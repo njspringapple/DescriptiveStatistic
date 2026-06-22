@@ -1,0 +1,1419 @@
+===== SEITE 1 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+LMU München Statistik I 226 / 637
+
+===== SEITE 2 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 3 =====
+Statistische Grafik
+Statistische Grafiken
+repräsentieren die Ausprägungen gewisser Merkmale in einem Datensatz
+durch die ästhetischen Eigenschaften geometrischer Objekte.
+Aus dieser Definition können wir eine formale “Grammatik” für grafische
+Darstellungen ableiten.
+(s.a. Wilkinson (2005) The Grammar of Graphics,
+Wickham et al. (2020) ggplot2: Elegant Graphics for Data Analysis)
+LMU München Statistik I 228 / 637
+
+===== SEITE 4 =====
+Grammar of Graphics
+(Fast) jede sinnvolle Grafik lässt sich als Kombination der folgenden
+Basis-Elemente beschreiben:
+Daten: enthalten die Beobachtungen der dargestellten Merkmale
+(Oft auch: daraus abgeleitete Statistiken wie Anteile, Mittelwerte, etc)
+Geometrische Elemente: z.B. Punkte, Linien, Rechtecke, etc…
+Ästhetische Zuordnungen: die Ausprägungen der in der Grafik
+dargestellten Merkmale werden durch sichtbare Eigenschaften der
+geometrischen Elemente repräsentiert, z.B.
+Position (vertikal/horizontal)
+Farbe
+Größe
+Form
+LMU München Statistik I 229 / 637
+▶
+▶
+▶ ▶
+▶
+▶
+▶
+
+===== SEITE 5 =====
+Grammar of Graphics
+Also: Daten werden über ästhetische Eigenschaften von geometrischen
+Elementen dargestellt.
+zusätzlich:
+Datentransformationen/Statistiken: Oft werden nicht Rohdaten selbst,
+sondern daraus abgeleitet Größen (Mittelwerte, Anteile, ….) abgebildet.
+Komplexere geometrische Elemente basieren oft intern auf
+Datentransformationen ( Balkendiagramme, geglättete Trendlinien,
+Boxplots, ….).
+Skalen ordnen für ein gegebenes Merkmal/Statistik und ihrer
+ästhetischen Zuordnung jeder Ausprägungen bestimmte Werte zu (z.B.
+Achsenabschnitte für Position, Farbpaletten für Farbe, etc…) und legen
+damit auch Legenden (z.B. für Farbskalen) und Achsenbeschriftungen
+fest.
+Koordinatensysteme: kartesische / logarithmische /
+Polarkoordinatensysteme; Kartenprojektionen
+LMU München Statistik I 230 / 637
+▶
+→
+▶
+▶
+
+===== SEITE 6 =====
+Grammar of Graphics
+zusätzlich:
+Facettierung definiert anhand welcher Merkmale die Daten in
+Subgruppen aufgeteilt werden und wie die Darstellungen der
+verschiedenen Subgruppen arrangiert werden (s.a.: small multiples
+plot, lattice plots).
+Theme: umfasst sämtliche Designaspekte wie Fonteigenschaften,
+Gitterlinien, Hintergrundfarben, Layout von Textelementen und
+Legenden, …
+Implementation in R: ggplot2
+Python: plotnine
+LMU München Statistik I 231 / 637
+▶
+▶
+
+===== SEITE 7 =====
+Beispiele: Geometrien
+.. und viele viele mehr …
+Abb: Wickham et al. (2020)
+LMU München Statistik I 232 / 637
+
+===== SEITE 8 =====
+Beispiele: Ästhetiken
+Abb: Wilke (2020)
+LMU München Statistik I 233 / 637
+
+===== SEITE 9 =====
+Grammar of Graphics: Beispiele mit Code
+Aden-Buie, 2018
+Reynolds, 2019
+LMU München Statistik I 234 / 637
+
+===== SEITE 10 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 11 =====
+Wahrnehmung von Grafiken
+Wahrnehmungspsychologische Experimente zeigen deutliche Unterschiede
+in der korrekten Interpretation der folgenden Grafiktypen:
+Abb.: Healy, K. (2018). Data visualization: a practical introduction. Princeton University Press. (übernommen
+aus Heer & Bostock)
+Cleveland, W.S., Mc3Gill, R. (1984): Graphical Perception: Theory, Experimentation, and Application to the
+Development of Graphical Methods. JASA 79(387), 531–554.
+Heer, J., Bostock, M. (2010): Crowdsourcing graphical perception: using Mechanical Turk to assess
+visualization design. SIGCHI Proceedings, 203–212.
+LMU München Statistik I 236 / 637
+
+===== SEITE 12 =====
+Wahrnehmung von Grafiken
+LMU München Statistik I 237 / 637
+
+===== SEITE 13 =====
+Wahrnehmung von Grafiken
+Hierarchie der korrekten Interpretation:
+1. Position (gemeinsame/parallele Skala verschobene Skalen)
+2. Abstände & Längen
+3. Steigung & Winkel
+4. Flächen
+5. Volumen
+6. Farbton-Farbsättigung-Farbhelligkeit
+Da Position & Abstände am besten wahrgenommen werden, müssen diese
+verwendet werden um die wichtigsten Merkmale zu codieren.
+LMU München Statistik I 238 / 637
+>
+
+===== SEITE 14 =====
+Principles of Graphical Excellence
+Graphical excellence is the well-designed presentation of interesting
+data – a matter of substance, of statistics and of design.
+Graphical excellence consists of complex ideas communicated with
+clarity, precision and efficiency.
+Graphical excellence is that which gives to the viewer the greatest
+number of ideas in the shortest time with the least ink in the smallest
+space.
+Graphical excellence is nearly always multivariate.
+And graphical excellence requires telling the truth about the data.
+Tufte, E. (2001): The Visual Display of Information. Graphic Press 2nd ed.
+LMU München Statistik I 239 / 637
+▶
+▶
+▶
+▶
+▶
+
+===== SEITE 15 =====
+Goldene Regeln für Grafikgestaltung
+Verständnis von Grafiken erfordert:
+Detektion: Erkennen welche geometrischen Elemente und ästhetische
+Eigenschaften welche Werte repräsentieren
+Synthese: Gruppierung & In-Relation-Setzen der entdeckten Inhalte
+Evaluation: Bewertung der relativen Größen und Bedeutung dieser
+Inhalte.
+Speziell: Unterscheidung, Rangbildung, Abschätzung von Verhältnissen.
+alle drei Phasen unterstützt durch bewusste Wahl
+geeigneter Ästhetiken & Geometrien (s.o.: Abstände Farbe, etc.)
+geeigneter Achsen, Gitterlinien und Seitenverhältnisse
+inhaltlich adäquater Sortierung/Reihenfolge der Ausprägungen
+qualitativer Merkmale
+entsprechender Annotationen & Hervorhebungen
+Kommunikationsabsicht klarmachen:
+Welche Informationen will ich primär vermitteln? Welche zusätzlich? Auf
+welche Vergleiche soll Aufmerksamkeit gelenkt werden?
+Lesbarkeit maximieren – sowohl Genauigkeit als auch
+Geschwindigkeit/Schwierigkeit sind wichtig.
+Harrell, F.E. (2017), Principles of Graph Construction;
+Grolemund, G., Wickham, H. (2017) R for Data Science, Ch. 28; Rauser, J. (2016) How Humans See Data
+LMU München Statistik I 240 / 637
+▶
+▶
+▶
+▶
+▶ >
+▶
+▶
+▶
+▶
+⟹
+⟹
+
+===== SEITE 16 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 17 =====
+“Infoviz” vs Statistische Grafiken I
+LMU München Statistik I 242 / 637
+
+===== SEITE 18 =====
+“Infoviz” vs Statistische Grafiken I
+60000
+40000
+20000
+0
+1980 1985 1990 1995 2000 2005 2007
+Jahr
+]lh[
+musnokreiB
+LMU München Statistik I 243 / 637
+
+===== SEITE 19 =====
+“Infoviz” vs Statistische Grafiken I
+70000
+60000
+50000
+40000
+1980 1985 1990 1995 2000 2005 2007
+Jahr
+]lh[
+musnokreiB
+LMU München Statistik I 244 / 637
+
+===== SEITE 20 =====
+“Infoviz” vs Statistische Grafiken II
+LMU München Statistik I 245 / 637
+
+===== SEITE 21 =====
+“Infoviz” vs Statistische Grafiken II
+40000
+30000
+20000
+10000
+0
+LMU TUM FHM Uni BW KSFH
+lhaznetnedutS
+Männer
+Frauen
+LMU München Statistik I 246 / 637
+
+===== SEITE 22 =====
+“Infoviz” vs Statistische Grafiken II
+20000
+10000
+0
+LMU TUM FHM Uni BW KSFH
+lhaznetnedutS
+Männer
+Frauen
+LMU München Statistik I 247 / 637
+
+===== SEITE 23 =====
+“Infoviz” vs Statistische Grafiken IV
+LMU München Statistik I 248 / 637
+
+===== SEITE 24 =====
+“Infoviz” vs Statistische Grafiken IV
+500
+Dante
+400
+300
+200
+Michaeli
+Ungerer West
+Prinzregenten Schyren
+100
+Georgenschwaige MariaEinsiedel
+0
+2.5 5.0 7.5
+Fläche [ha]
+]rhaJ
+orp
+,dnesuaT
+[ rehcuseB
+LMU München Statistik I 249 / 637
+
+===== SEITE 25 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 26 =====
+Wahrnehmung Ästhetischer Zuordnungen
+Kodieren von Information durch:
+Position, Längen & Abstände: am einfachsten zu erkennen, v.a. für
+gemeinsame/parallele Skalen
+Winkel & Steigung: visueller Eindruck abhängig von Richtung & vom
+Seitenverhältnis der Darstellung
+Flächen:
+lang/dünn erscheint größer als kompakt/konvex
+abhängig von Farbe: hellere Flächen wirken größer
+Farbe: oft schwierig präzise Vergleiche abzulesen
+dennoch allgegenwärtig da kombinierbar mit anderen grafischen
+Elementen.
+LMU München Statistik I 251 / 637
+▶ ▶
+▶
+▶
+▶
+▶
+▶
+
+===== SEITE 27 =====
+Farbwahrnehmung
+Farbwahrnehmung ist komplex
+Farben für Grafiken so wählen dass Wahrnehmungseinheitlichkeit
+berücksichtigt wird:
+Grün-/Gelbtöne werden bei gleicher Sättigung intensiver wahrgenommen
+als andere Farben
+Sehschwächen mitbedenken
+LMU München Statistik I 252 / 637
+▶
+▶
+▶
+▶
+
+===== SEITE 28 =====
+Farbwahrnehmung
+Rot-Grün-Sehschwäche
+(Protanopia: Prävalenz 6%, Deuteranopia: Prävalenz 2%)
+aus Wong, B. Nature Methods 8(6), p. 441 (2011).
+LMU München Statistik I 253 / 637
+
+===== SEITE 29 =====
+Wahrnehmungseinheitlichkeit: Veranschaulichung
+110 120 100
+160 110
+180
+190 160
+170 150
+140
+130
+110
+100
+LMU München Statistik I 254 / 637
+
+===== SEITE 30 =====
+Farbräume
+repräsentieren Farben als (Vektoren von) Zahlen
+“technische” Farbräume: RGB (Rot-Grün-Blau, für Bildschirme) oder
+CMYK (Cyan-Magenta-Yellow-Black, für Druck)
+Additive Farbräume wie RGB / CMYK entsprechen nicht Funktionsweise
+der menschlichen Wahrnehmung, deswegen:
+Farbräume:
+HCL: hue-chroma-luminance
+HSV: hue-saturation-value
+Lab: Lightness-a (grün-rot Achse) - b (blau-gelb Achse)
+LMU München Statistik I 255 / 637
+▶
+▶ ▶
+▶
+▶
+▶
+▶
+
+===== SEITE 31 =====
+HCL - Farbraum
+Farbton: dominante Wellenlänge (hue)
+kreisförmige Dimension (grün - gelb - rot - lila - blau - grün)
+Farbsättigung (chroma)
+Helligkeit (luminance)
+LMU München Statistik I 256 / 637
+▶
+▶
+▶
+▶
+
+===== SEITE 32 =====
+HCL - Farbraum
+Farbton: dominante Wellenlänge (hue)
+kreisförmige Dimension (rot - gelb - grün - blau - lila - rot)
+Farbsättigung (saturation, chroma)
+Helligkeit (brightness, luminance)
+LMU München Statistik I 257 / 637
+▶
+▶
+▶
+▶
+
+===== SEITE 33 =====
+HCL - Farbraum
+Farbton: dominante Wellenlänge (hue)
+kreisförmige Dimension (rot - gelb - grün - blau - lila - rot)
+Farbsättigung (saturation, chroma)
+Helligkeit (brightness, luminance)
+LMU München Statistik I 258 / 637
+▶
+▶
+▶
+▶
+
+===== SEITE 34 =====
+HCL - Farbraum
+Farbton: dominante Wellenlänge (hue)
+kreisförmige Dimension (rot - gelb - grün - blau - lila - rot)
+Farbsättigung (saturation, chroma)
+Helligkeit (brightness, luminance)
+LMU München Statistik I 259 / 637
+▶
+▶
+▶
+▶
+
+===== SEITE 35 =====
+Farbskalentypen
+Qualitativ: (eher) nur für nominales Skalenniveau.
+Sequentiell: mindestens ordinales Skalenniveau
+Divergierend: mindestens ordinales Skalenniveau, mit “neutralem”
+mittleren Wert.
+LMU München Statistik I 260 / 637
+▶
+▶
+▶
+
+===== SEITE 36 =====
+Farbskalen für nominales Skalenniveau
+Qualitative Farbskalen für nominale Variablen:
+Fokus auf Unterscheidbarkeit bei gleichbleibender “Prägnanz”
+Variierender Farbton bei konstanter Sättigung & Helligkeit (korrigiert
+für menschliche Wahrnehmung)
+barrierefrei − lesbar auch bei Sehschwächen
+LMU München Statistik I 261 / 637
+▶
+▶
+
+===== SEITE 37 =====
+Beispiel
+Erster Vokal im Namen Erster Vokal im Namen
+a e i o u a e i o u
+Sinnvoll, aber viel rot−grün Kontrast Bessere Balance, weniger rot−grün
+Erster Vokal im Namen Erster Vokal im Namen
+a e i o u a e i o u
+Ok, aber Farben implizieren Ordnung Schlechte Farbskala! Zu viel (rot−grün) Kontrast & Sättigung.
+LMU München Statistik I 262 / 637
+
+===== SEITE 38 =====
+Sequentielle Farbskalen
+konstanter Farbton und Sättigung, variiere nur Helligkeit
+mehrere Farbtöne, mit variierender Sättigung und abnehmender
+Helligkeit
+Höchste Prägnanz für Werte die mit niedriger Helligkeit kodiert
+werden.
+LMU München Statistik I 263 / 637
+▶
+▶
+▶
+
+===== SEITE 39 =====
+Beispiel
+Electoral College Votes Electoral College Votes
+10 20 30 40 50 10 20 30 40 50
+Sinnvoll, aber evtl. kleine Unterschiede verwischt Sinnvoll, aber evtl. kleine Unterschiede verwischt
+Electoral College Votes Electoral College Votes
+10 20 30 40 50 10 20 30 40 50
+Sinnvoll, aber besser dunklere Farben für 'wichtigere' Werte Sinnvoll, überbetont evtl. kleine Unterschiede durch Farbübergänge
+LMU München Statistik I 264 / 637
+
+===== SEITE 40 =====
+Divergierende Farbskalen
+2 sequentielle Skalen mit je konstantem Farbton werden kombiniert
+“neutrale” Mitte: höchste Prägnanz für obere und untere Enden der
+Skala
+LMU München Statistik I 265 / 637
+▶
+▶
+
+===== SEITE 41 =====
+Beispiel: Divergierende Farbskalen
+Minority / Majority for Trump [2016, %] Minority / Majority for Trump [2016, %]
+−40 −20 0 20 −40 −20 0 20
+Minority / Majority for Trump [2016, %] Minority / Majority for Trump [2016, %]
+−40 −20 0 −40 −20 0
+Mitte nicht viel weniger prägnant als Enden. Nicht divergierend: Mitte nicht viel weniger prägnant als Enden, zu bunt
+LMU München Statistik I 266 / 637
+
+===== SEITE 42 =====
+Beispiel: Divergierende Farbskalen
+Differenz der Änderungsraten von Median-Bruttolöhnen und
+Neuvertragsmieten 2014 - 2018:
+Quelle: IW, Berliner Morgenpost (17.01.2020)
+LMU München Statistik I 267 / 637
+
+===== SEITE 43 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 44 =====
+Visualisierung der Häufigkeiten diskreter Merkmale
+(Bedingte) Häufigkeiten für diskrete/gruppierte Merkmale darstellbar u.a.
+als
+Stab-, Balken- und Säulendiagramm
+Histogramm
+(Kreis-/Tortendiagramm)
+LMU München Statistik I 269 / 637
+▶
+▶
+▶
+
+===== SEITE 45 =====
+Stab-, Säulen-, Balkendiagramm
+Stabdiagramm: Trage über jeweils einen zur -Achse
+senkrechten Strich (Stab) mit Höhe (oder ) ab.
+Säulendiagramm wie Stabdiagramm, aber mit Rechtecken statt
+Strichen.
+Balkendiagramm: wie Säulendiagramm, aber mit vertikal statt
+horizontal gelegter -Achse.
+Anwendungen:
+Ordinale Merkmale
+Metrische Merkmale mit wenigen Ausprägungen
+Nominale Merkmale (Problem: Anordnung der Ausprägungen beliebig!)
+LMU München Statistik I 270 / 637
+1 𝑘
+1 𝑘 1 𝑘
+▶ 𝑎 , … , 𝑎 𝑥
+ℎ , … , ℎ 𝑓 , … , 𝑓
+▶
+▶
+𝑥
+▶
+▶
+▶
+
+===== SEITE 46 =====
+Stab-, Säulen-, Balkendiagramm
+Darstellung der absoluten oder relativen Häufigkeiten als Höhen (Längen).
+Verwendete Geometrien:
+Vertikale oder horizontale Linien oder Rechtecke
+Ästhetische Zuordnungen:
+x-Position: Ausprägungen des Merkmals
+y-Position des oberen Endes: absolute oder relative Häufigkeiten
+(x und y umgekehrt für Balkendiagramm)
+LMU München Statistik I 271 / 637
+▶
+▶
+▶
+
+===== SEITE 47 =====
+Beispiel Mietspiegel: Säulendiagramm /
+Balkendiagramm
+1200
+900
+600
+300
+0
+1 2 3 4 5 6 7 8
+# Zimmer
+lhaznA
+8
+7
+6
+5
+4
+3
+2
+1
+0 300 600 900 1200
+Anzahl
+remmiZ
+#
+LMU München Statistik I 272 / 637
+
+===== SEITE 48 =====
+Stapeldiagramm
+Darstellen absoluter oder relativer Häufigkeiten als Länge. Die Abschnitte
+werden übereinander gestapelt und unterschiedlich eingefärbt.
+Anwendungen:
+Nominale Merkmale (aber: Reihenfolge?!)
+Ordinale / gruppierte Merkmale
+Metrische Daten mit wenigen Ausprägungen
+Besonders geeignet für den Vergleich verschiedener Gruppen durch
+nebeneinander liegende Stapel.
+also: bedingte Häufigkeiten gegeben Gruppe
+Zu beachten ist dann die Unterscheidung:
+relative Häufigkeit (Anteil) absolute Häufigkeit (Anzahl)
+LMU München Statistik I 273 / 637
+▶
+▶
+▶
+⟹
+↔
+
+===== SEITE 49 =====
+Stapeldiagramm
+Darstellung der absoluten oder relativen Häufigkeiten als Segmente
+unterschiedlicher Länge (vertikal) oder Breite (horizontal).
+verwendete Geometrien:
+Vertikale oder horizontale Rechtecksegmente
+Ästhetische Zuordnungen:
+Ausdehnung: absolute oder relative Häufigkeiten der
+Merkmalsausprägungen
+(Füll-)farbe: Ausprägungen des Merkmals
+optional: x- oder y-Position des Segments: Ausprägungen des
+bedingenden Merkmals
+LMU München Statistik I 274 / 637
+▶
+▶
+▶
+
+===== SEITE 50 =====
+Beispiel Mietspiegel: Stapeldiagramme
+1500
+1000
+500
+0
+normal beste
+Wohnlage
+lhaznA
+1.00
+0.75
+0.50
+0.25
+0.00
+normal beste
+Wohnlage
+lietnA
+# Zimmer
+8
+6
+5
+4
+3
+2
+1
+LMU München Statistik I 275 / 637
+
+===== SEITE 51 =====
+Kreisdiagramm, Tortendiagramm
+Darstellung von relativen/absoluten Häufigkeiten als Anteile der Fläche
+eines Kreises.
+Suboptimale Visualierung –
+Darstellung über Längen Darstellung über Winkel!
+Grundsätzlich anwendbar für
+Nominale Merkmale
+Ordinale Merkmale (Problem: Ordnung nicht korrekt wiedergegeben)
+Gruppierte Daten
+pie chart
+LMU München Statistik I 276 / 637
+≫
+▶
+▶
+▶
+
+===== SEITE 52 =====
+Tortendiagramm: Klein & Kalt
+Nettomiete, gruppiert
+(150,250]
+(250,350]
+(350,450]
+(450,550]
+(550,650]
+(650,750]
+(750,850]
+LMU München Statistik I 277 / 637
+
+===== SEITE 53 =====
+Beispiel Mietspiegel: Vergleich mit Kreisdiagramm
+normal
+1.00
+0.75
+0.50
+beste
+0.25
+0.00
+normal beste
+Wohnlage
+tiekgifuäH
+.ler
+# Zimmer
+8
+6
+5
+4
+3
+2
+1
+LMU München Statistik I 278 / 637
+
+===== SEITE 54 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 55 =====
+Dotplots
+“Eindimensionales Streudiagramm”
+Darstellung der einzelnen Beobachtungen als Punkte (Breiten) entlang der
+Achse.
+Verwendete Geometrien:
+Punkte (oder andere Symbole)
+Ästhetische Zuordnungen:
+x-Position: beobachtete Merkmalsausprägungen der UE
+optional: y-Position: Ausprägungen des bedingenden Merkmals
+(oder auch umgekehrt)
+LMU München Statistik I 280 / 637
+▶
+▶
+▶
+
+===== SEITE 56 =====
+Beispiel: Dotplot
+200 400 600 800
+Nettomiete
+LMU München Statistik I 281 / 637
+
+===== SEITE 57 =====
+Variante: Gruppierter Dotplot
+200 400 600 800
+Nettomiete
+(bin width = 10)
+LMU München Statistik I 282 / 637
+
+===== SEITE 58 =====
+Beispiel: Dotplot für bedingte Verteilungen
+3
+2
+1
+200 400 600 800
+Nettomiete
+remmiZ
+#
+LMU München Statistik I 283 / 637
+
+===== SEITE 59 =====
+Negativbeispiel: Streudiagramm
+800
+600
+400
+200
+0 25 50 75
+Index
+eteimotteN
+Ungeeignet, da horizontale Achse ohne Informationsgehalt.
+LMU München Statistik I 284 / 637
+→
+
+===== SEITE 60 =====
+Histogramm
+Grafiktyp für Häufigkeitsverteilungen auf mindestens Intervallskala.
+Darstellung der relativen Häufigkeiten durch Flächen (Prinzip der
+Flächentreue)
+Vorgehen:
+1. Aufteilung in Klassen (falls die Daten noch nicht gruppiert sind)
+2. Bestimmung der Klassenhäufigkeiten und der relativen Häufigkeiten
+3. Bestimmung der Histogramm-Höhen , so dass gilt:
+, wobei die Breite der Klasse ist.
+LMU München Statistik I 285 / 637
+𝑗
+𝑗
+𝑛
+𝑗 𝑛
+𝑗
+𝑗 𝑗 𝑗 𝑗
+𝑛
+𝑓 =
+𝑦
+𝑏 ⋅ 𝑦 = 𝑓 𝑏 𝑗
+
+===== SEITE 61 =====
+Beispiel: Nettomiete Klein & Kalt
+0.005
+bj = 10 bj = 20
+0.004
+0.004
+0.003
+0.002
+0.002
+0.001
+0.000 0.000
+200 400 600 800 200 400 600 800
+Nettomiete Nettomiete
+0.003 0.0025
+bj = 50 0.0020 bj = 100
+0.002
+0.0015
+0.0010
+0.001
+0.0005
+0.000 0.0000
+200 400 600 800 200 400 600 800
+Nettomiete Nettomiete
+LMU München Statistik I 286 / 637
+
+===== SEITE 62 =====
+Histogramm
+Flächentreue Darstellung ähnlich zu Idee von Dichtefunktionen:
+Histogramm ist stückweise konstante Approximation der Dichte.
+nur bei metrischen Daten sinnvoll
+Beachte: Interpretation der Balkenhöhe bei unterschiedlichen
+Klasssenbreiten nicht angemessen – Flächentreue!
+unterschiedlichen Klasssenbreiten vermeiden zu Gunsten
+einfacher Interpretierbarkeit
+Nachteil: Visueller Eindruck von Klassenbreite abhängig
+verschiedene Varianten ansehen, falls möglich: Klassenbreiten
+inhaltlich begründen
+Vorsicht bei Rändern (s.a. Kapitel “Kerndichteschätzer”)
+LMU München Statistik I 287 / 637
+▶
+▶
+▶
+⟹
+▶
+⟹
+▶
+
+===== SEITE 63 =====
+Histogramm
+Flächentreue Darstellung der Verteilung eines metrischen Merkmals,
+unterteilt in Klassen.
+Verwendete Geometrien:
+Achsenparallele Rechtecke
+Ästhetische Zuordnungen:
+x-Position der Ecken: Histogrammklassengrenzen
+Fläche (implizit also: Höhe): relative Häufigkeit der Klasse
+LMU München Statistik I 288 / 637
+▶
+▶
+
+===== SEITE 64 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 65 =====
+Dichtefunktion I
+Histogramm:
+Relative Häufigkeit in einer Histogramm-Klasse Fläche der
+Histogramm-Säule Fläche “unter der Kurve”
+Aber: Histogramm ist stückweise konstante Funktion
+Sehr problematisch: Abhängigkeit von Wahl der Klassengrenzen
+Histogram
+▶ =
+=
+▶
+▶
+ytisneD
+0 1 2 3 4 5
+4.0
+3.0
+2.0
+1.0
+0.0
+Histogram
+ytisneD
+0 1 2 3 4 5
+4.0
+3.0
+2.0
+1.0
+0.0
+Ersetze Histogramm durch glatte Funktion
+LMU München Statistik I 290 / 637
+▶ ⟹ 𝑓
+
+===== SEITE 66 =====
+Dichtefunktion II
+Wiederholung: Für eine Dichte(-funktion) (density) gilt:
+und
+Die Fläche unter der Dichte über beliebige Intervalle soll in etwa den
+relativen Häufigkeiten in diesen Intervallen entsprechen, d.h.
+: Mächtigkeit der Menge, also Anzahl der Elemente der Menge
+LMU München Statistik I 291 / 637
+∞
+−∞
+𝑏
+𝑖 𝑖
+𝑎
+▶ 𝑓(𝑥) ≥ 0 ∀ 𝑥
+▶ ∫ 𝑓(𝑥)𝑑𝑥 = 1.
+1
+∫ 𝑓(𝑥)𝑑𝑥 ≈ |{𝑥 ∶ 𝑎 < 𝑥 ≤ 𝑏}|
+𝑛
+|{…}|
+
+===== SEITE 67 =====
+Beispiele Histogramm und Dichte
+0.6
+0.4
+0.2
+0.0
+−4 −2 0 2 4
+x
+ytisned
+LMU München Statistik I 292 / 637
+
+===== SEITE 68 =====
+Beispiele Histogramm und Dichte
+0.6
+0.4
+0.2
+0.0
+−2 0 2
+x
+ytisned
+LMU München Statistik I 293 / 637
+
+===== SEITE 69 =====
+Beispiele Histogramm und Dichte
+0.6
+0.4
+0.2
+0.0
+−2 0 2
+x
+ytisned
+LMU München Statistik I 294 / 637
+
+===== SEITE 70 =====
+Berechnung von Dichte-Kurven
+̂
+Gleitendes Histogramm
+mit “Rechteck”-Kernfunktion
+für
+sonst
+LMU München Statistik I 295 / 637
+1
+𝑛 𝑖 𝑖
+𝑛
+𝑖
+𝑖=1
+1
+2
+|{𝑥 ∶ 𝑥 ∈ [𝑥 − ℎ, 𝑥 + ℎ)}|
+𝑓(𝑥) =
+2ℎ
+⟹
+1 1 𝑥 − 𝑥
+= ∑ 𝑘 ( )
+𝑛 ℎ ℎ
+− 1 ≤ 𝑢 < 1
+𝑘(𝑢) = {
+0
+
+===== SEITE 71 =====
+Kerndichteschätzer
+sei Kernfunktion, d.h. und
+Dann ist der Kerndichteschätzer (auch: KDE - kernel density estimator)
+̂
+Beispiele für Kernfunktionen:
+Gauß-Kern exp
+Epanechnikov-Kern max
+Dreieck-Kern max
+LMU München Statistik I 296 / 637
+∞
+−∞
+𝑛
+𝑖
+𝑖=1
+1 1 2
+√2𝜋 2
+3 2
+4
+𝑘(𝑢) 𝑘(𝑢) ≥ 0 ∀ 𝑢 ∫ 𝑘(𝑢)𝑑𝑢 = 1
+1 𝑥 − 𝑥
+𝑓(𝑥) = ∑ 𝑘 ( )
+𝑛ℎ ℎ
+𝑘(𝑢) = (− 𝑢 )
+𝑘(𝑢) = (0, (1 − 𝑢 ))
+𝑘(𝑢) = (0, 1 − |𝑢|)
+
+===== SEITE 72 =====
+Kerndichteschätzer
+−1.5 −1.0 −0.5 0.0 0.5 1.0 1.5
+0.1
+8.0
+6.0
+4.0
+2.0
+0.0
+Beispiele: Kernfunktionen
+u
+)u(k
+gaussian
+epanechnikov
+rectangular
+triangular
+LMU München Statistik I 297 / 637
+
+===== SEITE 73 =====
+Kerndichteschätzer
+Histogramme berücksichtigen nicht, wo Beobachtungen in der Klasse
+liegen, zählen nur die Anzahl der Beobachtungen innerhalb der
+Klassengrenzen
+Kerndichteschätzung an der Stelle berücksichtigt Entfernung der
+benachbarten Punkte zu , mit über die Distanz abnehmender
+Gewichtung:
+Histogram
+▶
+▶ 𝑥
+𝑥
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Kerndichte (Gauss−Kern)
+ytisneD
+LMU München Statistik I 298 / 637
+
+===== SEITE 74 =====
+Kerndichteschätzer
+Histogramme berücksichtigen nicht, wo Beobachtungen in der Klasse
+liegen, zählen nur die Anzahl der Beobachtungen innerhalb der
+Klassengrenzen
+Kerndichteschätzung an der Stelle berücksichtigt Entfernung der
+benachbarten Punkte zu , mit über die Distanz abnehmender
+Gewichtung:
+Histogram
+▶
+▶ 𝑥
+𝑥
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Kerndichte (Gauss−Kern)
+ytisneD
+LMU München Statistik I 299 / 637
+
+===== SEITE 75 =====
+Kerndichteschätzer: Bandbreite
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Bandwidth = 0.438
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Bandwidth = 0.73
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Bandwidth = 1.022
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Bandwidth = 0.438
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Bandwidth = 0.73
+ytisneD
+−2 0 2 4 6
+4.0
+3.0
+2.0
+1.0
+0.0
+Bandwidth = 1.022
+ytisneD
+Obere Reihe: Gauss-Kern, untere Reihe: Dreiecks-Kern
+LMU München Statistik I 300 / 637
+
+===== SEITE 76 =====
+Kern-Dichteschätzer
+0.5
+0.4
+0.3
+0.2
+0.1
+0.0
+−2 0 2
+x
+ytisned
+Kerndichteschätzer mit “optimaler” Bandbreite (blau), zu kleiner (orange)
+und zu großer (lila) Bandbreite .
+LMU München Statistik I 301 / 637
+ℎ
+ℎ
+
+===== SEITE 77 =====
+Bemerkungen zur Dichteschätzung
+Abhängigkeit von der Bandbreite
+Benutze automatische Verfahren zur Bestimmung von “optimalem”
+aus den Daten
+Abhängigkeit von der Wahl der Kernfunktion eher unbedeutend
+Kerndichteschätzungen sind insbesondere bei größeren Datenmengen
+und (quasi-)stetigen Merkmalen Histogrammen vorzuziehen.
+Kerndichteschätzungen sind immer Histogrammen mit
+unterschiedlichen Klassenbreiten vorzuziehen.
+Animation 1, Animation 2
+LMU München Statistik I 302 / 637
+▶ ℎ
+→
+ℎ
+▶
+▶
+▶
+
+===== SEITE 78 =====
+Statistische Grafiken
+Grammar of Graphics
+Grafiken: Wahrnehmung
+Grafiken: Infoviz vs Statistische Grafiken
+Farbskalen
+Diskrete Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Metrische Merkmale: Visualisierung von Häufigkeiten und Verteilungen
+Kerndichteschätzung
+Metrische Merkmale: Visualisierung gemeinsamer Verteilungen
+
+===== SEITE 79 =====
+Bivariate metrische Daten
+Daten liegen zu zwei metrischen Merkmalen vor:
+Datenpaare
+Fragen:
+Gibt es einen Zusammenhang zwischen diesen Merkmalen?
+Wie lässt sich dieser Zusammenhang beschreiben?
+Was ist die gemeinsame Verteilung dieser Merkmale?
+Einfachste grafische Darstellung: Streudiagramm.
+Die Datenpaare entsprechen Punkten in der Ebene (“Punktwolke”)
+Beispiele:
+: Wohnfläche [ ]
+: Nettomiete [€] oder Quadratmetermiete [€/ ]
+LMU München Statistik I 304 / 637
+𝑖 𝑖
+2
+2
+(𝑥 , 𝑦 ), 𝑖 = 1, … , 𝑛
+𝑋 𝑚
+𝑌 𝑚
+
+===== SEITE 80 =====
+Streudiagramm
+3000
+2000
+1000
+50 100 150 200 250
+Wohnfläche [ m2 ]
+]RUE[
+eteimotteN
+LMU München Statistik I 305 / 637
+
+===== SEITE 81 =====
+Streudiagramm
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+LMU München Statistik I 306 / 637
+
+===== SEITE 82 =====
+Darstellung für größere Datenmengen:
+Besser mit halbdurchsichtigen & kleineren Symbolen - Overplotting
+vermeiden:
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+.. so ist es lesbar
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+.. so nicht
+LMU München Statistik I 307 / 637
+
+===== SEITE 83 =====
+Darstellung für größere Datenmengen
+Alternativen: Anzahlen/Dichte direkt über Farbe codieren (hexbin-Plots,
+2D-Kerndichte):
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+Anzahl
+10 20 30
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+2D−Dichte (Schätzung)
+0.0010.0020.003
+LMU München Statistik I 308 / 637
+
+===== SEITE 84 =====
+Darstellung für größere Datenmengen
+in 3D:
+}
+R-Pakete: {rayshader}, {plotly}, {ggrgl}
+LMU München Statistik I 309 / 637
+
+===== SEITE 85 =====
+Streudiagramme mit diskreter Drittvariable
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+# Zimmer
+1
+2
+3
+4
+5
+6
+LMU München Statistik I 310 / 637
+
+===== SEITE 86 =====
+Streudiagramme mit diskreter Drittvariable
+# Zimmer: 1 # Zimmer: 2 # Zimmer: 3 # Zimmer: 4 # Zimmer: 5 # Zimmer: 6
+20
+15
+10
+5
+50 100150200250 50 100150200250 50 100150200250 50 100150200250 50 100150200250 50 100150200250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+LMU München Statistik I 311 / 637
+
+===== SEITE 87 =====
+Streudiagramme mit diskreter Drittvariable
+# Zimmer: 1 # Zimmer: 2 # Zimmer: 3 # Zimmer: 4 # Zimmer: 5 # Zimmer: 6
+20
+15
+10
+5
+50 100150200250 50 100150200250 50 100150200250 50 100150200250 50 100150200250 50 100150200250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+Anzahl
+30
+20
+10
+LMU München Statistik I 312 / 637
+
+===== SEITE 88 =====
+Streudiagramme mit stetiger Drittvariable
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+Baujahr
+2000
+1980
+1960
+1940
+1920
+LMU München Statistik I 313 / 637
+
+===== SEITE 89 =====
+Streudiagramme mit stetiger Drittvariable
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+bj
+2000
+1980
+1960
+1940
+1920
+LMU München Statistik I 314 / 637
+
+===== SEITE 90 =====
+Streudiagramme mit gruppierter Drittvariable
+[1918,1945] (1945,1960] (1960,1980] (1980,2013]
+20
+15
+10
+5
+50 100 150 200 250 50 100 150 200 250 50 100 150 200 250 50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+Anzahl
+20
+15
+10
+5
+LMU München Statistik I 315 / 637
+
+===== SEITE 91 =====
+Streudiagramme mit gruppierter Drittvariable
+[1918,1945]
+(1945,1960]
+(1960,1980]
+(1980,2013]
+20
+15
+10
+5
+20
+15
+10
+5
+20
+15
+10
+5
+20
+15
+10
+5
+50 100 150 200 250
+Wohnfläche [ m2 ]
+2 ] m/RUE[
+eteimretemtardauQ
+Anzahl
+20
+15
+10
+5
+LMU München Statistik I 316 / 637

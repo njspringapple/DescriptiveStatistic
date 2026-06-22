@@ -1,0 +1,461 @@
+
+
+--- PAGE 1 ---
+Deskriptive Statistik Blatt 10
+Fabian Scheipl, Daniel Schlichting WiSe 2025/2026
+Hinweise:
+• Abgabeschluss für bewertete Aufgaben ist immer Montag 12:00 der Folgewoche.
+Nur Abgaben, die rechtzeitig und formgerecht (PDF in DIN A 4 Hochformat, Dateigröße < 20 MB) über
+die Moodle-Seite zur Veranstaltung erfolgen, werden akzeptiert und bewertet.
+Bewertete Aufgaben enthalten im Titel in rot den Zusatz, wie viel Punkte sie maximal bringen.
+• Gruppenarbeit ist nicht zulässig und wird als versuchter Unterschleif an das Prüfungsamt gemeldet.
+• Nur nachvollziehbare, lesbare Lösungen können gewertet werden.
+Geben Sie für alle Berechnungen auch ihren formalen Ansatz und wesentliche Zwischenergebnisse an, um
+die volle Punktzahl zu erreichen.
+Wo Sie auf Sätze und Definitionen aus der Veranstaltung zurückgreifen, sollte klar erkennbar sein, was Sie
+verwendet haben.
+• Fassen Sie sich bei Textantworten kurz – Stichpunkte genügen.
+Formulieren Sie präzise mit korrekter Verwendung der in der Vorlesung eingeführten Fachbegriffe um die
+volle Punktzahl zu erreichen.
+• Runden Sie Ihre Ergebnisse auf 2 Nachkommastellen und kürzen Sie Brüche vollständig.
+• Wenn Sie bei einer Teilaufgabe Ergebnisse aus vorigen Teilaufgaben benötigen und diese nicht ermitteln
+konnten, geben Sie ggf. an, mit welchen alternativen Werten Sie stattdessen weiterarbeiten.
+• Grafiken und Berechnungen können Sie gegebenenfalls auch mit R oder Python erzeugen bzw. durchführen.
+Übertragen Sie in diesem Fall den vollständigen, lauffähigen (!) und kommentierten Code sowie den
+relevanten Output in Ihre abgegebene Lösung.
+• In der Angabe bezeichnet log(x) = log (x) immer den natürlichen Logarithmus zur Basis e ≈ 2.72.
+e
+Eigenständigkeit:
+Durch die Abgabe zur Benotung erklären Sie, dass Sie die eingereichte Lösung selbständig verfasst und keine
+anderen als die angegebenen Hilfsmittel benutzt haben. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn
+nach aus anderen Werken (dazu zählen auch Internetquellen oder von Künstlicher Intelligenz verfasste Texte
+und Berechnungen) übernommen wurden, haben Sie unter Angabe der Quelle kenntlich gemacht.
+1
+
+--- PAGE 2 ---
+Aufgabe 1 Stetige Verteilungen (15 P)
+1. Sei U eine stetig gleichverteilte Zufallsvariable auf dem Intervall [a, b]
+• [6 P] Leiten Sie Varianz von U her.
+Hinweis: Angabe des Ergebnisses durch Einsetzen in die Formel aus der Vorlesung ist nicht ausreichend.
+• [3 P] Bestimmen Sie die Dichte von Z := c · U + d, c ∈ R+, d ∈ R mithilfe des Dichte-
+Transformationssatzes.
+2. Sei X eine normalverteilte ZV mit µ = 2.5 und σ2 = 2.
+• [4 P] Geben Sie die Dichte, die Verteilung und den Träger von Y = 1 + 3X an.
+Hinweis: Sie benötigen dafür nicht den Dichte-Transformationssatz.
+• [2 P] Bestimmen Sie E(X2)
+Hinweis: Keine Integration nötig.
+Lösung
+Die Lösung wird in den Übungen am 12.01. und 14.01. besprochen.
+2
+
+--- PAGE 3 ---
+Die restlichen Aufgaben orientieren sich stark am Kapitel „ Wichtige parametrische Verteilungen“ der Vorlesung:
+Wir betrachten einige dort dargestellte Zusammenhänge noch einmal detaillierter.
+Hinweis: Für einige Aufgaben auf diesem Übungsblatt kann es von Vorteil sein, bekannte Reihen (z.B. harmonische
+Reihe, geometrische Reihe, Exponentialreihe, . . . ) noch einmal nachzuschlagen.
+Aufgabe 2 Verteilungsfunktionen und Dichten: Eigenschaften
+Zeigen Sie für die nachfolgend genannten Verteilungen: die in der Vorlesungen jeweils angegebene Funktion f
+erfüllt die Eigenschaften einer Wahrscheinlichkeitsfunktion.
+1. X diskret gleichverteilt auf der Menge {x , x , . . . , x }, k ∈ N, k ≥ 3.
+1 2 k
+2. X geometrisch verteilt mit Parameter π ∈ (0, 1).
+Lösung
+1. X diskret gleichverteilt auf der Menge T := {x , x , . . . , x }, k ∈ N, k ≥ 3.
+1 2 k
+• Nichtnegativität:
+1 √
+f (x) = I(x ∈ T ) ≥ 0
+k
+| {z }
+|{z}
+≥0
+>0
+• Normiertheit:
+X X 1 1 X k √
+f (x) = I(x ∈ T ) = I(x ∈ T ) = k/k = 1
+k k i
+| {z }
+x∈T x∈T i=1
+=1
+2. X geometrisch verteilt mit Parameter π ∈ (0, 1) mit T := N+
+• Nichtnegativität:
+√
+f (x) = (1 − π)x−1 π I(x ∈ T ) ≥ 0
+| {z } |{z} | {z }
+>0 >0 ≥0
+• Normiertheit:
+X X X
+f (x) = (1 − π)x−1πI(x ∈ T ) = π (1 − π)x−1 =
+x∈T x∈T x∈N+
+π X ∞ (1 − π)x−1 y:= = x−1 π X ∞ (1 − π)y ( = +) π/π = 1 √
+x=1 y=0
+∞
+geometrische Reihe für |q| < 1: P qk = 1 .
+1−q
+k=0
+– Hier: q := 1 − π ∈ (0, 1), da π ∈ (0, 1), und k = y, also 1 − q = 1 − (1 − π) = π. (+)
+Aufgabe 3 Verteilungen: Verteilungsfunktion berechnen
+Leiten Sie die Verteilungsfunktion F her für X
+X
+1. diskret gleichverteilt auf der Menge {1, 2, . . . , k}, k ∈ N, k ≥ 3.
+2. stetig gleichverteilt auf [a, b], mit a, b ∈ R, a < b;
+3. exponentialverteilt mit Parameter λ ∈ R+.
+Lösung
+Leiten Sie die Verteilungsfunktion F her für X
+X
+1.
+X diskret X X∼U{1,2,...,k} X 1
+F (x) =P (X ≤ x) = f (x ) = I (x )
+X X X i k {1,2,...,k} i
+i:xi≤x i:xi≤x
+
+1 · 0 = 0 x < 1
+= k 1 · (cid:12) (cid:12) {x i ∈ {1, . . . , k} : x i ≤ x} (cid:12) (cid:12) =  k k 1 · (cid:12) (cid:12) {1, . . . , ⌊x⌋} (cid:12) (cid:12) = ⌊x k ⌋ 1 ≤ x ≤ k
+ 1 · k = 1 x > k
+k
+3
+
+--- PAGE 4 ---
+2.
+x x
+X stetig Z X∼U[a,b] Z 1
+F (x) =P (X ≤ x) = f (u) du = I (u) du
+X X X b − a [a,b]
+−∞ −∞
+ x
+
+−
+Z
+R
+∞
+a
+b
+b
+−
+1
+−
+1
+a
+a
+=
+|
+I
+I
+0
+[a
+[a
+f
+,
+ü
+{
+,
+b
+b
+r
+z
+]
+]
+(
+x
+(
+u
+u
+<
+}
+)
+)
+a
+d
+d
+u
+u
++
+=
+R
+a
+x
+0
+b−
+1
+a
+I
+|
+[a,
+{
+b
+z
+]
+(u
+}
+) du = 0 + (cid:2)
+b−
+1
+a
+· u (cid:3)x
+a
+= x
+b−
+−
+a
+a a
+x
+≤
+<
+x
+a
+≤ b
+= −∞ =1
+| {z }
+
+−
+|
+Z
+∞
+a
+=
+b
+0
+−
+1
+sie
+a
+h
+=
+{
+I
+e
+z
+0
+[
+1
+a
+.
+,b
+Z
+]
+(
+e
+u
+ile
+) du
+}
++
+Z
+|
+a
+=
+b
+b b − −
+b
+a a
+−
+1
+=1
+a
+s
+I
+{
+i
+[
+e
+z
+a
+h
+,
+e
+b]
+2
+(
+.
+u
+Z
+)
+e
+d
+il
+u
+e
+}
++
+|
+Z
+b
+x
+b −
+1
+a
+=
+=
+I
+|
+{
+0
+[
+z
+0
+a
+f
+,
+ü
+{
+b
+r
+z
+]
+(
+x
+u
+>
+}
+)
+b
+du
+}
+= 1 x > b
+3.
+x x
+Z Z
+X stetig X∼E(λ)
+F (x) =P (X ≤ x) = f (u) du = λ · exp(−λ u)I (u) du
+X X X R+
+0
+| {z }
+−∞ −∞ (
+0 x < 0
+=
+λ · exp(−λ u) x ≥ 0
+ x
+R
+−∞ 0 du = 0 x < 0
+= 0 x
+R R (cid:2) (cid:3)x
+−∞ 0 du +
+0
+λ · exp(−λ x) = − exp(−λ u)
+0
+= (− exp(−λ x)) − (− e
+|
+xp(
+{
+−
+z
+λ 0
+}
+)) = 1 − exp(−λ x) x ≥ 0
+=1
+Aufgabe 4 Verteilungen: Erwartungswert und Varianz
+Berechnen Sie Erwartungswert und Varianz für X
+1. diskret gleichverteilt auf der Menge {x , . . . , x }, k ∈ N, k ≥ 3. Überlegen Sie sich dies auch spezifisch für
+1 k
+den Fall {x , . . . , x } = {1, . . . , k}.
+1 k
+2. exponentialverteilt mit Parameter λ ∈ R+.
+Lösung
+1. ges.: E(X), Var(X)
+geg.: X diskret gleichverteilt auf der Menge {x , x , . . . , x }, k ∈ N, k ≥ 3.
+1 2 k
+Da X diskret verteilt:
+X X
+E(X) = x · f (x) = x · f (x)
+X X
+x∈TX x∈{x1,x2,...,xk}
+k k
+X 1 1 X
+= x · = x ,
+i k k i
+i=1 i=1
+also das arithmetische Mittel der Zahlen {x , x , . . . , x }.
+1 2 k
+Analog: Var(X) entspricht der (empirischen) Varianz der {x , x , . . . , x }.
+1 2 k
+Falls {x , x , . . . , x } = {1, . . . , k}:
+1 2 k
+k k
+• E(X) = P 1 · i = 1 P i = 1 k(k+1) = k+1 (Gauß’sche Summenformel)
+k k k 2 2
+i=1 i=1
+k
+• E(X2) = 1 P i2 = 1 · k·(k+1)·(2k+1) = (k+1)·(2k+1) (Summe der ersten k Quadratzahlen)
+k k 6 6
+i=1
+• mit Verschiebungssatz also:
+4
+
+--- PAGE 5 ---
+Var(X) = E(X2) − (cid:0) E(X) (cid:1)2 = (k + 1) · (2k + 1) −
+(cid:18)
+k + 1
+(cid:19)2
+6 2
+2 (cid:0) 2k2 + 2k + k + 1 (cid:1) − 3 (cid:0) k2 + 2k + 12(cid:1) k2 − 1
+= =
+12 12
+(Var(X) = 0 für k = 1, positiv für k > 1.)
+2. geg.: X exponentialverteilt mit Parameter λ ∈ R+; f (x) = λe−λxI (x)
+X [0,∞)
+Da X stetig verteilt:
+∞
+Z
+E(X) = x · f (x) dx
+X
+−∞
+∞
+Z
+= 0 + x · λ exp(−λx) dx
+|{z} | {z }
+0 g(x) h′(x)
+ ∞
+∞
+Parti = . Integ.  x · λ 1 exp(−λx)   − Z λ · 1 exp(−λx) dx
+ |{z} −λ   |{z} −λ
+g(x) | {z } 0 g′(x) | {z }
+h(x) h(x)
+0
+∞
+Z
+= [−x exp(−λx)]∞ + exp(−λx) dx
+0
+0
+(cid:20)
+1
+(cid:21)∞
+= [−x exp(−λx)]∞ + − exp(−λx)
+0 λ
+0
+  
+1 1
+= [−0 − (−0 · exp(0))] + −0 − − exp(0) =
+λ λ
+| {z } | {z }
+=1 =1
+∞
+Z
+E(X2) = x2 λ exp(−λx) dx
+|{z} | {z }
+0 g(x) h′(x)
+ ∞
+∞
+ 1  Z 1
+P = I x2 λ exp(−λx) − 2 x λ exp(−λx) dx
+ |{z} −λ   |{z} −λ
+g(x) | {z } 0 g′(x) | {z }
+h(x) h(x)
+0
+∞
+2 Z
+= [0 − 0] − xλ exp(−λx)dx
+−λ
+0
+| {z }
+=E(X)=1/λ
+2
+=
+λ2
+mit Verschiebungssatz:
+Var(X) = E(X2) − (cid:0) E(X) (cid:1)2 = 2 −
+(cid:18)
+1
+(cid:19)2
+= 1
+λ2 λ λ2
+5

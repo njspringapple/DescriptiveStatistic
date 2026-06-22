@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章 · 收敛 互动教学实验室</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+  .navbtn { transition: all .15s; }
+  .navbtn.active { background:#b91c1c; color:#fff; box-shadow:0 4px 14px rgba(185,28,28,.35); }
+  canvas { display:block; width:100%; border-radius:.75rem; background:#fff; }
+  .card { background:#fff; border:1px solid #f0e6e6; box-shadow:0 6px 24px rgba(0,0,0,.05); }
+  .pill { background:#fef2f2; color:#b91c1c; }
+  .fade { animation: fade .4s ease; }
+  @keyframes fade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  input[type=range]{ accent-color:#b91c1c; }
+  .qbtn { transition:.12s; }
+  .qbtn:hover{ background:#fef2f2; }
+  .qbtn.correct{ background:#dcfce7; border-color:#16a34a; }
+  .qbtn.wrong{ background:#fee2e2; border-color:#dc2626; }
+  ::-webkit-scrollbar{height:8px;width:8px;} ::-webkit-scrollbar-thumb{background:#e5c5c5;border-radius:4px;}
+</style>
+</head>
+<body class="bg-rose-50 text-slate-800 min-h-screen">
+
+<header class="bg-gradient-to-r from-red-800 to-rose-600 text-white">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl md:text-3xl font-bold">📈 第五章 · 收敛 (Konvergenz) 互动实验室</h1>
+    <p class="text-rose-100 mt-1 text-sm md:text-base">动手拖、动手点 —— 把抽象的极限定理变成看得见的动画</p>
+  </div>
+</header>
+
+<nav class="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-rose-100">
+  <div class="max-w-6xl mx-auto px-3 py-2 flex gap-2 overflow-x-auto whitespace-nowrap">
+    <button class="navbtn active px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="map">🗺️ 知识地图</button>
+    <button class="navbtn px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="types">🔦 四种收敛</button>
+    <button class="navbtn px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="lln">🎯 大数定律</button>
+    <button class="navbtn px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="clt">🟡 中心极限定理</button>
+    <button class="navbtn px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="micro">🔬 标准化显微镜</button>
+    <button class="navbtn px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="ecdf">📊 经验分布</button>
+    <button class="navbtn px-3 py-2 rounded-lg text-sm font-medium bg-rose-100 text-rose-800" data-s="quiz">✅ 自测</button>
+  </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+
+<!-- ============ 知识地图 ============ -->
+<section id="sec-map" class="fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-3">一句话抓住第五章</h2>
+    <p class="leading-relaxed">本章不是问「一个数列是否收敛」，而是问：<b class="text-red-700">一串随机变量、样本均值、经验分布函数，在样本量 \(n\to\infty\) 时，会以什么意义接近某个极限？</b></p>
+    <div class="mt-4 grid md:grid-cols-2 gap-4">
+      <div class="bg-rose-50 rounded-xl p-4">
+        <h3 class="font-bold text-red-700 mb-2">🎓 主场景一：全班改坏习惯</h3>
+        <p class="text-sm leading-relaxed">每个学生是一条「世界线」\(\omega\)，每周记录犯错程度 \(X_n(\omega)\)，希望大家都改好（极限为 0）。四种收敛 = 四种不同的「验收标准」。</p>
+      </div>
+      <div class="bg-rose-50 rounded-xl p-4">
+        <h3 class="font-bold text-red-700 mb-2">🎯 主场景二：蒙眼掷飞镖</h3>
+        <p class="text-sm leading-relaxed">每镖落点是 \(X_i\)，平均落点是 \(\bar X_n\)。<b>大数定律</b>说「瞄得准」（\(\bar X_n\to\mu\)）；<b>中心极限定理</b>说「抖成钟形」。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-3">四种收敛的「验收方式」对照</h2>
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead><tr class="bg-red-800 text-white">
+        <th class="p-2 text-left">收敛方式</th><th class="p-2 text-left">验收方式</th><th class="p-2 text-left">关注点</th><th class="p-2">强弱</th>
+      </tr></thead>
+      <tbody>
+        <tr class="border-b border-rose-100"><td class="p-2 font-semibold">几乎必然 (f.s.)</td><td class="p-2">盯每个学生看一辈子</td><td class="p-2">几乎每人最终彻底不犯</td><td class="p-2 text-center">最严</td></tr>
+        <tr class="border-b border-rose-100 bg-rose-50/50"><td class="p-2 font-semibold">依概率 (P)</td><td class="p-2">每周拍合照数比例</td><td class="p-2">犯错占比趋 0，可换批人</td><td class="p-2 text-center">中</td></tr>
+        <tr class="border-b border-rose-100"><td class="p-2 font-semibold">矩 (Lʳ)</td><td class="p-2">算全班平均误差</td><td class="p-2">平均（或平方平均）误差趋 0</td><td class="p-2 text-center">较强</td></tr>
+        <tr class="bg-rose-50/50"><td class="p-2 font-semibold">分布 (D)</td><td class="p-2">只看直方图形状</td><td class="p-2">形状趋近，不管是谁</td><td class="p-2 text-center">最松</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 rounded">
+      <p class="font-mono text-center text-sm md:text-base">f.s. \(\Rightarrow\) P \(\Rightarrow\) D &nbsp;&nbsp;|&nbsp;&nbsp; Lʳ \(\Rightarrow\) P</p>
+      <p class="text-xs text-center text-amber-800 mt-1">反方向通常不成立（每个反例都在各模块里能亲手看到）</p>
+    </div>
+  </div>
+
+  <div class="card rounded-2xl p-6">
+    <h2 class="text-xl font-bold text-red-800 mb-3">本实验室导览</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+      <div class="bg-rose-50 rounded-lg p-3"><b>🔦 四种收敛</b><br>探照灯实验：亲手看「依概率收敛但不几乎必然」</div>
+      <div class="bg-rose-50 rounded-lg p-3"><b>🎯 大数定律</b><br>掷骰子/硬币，看样本均值如何稳稳收住</div>
+      <div class="bg-rose-50 rounded-lg p-3"><b>🟡 中心极限定理</b><br>高尔顿板 + 抽样分布：钟形怎么长出来</div>
+      <div class="bg-rose-50 rounded-lg p-3"><b>🔬 标准化显微镜</b><br>看 \(\sqrt n\) 如何「定格」正在消失的误差</div>
+      <div class="bg-rose-50 rounded-lg p-3"><b>📊 经验分布</b><br>Glivenko-Cantelli：样本曲线贴合真实曲线</div>
+      <div class="bg-rose-50 rounded-lg p-3"><b>✅ 自测</b><br>闭卷选择题，即时反馈</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 四种收敛 / 探照灯 ============ -->
+<section id="sec-types" class="hidden fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-2">🔦 探照灯实验：依概率收敛 ≠ 几乎必然收敛</h2>
+    <p class="text-sm leading-relaxed mb-2">一条环形跑道，你站在<b>固定的观测点</b>（红点）不动。探照灯扫过的弧越来越短（被照中概率 → 0），但灯<b>一圈圈不停地绕</b>。</p>
+    <ul class="text-sm list-disc pl-5 space-y-1 mb-2">
+      <li><b class="text-green-700">依概率收敛到 0：</b>被照中的概率 = 弧长 → 0。</li>
+      <li><b class="text-red-700">却不几乎必然收敛：</b>灯永远绕圈，观测点被照中<b>无限多次</b>，\(X_n\) 在 0/1 之间永远反复横跳。</li>
+    </ul>
+    <p class="text-sm bg-rose-50 rounded p-2">👉 班级版：「每周犯错的人很少（依概率成立），但犯错的人一直在轮换，没人真正改好（几乎必然不成立）。」</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <div class="card rounded-2xl p-4">
+      <h3 class="font-bold text-red-700 mb-2">环形跑道 + 探照灯</h3>
+      <canvas id="ringCv" style="height:300px"></canvas>
+      <div class="flex flex-wrap gap-2 mt-3 items-center">
+        <button id="ringRun" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">▶ 开始 / 暂停</button>
+        <button id="ringStep" class="bg-rose-100 text-red-800 px-4 py-2 rounded-lg text-sm font-medium">单步</button>
+        <button id="ringReset" class="bg-slate-200 px-4 py-2 rounded-lg text-sm">重置</button>
+        <label class="text-sm ml-2">速度
+          <input id="ringSpeed" type="range" min="1" max="20" value="6" class="align-middle">
+        </label>
+      </div>
+    </div>
+    <div class="card rounded-2xl p-4 flex flex-col">
+      <h3 class="font-bold text-red-700 mb-2">\(X_n\) 时间线（每次是否被照中）</h3>
+      <canvas id="ringTL" style="height:160px"></canvas>
+      <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+        <div class="bg-rose-50 rounded-lg p-2"><div class="text-xs text-slate-500">步数 n</div><div id="ringN" class="text-lg font-bold text-red-700">0</div></div>
+        <div class="bg-rose-50 rounded-lg p-2"><div class="text-xs text-slate-500">当前弧长 = P(照中)</div><div id="ringLen" class="text-lg font-bold text-red-700">—</div></div>
+        <div class="bg-rose-50 rounded-lg p-2"><div class="text-xs text-slate-500">累计被照中次数</div><div id="ringHit" class="text-lg font-bold text-red-700">0</div></div>
+      </div>
+      <p class="text-xs text-slate-500 mt-3">观察：弧长（照中概率）一路下降 → <b>依概率收敛</b>。但「累计被照中次数」永远在涨 → 永远横跳 → <b>不几乎必然收敛</b>。</p>
+    </div>
+  </div>
+
+  <div class="card rounded-2xl p-6 mt-6">
+    <h3 class="font-bold text-red-700 mb-3">📌 矩收敛：为什么高阶矩更严格？（罚款比喻 💸）</h3>
+    <p class="text-sm">把误差想成超速：一阶矩 \(E|X_n-X|\) 是<b>线性罚款</b>（超10罚10）；二阶矩 \(E|X_n-X|^2\) 是<b>平方罚款</b>（超10罚100，超20罚400）。平方惩罚对「偶尔大偏离」惩罚极重，所以连平方罚款都过关，线性罚款早就过了 —— 这就是 \(L^s\Rightarrow L^r\;(s>r)\)。而由 Markov 不等式 \(P(|X_n-X|>\varepsilon)\le E(|X_n-X|^r)/\varepsilon^r\)，矩收敛 \(\Rightarrow\) 依概率收敛。</p>
+  </div>
+</section>
+
+<!-- ============ 大数定律 ============ -->
+<section id="sec-lln" class="hidden fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-2">🎯 大数定律：样本均值会稳稳收住真实期望</h2>
+    <p class="text-sm leading-relaxed">不停地抽样，看样本均值 \(\bar X_n=\frac1n\sum X_i\) 如何越来越贴近真实期望 \(\mu\)（红色虚线）。这就是 <b>弱大数定律</b> \(\bar X_n\xrightarrow{P}\mu\) 和 <b>强大数定律</b> \(\bar X_n\xrightarrow{f.s.}\mu\) 的画面。背后机制：\(\mathrm{Var}(\bar X_n)=\sigma^2/n\to0\)。</p>
+  </div>
+
+  <div class="card rounded-2xl p-4">
+    <div class="flex flex-wrap gap-2 items-center mb-3">
+      <span class="text-sm font-medium">选择分布：</span>
+      <select id="llnDist" class="border border-rose-200 rounded-lg px-3 py-2 text-sm">
+        <option value="coin">硬币 Bernoulli(0.5) · μ=0.5</option>
+        <option value="die" selected>骰子 1-6 · μ=3.5</option>
+        <option value="uniform">均匀 U(0,1) · μ=0.5</option>
+        <option value="exp">指数 Exp(1) · μ=1</option>
+      </select>
+    </div>
+    <canvas id="llnCv" style="height:340px"></canvas>
+    <div class="flex flex-wrap gap-2 mt-3 items-center">
+      <button id="lln1" class="bg-rose-100 text-red-800 px-3 py-2 rounded-lg text-sm font-medium">+1 次</button>
+      <button id="lln100" class="bg-rose-100 text-red-800 px-3 py-2 rounded-lg text-sm font-medium">+100 次</button>
+      <button id="llnAuto" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">▶ 自动连发</button>
+      <button id="llnReset" class="bg-slate-200 px-4 py-2 rounded-lg text-sm">重置</button>
+      <div class="ml-auto grid grid-cols-2 gap-2 text-center">
+        <div class="bg-rose-50 rounded-lg px-3 py-1"><span class="text-xs text-slate-500">n = </span><span id="llnN" class="font-bold text-red-700">0</span></div>
+        <div class="bg-rose-50 rounded-lg px-3 py-1"><span class="text-xs text-slate-500">当前均值 = </span><span id="llnMean" class="font-bold text-red-700">—</span></div>
+      </div>
+    </div>
+    <p class="text-xs text-slate-500 mt-3">蓝线 = 样本均值随 n 的变化；红虚线 = 真实期望 \(\mu\)。n 越大，蓝线抖动越小、越贴近红线。</p>
+  </div>
+</section>
+
+<!-- ============ 中心极限定理 ============ -->
+<section id="sec-clt" class="hidden fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-2">🟡 中心极限定理：钟形为什么无处不在</h2>
+    <p class="text-sm leading-relaxed">$$\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\xrightarrow{D}N(0,1)$$</p>
+    <p class="text-sm leading-relaxed mt-2">不管单个变量长什么形状，只要把大量独立同分布、方差有限的小随机量「加起来 / 求平均」，标准化后都会逼近正态。下面两个实验都能亲眼看到这件事。</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <div class="card rounded-2xl p-4">
+      <h3 class="font-bold text-red-700 mb-2">实验 A · 高尔顿板</h3>
+      <p class="text-xs text-slate-500 mb-2">每颗球的落点 = 多次「左右小弹跳」的总和，自动堆成钟形山。</p>
+      <canvas id="galtonCv" style="height:340px"></canvas>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button id="galtonRun" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">▶ 撒球 / 暂停</button>
+        <button id="galtonReset" class="bg-slate-200 px-4 py-2 rounded-lg text-sm">重置</button>
+        <span class="ml-auto bg-rose-50 rounded-lg px-3 py-2 text-sm">已落球数：<b id="galtonCnt" class="text-red-700">0</b></span>
+      </div>
+    </div>
+
+    <div class="card rounded-2xl p-4">
+      <h3 class="font-bold text-red-700 mb-2">实验 B · 样本均值的抽样分布</h3>
+      <div class="flex flex-wrap gap-2 items-center mb-2 text-sm">
+        <select id="cltDist" class="border border-rose-200 rounded-lg px-2 py-1">
+          <option value="uniform">均匀 U(0,1)</option>
+          <option value="exp" selected>指数 Exp(1)（很偏！）</option>
+          <option value="coin">硬币 Bernoulli(0.5)</option>
+          <option value="die">骰子 1-6</option>
+        </select>
+        <label>样本量 n =
+          <select id="cltN" class="border border-rose-200 rounded-lg px-2 py-1">
+            <option>1</option><option>2</option><option>5</option><option selected>30</option><option>100</option>
+          </select>
+        </label>
+      </div>
+      <canvas id="cltCv" style="height:300px"></canvas>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button id="cltAdd" class="bg-rose-100 text-red-800 px-3 py-2 rounded-lg text-sm font-medium">+500 个样本均值</button>
+        <button id="cltAuto" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">▶ 自动累积</button>
+        <button id="cltReset" class="bg-slate-200 px-4 py-2 rounded-lg text-sm">重置</button>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">柱状 = 收集到的样本均值直方图；红线 = 理论正态 \(N(\mu,\sigma^2/n)\)。把 n 调大，再看「指数分布」这种很偏的分布也会变钟形！</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 标准化显微镜 ============ -->
+<section id="sec-micro" class="hidden fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-2">🔬 标准化显微镜：\(\sqrt n\) 在干嘛？</h2>
+    <p class="text-sm leading-relaxed">误差 \(\bar X_n-\mu\) 正以 \(1/\sqrt n\) 的速度缩向 0。不放大就只看到它「塌缩成一个点」，看不出形状。乘上 \(\sqrt n\) 恰好抵消缩小速度，把误差<b>定格</b>在稳定尺度上，我们才看清它的极限长相是正态 —— 就像给一个正在远去缩小的物体配一台倍率刚好同步的显微镜。</p>
+  </div>
+
+  <div class="card rounded-2xl p-4">
+    <div class="flex flex-wrap items-center gap-3 mb-3">
+      <label class="text-sm font-medium">样本量 n = <b id="microNlbl" class="text-red-700">5</b></label>
+      <input id="microN" type="range" min="1" max="400" value="5" class="flex-1 min-w-40">
+      <button id="microResample" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">重新抽样</button>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <h3 class="text-sm font-bold text-slate-600 mb-1">未放大：\(\bar X_n-\mu\)</h3>
+        <canvas id="microRaw" style="height:240px"></canvas>
+        <p class="text-xs text-slate-500 mt-1">n 一大就塌成中间一根尖针 —— 误差消失了。</p>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-slate-600 mb-1">放大 √n：\(\sqrt n(\bar X_n-\mu)/\sigma\)</h3>
+        <canvas id="microStd" style="height:240px"></canvas>
+        <p class="text-xs text-slate-500 mt-1">无论 n 多大，形状<b>稳定</b>地保持标准正态 \(N(0,1)\)（红线）。</p>
+      </div>
+    </div>
+    <p class="text-xs text-slate-500 mt-3">底层分布用「指数分布」（故意偏）。拖动滑块感受：左图越来越窄，右图始终是同一个钟形。</p>
+  </div>
+</section>
+
+<!-- ============ 经验分布 ============ -->
+<section id="sec-ecdf" class="hidden fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-2">📊 经验分布函数 & Glivenko-Cantelli 定理</h2>
+    <p class="text-sm leading-relaxed">$$\hat F_n(x)=\frac1n\sum_{i=1}^n \mathbf 1(X_i\le x),\qquad \sup_x|\hat F_n(x)-F(x)|\xrightarrow{f.s.}0$$</p>
+    <p class="text-sm leading-relaxed mt-2">像做民意调查 📊：样本越大，<b>整条</b>阶梯曲线（蓝）就越贴合真实分布曲线（红）。这就是「靠样本还原真相」的理论靠山 —— 统计学基本定理。</p>
+  </div>
+
+  <div class="card rounded-2xl p-4">
+    <div class="flex flex-wrap items-center gap-3 mb-3 text-sm">
+      <label class="font-medium">真实分布：</label>
+      <select id="ecdfDist" class="border border-rose-200 rounded-lg px-2 py-1">
+        <option value="normal" selected>正态 N(0,1)</option>
+        <option value="uniform">均匀 U(0,1)</option>
+        <option value="exp">指数 Exp(1)</option>
+      </select>
+      <label class="font-medium ml-2">样本量 n = <b id="ecdfNlbl" class="text-red-700">20</b></label>
+      <input id="ecdfN" type="range" min="2" max="1000" value="20" class="flex-1 min-w-40">
+      <button id="ecdfResample" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">重新抽样</button>
+    </div>
+    <canvas id="ecdfCv" style="height:340px"></canvas>
+    <div class="mt-3 bg-rose-50 rounded-lg px-3 py-2 inline-block text-sm">
+      最大偏差 \(\sup_x|\hat F_n(x)-F(x)|\) = <b id="ecdfSup" class="text-red-700">—</b>
+      <span class="text-xs text-slate-500">（n 越大越接近 0）</span>
+    </div>
+    <p class="text-xs text-slate-500 mt-2">蓝色阶梯 = 经验分布 \(\hat F_n\)；红色平滑曲线 = 真实分布 \(F\)；橙色竖线标出最大偏差所在处。</p>
+  </div>
+</section>
+
+<!-- ============ 自测 ============ -->
+<section id="sec-quiz" class="hidden fade">
+  <div class="card rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold text-red-800 mb-1">✅ 闭卷自测</h2>
+    <p class="text-sm text-slate-500">选一个答案，立刻看到对错与解析。</p>
+    <div class="mt-3 text-sm">得分：<b id="quizScore" class="text-red-700">0</b> / <span id="quizTotal">0</span></div>
+  </div>
+  <div id="quizBox" class="space-y-5"></div>
+</section>
+
+</main>
+
+<footer class="text-center text-xs text-slate-400 py-6">第五章 · 收敛 互动教学实验室 · 所有图形均由代码实时生成</footer>
+
+<script>
+/* ============ 通用工具 ============ */
+function setup(cv){
+  const dpr = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  cv.width = Math.max(1,r.width)*dpr; cv.height = Math.max(1,r.height)*dpr;
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  cv._w = r.width; cv._h = r.height; cv._ctx = ctx;
+  return ctx;
+}
+function randn(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function randExp(l){return -Math.log(Math.random())/l;}
+function normPdf(x,m,s){return Math.exp(-((x-m)**2)/(2*s*s))/(s*Math.sqrt(2*Math.PI));}
+function normCdf(x){return 0.5*(1+erf(x/Math.SQRT2));}
+function erf(x){const t=1/(1+0.3275911*Math.abs(x));const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
+
+const DISTS = {
+  coin:{sample:()=>Math.random()<0.5?1:0, mean:0.5, varr:0.25},
+  die:{sample:()=>Math.floor(Math.random()*6)+1, mean:3.5, varr:35/12},
+  uniform:{sample:()=>Math.random(), mean:0.5, varr:1/12},
+  exp:{sample:()=>randExp(1), mean:1, varr:1},
+};
+
+/* ============ 导航 ============ */
+const sections = ['map','types','lln','clt','micro','ecdf','quiz'];
+const onShow = {};
+function show(s){
+  sections.forEach(x=>document.getElementById('sec-'+x).classList.add('hidden'));
+  document.getElementById('sec-'+s).classList.remove('hidden');
+  document.getElementById('sec-'+s).classList.remove('fade'); void document.getElementById('sec-'+s).offsetWidth;
+  document.getElementById('sec-'+s).classList.add('fade');
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.s===s));
+  current = s;
+  if(onShow[s]) setTimeout(onShow[s],30);
+  if(window.MathJax&&MathJax.typesetPromise) setTimeout(()=>MathJax.typesetPromise(),40);
+}
+let current='map';
+document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>show(b.dataset.s)));
+
+/* ============ 探照灯 ============ */
+(function(){
+  const cv=document.getElementById('ringCv'), tl=document.getElementById('ringTL');
+  let n=0,pos=0,hits=0,running=false,hist=[],raf=null,speed=6,frame=0;
+  function arcLen(){ return 1/(1+Math.floor(n/12)); }
+  function pointIn(){ const len=arcLen(); const p=0; // observation point angle frac =0
+    let a=pos%1, b=(pos+len)%1;
+    if(a<b) return p>=a&&p<b; else return p>=a||p<b;
+  }
+  function stepOnce(){
+    n++; const len=arcLen(); pos=(pos+len)%1;
+    const hit=pointIn(); if(hit)hits++; hist.push(hit?1:0); if(hist.length>120)hist.shift();
+    document.getElementById('ringN').textContent=n;
+    document.getElementById('ringLen').textContent=len.toFixed(4);
+    document.getElementById('ringHit').textContent=hits;
+  }
+  function drawRing(){
+    const ctx=cv._ctx||setup(cv), w=cv._w,h=cv._h; ctx.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)/2-26;
+    ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=14; ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+    const len=arcLen(); const a0=pos*2*Math.PI - Math.PI/2; const a1=(pos+len)*2*Math.PI - Math.PI/2;
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=14; ctx.beginPath(); ctx.arc(cx,cy,R,a0,a1); ctx.stroke();
+    // observation point at frac 0 => angle -PI/2 (top)
+    const oa=-Math.PI/2; const ox=cx+R*Math.cos(oa), oy=cy+R*Math.sin(oa);
+    ctx.fillStyle=pointIn()?'#dc2626':'#111827'; ctx.beginPath(); ctx.arc(ox,oy,9,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle='#dc2626'; ctx.font='12px sans-serif'; ctx.textAlign='center'; ctx.fillText('观测点',ox,oy-16);
+    ctx.fillStyle='#92400e'; ctx.fillText('探照灯弧',cx+ (R+0)*Math.cos((a0+a1)/2)*0, cy);
+    ctx.fillStyle=pointIn()?'#dc2626':'#16a34a'; ctx.font='bold 15px sans-serif';
+    ctx.fillText(pointIn()?'X_n = 1 (被照中!)':'X_n = 0', cx, cy+5);
+  }
+  function drawTL(){
+    const ctx=tl._ctx||setup(tl), w=tl._w,h=tl._h; ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='#e5e7eb'; ctx.beginPath(); ctx.moveTo(0,h-20); ctx.lineTo(w,h-20); ctx.stroke();
+    const bw=Math.max(2,(w-10)/120);
+    hist.forEach((v,i)=>{ ctx.fillStyle=v?'#dc2626':'#cbd5e1'; const bh=v?(h-30):4; ctx.fillRect(5+i*bw,h-20-bh,bw*0.8,bh); });
+    ctx.fillStyle='#64748b'; ctx.font='11px sans-serif'; ctx.textAlign='left'; ctx.fillText('红=照中(1)  灰=没中(0)  →时间',5,12);
+  }
+  function loop(){ if(!running)return; frame++; if(frame%(21-speed)===0) stepOnce(); drawRing(); drawTL(); raf=requestAnimationFrame(loop); }
+  document.getElementById('ringSpeed').addEventListener('input',e=>speed=+e.target.value);
+  document.getElementById('ringRun').addEventListener('click',()=>{running=!running; if(running)loop();});
+  document.getElementById('ringStep').addEventListener('click',()=>{running=false; stepOnce(); drawRing(); drawTL();});
+  document.getElementById('ringReset').addEventListener('click',()=>{running=false;n=0;pos=0;hits=0;hist=[];
+    document.getElementById('ringN').textContent=0; document.getElementById('ringHit').textContent=0; document.getElementById('ringLen').textContent='—';
+    drawRing(); drawTL();});
+  onShow['types']=()=>{ setup(cv); setup(tl); drawRing(); drawTL(); };
+})();
+
+/* ============ 大数定律 ============ */
+(function(){
+  const cv=document.getElementById('llnCv');
+  let key='die', d=DISTS[key], sum=0, n=0, avgs=[], running=false, raf=null;
+  function reset(){ sum=0;n=0;avgs=[]; document.getElementById('llnN').textContent=0; document.getElementById('llnMean').textContent='—'; draw(); }
+  function add(k){ for(let i=0;i<k;i++){ sum+=d.sample(); n++; avgs.push(sum/n);} 
+    if(avgs.length>4000) avgs=avgs.filter((_,i)=>i%2===0); // downsample
+    document.getElementById('llnN').textContent=n; document.getElementById('llnMean').textContent=(sum/n).toFixed(4); draw(); }
+  function draw(){
+    const ctx=cv._ctx||setup(cv), w=cv._w,h=cv._h; ctx.clearRect(0,0,w,h);
+    const padL=46,padR=14,padT=14,padB=26; const pw=w-padL-padR, ph=h-padT-padB;
+    let lo=d.mean-Math.max(1, Math.sqrt(d.varr)*2.5), hi=d.mean+Math.max(1, Math.sqrt(d.varr)*2.5);
+    // axes
+    ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.stroke();
+    const Y=v=>padT+ph*(1-(v-lo)/(hi-lo));
+    // y ticks
+    ctx.fillStyle='#94a3b8'; ctx.font='11px sans-serif'; ctx.textAlign='right';
+    for(let t=0;t<=4;t++){ const v=lo+(hi-lo)*t/4; const y=Y(v); ctx.fillText(v.toFixed(2),padL-6,y+3);
+      ctx.strokeStyle='#f1f5f9'; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke(); }
+    // mean line
+    ctx.strokeStyle='#dc2626'; ctx.setLineDash([6,4]); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(padL,Y(d.mean)); ctx.lineTo(w-padR,Y(d.mean)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#dc2626'; ctx.textAlign='left'; ctx.fillText('μ='+d.mean.toFixed(2), padL+4, Y(d.mean)-4);
+    // avg curve
+    if(avgs.length>1){ ctx.strokeStyle='#2563eb'; ctx.lineWidth=2; ctx.beginPath();
+      avgs.forEach((a,i)=>{ const x=padL+pw*(i/(avgs.length-1)); const y=Y(Math.max(lo,Math.min(hi,a))); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+      ctx.stroke(); }
+    ctx.fillStyle='#64748b'; ctx.textAlign='center'; ctx.fillText('样本数 n →', w/2, h-6);
+  }
+  document.getElementById('llnDist').addEventListener('change',e=>{key=e.target.value;d=DISTS[key];reset();});
+  document.getElementById('lln1').addEventListener('click',()=>add(1));
+  document.getElementById('lln100').addEventListener('click',()=>add(100));
+  document.getElementById('llnReset').addEventListener('click',()=>{running=false;document.getElementById('llnAuto').textContent='▶ 自动连发';reset();});
+  document.getElementById('llnAuto').addEventListener('click',()=>{ running=!running;
+    document.getElementById('llnAuto').textContent=running?'⏸ 暂停':'▶ 自动连发';
+    function loop(){ if(!running)return; add(20); if(n<6000) raf=requestAnimationFrame(loop); else {running=false;document.getElementById('llnAuto').textContent='▶ 自动连发';} } if(running)loop(); });
+  onShow['lln']=()=>{ setup(cv); draw(); };
+})();
+
+/* ============ 高尔顿板 ============ */
+(function(){
+  const cv=document.getElementById('galtonCv');
+  const ROWS=11, BINS=ROWS+1;
+  let bins=new Array(BINS).fill(0), balls=[], total=0, running=false, raf=null;
+  function reset(){ bins=new Array(BINS).fill(0); balls=[]; total=0; document.getElementById('galtonCnt').textContent=0; draw(); }
+  function spawn(){ balls.push({row:0, col:ROWS/2, y:0, x:0.5, done:false}); }
+  function draw(){
+    const ctx=cv._ctx||setup(cv), w=cv._w,h=cv._h; ctx.clearRect(0,0,w,h);
+    const topY=20, pegArea=h*0.55, binTop=topY+pegArea+8, binBottom=h-4;
+    // pegs
+    ctx.fillStyle='#cbd5e1';
+    for(let r=0;r<ROWS;r++){ const cols=r+1; const yy=topY+ (pegArea*(r+0.5)/ROWS);
+      for(let c=0;c<cols;c++){ const xx=w/2 + (c-(cols-1)/2)*(w*0.07); ctx.beginPath(); ctx.arc(xx,yy,3,0,2*Math.PI); ctx.fill(); } }
+    // bins
+    const maxB=Math.max(1,...bins); const bw=w/BINS;
+    for(let i=0;i<BINS;i++){ const bh=(binBottom-binTop)*(bins[i]/maxB);
+      ctx.fillStyle='#f59e0b'; ctx.fillRect(i*bw+2, binBottom-bh, bw-4, bh); }
+    // balls falling
+    balls.forEach(b=>{ const yy=topY+pegArea*b.y; const xx=w/2 + (b.x-0.5)*(w*0.07*ROWS);
+      ctx.fillStyle='#dc2626'; ctx.beginPath(); ctx.arc(xx,Math.min(yy,binTop),4,0,2*Math.PI); ctx.fill(); });
+    ctx.fillStyle='#64748b'; ctx.font='11px sans-serif'; ctx.textAlign='center'; ctx.fillText('每碰一个钉子 → 随机左右弹 → 落点是很多次弹跳的总和', w/2, h-2);
+  }
+  function tick(){
+    balls.forEach(b=>{ if(b.done)return; b.y+=0.045;
+      const targetRow=Math.floor(b.y*ROWS);
+      if(targetRow>b.row && b.row<ROWS){ b.row=targetRow; b.x += (Math.random()<0.5?-0.5:0.5)/ROWS; }
+      if(b.y>=1){ b.done=true; let bin=Math.round(b.x*ROWS); bin=Math.max(0,Math.min(BINS-1,bin)); bins[bin]++; total++; document.getElementById('galtonCnt').textContent=total; }
+    });
+    balls=balls.filter(b=>!b.done);
+  }
+  function loop(){ if(!running)return; if(Math.random()<0.5||balls.length<3) spawn(); tick(); draw(); raf=requestAnimationFrame(loop); }
+  document.getElementById('galtonRun').addEventListener('click',()=>{running=!running;if(running)loop();});
+  document.getElementById('galtonReset').addEventListener('click',()=>{running=false;reset();});
+  onShow['clt']=()=>{ setup(cv); draw(); cltDraw(); };
+})();
+
+/* ============ CLT 抽样分布 ============ */
+let cltDraw;
+(function(){
+  const cv=document.getElementById('cltCv');
+  let key='exp', n=30, means=[], running=false, raf=null;
+  function sampleMean(){ const d=DISTS[key]; let s=0; for(let i=0;i<n;i++)s+=d.sample(); return s/n; }
+  function addBatch(k){ for(let i=0;i<k;i++)means.push(sampleMean()); draw(); }
+  function reset(){ means=[]; draw(); }
+  function draw(){
+    const ctx=cv._ctx||setup(cv), w=cv._w,h=cv._h; ctx.clearRect(0,0,w,h);
+    const d=DISTS[key], mu=d.mean, sd=Math.sqrt(d.varr/n);
+    const lo=mu-4*sd, hi=mu+4*sd, NB=40;
+    const padB=24,padT=10,padL=8,padR=8; const pw=w-padL-padR, ph=h-padT-padB;
+    // hist
+    const bins=new Array(NB).fill(0);
+    means.forEach(m=>{ let idx=Math.floor((m-lo)/(hi-lo)*NB); if(idx>=0&&idx<NB)bins[idx]++; });
+    const binW=(hi-lo)/NB; const area=means.length*binW;
+    const maxDensity = Math.max(normPdf(mu,mu,sd), area? Math.max(...bins)/area : 1);
+    const Y=dn=>padT+ph*(1-dn/(maxDensity*1.15));
+    const X=v=>padL+pw*(v-lo)/(hi-lo);
+    // bars
+    ctx.fillStyle='#fbcfe8';
+    bins.forEach((c,i)=>{ if(c===0)return; const dens=area?c/area:0; const x=X(lo+i*binW); const bw=pw/NB;
+      ctx.fillRect(x, Y(dens), bw-1, padT+ph-Y(dens)); });
+    // normal curve
+    ctx.strokeStyle='#dc2626'; ctx.lineWidth=2.5; ctx.beginPath();
+    for(let i=0;i<=120;i++){ const v=lo+(hi-lo)*i/120; const y=Y(normPdf(v,mu,sd)); const x=X(v); if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y); }
+    ctx.stroke();
+    // axis
+    ctx.strokeStyle='#e5e7eb'; ctx.beginPath(); ctx.moveTo(padL,padT+ph); ctx.lineTo(w-padR,padT+ph); ctx.stroke();
+    ctx.fillStyle='#64748b'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('μ='+mu.toFixed(2), X(mu), padT+ph+15);
+    ctx.fillText('样本均值 X̄ₙ 的取值', w/2, h-3);
+    ctx.textAlign='left'; ctx.fillStyle='#be185d'; ctx.fillText('已收集 '+means.length+' 个均值', padL+2, padT+12);
+  }
+  cltDraw=draw;
+  document.getElementById('cltDist').addEventListener('change',e=>{key=e.target.value;reset();});
+  document.getElementById('cltN').addEventListener('change',e=>{n=+e.target.value;reset();});
+  document.getElementById('cltAdd').addEventListener('click',()=>addBatch(500));
+  document.getElementById('cltReset').addEventListener('click',()=>{running=false;document.getElementById('cltAuto').textContent='▶ 自动累积';reset();});
+  document.getElementById('cltAuto').addEventListener('click',()=>{running=!running;document.getElementById('cltAuto').textContent=running?'⏸ 暂停':'▶ 自动累积';
+    function loop(){ if(!running)return; addBatch(120); if(means.length<20000)raf=requestAnimationFrame(loop); else{running=false;document.getElementById('cltAuto').textContent='▶ 自动累积';}} if(running)loop();});
+})();
+
+/* ============ 标准化显微镜 ============ */
+(function(){
+  const rawCv=document.getElementById('microRaw'), stdCv=document.getElementById('microStd');
+  const d=DISTS.exp, mu=d.mean, sig=Math.sqrt(d.varr);
+  let n=5, raws=[], stds=[];
+  function resample(){ raws=[]; stds=[]; const M=4000;
+    for(let i=0;i<M;i++){ let s=0; for(let j=0;j<n;j++)s+=d.sample(); const xbar=s/n;
+      raws.push(xbar-mu); stds.push(Math.sqrt(n)*(xbar-mu)/sig); }
+    draw(); }
+  function hist(cv, data, lo, hi, overlay){
+    const ctx=cv._ctx||setup(cv), w=cv._w,h=cv._h; ctx.clearRect(0,0,w,h);
+    const NB=44, padB=22,padT=8,padL=6,padR=6; const pw=w-padL-padR, ph=h-padT-padB;
+    const bins=new Array(NB).fill(0); const binW=(hi-lo)/NB;
+    data.forEach(v=>{ let i=Math.floor((v-lo)/(hi-lo)*NB); if(i>=0&&i<NB)bins[i]++; });
+    const area=data.length*binW;
+    let maxD = area?Math.max(...bins)/area:1; if(overlay) maxD=Math.max(maxD, normPdf(0,0,1));
+    const Y=dn=>padT+ph*(1-dn/(maxD*1.15)); const X=v=>padL+pw*(v-lo)/(hi-lo);
+    ctx.fillStyle=overlay?'#bfdbfe':'#fbcfe8';
+    bins.forEach((c,i)=>{ if(!c)return; const dens=c/area; const x=X(lo+i*binW); ctx.fillRect(x,Y(dens),pw/NB-1,padT+ph-Y(dens)); });
+    if(overlay){ ctx.strokeStyle='#dc2626'; ctx.lineWidth=2.5; ctx.beginPath();
+      for(let i=0;i<=120;i++){ const v=lo+(hi-lo)*i/120; const y=Y(normPdf(v,0,1)); const x=X(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);} ctx.stroke(); }
+    ctx.strokeStyle='#e5e7eb'; ctx.beginPath(); ctx.moveTo(padL,padT+ph); ctx.lineTo(w-padR,padT+ph); ctx.stroke();
+    ctx.fillStyle='#94a3b8'; ctx.font='11px sans-serif'; ctx.textAlign='center'; ctx.fillText('0', X(0), padT+ph+14);
+  }
+  function draw(){ hist(rawCv, raws, -1.6, 1.6, false); hist(stdCv, stds, -4, 4, true); }
+  document.getElementById('microN').addEventListener('input',e=>{ n=+e.target.value; document.getElementById('microNlbl').textContent=n; document.getElementById('microNlbl2')&&0; document.querySelector('#sec-micro #microNlbl').textContent=n; resample(); });
+  document.getElementById('microResample').addEventListener('click',resample);
+  onShow['micro']=()=>{ setup(rawCv); setup(stdCv); resample(); };
+})();
+
+/* ============ 经验分布 / Glivenko-Cantelli ============ */
+(function(){
+  const cv=document.getElementById('ecdfCv');
+  let key='normal', n=20, data=[];
+  const trueCdf={ normal:x=>normCdf(x), uniform:x=>Math.max(0,Math.min(1,x)), exp:x=>x<0?0:1-Math.exp(-x) };
+  const rng={ normal:[-3.2,3.2], uniform:[-0.15,1.15], exp:[0,5] };
+  const samp={ normal:()=>randn(), uniform:()=>Math.random(), exp:()=>randExp(1) };
+  function resample(){ data=[]; for(let i=0;i<n;i++)data.push(samp[key]()); data.sort((a,b)=>a-b); draw(); }
+  function draw(){
+    const ctx=cv._ctx||setup(cv), w=cv._w,h=cv._h; ctx.clearRect(0,0,w,h);
+    const [lo,hi]=rng[key]; const padL=36,padR=14,padT=14,padB=28; const pw=w-padL-padR, ph=h-padT-padB;
+    const X=v=>padL+pw*(v-lo)/(hi-lo); const Y=p=>padT+ph*(1-p);
+    // grid
+    ctx.strokeStyle='#f1f5f9'; ctx.lineWidth=1;
+    for(let t=0;t<=4;t++){ const y=Y(t/4); ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillStyle='#94a3b8'; ctx.font='11px sans-serif'; ctx.textAlign='right'; ctx.fillText((t/4).toFixed(2),padL-5,y+3); }
+    ctx.strokeStyle='#cbd5e1'; ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+ph); ctx.lineTo(w-padR,padT+ph); ctx.stroke();
+    // true CDF
+    ctx.strokeStyle='#dc2626'; ctx.lineWidth=2.5; ctx.beginPath();
+    for(let i=0;i<=200;i++){ const v=lo+(hi-lo)*i/200; const y=Y(trueCdf[key](v)); const x=X(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);} ctx.stroke();
+    // empirical step
+    ctx.strokeStyle='#2563eb'; ctx.lineWidth=2; ctx.beginPath();
+    let prevY=Y(0); ctx.moveTo(padL,prevY);
+    let sup=0, supX=lo, supA=0,supB=0;
+    for(let i=0;i<data.length;i++){ const xv=data[i]; const x=X(xv); const yBefore=Y(i/n); const yAfter=Y((i+1)/n);
+      ctx.lineTo(x,yBefore); ctx.lineTo(x,yAfter);
+      // sup distance check at jump
+      const F=trueCdf[key](xv); const d1=Math.abs(i/n-F), d2=Math.abs((i+1)/n-F);
+      if(d1>sup){sup=d1;supX=xv;supA=i/n;supB=F;} if(d2>sup){sup=d2;supX=xv;supA=(i+1)/n;supB=F;}
+    }
+    ctx.lineTo(w-padR,Y(1)); ctx.stroke();
+    // sup marker
+    if(data.length){ const x=X(supX); ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5; ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(x,Y(supA)); ctx.lineTo(x,Y(supB)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#d97706'; ctx.beginPath(); ctx.arc(x,Y(supA),4,0,2*Math.PI); ctx.fill(); ctx.beginPath(); ctx.arc(x,Y(supB),4,0,2*Math.PI); ctx.fill(); }
+    document.getElementById('ecdfSup').textContent=data.length?sup.toFixed(4):'—';
+    // legend
+    ctx.font='12px sans-serif'; ctx.textAlign='left';
+    ctx.fillStyle='#2563eb'; ctx.fillText('■ 经验分布 F̂ₙ', padL+6, padT+14);
+    ctx.fillStyle='#dc2626'; ctx.fillText('■ 真实分布 F', padL+6, padT+30);
+    ctx.fillStyle='#64748b'; ctx.textAlign='center'; ctx.fillText('x →', w/2, h-6);
+  }
+  document.getElementById('ecdfDist').addEventListener('change',e=>{key=e.target.value;resample();});
+  document.getElementById('ecdfN').addEventListener('input',e=>{n=+e.target.value;document.getElementById('ecdfNlbl').textContent=n;resample();});
+  document.getElementById('ecdfResample').addEventListener('click',resample);
+  onShow['ecdf']=()=>{ setup(cv); resample(); };
+})();
+
+/* ============ 自测 ============ */
+(function(){
+  const Q=[
+    {q:'依概率收敛的定义是？', o:['每条样本路径都收敛','对任意 ε>0，P(|Xₙ−X|>ε)→0','E(|Xₙ−X|)→0','分布函数处处相等'], a:1,
+     e:'依概率收敛只要求「偏离超过 ε 的概率」趋于 0，不要求每条路径都收敛。'},
+    {q:'探照灯例子说明了什么？', o:['几乎必然 ⇒ 依概率','依概率收敛但不几乎必然收敛','矩收敛 ⇒ 依概率','分布收敛 ⇒ 依概率'], a:1,
+     e:'被照中概率（弧长）→0 是依概率收敛；但灯不停绕圈，观测点被照中无限多次，故不几乎必然收敛。'},
+    {q:'矩收敛 ⇒ 依概率收敛，用的是哪个不等式？', o:['Cauchy-Schwarz','Jensen 不等式','Markov 不等式','三角不等式'], a:2,
+     e:'P(|Xₙ−X|>ε) ≤ E(|Xₙ−X|ʳ)/εʳ，右边趋 0 则左边趋 0。'},
+    {q:'强大数定律给出的是哪种收敛？', o:['依概率收敛','几乎必然收敛','分布收敛','均方收敛'], a:1,
+     e:'强大数定律：X̄ₙ → μ 几乎必然 (f.s.)；弱大数定律才是依概率 (P)。'},
+    {q:'中心极限定理说的是？', o:['Xᵢ 本身变成正态','样本均值等于期望','标准化后的样本均值趋于 N(0,1)','分布函数处处收敛'], a:2,
+     e:'CLT：√n(X̄ₙ−μ)/σ →ᴰ N(0,1)。是「标准化后的均值误差」趋正态，不是 Xᵢ 本身。'},
+    {q:'√n 在标准化中起什么作用？', o:['让误差更快趋于0','抵消误差 1/√n 的缩小速度，定格其形状','把均值变成0','缩小方差'], a:1,
+     e:'误差约以 1/√n 缩小，乘 √n 恰好「定格」，才能看清其极限是正态 —— 显微镜比喻。'},
+    {q:'Glivenko-Cantelli 定理的核心结论是？', o:['F̂ₙ(x)→F(x) 仅在一点','sup|F̂ₙ−F|→0 几乎必然（一致收敛）','样本均值收敛','Xᵢ 独立'], a:1,
+     e:'不仅逐点，而是整条经验分布函数一致地（sup 距离）几乎必然收敛到真实 F。'},
+    {q:'Slutsky 定理为什么允许用估计量替换未知参数？', o:['因为它们相等','因为替换量依概率收敛到常数，不改变极限分布','因为方差为0','因为样本无限'], a:1,
+     e:'只要替换量「依概率收敛到一个常数」（粗量杯越来越准），渐近分布不变。'},
+  ];
+  const box=document.getElementById('quizBox'); document.getElementById('quizTotal').textContent=Q.length;
+  let score=0, answered=new Array(Q.length).fill(false);
+  Q.forEach((item,qi)=>{
+    const card=document.createElement('div'); card.className='card rounded-2xl p-5';
+    card.innerHTML='<p class="font-semibold mb-3">'+(qi+1)+'. '+item.q+'</p>';
+    const opts=document.createElement('div'); opts.className='space-y-2';
+    item.o.forEach((op,oi)=>{
+      const b=document.createElement('button');
+      b.className='qbtn w-full text-left border border-rose-200 rounded-lg px-3 py-2 text-sm';
+      b.textContent=String.fromCharCode(65+oi)+'. '+op;
+      b.addEventListener('click',()=>{
+        if(answered[qi])return; answered[qi]=true;
+        const btns=opts.querySelectorAll('button'); btns.forEach(x=>x.disabled=true);
+        if(oi===item.a){ b.classList.add('correct'); score++; document.getElementById('quizScore').textContent=score; }
+        else { b.classList.add('wrong'); btns[item.a].classList.add('correct'); }
+        const exp=document.createElement('div'); exp.className='mt-3 text-sm bg-amber-50 border-l-4 border-amber-400 rounded p-2';
+        exp.innerHTML='💡 '+item.e; card.appendChild(exp);
+      });
+      opts.appendChild(b);
+    });
+    card.appendChild(opts); box.appendChild(card);
+  });
+})();
+
+/* ============ 初始化 & 自适应 ============ */
+window.addEventListener('resize',()=>{ if(onShow[current]) onShow[current](); });
+show('map');
+</script>
+</body>
+</html>

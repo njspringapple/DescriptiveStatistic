@@ -1,0 +1,937 @@
+   Zufallsvektoren & multivariate Verteilungen
+        Zufallsvektoren
+        Stochastische Unabhängigkeit von Zufallsvariablen
+        Faltungen
+        Bedingte Verteilungen und Dichten
+        Bedingte Momente
+
+
+
+
+LMU München                           Statistik I           457 / 637
+Zufallsvektoren & multivariate Verteilungen
+   Zufallsvektoren
+   Stochastische Unabhängigkeit von Zufallsvariablen
+   Faltungen
+   Bedingte Verteilungen und Dichten
+   Bedingte Momente
+  Gemeinsame Verteilungsfunktion
+
+   Def.: Gemeinsame Verteilungsfunktion
+
+   Die gemeinsame Verteilungsfunktion zweier Zufallsvariablen 𝑋 und 𝑌 auf
+   dem Wahrscheinlichkeitsraum (Ω, 𝑃) ist die Funktion
+
+                      𝐹𝑋,𝑌 (𝑥, 𝑦) ∶= 𝑃(𝑋 ≤ 𝑥 ∧ 𝑌 ≤ 𝑦)
+                                = 𝑃({𝜔 ∈ Ω ∶ 𝑋(𝜔) ≤ 𝑥 ∧ 𝑌(𝜔) ≤ 𝑦})
+
+
+
+   Beachte:
+      ▶ 𝐹𝑋,𝑌 (𝑥, 𝑦) ist eine Funktion von ℝ × ℝ nach [0, 1]
+      ▶ Definition gilt für stetige und diskrete ZV
+
+
+
+
+LMU München                                Statistik I                  459 / 637
+  Gemeinsame Wahrscheinlichkeitsfunktion
+
+   Def.: Gemeinsame Wahrscheinlichkeitsfunktion
+   Für diskrete ZVn 𝑋 und 𝑌 mit Trägern 𝑇𝑋 , 𝑇𝑌 ist die gemeinsame
+   Wahrscheinlichkeitsfunktion von 𝑋 und 𝑌
+
+                   𝑓𝑋,𝑌 (𝑥, 𝑦) = 𝑃(𝑋 = 𝑥 ∧ 𝑌 = 𝑦)
+                             = 𝑃(𝑋 = 𝑥, 𝑌 = 𝑦)           ∀ 𝑥 ∈ 𝑇𝑋 , 𝑦 ∈ 𝑇 𝑌
+
+
+
+   Für solche diskreten ZVn 𝑋 und 𝑌 gilt dann auch:
+
+                          𝐹𝑋,𝑌 (𝑥, 𝑦) = ∑          ∑ 𝑓𝑋,𝑌 (𝑢, 𝑣)
+                                       {𝑢∶𝑢≤𝑥} {𝑣∶𝑣≤𝑦}
+
+
+
+
+LMU München                              Statistik I                          460 / 637
+  Gemeinsame Dichtefunktion
+
+
+
+   Def.: Gemeinsame Dichtefunktion
+   Die gemeinsame Dichtefunktion 𝑓𝑋,𝑌 (𝑥, 𝑦) von stetigen 𝑋 und 𝑌 wird über
+   ihre gemeinsame Verteilungsfunktion 𝐹𝑋,𝑌 (𝑥, 𝑦) definiert:
+                                 𝑦    𝑥
+               𝐹𝑋,𝑌 (𝑥, 𝑦) = ∫       ∫      𝑓𝑋,𝑌 (𝑢, 𝑣) 𝑑𝑢 𝑑𝑣   ∀ 𝑥, 𝑦 ∈ ℝ
+                            𝑣=−∞     𝑢=−∞
+
+
+
+
+LMU München                                 Statistik I                       461 / 637
+  Eigenschaften von 𝑓(𝑥, 𝑦) und 𝐹(𝑥, 𝑦)
+      ▶ Im Folgenden meist 𝑓(𝑥, 𝑦) statt 𝑓𝑋,𝑌 (𝑥, 𝑦), 𝐹(𝑥, 𝑦) statt 𝐹𝑋,𝑌 (𝑥, 𝑦)
+      ▶ Für die gemeinsame Dichte stetiger ZV gilt überall dort wo 𝑓(𝑥, 𝑦) stetig
+        ist:
+                                   𝜕2 𝐹(𝑥, 𝑦)
+                                               = 𝑓(𝑥, 𝑦)
+                                     𝜕𝑥 𝜕𝑦
+
+      ▶ Genau wie univariate Dichtefunktionen ist die gemeinsame
+        Dichtefunktion 𝑓(𝑥, 𝑦) normiert:
+                                   +∞       +∞
+                               ∫        ∫        𝑓(𝑥, 𝑦) 𝑑𝑥 𝑑𝑦 = 1
+                                −∞      −∞
+
+
+      ▶ … und ihr Integral ergibt Wahrscheinlichkeiten für beliebige
+        Teilmengen 𝐴 ⊆ (ℝ × ℝ):
+
+                             𝑃((𝑋, 𝑌) ∈ 𝐴) = ∫ 𝑓(𝑥, 𝑦) 𝑑(𝑥, 𝑦)
+                                                          𝐴
+
+
+
+LMU München                                 Statistik I                      462 / 637
+  Transformationsregel für 𝐸(𝑔(𝑋, 𝑌))
+   Seien 𝑋 und 𝑌 zwei ZVn mit gemeinsamer
+   Wahrscheinlichkeits-/Dichtefunktion 𝑓𝑋,𝑌 (𝑥, 𝑦).
+   Sei 𝑔(𝑥, 𝑦) eine reellwertige Funktion.
+   Dann gilt für 𝑍 = 𝑔(𝑋, 𝑌)
+
+                                   ∑ ∑ 𝑔(𝑥, 𝑦) 𝑓𝑋,𝑌 (𝑥, 𝑦)           𝑋, 𝑌 diskret
+              𝐸(𝑍) = 𝐸(𝑔(𝑋, 𝑌)) = { 𝑥∞ 𝑦∞
+                                   ∫−∞ ∫−∞ 𝑔(𝑥, 𝑦) 𝑓𝑋,𝑌 (𝑥, 𝑦)𝑑𝑥𝑑𝑦   𝑋, 𝑌 stetig
+
+   Beispiel: für 𝑍 = 𝑋 ⋅ 𝑌 gilt daher
+
+                               𝐸(𝑋 ⋅ 𝑌) = ∑ ∑ 𝑥 ⋅ 𝑦 ⋅ 𝑓𝑋,𝑌 (𝑥, 𝑦)
+                                           𝑥     𝑦
+
+
+   bzw.                                ∞       ∞
+                          𝐸(𝑋 ⋅ 𝑌) = ∫ ∫ 𝑥 ⋅ 𝑦 ⋅ 𝑓𝑋,𝑌 (𝑥, 𝑦)𝑑𝑥𝑑𝑦.
+                                      −∞   −∞
+
+
+
+
+LMU München                                    Statistik I                          463 / 637
+  Randverteilungen
+
+   Die Dichten der Randverteilungen von 𝑋 und 𝑌 sind gegeben durch:
+
+
+                               ∑     𝑓 (𝑥, 𝑦)         𝑋, 𝑌 diskret
+                     𝑓𝑋 (𝑥) = { 𝑦∈𝑇
+                                 +∞
+                                    𝑌 𝑋,𝑌
+                               ∫−∞ 𝑓𝑋,𝑌 (𝑥, 𝑦) 𝑑𝑦     𝑋, 𝑌 stetig
+
+   bzw.
+
+                               ∑     𝑓 (𝑥, 𝑦)         𝑋, 𝑌 diskret
+                     𝑓𝑌 (𝑦) = { 𝑥∈𝑇
+                                 +∞
+                                    𝑋 𝑋,𝑌
+                               ∫−∞ 𝑓𝑋,𝑌 (𝑥, 𝑦) 𝑑𝑥     𝑋, 𝑌 stetig
+
+
+   Die gemeinsame Verteilung von 𝑋 und 𝑌 enthält i. A. mehr Information als
+   in den Randverteilungen von 𝑋 und 𝑌 steckt
+   ⇝ stochastische (Un-)Abhängigkeit
+
+
+
+LMU München                             Statistik I                      464 / 637
+  Allgemeine Zufallsvektoren
+
+   Allgemeiner kann man mehr als 2 Zufallsvariablen 𝑋1 , … , 𝑋𝑛 zu einem
+   Zufallsvektor 𝐗 = (𝑋1 , ..., 𝑋𝑛 ) der Dimension 𝑛 zusammenfassen.
+   Dieser hat dann Wahrscheinlichkeits-/Dichtefunktion
+
+                                        𝑓𝐗 (𝐱) = 𝑓𝑋 ,...,𝑋 (𝑥1 , ..., 𝑥𝑛 )
+                                                     1      𝑛
+
+
+   und Verteilungsfunktion
+
+                                  𝐹𝐗 (𝐱) = 𝑃(𝑋1 ≤ 𝑥1 ∧ … ∧ 𝑋𝑛 ≤ 𝑥𝑛 ).
+
+   Die Randverteilungen der einzelnen Komponenten sind entsprechend
+
+
+                ∑ =𝑥 𝑓𝐗 (𝐱)                                                                  diskretes 𝐗
+    𝑓𝑋 (𝑥𝑖 ) = { 𝐱∶𝐱
+                  +∞
+                     𝑖 𝑖
+                         +∞                                                                                  .
+      𝑖         ∫−∞ … ∫−∞ 𝑓𝐗 (𝑢1 , … , 𝑢𝑖−1 , 𝑥𝑖 , 𝑢𝑖+1 , … , 𝑢𝑛 ) 𝑑𝑢1 … 𝑑𝑢𝑖−1 𝑑𝑢𝑖+1 … 𝑑𝑢𝑛   stetiges 𝐗
+
+
+
+
+LMU München                                          Statistik I                                          465 / 637
+  Beispiel: Betrug beim Münzwurf
+
+
+
+   Ein Lehrer bittet seine Schüler, eine (faire) Münze zweimal zu werfen, und
+   das Ergebnis (“Kopf” = 0, “Zahl” = 1) für jeden Wurf zu notieren. Sei 𝑋 das
+   Ergebnis des ersten Wurfes und 𝑌 das Ergebnis des zweiten Wurfes.
+      ▶ Ein gewissenhafter Schüler folgt genau den Anweisungen des Lehrers
+        und notiert das Ergebnis 𝑋𝐺 und 𝑌𝐺 . Ein fauler Schüler wirft nur eine
+        Münze und notiert das erzielte Ergebnis zweimal: 𝑋𝐹 und 𝑌𝐹 .
+      ▶ Berechne die gemeinsame Wahrscheinlichkeitsfunktion von (𝑋𝐺 , 𝑌𝐺 )
+        und von (𝑋𝐹 , 𝑌𝐹 ).
+
+
+
+
+LMU München                            Statistik I                          466 / 637
+  Beispiel: Trinomialverteilung
+
+
+
+   Ein Experiment, bei dem ein von drei möglichen Ereignissen mit
+   Wahrscheinlichkeit 𝜋1 , 𝜋2 und 𝜋3 (𝜋1 + 𝜋2 + 𝜋3 = 1) auftritt, wird unabhängig
+   voneinander 𝑛-mal wiederholt. Sei 𝐗 ein drei-dimensionaler Zufallsvektor,
+   dessen 𝑖-te Komponente angibt, wie oft das 𝑖-te Ereignis eingetreten ist.
+   Beispiel:
+   In einer Population mit Häufigkeiten 𝜋1 , 𝜋2 und 𝜋3 der Genotypen 𝑎𝑎, 𝑎𝑏
+   und 𝑏𝑏 wird eine Stichprobe vom Umfang 𝑛 gezogen. Die Anzahlen 𝑋1 , 𝑋2
+   und 𝑋3 der drei Genotypen ist dann trinomialverteilt.
+
+
+
+
+LMU München                            Statistik I                            467 / 637
+  Beispiel: Trinomialverteilung
+
+
+   Ein drei-dimensionaler diskreter Zufallsvektor 𝐗 heißt trinomialverteilt,
+   falls er Träger
+
+              𝑇𝑋 = {𝐱 = (𝑥1 , 𝑥2 , 𝑥3 ) ∶ 𝑥𝑖 ∈ {0, 1, ..., 𝑛} ∧ 𝑥1 + 𝑥2 + 𝑥3 = 𝑛}
+
+   und Wahrscheinlichkeitsfunktion
+                                                                𝑛!        𝑥1 𝑥2 𝑥3
+                   𝑓𝐗 (𝐱) = 𝑓𝑋 ,𝑋 ,𝑋 (𝑥1 , 𝑥2 , 𝑥3 ) =                   𝜋1 𝜋2 𝜋3
+                               1   2   3                    𝑥1 !𝑥2 !𝑥3 !
+
+   besitzt.
+
+
+
+
+LMU München                                   Statistik I                            468 / 637
+  Multinomialverteilung
+
+   Man schreibt kurz: 𝐗 ∼ ℳ3 (𝑛, 𝝅 = (𝜋1 , 𝜋2 , 𝜋3 ))
+   Hierbei steht ℳ3 für die Multinomialverteilung der Dimension 3.
+
+
+   Ein ℳ𝑑 (𝑛, 𝝅)-verteilter Zufallsvektor 𝐗 hat
+   Allgemein:
+
+
+
+      ▶ Träger 𝑇𝑋 = {(𝑥1 , 𝑥2 , … , 𝑥𝑑 ) ∶ 𝑥𝑗 ∈ {0, 1, … , 𝑛} ∀ 𝑗 ∧ ∑𝑑𝑗=1 𝑥𝑗 = 𝑛}
+      ▶ und Parameter 𝝅 = (𝜋1 , … , 𝜋𝑑 ) mit 𝜋𝑗 ∈ [0, 1] ∀ 𝑗 und ∑𝑑𝑗=1 𝜋𝑗 = 1.
+
+   Die Multinomialverteilung ist eine Verallgemeinerung der
+   Binomialverteilung auf unabhängige Wiederholungen von identischen
+   Zufallsexperimenten mit mehr als zwei möglichen Ergebnissen.
+
+
+   Für ihre Randverteilungen gilt: 𝑋𝑖 ∼ ℬ (𝑛, 𝜋𝑖 ).
+
+
+
+LMU München                                    Statistik I                          469 / 637
+Zufallsvektoren & multivariate Verteilungen
+   Zufallsvektoren
+   Stochastische Unabhängigkeit von Zufallsvariablen
+   Faltungen
+   Bedingte Verteilungen und Dichten
+   Bedingte Momente
+  Unabhängige Zufallsvariablen
+
+
+   Def.: Unabhängige Zufallsvariablen
+
+   Zufallsvariablen 𝑋, 𝑌 sind genau dann stochastisch unabhängig, wenn
+   ∀ 𝑥 ∈ 𝑇𝑋 , 𝑦 ∈ 𝑇𝑌 (𝑋, 𝑌 diskret) bzw. ∀ 𝑥, 𝑦 ∈ ℝ (𝑋, 𝑌 stetig) gilt:
+
+                          𝐹𝑋,𝑌 (𝑥, 𝑦) = 𝐹𝑋 (𝑥) ⋅ 𝐹𝑌 (𝑦)
+
+   und damit
+
+                          𝑓𝑋,𝑌 (𝑥, 𝑦) = 𝑓𝑋 (𝑥) ⋅ 𝑓𝑌 (𝑦)
+              (bzw. 𝑃(𝑋 = 𝑥, 𝑌 = 𝑦) = 𝑃(𝑋 = 𝑥) ⋅ 𝑃(𝑌 = 𝑦) im diskreten Fall.)
+
+
+
+
+LMU München                                   Statistik I                       471 / 637
+  Vektoren von unabhängigen Zufallsvariablen
+   Allgemein: ZVn 𝑋1 , 𝑋2 , ..., 𝑋𝑛 heißen unabhängig, falls
+                                                                                   𝑛
+                                      𝑓𝑋 ,…,𝑋 (𝑋1 = 𝑥1 , ..., 𝑋𝑛 = 𝑥𝑛 ) = ∏ 𝑓𝑋 (𝑥𝑖 )
+                                           1   𝑛                                         𝑖
+                                                                                   𝑖=1
+
+
+
+                                                            ⋂
+                                                                                   𝑛
+                  d.h. für diskrete 𝑋𝑖 :              𝑃(              (𝑋𝑖 = 𝑥𝑖 )) = ∏ 𝑃(𝑋𝑖 = 𝑥𝑖 )
+                                                                 𝑖                 𝑖=1
+
+   für alle 𝑥1 , 𝑥2 , ..., 𝑥𝑛 aus den entsprechenden Trägern gilt.
+      ▶ Zufallsvariablen sind stochastisch unabhängig, wenn ihre gemeinsame
+        Verteilung dem Produkt ihrer Randverteilungen entspricht.
+        Ihre gemeinsame Verteilung enthält dann also keine zusätzliche
+        Information gegenüber den Randverteilungen.
+      ▶ Analog zu stoch. Unabhängigkeit von Ereignissen 𝐴, 𝐵:
+              𝐴 ⟂ 𝐵 ⟺ 𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐴)𝑃(𝐵)
+              𝑋 ⟂ 𝑌 ⟺ 𝑃((𝑋(𝜔) ≤ 𝑥) ∩ (𝑌(𝜔) ≤ 𝑦)) = 𝑃(𝑋(𝜔) ≤ 𝑥)𝑃(𝑌(𝜔) ≤ 𝑦)                           ∀ 𝑥, 𝑦
+                    ⟺ 𝐹𝑋,𝑌 (𝑥, 𝑦) = 𝐹𝑋 (𝑥)𝐹𝑌 (𝑦) ∀ 𝑥, 𝑦
+                    ⟺ 𝑓𝑋,𝑌 (𝑥, 𝑦) = 𝑓𝑋 (𝑥)𝑓𝑌 (𝑦)                     ∀ 𝑥, 𝑦
+LMU München                                        Statistik I                                         472 / 637
+  Beispiel: Randverteilung & Gemeinsame Verteilung
+              Abhängige Zufallsvariablen
+                    0.15
+
+          fX1(x1)   0.10
+                    0.05
+                                −2                      0                    2
+                                                       X1
+
+
+
+
+                      2                                                                2
+
+
+
+
+              X2      0                                                          X2    0
+
+
+
+
+                     −2                                                               −2
+
+
+
+                                −2                      0                    2             0.05   0.10      0.15
+                                                       X1                                         fX2(x2)
+
+
+                                           f(x1, x2)
+                                                       0.02 0.04 0.06
+
+
+
+                                                                   f(x1, x2) ≠ fX1(x1)fX2(x2)
+
+LMU München                                                    Statistik I                                         473 / 637
+  Beispiel: Randverteilung & Gemeinsame Verteilung
+              Unabhängige Zufallsvariablen
+                    0.15
+
+          fX1(x1)   0.10
+                    0.05
+                               −2                    0                    2
+                                                    X1
+
+
+
+
+                      2                                                             2
+
+
+
+
+              X2      0                                                       X2    0
+
+
+
+
+                     −2                                                            −2
+
+
+
+                                −2                   0                    2             0.05   0.10      0.15
+                                                    X1                                         fX2(x2)
+
+
+                                        f(x1, x2)
+                                                    0.02 0.04 0.06
+
+
+
+                                                                f(x1, x2) = fX1(x1)fX2(x2)
+
+LMU München                                                 Statistik I                                         474 / 637
+  Beispiel: Bernoulli-Kette
+
+
+   Sind 𝑋1 , 𝑋2 , ..., 𝑋𝑛 jeweils Bernoulli-verteilt mit Parameter 𝜋 und unabhängig,
+   so heißt 𝐗 = (𝑋1 , 𝑋2 , ..., 𝑋𝑛 ) Bernoulli-Kette.
+
+   Beispiel:
+
+   𝑛 = 3, 𝜋 = 61 ; wegen der Unabhängigkeit gilt dann z.B.
+
+                   𝑃(𝐗 = (1, 0, 0)) = 𝑃(𝑋1 = 1, 𝑋2 = 0, 𝑋3 = 0)
+                                    = 𝑃(𝑋1 = 1) ⋅ 𝑃(𝑋2 = 0) ⋅ 𝑃(𝑋3 = 0)
+                                       1 5 2   25
+                                   =    ( ) =
+                                       6 6    216
+
+
+
+
+LMU München                               Statistik I                           475 / 637
+Zufallsvektoren & multivariate Verteilungen
+   Zufallsvektoren
+   Stochastische Unabhängigkeit von Zufallsvariablen
+   Faltungen
+   Bedingte Verteilungen und Dichten
+   Bedingte Momente
+  Faltungen
+
+   Sind 𝑋 und 𝑌 diskrete ZV mit Wahrscheinlichkeitsfunktionen 𝑓𝑋 (𝑥) und 𝑓𝑌 (𝑦),
+   so gilt für die Summe 𝑍 = 𝑋 + 𝑌:
+
+                      𝑃(𝑋 + 𝑌 = 𝑧) = ∑ 𝑃(𝑋 = 𝑥, 𝑥 + 𝑌 = 𝑧)
+                                    𝑥∈𝑇𝑋
+
+                                  = ∑ 𝑃(𝑋 = 𝑥, 𝑌 = 𝑧 − 𝑥)
+                                    𝑥∈𝑇𝑋
+
+
+   falls 𝑋 ⟂ 𝑌 gilt außerdem:
+
+                                  = ∑ 𝑃(𝑋 = 𝑥) ⋅ 𝑃(𝑌 = 𝑧 − 𝑥)
+                                    𝑥∈𝑇𝑋
+
+                                  = ∑ 𝑓𝑋 (𝑥) ⋅ 𝑓𝑌 (𝑧 − 𝑥)
+                                    𝑥∈𝑇𝑋
+
+
+
+
+LMU München                            Statistik I                          477 / 637
+  Faltungen
+
+   Def: Faltung von stochastisch unabhängigen, diskreten Zufallsvariablen
+
+   Die Faltung der stochastisch unabhängigen, diskreten Zufallsvariablen 𝑋
+   und 𝑌 bezeichnet die Wahrscheinlichkeitsverteilung ihrer Summe 𝑍 = 𝑋 + 𝑌:
+
+                     𝑃(𝑋 + 𝑌 = 𝑧) = 𝑓𝑍 (𝑧) = ∑ 𝑓𝑋 (𝑥) ⋅ 𝑓𝑌 (𝑧 − 𝑥)
+                                               𝑥∈𝑇𝑋
+
+                                           = ∑ 𝑓𝑋 (𝑧 − 𝑦) ⋅ 𝑓𝑌 (𝑦)
+                                               𝑦∈𝑇𝑌
+
+
+
+
+   Für stetige unabhängige ZVn 𝑋, 𝑌 mit 𝑍 = 𝑋 + 𝑌 gilt analog die Faltung
+
+                 𝑓𝑍 (𝑧) = ∫ 𝑓𝑋 (𝑥)𝑓𝑌 (𝑧 − 𝑥)𝑑𝑥 = ∫ 𝑓𝑋 (𝑧 − 𝑦)𝑓𝑌 (𝑦)𝑑𝑦
+
+
+
+
+LMU München                             Statistik I                         478 / 637
+  Bsp: Faltung zweier geometrischen ZV
+
+
+
+
+   Seien 𝑋 ∼ 𝒢 (𝜋) und 𝑌 ∼ 𝒢 (𝜋) unabhängig.
+   Berechne Träger und Wahrscheinlichkeitsfunktion der Summe 𝑍 = 𝑋 + 𝑌.
+   Wie kann man 𝑍 interpretieren?
+
+
+
+
+LMU München                           Statistik I                         479 / 637
+  Negative Binomialverteilung
+
+
+   Die Verteilung der Faltung 𝑋 = 𝑋1 + ... + 𝑋𝑛 mit 𝑋𝑖 ∼ 𝒢 (𝜋); 𝑖 = 1, … , 𝑛 ist eine
+                                                        iid
+
+   Negative Binomialverteilung auf 𝑇𝑋 = {𝑛, 𝑛 + 1, 𝑛 + 2, …} mit Parametern
+   𝑛 ∈ ℕ+ und 𝜋 ∈ (0, 1) und Wahrscheinlichkeitsfunktion
+
+                                    𝑥−1 𝑛
+                           𝑓(𝑥) = (    )𝜋 (1 − 𝜋)𝑥−𝑛 𝐼(𝑥 ≥ 𝑛)
+                                   𝑛−1
+
+
+   Wir schreiben: 𝑋 ∼ 𝒩 ℬ (𝑛, 𝜋)
+
+
+   Funktionen in R: [dpqr]nbinom(size, prob)
+   Beachte: Abweichende Definition in R – Träger ist ℕ+0 !
+
+
+
+
+LMU München                               Statistik I                              480 / 637
+   Sind 𝑋 ∼ 𝒫 (𝜆1 ) und 𝑌 ∼ 𝒫 (𝜆2 ) unabhängig, so ist die Faltung von 𝑋 und 𝑌
+  Bsp: Faltung zweier Poisson-ZV
+
+                                  (𝑋 + 𝑌) ∼ 𝒫 (𝜆1 + 𝜆2 )
+   wieder Poisson-verteilt mit Parameter 𝜆1 + 𝜆2 :
+
+
+
+                                         𝑧
+              Beweis: 𝑃(𝑋 + 𝑌 = 𝑧) = ∑ 𝑓𝑋 (𝑥) ⋅ 𝑓𝑌 (𝑧 − 𝑥)
+                                        𝑥=0
+                                         𝑧       𝜆𝑥1                𝜆𝑧−𝑥
+                                                                     2
+                                    =∑                 exp(−𝜆1 )              exp(−𝜆2 )
+                                        𝑥=0
+                                                 𝑥!                (𝑧 − 𝑥)!
+                                         𝑧        𝜆𝑥1 𝜆𝑧−𝑥
+                                                       2
+                                    =∑                         exp(−(𝜆1 + 𝜆2 ))
+                                        𝑥=0
+                                                 𝑥!(𝑧 − 𝑥)!
+                                             𝑧
+                                                 𝑧!              exp(−(𝜆1 + 𝜆2 ))
+                                    = (∑                𝜆𝑥1 𝜆𝑧−𝑥
+                                                             2 )
+                                         𝑥=0
+                                             𝑥!(𝑧 − 𝑥)!                𝑧!
+
+
+                                                 ⏟⏟⏟
+                                                                     exp(−(𝜆1 + 𝜆2 ))
+                                    =            (𝜆1 + 𝜆2 )𝑧                              .
+                                                                               𝑧!
+                                        ∑𝑘=0 (𝑛𝑘)𝑎𝑛−𝑘 𝑏𝑘 =(𝑎+𝑏)𝑛
+                                         𝑛
+LMU München                                      Statistik I                                  481 / 637
+Zufallsvektoren & multivariate Verteilungen
+   Zufallsvektoren
+   Stochastische Unabhängigkeit von Zufallsvariablen
+   Faltungen
+   Bedingte Verteilungen und Dichten
+   Bedingte Momente
+  Bedingte Verteilungen von diskreten ZVn
+
+   Def: Bedingte Verteilungs- & Dichtefunktion diskreter ZV
+
+   Die bedingte Verteilungsfunktion 𝐹𝑋|𝑌 (𝑥|𝑦) und die
+   bedingte Wahrscheinlichkeits- oder Dichtefunktion 𝑓𝑋|𝑌 (𝑥|𝑦) einer diskreten
+   ZV 𝑋 gegeben 𝑌 = 𝑦, sind definiert für alle 𝑦 mit 𝑃(𝑌 = 𝑦) > 0:
+
+                                                  𝑃(𝑋 ≤ 𝑥, 𝑌 = 𝑦)
+                   𝐹𝑋|𝑌 (𝑥|𝑦) = 𝑃(𝑋 ≤ 𝑥|𝑌 = 𝑦) =
+                                                     𝑃(𝑌 = 𝑦)
+                                                 𝑃(𝑋 = 𝑥, 𝑌 = 𝑦)
+                   𝑓𝑋|𝑌 (𝑥|𝑦) = 𝑃(𝑋 = 𝑥|𝑌 = 𝑦) =
+                                                    𝑃(𝑌 = 𝑦)
+                                𝑓𝑋,𝑌 (𝑥, 𝑦)
+                              =
+                                  𝑓𝑌 (𝑦)
+
+
+
+
+LMU München                            Statistik I                         483 / 637
+  Folgerungen
+
+
+   Es gilt immer:
+
+                            𝑓𝑋,𝑌 (𝑥, 𝑦) = 𝑓𝑋|𝑌 (𝑥|𝑦) ⋅ 𝑓𝑌 (𝑦)
+                                       = 𝑓𝑌|𝑋 (𝑦|𝑥) ⋅ 𝑓𝑋 (𝑥)
+
+   Daraus folgt:
+   𝑋 und 𝑌 sind genau dann unabhängig wenn
+
+                                       𝑓𝑋|𝑌 (𝑥|𝑦) = 𝑓𝑋 (𝑥)
+                             oder      𝑓𝑌|𝑋 (𝑦|𝑥) = 𝑓𝑌 (𝑦)
+
+   für alle 𝑥 und 𝑦 gilt.
+
+
+
+
+LMU München                              Statistik I            484 / 637
+   Betrachte zwei unabhängige ZV 𝑋 ∼ 𝒫 (𝜆1 ) und 𝑌 ∼ 𝒫 (𝜆2 ). Sei 𝑍 = 𝑋 + 𝑌. Dann
+  Beispiel
+
+                                       𝑋|𝑍 = 𝑧 ∼ ℬ (𝑧, 𝜋 = 𝜆 +𝜆
+   gilt
+                                                                      𝜆
+                                                             1
+                                                                )
+                                                                      1   2
+
+
+
+   Beweis:
+
+
+                                 𝑃(𝑋 = 𝑥 ∩ 𝑌 = 𝑧 − 𝑥)
+              𝑃(𝑋 = 𝑥|𝑍 = 𝑧) =
+                                      𝑃(𝑍 = 𝑧)
+                                  𝑥                    𝑧−𝑥
+                                 𝜆1            𝜆2
+                                 𝑥!
+                                    exp(−𝜆1 ) (𝑧−𝑥)! exp(−𝜆2 )
+                            =
+                                      (𝜆1 +𝜆2 )𝑧
+                                          𝑧!
+                                                   exp(−(𝜆1 + 𝜆2 ))
+                                                                    𝑥           𝑧−𝑥
+                                           𝜆𝑥1 𝜆𝑧−𝑥
+                                                                      ⏟⏟⏟
+                                  𝑧!            2       𝑧   𝜆1            𝜆2
+                            =                        = ( )(        ) (         )
+                              𝑥!(𝑧 − 𝑥)! (𝜆1 + 𝜆2 )𝑧    𝑥 𝜆1 + 𝜆 2     𝜆1 + 𝜆2
+
+                                                                                      𝜆1
+                                                                              =(1−            )
+                                                                                     𝜆1 +𝜆2
+
+
+LMU München                                            Statistik I                                485 / 637
+  Bedingte Verteilungen von stetigen ZVn
+
+
+
+   Betrachte die Zufallsvariablen 𝑋 und 𝑌 mit gemeinsamer Dichte 𝑓𝑋,𝑌 (𝑥, 𝑦).
+   Wir interessieren uns für die bedingte Verteilung von 𝑋 gegeben 𝑌 = 𝑦.
+   “Problem”:
+   Es gilt 𝑃(𝑌 = 𝑦) = 0 für alle 𝑦. Daher ist
+
+                                             𝑃(𝑋 ≤ 𝑥 ∧ 𝑌 = 𝑦)
+                        𝑃(𝑋 ≤ 𝑥|𝑌 = 𝑦) =
+                                                   𝑃(𝑌 = 𝑦)
+
+   nicht definiert.
+
+
+
+
+LMU München                                Statistik I                      486 / 637
+  Bedingte Verteilungen von stetige ZVn
+   “Lösung:”
+   Betrachte W.keit bedingt auf sehr kleine Intervalle mit Länge 𝛿 – es gilt
+                                               𝑦+𝛿/2
+   näherungsweise: 𝑃(𝑦 − 𝛿2 ≤ 𝑌 ≤ 𝑦 + 𝛿2 ) = ∫𝑦−𝛿/2 𝑓𝑌 (𝑢)𝑑𝑢 ≈ 𝑓𝑌 (𝑦) 𝛿
+
+
+                                                                𝑃 ((𝑋 ≤ 𝑥) ∧ (𝑦 − 𝛿2 ≤ 𝑌 ≤ 𝑦 + 𝛿2 ))
+        ⟹ 𝑃(𝑋 ≤ 𝑥|𝑌 = 𝑦) ≈ 𝑃(𝑋 ≤ 𝑥|𝑦 − 𝛿2 ≤ 𝑌 ≤ 𝑦 + 𝛿2 ) =
+                                                                       𝑃(𝑦 − 𝛿2 ≤ 𝑌 ≤ 𝑦 + 𝛿2 )
+                                                                 𝑥      𝑦+𝛿/2
+                                                                ∫−∞ (∫𝑦−𝛿/2 𝑓𝑋,𝑌 (𝑢, 𝑣)𝑑𝑣) 𝑑𝑢
+                                                            =             𝑦+𝛿/2
+                                                                        ∫𝑦−𝛿/2 𝑓𝑌 (𝑢)𝑑𝑢
+                                                                 𝑥
+                                                                ∫−∞ 𝑓𝑋,𝑌 (𝑢, 𝑦) 𝛿 𝑑𝑢
+                                                            ≈
+                                                                       𝑓𝑌 (𝑦) 𝛿
+                                                                        𝑓𝑋,𝑌 (𝑢, 𝑦)
+
+                                                                        ⏟⏟⏟
+                                                                  𝑥
+                                                            =∫                             𝑑𝑢
+                                                                 −∞      𝑓𝑌 (𝑦)
+
+                                                                      Dichte von 𝑋|𝑌 = 𝑦
+
+
+
+LMU München                                   Statistik I                                          487 / 637
+  Bedingte Verteilungen von stetigen ZVn
+
+
+   Def: Bedingte Verteilungs- & Dichtefunktion stetiger ZV
+
+   Die bedingte Verteilungsfunktion einer stetigen ZV 𝑋, gegeben 𝑌 = 𝑦 ist
+                                                𝑥 𝑓
+                                                     𝑋,𝑌 (𝑢,𝑦)
+                            𝐹𝑋|𝑌 (𝑥|𝑦) ∶= ∫           𝑓𝑌 (𝑦)
+                                                                 𝑑𝑢
+                                             −∞
+
+   für alle 𝑦 mit 𝑓𝑌 (𝑦) > 0.
+   Die bedingte Dichte von 𝑋 gegeben 𝑌 = 𝑦 ist somit
+
+                                                𝑓𝑋,𝑌 (𝑥, 𝑦)
+                              𝑓𝑋|𝑌 (𝑥|𝑦) ∶=
+                                                     𝑓𝑌 (𝑦)
+
+
+
+
+LMU München                            Statistik I                           488 / 637
+  Beispiel: Gemeinsame, bedingte und Rand-Dichten
+   Sei (𝑋, 𝑌) ∈ [0, 1] × [0, 1] ein stetiger Zufallsvektor mit gemeinsamer Dichte
+                     𝑓𝑋,𝑌 (𝑥, 𝑦) = (1 + 𝑥 − 𝑦 − 2𝑥 2 + 4𝑥 2 𝑦) ⋅ 𝐼(𝑥 ∈ [0, 1]) ⋅ 𝐼(𝑦 ∈ [0, 1]) ∶
+
+
+
+                  1.00
+
+
+                                                                         4
+                  0.75
+                                                             f(x,y)
+                                                                     3
+                                                                             3
+
+                                                                     2
+                                                                         f(x,y)
+              y   0.50                                                            2
+                                                                     1
+                                                                                      1
+                                                                                                                                    1.0
+                  0.25                                               0                                                            0.8
+                                                                                          0                                      0.6
+                                                                                          0.0
+                                                                                                0.2                            0.4
+                                                                                                                                 y
+                                                                                                      0.4
+                  0.00                                                                                  x 0.6              0.2
+                                                                                                                0.8
+                         0.00   0.25   0.50   0.75   1.00                                                             1.00.0
+LMU München                             x              Statistik I                                                                        489 / 637
+  Verteilung einer diskreten und einer stetigen ZV
+
+
+   Das Konzept von gemeinsamer und bedingter Verteilung lässt sich
+   problemlos auch auf zwei Zufallsvariablen verallgemeinern, von denen
+   eine diskret und eine stetig ist.
+   Bsp:
+   Bedingt binomialverteilte Zufallsvariable 𝑌, deren
+   Erfolgswahrscheinlichkeit 𝜋 selbst eine Zufallsvariable 𝑋 ist:
+
+
+
+                                 Sei 𝑋 ∼ ℬ 𝑒(𝛼, 𝛽)
+                              und 𝑌|𝑋 ∼ ℬ (𝑛, 𝜋 = 𝑋)
+
+
+
+
+LMU München                            Statistik I                        490 / 637
+  Beispiel: Die gemeinsame Verteilung
+
+
+
+   Die gemeinsame Verteilung von 𝑋 und 𝑌 ist
+
+                     𝑓(𝑥, 𝑦) = 𝑓(𝑦|𝑥) ⋅ 𝑓(𝑥)
+                                𝑛                      1
+                             = ( ) 𝑥 𝑦 (1 − 𝑥)𝑛−𝑦 ⋅         𝑥 𝛼−1 (1 − 𝑥)𝛽−1
+                                𝑦                   𝐵(𝛼, 𝛽)
+                                  1      𝑛
+                             =          ( ) 𝑥 𝑦+𝛼−1 (1 − 𝑥)𝑛−𝑦+𝛽−1
+                               𝐵(𝛼, 𝛽) 𝑦
+
+   für 𝑥 ∈ [0, 1] und 𝑦 ∈ {0, 1, ..., 𝑛}.
+
+
+
+
+LMU München                                  Statistik I                       491 / 637
+  Beispiel: Die bedingte Verteilung von 𝑋|𝑌 = 𝑦
+
+
+   Für die bedingte Dichte 𝑓(𝑥|𝑦) folgt:
+
+                                  𝑓(𝑥, 𝑦) (∗) 𝑦+𝛼−1
+                       𝑓(𝑥|𝑦) =           ∝ 𝑥       (1 − 𝑥)𝑛−𝑦+𝛽−1
+                                   𝑓(𝑦)
+
+   also: 𝑋|𝑌 = 𝑦 ∼ ℬ 𝑒(𝛼 + 𝑦, 𝛽 + 𝑛 − 𝑦)
+   Bei (∗) haben wir ausgenützt, dass der Nenner 𝑓(𝑦) in
+
+                                                  𝑓(𝑥, 𝑦)
+                                    𝑓(𝑥|𝑦) =
+                                                   𝑓(𝑦)
+
+   nicht von 𝑥 abhängt, also für 𝑌 = 𝑦 konstant ist.
+
+
+
+
+LMU München                                Statistik I               492 / 637
+  Beispiel: Die Randverteilung von 𝑌
+   Damit folgt für 𝑓(𝑦) = 𝑓(𝑥, 𝑦)/𝑓(𝑥|𝑦):
+
+                            𝑛 𝐵(𝑦 + 𝛼, 𝑛 − 𝑦 + 𝛽)
+                    𝑓(𝑦) = ( )
+                            𝑦        𝐵(𝛼, 𝛽)
+
+
+                           ⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟⏟ 𝑦
+                                   Γ(𝛼 + 𝛽)         𝑛
+                         =                         ( ) Γ(𝛼 + 𝑦) Γ(𝛽 + 𝑛 − 𝑦)
+                            Γ(𝛼) Γ(𝛽) Γ(𝛼 + 𝛽 + 𝑛)
+
+                           hängt nicht von y ab
+
+   für 𝑦 = 0, ..., 𝑛.
+   Diese Verteilung heißt “Beta-Binomialverteilung” mit Parameter 𝑛 ∈ ℕ,
+
+                                𝑌 ∼ ℬℬ (𝑛, 𝛼, 𝛽)
+   𝛼, 𝛽 ∈ ℝ+ :
+
+
+
+   Inhaltlich: Verteilung der Anzahl Erfolge in 𝑛 Versuchen bei unabhängigen
+   Bernoulliexperimenten mit variierender Erfolgswahrscheinlichkeit
+   (genauer: Beta-verteilter Erfolgsw.keit).
+
+LMU München                                  Statistik I                       493 / 637
+  Beta-Binomial-Verteilung
+              B(n = 30, p = 0.5) und Beta−Binomial−Verteilungen
+
+                     0.15                                            0.15
+
+
+
+
+                     0.10                                            0.10
+
+
+
+
+              f(x)                                            f(x)
+
+
+
+                     0.05                                            0.05
+
+
+
+
+                     0.00                                            0.00
+
+                            0   10          20          30                  0               10                  20                  30
+                                       x                                                               x
+                                                                                α , β = 0.5 in rot; α , β = 5 in grün; α , β = 50 in blau
+
+
+
+
+LMU München                                             Statistik I                                                                         494 / 637
+Zufallsvektoren & multivariate Verteilungen
+   Zufallsvektoren
+   Stochastische Unabhängigkeit von Zufallsvariablen
+   Faltungen
+   Bedingte Verteilungen und Dichten
+   Bedingte Momente
+  Bedingte Momente
+   Def: Bedingte Momente von Zufallsvariablen
+
+   Völlig analoge Definitionen basierend auf den bedingten Dichten – es gilt:
+
+                               ∑      𝑥𝑃(𝑋 = 𝑥|𝑍 = 𝑧)      𝑋 diskret
+                𝐸(𝑋|𝑍 = 𝑧) ∶= { 𝑥∈𝑇
+                                 ∞
+                                    𝑋
+                               ∫−∞ 𝑥𝑓𝑋|𝑍 (𝑥|𝑍 = 𝑧) 𝑑𝑥      𝑋 stetig
+              Var(𝑋|𝑍 = 𝑧) ∶= 𝐸[(𝑋 − 𝐸(𝑋|𝑍 = 𝑧))2 |𝑍 = 𝑧]
+                               ∑      (𝑥 − 𝐸(𝑋|𝑍 = 𝑧))2 𝑃(𝑋 = 𝑥|𝑍 = 𝑧)   𝑋 diskret
+                            = { 𝑥∈𝑇
+                                 ∞
+                                    𝑋
+                               ∫−∞ (𝑥 − 𝐸(𝑋|𝑍 = 𝑧))2 𝑓𝑋|𝑍 (𝑥|𝑍 = 𝑧) 𝑑𝑥   𝑋 stetig
+
+
+   Beachte:
+      ▶ 𝐸(𝑋|𝑍 = 𝑧) ist ein konkreter Zahlenwert, der eine Eigenschaft der
+        bedingten Verteilung von 𝑋 für eine feste Bedingung 𝑍 = 𝑧 beschreibt.
+      ▶ 𝐸(𝑋|𝑍) ist als Funktion der Werte von 𝑍 selbst wieder eine
+        Zufallsvariable.
+
+LMU München                                  Statistik I                             496 / 637
+  Satz vom iterierten Erwartungswert
+   Satz vom iterierten Erwartungswert
+
+   Für beliebige Funktionen 𝑔 und Zufallsvariablen 𝑋, 𝑍 gilt:
+
+                                 𝐸(𝐸(𝑔(𝑋)|𝑍)) = 𝐸(𝑔(𝑋))
+
+
+
+   Es gilt also auch: 𝐸(𝐸(𝑋|𝑍)) = 𝐸(𝑋)
+   Beweis (diskreter Fall):
+
+   𝐸𝑍 (𝐸𝑋|𝑍 (𝑔(𝑋)|𝑍)) = ∑ 𝐸𝑋|𝑍 (𝑔(𝑋)|𝑍 = 𝑧)𝑃(𝑍 = 𝑧) = ∑ ∑ 𝑔(𝑥)𝑃(𝑋 = 𝑥|𝑍 = 𝑧)𝑃(𝑍 = 𝑧)
+                     𝑧∈𝑇𝑧                               𝑧∈𝑇𝑧 𝑥∈𝑇𝑥
+
+                   = ∑ ∑ 𝑔(𝑥)𝑃(𝑋 = 𝑥, 𝑍 = 𝑧) = ∑ 𝑔(𝑥)𝑃(𝑋 = 𝑥)
+                     𝑥∈𝑇𝑥 𝑧∈𝑇𝑧                         𝑥∈𝑇𝑥
+
+                   = 𝐸(𝑔(𝑋))
+
+
+
+LMU München                              Statistik I                         497 / 637
+  Satz von der totalen Varianz
+   Satz von der totalen Varianz
+   Für beliebige Zufallsvariablen 𝑋, 𝑍 gilt:
+   Die Varianz von 𝑋 ist die Summe der erwarteten bedingten Varianz von 𝑋
+   gegeben 𝑍 und der Varianz der bedingten Erwartung von 𝑋 gegeben 𝑍:
+
+                          Var(𝑋) = 𝐸(Var(𝑋|𝑍)) + Var(𝐸(𝑋|𝑍))
+
+
+
+      ▶ Analog zur Streuungszerlegung in geschichteten Stichproben mit
+        schichtweisen Mittelwerten 𝑥̄ 𝑗 und schichtweisen Varianzen
+              2
+          𝑠𝑥𝑗 , 𝑗 = 1, … , 𝑟 –
+          “Gesamtvarianz = Varianz innerhalb der Schichten + Varianz zwischen
+          den Schichten”:
+                                         𝑟                 𝑟
+                                      1        2   1                 2
+                             𝑠̃𝑥2 =     ∑ 𝑛𝑗 𝑠̃𝑥𝑗 + ∑ 𝑛𝑗 (𝑥̄ 𝑗 − 𝑥)̄
+                                      𝑛 𝑗=1        𝑛 𝑗=1
+
+
+LMU München                                  Statistik I                    498 / 637
+  Satz von der totalen Varianz - Beweis
+
+   Es gilt: Var(𝑋|𝑍) = 𝐸(𝑋 2 |𝑍) − (𝐸(𝑋|𝑍))2 , also auch
+                                                                        2
+              𝐸𝑍 (Var𝑋|𝑍 (𝑋|𝑍)) = 𝐸𝑍 (𝐸𝑋|𝑍 (𝑋 2 |𝑍)) − 𝐸𝑍 ((𝐸𝑋|𝑍 (𝑋|𝑍)) )
+                                                             2
+                                = 𝐸𝑋 (𝑋 2 ) − 𝐸𝑍 ((𝐸𝑋|𝑍 (𝑋|𝑍)) )
+                                                       2     2                              2
+                                = 𝐸𝑋 (𝑋 2 ) − 𝐸𝑋 (𝑋) + 𝐸𝑋 (𝑋) − 𝐸𝑍 ((𝐸𝑋|𝑍 (𝑋|𝑍)) )
+
+                                                                        ⏟
+                                                                 2               2
+                                = Var𝑋 (𝑋) − (𝐸𝑍 ((𝐸𝑋|𝑍 (𝑋|𝑍)) ) −      𝐸𝑋 (𝑋)              )
+                                                                                        2
+                                                                     =𝐸𝑍 (𝐸𝑋|𝑍 (𝑋|𝑍))
+
+                                = Var𝑋 (𝑋) − Var𝑍 (𝐸𝑋|𝑍 (𝑋|𝑍))
+                  ⟹ Var (𝑋) = 𝐸 (Var (𝑋|𝑍)) + Var (𝐸 (𝑋|𝑍))
+
+
+
+
+LMU München                                   Statistik I                                       499 / 637
+

@@ -1,0 +1,1596 @@
+   Wichtige parametrische Verteilungen
+        Diskrete parametrische Verteilungen
+        Stetige parametrische Verteilungen
+        Dichtetransformationssatz
+
+
+
+
+LMU München                           Statistik I   401 / 637
+Wichtige parametrische Verteilungen
+   Diskrete parametrische Verteilungen
+   Stetige parametrische Verteilungen
+   Dichtetransformationssatz
+  Parametrische Verteilungen
+
+
+
+
+   Statistik benutzt viele “gängige” Klassen von Verteilungen,
+      ▶ die bestimmte Arten von häufigen, idealtypischen Zufallsvorgängen (zB
+        “Alles gleich wahrscheinlich”, “Ziehen mit/ohne Zurücklegen”)
+        formalisieren und
+      ▶ die meist von weiteren Parametern, die das konkrete Setting
+        beschreiben, abhängen.
+
+
+
+
+LMU München                           Statistik I                        403 / 637
+  Bernoulli-Verteilung
+
+   Das einfachste Beispiel ist die Bernoulli-Verteilung.
+   Eine Bernoulli-verteilte ZV kann nur die Werte 0 und 1 annehmen:
+
+                         𝑃(𝑋 = 1) = 𝑓(1) = 𝜋
+                         𝑃(𝑋 = 0) = 𝑓(0) = 1 − 𝜋
+                            𝑓𝑋 (𝑥) = 𝜋 𝑥 (1− 𝜋)1−𝑥 ⋅ 𝐼(𝑥 ∈ {0, 1})
+
+
+
+   𝜋 ∈ [0, 1] ist der einzige Parameter der Bernoulli-Verteilung.
+
+                                       𝑋 ∼ ℬ (𝜋)
+   Notation:
+
+
+
+   Beispiel: Ergebnis eines Münzwurfs ist ℬ (𝜋 = 0.5)-verteilt.
+
+
+
+LMU München                               Statistik I                 404 / 637
+  Diskrete Gleichverteilung
+   Die allgemeine diskrete Gleichverteilung hat einen endlichen Träger
+   𝑇 = {𝑥1 , 𝑥2 , ..., 𝑥𝑘 }, wobei
+
+                                                      1
+                            𝑃(𝑋 = 𝑥) = 𝑓(𝑥) =           ⋅ 𝐼(𝑥 ∈ 𝑇)
+                                                      𝑘
+
+
+   Häufig sind alle natürlichen Zahlen zwischen 𝑎 ∈ ℕ und 𝑏 ∈ ℕ Element des
+   Trägers 𝑇. Die Grenzen 𝑎 und 𝑏 sind dann die Parameter der diskreten
+   Gleichverteilung.
+
+
+                                    𝑋 ∼ 𝒰𝐷 (𝑎, 𝑏)
+   Notation:
+
+
+
+   Beispiel: Augenzahl beim fairen Würfelwurf ist 𝒰𝐷 (𝑎 = 1, 𝑏 = 6)-verteilt.
+   In R: sample()
+
+
+LMU München                             Statistik I                             405 / 637
+  Geometrische Verteilung
+
+   Ein Zufallsvorgang, bei dem mit Wahrscheinlichkeit 𝜋 ein Ereignis 𝐴 eintritt,
+   wird unabhängig voneinander so oft wiederholt, bis zum ersten Mal 𝐴
+   eintritt.
+   Sei 𝑋 die ZV “Anzahl der Versuche bis zum ersten Mal 𝐴 eintritt”.
+   Dann ist 𝑇 = ℕ+ und die Wahrscheinlichkeitsfunktion von 𝑋 lautet:
+
+                                ⏟⏟⏟
+                         𝑓(𝑥) = (1 −         ⏟ ⋅𝐼(𝑥 ∈ 𝑇)
+                                     𝜋)𝑥−1 ⋅ 𝜋
+                                                1-mal 𝐴
+                                (x-1)-mal 𝐴̄
+
+   𝜋 ∈ (0, 1) ist der Parameter der geometrischen Verteilung.
+
+
+
+                                      𝑋 ∼ 𝒢 (𝜋)
+   Notation:
+
+
+
+
+LMU München                              Statistik I                        406 / 637
+  Alternative Definition
+
+
+   Sei 𝑌 ∶= “Anzahl der Versuche bevor das erste mal 𝐴 eintritt”, d.h. 𝑌 = 𝑋 − 1.
+   Dann ist
+
+                                 𝑇 = {0, 1, 2, ...} = ℕ+0
+                              𝑓(𝑦) = (1 − 𝜋)𝑦 𝜋 ⋅ 𝐼(𝑦 ∈ 𝑇)
+
+
+   Für diese Definition gibt es folgende Implementationen in R:
+      ▶ dgeom(x, prob=𝜋) berechnet Wahrscheinlichkeitsfunktion 𝑓𝑌 (𝑥)
+      ▶ pgeom(q, prob=𝜋) wertet Verteilungsfunktion für q aus: 𝐹𝑌 (𝑞)
+      ▶ rgeom(n, prob=𝜋) generiert n Zufallszahlen aus der Verteilung
+      ▶ qgeom(p, prob=𝜋) berechnet Quantile der geom. Verteilung: ≈ 𝐹𝑌−1 (𝑝)
+
+
+
+
+LMU München                              Statistik I                          407 / 637
+  Visualisierung 𝒢 (𝜋)
+              Geometrische Verteilung
+
+                     0.5                                       1.00
+
+
+
+
+                     0.4
+                                                               0.75
+
+
+
+
+                     0.3
+
+
+              f(x)                                      F(x)   0.50
+
+
+                     0.2
+
+
+
+
+                                                               0.25
+                     0.1
+
+
+
+
+                     0.0                                       0.00
+
+                           0   5        10   15   20                  0   5   10              15             20
+                                        x                                     x
+                                                                                   π = 0.2 in rot; π = 0.5 in grün
+
+
+
+
+LMU München                                       Statistik I                                                        408 / 637
+  Binomialverteilung
+   Bei einer Folge von unabhängigen Bernoulli-Experimenten 𝑋𝑖 , 𝑖 = 1, … , 𝑛
+   interessiert man sich häufig nur für die Anzahl 𝑋 ∶= ∑𝑛𝑖=1 𝑋𝑖 , wie oft 𝑋𝑖 = 1
+   aufgetreten ist.
+   Diese ZV 𝑋 heißt binomialverteilt mit Parametern 𝑛 ∈ ℕ, 𝜋 ∈ [0, 1]. Sie hat
+   Träger 𝑇 = {0, 1, ..., 𝑛} sowie die Wahrscheinlichkeitsfunktion:
+                                         𝑛
+                      𝑃(𝑋 = 𝑥) = 𝑓(𝑥) = ( ) ⋅ 𝜋 𝑥 (1 − 𝜋)𝑛−𝑥 ⋅ 𝐼(𝑥 ∈ 𝑇)
+                                         𝑥
+
+
+
+                                       𝑋 ∼ ℬ (𝑛, 𝜋)
+   Notation:
+
+
+
+   Es gilt ℬ (1, 𝜋) = ℬ (𝜋).
+
+
+   in R: [dpqr]binom(size=𝑛, prob=𝜋,...)
+
+LMU München                                Statistik I                              409 / 637
+  Visualisierung ℬ (𝑛, 𝜋)
+              Binomial Verteilung
+                                                                              1.00
+
+
+                                                                              0.75
+                       0.2
+
+
+              f(x)                                                     F(x)   0.50
+
+                       0.1
+                                                                              0.25
+
+
+                       0.0                                                    0.00
+                             0   2        4        6        8   10                   0          2          4          6            8        10
+                                              x                                                                  x
+
+                                                                              1.00
+
+                     0.075
+                                                                              0.75
+
+
+
+                                                                       F(x)
+                     0.050
+              f(x)                                                            0.50
+
+
+                     0.025                                                    0.25
+
+
+                     0.000                                                    0.00
+                             0       25       50       75       100                  0              25          50            75            100
+                                              x                                                                  x
+                                                                                 oben: n = 10 ; unten: n = 100 . π = 0.25 in rot; π = 0.6 in grün
+
+
+
+
+LMU München                                                     Statistik I                                                                         410 / 637
+  Beispiele
+
+
+
+   Das Urnenmodell:
+   Zufälliges Ziehen mit Zurücklegen einer Stichprobe von 𝑛 Kugeln aus einer
+   Urne mit 𝑁 Kugeln, darunter 𝑀 markierte.
+   Sei 𝑋: “Anzahl der markierten Kugeln in der Stichprobe”.
+
+                                 𝑋 ∼ ℬ (𝑛, 𝑀/𝑁).
+   Dann gilt
+
+
+
+
+LMU München                           Statistik I                        411 / 637
+  Hypergeometrische Verteilung
+   Häufig wird jedoch ohne Zurücklegen gezogen, d.h.
+   “Auswahlwahrscheinlichkeiten” ändern sich von Ziehung zu Ziehung
+   (Beispiel: Kartenspiele).
+   Die Verteilung von 𝑋 (Anzahl der markierten Kugeln) nennt man dann
+   hypergeometrisch. Die hypergeometrische Verteilung hat den Träger
+
+                     𝑇 = {max (0, 𝑛 − (𝑁 − 𝑀)) , ..., min (𝑛, 𝑀)}
+
+   und die Wahrscheinlichkeitsfunktion
+
+                                      (𝑀𝑥)(𝑁−𝑀
+                                           𝑛−𝑥
+                                               )
+                             𝑓(𝑥) =                    ⋅ 𝐼(𝑥 ∈ 𝑇)
+                                         (𝑁𝑛)
+
+
+                                  𝑋 ∼ ℋ (𝑛, 𝑁, 𝑀)
+   Notation:
+
+
+
+
+   Funktionen in R: [dpqr]hyper(m = 𝑀, n = 𝑁 − 𝑀, k= 𝑛, ...)
+LMU München                              Statistik I                    412 / 637
+  Ziehen mit und ohne Zurücklegen I
+                           n = 10, M = 20, N = 100                     n = 20, M = 20, N = 100
+
+                 0.3
+
+
+
+
+                 0.2
+
+
+
+
+                 0.1
+
+
+
+
+                 0.0
+
+          f(x)             n = 40, M = 20, N = 100                     n = 80, M = 20, N = 100
+
+                 0.3
+
+
+
+
+                 0.2
+
+
+
+
+                 0.1
+
+
+
+
+                 0.0
+                       0   10                 20         30        0   10                  20                   30
+                                                              x
+                                                                                 H(n, M, N) in grün; B(n, M/N) in rot
+
+
+
+
+LMU München                                          Statistik I                                                        413 / 637
+  Ziehen mit und ohne Zurücklegen II
+                           n = 20, M = 20, N = 40                      n = 20, M = 20, N = 80
+
+
+
+
+                 0.3
+
+
+
+                 0.2
+
+
+
+                 0.1
+
+
+
+                 0.0
+
+          f(x)             n = 20, M = 20, N = 160                     n = 20, M = 20, N = 320
+
+
+
+
+                 0.3
+
+
+
+                 0.2
+
+
+
+                 0.1
+
+
+
+                 0.0
+                       0   10                 20         30        0   10                  20                   30
+                                                              x
+                                                                                 H(n, M, N) in grün; B(n, M/N) in rot
+
+
+
+
+LMU München                                          Statistik I                                                        414 / 637
+  Approximation der hypergeometrischen Verteilung
+
+
+
+
+   Für 𝑁 “groß” und 𝑛 “klein” läßt sich die hypergeometrische Verteilung also
+   gut durch die Binomialverteilung approximieren:
+
+                         ℋ (𝑛, 𝑁, 𝑀)             ℬ (𝑛, 𝜋 = 𝑀 )
+                                        𝑑
+                                        ≈
+                                                           𝑁
+
+
+
+
+LMU München                            Statistik I                         415 / 637
+  Poisson-Verteilung
+
+
+
+   Häufig gibt es zufällige Vorgänge, bei denen es (… zumindest theoretisch …)
+   keine natürliche obere Grenze für die interessierende Anzahl an
+   Ereignissen in einem gegebenen Zeitintervall gibt, z.B.:
+      ▶ Anzahl an Telefonanrufen in einem “Call-Center” pro Stunde
+      ▶ Anzahl an Blitzschlägen pro Woche in Oberbayern
+
+   Die einfachste Verteilung für solche Phänomene ist die Poisson-Verteilung
+   (nach Siméon Denis Poisson [1781-1840]).
+
+
+
+
+LMU München                           Statistik I                         416 / 637
+  Poisson-Verteilung
+   Eine Zufallsvariable 𝑋 mit Träger 𝑇 = ℕ+0 und Wahrscheinlichkeitsfunktion
+
+                                              𝜆𝑥
+                            𝑓(𝑥) = exp(−𝜆)       ⋅ 𝐼(𝑥 ∈ 𝑇)
+                                              𝑥!
+   folgt einer Poisson-Verteilung.
+   Der Parameter 𝜆 ∈ ℝ+ ist die durchschnittliche Rate oder die Intensität, mit
+   der die interessierenden Ereignisse in dem zugrundeliegenden
+   Zeitintervall auftreten.
+
+
+                                     𝑋 ∼ 𝒫 (𝜆)
+   Notation:
+
+
+
+
+   𝒫 (𝜆)-verteilt ist, sind ℰ (𝜆)-verteilt!
+   Beachte: Wartezeiten zwischen Ereignissen, deren Gesamtzahl
+
+
+
+   Funktionen in R: [dpqr]pois()
+LMU München                            Statistik I                          417 / 637
+  Visualisierung 𝒫 (𝜆)
+              Poisson Verteilung
+
+                                                          1.00
+                     0.8
+
+
+
+
+                                                          0.75
+                     0.6
+
+
+
+
+              f(x)   0.4                           F(x)   0.50
+
+
+
+
+                     0.2                                  0.25
+
+
+
+
+                     0.0                                  0.00
+
+                           0   5   10   15   20                  0   5             10         15     20
+                                   x                                               x
+
+                                                                         λ = 0.2        λ=1    λ=4
+
+
+
+
+LMU München                                  Statistik I                                                  418 / 637
+  Approximation der Binomialverteilung
+
+
+
+
+   Die Binomialverteilung 𝐵(𝑛, 𝜋) kann für “großes n” und “kleines 𝜋” gut
+   durch die Poisson-Verteilung mit 𝜆 = 𝑛𝜋 approximiert werden.
+
+                             ℬ (𝑛, 𝜋)             𝒫 (𝜆 = 𝑛𝜋)
+                                         𝑑
+                                         ≈
+
+   Je größer 𝑛 ist und vor allem je kleiner 𝜋, desto besser ist die
+   Approximation.
+
+
+
+
+LMU München                             Statistik I                         419 / 637
+  Vergleich Binomial/Poissonverteilung (n = 10)
+                                   π = 0.1                                      π = 0.3
+                 0.4
+
+
+
+                 0.3
+
+
+
+                 0.2
+
+
+
+                 0.1
+
+
+
+                 0.0
+
+          f(x)                     π = 0.5                                      π = 0.8
+                 0.4
+
+
+
+                 0.3
+
+
+
+                 0.2
+
+
+
+                 0.1
+
+
+
+                 0.0
+                       0   3   6             9   12       15        0   3   6             9          12            15
+                                                               x
+                                                                                  P (nπ) in grün; B( n = 10 , π ) in rot
+
+
+
+
+LMU München                                           Statistik I                                                          420 / 637
+  Vergleich Binomial/Poissonverteilung (n = 100)
+                                 π = 0.1                               π = 0.3
+
+
+
+
+                 0.10
+
+
+
+
+                 0.05
+
+
+
+
+                 0.00
+
+          f(x)                   π = 0.5                               π = 0.8
+
+
+
+
+                 0.10
+
+
+
+
+                 0.05
+
+
+
+
+                 0.00
+                        0   30        60   90                 0   30        60               90
+                                                         x
+                                                                       P (nπ) in grün; B( n = 100 , π ) in rot
+
+
+
+
+LMU München                                     Statistik I                                                      421 / 637
+  Vergleich Binomial/Poissonverteilung (n = 100)
+                               π = 0.01                      π = 0.025                           π = 0.05
+
+
+
+
+                 0.3
+
+
+
+
+                 0.2
+          f(x)
+
+
+
+
+                 0.1
+
+
+
+
+                 0.0
+
+                       0   5              10   15   0    5               10   15   0         5              10            15
+                                                                x
+                                                                                       P (nπ) in grün; B( n = 100 , π ) in rot
+
+
+
+
+LMU München                                             Statistik I                                                              422 / 637
+  Einige diskrete Verteilungen
+
+      Name & Symbol                Parameter                 Träger             𝐸(𝑋)     Var(𝑋)
+
+
+      ℬ (𝑛, 𝜋)
+      Binomialverteilung
+                                𝑛 ∈ ℕ+ ; 𝜋 ∈ [0, 1]       {0, 1, … , 𝑛}         𝑛𝜋     𝑛𝜋(1 − 𝜋)
+
+
+      𝒢 (𝜋)
+      Geometrische Verteilung
+                                                                                 1         1−𝜋
+                                    𝜋 ∈ (0, 1]                  ℕ+               𝜋         𝜋2
+
+
+
+
+      𝒫 (𝜆)
+      Poissonverteilung
+                                     𝜆 ∈ ℝ+                     ℕ+0              𝜆          𝜆
+
+
+
+      ℋ (𝑛, 𝑁, 𝑀)
+      Hypergeometrische V.
+                                     𝑛,𝑁,𝑀∈𝑁+ ;
+                                      𝑀≤𝑁;𝑛≤𝑁
+                                                          {max(0,𝑛−(𝑁−𝑀)),
+                                                                ...,min(𝑛,𝑀)}
+                                                                                𝑛 𝑀𝑁   𝑛 𝑀𝑁 𝑁−𝑀 𝑁−𝑛
+                                                                                             𝑁 𝑁−1
+
+
+
+
+LMU München                                 Statistik I                                           423 / 637
+Wichtige parametrische Verteilungen
+   Diskrete parametrische Verteilungen
+   Stetige parametrische Verteilungen
+   Dichtetransformationssatz
+  Wichtige stetige Verteilungen
+
+
+
+
+   Im Folgenden werden wir nun wichtige stetige parametrische Verteilungen
+   kennenlernen. Diese hängen wie parametrische diskrete Verteilungen von
+   einem oder mehreren Parametern ab.
+   Zur Charakterisierung geben wir meist die Dichtefunktion und den Träger
+   an.
+
+
+
+
+LMU München                          Statistik I                        425 / 637
+  Stetige Gleichverteilung
+
+   Die stetige Gleichverteilung hat
+      ▶ Parameter 𝑎 ∈ ℝ und 𝑏 ∈ ℝ (𝑎 < 𝑏)
+      ▶ Dichtefunktion
+                                             1
+                                                       𝑥 ∈ [𝑎, 𝑏]
+                                𝑓(𝑥) = { 𝑏−𝑎
+                                        0              sonst
+
+      ▶ Träger 𝑇 = [𝑎, 𝑏].
+
+
+                                      𝑋 ∼ 𝒰 [𝑎, 𝑏]
+   Notation:
+
+
+
+   Funktionen in R: [dprq]unif()
+
+
+
+
+LMU München                              Statistik I                426 / 637
+  Exponentialverteilung
+   Eine stetige Zufallsvariable 𝑋
+      ▶ mit nichtnegativem Träger 𝑇 = ℝ+0
+      ▶ und Dichtefunktion
+                                       𝜆 exp(−𝜆𝑥)    𝑥≥0
+                               𝑓(𝑥) = {
+                                       0             sonst
+
+      ▶ mit Parameter 𝜆 ∈ ℝ+
+   heißt exponentialverteilt. Die Verteilungsfunktion ist
+                                    1 − exp(−𝜆𝑥) 𝑥 ≥ 0
+                            𝐹(𝑥) = {
+                                    0            𝑥<0
+
+
+                                     𝑋 ∼ ℰ (𝜆)
+   Notation:
+
+
+
+
+   Wenn die Wartezeit auf bzw. zwischen Ereignissen ℰ (𝜆)-verteilt ist, dann ist
+   in R: [dpqr]exp(rate =𝜆, ...)
+
+   die Anzahl der Ereignisse in einem Zeitintervall der Länge 1 𝒫 (𝜆)-verteilt.
+LMU München                            Statistik I                           427 / 637
+  Visualisierung Exponentialverteilung
+              Exponential Verteilung
+
+                     4                                           1.00
+
+
+
+
+                     3                                           0.75
+
+
+
+
+              f(x)   2                                    F(x)   0.50
+
+
+
+
+                     1                                           0.25
+
+
+
+
+                     0                                           0.00
+
+                         0.0   2.5     5.0   7.5   10.0                 0.0   2.5             5.0         7.5    10.0
+                                       x                                                      x
+
+                                                                                    λ = 0.2         λ=1    λ=4
+
+
+
+
+LMU München                                          Statistik I                                                        428 / 637
+  Gammaverteilung
+
+   Die Gammaverteilung ist eine Verallgemeinerung der
+   Exponentialverteilung mit:
+      ▶ Parameter 𝛼 ∈ ℝ+ und 𝛽 ∈ ℝ+
+      ▶ Dichtefunktion
+                                      𝛽𝛼 𝛼−1
+                                     Γ(𝛼)
+                                          𝑥 exp(−𝛽𝑥)     𝑥>0
+                            𝑓(𝑥) = {
+                                   0                     sonst
+
+      ▶ nichtnegativem Träger 𝑇 = ℝ+
+                                                     ∞
+   Γ(𝛼) bezeichnet die Gammafunktion Γ(𝛼) = ∫0 𝑥 𝛼−1 exp(−𝑥) 𝑑𝑥, wobei
+
+
+   Notation: 𝑋 ∼ 𝒢 (𝛼, 𝛽)
+   Γ(𝑥 + 1) = 𝑥! für 𝑥 = 0, 1, 2, ... gilt.
+
+
+   in R: [dpqr]gamma(shape = 𝛼, rate = 𝛽, ...)
+
+
+
+LMU München                            Statistik I                       429 / 637
+  Visualisierung Gammaverteilung
+              Gamma Verteilung
+
+                                                                      1.00
+
+
+
+
+                     1.5
+
+                                                                      0.75
+
+
+
+
+                     1.0
+              f(x)                                             F(x)   0.50
+
+
+
+
+                     0.5
+                                                                      0.25
+
+
+
+
+                     0.0                                              0.00
+
+                           0.0   2.5   5.0   7.5     10.0                    0.0     2.5     5.0   7.5   10.0
+                                       x                                                     x
+
+                                               α=2,β=1          α=2,β=2            α=2,β=5
+
+
+
+
+LMU München                                              Statistik I                                            430 / 637
+  Visualisierung Gammaverteilung
+              Gamma Verteilung
+
+                     1.5                                                        1.00
+
+
+
+
+                                                                                0.75
+
+                     1.0
+
+
+
+
+              f(x)                                                       F(x)   0.50
+
+
+
+
+                     0.5
+
+                                                                                0.25
+
+
+
+
+                     0.0                                                        0.00
+
+                           0.0   2.5   5.0      7.5              10.0                  0.0     2.5               5.0   7.5   10.0
+                                       x                                                                         x
+
+                                             α = 0.5 , β = 0.1          α = 0.5 , β = 0.2    α = 0.5 , β = 0.5
+
+
+
+
+LMU München                                                       Statistik I                                                       431 / 637
+  Visualisierung Gammaverteilung
+              Gamma Verteilung
+
+                     5                                                            1.00
+
+
+
+
+                     4
+                                                                                  0.75
+
+
+
+
+                     3
+
+
+              f(x)                                                         F(x)   0.50
+
+
+                     2
+
+
+
+                                                                                  0.25
+                     1
+
+
+
+
+                     0                                                            0.00
+
+                         0.0   0.5   1.0       1.5       2.0       2.5                   0.0       0.5       1.0             1.5   2.0   2.5
+                                           x                                                                         x
+
+                                               α=2,β=3         α = 0.8 , β = 3           α=6,β=3         α = 0.8 , β = 0.6
+
+
+
+
+LMU München                                                           Statistik I                                                              432 / 637
+  Eigenschaften der Gammaverteilung
+
+
+
+
+        ℰ (𝜆) ≡ 𝒢 (𝛼 = 1, 𝛽 = 𝜆)
+      ▶ Für 𝛼 = 1 ergibt sich die Exponentialverteilung mit Parameter 𝜆 = 𝛽:
+
+      ▶ Für 𝛼 = 𝑑 mit 𝑑 ∈ ℕ und 𝛽 = 1 ergibt sich die sogenannte 𝜒 2 -Verteilung
+
+          𝜒 2 (𝑑) ≡ 𝒢 (𝛼 = 𝑑2 , 𝛽 = 12 )
+                   2                    2
+          mit 𝑑 Freiheitsgraden: 𝑋 ∼ 𝜒 2 (𝑑):
+
+      ▶ in R:
+              ▶ Gammaverteilung: [dpqr]gamma(..., shape =𝛼, rate =𝛽)
+              ▶ 𝜒 2 -Verteilung: [dpqr]chisq(..., df=𝑑)
+
+
+
+
+LMU München                                 Statistik I                      433 / 637
+  Normalverteilung
+   Eine Zufallsvariable 𝑋
+      ▶ mit Träger 𝑇 = ℝ
+      ▶ Dichtefunktion
+                                                         2
+                                 1               1 (𝑥 − 𝜇)
+                      𝑓(𝑥) =            exp (−             )   für 𝑥 ∈ ℝ
+                               √2𝜋𝜎 2            2 𝜎2
+
+      ▶ mit Parametern 𝜇 ∈ ℝ und 𝜎 2 ∈ ℝ+
+
+   heißt normalverteilt.
+   Für 𝜇 = 0 und 𝜎 2 = 1 nennt man die Zufallsvariable standardnormalverteilt.
+
+
+                                     𝑋 ∼ 𝒩 (𝜇, 𝜎 2 )
+   Notation:
+
+
+
+   In R: [dpqr]norm(m = 𝜇, sd = √𝜎 2 , ...) (NB: 𝜎 nicht 𝜎 2 !)
+   (“Gaußsche Glockenkurve”)
+LMU München                               Statistik I                      434 / 637
+  Visualisierung Normalverteilung
+              Normal−Verteilung
+
+                     0.8                                                 1.00
+
+
+
+
+                     0.6                                                 0.75
+
+
+
+
+              f(x)   0.4                                          F(x)   0.50
+
+
+
+
+                     0.2                                                 0.25
+
+
+
+
+                     0.0                                                 0.00
+
+                           −4     0                4                                      −4           0            4
+                                  x                                                                    x
+
+                                  m = − 1 , σ2 = 0.25   m = − 1 , σ2 = 4        m = 0 , σ2 = 1   m = 1.5 , σ2 = 4
+
+
+
+
+LMU München                                                Statistik I                                                  435 / 637
+  Mehr zur Normalverteilung
+      ▶ Verschieben und Skalieren einer normalverteilten Zufallsvariable
+        erzeugt eine neue normalverteilte Zufallsvariable:
+
+                            𝑋 ∼ 𝒩 (𝜇, 𝜎 2 ) ⟹ (𝑎 + 𝑏𝑋) ∼ 𝒩 (𝑎 + 𝑏𝜇, 𝑏2 𝜎 2 )
+
+
+      ▶ Summen (und Differenzen) normalverteilter Zufallsvariablen sind
+        normalverteilt:
+
+
+                            𝑋𝑖 ∼ 𝒩 (𝜇𝑖 , 𝜎𝑖 ) ⟹ ∑ 𝑋𝑖 ∼ 𝒩 (∑ 𝜇𝑖 , ∑ 𝜎𝑖 )
+                                          2                                  2
+
+                                                        𝑖            𝑖   𝑖
+            3
+
+      ▶ Das Integral der Normalverteilungsdichte ist nicht analytisch
+                                  𝑥
+        zugänglich, d.h. 𝐹(𝑥) = ∫−∞ 𝑓(𝑢) 𝑑𝑢 hat keine geschlossene Form
+        (d.h. man findet keine Stammfunktion und braucht numerische
+        Integration).
+        Software-Implementation oft über “error function Erf”
+       3
+           Varianz ist Summe der Varianzen nur wenn 𝑋𝑖 unabhängig.
+LMU München                                      Statistik I                     436 / 637
+  Betaverteilung
+   Eine Zufallsvariable 𝑋
+      ▶ mit Träger 𝑇 = (0, 1)
+      ▶ Dichtefunktion
+                                       1
+                                              𝑥 𝛼−1 (1 − 𝑥)𝛽−1   0<𝑥<1
+                            𝑓(𝑥) = { 𝐵(𝛼,𝛽)
+                                    0                            sonst
+
+      ▶ und Parametern 𝛼 ∈ ℝ+ und 𝛽 ∈ ℝ+
+   heißt betaverteilt.
+
+                                       𝑋 ∼ ℬℯ(𝛼, 𝛽)
+   Notation:
+
+
+
+   Betafunktion 𝐵(𝛼, 𝛽) so definiert, dass Dichtefunktion die
+                                1
+   Normierungseigenschaft ∫ 𝑓(𝑥) 𝑑𝑥 = 1 besitzt:
+                              0
+             Γ(𝛼)Γ(𝛽)   1 𝛼−1
+   𝐵(𝛼, 𝛽) = Γ(𝛼+𝛽) = ∫0 𝑥 (1 − 𝑥)𝛽−1 𝑑𝑥.
+   In R: [dpqr]beta(shape1 = 𝛼, shape2= 𝛽, ...)
+LMU München                                    Statistik I               437 / 637
+  Visualisierung Betaverteilung
+              Beta−Verteilung
+
+                     12
+                                                                              1.00
+
+
+
+
+                     9                                                        0.75
+
+
+
+
+              f(x)   6
+                                                                       F(x)   0.50
+
+
+
+
+                     3                                                        0.25
+
+
+
+
+                     0                                                        0.00
+
+                          0.00   0.25   0.50        0.75      1.00                   0.00      0.25             0.50      0.75   1.00
+                                         x                                                                       x
+
+                                               a=2,b=3     a = 2 , b = 0.5           a=4,b=3          a = 0.7 , b = 0.5
+
+
+
+
+LMU München                                                      Statistik I                                                            438 / 637
+  Cauchy-Verteilung
+   Eine Zufallsvariable 𝑋
+      ▶ mit Träger 𝑇 = ℝ
+      ▶ und Dichte- bzw. Verteilungsfunktion
+
+                                       1   1
+                                 𝑓(𝑥) =  ⋅
+                                       𝜋 1 + 𝑥2
+                                       1 arctan(𝑥)
+                                 𝐹(𝑥) = +
+                                       2      𝜋
+
+
+   heißt Cauchy-verteilt.
+
+
+                                      𝑋∼𝒞
+   Notation:
+
+
+
+   Die Cauchy-Verteilung hat “heavy tails”, d.h. sehr viel
+   Wahrscheinlichkeitsmasse verteilt sich auf extreme Werte.
+
+LMU München                           Statistik I              439 / 637
+  Vergleich Cauchy-Verteilung / Normalverteilung
+
+                     0.4                                   1.00
+
+
+
+
+                     0.3                                   0.75
+
+
+
+
+              f(x)   0.2                            F(x)   0.50
+
+
+
+
+                     0.1                                   0.25
+
+
+
+
+                     0.0                                   0.00
+
+                           −10   −5   0   5   10                  −10   −5   0             5            10
+                                      x                                      x
+                                                                             N(0, 1) in grün; Cauchyv. in rot
+
+
+
+
+LMU München                                   Statistik I                                                       440 / 637
+  Einige stetige Verteilungen
+     Name & Symbol                Parameter        Träger      𝐸(𝑋)     Var(𝑋)
+
+
+
+     𝒰 (𝑎, 𝑏)
+     Stetige Gleichverteilung
+                                                               𝑎+𝑏       (𝑏−𝑎)2
+                                𝑎, 𝑏 ∈ ℝ; 𝑎 ≤ 𝑏   [𝑎, 𝑏] ⊂ ℝ    2          12
+
+
+
+     ℰ (𝜆)
+     Exponentialverteilung
+                                                                1          1
+                                    𝜆 ∈ ℝ+           ℝ+         𝜆          𝜆2
+
+
+
+     𝒢 (𝛼, 𝛽)
+     Gammaverteilung
+                                                                𝛼          𝛼
+                                  𝛼, 𝛽 ∈ ℝ+          ℝ+         𝛽          𝛽2
+
+
+
+     𝒩 (𝜇, 𝜎 2 )
+     Normalverteilung
+                                𝜇 ∈ ℝ; 𝜎 2 ∈ ℝ+       ℝ         𝜇          𝜎2
+
+
+
+     ℬ 𝑒(𝛼, 𝛽)
+     Betaverteilung
+                                                                𝛼          𝛼⋅𝛽
+                                  𝛼, 𝛽 ∈ ℝ+         (0, 1)     𝛼+𝛽    (𝛼+𝛽)2 (𝛼+𝛽+1)
+
+   Erwartungswert, Varianz und höhere Momente der Cauchyverteilung sind
+   nicht definiert, die entsprechendenStatistik I
+LMU München                             Integrale divergieren!        441 / 637
+Wichtige parametrische Verteilungen
+   Diskrete parametrische Verteilungen
+   Stetige parametrische Verteilungen
+   Dichtetransformationssatz
+  Dichtetransformationssatz
+
+
+
+
+LMU München              Statistik I   443 / 637
+  Transformationssatz für Dichten: Idee
+   Was ist die Dichte von 𝑌 = 𝑔(𝑋)?4
+
+              Dichte der transformierten ZV Y = g(X)                                      Transformation: g(x) = 2x
+                                                                                    2.0
+
+
+
+
+                                                                                    1.5
+
+
+
+
+                                                                           y = 2x   1.0
+
+
+
+
+                                                                                    0.5
+
+
+
+
+                                                                                    0.0
+              0.8           0.6           0.4          0.2           0.0                  0.00 0.25 0.50 0.75 1.00
+                                           fY(y)                                                     x
+
+                                                                                                                     0.0
+
+
+                                                                                                                     0.5
+
+                                                                                                                           fX(x)
+                                                                                                                     1.0
+
+
+                                                                                                                     1.5
+
+                                                                           Dichte der ursprünglichen ZV X
+
+       4
+           s. a. Claude Artefact
+LMU München                                            Statistik I                                                                 444 / 637
+  Transformationssatz für Dichten: Idee
+   Was ist die Dichte von 𝑌 = 𝑔(𝑋)?5
+
+              Dichte der transformierten ZV Y = g(X)                                Transformation: g(x) = x
+                                                                             1.00
+
+
+
+                                                                             0.75
+
+
+
+                                                                      y= x   0.50
+
+
+
+                                                                             0.25
+
+
+
+                                                                             0.00
+               2.0        1.5         1.0         0.5          0.0                  0.00   0.25   0.50   0.75   1.00
+                                     fY(y)                                                         x
+
+                                                                                                                       0.00
+
+
+
+                                                                                                                       0.25
+
+
+
+                                                                                                                       0.50   fX(x)
+
+                                                                                                                       0.75
+
+
+
+                                                                                                                       1.00
+
+                                                                               Dichte der ursprünglichen ZV X
+
+       5
+           s. a. Claude Artefact
+LMU München                                             Statistik I                                                                   445 / 637
+  Transformationssatz für Dichten: Idee
+   Was ist die Dichte von 𝑌 = 𝑔(𝑋)?6
+
+              Dichte der transformierten ZV Y = g(X)                                     Transformation: g(x) = e−3e3x
+                                                                                  1.00
+
+
+
+                                                                                  0.75
+
+
+
+
+                                                                     y = e−3e3x
+                                                                                  0.50
+
+
+
+                                                                                  0.25
+
+
+
+                                                                                  0.00
+                 4          3           2          1           0                         0.00   0.25   0.50   0.75   1.00
+                                     fY(y)                                                              x
+
+                                                                                                                            0.0
+
+
+
+
+                                                                                                                            0.5
+
+
+                                                                                                                                  fX(x)
+                                                                                                                            1.0
+
+
+
+
+                                                                                                                            1.5
+
+                                                                                    Dichte der ursprünglichen ZV X
+
+       6
+           s. a. Claude Artefact
+LMU München                                            Statistik I                                                                        446 / 637
+  Der Transformationssatz für Dichten
+   Transformationssatz für Dichten:
+   Sei 𝑋 eine stetige Zufallsvariable mit Dichte 𝑓𝑋 (𝑥) und sei 𝑌 die
+   transformierte Zufallsvariable 𝑌 = 𝑔(𝑋) mit Träger
+   𝑇𝑌 = 𝑔(𝑇𝑋 ) = {𝑦 ∶ (∃𝑥 ∈ 𝑇𝑋 ∶ 𝑔(𝑥) = 𝑦)}.
+   Für eine streng monotone und differenzierbare Funktion 𝑔 gilt:
+                                                        ′
+                            𝑓𝑌 (𝑦) = 𝑓𝑋 (𝑔−1 (𝑦)) |(𝑔−1 ) (𝑦)|
+
+
+
+   → berechne Dichten von 𝑌 = exp(𝑋), 𝑌 = √𝑋, etc….
+   Formal:
+   Zufallsvariable 𝑌 ist die Verkettung der Abbildungen 𝑋 ∶ Ω → 𝑇𝑋 und
+   𝑔 ∶ 𝑇𝑋 → 𝑇𝑌 :
+                             𝑌(𝜔) = (𝑔 ○ 𝑋)(𝜔) = 𝑔(𝑋(𝜔))
+
+
+
+LMU München                               Statistik I                    447 / 637
+  Transformationssatz für Dichten: Idee
+                                               ′
+   Intuition für 𝑓𝑌 (𝑦) = 𝑓𝑋 (𝑔−1 (𝑦)) |(𝑔−1 ) (𝑦)|:
+
+      ▶ Es muss gelten: 𝑃 (𝑋 ∈ [𝑎, 𝑏]) = 𝑃 (𝑌 = 𝑔(𝑋) ∈ [𝑔(𝑎), 𝑔(𝑏)]), also
+              𝑏           𝑔(𝑏)
+          ∫𝑎 𝑓𝑋 (𝑥)𝑑𝑥 = ∫𝑔(𝑎) 𝑓𝑌 (𝑦)𝑑𝑦.
+                                 ′          1
+      ▶ Außerdem gilt (𝑔−1 ) (𝑦) =                  , also:
+                                       𝑔′ (𝑔−1 (𝑦))
+                                                                  ′
+      ▶ Flache Steigung von 𝑔(𝑥): |𝑔′ (𝑥)| ≪ 1 ⟺ | (𝑔−1 ) (𝑦)| ≫ 1
+         ⟹ lange Intervalle in 𝑇𝑋 werden zu kurzen Intervallen in 𝑇𝑌
+         ⟹ Dichte muss dort größer werden damit die selbe
+        Wahrscheinlichkeit in das kleinere Intervall passt.
+                                                              ′
+      ▶ Steile Steigung von 𝑔(𝑥): |𝑔′ (𝑥)| ≫ 1 ⟺ | (𝑔−1 ) (𝑦)| ≪ 1
+         ⟹ kurze Intervalle in 𝑇𝑋 werden zu langen Intervallen in 𝑇𝑌
+         ⟹ Dichte muss dort kleiner werden damit die selbe
+        Wahrscheinlichkeit über ein längeres Intervall verteilt wird.
+
+
+
+LMU München                                    Statistik I                   448 / 637
+  Beispiel: Lineare Transformation
+
+
+
+   Wie lautet die Dichte von 𝑌 = 𝑔(𝑋) = 𝑎𝑋 + 𝑏 (𝑎 ≠ 0)?
+
+
+                                           𝑦−𝑏
+                                   𝑔−1 (𝑦) = 𝑎
+                                 −1 ′
+                              |(𝑔 ) (𝑦)| = | 𝑎1 |
+                                           1          𝑦−𝑏
+                               ⟹ 𝑓𝑌 (𝑦) = |𝑎| 𝑓𝑋 ( 𝑎 )
+
+
+
+
+LMU München                             Statistik I         449 / 637
+  Beispiel: Das Quadrat einer
+
+   Wie lautet die Dichte von 𝑌 = 𝑋 2 , falls 𝑋 ∼ 𝒩 (0, 1)?
+  Standardnormalverteilung
+   Betrachte zunächst 𝑍 = |𝑋|, dann hat 𝑍 offensichtlich die Dichte
+                              2             1 2
+                   𝑓(𝑧) =          exp (−     𝑧 )           für 𝑧 ≥ 0 und 0 sonst
+                             √2𝜋            2
+
+   Nun ist 𝑋 2 = 𝑌 = 𝑍 2 = 𝑔(𝑍) und 𝑔 monoton wachsend auf dem Wertebereich
+   ℝ+ von 𝑍. Es ergibt sich wegen 𝑦 = 𝑧2 ⟺ 𝑧 = √𝑦:
+                   ′   1 − 21
+              (𝑔−1 ) (𝑦) =
+                         𝑦
+                       2
+                         1 − 21         1
+              ⟹ 𝑓(𝑦) =        𝑦 ⋅ exp (− 𝑦)                     für 𝑦 ≥ 0 und 0 sonst
+                                        2
+
+   Das ist die Dichte einer 𝒢 (0.5, 0.5),
+                       √2𝜋
+
+
+   also einer 𝜒 2 -Verteilung mit Freiheitsgrad 1:
+
+                                       𝑋 2 = 𝑌 ∼ 𝜒 2 (1)
+
+LMU München                                   Statistik I                               450 / 637
+  Beispiel: Erzeugung exponentialverteilter
+  Zufallsvariablen
+
+
+   Betrachte 𝑋 ∼ 𝒰 [0, 1] und 𝑌 = − log(𝑋), also 𝑔(𝑥) = − log(𝑥).
+   Die Umkehrfunktion und deren Ableitung lauten:
+                                                       ′
+                     𝑔−1 (𝑦) = exp(−𝑦)           (𝑔−1 ) (𝑦) = − exp(−𝑦)
+
+   Durch Anwendung des Transformationssatzes für Dichten erhält man
+
+                      𝑓𝑌 (𝑦) = 1 ⋅ |− exp(−𝑦)| = exp(−𝑦)
+
+   Es gilt: 𝑌 ∼ ℰ (𝜆 = 1)!
+
+   erzeugen, und allgemeiner liefert 𝑌 = − 1𝜆 log(𝑋) Zufallszahlen 𝑌 ∼ ℰ (𝜆).
+   Dies ist also eine einfache Art, exponentialverteilte Zufallsvariablen zu
+
+
+
+
+LMU München                              Statistik I                            451 / 637
+  Anwendung: Inversions-Methode
+   Allgemeiner kann man die Inversions-Methode zur Erzeugung von
+   Realisationen 𝑥𝑖 aus einer beliebigen stetigen Verteilung mit
+   Verteilungsfunktion 𝐹𝑋 (𝑥) verwenden:
+
+      1. Erzeuge Realisationen 𝑢1 , … , 𝑢𝑛 mit 𝑈𝑖 ∼ 𝒰 [0, 1].
+                                                                  iid
+
+      2. Berechne 𝑥𝑖 = 𝐹𝑋−1 (𝑢𝑖 ), 𝑖 = 1, … , 𝑛
+
+   Die 𝑥𝑖 sind dann Zufallszahlen aus der gewünschten Verteilung mit CDF 𝐹(𝑥).
+   Beweis:
+   𝑔() ∶= 𝐹𝑋−1 (), also ist 𝑔−1 () = 𝐹𝑋 ().
+   Ausserdem ist 𝑓𝑈 (𝑥) = 1 ∀ 𝑥 ∈ [0, 1].
+   Damit ist die Dichte der 𝑋𝑖 :
+
+                                     ⏟⏟⏟(𝐹𝑋 (𝑥)) ⋅ 𝐹⏟
+                                                              ′
+                              𝑓(𝑥) = 𝑓𝑈             𝑋 (𝑥) = 𝑓𝑋 (𝑥)
+                                                             𝑓𝑋 (𝑥)
+                                          =1
+
+
+
+
+LMU München                                    Statistik I                452 / 637
+  Intuition: Inversions-Methode
+                             Inversionsverfahren für eine Exponentialverteilung
+                      1.00
+
+
+
+                      0.75
+
+
+
+              f(x)    0.50
+
+
+
+                      0.25
+
+
+
+                      0.00
+                                0                    3                          6   9   12
+                                                                           x
+
+                      1.00
+
+
+
+                      0.75
+
+
+
+
+          F(x) & Ui
+                      0.50
+
+
+
+                      0.25
+
+
+
+                      0.00
+                                0                    3                          6   9   12
+                                                                     x & F−1(Ui)
+
+
+
+
+LMU München                                                       Statistik I                453 / 637
+  Intuition: Inversions-Methode
+                             Inversionsverfahren für eine Normalverteilung
+                       0.4
+
+
+
+                       0.3
+
+
+
+              f(x)     0.2
+
+
+
+                       0.1
+
+
+
+                       0.0
+                                                −2.5                      0.0      2.5
+                                                                           x
+
+                      1.00
+
+
+
+                      0.75
+
+
+
+
+          F(x) & Ui
+                      0.50
+
+
+
+                      0.25
+
+
+
+                      0.00
+                                                −2.5                      0.0      2.5
+                                                                     x & F−1(Ui)
+
+
+
+
+LMU München                                                       Statistik I            454 / 637
+  Intuition: Inversions-Methode
+                             Inversionsverfahren für eine bimodale Dichte
+                       2.0
+
+
+
+                       1.5
+
+
+
+              f(x)     1.0
+
+
+
+                       0.5
+
+
+
+                       0.0
+                                −2                          −1                     0   1
+                                                                           x
+
+                      1.00
+
+
+
+                      0.75
+
+
+
+
+          F(x) & Ui
+                      0.50
+
+
+
+                      0.25
+
+
+
+                      0.00
+                                −2                          −1                     0   1
+                                                                     x & F−1(Ui)
+
+
+
+
+LMU München                                                       Statistik I              455 / 637
+  Beispiel: Zufallszahlen aus der Cauchy-Verteilung
+
+
+   Dichte- und Verteilungsfunktion der Cauchy-Verteilung sind:
+
+                                        1   1
+                                  𝑓(𝑥) =  ⋅
+                                        𝜋 1 + 𝑥2
+                                        1 arctan(𝑥)
+                                  𝐹(𝑥) = +
+                                        2      𝜋
+   Die inverse Verteilungsfunktion ist somit:
+
+                                                         1
+                                𝐹 −1 (𝑦) = tan [𝜋 (𝑦 −     )]
+                                                         2
+
+
+   indem man 𝑈1 , ..., 𝑈𝑛 aus ∼ 𝒰 [0, 1] erzeugt und tan [𝜋 (𝑈𝑖 − 21 )] berechnet.
+   Zufallszahlen aus der Cauchy-Verteilung lassen sich also leicht erzeugen,
+
+
+
+
+LMU München                                Statistik I                           456 / 637
+

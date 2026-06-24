@@ -1,0 +1,2352 @@
+                                      Teil IV: Konvergenz
+
+  Fragen
+     ▶ Was konvergiert eigentlich bei Zufallsvariablen bzw. Verteilungen?
+     ▶ Welche Voraussetzungen haben Grenzwertsätze?
+
+
+
+
+LMU München: Statistik 2 (WTG)   13 Normalverteilung                        603/847
+   Kapitel 14
+       Konvergenz von Zufallsvariablen
+
+
+
+14. Konvergenz von Zufallsvariablen
+14.1 Konvergenzarten
+14.2 Gesetze der großen Zahlen
+ Ziel
+
+
+  Wir betrachten im Folgenden Folgen von Zufallsvariablen (von meßbaren
+  Abbildungen)
+
+
+                                                 X1 , X2 , . . . , Xn : Ω → R
+
+
+     ▶ Was passiert für n → ∞?
+     ▶ Was bedeutet Konvergenz für Zufallsvariablen bzw. Verteilungen?
+     ▶ Welche Arten von Konvergenzsätzen gibt es für Zufallsvariablen und welche
+       Folgerungen?
+
+
+
+
+LMU München: Statistik 2 (WTG)   14 Konvergenz von Zufallsvariablen             605/847
+ Beispiele I
+  x <- rnorm(1000, 0, 1)
+  plot(cumsum(x)/1:1000, type = "s", ylab = "Mittelwert")
+
+
+
+
+                                   0.3
+
+
+
+                                   0.2
+
+
+
+                                   0.1
+
+
+
+                      Mittelwert   0.0
+
+
+
+                                   −0.1
+
+
+
+                                   −0.2
+
+
+
+                                   −0.3
+                                          0             200            400             600   800   1000
+
+                                                                               Index
+
+
+
+
+LMU München: Statistik 2 (WTG)            14 Konvergenz von Zufallsvariablen                              606/847
+ Beispiele II
+  y <- rt(1000, 2)
+  plot(cumsum(y)/1:1000, type = "s", ylab = "Mittelwert")
+
+
+
+
+                                   1
+
+
+
+
+                                   0
+
+
+                      Mittelwert
+
+                                   −1
+
+
+
+
+                                   −2
+
+
+
+
+                                        0             200            400             600   800   1000
+
+                                                                             Index
+
+
+
+
+LMU München: Statistik 2 (WTG)          14 Konvergenz von Zufallsvariablen                              607/847
+ Beispiele III
+  plot(ecdf(x), main = "Empirische Verteilungsfunktion")
+  lines(seq(-5, 5, length = 1000), pnorm(seq(-5, 5, length = 1000)), col = "blue", lty = 2)
+
+
+
+                                                         Empirische Verteilungsfunktion
+
+                              1.0
+
+
+
+                              0.8
+
+
+
+                              0.6
+
+                      Fn(x)
+
+                              0.4
+
+
+
+                              0.2
+
+
+
+                              0.0
+
+                                          −4                 −2              0            2
+
+                                                                         x
+
+
+
+
+LMU München: Statistik 2 (WTG)      14 Konvergenz von Zufallsvariablen                        608/847
+ Beispiele IV
+  plot(ecdf(y), main = "Empirische Verteilungsfunktion", xlim = c(-10, 10))
+  lines(seq(-5, 5, length = 1000), pt(seq(-5, 5, length = 1000), 2), col = "blue", lty = 2)
+
+
+
+                                                            Empirische Verteilungsfunktion
+
+                              1.0
+
+
+
+                              0.8
+
+
+
+                              0.6
+
+                      Fn(x)
+
+                              0.4
+
+
+
+                              0.2
+
+
+
+                              0.0
+
+                                    −10                −5                 0                  5   10
+
+                                                                          x
+
+
+
+
+LMU München: Statistik 2 (WTG)       14 Konvergenz von Zufallsvariablen                               609/847
+ Beispiele V
+  rxquer <- function(i) return(mean(rnorm(1000)))
+  xquer <- sapply(1:1000, rxquer)
+  hist(xquer, breaks = 10, freq = FALSE)
+
+
+
+                                                                   Histogram of xquer
+
+
+                                12
+
+
+                                10
+
+
+                                8
+
+
+
+                      Density   6
+
+
+                                4
+
+
+                                2
+
+
+                                0
+
+                                     −0.10              −0.05               0.00        0.05   0.10
+
+                                                                            xquer
+
+
+
+LMU München: Statistik 2 (WTG)         14 Konvergenz von Zufallsvariablen                             610/847
+ Beispiele VI
+  rxquer <- function(i) return(mean(rt(1000, 2)))
+  xquer <- sapply(1:1000, rxquer)
+  hist(xquer, breaks = 20, freq = FALSE)
+
+
+
+                                                                  Histogram of xquer
+
+                                2.5
+
+
+
+                                2.0
+
+
+
+                                1.5
+
+
+                      Density
+                                1.0
+
+
+
+                                0.5
+
+
+
+                                0.0
+
+                                               −3                −2                −1   0
+
+                                                                           xquer
+
+
+
+LMU München: Statistik 2 (WTG)        14 Konvergenz von Zufallsvariablen                    611/847
+ Beispiele VII
+
+
+
+
+  z <- vector(length = 5000)
+  z[1] <- rnorm(1)
+  for (i in 2:5000) z[i] <- rnorm(1, 0.5 * z[i - 1])
+  plot(cumsum(z)/(1:5000), type = "s", ylab = "Mittelwert")
+
+
+
+
+LMU München: Statistik 2 (WTG)   14 Konvergenz von Zufallsvariablen   612/847
+ Beispiele VIII
+
+
+                                   0.1
+
+
+                                   0.0
+
+
+
+                                   −0.1
+
+
+                      Mittelwert   −0.2
+
+
+                                   −0.3
+
+
+                                   −0.4
+
+
+
+
+                                          0            1000            2000            3000   4000   5000
+
+                                                                               Index
+
+
+
+
+LMU München: Statistik 2 (WTG)            14 Konvergenz von Zufallsvariablen                                613/847
+14. Konvergenz von Zufallsvariablen
+14.1 Konvergenzarten
+14.2 Gesetze der großen Zahlen
+ Konvergenzarten I
+  Aus der Analysis kennen wir
+
+  Definition
+  Sei (fn ) eine Funktionenfolge, fn : M −→ R, ∅ ̸= M ⊆ R.
+    a) (fn ) konvergiert punktweise gegen f : M −→ R g.d.w.
+        ∀      limn→∞ fn (z) = f (z), also genau dann wenn
+          z∈M
+
+                                              ∀      ∀      ∃      ∀ |fn (z) − f (z)| < ε
+                                            z∈M ε∈R+ N∈Nn>N
+
+
+          N hängt im Allgemeinen von z und ε ab.
+    b) (fn ) konvergiert gleichmäßig gegen f : M −→ K genau dann wenn
+
+                                              ∀       ∃     ∀      ∀ |fn (z) − f (z)| < ε
+                                            ε∈R+ N∈Nn>N z∈M
+
+
+          N hängt nicht von z ab, aber im Allgemeinen immer noch von ε →
+          Konvergenz ist gleichmäßig in z.
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten      615/847
+ Konvergenzarten II
+
+
+
+
+  Aus gleichmäßiger folgt punktweise Konvergenz, aber nicht umgekehrt.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   616/847
+ Konvergenzarten III
+  Beispiel 14.1
+                                                fn : [0, 1] → R
+                                           fn (x ) := x n
+                                                      {︃
+                                                          0          für 0 ≤ x < 1
+                                            f (x ) :=
+                                                          1          für x = 1
+
+  Es gilt: fn (x ) konvergiert punktweise gegen f (x ), aber nicht gleichmäßig.
+
+  Für Zufallsvariablen ist sogar punktweise Konvergenz unter Umständen zu
+  “stark”. Insbesondere interessieren uns Fälle mit Wahrscheinlichkeit 0 nicht.
+
+     ▶ Wir definieren vier Arten von Konvergenz für Zufallsvariablen
+             ▶ Fast sichere Konvergenz
+             ▶ Konvergenz in Erwartung
+             ▶ Konvergenz in Wahrscheinlichkeit
+             ▶ Konvergenz in Verteilung (genauer im übernächsten Kapitel)
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   617/847
+ Fast sichere Konvergenz I
+  Idee:
+
+     ▶ Wir betrachten eigentlich punktweise Konvergenz von Xn (ω) → X (ω)
+     ▶ Aber “unmögliche” Ergebnisse interessieren uns nicht
+     ▶ Sei also das Ereignis A: “Menge auf der Xn nicht gegen X konvergiert” eine
+       P-Nullmenge.
+     ▶ Die Aussage “Xn konvergiert punktweise gegen X ” gilt also fast überall.
+
+  Definition
+  Sei (Ω, F, P) Wahrscheinlichkeitsraum und Xi : Ω → R ZV, i = 1, 2, . . ..
+  Dann konvergiert die Folge (Xn )n∈N fast sicher (engl. convergence almost surely)
+  gegen X : Ω → R, wenn
+                        (︂                               )︂
+                      P {ω ∈ Ω | lim Xn (ω) = X (ω)} = 1;
+                                                           n→∞
+
+                                 f.s.
+  Wir schreiben Xn → X oder Xn → X mit Wahrscheinlichkeit 1.
+
+
+LMU München: Statistik 2 (WTG)      14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   618/847
+ Fast sichere Konvergenz II
+
+  Beispiel 14.2
+                                                                              f.s.
+  Sei X1 ∼ U[0, 1] und Xn := X1n . Dann gilt Xn → 0.
+  Beweis: Sei o.b.d.A. ([0, 1], B[0,1] , U[0, 1]) und X1 (ω) = ω. Dann gilt für jedes
+  0 ≤ ω < 1: lim ω n = 0. Für ω = 1 gilt ω n = 1n = 1. Damit ist
+                     n→∞
+  A := {ω ∈ Ω|X (ω)n ̸→ 0} = {1}, eine Nullmenge bezüglich der stetigen
+  Gleichverteilung.
+
+     ▶ Im Beispiel konvergiert die Folge von Zufallsvariablen gegen einen Skalar (in
+       der Praxis meistens der Fall).
+     ▶ Wir können dies auch als Konvergenz gegen eine Zufallsvariable mit
+       Dirac-Verteilung in diesem Skalar sehen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   619/847
+ Konvergenz in Wahrscheinlichkeit I
+
+  Idee:
+  Bei gleichmäßiger Konvergenz betrachten wir den Abstand der Folgenglieder von
+  der Funktion, gegen die die Folge konvergiert:
+
+
+                             ∀ε > 0 ∃N, so dass ∀n ≥ N : |fn (x ) − f (x )| < ε
+
+
+     ▶ Für Zufallsvariablen reicht, dass dieser Abstand mit Wahrscheinlichkeit 1
+       kleiner als ε ist.
+     ▶ Wir betrachten hier also das Ereignis An = {ω ∈ Ω : |Xn (ω) − X (ω)| > ε},
+       also dass Xn von X um mehr als ε abweicht.
+     ▶ Für beliebige kleine ε > 0 konvergiere P(An ) gegen Null:
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   620/847
+ Konvergenz in Wahrscheinlichkeit II
+  Definition
+  Sei (Ω, F, P) ein Wahrscheinlichkeitsraum und Xi : Ω → R, i = 1, 2, . . ..
+  Dann konvergiert die Folge (Xn )n∈N in Wahrscheinlichkeit (engl. convergence in
+  probability) gegen X : Ω → R, falls
+
+                                 P(|Xn − X | > ε) → 0                        für n → ∞ ∀ε > 0;
+
+                                 P
+  Wir schreiben Xn → X und sprechen auch von stochastischer Konvergenz.
+
+  Beispiel 14.3
+                                                                                             P
+  Wie oben X1 ∼ U[0, 1] und Xn := X1n . Dann gilt Xn → 0.
+  Sei o.b.d.A. ([0, 1], B[0,1] , U[0, 1]) und X (ω) = ω. Dann gilt
+                                                                                                 n→∞
+               P(|Xn − 0| > ε) = P(X1n > ε) = P(X1 > ε1/n ) = 1 − ε1/n → 0
+
+
+
+
+LMU München: Statistik 2 (WTG)       14.1 Konvergenz von Zufallsvariablen: Konvergenzarten             621/847
+ Konvergenz in Wahrscheinlichkeit III
+
+
+
+  Es ist kein Zufall, dass hier beide Konvergenzarten gelten:
+
+  Satz
+  Sei (Xn )n∈N , Folge von Zufallsvariablen Xi : Ω → R und X : Ω → R. Dann gilt
+                                                       f.s.                       P
+                                                 Xn → X =⇒ Xn → X
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   622/847
+ Konvergenz in Wahrscheinlichkeit IV
+
+
+  Beweis:
+                                                                                     f.s.
+  Sei C = {ω ∈ Ω | Xn (ω) ̸→ X (ω)}. Nach Def. Xn → X ⇐⇒ P(C ) = 0.
+           ⋃︁
+  Sei Bn = m≥n {ω ∈ Ω : |Xm (ω) − X (ω)| > ε} für beliebiges ε > 0. Die Folge Bn
+  ist monoton absteigend: Bn ⊇ Bn+1 ⊇ . . ., und es gilt für
+
+                                                          ⋂︂
+                                                 B=             Bn :        Bn ↓ B,
+                                                          n≥1
+
+
+
+  also auch lim P(Bn ) = P(B).
+                  n→∞
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten      623/847
+ Konvergenz in Wahrscheinlichkeit V
+  Zeige zunächst dass P(B) = 0:
+
+                                   ∀ ω ∈ C̄ : Xn (ω) → X (ω)
+                       =⇒          ∀ ω ∈ C̄ : ∃ n : |Xm (ω) − X (ω)| < ε ∀ m ≥ n
+                       =⇒          ∀ ω ∈ C̄ : ∃ n : ω ̸∈ Bm ∀ m ≥ n
+                       =⇒          ∀ ω ∈ C̄ : ω ̸∈ B
+                       =⇒          B ∩ C̄ = ∅ =⇒ B ⊆ C =⇒ P(B) ≤ P(C ) = 0
+
+  Da {ω ∈ Ω : |Xn (ω) − X (ω)| > ε} ⊆ Bn und lim P(Bn ) = P(B) = 0:
+                                                                              n→∞
+
+                                                                                          P
+                                 P(|Xn − X | > ε) ≤ P(Bn ) → 0 =⇒ Xn → X .
+
+
+
+
+     ▶ Die Umkehrung gilt aber nicht!
+     ▶ Die fast sichere Konvergenz ist also stärker als die Konvergenz in
+       Wahrscheinlichkeit
+LMU München: Statistik 2 (WTG)    14.1 Konvergenz von Zufallsvariablen: Konvergenzarten       624/847
+ Konvergenz in Wahrscheinlichkeit VI
+
+
+
+  Beispiel 14.4
+  Wahrscheinlichkeitsraum ([0, 1], B[0,1] , U[0, 1]), X (ω) = ω. Seien m ≥ 0,
+  0 ≤ k ≤ 2m − 1 und n = 2m + k. Sei weiter An = [k2−m , (k + 1)2−m ) und
+  Xn (ω) = 1An (ω).
+  Dann gilt für 0 < ε < 1: P [|Xn | > ε] = 2−m
+                                                     P
+  Für n → ∞ ⇒ m → ∞ ⇒ 2−m → 0, also Xn → 0.
+  Aber Xn konvergiert nicht fast sicher, denn für jedes ω ∈ [0, 1] konvergiert Xn (ω)
+  nicht.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   625/847
+ Konvergenz im Moment I
+  Idee:
+
+     ▶ Wir betrachten wieder den Abstand der Folgenglieder von der
+       Zufallsvariablen, gegen die die Konvergenz erfolgt: |Xn − X |
+     ▶ Dabei handelt es sich um eine Zufallsvariable.
+     ▶ Der Abstand muss nicht gegen Null konvergieren, aber zumindest im
+       Erwartungswert sollte er gegen Null konvergieren:
+
+  Definition
+  Sei (Ω, F, P) ein Wahrscheinlichkeitsraum und Xi : Ω → R, i = 1, 2, . . ..
+  Dann konvergiert die Folge (Xn )n∈N im r -ten Moment (engl. convergence in the
+  r -th moment) oder im r -ten Mittel, r ≥ 1, gegen X : Ω → R, wenn
+  E(|Xn |r ) < ∞ ∀ n, E(|X |r ) < ∞ und
+
+                                             E(|Xn − X |r ) → 0                  für n → ∞;
+
+                                 r                        Lr
+  Wir schreiben Xn → X oder Xn → X
+
+LMU München: Statistik 2 (WTG)       14.1 Konvergenz von Zufallsvariablen: Konvergenzarten    626/847
+ Konvergenz im Moment II
+  Beispiel 14.5
+  Sei r > s ≥ 1 und
+                                                                                             1
+                                                   mit Wahrscheinlichkeit n− 2 (r +s)
+                                        {︃
+                                             n
+                           Xn =                                                    1
+                                             0     mit Wahrscheinlichkeit 1 − n− 2 (r +s)
+
+  Es gilt
+                                                                      1                  1
+                                      E(|Xn |s ) = ns · n− 2 (r +s) = n 2 (s−r ) → 0,
+
+                                 s
+  da s < r , also Xn → 0.
+  Es gilt weiterhin
+                                                                     1                 1
+                                     E(|Xn |r ) = nr · n− 2 (r +s) = n 2 (r −s) → ∞,
+
+
+  da r > s.
+
+
+LMU München: Statistik 2 (WTG)       14.1 Konvergenz von Zufallsvariablen: Konvergenzarten       627/847
+ Konvergenz im Moment III
+
+
+
+  Satz
+
+  Sei (Xn )n∈N eine Folge von Zufallsvariablen Xi : Ω → R und X : Ω → R. Dann
+  gilt
+                                                                  r                      s
+                                    ∀r > s ≥ 1 : Xn → X =⇒ Xn → X
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten       628/847
+ Konvergenz im Moment IV
+
+  Beweis:
+  Voraussetzung ist:
+
+                                         E(|Xn − X |r ) = ∥Xn − X ∥rr → 0.
+
+
+  Nach Satz 8.19 gilt für r > s ≥ 1 mit c ≥ 0:
+
+                                              ∥Xn − X ∥rr ≥ c∥Xn − X ∥ss .
+
+
+  Da ∥Xn − X ∥ss ≥ 0 und die linke Seite gegen Null geht, muss auch die rechte
+  Seite gegen Null gehen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   629/847
+ Konvergenz im Moment V
+  Vielleicht etwas überraschend ist die Konvergenz im Moment stärker als die
+  Konvergenz in Wahrscheinlichkeit:
+
+  Satz
+  Sei (Xn )n∈N eine Folge von Zufallsvariablen Xi : Ω → R und X : Ω → R. Dann
+  gilt für r ≥ 1:
+                                                      r                         P
+                                               Xn → X =⇒ Xn → X
+
+
+
+  Beweis:
+  Wegen Satz 14.6 reicht es, r = 1 zu nehmen. Dann gilt
+
+                                                                           E(|Xn − X |)
+                                         P(|Xn − X | > ε) ≤                             ,
+                                                                                ε
+
+  in dem wir in die Markov-Ungleichung (Xn − X ) einsetzen.
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten      630/847
+ Zusammenhänge im Überblick I
+
+
+     ▶ Fast sichere Konvergenz =⇒ Konvergenz in Wahrscheinlichkeit
+     ▶ Konvergenz im Moment =⇒ Konvergenz in Wahrscheinlichkeit
+     ▶ Für r > s: Konvergenz im r -ten Moment =⇒ Konvergenz im s-ten Moment
+
+  Satz
+  Konvergiert eine Folge von Zufallsvariablen Xn im r -ten Mittel gegen X und gilt
+                                                  ∞
+                                                  ∑︂
+                                                        E(|Xn − X |r ) < ∞
+                                                  n=1
+
+  dann konvergiert die Folge auch fast sicher gegen X .
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten   631/847
+ Zusammenhänge im Überblick II
+  Beweis:
+  Für jedes ε > 0 gilt nach der Markov-Ungleichung Satz 8.13
+
+                                                                           E (|Xn − X |r )
+                                        P(|Xn − X | > ε) ≤
+                                                                                 εr
+
+  Ist nun
+                                                 ∞
+                                                 ∑︂
+                                                        E (|Xn − X |r ) < ∞,
+                                                 n=1
+
+  so folgt
+                                              ∞
+                                              ∑︂
+                                                     P(|Xn − X | > ε) < ∞.
+                                              n=1
+
+
+  Nach dem Borel–Cantelli-Lemma tritt das Ereignis
+
+                                                          |Xn − X | > ε
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten       632/847
+ Zusammenhänge im Überblick III
+                                                                                                     f.s.
+  nur endlich oft auf (fast sicher). Da dies für jedes ε > 0 gilt, folgt Xn −−→ X .
+
+  Satz (Borel–Cantelli-Lemma I)
+  Sei (An )n∈N eine Folge von Ereignissen in einem Wahrscheinlichkeitsraum. Es gilt
+                       ∞
+                       ∑︂
+                             P(An ) < ∞ =⇒ P(An tritt unendlich oft auf) = 0
+                       n=1
+
+
+
+  Beweis:
+  „Unendlich oft“ bedeutet
+                                                                     ∞ ⋃︂
+                                                                     ⋂︂
+                                 An „unendlich oft“ =                             An =: lim sup An
+                                                                                          n→∞
+                                                                     k=1 n≥k
+
+
+
+  Für jedes feste k gilt wegen der σ-Subadditivität (Satz 3.28):
+
+LMU München: Statistik 2 (WTG)    14.1 Konvergenz von Zufallsvariablen: Konvergenzarten                     633/847
+ Zusammenhänge im Überblick IV
+                                                 ⎛              ⎞
+                                                      ⋃︂                 ∑︂
+                                              P⎝            An ⎠ ≤              P(An ).
+                                                     n≥k                 n≥k
+
+
+                       ∑︁∞
+  Da die Reihe             n=1 P(An ) konvergiert, gilt
+
+                                            ∑︂
+                                                   P(An ) −→ 0               (k → ∞).
+                                            n≥k
+
+
+  Somit folgt
+                                                       ⎛              ⎞
+                                                            ⋃︂
+                                                    P⎝            An ⎠ −→ 0.
+                                                           n≥k
+
+
+
+  Auf Grund der Stetigkeit des Wahrscheinlichkeitsmaßes erhalten wir
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten    634/847
+ Zusammenhänge im Überblick V
+
+
+
+
+                                                                                    ⎛            ⎞
+                                                                                         ⋃︂
+                            P(An „unendlich oft") = lim P ⎝                                    An ⎠ = 0.
+                                                                        k→∞
+                                                                                         n≥k
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.1 Konvergenz von Zufallsvariablen: Konvergenzarten                     635/847
+14. Konvergenz von Zufallsvariablen
+14.1 Konvergenzarten
+14.2 Gesetze der großen Zahlen
+ Unabhängig und identisch verteilt I
+
+
+  Definition
+  Eine Familie von Zufallsvariablen Xi : Ω → Ωi , i ∈ I heißt
+  unabhängig und identisch verteilt (u.i.v.), wenn die beiden folgenden Kriterien
+  erfüllt sind:
+    ▶ Die Familie Xi : Ω → Ωi , i ∈ I ist stochastisch unabhängig, siehe Def. 4.20
+     ▶ Die Zufallsvariablen haben alle dieselbe Verteilung Xi ∼ F .
+
+
+     ▶ In der Regel benutzt man die Abkürzung des englischen Ausdruck
+       independent and identically distributed, i.i.d. oder iid.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   637/847
+ Unabhängig und identisch verteilt II
+
+
+  Diese Annahme bildet insbesondere die Standardituation ab, in der X1 , . . . , Xn
+  eine Stichprobe eines Merkmals X̃ bei einer einfachen Zufallsauswahl sind.
+  Beispiel X̃ Einkommen, n Personen zufällig ausgewählt
+
+              X1       Einkommen der                     ersten             zufällig ausgewählten Person
+              X2       Einkommen der                    zweiten             zufällig ausgewählten Person
+               ..                                           ..
+                .                                            .
+              Xn       Einkommen der                     n-ten              zufällig ausgewählten Person
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen           638/847
+ Schwaches Gesetz der großen Zahlen I
+
+
+
+  Satz (Schwaches Gesetz der großen Zahlen)
+  Seien X1 , . . . , Xn unabhängig und identisch verteilt mit E(Xi ) = µ und
+  Var(Xi ) = σ 2 < ∞ ∀i = 1, . . . , n.
+  Dann gilt
+                                                                     n
+                                                               1 ∑︂     P
+                                                   X̄n :=            Xi → µ.
+                                                               n i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   639/847
+ Schwaches Gesetz der großen Zahlen II
+
+  Beweis:
+        2
+  X̄n → µ            denn
+                                                            n
+                                                       1 ∑︂            1
+                                      E(X̄n ) =              (E(Xi )) = · nµ = µ
+                                                       n i=1           n
+
+  und
+                                                                              1 2    1
+                                 E(|X̄n − µ|2 ) = Var(X̄n ) =                    nσ = σ 2 → 0
+                                                                              n2     n
+                 P
+   =⇒ X̄n → µ wegen Satz 14.7.
+
+
+
+
+LMU München: Statistik 2 (WTG)    14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   640/847
+ Schwaches Gesetz der großen Zahlen III
+
+
+  Beispiel 14.6
+  Xi ∼ Po(λ) stochastisch unabhängig =⇒ E(Xi ) = λ,
+                                        n
+                                     1 ∑︂     P
+  Var(Xi ) = λ, i = 1, . . . , n und       Xi → λ
+                                     n i=1
+
+
+  set.seed(1)
+  N <- 500
+  x <- rpois(N, 2.5)
+  xbar <- cumsum(x)/(1:N)
+  plot(xbar, pch = 19, cex = 0.2, ylab = expression(bar(x)))
+  lines(c(0, N), rep(2.5, 2), lty = 2, col = "blue", lwd = 2)
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   641/847
+ Schwaches Gesetz der großen Zahlen IV
+
+
+                          3.0
+
+
+
+
+                          2.5
+
+
+
+                      x
+                          2.0
+
+
+
+
+                          1.5
+
+
+
+
+                          1.0
+
+                                 0             100            200             300             400   500
+
+                                                                     Index
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen          642/847
+ Theorem von Bernoulli I
+
+
+
+  Spezialfall des Gesetzes der großen Zahlen: Wir betrachten n 0/1-Experimente
+  mit Erfolgswahrscheinlichkeit π. Das heißt Xi ∼ B(1, π). Dann ist X̄ die relative
+  Häufigkeit der Erfolge und es gilt
+
+                                                                      P
+                                                               X̄n → π
+
+
+  Die relative Häufigkeit konvergiert also gegen die wahre Wahrscheinlichkeit.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   643/847
+ Theorem von Bernoulli II
+  set.seed(1)
+  x <- cumsum(rbinom(500, 1, 0.3))/(1:500)
+  plot(x, pch = 19, cex = 0.2, ylab = expression(bar(x)))
+  lines(c(0, 1000), rep(0.3, 2), lty = 2, col = "blue", lwd = 2)
+
+
+
+
+                          0.4
+
+
+                          0.3
+
+
+                      x
+                          0.2
+
+
+                          0.1
+
+
+                          0.0
+                                 0             100            200             300             400   500
+
+                                                                     Index
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen          644/847
+ Frequentismus
+
+
+
+
+        Folgerungen
+
+        Frequentische Interpretation der Wahrscheinlichkeit: Wahrscheinlichkeiten
+        werden als Grenzwert der relativen Häufigkeit aufgefasst.
+        Frequentische Interpretation des Erwartungswerts: Erwartungswert ist
+        Grenzwert des Mittelwerts.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   645/847
+ Satz von Khinchine I
+
+
+
+
+  Satz von Khinchine (ohne Beweis): Die Voraussetzung Var(Xi ) = σ 2 ist nicht
+  nötig! Es reicht, dass E(Xi ) existiert. Weiterhin aber i.i.d. nötig.
+  Zum Beispiel Xi ∼ t(n) (Def. 19.12)
+
+     ▶ E(Xi ) = 0 für n > 1, für n = 1 existiert der Erwartungswert nicht.
+                    n
+     ▶ Var(Xi ) =        für n > 2, für n ≤ 2 existiert die Varianz nicht.
+                  n−2
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   646/847
+ Satz von Khinchine II
+
+
+
+  set.seed(172)
+  N <- 10000
+  x3 <- rt(N, 3)
+  mean(x3)
+
+
+  ## [1] -0.01566653
+
+  var(x3)
+
+
+  ## [1] 2.521877
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   647/847
+ Satz von Khinchine III
+
+
+
+                          0.2
+
+
+                          0.1
+
+                      x
+                          0.0
+
+
+
+                          −0.1
+
+
+
+                                 0             200            400             600             800   1000
+
+                                                                     Index
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen           648/847
+ Satz von Khinchine IV
+  x2 <- rt(N, 2)
+  mean(x2)
+
+
+  ## [1] 0.02320655
+
+  var(x2)
+
+
+  ## [1] 7.795786
+
+
+
+
+                          1.0
+
+
+
+                          0.5
+
+                      x
+                          0.0
+
+
+
+                          −0.5
+
+
+
+                                 0             200            400             600             800   1000
+
+                                                                     Index
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen           649/847
+ Gegenbeispiel I
+
+
+
+
+  Beispiel 14.7
+                                                                                                    n
+                                                                                                   ∑︂
+  Xi ∼ Cauchy iid. Gesetz der großen Zahlen ist für X̄n = n1                                             Xi nicht anwendbar,
+                                                                                                   i=1
+  da die Cauchy-Verteilung keinen Erwartungswert hat (siehe Beispiel 8.5)!
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen                         650/847
+ Gegenbeispiel II
+
+
+                             4
+
+
+
+                             2
+
+
+
+                             0
+
+                      Xbar
+                             −2
+
+
+
+                             −4
+
+
+
+                             −6
+
+
+
+
+                                  0e+00          2e+04          4e+04           6e+04          8e+04   1e+05
+
+                                                                        Index
+
+
+
+
+LMU München: Statistik 2 (WTG)      14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen            651/847
+ Starkes Gesetz der großen Zahlen I
+
+  Satz ((Zweites) Starkes Gesetz der großen Zahlen nach Kolmogorov)
+
+  Seien X1 , . . . , Xn unabhängige, identisch verteilte Zufallsvariablen. Dann gilt:
+  Existiert der Erwartungswert E(X1 ) und ist er endlich (d.h. E(|X1 |) < ∞), so
+                            n
+                           ∑︂
+                         1
+  konvergiert X̄n := n        Xi P-fast sicher mit
+                                  i=1
+
+                                              lim X̄n = E(X1 )                    P − f.s.
+                                            n→∞
+
+
+  Ist E(X1 ) = ∞, so konvergiert X̄n P-fast sicher nicht gegen einen endlichen
+  Grenzwert.
+
+  Beweis siehe Henze (2019), Seite 200ff.
+
+     ▶ Voraussetzungen von starken und schwachem Gesetz sind identisch (i.i.d.
+       und E(X1 ) < ∞)
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   652/847
+ Monte-Carlo-Verfahren I
+
+
+  Ziel: Wir wollen numerisch ein Integral (Fläche unter der Funktion) über die
+  Funktion f : (0, 1) → (0, 1) berechnen. O.B.d.A. sei f : (0, 1) → (0, 1).
+  Seien (Xi , Yi )i=1,...,n unabhängige, gleichverteilte Zufallsvariablen auf
+  Ω = [0, 1) × [0, 1). Sei B eine Borelmenge (B ∈ BΩ ) und Zi = IB (Xi , Yi ). Es gilt
+
+                                                                                                ∫︂
+                                 p := P(Zi = 1) = P ((Xi , Yi ) ∈ B) =                                  I dλ2
+                                                                                                    B
+
+
+
+  Die Zi sind unabhängig und identisch Bernoulli-verteilt mit p = P(Zi = 1), daher
+  E(Z1 ) = p, also Fläche von B.
+
+
+
+
+LMU München: Statistik 2 (WTG)    14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen               653/847
+ Monte-Carlo-Verfahren II
+
+
+  Algorithmus zur Monte-Carlo-Integration
+
+     ▶ Ziehe n unabhängige gleichverteilte Zufallszahlen (Xi , Yi ) auf [0, 1)2
+     ▶ Stelle fest, ob (Xi , Yi ) in B
+     ▶ Gesetz der großen Zahlen sagt:
+
+
+                                                                     n
+                                                          1 ∑︂
+                                                       lim      Zi = p
+                                                      n→∞ n
+                                                            i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   654/847
+ Monte-Carlo-Verfahren III
+
+
+                                                   1.0
+
+
+
+                                                   0.8
+
+
+
+                                                   0.6
+
+
+                                     sin(x * pi)
+                                                   0.4
+
+
+
+                                                   0.2
+
+
+
+                                                   0.0
+
+                                                         0.0   0.2   0.4       0.6   0.8       1.0
+
+                                                                           x
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen     655/847
+ Monte-Carlo-Verfahren IV
+
+
+
+                                                                          Schätzung
+                                                    N=10                  0.8000000
+                                                    N=10ˆ2                0.5700000
+                                                    N=10ˆ3                0.6540000
+                                                    N=10ˆ4                0.6460000
+                                                    N=10ˆ5                0.6361100
+                                                    N=10ˆ6                0.6371100
+                                                    N=10ˆ7                0.6366096
+                                                    Wahrer Wert           0.6366198
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   656/847
+ Allgemeine Gesetze der großen Zahlen I
+
+
+  Definition
+  Gegeben sei eine Folge von Zufallsvariablen (Xn )n∈N , für deren Erwartungswert
+  gelte E(|Xn |) < ∞ für alle n ∈ N. Man sagt, die Folge genügt dem starken bzw.
+  schwachen Gesetz der großen Zahlen (engl. strong or weak law of large numbers,
+  LLN), wenn die Folge
+                                                                 n
+                                                           1 ∑︂
+                                               X n :=            (Xi − E(Xi ))
+                                                           n i=1
+
+  der zentrierten Mittelwerte fast sicher bzw. in Wahrscheinlichkeit gegen 0
+  konvergiert.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   657/847
+ Allgemeine Gesetze der großen Zahlen II
+
+
+
+  Ohne Beweise einige Gesetze der großen Zahlen, die nicht Unabhängigkeit oder
+  identische Verteilung voraussetzen.
+
+  Satz (Starkes Gesetz der großen Zahlen von Etemadi)
+  Ist die Folge von Zufallsvariablen (Xn )n∈N identisch verteilt und paarweise
+  unabhängig mit E(|Xn |) < ∞, so genügt sie dem starken Gesetz der großen
+  Zahlen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   658/847
+ Allgemeine Gesetze der großen Zahlen III
+
+
+
+  Satz (Erstes Gesetz der großen Zahlen von Kolmogorow)
+  Gilt für eine unabhängige Folge von Zufallsvariablen (Xn )n∈N mit endlicher
+  Varianz die Kolmogorov-Bedingung
+                                                      ∞
+                                                      ∑︂ Var(Xn )
+                                                                             <∞
+                                                      n=1
+                                                                  n2
+
+  so genügt sie dem starken Gesetz der großen Zahlen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   659/847
+ Allgemeine Gesetze der großen Zahlen IV
+
+
+
+  Satz (von Cantelli)
+  Ist eine Folge von Zufallsvariablen (Xn )n∈N unabhängig, habe endliche vierte
+  Momente und seien die zentralen vierten Momente gleichmäßig beschränkt
+
+                                             sup E (Xn − E(Xn ))4 < ∞
+                                                  (︁             )︁
+                                             n∈N
+
+
+  so genügt sie dem starken Gesetz der großen Zahlen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   660/847
+ Allgemeine Gesetze der großen Zahlen V
+
+
+  Beispiel 14.8
+  In der Finanzmathematik bezeichnet man mit Market Microstructure Noise kleine
+  Kursbewegungen, verursacht durch zufällige Trades bzw. Trade-Artifakte. Sie
+  haben einen Mittelwert von 0, aber keine konstante Varianz. In der Regel gilt
+  aber die Kolmogorov-Bedingung
+                                                     ∞
+                                                     ∑︂  Var(Xn )
+                                                                  < ∞,
+                                                     n=1
+                                                           n2
+
+  so dass das Gesetz der großen Zahlen gilt, sprich der Mittelwert gegen 0
+  konvergiert.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   661/847
+ Allgemeine Gesetze der großen Zahlen VI
+  Beispiel 14.9
+  Eine Versicherung hat viele Kunden, die im Laufe des Jahres Schadensfälle
+  melden. Sei Xn die Schadenssumme des n-ten Kunden mit:
+    ▶ Paarweise unabhängigen Schadenshöhen (Schäden sind nicht völlig
+       unabhängig, aber direkte Abhängigkeiten bestehen nur zwischen einzelnen
+       Gruppen, z. B. innerhalb von Haushalten).
+    ▶ Gemeinsamer Erwartungswert: E [Xn ] = µ und eine gleichmäßig beschränkte
+       zweite Momentenbedingung.
+  Die durchschnittliche Schadenshöhe konvergiert also nach dem Satz von Etemadi:
+                                                                 n
+                                                           1 ∑︂
+                                                 X̄n =           Xi → µ f.s.
+                                                           n i=1
+
+
+     ▶ Für abhängige Zufallsvariablen gibt es Ergodensätze, siehe auch Kapitel
+       stochastische Prozesse.
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   662/847
+ Multivariates Gesetz der großen Zahlen
+
+
+
+  Satz (Multivariates starkes Gesetz der großen Zahlen)
+  Seien X1 , X2 , . . . mit Xi = (Xi1 , . . . , Xip ) iid reelwertige Zufallsvektoren auf Rp
+  und µ := E(X1 ) mit E(∥X1 ∥) < ∞. Dann gilt für alle j = 1, . . . , p
+                                                                  n
+                                                            1 ∑︂       f.s.
+                                                 X̄j :=           Xij −−→ µj .
+                                                            n i=1
+
+
+  Beweisidee: komponentenweise Anwendung des eindimensionalen Gesetzes der
+  großen Zahlen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   14.2 Konvergenz von Zufallsvariablen: Gesetze der großen Zahlen   663/847
+   Kapitel 15
+       Verteilungskonvergenz
+
+
+
+15. Verteilungskonvergenz
+15.1 Konvergenz in Verteilung
+15.2 Zusammenhang Konvergenzarten
+15.3 Zentrale Grenzwertsätze
+15.4 Fundamentalsatz der Statistik
+ Verteilungskonvergenz
+
+
+
+
+          Far better an approximate answer to the right question, which is often
+          vague, than the exact answer to the wrong question, which can always
+          be made precise.
+
+          John Tukey (1915–2000)
+          Ann. Math. Statist. 33(1): 1-67 (1962)
+
+
+
+
+LMU München: Statistik 2 (WTG)   15 Verteilungskonvergenz                          665/847
+15. Verteilungskonvergenz
+15.1 Konvergenz in Verteilung
+15.2 Zusammenhang Konvergenzarten
+15.3 Zentrale Grenzwertsätze
+15.4 Fundamentalsatz der Statistik
+ Konvergenz in Verteilung I
+
+
+  Definition
+  Sei (Ω, F, P) ein Wahrscheinlichkeitsraum und Xi : Ω → R Zufallsvariablen mit
+  Verteilungsfunktionen Fi , i = 1, 2, . . ..
+  Dann konvergiert die Folge (Xn )n∈N in Verteilung (engl. convergence in
+  distribution) gegen X : Ω → R mit Verteilungsfunktion F , falls
+
+                                                       lim Fn (x ) = F (x )
+                                                     n→∞
+
+
+  für alle x , in denen F stetig ist.
+                      D
+  Wir schreiben Xn → X . Man spricht auch von schwacher Konvergenz.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.1 Verteilungskonvergenz: Konvergenz in Verteilung   667/847
+ Konvergenz in Verteilung II
+
+
+  Beispiel 15.1
+   ▶ Sei Xn ∼ U(0, 1), also für 0 ≤ x ≤ 1 : FXn (x ) = x .
+     ▶ Sei Z = 1 − X1 , also für 0 ≤ x ≤ 1 : FZ (x ) = x .
+                                   D                  D
+     ▶ Dann gilt offensichtlich Xn → Z , aber auch Xn → X1
+
+     ▶ Im Gegensatz zum letzten Kapitel konvergiert die Folge nicht gegen einen
+       Skalar, sondern gegen eine Zufallsvariable.
+     ▶ Die Zufallsvariable ist aber nicht eindeutig, aber deren Verteilung
+
+                                 D                              a
+  Wir schreiben Xn → U(0, 1) oder Xn ∼ U(0, 1).
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.1 Verteilungskonvergenz: Konvergenz in Verteilung   668/847
+ Poisson-Approximation I
+
+
+  Satz
+  Sei Xn ∼ B(n, pn ) und (pn )n≥1 eine Folge mit
+
+                                                          lim (npn ) = λ
+                                                         n→∞
+
+
+  für ein λ > 0. Dann gilt
+                                                                 D
+                                                          Xn → Po(λ).
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.1 Verteilungskonvergenz: Konvergenz in Verteilung   669/847
+ Poisson-Approximation II
+  Beweis:
+  Statt mit der Verteilungsfunktion können wir hier auch mit der
+  (Wahrscheinlichkeits-)Dichte arbeiten:
+
+
+                P(Xn = k) = limn→∞ kn pnk (1 − pn )n−k
+                                          (︁ )︁
+      lim
+     n→∞
+                                   (︃ )︃k (︃           )︃n−k
+                           n!        λ               λ
+         =       lim                           1−
+                n→∞ k! (n − k)!       n              n
+                      (︃ k )︃ (︃                                   )︃ (︃       )︃n (︃       )︃−k
+                        λ        n(n − 1)(n − 2) · · · (n − k + 1)           λ            λ
+         =       lim                                                    1 −          1 −
+                n→∞     k!                         nk                        n            n
+                  k
+                           (︃                                   )︃ (︃       )︃n (︃       )︃−k
+                λ             n n−1 n−2                 n−k +1            λ            λ
+         =          · lim        ·      ·           ···              1−           1−
+                 k! n→∞ n           n         n              n            n            n
+                           ⏞                    ⏟⏟               ⏞ ⏞ ⏟⏟ ⏞ ⏞           ⏟⏟     ⏞
+                                                           →1                           →e −λ   →1
+                 λk
+         =       k! exp(−λ).
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.1 Verteilungskonvergenz: Konvergenz in Verteilung                670/847
+ Poisson-Approximation III
+
+
+
+  Diese asymptotische Aussage lässt sich auch schon für endliche n anwenden. Es
+  lässt sich sogar die Güte der Approximation abschätzen:
+
+                                 ∞
+                                 ∑︂
+                                       |B(n, pn )({k}) − Po(npn )({k})| ≤ 2npn2 .
+                                 k=0
+
+
+
+  Die Approximation ist also besonders gut für kleine p.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.1 Verteilungskonvergenz: Konvergenz in Verteilung   671/847
+ Poisson-Approximation IV
+                                                       B(10,0.1) und Po(1)                                              B(100,0.1) und Po(10)
+
+                             1.0
+
+                                                                                             0.8
+                             0.8
+
+                      F(x)                                                            F(x)
+                             0.6                                                             0.4
+
+
+                             0.4
+                                                                                             0.0
+
+                                          1        2         3        4      5    6                         0       5     10    15    20   25   30
+
+                                                                  x                                                               x
+
+
+
+                                          Differenz der Verteilungsfunktionen                                   Differenz der Verteilungsfunktionen
+
+
+                             0.010                                                           1e−03
+
+
+
+
+                                                                                             −1e−03 0e+00
+                             0.000
+
+
+
+
+                             −0.015
+                                      0        5        10       15   20   25    30                         0       5     10    15    20   25   30
+
+                                                                  x                                                               x
+
+
+
+
+  Abbildung 27: Oben: Verteilungsfunktion der Binomial- und der approximierenden
+  Poisson-Verteilungen, unten: Differenz der Verteilungsfunktionen.
+
+
+
+LMU München: Statistik 2 (WTG)                15.1 Verteilungskonvergenz: Konvergenz in Verteilung                                                    672/847
+15. Verteilungskonvergenz
+15.1 Konvergenz in Verteilung
+15.2 Zusammenhang Konvergenzarten
+15.3 Zentrale Grenzwertsätze
+15.4 Fundamentalsatz der Statistik
+ Zusammenhang Konvergenzarten I
+
+
+  Satz
+  Sei (Xn )n∈N eine Folge von Zufallsvariablen Xi : Ω → R und X : Ω → R. Dann
+  gilt
+                                                     P                       D
+                                              Xn → X =⇒ Xn → X
+
+
+
+  Beweis:
+                                 P
+  Voraussetzung: Xn → X .
+  Sei Fn (x ) = P(Xn ≤ x );                 F (x ) = P(X ≤ x ). Es gilt für ϵ > 0 :
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten   674/847
+ Zusammenhang Konvergenzarten II
+
+
+     Fn (x ) = P(Xn ≤ x ) = P(Xn ≤ x , X ≤ x + ϵ) + P(Xn ≤ x , X > x + ϵ)
+                                    ≤ P(X ≤ x + ϵ) + P(Xn − X ≤ x − X , x − X < −ϵ)
+                                    ≤ F (x + ϵ) + P(Xn − X < −ϵ)
+                                    ≤ F (x + ϵ) + P(Xn − X < −ϵ) + P(Xn − X > ϵ)
+                                    ≤ F (x + ϵ) + P(|Xn − X | > ϵ)
+              und F (x − ϵ) = P(X ≤ x − ϵ)
+                                    = P(X ≤ x − ϵ, Xn ≤ x ) + P(X ≤ x − ϵ, Xn > x )
+                                    ≤ Fn (x ) + P(|Xn − X | > ϵ)                        (Umformung s.o.)
+
+  Zusammen:
+
+                     F (x − ϵ) − P(|Xn − X | > ϵ) ≤ Fn (x ) ≤ F (x + ϵ) + P(|Xn − X | > ϵ)
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten                  675/847
+ Zusammenhang Konvergenzarten III
+
+  Für n → ∞:
+
+                     F (x − ϵ) − P(|Xn − X | > ϵ) ≤ Fn (x ) ≤ F (x + ϵ) + P(|Xn − X | > ϵ)
+                                 ⏞     ⏟⏟       ⏞                         ⏞     ⏟⏟       ⏞
+                                                  →0                                            →0
+                            =⇒ F (x − ϵ) ≤ lim Fn (x ) ≤ F (x + ϵ)
+                                                      n→∞
+
+  Falls F in x stetig:
+
+                           F (x ) ≤ lim Fn (x ) ≤ F (x )
+                                        n→∞
+                                                                                            D
+                                     =⇒ F (x ) = lim Fn (x ) =⇒ Xn → X
+                                                           n→∞
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten            676/847
+ Zusammenhang Konvergenzarten IV
+
+  Also:
+
+     ▶ Stärkste Konvergenzarten: fast sicher und im Moment
+     ▶ schwächer: in Wahrscheinlichkeit (schwaches Gesetz der großen Zahlen)
+     ▶ am schwächsten: in Verteilung (manchmal auch schwache Konvergenz
+       genannt)
+
+  Achtung! In der Regel:
+
+     ▶ Konvergenz fast sicher, im Moment und in Wahrscheinlichkeit gegen
+       Delta-verteilte Zufallsvariable, also gegen Skalar
+     ▶ Konvergenz in Verteilung gegen mehrere Zufallsvariablen identischer
+       Verteilung, also gegen Verteilung
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten   677/847
+ Satz von Slutsky I
+
+
+  Satz
+                 D               P                    P
+  Seien Xn → X , An → a und Bn → b. Dann gilt:
+                                                                     D
+                                                  An + Bn Xn → a + bX
+
+
+
+  Es gilt also auch für b ̸= 0:
+                                              D                                D
+                                        Xn → X =⇒ a + bXn → a + bX
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten   678/847
+ Satz von Slutsky II
+
+
+  Beweis:
+  Hier nur eine Beweisskizze unter Unabhängigkeit:
+         D
+  Sei Yn → Y unabhängig von Xn , X . Dann
+
+                            Satz10.8                                             Satz6.10
+  Var phi(Xn ,Yn ) (t)           =     Var phiXn (t)·Var phiYn (t) =⇒ Var phiX (t)·Var phiY (t) = Va
+
+               P                                                                            P
+  Mit Yn → a und Faltung folgt Xn + Yn → X + a, analog für Yn → b.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten       679/847
+ Satz von Slutsky III
+                                                                     Geboren in Jaroslawl. Studierte
+                                                                     Mathematik und Physik in Kiew, wurde
+                                                                     1902 wegen revolutionärer
+                                                                     Bestrebungen exmatrikuliert.
+                                                                     Anschliessend Studium des
+                                                                     Ingenieurwesens an der heutigen TU
+                                                                     München. 1905 nahm er sein Studium
+                                                                     in Kiew wieder auf. Entwickelte in
+                                                                     seiner Abschlussarbeit 1911 die
+                                                                     Slutsky-Zerlegung zur Bestimmung der
+                                                                     hicksschen Nachfragefunktion, noch
+                                                                     heute wichtiges Instrument der
+                                                                     Mikroökonomie. 1915 Professur in
+  Jewgeni Jewgenjewitsch Sluzki                                      Kiew, ab 1926 in Moskau.
+  (7./19. April 1880 bis 10. März
+  1948)
+
+
+
+LMU München: Statistik 2 (WTG)   15.2 Verteilungskonvergenz: Zusammenhang Konvergenzarten             680/847
+15. Verteilungskonvergenz
+15.1 Konvergenz in Verteilung
+15.2 Zusammenhang Konvergenzarten
+15.3 Zentrale Grenzwertsätze
+15.4 Fundamentalsatz der Statistik
+ Zentraler Grenzwertsatz I
+
+
+  Satz (Zentraler Grenzwertsatz (engl. central limit theorem, CLT) von
+  Lindeberg-Lévy)
+  Seien Xi , i = 1, . . . unabhängig und identisch verteilt (independent identically
+  distributed, iid) mit E(Xi ) = µ und Var(Xi ) = σ 2 < ∞ ∀i = 1, . . .. Dann gilt
+
+                                                       X̄ − µ D
+                                                          σ   → N(0, 1)
+                                                          √
+                                                              n
+
+  bzw.
+                                                 √                     D
+                                                     n(X̄ − µ) → N(0, σ 2 )
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   682/847
+ Zentraler Grenzwertsatz II
+  Beweis:
+  Der folgende Beweis setzt die Existenz der momenterzeugenden Funktion in einer
+  Umgebung um 0 voraus. Allgemeiner lässt sich der ZGWS mit der
+  charakteristischen Funktion beweisen.
+           Xi − µ                                              ∑︁n
+  Sei Yi =         , also E(Yi ) = 0, Var(Yi ) = 1 und Zn = √1n i=1 Yi .
+               σ
+                                                                        ′
+  Benutze K (s) = log M(s), also K ′ (s) = M (s)
+                                           M(s) und (Quotientenregel, M(0) = 1):
+
+
+
+
+     K ′ (0) = M ′ (0) = E(Yi ) = 0,                         K ′′ (0) = M ′′ (0) − (M ′ (0))2 = Var(Yi ) = 1.
+
+
+
+  für n ∈ {1, 2} da M(0) ≡ 1. K wird auch kumulantenerzeugende Funktion
+  genannt.
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze                       683/847
+ Zentraler Grenzwertsatz III
+
+
+
+                                                                       n
+                                                                         (︄  )︄)︄  (︄
+                                                                t ∑︂
+                       MZn (t) = E (exp(tZn )) = E exp √                 Yi
+                                                                  n i=1
+                                     n
+                                    ∏︂ (︃     (︃      )︃)︃            (︃     )︃n
+                                stu              t         iid           t
+                                =       E exp √ Yi         = MY √
+                                    i=1
+                                                   n                       n
+                                                          (︃       )︃           (︃     )︃
+                                                               t                   t
+                   also KZn (t) = log MZn (t) = n log MY √             = nKY √
+                                                                 n                   n
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze        684/847
+ Zentraler Grenzwertsatz IV
+
+
+
+                                          KY (ϵt) (︁ 0                     )︁
+               lim KZn (t) = lim                           0 , KY (0) = 0
+              n→∞                     ϵ→0     ϵ2
+                                 L’Hospital      tK ′ (ϵt) (︁ 0
+                                            lim Y                   , KY′ (0) = 0
+                                                                                   )︁
+                                    =                             0
+                                            ϵ→0       2ϵ
+                                 L’Hospital      t 2 KY′′ (ϵt)     t2
+                                    =       lim                 =        (KY′′ (0) = Var(Yi ) = 1)
+                                            ϵ→0        2            2
+
+                                         (︃ 2 )︃
+                                           t
+  Behauptung folgt aus MN(0,1) (t) = exp         .
+                                            2
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze                 685/847
+ Beispiele I
+
+
+
+  Beispiel 15.2 (Diskrete Gleichverteilung (Würfelwurf))
+  Sei Xi ∼ U{1, 2, 3, 4, 5, 6}. Dann ist E(Xi ) = 3.5 und Var(Xi ) = 35
+                                                                     12 . Sei
+           n
+          ∑︂
+  X̄ = n1    Xi
+             i=1
+                                                 √ X̄ − 3.5 D
+                                                  n √︁      → N(0, 1)
+                                                      35/12
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   686/847
+ Beispiele II
+                                                             n=1                                                     n=3
+
+
+                                3.0
+                                                                                                    2.0
+
+
+                      Density                                                             Density
+                                2.0
+                                                                                                    1.0
+                                1.0
+
+                                0.0                                                                 0.0
+
+                                      −1.5    −1.0    −0.5   0.0    0.5       1.0   1.5                    −2   −1     0     1   2
+
+
+
+
+                                                             n=10                                                    n=100
+
+
+                                0.6                                                                 0.4
+
+
+
+                      Density                                                             Density
+                                0.4
+                                                                                                    0.2
+                                0.2
+
+                                0.0                                                                 0.0
+
+                                       −4            −2       0           2         4                     −4    −2    0      2       4
+
+
+
+
+                   Abbildung 28: Verteilung des Mittelwerts bei n-maligem Würfeln
+
+
+
+
+LMU München: Statistik 2 (WTG)               15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze                                         687/847
+ Beispiele III
+  Beispiel 15.3
+  Sei X1 , . . . , Xn iid mit E(Xi ) = 0, Var(Xi ) = σ 2 und Var(Xi2 ) = τ 2 < ∞.
+                                                             n
+                                                         1 ∑︂              P
+                                             S2 =              (Xi − X̄ )2 → σ 2
+                                                         n i=1
+                     √
+  Frage: Konvergiert n(S 2 − σ 2 )?
+  S 2 hängt nicht von µ ab, also o.B.d.A. µ = 0.
+  Der Zentrale Grenzwertsatz sagt:
+                              (︄ n           )︄
+                          √     1 ∑︂ 2           D
+                            n         X − σ 2 → N(0, τ 2 )
+                                n i=1 i
+                                                     P
+  Gesetz der großen Zahlen: X̄ 2 → 0. Damit folgt:
+                                  (︄ n                  )︄
+              √     2    2
+                               √    1 ∑︂ 2         2  2    D
+                n(S − σ ) = n            Xi − ⏞⏟⏟⏞
+                                                X̄ −σ      → N(0, τ 2 )
+                                    n                          i=1              →0
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   688/847
+ Asymptotik und Approximation I
+  Beispiel 15.4 (Binomialverteilung (vgl. Statistik I))
+                                                   ∑︁n
+  Sei Xi ∼ B(1, p), i = 1, . . . , n. Dann ist Yn = i=1 Xi ∼ B(n, p). Es gilt der
+  Zentrale Grenzwertsatz von de Moivre-Laplace:
+                          Y − np    D                 Yn − np    a
+                        √︁ n        → N(0, 1), oder √︁           ∼ N(0, 1).
+                          np(1 − p)                    np(1 − p)
+
+
+  Das ist eine asymptotische Aussage. Umformuliert (mit dem 0.025-Quantil der
+  Standardnormalverteilung gleich ungefähr 1.96):
+                          (︃           )︃
+                   Yn a      p(1 − p)
+                      ∼ N p,
+                   n            n
+                       (︃                                           )︃
+                                            Yn
+                               √︂                         √︂
+                                  p(1−p)                     p(1−p)
+                   ⇒ P p − 1.96      n    ≤    ≤ p + 1.96       n      ≈ 0.95
+                                            n
+
+  Für n → ∞ degerniert das Intervall zum Punkt p.
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   689/847
+ Asymptotik und Approximation II
+  Aber: schon für endliche n sind wir (vielleicht) schon nah dran. Wir nutzen die
+  Grenzwertsätze zur Approximation:
+
+                                                       (︃           )︃
+                                                 Yn        p(1 − p)
+                                                    ≈ N p,
+                                                 n            n
+
+  Obiges Intervall gilt approximativ schon für endliche n.
+
+        Zentraler Grenzwertsatz
+        Der Zentrale Grenzwertsatz ist deswegen so "Zentral", weil viele
+        unbekannte Verteilungen durch die Normalverteilung (oder davon
+        abgeleitete Verteilungen) approximiert werden können.
+
+  Beispiel: In der einfachen linearen Regression nimmt man an, dass der
+  (Beobachtungs-)Fehler normalverteilt ist. Begründung: Der Fehler ergibt sich aus
+  der Summe sehr vieler kleiner Fehlerquellen.
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   690/847
+ Konvergenzrate I
+
+
+
+  Definition (Landau-Symbole)
+  Sei fn eine Folge von reellen Zahlen. Dann bezeichnet
+                                              ⃓ ⃓
+                                              ⃓ fn ⃓
+                               o(gn ) → lim ⃓⃓ ⃓⃓ = 0
+                                        n→∞ gn
+                                                 ⃓ ⃓
+                                                 ⃓ fn ⃓
+                               O(gn ) → lim sup ⃓⃓ ⃓⃓ < ∞
+                                          n→∞      gn
+
+
+  Interpretation von o: fn geht schneller gegen 0 als gn .
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   691/847
+ Konvergenzrate II
+  Satz
+  Es seien X1 , . . . , Xn iid mit Xi ∼ F , E(Xi ) = µ, Var(Xi ) = σ 2 , E(Xi3 ) < ∞ und
+  k-tem zentralen Moment µ0k = E((Xi − µ)k ). Dann gilt:
+
+
+                                     √
+                                   (︃    (︃        )︃    )︃
+                                            X̄ − µ
+                       Gn (x ) = P     n              ≤x
+                                               σ
+                                             µ03
+                                                                        (︃    )︃
+                                                         2                 1
+                               = Φ(x ) +       √ (1 − x ) Var phi(x ) +o √
+                                          6 σ3 n                            n
+                                         ⏞             ⏟⏟          ⏞
+                                                             erste Edgeworth-Korrektur
+
+
+
+            (︂         )︂
+     ▶ o         √1         meint eine Folge, die wie √1n → 0 für n → ∞, aber schneller als √1n .
+                   n
+     ▶ für symmetrische Verteilungen ist µ3 = 0 und damit ist z.B. für die
+       t-Verteilung die Approximation durch N(0, 1) schneller als √1n . Die erste
+       Edgeworth-Korrektur ist also für schiefe Verteilungen wie χ2 (n) von
+       Interesse.
+
+LMU München: Statistik 2 (WTG)    15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze        692/847
+ Konvergenzgeschwindigkeit
+
+  Satz (Berry-Esseen)
+
+  Seien X1 , . . . , Xn iid, Xi ∼ F mit E(Xi ) = µ, Var(Xi ) = σ 2 , E(Xi3 ) < ∞ =⇒
+  ∃ c (unabhängig von F ) mit
+                                                       (︁         )︁
+                                                    c E |X1 − µ|3
+                               |Gn (x ) − Φ(x )| ≤ √
+                                                     n    σ3
+
+                           √
+                        (︃     (︃        )︃     )︃
+                                  X̄ − µ
+  wobei Gn (x ) = P          n              ≤x .
+                                     σ
+
+     ▶ Der Satz von Berry-Esseen gilt für endliche n
+     ▶ c ist unabhängig von F
+     ▶ c ist nicht genau bekannt, aktuell bekannte Obergrenze ist cmin ≤ 0.4748
+       (Korolev and Shevtsova (2012))
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   693/847
+ Gegenbeispiel I
+
+
+  Seien X1 , X2 , . . . , iid Pareto-verteilt (siehe Def. 9.9) mit xm = 1 und 1 < α < 2.
+                             α
+  Dann gilt E(Xi ) = α−1        und die Varianz von X existiert nicht.
+
+  # Funktion zum Ziehen aus Pareto-Verteilung über Inversionsmethode
+  rpareto <- function(n, alpha, xm = 1) {
+      u <- runif(n)
+      xm * uˆ(-1/alpha)
+  }
+  ziehen <- function(n, alpha) {
+      x <- rpareto(n, alpha)
+      return(sqrt(n) * sum(x - alpha/(alpha - 1)))
+  }
+  draws <- sapply(rep(10000, 1000), ziehen, alpha = 1.5)
+  hist(draws)
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze   694/847
+ Gegenbeispiel II
+                                                                    Histogram of draws
+
+                                  700
+
+
+                                  600
+
+
+                                  500
+
+
+                                  400
+
+                      Frequency
+                                  300
+
+
+                                  200
+
+
+                                  100
+
+
+                                  0
+
+                                               0e+00              1e+06               2e+06      3e+06
+
+                                                                            draws
+
+
+
+
+                                          1
+                                                                                    ∑︁n
+  Anmerkung: In diesem Fall konvergiert n1/α                                          i=1 (Xi − µ), allerdings nicht gegen
+  die Normalverteilung.
+
+LMU München: Statistik 2 (WTG)          15.3 Verteilungskonvergenz: Zentrale Grenzwertsätze                            695/847
+15. Verteilungskonvergenz
+15.1 Konvergenz in Verteilung
+15.2 Zusammenhang Konvergenzarten
+15.3 Zentrale Grenzwertsätze
+15.4 Fundamentalsatz der Statistik
+ Fundamentalsatz der Statistik I
+
+
+                                       ∑︁n
+  Im Folgenden bezeichne Fˆ︁ (x ) = n1   i=1 I(−∞,x ] (Xi ) die
+  empirische Verteilungsfunktion von X1 , . . . , Xn .
+
+  Satz (Satz von Gliwenko-Cantelli, Hauptsatz der Statistik
+  (engl. Glivenko–Cantelli theorem))
+                  f.s.
+    a) Fˆ︁ (x ) → F (x ) ∀x ∈ R
+       √                      D
+    b) n (Fˆ︁n (x ) − F (x )) → N(0, F (x )(1 − F (x )))                                ∀x ∈ R
+                                f.s.
+    c) sup |Fˆ︁n (x ) − F (x )| → 0
+          x ∈R
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik       697/847
+ Fundamentalsatz der Statistik II
+
+  Beweis:
+  b) IXi ≤x ∼ B(1, F (x )) iid ∀i = 1, . . . , n und x ∈ R. Wegen des ZGWS gilt
+                 (︄     n
+                                           )︄
+             √      1 ∑︂                        D
+               n            IX ≤x − F (x ) → N(0, F (x )(1 − F (x ))) =⇒ b)
+                    n i=1 i
+             ⏞              ⏟⏟               ⏞
+                     √
+                    = n (Fˆ︁n (x )−F (x ))
+
+  a) Starkes Gesetz der großen Zahlen:
+                                    1      ∑︂              f.s.
+                        Fˆ︁n (x ) =              IXi ≤x → E(IXi ≤x ) = P(Xi ≤ x ) = F (x )
+                                    n
+
+  c) ohne Beweis
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik   698/847
+ Fundamentalsatz der Statistik III
+                                                            n=10                                              n=25
+                              1.0                                                           1.0
+
+                              0.8                                                           0.8
+
+                              0.6                                                           0.6
+                      Fn(x)                                                         Fn(x)
+                              0.4                                                           0.4
+
+                              0.2                                                           0.2
+
+                              0.0                                                           0.0
+
+                                    2         3         4         5        6    7                 0   5       10       15   20
+
+                                                              x                                                    x
+                                                            n=100                                             n=250
+                              1.0                                                           1.0
+
+                              0.8                                                           0.8
+
+                              0.6                                                           0.6
+                      Fn(x)                                                         Fn(x)
+                              0.4                                                           0.4
+
+                              0.2                                                           0.2
+
+                              0.0                                                           0.0
+
+                                        0           5                 10       15                 0       5            10        15
+
+                                                              x                                                    x
+
+  Abbildung 29: Approximation der χ2 (5)-Verteilung durch die empirische
+  Verteilungsfunktion
+
+
+
+LMU München: Statistik 2 (WTG)              15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik                                 699/847
+ Fundamentalsatz der Statistik IV
+                                                        n=10                                                         n=25
+                              1.0                                                      1.0
+
+                              0.8                                                      0.8
+
+                              0.6                                                      0.6
+                      Fn(x)                                                    Fn(x)
+                              0.4                                                      0.4
+
+                              0.2                                                      0.2
+
+                              0.0                                                      0.0
+
+                                        2       4             6       8   10                 0       2       4        6         8       10        12
+
+                                                          x                                                           x
+                                                        n=100                                                    n=250
+                              1.0                                                      1.0
+
+                              0.8                                                      0.8
+
+                              0.6                                                      0.6
+                      Fn(x)                                                    Fn(x)
+                              0.4                                                      0.4
+
+                              0.2                                                      0.2
+
+                              0.0                                                      0.0
+
+                                    0       2       4             6   8   10                     0       2       4          6       8        10
+
+                                                          x                                                           x
+
+  Abbildung 30: Approximation der Po(5)-Verteilung durch die empirische
+  Verteilungsfunktion
+
+
+
+LMU München: Statistik 2 (WTG)          15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik                                                      700/847
+ Fundamentalsatz der Statistik V
+                                                       n=10                                                  n=25
+                              1.0                                                         1.0
+
+                              0.8                                                         0.8
+
+                              0.6                                                         0.6
+                      Fn(x)                                                       Fn(x)
+                              0.4                                                         0.4
+
+                              0.2                                                         0.2
+
+                              0.0                                                         0.0
+
+                                    −4     −3     −2   −1      0        1   2                          0           50        100
+
+                                                         x                                                     x
+                                                       n=100                                                 n=250
+                              1.0                                                         1.0
+
+                              0.8                                                         0.8
+
+                              0.6                                                         0.6
+                      Fn(x)                                                       Fn(x)
+                              0.4                                                         0.4
+
+                              0.2                                                         0.2
+
+                              0.0                                                         0.0
+
+                                    −100        −50      0         50       100                 −100   −50     0        50         100
+
+                                                         x                                                     x
+
+  Abbildung 31: Approximation der Cauchy-Verteilung durch die empirische
+  Verteilungsfunktion
+
+
+
+LMU München: Statistik 2 (WTG)             15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik                                     701/847
+ Fundamentalsatz der Statistik VI
+
+
+
+
+        Fundamentalsatz der Statistik
+        Der Fundamentalsatz, auch Hauptsatz der Statistik erlaubt, dass wir
+        allgemein theoretische Verteilungen aus Stichproben schätzen können
+        (wenn diese groß genug sind).
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik   702/847
+ Multivariate Grenzwertsätze I
+
+
+
+  Definition (Konvergenz in Verteilung)
+  Seien X, X1 , X2 , . . . k-dimensionale Zufallsvektoren mit Verteilungsfunktionen
+  F (x ) = P(X ≤ x ), Fn (x ) = P (Xn ≤ x ) , x ∈ Rk , n ≥ 1.
+  Gilt limn→∞ Fn (x) = F (x) für alle x in denen F stetig ist, so konvergiert Xn in
+  Verteilung gegen X:
+                                                                     D
+                                                              Xn → X.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik   703/847
+ Multivariate Grenzwertsätze II
+  Satz (Multivariater Zentraler Grenzwertsatz)
+  Sei (Xn ) eine Folge unabhängiger    und identisch verteilter k-dimensionaler
+  Zufallsvektoren mit E X⊤
+                         (︁       )︁
+                               X
+                             1 1     < ∞.
+  Mit µ := E(X1 ) und Σ := Cov(X1 ) gilt
+                                (︄ n          )︄
+                             1     ∑︂             D
+                            √          Xj − nµ → Nk (0k , Σ).
+                              n j=1
+
+
+  Beweisidee:
+  Seien X1 , X2 , . . . iid Rk -wertig mit E (X1 ) = µ und Cov(X1 ) = Σ.
+  Für jedes a ∈ Rk gilt
+                                                n
+                                        1 ∑︂ ⊤            D
+                                       √                  → N(0, a⊤ Σa)
+                                               a (Xi − µ) −
+                                         n i=1
+
+  (eindimensionaler ZGWS). Das daraus
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik   704/847
+ Multivariate Grenzwertsätze III
+
+
+
+
+                                                     n
+                                             1 ∑︂            D
+                                            √       (Xi − µ) −
+                                                             → Nk (0, Σ).
+                                              n i=1
+
+
+  folgt, ist das sogenannte Cramér–Wold-Theorem.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik   705/847
+ Multivariate Grenzwertsätze IV
+
+
+  Satz (Multivariater Hauptsatz der Statistik)
+  Seien X1 , X2 , . . . iid Rk -wertige Zufallsvektoren mit gemeinsamer
+  Verteilungsfunktion
+                                F (x ) = P(X1 ≤ x ),     x ∈ Rk ,
+  wobei X ≤ x komponentenweise zu verstehen ist. Die empirische
+  Verteilungsfunktion
+                                        n
+                                     1 ∑︂
+                           Fn (x ) =       1{Xi ≤x } .
+                                     n i=1
+  konvergiert gegen die thereotische Verteilungsfunktion.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik   706/847
+ Multivariate Grenzwertsätze V
+
+  Dann gilt:
+    1. (Multivariates starkes Gesetz)
+                                                            f.s.
+                                                Fn (x ) −−→ F (x )                  ∀x ∈ Rk .
+
+
+    2. (Multivariater ZGWS, punktweise) Für jedes feste x gilt
+                                 √ (︁               )︁ D  (︁                    )︁
+                                  n Fn (x ) − F (x ) − → N 0, F (x )(1 − F (x )) .
+
+
+
+  Beweis: wie im eindimensionalen.
+
+
+
+
+LMU München: Statistik 2 (WTG)   15.4 Verteilungskonvergenz: Fundamentalsatz der Statistik      707/847
+

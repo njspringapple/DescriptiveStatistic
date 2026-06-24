@@ -1,0 +1,3661 @@
+                            Teil III: Mehrdimensionale
+                                  Zufallsvariablen
+
+
+
+
+LMU München: Statistik 2 (WTG)   10 Erzeugende Funktionen   428/845
+   Kapitel 11
+       Zufallsvektoren
+
+
+11. Zufallsvektoren
+11.1 Mehrdimensionale Wahrscheinlichkeitsräume
+11.2 Mehrdimensionale Verteilungsfunktion und Dichte
+11.3 Randverteilung
+11.4 Transformationssatz für Dichten
+11.5 Exkurs: Faltung
+  Nach Def. 4.8 ist jede messbare Abbildung X : Ω1 → Ω2 eine Zufallsvariable. In
+  Teil II war Ω2 = R. Nun betrachten wir Ω2 = Rn .
+  Ziele des Kapitels
+     ▶ Konstruktion des mehrdimensionalen Messraums
+     ▶ Verallgemeinerung Verteilungsfunktion und Dichte
+     ▶ Erwartungswert, Randverteilung
+     ▶ Dichtetransformationssatz
+
+
+
+
+LMU München: Statistik 2 (WTG)   11 Zufallsvektoren                            430/845
+ n-facher Münzwurf
+
+
+
+
+  Beispiel 1.2
+  Wir werfen die Münze n-mal. Ergebnisse sind n-Tupel der Form
+  ω = (1, 0, 0, . . . , 1). Die Ergebnismenge Ωn besteht aus 2n Elementen.
+  Wir interessieren uns für die Wahrscheinlichkeit von Ereignissen A ⊂ Ω.
+   =⇒ i.i.d.-Modell!
+
+
+
+
+LMU München: Statistik 2 (WTG)   11 Zufallsvektoren                          431/845
+ Umfrage
+
+
+
+
+     ▶ Wir fragen n Personen: “Welche Partei wollen Sie wählen?”
+     ▶ Wir fragen eine Person nach Parteipräferenz, Schulabschluss, Einkommen,
+       Geschlecht und Schuhgröße
+
+
+
+
+LMU München: Statistik 2 (WTG)   11 Zufallsvektoren                          432/845
+ Temperaturen
+
+
+                                                25
+
+
+
+                                                20
+
+
+
+
+                      Durchschnittstemperatur
+                                                15
+
+
+
+                                                10
+
+
+
+                                                5
+
+
+
+                                                          2021−01         2021−07     2022−01
+
+                                                                              Monat
+
+
+
+  Abbildung 21: Durchschnittstemperatur in München Stadt von November 2020 bis Mai
+  2022
+
+
+LMU München: Statistik 2 (WTG)                       11 Zufallsvektoren                         433/845
+11. Zufallsvektoren
+11.1 Mehrdimensionale Wahrscheinlichkeitsräume
+11.2 Mehrdimensionale Verteilungsfunktion und Dichte
+11.3 Randverteilung
+11.4 Transformationssatz für Dichten
+11.5 Exkurs: Faltung
+ Kartesisches Produkt I
+  Das kartesische Produkt zweier Mengen
+
+                                                A = {a1 , a2 , a3 , . . . , ak }
+                                                B = {b1 , b2 , b3 , . . . , bm }
+
+  ist die Menge
+
+
+                             A × B := {(ai , bj ) | i = 1, . . . , k, j = 1, . . . , m}
+
+
+  Sie besteht also aus allen möglichen Kombinationen, so dass
+
+                           A × B = {(a1 , b1 ) , (a1 , b2 ) , (a1 , b3 ) , . . . , (a1 , bm )
+                                           (a2 , b1 ) , (a2 , b2 ) , (a2 , b3 ) , . . . , (a2 , bm )
+                                         ..
+                                          .
+                                           (ak , b1 ) , (ak , b2 ) , (ak , b3 ) , . . . , (ak , bm )}
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume        435/845
+ Kartesisches Produkt II
+
+
+
+
+  Beispiel 11.1
+                                       A = {1, 2, 3}
+                                       B = {1, 2, 3, 4}
+                                 A × B = {(1, 1), (1, 2), (1, 3), (1, 4), (2, 1), . . .}
+
+
+  Bei den Elementen von A × B handelt es sich um Tupel, das heißt die Reihenfolge
+  ist wichtig! Z.B. ist (1, 2) nicht gleich (2, 1).
+
+
+
+
+LMU München: Statistik 2 (WTG)     11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume   436/845
+ Kartesisches Produkt III
+  Verallgemeinerung
+     ▶ Das kartesische Produkt der Mengen Ω1 , Ω2 , . . . , Ωn wird mit
+
+                                              n
+
+                                            ×Ω = Ω × Ω × . . . × Ω
+                                            i=1
+                                                     i         1        2                   n
+
+
+
+  bezeichnet und besteht aus allen möglichen n-Tupeln, die sich (unter Beachtung
+  der Reihenfolge) aus Elementen aus Ω1 , Ω2 , . . . , Ωn bilden lassen. - Die Mengen
+  Ω1 , Ω2 , . . . , Ωn müssen nicht endlich sein; für endliche Mengen gilt
+                                              n
+
+                                           ×Ω = |Ω | · |Ω | · . . . · |Ω |
+                                            i=1
+                                                     i             1        2                n
+
+
+
+     ▶ Kartesische Produkte werden verwendet, um Ergebnisse komplexer
+       Experimente aus Einzelexperimenten zusammenzusetzen.
+     ▶ Beispiel n-facher Münzwurf: Ω = (ω1 , . . . , ωn ) mit ωi ∈ {Kopf,Zahl}.
+     ▶ Übrigens n kann gegen ∞ gehen.
+
+
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume   437/845
+ Produkt-σ-Algebra I
+
+
+
+
+              ×n
+  Ist Ω = i=1 Ωi und Fi σ-Algebra von Ωi für alle i, dann lässt sich wie folgt eine
+  σ-Algebra für Ω definieren:
+
+                                                                (                                  )!
+                                                                     n
+                  F1 ⊗ F2 ⊗ · · · ⊗ Fn := σ                       ×A |A ∈ F , i = 1, . . . , n
+                                                                   i=1
+                                                                            i    i        i             ,
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume            438/845
+ Produkt-σ-Algebra II
+
+
+  Beispiel 11.2
+  Wir werfen einen Würfel auf einer Linie der Länge 1. Ergebnisse sind die
+  Augenzahlen Ω1 = {1, . . . , 6} und wo auf der Linie der Würfel landet Ω2 = (0, 1).
+  Also insgesamt
+
+                                        Ω = {(ω1 , ω2 )|ω1 ∈ Ω1 , ω2 ∈ Ω2 }
+
+
+  Erzeuger der passenden σ-Algebra ist
+
+                                       {A1 × A2 |A1 ∈ P(Ω1 ), A2 ∈ B(0,1) }
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume   439/845
+ Produkt-σ-Algebra III
+
+
+
+  Borelsche σ-Algebra im n-dimensionalen
+
+  Siehe Def. 2.23: Die von On = {U ⊂ Rn | U offen} erzeugte σ-Algebra
+  B n = B(Rn ) heißt Borelsche σ-Algebra auf Rn .
+                                                                        n
+                                                           On =      ×O
+                                                                      i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume   440/845
+ Produktmaß I
+
+  Definition 11.1
+                                 Nn
+  Das Produktmaß                      i=1 µi ist definiert durch
+
+                        n
+                                      !               !     n
+                                           n
+
+                                          ×A =
+                        O                                   Y
+                                 µi               i               µi (Ai ) ∀ Ai ∈ Fi ∀ i = 1, . . . , n.
+                         i=1              i=1               i=1
+
+
+
+  Streng genommen nur definiert auf messbaren Rechtecken, dann aber eindeutige
+  Fortsetzung.
+
+  Beispiel 11.3
+  Siehe Definition 3.11: λ : B n → R:
+
+                         λ(]a1 , b1 [× · · · ×]an , bn [) = (b1 − a1 ) · . . . · (bn − an )
+
+
+
+
+LMU München: Statistik 2 (WTG)    11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume          441/845
+ Produktmaßraum I
+  Definition 11.2
+  Seien (Ωi , Fi , µi ), i = 1, . . . , n Maßräume. Ihr Produktmaßraum ist der Maßraum
+                                                 n      n
+                                                             !
+                                          n
+
+                                                   ×
+                                                 O      O
+                                            Ωi ,   Fi ,   µi
+                                                    i=1         i=1          i=1
+
+
+     ▶ mit Basismenge              ×ni=1 Ωi = Ω1 × Ω2 × · · · × Ωn ,
+     ▶ Produkt-σ-Algebra
+                                                                   (                                   )!
+                                                                        n
+                       F1 ⊗ F2 ⊗ · · · ⊗ Fn = σ                       ×A |A ∈ F , i = 1, . . . , n
+                                                                       i=1
+                                                                               i    i         i                ,
+
+
+     ▶ und dem Produkmaß
+                  n
+                       !                                !       n
+                                              n
+
+                                            ×
+                 O                                              Y
+                    µi                             Ai       =         µi (Ai ) ∀ Ai ∈ Fi ∀ i = 1, . . . , n.
+                            i=1              i=1                i=1
+
+
+
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume                   442/845
+ Mehrdimensionale Zufallsvariable
+
+
+  Erinnerung
+  Def. 4.8: Ist (Ω1 , F1 , P) ein Wahrscheinlichkeitsraum und (Ω2 , F2 ) ein Meßraum,
+  so heißt eine F1 -F2 meßbare Abbildung
+
+
+                                                          X : Ω1 → Ω2
+
+
+  Zufallsvariable (ZV). Ist Ω2 = Rn , so heißt X
+  n-dimensionale reelle Zufallsvariable.
+  Wir nennen X = (X1 , . . . , Xn )⊤ auch Zufallsvektor (engl. random vector).
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.1 Zufallsvektoren: Mehrdimensionale Wahrscheinlichkeitsräume   443/845
+11. Zufallsvektoren
+11.1 Mehrdimensionale Wahrscheinlichkeitsräume
+11.2 Mehrdimensionale Verteilungsfunktion und Dichte
+11.3 Randverteilung
+11.4 Transformationssatz für Dichten
+11.5 Exkurs: Faltung
+ Mehrdimensionale Verteilungsfunktion I
+
+
+  Definition 11.3 (n-dimensionale Verteilungsfunktion)
+  Sei (Ω, F, P) ein Wahrscheinlichkeitsraum und X : Ω → Rn eine n-dimensionale
+  reelle ZV, X = (X1 , . . . , Xn ). Dann heißt die Funktion
+
+
+                                 FX : Rn        →        [0, 1]
+                  x = (x1 , . . . , xn )        7→       P(X ≤ x)
+                                                 =       P(X1 ≤ x1 , X2 ≤ x2 , . . . , Xn ≤ xn )
+                                                 =       P({ω ∈ Ω | Xi (ω) ≤ xi ∀i = 1, . . . , n})
+
+
+  die n-dimensionale Verteilungsfunktion von X .
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   445/845
+ Mehrdimensionale Verteilungsfunktion II
+
+  Satz 11.4
+  Für x ∈ Rn und h ∈ R sei (x + h) := (x1 + h, . . . , xn + h). Dann gilt
+     i) FX (x ) ist monoton wachsend in jeder Komponente von x .
+    ii) FX (x ) ist rechtsstetig
+
+                                            lim FX (x + h) = FX (x)                     ∀x ∈ Rn .
+                                             h↓0
+
+
+   iii)      lim FX (x ) = 0 für alle k ∈ {1, . . . , n} , lim FX (x + h) = 1.
+          xk →−∞                                                                  h→∞
+   iv) Wahrscheinlichkeitsmaße auf Rn sind durch die zugehörigen n-dimensionalen
+       Verteilungsfunktionen vollständig definiert.
+
+  Ohne Beweis.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   446/845
+ Mehrdimensionale Verteilungsfunktion III
+
+
+  Beispiel 11.4
+  Die Gleichverteilung auf (0, 1) × (0, 1) hat die Verteilungsfunktion
+                            
+                            
+                              0            x1 ≤ 0 oder x2 ≤ 0
+                            
+                            x1 · x2        0 < x1 ≤ 1 und 0 < x2 ≤ 1
+                            
+                            
+                            
+                        F (x1 , x2 ) =        x1              für 0 < x1 ≤ 1 und x2 > 1
+                                            
+                                              x2                    x1 > 1 und 0 < x2 ≤ 1
+                                            
+                                            
+                                            
+                                            
+                                            
+                                              1                     x1 > 1 und x2 > 1
+                                            
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   447/845
+ Mehrdimensionale Verteilungsfunktion IV
+
+                                          1.0
+                                                                                                   0.
+                                                                                                      09
+
+
+                                                                                                   0.
+                                                                                                        08
+                                          0.8
+                                                                                            0.
+                                                                                              07
+
+
+
+                                                                                                  0.0
+                                          0.6                                                        6
+
+
+                                                                                                 0.0
+                                                                                                        5
+
+
+                                                                                                 0.0
+                                          0.4                                                        4
+
+
+                                                                                                 0.03
+
+
+
+                                          0.2                                                    0.02
+
+
+
+                                                                                                 0.01
+
+
+
+                                          0.0
+
+                                                0.0     0.2       0.4      0.6       0.8                1.0
+
+
+
+
+  Abbildung 22: Verteilungsfunktion der zweidimensionalen Gleichverteilung auf dem
+  Einheitsquadrat
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte        448/845
+ Mehrdimensionale Verteilungsfunktion V
+
+                                          1.0
+                                                                                                         0.10
+
+
+                                          0.8
+                                                                                                         0.08
+
+
+
+                                          0.6                                                            0.06
+
+
+
+                                          0.4                                                            0.04
+
+
+
+                                                                                                         0.02
+                                          0.2
+
+
+                                                                                                         0.00
+                                          0.0
+                                                0.0    0.2       0.4        0.6       0.8       1.0
+
+
+
+
+  Abbildung 23: Verteilungsfunktion der zweidimensionalen Gleichverteilung auf dem
+  Einheitsquadrat
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte          449/845
+ Satz von Fubini I
+
+
+
+  Satz 11.5 (Satz von Fubini für das Riemann-Integral)
+  Seien a, b, c, d, e, f ∈ Rn , n ∈ N, a < b, c < d, e < f , I = [a, b],
+  J = [c, d], K = [e, f ]. Wenn I = J × K und f ∈ R, dann gilt
+             Z                        Z Z                   Z Z
+                f (x , y )d(x , y ) =     f (x , y )dx dy =       f (x , y )dy dx
+                    I                                K    J                                 J    K
+
+
+
+  Beweis siehe Analysis II.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   450/845
+ Satz von Fubini II
+
+  Satz 11.6 (Satz von Fubini)
+
+  Seien (Ω1 , F1 , µ) und (Ω2 , F2 , ν) zwei Maßräume mit σ-endlichen Maßen µ und
+  ν. Ist f : Ω1 × Ω2 → R eine nicht-negative, (F1 ⊗ F2 )-B-meßbare Funktion bzw.
+  eine (µ ⊗ ν)-integrierbare Funktion, so gilt
+
+                       Z                                 Z Z                     
+                            f d(µ ⊗ ν)            =           f (ω1 , ω2 ) dµ(ω1 ) dν(ω2 )
+                                                         Z Z                     
+                                                  =           f (ω1 , ω2 ) dν(ω2 ) dµ(ω1 ).
+
+
+
+  Beweis siehe Meintrup and Schäffler (2005) Satz 2.24.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   451/845
+ Satz von Fubini III
+
+  Über den Satz von Fubini definiert man sich mehrdimensionale Dichten bezüglich
+  des dominierenden Produktmaßes µ ⊗ ν:
+
+     ▶ Beispiel “Würfel auf der Linie”: dominierendes Maß ist µZ ⊗ λ
+     ▶ Für mehrdimensionale stetige Verteilungen ist λn dominierende Maß
+     ▶ Für mehrdimensionale diskrete Vereilungen ist µnZ dominierendes Maß
+
+  Beispiel 11.5
+  Die Dichte der Gleichverteilung auf dem Einheitsquadrat (0, 1) × (0, 1) ist
+  konstant gleich 1:
+
+                                             f (x1 , x2 ) = I(0,1)×(0,1) (x1 , x2 )
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   452/845
+ Multinomialverteilung I
+  Urnenmodell mit k Farben. Es werden n Kugeln mit Zurücklegen gezogen. Die
+  Zufallsvariable X = (X1 , X2 , . . . , Xk ) beschreibt die gezogenen Farben, wobei Xi
+  die Anzahl der Kugeln der Farbe i ist.
+
+  Definition 11.7
+                                                                             n
+                                                                             X
+  Sei k ≤ n ∈ N0 und p1 , . . . , pk ∈ [0, 1] mit                                  pi = 1. Die Verteilung mit der
+                                                                             i=1
+  Zähldichte
+                                                                                      
+                                                                            n
+                                     f (n1 , . . . , nk ) =                                p1n1 · · · pknk ,
+                                                                     n1 , . . . , nk
+        k
+        X
+  für         nk = n (sonst ist die Zähldichte gleich 0) heißt Multinomialverteilung
+        i=1
+  M(n, (p1 , . . . , pk )) bzw. M(n, p).
+
+                        n                 n!
+                                
+  Dabei ist        n1 ,...,nk       = n1 !···nk!
+                                                 der Multinomialkoeffizient.
+
+LMU München: Statistik 2 (WTG)      11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte           453/845
+ Multinomialverteilung II
+
+
+
+
+     ▶ Fasst man (o.b.d.A.) die Farben 2 bis k zusammen, dann wird aus dem
+       Multinomialmodell offensichtlich ein Binomialmodell: Es wird entweder mit
+       Wahrscheinlichkeit p1 Farbe 1 gezogen oder nicht (mit Wahrscheinlichkeit
+                Xk
+       1 − p1 =     pi ).
+                         i=2
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   454/845
+ Dirichlet-Verteilung I
+
+
+  Definition 11.8
+                                                    Pm
+  Sei m ≥ 2. Mit xi ∈ [0, 1] und                i=1 xi = 1 heißt die Verteilung mit der Dichte
+                                             Pm
+                                           Γ(        αi ) α1 −1 α2 −1
+                                 f (x|α) = Qm i=1        x1    x2     · · · xmαm −1
+                                              i=1 Γ(αi )
+
+  bezüglich des (m − 1)-dimensionalen Lebesgue-Maßes auf dem (m − 1)-Simplex
+  heißt Dirichlet-Verteilung.
+  X ∼ Diri(α1 , . . . , αm ).
+
+  Spezialfall der Dirichlet-Verteilung für m = 2 ist die Beta-Verteilung (Def. 19.15)
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte   455/845
+ Dirichlet-Verteilung II
+                                 Dirichlet (1,1,1)                Dirichlet (2,2,2)               Dirichlet (10,10,10)
+
+
+
+
+                                 Dirichlet (2,10,2)               Dirichlet (2,2,10)             Dirichlet (0.9,0.9,0.9)
+
+
+
+
+LMU München: Statistik 2 (WTG)    11.2 Zufallsvektoren: Mehrdimensionale Verteilungsfunktion und Dichte                    456/845
+11. Zufallsvektoren
+11.1 Mehrdimensionale Wahrscheinlichkeitsräume
+11.2 Mehrdimensionale Verteilungsfunktion und Dichte
+11.3 Randverteilung
+11.4 Transformationssatz für Dichten
+11.5 Exkurs: Faltung
+ Randverteilung I
+
+  Satz 11.9
+  Sei X : Ω → Rn eine n-dimensionale Zufallsvariable und g : Rn → Rk
+  B n -B k -meßbar. Dann ist
+
+                                         g ◦ X : Ω → Rk ,               ω 7→ g(X(ω))
+
+
+  eine k-dimensionale reelle Zufallsvariable mit Verteilung
+
+                       Pg(X) (A) = P(g(X) ∈ A) = P({ω ∈ Ω | g(X(ω)) ∈ A}).
+
+
+
+  Beweis:
+  Satz 4.13 (Meßbarkeit der Komposition)
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                  458/845
+ Randverteilung II
+  Insbesondere heißt dass, dass für eine n-dimensionale Zufallsvariable oder
+  Zufallsvektor X = (X1 , . . . , Xn ) auch alle Xi eindimensionale Zufallsvariablen
+  sind.
+  Definition 11.10 (Randverteilung)
+
+  Ist g : Rn → R mit g(x) = xj für ein festes j ∈ {1, . . . , n} (Projektion auf j-te
+  Koordinate), so gilt:
+
+
+                        g(X) = Xj ,
+                     PXj (A) = PX ({x ∈ Rn : xj ∈ A}) = P(Xj ∈ A) für A ∈ B.
+
+
+  PXj heißt Randverteilung oder marginale Verteilung (engl. marginal distribution)
+  von Xj .
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                   459/845
+ Randverteilung III
+
+     ▶ Besitzt X die Dichte f , so hat Xj (mit ν = λ oder ν = µZ ) die marginale
+       Dichte oder Randdichte
+
+
+
+                 fj : R → R
+                           Z     Z
+                  fj (y ) = . . . f (x1 , x2 , . . . , xj−1 , y , xj+1 , . . . , xn )
+
+                                                          dν(xn ) . . . dν(xj+1 )dν(xj−1 ) . . . dν(x1 )
+
+
+
+     ▶ Erwartungswert und Varianz der marginalen Verteilung werden marginaler
+       Erwartungswert bzw. marginale Varianz genannt (usw.).
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                                      460/845
+ Randverteilung IV
+
+
+  Beispiel 11.6 (Zweidimensionale Gleichverteilung)
+                                              
+                  (X , Y ) ∼ U (0, 1) × (0, 1)
+                                 f (x , y ) = I(0,1)×(0,1) (x , y ) = I(0,1) (x ) · I(0,1) (y )
+                                              Z
+                                   fX (x ) = f (x , y )dy = I(0,1) (x )
+
+                                        X ∼ U(0, 1)
+
+  Aus Symmetriegründen: Y ∼ U(0, 1)
+
+
+
+
+LMU München: Statistik 2 (WTG)     11.3 Zufallsvektoren: Randverteilung                           461/845
+ Mehrdimensionaler Erwartungswert
+
+
+
+  Definition 11.11
+  Sei X : Ω → Rn , X = (X1 , . . . , Xn ) eine n-dimensionale Zufallsvariable, dann heißt
+  der Vektor der marginalen Erwartungswerte
+
+                                             E(X) := (E(X1 ), . . . , E(Xn ))
+
+
+  der (n-dimensionale) Erwartungswert oder Erwartungswertvektor von X
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                462/845
+ Multinomialverteilung I
+  Beispiel 11.7 (Multinomialverteilung)
+  Sei X ∼ M(n, p)
+                                                                            n!
+                                           f (n1 , . . . , nk ) =                    p n1 · · · pknk ,
+                                                                      n1 ! · · · nk ! 1
+
+  O.B.d.A. für i = 1:
+                                               X
+                  fX1 (n1 ) =                                   f (n1 , . . . , nk )
+                                      n2 +...+nk =n−n1
+                                               X           n!
+                                 =                                   p1n1 · · · pknk
+                                      n +...+n =n−n
+                                                    n 1 ! · · · nk !
+                                       2          k         1
+                                                                                                     !
+                                         n!                                   X        (n − n1 )! ni
+                                 =               p n1                                            pi
+                                   n1 !(n − n1 )! 1                   n2 +...+nk =n−n1
+                                                                                          ni !
+                                                                       k
+                                                                              !n−n1
+                                            n!                        X
+                                 =                  p n1                   pi         Multinomialtheorem
+                                      n1 !(n − n1 )! 1                 i=2
+
+
+LMU München: Statistik 2 (WTG)       11.3 Zufallsvektoren: Randverteilung                                  463/845
+ Multinomialverteilung II
+
+
+
+
+     ▶ Randverteilung Xi ∼ B(n, pi )
+     ▶ Marginaler Erwartungwert E(Xi ) = npi
+     ▶ Marginale Varianz Var(Xi ) = npi (1 − pi )
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung   464/845
+ Zweidimensionale Normalverteilung I
+
+
+  Definition 11.12
+  Sei X eine Zufallsvariable Ω → R2 mit Dichte
+                                        1
+            fX (x1 , x2 ) =             p        ·
+                                 2πσ1 σ2 1 − ϱ2
+                                                h                                                 i
+                                                   (x1 −µ1 )2             2
+                                            1
+                                 · exp − 2(1−ϱ2)       σ2
+                                                              + (x2 −µ
+                                                                    σ2
+                                                                       2)
+                                                                            − 2ϱ(x1 −µ1 )(x2 −µ2 )
+                                                                                     σ1 σ2            .
+                                                                     1   2
+
+
+  bezüglich λ2 . Dann ist X zweidimensional normalverteilt
+
+                                              σ12
+                                                       
+                                  µ1                ϱσ1 σ2
+                      X ∼ N2            ,
+                                  µ2        ϱσ1 σ2    σ22
+
+
+
+
+LMU München: Statistik 2 (WTG)    11.3 Zufallsvektoren: Randverteilung                                    465/845
+ Zweidimensionale Normalverteilung II
+
+                                               ρ=0                               ρ = 0.5
+
+
+
+
+                                 f
+                                                                        f
+
+                                                       x2                                  x2
+                                          x1                                x1
+
+
+
+
+                                           ρ = − 0.5                             ρ = 0.9
+
+
+
+
+                                 f                                      f
+
+                                                       x2                                  x2
+                                          x1                                x1
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                           466/845
+ Zweidimensionale Normalverteilung III
+                                                       ρ=0                                                       ρ = 0.5
+                                 3                                                          3
+
+                                 2                       0.02                               2                                         0.02
+
+                                                         0.06                                                                      0.06
+                                 1                                                          1                            0.1
+                                                            2          1
+                                                                                                                               0.14
+                                                       0.1          0.
+                          x2     0                                                     x2   0                       0.1
+                                                                                                                         6
+                                                             0.14
+                                                                                                                       2
+                                                                                                                    0.1
+                                 −1                     0.08                                −1              0.08
+                                                         0.04                                              0.04
+                                 −2                                                         −2
+
+                                 −3                                                         −3
+
+                                      −3   −2   −1           0             1   2   3             −3   −2   −1        0                 1            2   3
+
+                                                  ρ = x1
+                                                      − 0.5                                                      ρ =x10.9
+                                 3                                                          3
+
+                                 2              0.02                                        2
+                                                                                                                                             0.05
+                                                  0.06
+                                 1                          0.1                             1                                         0.15
+                                                       14                                                                      5
+                                                   0.                                                                    0.2
+                          x2     0                               0.1                   x2   0                              3
+                                                                  6                                                      0.
+                                                        0.1
+                                                             2                                                     0.2
+                                 −1                               0.08
+                                                                                            −1
+                                                                       0.04                                0.1
+                                 −2                                                         −2
+
+                                 −3                                                         −3
+
+                                      −3   −2   −1           0             1   2   3             −3   −2   −1        0                 1            2   3
+
+                                                            x1                                                       x1
+
+
+
+
+LMU München: Statistik 2 (WTG)        11.3 Zufallsvektoren: Randverteilung                                                                                  467/845
+ Zweidimensionale Normalverteilung IV
+  Zur Vereinfachung arbeiten wir im Folgenden erst Mal mit µ1 = µ2 = 0 und
+  σ12 = σ22 = 1. Die Dichte von X = (X1 , X2 ) ist dann
+                                                                                                       
+                                             1                              1        2               2
+               fX (x1 , x2 ) =                           exp −                    (x   − 2ϱ x x
+                                                                                             1 2 + x   )  .
+                                                                        2(1 − ϱ2 ) 1                 2
+                                        p
+                                   2π       1 − ϱ2
+
+  Randdichte:
+                             Z
+             fX1 (x1 ) =         fX (x1 , x2 )dx2
+                             Z                                                    
+                                  1                   1         2               2
+                         =               exp −               (x   − 2ϱ x x
+                                                                        1 2 + x   )  dx2
+                                                  2(1 − ϱ2 ) 1                  2
+                                p
+                              2π 1 − ϱ2
+                                                            
+                                1                  1       2
+                         =            exp −              x ·
+                                              2(1 − ϱ2 ) 1
+                              p
+                            2π 1 − ϱ2
+                          Z                                 
+                                       1        2
+                         · exp −             (x   − 2ϱ x x
+                                                        1 2 )   dx2
+                                   2(1 − ϱ2 ) 2
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                                         468/845
+ Zweidimensionale Normalverteilung V
+
+
+  Berechnung des Integrals über den 1-Trick:
+
+
+   Z                                  
+                  1       2
+     exp −              (x − 2ϱ x1 x2 ) dx2
+             2(1 − ϱ2 ) 2
+             x12 ϱ2
+                      Z                                         
+                                       1       2               2 2
+   = exp                   exp −             (x − 2ϱx1 x2 + x1 ϱ ) dx2
+           2(1 − ϱ2 )              2(1 − ϱ2 ) 2
+                            x12 ϱ2
+                                    Z                                                   
+     p                                         1                    1                  2
+   = 2π(1 − ϱ2 ) exp                                    exp   −            (x2 − x 1 ϱ)  )   d
+                          2(1 − ϱ2 )                            2(1 − ϱ2 )
+                                         p
+                                            2π(1 − ϱ2 )
+                                         |                      {z                         }
+                                                                        Dichte von N(x1 ϱ, 1−ϱ2 )
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                               469/845
+ Zweidimensionale Normalverteilung VI
+
+  Zusammen also
+
+                                         Z
+                        fX1 (x1 ) =           fX (x1 , x2 )dx2
+                                         p
+                                        2π1 − ϱ2
+                                                                               
+                                                           1        2     2 2
+                                    =            exp −           (x   − x   ϱ )
+                                                       2(1 − ϱ2 ) 1       1
+                                         p
+                                      2π 1 − ϱ2
+                                                    
+                                       1          1
+                                    = √ exp − x12
+                                        2π        2
+
+
+     ▶ Also ist X1 ∼ N(0, 1).
+     ▶ Aus Symmetriegründen gilt X2 ∼ N(0, 1).
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung               470/845
+ Zweidimensionale Normalverteilung VII
+
+
+  Für die allgemeine zweidimensionale Normalverteilung
+
+                                                                         σ12
+                                                                                      
+                                                        µ1                       ρσ1 σ2
+                                 X ∼ N2                        ,
+                                                        µ2              ρσ1 σ2    σ22
+
+
+  gilt:
+
+     ▶ X1 ∼ N(µ1 , σ12 )
+     ▶ X2 ∼ N(µ2 , σ22 )
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.3 Zufallsvektoren: Randverteilung                          471/845
+11. Zufallsvektoren
+11.1 Mehrdimensionale Wahrscheinlichkeitsräume
+11.2 Mehrdimensionale Verteilungsfunktion und Dichte
+11.3 Randverteilung
+11.4 Transformationssatz für Dichten
+11.5 Exkurs: Faltung
+ Erinnerung: Transformationssatz für Dichten I
+
+
+  Satz 11.13 (Dichtetransformationssatz)
+
+  Sei X : Ω → R Zufallsvariable mit stetiger Verteilungsfunktion FX und Dichte
+            ∂FX (x )
+  fX (x ) =          bezüglich des Lebesgue-Maßes λ.
+              ∂x
+                                                     ∂g(x )
+  Sei g : R → R bijektiv und stetig differenzierbar,        ̸= 0 mit h = g −1 . Dann
+                                                      ∂x
+  gilt: g ◦ X hat Dichte
+
+                                                                                    ∂h(y )
+                                            fg◦X (y ) = fX (h(y )) ·
+                                                                                     ∂y
+
+  bezüglich λ.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten       473/845
+ Erinnerung: Transformationssatz für Dichten II
+  Beispiel 11.8
+  Sei X ∼ Exp(λ). Wie ist die Verteilung von X 2 ? Da X ≥ 0 fast sicher, gilt:
+
+                                 g(x )      =       x2
+                                                     √
+                              h(y )      g −1 (y ) = y
+                                            =
+                             ∂h(y )        1
+                                       =   √
+                              ∂y         2 y
+                                             √       1
+                             fX 2 (y ) = fX ( y ) · √
+                                                    2 y
+                                                     √    1            √
+                                       = λ exp (−λ y ) · √ · I[0,∞[ ( y )
+                                                         2 y
+                                           λ           √
+                                       =   √ exp (−λ y ) · I[0,∞[ (y )
+                                         2 y
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten   474/845
+ Erinnerung: Transformationssatz für Dichten III
+  Vielleicht einfacher:
+
+
+
+                      FX (x )        = P(X ≤ x ) = 1 − exp(−λx )
+                                                           √
+                     FX 2 (y )       = P(X 2 ≤ y ) = P(X ≤ y )
+                                                   √
+                                     = 1 − exp(−λ y )
+                                        ∂                 √      1           √
+                           fX 2      =    FX 2 = λ exp (−λ y ) · √ · I[0,∞[ ( y )
+                                       ∂y                       2 y
+
+
+  Nicht anwendbar für
+     ▶ X ∼ U{−2,−1,+1,+2} =⇒ X 2 ∼ U{1,4} .
+     ▶ X ∼ N(0, 1) =⇒ X 2 ∼ χ2 – aber g(x ) = x 2 nicht bijektiv!
+     ▶ X ∼ Nk (µ, Σ) =⇒ g(X) ∼ ?
+
+
+
+LMU München: Statistik 2 (WTG)    11.4 Zufallsvektoren: Transformationssatz für Dichten   475/845
+ Allgemeiner Transformationssatz I
+
+
+  Aus Analysis II:
+
+  Definition 11.14
+  Sei G ⊆ Rm , f : G −→ Rm , m ∈ N, x ∈ G. Wenn für die Funktion
+  f := (f1 , . . . , fm ) alle partiellen Ableitungen ∂k f existieren, dann heißt die
+  quadratische m × m-Matrix der partiellen Ableitungen die Jacobi-Matrix:
+                                                                                         
+                                                              ∂1 f1 (x ) . . . ∂n f1 (x )
+                               ∂ (f1 , . . . , fm )               ..               ..
+                 J(↶) :=                            (x ) := 
+                                                                                         
+                              ∂ (x1 , . . . , xm )                 .                .     
+                                                              ∂1 fm (x ) . . . ∂n fm (x )
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten        476/845
+ Allgemeiner Transformationssatz II
+
+
+  Satz 11.15 (Allgemeiner Transformationssatz)
+
+  Sei X : Ω → Rn mit n ∈ N eine (stetige mehrdimensionale) Zufallsvariable mit
+  Dichte fX bzgl. λn . Sei g : Rn → Rn meßbare Funktion. Ferner sei für
+  Gm ∈ B n , m = 1,. . . , M eine (fast sicher vollständige) Aufteilung des Rn mit
+             S˙
+  P X∈          Gm = 1, so dass
+               m∈M
+
+                                 gm := g|Gm bijektiv und stetig differenzierbar
+
+                                                    −1
+  Sei für alle m ∈ M Jm (y ) die Jacobi-Matrix für gm  := hm = (h1m , . . . , hnm ).
+
+
+
+
+LMU München: Statistik 2 (WTG)    11.4 Zufallsvektoren: Transformationssatz für Dichten   477/845
+ Allgemeiner Transformationssatz III
+
+
+  Dann gilt
+
+                                                                       X
+                                                    fg◦X (y) =                 vm (y)
+                                                                      m∈M
+
+
+
+  mit
+
+                                   
+                                        fX (hm (y)) · |det (Jm (y ))|                    falls hm (y ) ∈ Gm ,
+                     vm (y) =
+                                                      0                                  sonst.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten                          478/845
+ Allgemeiner Transformationssatz IV
+
+
+
+  Beweisidee:
+
+
+                                           P(Y ∈ A) = P X ∈ g −1 (A) .
+                                                                    
+
+
+
+  Integration über das Urbild und Variablentransformation im Integral, daraus
+  Jacobideterminante als Volumenfaktor.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten   479/845
+ Beispiel eindimensionale, nicht bijektive
+ Transformation
+  X ∼ N(0, 1) und g(x ) = x 2 .
+
+                            G1 = R+ ; G2 = R− ; P(G1 ∪ G2 ) = 1
+                                 √               √
+                        h1 (y ) = y ; h2 (y ) = − y
+                      |J1 (y )| = 21 y −1/2 ; |J2 (y )| = | − 12 y 1/2 | = 12 y 1/2
+                                                                                √
+                        v1 (y ) = √12π exp − 12 (y 1/2 )2 · |J1 (y )| · IR+ ( y )
+                                                                                  √
+                        v2 (y ) = √12π exp − 12 (−y 1/2 )2 · |J2 (y )| · IR− (− y )
+                       vm (y ) = √12π exp − 12 y · 12 y −1/2 · IR+ (y ) für m = 1, 2
+                                                      
+
+                       fX 2 (y ) = v1 (y ) + v2 (y ) = 2v1 (y ) =
+                                   q
+                                       1 −1/2
+                                                 exp − 21 y · IR+ (y )
+                                                            
+                                 = 2π     y
+
+                                                                                         1
+                                                                                                    √
+  fX 2 ist die Dichte der χ2 -Verteilung mit k = 1 Freiheitsgraden, da Γ                 2       =       π.
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten                    480/845
+ Beispiel mehrdimensionale Transformation I
+
+
+  Seien X1 ∼ N(0, 1), X2 ∼ N(0, 1) stochastisch unabhängig. Wie ist die Verteilung
+  von Z = XX12 ?
+
+        Mehrdimensionaler Transformationssatz
+        Der Transformationssatz gilt nur für g : Rn → Rn . Wollen wir die
+        Dimension ändern, müssen wir in zwei Schritten vorgehen:
+         ▶ Definiere g : Rn → Rn , z.B. für g(X ) = (Z , W ), so dass Z die
+            interessierende Zufallsvariable ist
+         ▶ Berechne Randverteilung von Z
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten   481/845
+ Beispiel mehrdimensionale Transformation II
+
+
+
+
+  Schritt 1
+           ∼ N(0, 1),
+  Seien X1          X2 ∼ N(0, 1) stochastisch unabhängig. Wie ist die Verteilung
+             X2
+  von Y =       , X1 ?
+             X1
+  Gemeinsame Dichte: f (x1 , x2 ) = ϕ(x1 )ϕ(x2 ) wegen Unabhängigkeit.
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten   482/845
+ Beispiel mehrdimensionale Transformation III
+
+
+                                                                         
+                                                                x2
+                                 g(x1 , x2 )       :=              , x1
+                                                                x1
+                                 h(y1 , y2 )        =       g −1 (y1 , y2 ) = (y2 , y1 y2 )
+                                                                             
+                                                                     0 1
+                                    det(J)          =       det                  = −y2
+                                                                    y2 y1
+                        fY1 ,Y2 (y1 , y2 )          =       ϕ (y2 ) ϕ (y1 · y2 ) | det J|
+                                                                                                   
+                                                            |−y2 |            1 2
+                                                                                   y2 + (y1 y2 )2
+                                                                                                  
+                                                    =               exp −
+                                                              2π              2
+                                                                                                
+                                                            |y2 |          1 2
+                                                                                y2 · (1 + y12 )
+                                                                                               
+                                                    =             exp −
+                                                             2π            2
+
+
+
+
+LMU München: Statistik 2 (WTG)     11.4 Zufallsvektoren: Transformationssatz für Dichten                483/845
+ Beispiel mehrdimensionale Transformation IV
+
+
+
+
+  Schritt 2
+                                                                      
+                                                            X2
+  Gegeben ist die Dichte von Y =                               , X1         = (Z , X1 ). Wie ist die Verteilung von
+                                                            X1
+          X2
+  Z=         ?
+          X1
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten                          484/845
+ Beispiel mehrdimensionale Transformation V
+
+                                 Z∞
+        fZ1 (y1 )     =                  fY1 ,Y2 (y1 , y2 )dy2
+                            −∞
+                             Z∞                               
+                                          y2      1 2       2
+                      =      2               exp − y2 (1 + y1 ) dy2                          (Symmetrie)
+                                          2π      2
+                                     0
+                                     Z∞                    
+                                 1            1 2         2
+                      =               y2 exp − y2 (1 + y1 ) dy2
+                                 π            2
+                                   0
+                                                               ∞
+                                 1          1                −1               −1
+                      =              exp − y22 (1 + y12 )                =             (0 − 1)
+                                 π          2              1 + y12 y2 =0   π(1 + y12 )
+                                      1
+                      =                                  Dichte der Cauchy-Verteilung, Def. 8.3
+                                 π (1 + y12 )
+
+
+
+LMU München: Statistik 2 (WTG)       11.4 Zufallsvektoren: Transformationssatz für Dichten                 485/845
+ Faltung I
+  Sei X = (X1 , X2 ) eine zweidimensionale Zufallsvariable mit Dichte fX bzgl. λ2 .
+  Gesucht ist fX1 +X2 .
+  Sei g(x1 , x2 ) = (X1 + X2 , X2 ) ∈ R2 . g ist bijektiv und damit
+
+
+
+                                 h(y )     =      g −1 (y1 , y2 ) = (y1 − y2 , y2 )
+                            g ◦X           =      (X1 + X2 , X2 )
+                                                   | {z }
+                                                        =Y
+                                                                                                              !
+                                                                                          ∂y1 −y2   ∂y1 −y2
+                                                             ∂g −1
+                                                                     
+                                                                                            ∂y1       ∂y2
+                           det(J)          =      det                      = det            ∂y2       ∂y2
+                                                              ∂y                            ∂y1       ∂y2
+                                                                           
+                                                              1     −1
+                                           =      det                           =1
+                                                              0      1
+                    fY ,X2 (y , x2 )       =      fX (y − x2 , x2 ) · 1
+
+
+
+LMU München: Statistik 2 (WTG)    11.4 Zufallsvektoren: Transformationssatz für Dichten                           486/845
+ Faltung II
+                                                           Z
+                            =⇒ fY (y )            =             fY ,X2 (y , x2 ) dx2
+                                                           Z
+                                                  =             fX (y − x2 , x2 ) dx2    (Faltung)
+
+
+
+  Falls X1 und X2 stochastisch unabhängig gilt fX (x1 , x2 ) = fX1 (x1 ) · fX2 (x2 ) und
+  damit
+                                                       Z
+                                        fY (y ) =           fX1 (y − x2 ) · fX2 (x2 )dx2
+
+
+  Vergleiche Faltung im diskreten Fall (Statistik 1):
+
+                                                         X
+                                          fY (y ) =             fX1 (y − x2 ) · fX2 (x2 )
+                                                           x2
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten               487/845
+ Beispiel Faltung I
+
+  Satz 11.16
+  Seien X1 ∼ N(0, λ2 ) und X2 ∼ N(0, 1 − λ2 ) stochastisch unabhängig. Dann gilt
+  X1 + X2 ∼ N(0, 1).
+
+  Beweis:
+
+                                                Z
+                           fX1 +X2 (z) =       fX1 (z − x ) fX2 (x ) dx (Faltung)
+                                                                            2 !
+                                                                    1 z −x
+                                             Z
+                                                   1
+                                           =   √        exp −                     ·
+                                                  2πλ2              2     λ
+                                                                        1 x2
+                                                                                
+                                                     1
+                                             ·p                exp −                dx
+                                                2π(1 − λ2 )             2 1 − λ2
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten   488/845
+ Beispiel Faltung II
+                          
+              1        1
+            =√    exp − z 2 ·
+               2π      2
+                                                                                                  
+                                                                          (z − x )2     x2
+                   Z                                                                          
+                        1       1             1
+                                                                                             − z2 
+                                                                                                  
+               ·       √   p                 − 2
+                                         exp                                 2
+                                                                                    +      2       dx
+                         2π λ2 (1 − λ2 )                                     λ         1−λ
+                                                                        |            {z          }
+                                                                                      A
+                       |                                               {z                          }
+                                                                        B
+
+
+
+
+                       (1 − λ2 ) z 2 − 2 (1 − λ2 )z x + (1 − λ2 ) x 2 + λ2 x 2 − λ2 (1 − λ2 ) z 2
+        A     =
+                                                      λ2 (1 − λ2 )
+                       x 2 − 2 (1 − λ2 ) z x + [(1 − λ2 ) z]2    (x − (1 − λ2 ) z)2
+              =                       2       2
+                                                              =
+                                     λ (1 − λ )                      λ2 (1 − λ2 )
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten                   489/845
+ Beispiel Faltung III
+
+
+
+
+                          =⇒ B(x ) ist Dichte von N((1 − λ2 ) z, λ2 (1 − λ2 ))
+                             Z
+                          =⇒   B(x ) dx = 1
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.4 Zufallsvektoren: Transformationssatz für Dichten   490/845
+11. Zufallsvektoren
+11.1 Mehrdimensionale Wahrscheinlichkeitsräume
+11.2 Mehrdimensionale Verteilungsfunktion und Dichte
+11.3 Randverteilung
+11.4 Transformationssatz für Dichten
+11.5 Exkurs: Faltung
+ Faltung I
+  Definition 11.17
+  Die Faltung (engl. convolution, von lat. convolvere, zusammenrollen) f ∗ g zweier
+  Funktionen f , g : Rn → C ist definiert durch
+                                          Z
+                          (f ∗ g)(x ) := f (τ )g(x − τ )dτ
+                                                                  Rn
+
+
+
+  Anschaulich bedeutet die Faltung f ∗ g, dass jeder Wert von f durch das mit g
+  gewichtete Mittel (f ∗ g)(x ) ersetzt wird, genauer der Funktionswert f (t) mit
+  g(x − t) gewichtet wird.
+
+  Anwendungen
+     ▶ Gleitender Mittelwert
+     ▶ Filter für Signale, Bilder
+     ▶ Dichte der Summe von Zufallsvariablen
+     ▶ Kerndichteschätzer
+
+LMU München: Statistik 2 (WTG)   11.5 Zufallsvektoren: Exkurs: Faltung          492/845
+ Beispiele I
+                                           Gauss−Glättungskern                                 (Geglättete) Rechtecksfunktion
+
+                          2.0
+
+                          1.5                                                       0.8
+
+                      z   1.0                                                   y
+                                                                                    0.4
+                          0.5
+
+                          0.0                                                       0.0
+
+                                   −3    −2    −1     0    1     2     3                  −3     −2    −1    0     1    2       3
+
+                                                      x                                                      x
+
+
+
+                                 Verrauschte und geglättete Sinusfunktion
+
+
+                          1.0
+
+
+                          0.0
+                      y
+
+
+
+                          −1.0
+
+
+                                   −3    −2    −1     0    1     2     3
+
+                                                      x
+
+
+
+
+                                                Abbildung 24: Faltung als Glättung
+
+
+LMU München: Statistik 2 (WTG)          11.5 Zufallsvektoren: Exkurs: Faltung                                                       493/845
+ Beispiele II
+                                                                                                             Gauss
+
+                                  1                                                   0.04
+
+
+
+
+                      Frequency
+                                                                                      0.02
+
+
+
+                                  0                                                   0.00
+
+                                         −3    −2    −1      0       1   2   3                −3   −2   −1     0     1   2   3
+
+                                                             x
+
+
+
+                                                          Rechteck                                            t(1)
+
+                                                                                      0.030
+
+                                  0.04
+
+                                                                                      0.015
+                                  0.02
+
+
+                                  0.00                                                0.000
+                                         −3    −2    −1      0       1   2   3                −3   −2   −1     0     1   2   3
+
+
+
+
+             Abbildung 25: Faltung als Kerndichteschätzer mit verschiedenen Kernen
+
+
+
+
+LMU München: Statistik 2 (WTG)                11.5 Zufallsvektoren: Exkurs: Faltung                                              494/845
+ Fourier-Transformation der Faltung I
+  Wir betrachten die Fourier-Transformation (Def. 10.4)
+                                                                                 Z
+                                                                         1
+                                 f˜(ξ) = F (f )(ξ) =                         n       f (x ) e −ix ξ dx
+                                                                    (2π) 2
+
+  Nach dem Satz von Fubini dürfen wir die Integrationsreihenfolge vertauschen
+  (sofern alles integrierbar ist):
+
+                                                 Z ∞                Z ∞                                  
+                        F(f ∗ g)(ξ) =                      f (y )                g(x − y )e −ix ξ dx          dy
+                                                    −∞                   −∞
+
+
+  Mit der Substitution u = x − y , also du = dx :
+
+                                                 Z ∞                         Z ∞                         
+                                                                    −iy ξ                         −iuξ
+                       F(f ∗ g)(ξ) =                      f (y )e                         g(u)e          du dy
+                                                   −∞                                −∞
+
+
+
+LMU München: Statistik 2 (WTG)   11.5 Zufallsvektoren: Exkurs: Faltung                                             495/845
+ Fourier-Transformation der Faltung II
+
+
+
+
+  Also erhalten wir die Fouriertransformation der Faltung einfach als Produkt der
+  Fouriertransformierten:
+
+
+                                         F(f ∗ g)(ξ) = F(f )(ξ) · F(g)(ξ)
+
+
+
+
+LMU München: Statistik 2 (WTG)   11.5 Zufallsvektoren: Exkurs: Faltung          496/845
+ Fourier-Transformation der Faltung III
+  Die schnelle Fourier-Transformation (englisch fast Fourier transform, FFT) ist
+  ein sehr effizienter Algorithmus zur Berechnung der diskreten
+  Fourier-Transformation.
+
+                                                          y                                                   z                                                       y*z
+
+                                                                                     0.4                                                     1.0
+                           1.0
+
+                                                                                     0.3                                                     0.5
+                           0.5
+
+                      y    0.0                                                   z   0.2                                             y*z     0.0
+
+
+
+
+                           −1.0 −0.5
+                                                                                     0.1                                                     −0.5
+
+
+                                                                                                                                             −1.0
+                                                                                     0.0
+
+                                       0       50        100      150      200             0       50        100      150      200                  0       50        100      150      200
+
+                                                         Index                                               Index                                                    Index
+
+
+
+                                                         F(y)                                                F(z)                                                 F(y)F(z)
+                                                                                     40                                               25000
+                          200
+
+
+                                                                                     30                                               20000
+                          150
+                                                                                                                                      15000
+                          100                                                        20
+                                                                                                                                      10000
+
+                           50                                                        10
+                                                                                                                                           5000
+
+
+                              0                                                       0                                                       0
+
+                                       0   5        10    15     20   25   30              0   5        10    15     20   25   30                   0   5        10    15     20   25   30
+
+                                                     Frequenz                                            Frequenz                                                 Frequenz
+
+
+
+
+LMU München: Statistik 2 (WTG)                 11.5 Zufallsvektoren: Exkurs: Faltung                                                                                                          497/845
+   Kapitel 12
+       (Un-)Abhängigkeit
+
+
+
+12. (Un-)Abhängigkeit
+12.1 Unabhängigkeit
+12.2 Kovarianz
+12.3 Bedingte Verteilung
+ (Un-)Abhängigkeit
+
+
+
+
+                                      Abbildung 26: https://xkcd.com/552/
+
+
+
+
+LMU München: Statistik 2 (WTG)   12 (Un-)Abhängigkeit                       499/845
+12. (Un-)Abhängigkeit
+12.1 Unabhängigkeit
+12.2 Kovarianz
+12.3 Bedingte Verteilung
+ Verteilungsfunktion I
+
+
+  Satz 12.1 (Unabhängigkeit n-dimensionaler Zufallsvariablen)
+
+  Sei X = (X1 , . . . , Xn ) eine reelle n-dimensionale Zufallsvariable. Dann gilt
+  X1 , . . . , Xn stochastisch unabhängig ⇐⇒ ∀ c = (c1 , . . . , cn ) ∈ Rn
+
+
+                                  P(X ≤ c)            = P(X1 ≤ c1 , . . . , Xn ≤ cn )
+                                                        Yn
+                                                      =    P(Xi ≤ ci ),
+                                                              i=1
+                                                             n
+                                                             Y
+                                        FX (c)        =             FXi (ci ).
+                                                              i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit                 501/845
+ Verteilungsfunktion II
+  Beweis:
+  “Unabhängigkeit =⇒ Produktformel”
+  Wenn X1 , . . . , Xn unabhängig sind, dann sind per Definition die von ihnen
+  erzeugten σ -Algebren σ (X1 ) , . . . , σ (Xn ) unabhängig. Insbesondere sind dann für
+  alle Borel-Mengen Ai ∈ B(R) die Ereignisse {Xi ∈ Ai } unabhängig und es gilt:
+
+                                                                           n
+                                                                           Y
+                                 P (X1 ∈ A1 , . . . , Xn ∈ An ) =                P (Xi ∈ Ai ) .
+                                                                           i=1
+
+
+  Wähle Ai = (−∞, ci ]. Dann folgt sofort
+
+                                                                           n
+                                                                           Y
+                                 P (X1 ≤ c1 , . . . , Xn ≤ cn ) =                P (Xi ≤ ci ) .
+                                                                           i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)    12.1 (Un-)Abhängigkeit: Unabhängigkeit                          502/845
+ Verteilungsfunktion III
+  “Produktformel =⇒ Unabhängigkeit”
+  Betrachten wir H := {(−∞, c] : c ∈ R}. H ist durchschnittsstabil (Def. 3.9):
+  (−∞, c1 ] ∩ (−∞, c2 ] = (−∞, min (c1 , c2 )] und Erzeuger der Borelschen σ-Algebra
+  B.
+  Für feste A2 , . . . , An ∈ H definiere für A ∈ B(R) zwei Maße
+
+                                 µ(A) = P (X1 ∈ A, X2 ∈ A2 , . . . , Xn ∈ An ) ,
+                                                      Yn
+                                    ν(A) = P (X1 ∈ A)    P (Xi ∈ Ai ) .
+                                                                          i=2
+
+
+  Beide sind Maße in der VariablenQn A. Aus Voraussetzung
+  P (X1 ≤ c1 , . . . , Xn ≤ cn ) = i=1 P (Xi ≤ ci ) folgt
+
+
+                                          µ((−∞, c]) = ν((−∞, c])               ∀c.
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit               503/845
+ Verteilungsfunktion IV
+
+
+  Also stimmen µ und ν auf dem Erzeuger H überein und damit nach Eindeutigkeit
+  von Maßen (Satz 3.10) µ = ν.
+  Damit gilt die Produktformel für alle Borelmengen A1 , solange A2 , . . . , An ∈ H
+  sind. Nun iteriere durch alle Ai , so dass
+
+                                                                          n
+                                                                          Y
+                                 P (X1 ∈ A1 , . . . , Xn ∈ An ) =               P (Xi ∈ Ai )
+                                                                          i=1
+
+
+  für alle Ai ∈ B(R).
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit                        504/845
+ Dichte unabhängiger Zufallsvariablen I
+
+
+  Satz 12.2
+                                                                                       n
+                                                                                       O
+  Sind X1 , . . . , Xn reelle unabhängige ZV mit Dichten fX1 , . . . , fXn bzgl. µ =         µi ,
+                                                                                       i=1
+  dann und genau dann ist die gemeinsame Dichte von X = (X1 , . . . , Xn )⊤ das
+  Produkt der einzelnen Dichten, d.h.
+                                                                   n
+                                                                   Y
+                                                     fX (x ) =            fXi (xi )
+                                                                    i=1
+
+  ist Dichte bzgl. µ.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit                      505/845
+ Dichte unabhängiger Zufallsvariablen II
+  Beweis
+                                 Q
+  “Xi stu =⇒ fX =                    fXi ”
+  Sei FX Verteilungsfunktion von X, c ∈ Rn . Nach Definition:
+                         Z
+    FX (c) = PX (Ic ) =     fdµ für Ic := (−∞, c1 ] × . . . × (−∞, cn ]
+                                          Ic
+                                                                              n                     n      Z
+                                                                  Satz 12.1
+                                                                              Y                     Y
+                  = P(X1 ≤ c1 , . . . , Xn ≤ cn )                     =             P(Xi ≤ ci ) =                  fXi dµi
+                                                                              i=1                    i=1
+                                                                                                        (−∞,ci ]
+                            Z                  Z     n                                     n
+                                                                                         Z Y
+                Fubini                                                          Fubini
+                                                     Y
+                  =                 ···                    fXi dµ1 · · · dµn =                    fXi dµ
+                                                     i=1                                 Ic i=1
+                         (−∞,c1 ]       (−∞,cn ]
+                         n
+                         Y
+     =⇒ f         =            fXi µ − f.ü,         (Satz 7.4 Radon-Nikodym)
+                         i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit                                                 506/845
+ Dichte unabhängiger Zufallsvariablen III
+
+            Q
+  “fX =         fXi =⇒ Xi stu”
+
+
+                                                                    n
+                                                                  Z Y
+      P(X1 ≤ c1 , . . . , Xn ≤ cn ) = FX (c) =                               fXi dλn      (nach Voraussetzung)
+                                                                    Ic i=1
+                                                                  n
+                                                                  Y         Z
+                                                              =                  fXi dλ     (Fubini)
+                                                                  i=1
+                                                                     (−∞,ci ]
+                                                                  n
+                                                                  Y
+                                                              =           P(Xi ≤ ci )
+                                                                  i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit                                      507/845
+ Unabhängigkeit von Funktionen von Zufallsvariablen
+
+
+
+
+  Satz 12.3
+  Seien X1 : Ω → Rn1 und X2 : Ω → Rn2 zwei ni -dimensionale stochastisch
+  unabhängige Zufallsvariablen (i = 1, 2) und hi : Rni ⇒ Rmi meßbare Funktionen.
+  Dann sind Y1 = h1 ◦ X1 und Y2 = h2 ◦ X2 stochastisch unabhängig.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit       508/845
+ Erwartungswert des Produkts unabhängiger
+ Zufallsvariablen I
+  Satz 12.4 (Erwartungswert des Produkts unabhängiger Zufallsvariablen)
+
+  Sind X1 , . . . , Xn unabhängige integrierbare Zufallsvariablen, so folgt
+                                       n
+                                            !     n
+                                      Y          Y
+                                  E       Xi =      E(Xi ).
+                                                      i=1                 i=1
+
+
+
+     ▶ Die Umkehrung folgt nicht!
+
+  Beweis:
+  Betrachte n = 2. Wegen stochastischer Unabhängigkeit fX = fX1 · fX2 .
+
+
+                                 PX = fX ⊙ (µ1 ⊗ µ2 ) = fX1 · fX2 ⊙ (µ1 ⊗ µ2 )
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit          509/845
+ Erwartungswert des Produkts unabhängiger
+ Zufallsvariablen II
+  Sei nun g : R2 ⇒ R, x 7→ g(x ) = x1 · x2 :
+
+                                           Z
+     E(X1 X2 )         =     E(g ◦ X) = gdPX
+                             Z
+                       =       g d(fX ⊙ (µ1 ⊗ µ2 ))
+                             Z
+                       =       g · (fX1 · fX2 ) d(µ1 ⊗ µ2 )         (Unabhängigkeit und Satz 7.1)
+                             Z Z
+                       =          x1 x2 fX1 (x1 ) · fX2 (x2 ) dµ1 (x1 ) dµ2 (x2 )
+                             Z                        Z
+                       =       x1 fX1 (x1 )dµ1 (x1 )      x2 fX2 (x2 )dµ2 (x2 )
+
+                       =     E(X1 ) · E(X2 )
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit                        510/845
+ Erwartungswert des Produkts unabhängiger
+ Zufallsvariablen III
+
+
+
+  Für n > 2 durch Induktion.
+
+     ▶ Daraus folgt auch der Beweis von Satz 10.8
+       (Momenterzeugende/Charakteristische Funktion von Summen von
+       Zufallsvariablen).
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.1 (Un-)Abhängigkeit: Unabhängigkeit   511/845
+12. (Un-)Abhängigkeit
+12.1 Unabhängigkeit
+12.2 Kovarianz
+12.3 Bedingte Verteilung
+ Kovarianz und Korrelation
+
+  Definition 12.5
+  Seien X und Y : Ω → R Zufallsvariablen mit E(X ) < ∞ und E(Y ) < ∞. Dann
+  heißt
+
+                                 Cov(X , Y ) := E[(X − E(X ))(Y − E(Y ))]
+
+
+  die Kovarianz (engl. covariance) sowie, wenn Var(X ) > 0 und Var(Y ) > 0,
+
+                                                                     Cov(X , Y )
+                                        ρ(X , Y ) = p                     p          .
+                                                                Var(X ) ·    Var(Y )
+
+  die Korrelation (engl. correlation) von X und Y .
+
+     ▶ Kovarianz und Korrelation sind Maße für die Stärke und Richtung der
+       linearen stochastischen Abhängigkeit von Zufallsvariablen.
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                       513/845
+ Eigenschaften der Kovarianz I
+
+
+  Im Folgenden gehen wir immer davon aus, dass die Kovarianzen bzw. die
+  Erwartungswerte existieren.
+
+  Satz 12.6 (Eigenschaften der Kovarianz)
+                                        1)          Cov(X , X ) = Var(X )
+                                        2)         Cov(X , Y ) = Cov(Y , X )
+                                        3)      Cov(−X , Y ) = − Cov(X , Y )
+
+
+  Beweis:, Einsetzen!
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz             514/845
+ Eigenschaften der Kovarianz II
+
+
+  Satz 12.7
+                                                                     p
+                                         | Cov(X , Y )| ≤                Var(X ) Var(Y )
+
+
+
+                                                   −1 ≤ ρ(X , Y ) ≤ +1
+
+
+
+  Beweis:, Folgt direkt aus der Cauchy-Schwarz-Ungleichung Satz 8.18.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                         515/845
+ Eigenschaften der Kovarianz III
+
+  Satz 12.8 (Verschiebungssatz)
+
+                                       Cov(X , Y ) = E(XY ) − E(X )E(Y )
+
+
+
+  Beweis:
+  Ausmultiplizieren und Linearität des Erwartungswertes:
+
+                 Cov(X , Y ) = E[XY − X E(Y ) − E(XY ) + E(X )E(Y )]
+                                   = E(XY ) − E(Y )E(X ) − E(X )E(Y ) + E(X )E(Y )
+                                   = E(XY ) − E(X )E(Y )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                   516/845
+ Eigenschaften der Kovarianz IV
+
+  Satz 12.9 (Summe von Varianzen)
+
+                            Var(X + Y ) = Var(X ) + Var(Y ) + 2 Cov(X , Y )
+
+
+
+  Beweis:
+
+
+                             E (X + Y )2 − E(X + Y )2
+                                        
+    Var(X + Y )            =
+                           = E (X 2 + 2XY + Y 2 ) − (E(X ) + E(Y ))2
+                                                 
+
+                           =     E(X 2 ) − E(X )2 + E(Y 2 ) − E(Y )2 + 2E(XY ) − 2E(X )E(Y )
+                           =     Var(X ) + Var(Y ) + 2 Cov(X , Y )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                        517/845
+ Eigenschaften der Kovarianz V
+
+
+
+
+  Nur für stochastisch unabhängige Zufallsvariablen X und Y gilt also:
+
+
+                                         Var(X + Y ) = Var(X ) + Var(Y )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz         518/845
+ Eigenschaften der Kovarianz VI
+
+  Satz 12.10 (Bilinearität)
+
+                                    Cov(aX + b, cY + d) = ac Cov(X , Y )
+
+
+
+  Beweis:
+
+                                                                                         
+    Cov(aX + b, cY + d)                   = E (aX + b − E(aX + b)) · (cY + d − E(cY + d))
+                                                                           
+                                          = E (aX − aE(X )) · (cY − cE(Y ))
+                                                                         
+                                          = acE (X − E(X )) · (Y − E(Y ))
+                                          =      ac Cov(X , Y )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                       519/845
+ Kovarianzmatrix I
+  Definition 12.11
+  Sei X : Ω → Rn , X = (X1 , . . . , Xn ) eine n-dimensionale Zufallsvariable, dann heißt
+
+                                  Cov(X) := E((X − E(X))(X − E(X))⊤ )
+
+
+  die Kovarianzmatrix (engl. covariance matrix) von X .
+
+
+
+             Cov(X)          ∈      Rn×n
+       (Cov(X))i,j           =      E((Xi − E(Xi ))(Xj − E(Xj ))) = Cov(Xi , Xj ) = Cov(X)j,i
+       (Cov(X))i,i           =      E(Xi − E(Xi ))2 = Var(Xi ) (marginale Varianzen)
+
+
+
+     ▶ Die Kovarianzmatrix ist symmetrisch
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                              520/845
+ Kovarianzmatrix II
+
+
+
+
+  Beispiel 12.1
+                                                                      σ12
+                                                                                   
+                                                       µ1                     ρσ1 σ2
+                                 X ∼ N2                       ,
+                                                       µ2            ρσ1 σ2    σ22
+
+  Es gilt: Var(X1 ) = σ12 , Var(X2 ) = σ22 , Cov(X1 , X2 ) = ρσ1 σ2 .
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                          521/845
+ Kovarianzmatrix III
+
+  Beispiel 12.2 (Multinomialverteilung)
+  Sei X ∼ M(n, p) mit p = (p1 , . . . , pk ).
+  Wir wissen bereits Xi ∼ B(n, pi ) =⇒ E(Xi ) = npi , Var(Xi ) = npi (1 − pi ). Wie
+  ist die Cov(Xi , Xj ) für i ̸= j?
+  Es gilt Xi + Xj ∼ B(n, pi + pj ). Also
+
+                                    Var(Xi + Xj ) = n(pi + pj )(1 − pi − pj )
+
+
+  Außerdem gilt allgemein
+
+                           Var(Xi + Xj ) = Var(Xi ) + Var(Xj ) + 2 Cov(Xi , Xj )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                 522/845
+ Kovarianzmatrix IV
+
+
+  Also
+
+
+                                    1
+       Cov(Xi , Xj )         =      2 (Var(Xi + Xj ) − (Var(Xi ) + Var(Xj )))
+                                    1
+                             =      2 (n(pi + pj )(1 − pi − pj ) − (npi (1 − pi ) + npj (1 − pj )))
+                                    1           2                                2
+                             =      2 npi − npi − npi pj + npj − npi pj − npj
+                                         −npi + npi2 − npj + npj2
+                                                                    
+
+                             =      −npi pj
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                                    523/845
+ Kovarianzmatrix V
+  Zusammen also X ∼ M(n, p) =⇒
+
+                                                                    
+                                                                np1
+                                                       E(X) =  ... 
+                                                                   
+
+                                                                         npk
+
+
+
+                                                                                                              
+                   np1 (1 − p1 )   −np1 p2                                     −np1 p3    ···        −np1 pk
+                  −np1 p2       np2 (1 − p2 )                                 −np2 p3               −np2 pk    
+                                                                                                       ..
+                                                                                                               
+                                                                                         ..                    
+                  −np1 p3
+        Cov(X) =                  −np2 p3                                np3 (1 − p3 )        .        .       
+                                                                                                                
+                        ..                                                    ..         ..                    
+                         .                                                       .            .                
+                     −np1 pk       −np2 pk                                       ···               npk (1 − pk )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                                                  524/845
+ Korrelationsmatrix I
+
+  Definition 12.12
+  Sei Σ die Kovarianzmatrix einer mehrdimensionalen Zufallsvariablen
+  X = (X1 , . . . , Xn ) und diag(Σ) die Matrix der Diagonalelemente von Σ. Dann
+  heißt
+
+                             R = Corr(X ) := (diag(Σ))−1/2 Σ(diag(Σ))−1/2
+
+
+  die Korrelationsmatrix von X .
+
+  Es gilt ri,i = 1 für alle i = 1, . . . , n und
+
+                                                                       Cov(Xi , Xj )
+                                  ri,j = ρ(Xi , Xj ) = p                       p
+                                                                     Var(Xi ) · Var(Xj )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                         525/845
+ Korrelationsmatrix II
+  Beispiel 12.3
+  Sei X ∼ M(10, (0.5, 0.3, 0.2)). Die Kovarianzmatrix ist
+                                                         
+                                          2.5 −1.5 −1
+                      Cov(X) = Σ = −1.5 2.1 −0.6
+                                          −1 −0.6 1.6
+
+
+                                                                                                    
+                2.5                0         0                              0.63...      0         0
+     diag(Σ) =  0                2.1        0              diag(Σ)−1/2 =  0        0.69...      0 
+                 0                 0        1.6                                0         0      0.79...
+
+
+                                                                         
+                                                1      −0.654...  −0.5
+  Corr(X ) = (diag(Σ))−1/2 Σ(diag(Σ))−1/2 = −0.654...    1      −0.327...
+                                              −0.5     −0.327...    1
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                                     526/845
+ Eigenschaften I
+
+
+
+
+  Satz 12.13
+  Sei X : Ω → Rn n-dimensionale Zufallsvariable, A ∈ Rm×n und b ∈ Rm . Dann gilt
+     i) E(AX + b) = AE(X) + b
+    ii) Cov(AX + b) = ACov(X)A⊤
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz           527/845
+ Eigenschaften II
+  Beweis:
+     i) Linearität des Erwartungswertes
+    ii)
+
+               Cov(AX + b) = E((AX + b − E(AX + b))(AX + b − E(AX + b))⊤ )
+                                      = E((AX + b − AE(X ) − b)(AX + b − AE(X ) − b)⊤ )
+                                      = E((AX − AE(X ))(AX − AE(X ))⊤ )
+                                      = E(A(X − E(X ))(X − E(X ))⊤ A⊤ )
+                                      = AE((X − E(X ))(X − E(X ))⊤ )A⊤
+                                      = ACov(X )A⊤
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                        528/845
+ Eigenschaften III
+  Satz 12.14
+  Die Kovarianzmatrix ist positiv semidefinit.
+
+  Beweis:
+  Positiv semidefinit heißt x⊤ Cov(X)x ≥ 0                           ∀x ∈ Rn
+
+                     x⊤ Cov(X) x = x⊤ E((X − E(X)) (X − E(X))⊤ ) x
+                                           = E((x⊤ X − x⊤ E(X)) (x⊤ X − x⊤ E(X))⊤ )
+                                               |      {z      }
+                                                                ∈R
+
+                                           = E((x X − x E(X))2 ) = Cov(x⊤ X) ≥ 0
+                                                       ⊤         ⊤
+
+
+
+
+     ▶ Für n = 1 =⇒ Var(X ) ≥ 0.
+     ▶ det(Σ) = 0 heißt nicht X ≡ const.
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                    529/845
+ Eigenschaften IV
+
+
+
+  Beispiel 12.4
+  Sei X Zufallsvariable mit Var(X ) = 1. Betrachte die zweidimensionale
+  Zufallsvariable Y = (X , X ). Es gilt Cov(X , X ) = Var(X ) = 1. Also
+                                                     
+                                                 1 1
+                                   Cov(Y) =
+                                                 1 1
+
+  Es gilt det(Cov(Y)) = 0.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz        530/845
+ Standardisierung I
+
+  Satz 12.15 (Standardisierung)
+  Sei X = (X1 , . . . , Xn ) n-dimensionaler Zufallsvektor mit E(X) = µ und positiv
+  definiter Kovarianzmatrix Cov(X ) = Σ. Dann existiert eine invertierbare Matrix
+    B ∈ Rn×n , so dass gilt:
+
+                           Für Y = B−1 (X − µ) ist E(Y) = 0n , Cov(Y) = In
+
+
+
+     ▶ 0n bezeichnet den Null-Vektor der Länge n.
+     ▶ In bezeichnet die Einheitsmatrix der Dimension n × n.
+                                              X −µ
+     ▶ Für n = 1 gilt mit Cov(X ) = σ 2 : Y =        hat E(Y ) = 0 und
+                                                σ
+       Cov(Y ) = 1.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                531/845
+ Standardisierung II
+
+
+  Beweis:
+  Σ ist nach Voraussetzung positiv definit. Damit existiert die Cholesky-Zerlegung
+  Σ = BB⊤ mit B ∈ Rn×n und B−1 existiert. Also
+
+                    E(Y) = E(B−1 (X − µ)) = B−1 (E(X) − µ) = B−1 0n = 0n
+
+
+                                                           ⊤                   ⊤
+             Cov(Y) = B−1 Cov(X) B−1                           = B−1 BB⊤ B−1       = In (B−1 B)⊤ = In
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.2 (Un-)Abhängigkeit: Kovarianz                                      532/845
+12. (Un-)Abhängigkeit
+12.1 Unabhängigkeit
+12.2 Kovarianz
+12.3 Bedingte Verteilung
+ Bedingte Wahrscheinlichkeit I
+
+
+  In Def. 3.26 haben wir die bedingte Wahrscheinlichkeit kennen gelernt:
+
+                                                                      P(A ∩ B)
+                                                    P(A|B) =
+                                                                        P(B)
+
+
+  Das Konzept lässt sich leicht auf diskrete Zufallsvariablen erweitern. Seien X und
+  Y diskrete Zufallsvariablen. Dann ist die bedingte Verteilung von X gegeben
+  Y = y (auf dem Träger von Y , also P(Y = y ) > 0):
+
+                                                                        P(X = x , Y = y )
+                                    P(X = x |Y = y ) =
+                                                                           P(Y = y )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                534/845
+ Bedingte Wahrscheinlichkeit II
+
+  Beispiel 12.5
+  Wir werfen zwei Mal eine faire Münze. Sei
+   ▶ X Anzahl der Münzwürfe mit Kopf und
+     ▶ y = 1 wenn der erste Münzwurf Kopf ist, 0 sonst.
+                                                 0
+                                                                                     =0      für x = 0
+                              P(X = x , Y = 1)  0.25
+                                                   0.5
+            P(X = x |Y = 1) =                 =    0.5                               = 0.5   für x = 1
+                                 P(Y = 1)         0.25
+                                                                                     = 0.5   für x = 2
+                                                
+                                                                               0.5
+
+  Analog für Y = 0.
+
+     ▶ Siehe auch Gedächtnislosigkeit der Exponentialverteilung, Satz 5.11.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                             535/845
+ Bedingte Verteilung I
+  Beispiel 12.6
+
+  Wir würfeln mit einem Würfel. Sei Y die Zufallsvariable und y das Ergebnis des
+  Wurfs. Anschliessend werfen wir y -mal ein faire Münze. Die Anzahl der
+  Münzwürfe, die Kopf zeigen, sei X .
+   ▶ X |Y = 1 ∼ B 1, 12
+                        
+
+   ▶ X |Y = 2 ∼ B 2, 21
+                        
+
+   ▶ ...
+
+  Allgemein können wir schreiben:
+                                                                                  
+                                                                    1
+                                                X |(Y = y ) ∼ B y ,
+                                                                    2
+
+  Wir nennen dies die bedingte Verteilung (engl. conditional distribution) von
+  X |Y .
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung           536/845
+ Bedingte Verteilung II
+  Berechnen wir die gemeinsame Dichte (engl. joint density) von (X , Y ). Es gilt:
+
+
+
+                            f(X ,Y ) (x , y ) = P(X = x , Y = y )
+                                              = P(X = x |Y = y ) · P(Y = y )
+                                                 
+                                                 y                         1
+                                              =     0.5y I{0,...,y } (x ) · I{1,...,6} (y )
+                                                 x                         6
+
+
+  Damit ergibt sich für die Randdichte (engl. marginal density) von X :
+
+                                                  6  
+                                              1X y
+                                  P(X = x ) =           0.5y · I{0,...,y } (x )
+                                              6 y =1 x
+
+
+                                       0            1             2            3       4        5        6
+                   P(X=x)        0.1641      0.3125        0.2578       0.1667     0.0755   0.0208   0.0026
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                                  537/845
+ Bedingte Dichte I
+
+
+
+
+                                                  links
+
+
+
+                                                                                   rechts
+
+
+
+                                                                       links
+
+
+
+
+                    0                                                          x            1
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                    538/845
+ Bedingte Dichte II
+
+
+  Beispiel 12.7
+
+  Wir rollen eine weiße Billardkugel auf einem Billiardtisch der Länge 1. Die
+  Zufallsvariable X beschreibe den Punkt auf [0, 1], auf dem die Kugel zu liegen
+  kommt.
+  Wir rollen weitere n rote Kugeln. Beschreibe die Zufallsvariable Yi ob die rote
+  Kugel i links von der weißen Kugel zu liegen kommt (also auf einem Punkt
+  kleiner X ). Offensichtlich gilt P(Yi = 1|X = x ) = x bzw. Y ∼ B(n, X ).
+
+  Aber: Die bedingte Wahrscheinlichkeit P(Y |X = x ) ist nicht definiert, da X eine
+  stetige Zufallsvariable ist und damit P(X = x ) ≡ 0.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung        539/845
+ Bedingte Dichte III
+
+
+  Definition 12.16 (Bedingte Dichte)
+
+  Seien (X , Y ) Zufallsvariablen mit gemeinsamer Dichte f . Dann heißt
+                                          f (x ,y )
+                                          fy (y ) falls fy (y ) > 0
+                        fX |Y (x |y ) :=
+                                         
+                                              0          sonst
+
+  die bedingte Dichte (engl. conditional density) von X gegeben Y , also die Dichte
+  von X |Y .
+
+     ▶ Für X und Y diskret entspricht dies der bedingten Wahrscheinlichkeit.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung    540/845
+ Bedingte Dichte IV
+  Beispiel 12.8
+  Sei (X , Y ) : Ω → (0, 1) × (0, 1) mit Dichte (im Folgenden immer 0 < x < 1 und
+  0 < y < 1)
+
+                                                    f (x , y ) = 65 x 2 + y
+                                                                                    
+
+
+
+
+  Die marginale Dichte von Y ist
+
+
+                                         Z                           Z 1
+                                                                               6   2
+                      fY (y )     =           f (x , y ) dx =                  5 (x + y ) dx
+                                                                       0
+                                              Z 1
+                                          6          2
+                                                                                 1 3 1 6
+                                  =       5         x dx + 65 y = 65                          2   6
+                                                                                  3x 0 + 5y = 5 + 5y
+                                               0
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                           541/845
+ Bedingte Dichte V
+  Die marginale Dichte von X ist
+
+                       Z                         Z 1                                      Z 1
+                                                            2           6 2
+          fX (x ) =          f (x , y ) dy =            6                     6
+                                                        5 (x + y ) dy = 5 x + 5                 ydy = 65 x 2 + 35
+                                                    0                                      0
+
+
+  Das ist wirklich eine Dichte, da
+
+                         Z                       Z 1
+                                                          6 2
+                                                                                      1 3 1 3
+                                                               3
+                                                                           dx = 65
+                                                                       
+                              fX (x ) dx =                5x + 5                       3x 0 + 5 = 1
+                                                   0
+
+
+  Die bedingte Dichte von X |Y ist
+
+                                                         6   2
+                                                                  
+                                             f (x , y )  5 x +y       3(x 2 + y )
+                             fX |Y (x |y ) =            = 2 6       =
+                                              fY (y )      5 + 5y
+                                                                       1 + 3y
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                                        542/845
+ Bedingte Dichte VI
+                                          Gemeinsame Dichte f(x,y)                 Bedingte Dichte f(x|y=0.8) und f(x|y=0.1)
+                              1.0
+
+                              0.8                                                  2.0
+
+
+                              0.6                                                  1.5
+                          y                                                   f
+                              0.4                                                  1.0
+
+
+                              0.2                                                  0.5
+
+
+                              0.0                                                  0.0
+
+                                    0.0     0.2   0.4       0.6   0.8   1.0              0.0   0.2   0.4       0.6   0.8   1.0
+
+                                                        x                                                  x
+
+                                            Marginale Dichte f(x)
+
+
+
+                              2.0
+
+                              1.5
+                          f
+                              1.0
+
+                              0.5
+
+                              0.0
+
+                                    0.0     0.2   0.4       0.6   0.8   1.0
+
+                                                        x
+
+
+
+
+LMU München: Statistik 2 (WTG)       12.3 (Un-)Abhängigkeit: Bedingte Verteilung                                                 543/845
+ Satz von Bayes I
+
+
+
+  Satz 12.17 (Satz von Bayes für Dichten)
+  Seien X und Y Zufallsvariablen mit Dichten fX (bezüglich µ) und fY und
+  gemeinsamer Dichte fX ,Y . Dann ist
+
+                                            fY |X (y |x )fX (x )      fY |X (y |x )fX (x )
+                       fX |Y (x |y ) =                           =R
+                                                  fY (y )           fY |X (y |x )fX (x )dµ(x )
+
+
+  solange X bzw. Y eine Dichte haben (können also jeweils diskret oder stetig sein).
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                     544/845
+ Satz von Bayes II
+
+
+  Beweis:
+  Nach Definition der bedingten Dichte:
+
+                                 fX ,Y (x , y ) = fX |Y (x |y )fY (y ) = fY |X (y |x )fX (x )
+
+
+  Nach Definition der marginalen Dichte:
+                        Z                      Z
+               fY (y ) = fX ,Y (x , y )dµ(x ) = fY |X (y |x )fX (x )dµ(x )
+
+
+
+
+LMU München: Statistik 2 (WTG)     12.3 (Un-)Abhängigkeit: Bedingte Verteilung                  545/845
+ Satz von Bayes III
+  Thomas Bayes (1701 bis 7. April 1761)
+
+  Englischer Mathematiker, Philosoph
+  und presbyterianischer Pfarrer. Der
+  nach ihm benannte Satz wurde 1763 in
+  einem posthum erschienenen Artikel
+  bewiesen.
+
+
+
+
+  Vermutlich nicht Rev. Thomas Bayes                                   Grab von Thomas Bayes
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                   546/845
+ Satz von Bayes IV
+
+
+  Beispiel 12.9 (Beispiel von Bayes)
+  Fortsetzung von Beispiel 12.7.
+  Wir rollen eine weiße Billiardkugel auf einem Billiardtisch der Länge 1. Die
+  Zufallsvariable X beschreibe den Punkt auf [0, 1], auf dem die Kugel zu liegen
+  kommt. Annahme: X ∼ U[0, 1].
+  Wir rollen weitere n rote Kugeln. Beschreibe die Zufallsvariable Yi ob die rote
+  Kugel i links von der weißen Kugel zu liegen kommt (also auf einem Punkt
+  kleiner X ). Offensichtlich gilt P(Yi = 1|X = x ) = x .
+  Wir kennen die AnzahlPn y der Kugeln, die insgesamt links von X = x zu liegen
+  kommen. Mit Y = i=1 Yi gilt Y |X = x ∼ B(n, x ). Können wir eine Aussage
+  über die Verteilung von X gegeben Y = y treffen?
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung        547/845
+ Satz von Bayes V
+
+  Satz von Bayes:
+
+
+                                              fY |X (y |x )fX (x )
+                 fX |Y (x |y )      =       R
+                                             fY |X (y |x )fX (x )dx
+                                               n y
+                                                              n−y
+                                               y x (1 − x )         · I[0,1] (x )
+                                    =       R n
+                                                    y          n−y
+                                               y x (1 − x )        · I[0,1] (x )dx
+                                                     1
+                                    =                           x (y +1)−1 (1 − x )(n−y +1)−1
+                                            B(y + 1, n − y + 1)
+
+
+  Also ist X |Y = y ∼ Beta(y + 1, n − y + 1). (vgl. Def. 19.15)
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                    548/845
+ Satz von Bayes VI
+
+
+
+
+  Hier ist also die
+
+     ▶ Vorinformation, auch Priori genannt, X ∼ U(0, 1), d.h. X ∼ Beta(1, 1)
+     ▶ Datenverteilung (Datendichte, Likelihood) Y |X ∼ B(n, x )
+     ▶ Information nach Beobachtung, auch Posteriori genannt,
+       X |Y ∼ Beta(y + 1, n − y + 1)
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung   549/845
+ Bedingter Erwartungswert I
+
+  Definition 12.18
+  Seien X und Y reelwertige Zufallsvariablen. Ist fX |Y (x |y ) die bedingte Dichte von
+  X gegeben Y = y mit dominierendem Maß µ, dann ist
+                                        Z
+                       E(X |Y = y ) = xfX |Y (x , y )dµ(x )
+
+
+  der bedingte Erwartungswert von X gegeben Y = y .
+  Damit ist
+
+                                            E(X |Y ) : R             →         R
+                                      mit E(X |Y )(y )               :=        E(X |Y = y ),
+
+  der bedingte Erwartungswert von X gegeben Y , eine Zufallsvariable.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                   550/845
+ Bedingter Erwartungswert II
+
+
+
+
+  Beispiel 12.10 (Weiterführung Bsp. 12.6))
+  Es gilt X |Y ∼ B(Y , 12 ), also
+
+                                                       E(X |Y ) = 12 · Y
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung   551/845
+ Satz vom iterierten Erwartungswert I
+
+
+
+
+  Satz 12.19 (Satz vom iterierten Erwartungswert)
+
+                                                    E(E(X |Y )) = E(X )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung   552/845
+ Satz vom iterierten Erwartungswert II
+  Beweis:
+                                                                Z                         
+               EY (EX |Y (X |Y ))               =         EY            x dPX |Y =y (x )
+                                                                Z                                    
+                                                =         EY            x fX |Y =y (x |y ) dνX (x )
+                                                          Z Z
+                                                =                  x fX |Y (x |y ) dνX (x ) fY (y ) dνY (y )
+                                                          Z Z
+                                              Fubini
+                                                =                 x fX |Y (x |y ) fY (y ) dνX (x ) dνY (y )
+                                                          Z      Z                          
+                                              Fubini
+                                                =              x      fX ,Y (x , y ) dνY (y ) dνX (x )
+                                                                 |             {z             }
+                                                          Z
+                                                =              x         fX (x ) dνX (x ) = EX (X )
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                                   553/845
+ Satz vom iterierten Erwartungswert III
+
+
+
+
+  Beispiel 12.11 (Weiterführung Bsp. 12.6))
+                                                                               1
+                                                                                          = 47
+                                                                                      
+                                            E (E(X |Y )) = E                   2 ·Y
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                     554/845
+ Varianzzerlegungssatz
+
+
+  Satz 12.20 (Varianzzerlegungssatz)
+  Sei X |Y eine stetige bedingte Zufallsvariable. Dann gilt:
+                                                                      
+                                 Var(X ) = E Var(X |Y ) + Var E(X |Y )
+
+
+
+  Interpretation: Fassen wir Y als “Gruppe” auf. Dann lässt sich Varianz von X in
+  zwei Teile zerlegen:
+     ▶ Mittlere Varianz von X innerhalb der Ausprägungen von Y
+     ▶ Varianz von X zwischen den von Y definierten Gruppen
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung   555/845
+ Beispiel I
+
+
+
+
+  Beispiel 12.12
+  Seien X und Y Zufallsvariablen mit gemeinsamer Dichte
+                                    
+                                      1/x für 0 < y ≤ x < 1
+                   fX ,Y (x , y ) =
+                                      0   sonst
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung   556/845
+ Beispiel II
+
+
+  Die Dichte der Randverteilung von X ist
+
+                                                           Z x
+                                                                   1
+                                            fX (x ) =                dy = I(0,1) (x ).
+                                                              0    x
+
+
+  Die Dichte der Randverteilung von Y ist
+
+                                                    Z 1                         
+                                                           1                    1
+                                    fY (y ) =                dx = log              I(0,1) (y ).
+                                                      y    x                    y
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                      557/845
+ Beispiel III
+
+  Die Dichte der bedingten Verteilung von Y |X ist
+
+                                                                        1
+                                                 fY |X (y |x ) =          I(0,x ) (y ).
+                                                                        x
+
+
+  Die Dichte der bedingten Verteilung von X |Y ist
+
+                                                                    1/x
+                                           fX |Y (x |y ) =                 I[y ,1) (x ).
+                                                                 log(1/y )
+
+
+  X ∼ U(0, 1) =⇒ E(X ) = 1/2; Var(X ) = 1/12
+  Aber: Y ∼?.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung               558/845
+ Beispiel IV
+  Wir kennen aber Y |X ∼ U(0, x ):
+
+
+                                                                   
+                                                                X           1
+            E(Y )       =        E(E(Y |X )) = E                        =
+                                                                2           4
+         Var(Y )        =                                        1
+                                 E(Var(Y |X )) + Var(E(Y |X )) = 12 E(X 2 ) + 14 Var(X ) = 7/144
+      E(X · Y )  E(E(X · Y |X ) = E(X E(Y |X ))
+                        =
+                       
+                      X       1
+               = E X       = E(X 2 )
+                      2       2
+                                                   
+                 1                   1 1         1     1
+               =    Var(X ) + E(X )2 =          +     =
+                 2                      2 12 4          6
+                 1 1 1         1
+   Cov(X , Y ) =   − · =
+                 6 2 4        24
+
+
+
+
+LMU München: Statistik 2 (WTG)    12.3 (Un-)Abhängigkeit: Bedingte Verteilung                559/845
+ Bedingte Unabhängigkeit I
+
+
+
+  Definition 12.21
+  Sei X , Y und Z Zufallsvariablen, so dass
+
+                                      fX ,Y |Z (x , y |z) = fX |Z (x |z)fY |Z (y |z),
+
+
+  dann ist X ⊥ Y | Z : das heißt X und Y sind bedingt unabhängig gegeben Z .
+
+  Klassisches Beispiel: Anzahl der Störche und Anzahl von Geburten in einer Region
+  ist korreliert.
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung            560/845
+ Bedingte Unabhängigkeit II
+
+
+
+  Beispiel 12.13
+  Wir werfen drei Würfel (rot, grün und blau). Sei
+   ▶ X Augensumme des roten und grünen Würfels
+     ▶ Y Augensumme des roten und blauen Würfels
+     ▶ Z Augenzahl des roten Würfels
+  Offensichtlich ist X ⊥ Y | Z .
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung   561/845
+ Bedingte Unabhängigkeit III
+  Beispiel
+  Seien X1 und X2 die Ergebnisse zweier Klausuren einer Studentin. Wir nehmen
+  an, dass ihr Ergebnis von ihrer eigentlichen Fähigkeit Z (mit unbekannter
+  Verteilung und Var(Z )>0) abhängt, aber zusätzlichen Fehler hat.
+  Modell: Xi = Z + ϵi mit ϵi ∼ N(0, σ 2 ) für i = 1, 2 unabhängig, sowie Z und ϵi
+  unabhängig.
+  Unabhängig von der Verteilung von Z gilt also: Xi |(Z = z) ∼ N(z, σ 2 ).
+  Damit ist
+
+
+
+     Cov(X1 , X2 ) = E(X1 X2 ) − E(X1 )E(X2 )                                             (3)
+                         = E [(Z + ϵ1 )(Z + ϵ2 )] − E(Z + ϵ1 )E(Z + ϵ2 )                  (4)
+                                    2
+                         = E(Z + Z ϵ1 + Z ϵ2 − ϵ1 ϵ2 ) − [E(Z ) + E(ϵ1 )] [E(Z ) + E(ϵ2 )] (5)
+                         = E(Z 2 ) − E(Z )2 + E(Z ϵ1 ) − E(Z )E(ϵ1 ) . . .                (6)
+                         = Var(Z ) > 0                                                    (7)
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung              562/845
+ Bedingte Unabhängigkeit IV
+
+
+
+
+  Aber
+
+
+
+                Cov(X1 , X2 |(Z = z) = . . .                                                      (8)
+                                                            2                  2
+                                                 = E(z ) − E(z) + E(Z ϵ1 ) − E(Z )E(ϵ1 ) . . .    (9)
+                                                        2       2
+                                                 =z −z =0                                        (10)
+
+
+
+
+LMU München: Statistik 2 (WTG)   12.3 (Un-)Abhängigkeit: Bedingte Verteilung                      563/845
+   Kapitel 13
+       Normalverteilung
+
+
+
+13. Normalverteilung
+13.1 Eindimensionale Normalverteilung
+13.2 Multivariate Normalverteilung
+ Normalverteilung
+
+
+
+
+LMU München: Statistik 2 (WTG)   13 Normalverteilung   565/845
+13. Normalverteilung
+13.1 Eindimensionale Normalverteilung
+13.2 Multivariate Normalverteilung
+ Normalverteilung I
+
+
+  Definition 13.1
+  Sei X : Ω → R Zufallsvariable mit stetiger Dichte
+                                                     
+                                       1          1 2
+                            φ(x ) = √ exp − x
+                                       2π         2
+
+  bzw. Verteilungsfunktion
+                                                             Zx
+                                            FX (x ) =             φ(y ) dy =: Φ(x )
+                                                           −∞
+
+  Dann ist X ∼ N(0, 1) standardnormalverteilt.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung   567/845
+ Normalverteilung II
+
+  Definition 13.2
+  Sei X : Ω → R Zufallsvariable mit stetiger Dichte
+                                                       
+                                  1             1
+                       f (x ) = √      exp − 2 (x − µ)2
+                                  2πσ          2σ
+
+  bzw. Verteilungsfunktion
+                                                                   Zx
+                                                     F (x ) =            f (y ) dy
+                                                                  −∞
+
+  Dann heißt X ∼ N(µ, σ 2 ) normalverteilt mit Parametern µ ∈ R und σ 2 ∈ R+ .
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung   568/845
+ Normalverteilung III
+
+
+                             0.4
+                                          N(0,1)
+                                          N(2,1)
+                                          N(0,2)
+
+                             0.3
+
+
+
+
+                      f(x)   0.2
+
+
+
+
+                             0.1
+
+
+
+
+                             0.0
+
+                                          −4             −2              0               2   4
+
+                                                                         x
+
+
+
+
+LMU München: Statistik 2 (WTG)     13.1 Normalverteilung: Eindimensionale Normalverteilung       569/845
+ Normalverteilung IV
+ Carl Friedrich Gauß (1777–1855), Princeps
+ mathematicorum
+ Deutscher Mathematiker, Statistiker, Astronom, Geodät,
+ Elektrotechniker und Physiker. Entwickelte im Alter von
+ 18 Jahren die Methode der kleinsten Quadrate, die erste
+ Methode zur Anpassung eines Modells an Daten (z.B.
+ um die Bahn des Zwergplaneten Ceres zu bestimmen).
+ Er benutze als erstes die Normalverteilung, daher oft
+ auch als Gauß-Verteilung bezeichnet (insbesondere in der
+ Erweiterung der Gauß-Prozesse).
+ Außerdem begründete er die nichteuklidische Geometrie,
+ auf ihn gehen diverse Integralsätze, mathematische
+ Funktionen. Seine Ergebnisse wandte er neben der
+ Astronomie insbesondere in der Landvermessung an,
+ später arbeitete er auf dem Gebiet des Magnetismus.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung   570/845
+ Eigenschaften der Normalverteilung I
+
+  Satz 13.3 (Lineare Transformation)
+
+  Sei X ∼ N(µ, σ 2 ) und Y = aX + b mit a, b ∈ R. Dann ist Y ∼ N(aµ + b, a2 σ 2 ).
+
+  Beweis:
+  Anwendung des Transformationssatzes für Dichten:
+
+                                           y = g(x )           = ax + b
+                                                                 y −b
+                                              g −1 (y )        =        bijektiv,
+                                                                     a
+                                           ∂g −1 (y )            1
+                                                               =   .
+                                              ∂y                 a
+
+
+   =⇒
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung   571/845
+ Eigenschaften der Normalverteilung II
+
+                                                            
+                                                   y −b               1
+                      fY (y )      =      fX                     ·
+                                                     a               |a|
+                                                                                               !2 
+                                                                                       y −b
+                                                     1             1                     a −µ
+                                          =√                exp −                                
+                                                   2π σ |a|        2                       σ
+                                                                                                    2 !
+                                                      1    1                          y − (aµ + b)
+                                          =√         exp −
+                                                2
+                                             2πσ a 2       2                               aσ
+
+
+
+
+                                               =⇒ Y ∼ N(aµ + b, a2 σ 2 )
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung                    572/845
+ Eigenschaften der Normalverteilung III
+
+  Wegen Symmetrie der Dichte gilt E(X ) = µ.
+  Nach Beispiel 10.1 gilt für X ∼ N(0, 1) =⇒ Var(X ) = 1. Nach 8.6 und 13.3 also
+  für Y ∼ N(0, σ 2 )
+
+
+                                         Var(Y ) = Var(σX ) = σ 2 Var(X )
+
+
+  Standardisierung
+
+                                                                             X −µ
+                                 X ∼ N(µ, σ 2 ) =⇒ Y =                            ∼ N(0, 1).
+                                                                               σ
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung       573/845
+ Unabhängigkeit I
+  Satz 13.4 (Additivität der Normalverteilung)
+
+  Seien X1 ∼ N(µ1 , σ12 ) und X2 ∼ N(µ2 , σ22 ) stochastisch unabhängig. Dann gilt
+
+                                         X1 + X2 ∼ N(µ1 + µ2 , σ12 + σ22 ).
+
+
+
+  Beweis:
+
+                                                                            X1 + X2 − (µ1 + µ2 )
+           X1 + X2 ∼ N(µ1 + µ2 , σ12 + σ22 ) ⇐⇒                                 p                ∼ N(0, 1)
+                                                                                   σ12 + σ22
+
+  Weiterhin:
+
+                    X1 + X2 − (µ1 + µ2 )   X1 − µ1    X2 − µ2
+                        p
+                            2     2
+                                         =p 2      2
+                                                     +p 2       ∼ N(0, 1)
+                           σ1 + σ 2         σ1 + σ 2   σ1 + σ22
+                                          | {z } | {z }
+                                              X
+                                              e1         X
+                                                         e2
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung                     574/845
+ Unabhängigkeit II
+
+  und
+
+                                                    σ12                                        σ22
+                                                                                                    
+                            X1 ∼ N 0,
+                            f                                     ,     X2 ∼ N 0,
+                                                                        f                                  .
+                                                σ12 + σ22                                  σ12 + σ22
+
+                      σ12
+  Sei λ2 :=                 . Es reicht also zu zeigen:
+                  σ12 + σ22
+
+
+  f1 ∼ N(0, λ2 ), X
+  X               f2 ∼ N(0, 1−λ2 ) stochastisch unabhängig =⇒ X   f2 ∼ N(0, 1),
+                                                              f1 +X
+
+
+
+  was wir bereits in Satz 11.16 bewiesen haben.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung                       575/845
+ Unabhängigkeit III
+
+
+  Satz 13.5
+  Seien X1 , . . . , Xn stochastisch unabhängig mit, Xi ∼ N(µi , σi2 ) für i = 1, . . . , n.
+  Dann gilt
+       Pn                 Pn         Pn    2
+    i)   i=1 Xi ∼ N(        i=1 µi ,  i=1 σi )
+    ii) Für µ1 = . . . = µn =: µ, σ12 = . . . = σn2 =: σ 2 gilt
+                                                              n
+                                                                           σ2
+                                                                             
+                                                           1X
+                                                 X̄ =            Xi ∼ N µ,
+                                                           n i=1           n
+
+
+  Beweis:, Durch induktive Anwendung von Satz 13.4
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung   576/845
+ Unabhängigkeit IV
+  Satz 13.6 (von Cramér)
+  Sind X und Y stochastisch unabhängig und X + Y ist normalverteilt mit
+  E(X + Y ) = µ und Var(X + Y ) = σ 2 > 0, so sind auch X und Y normalverteilt.
+
+  Beweis:
+  Wir nehmen an, dass X , Y und X + Y momenterzeugende Funktionen haben
+  (sonst Beweisführung über charakteristische Funktionen).
+                                                        Nach Beispiel 10.1 ist
+                                                                                           t2
+  die momenterzeugende Funktion von N(0,1) M = exp                                         2    . Mit 10.7 ist die
+                                                                                      2
+  momenterzeugende Funktion von X + Y ∼ N(µ, σ )
+                                                                    2 2
+                                                                         
+                             MX +Y (s) = exp(µs)M(σ 2 s) = exp µs + σ 2s
+
+
+  Nach Satz 10.8 gilt wegen Unabhängigkeit
+
+
+                                                     MX +Y = MX · MY
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung                             577/845
+ Unabhängigkeit V
+
+  Betrachte nun den Logarithmus
+
+
+                                  log(MX (s)) + log(MY (s)) = µs + 12 σ 2 s 2 .
+
+
+  Setze KX (s) := log MX (s) und KY (s) := log MY (s) und entwickle in Taylorreihen
+  (vgl. Beweis zu Satz 10.2):
+
+
+                                                     a2 2 a3 3
+                                       KX (s) = a1 s +  s + s + ··· ,                      (11)
+                                                     2     6
+                                                     b2 2 b3 3
+                                      KY (s) = b1 s + s + s + · · · .                      (12)
+                                                      2    6
+
+
+  Vergleich der Koeffizienten liefert a1 + b1 = µ, a2 + b2 = σ 2 und
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung    578/845
+ Unabhängigkeit VI
+
+
+
+
+                                             ar + br = 0             für alle r ≥ 3.
+
+
+  Da eine Verteilung genau dann normalverteilt ist, wenn K (s) = log(M(s)) ein
+  Polynom zweiten Grades ist (äquivalent: alle Koeffizienten ab Ordnung 3
+  verschwinden), folgt, dass auch X und Y normalverteilt sind.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.1 Normalverteilung: Eindimensionale Normalverteilung   579/845
+13. Normalverteilung
+13.1 Eindimensionale Normalverteilung
+13.2 Multivariate Normalverteilung
+ Multivariate Standardnormalverteilung I
+
+
+  Definition 13.7 (k-dimensionale Normalverteilung)
+  Sei X : Ω → Rk . X = (X1 , . . . , Xk ) heißt
+  k-dimensional (multivariat) standardnormalverteilt, wenn X eine stetige
+  Verteilung mit Dichte
+                                           k           k
+                                                              !
+                                         1            1X 2
+                        fX (x ) = √             exp −      x
+                                         2π           2 i=1 i
+
+  besitzt: X ∼ Nk (0, Ik ).
+
+     ▶ Für k = 1 ergibt sich die eindimensionale Standardnormalverteilung.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   581/845
+ Multivariate Standardnormalverteilung II
+
+
+
+  Satz 13.8
+
+
+             X ∼ Nk (0, Ik )             ⇐⇒
+             Xi ∼ N(0, 1) ∀i = 1, . . . , k und X1 , . . . , Xk stochastisch unabhängig.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung      582/845
+ Multivariate Standardnormalverteilung III
+  Beweis:
+
+                                             k
+                                             Y
+                        fX (x )       =            fXi (xi )      (Xi stochastisch unabhängig)
+                                             i=1
+                                             k
+                                             Y
+                                      =            φ(xi )        (Xi ∼ N(0, 1))
+                                             i=1
+                                                        k                       k
+                                                                                         !
+                                                  1                  1X 2
+                                      =          √             exp −      x
+                                                   2π                2 i=1 i
+
+
+
+     ▶ In Matrixscheibweise ist die Dichte:
+
+                                                                                            
+                                                                 −k/2         1
+                                          fX (x ) = (2π)                 exp − x ⊤ x
+                                                                              2
+
+LMU München: Statistik 2 (WTG)    13.2 Normalverteilung: Multivariate Normalverteilung           583/845
+ Multivariate Normalverteilung I
+
+
+  Definition 13.9
+  Sei X ∼ Nk (0, Ik ) und A ∈ Rp×k sowie µ ∈ Rp . Dann heißt
+
+                                                          Y = AX + µ
+
+  p-dimensional normalverteilt:
+
+                                         Y ∼ Np (µ, Σ)                  mit Σ = AA⊤ .
+
+
+
+     ▶ In der Regel nimmt man p = k.
+     ▶ Σ = AA⊤ ist positiv semidefinit.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   584/845
+ Multivariate Normalverteilung II
+
+  Satz 13.10
+  Sei Y ∼ Np (µ, Σ). Dann ist
+   ▶ E(Y) = µ
+     ▶ Cov(Y) = Σ
+
+  Beweis:
+  Siehe Satz 12.13:
+
+
+                                   E(AX + µ) = AE(X) + µ = A0 + µ = µ
+                                 Cov(AX + µ) = ACov(X)A⊤ = AIA⊤
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   585/845
+ Multivariate Normalverteilung III
+  Satz 13.11
+
+  Wenn A ∈ Rk×k invertierbar, dann hat Y ∼ Nk (µ, Σ) die Dichte fY : Rk → R
+                                                                    
+                                             1
+          fY (y) = (2π)−k/2 det(Σ)−1/2 exp − (y − µ)⊤ Σ−1 (y − µ)
+                                             2
+
+  mit Σ = AA⊤ .
+
+  Beweis Da A invertierbar, ist AA⊤ positiv semidefinit und damit Σ invertierbar.
+  Es gilt:
+
+                                                  ⊤                          −1
+                                           A−1 A−1 = AA⊤                                = Σ−1
+
+
+
+                                       psd
+                                     0 ≤ det(Σ) = det A⊤ A = det(A)2
+                                                          
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung           586/845
+ Multivariate Normalverteilung IV
+  Mit Dichtetransformationssatz (Satz 11.15) gilt für Y = AX + µ
+
+
+                                     fY (y ) = fX (A−1 (y − µ)) · | det(A)|−1
+
+
+  Also:
+
+                                                    
+                                          1     1 ⊤
+                 fX (x )     =      p      exp − x x
+                                     (2π)k      2
+                 fY (y )     = fX (A−1 (y − µ)) · | det(A)|−1
+                               | det(A)|−1
+                                                                              
+                                                     1        ⊤ −1 ⊤ −1
+                             =   p          exp − (y − µ) A          A (y − µ)
+                                    (2π)k            2
+                                                         (y − µ)⊤ Σ−1 (y − µ)
+                                                                             
+                                       1
+                             = p                 exp −                          .
+                                   (2π)k det(Σ)                    2
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   587/845
+ Degenerierter Fall I
+
+     ▶ Ist Σ = AA⊤ nicht invertierbar (mit Rang p < k), hat Y = AX + µ
+       keine Dichte bezüglich λk .
+     ▶ Es lässt sich allerdings eine Restriktion des Lebesgue-Maßes auf einen
+       p-dimensionalen Unterraum von Rk konstruieren.
+     ▶ Dann hat Y die Dichte
+
+                                                                                              
+                                      − p2                    − 21        1
+                   f (x) = (2π)              (det∗ (Σ))              exp − (x − µ)⊤ Σ+ (x − µ)
+                                                                          2
+
+
+  mit
+
+     ▶ Σ+ eine verallgemeinerte Inverse (z.B. Moore–Penrose),
+     ▶ det∗ die verallgemeinerte Determinante (Produkt der Eigenwerte ungleich
+       Null).
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung              588/845
+ Degenerierter Fall II
+
+  Ist q der Rang von Σ. Dann gibt es eine (q × p)-Matrix B mit
+
+
+                                                  BY ∼ Nq (Bµ, BΣB⊤ )
+
+
+  Beispiel
+
+                                                                                     
+                                                                  µ1     1              0
+                                              X ∼ N2                  ,
+                                                                  µ2     0              0
+
+
+     ▶ Eigenwerte von Σ: 1 
+                           und 0 
+     ▶ Pseudoinverse Σ+ = 1 0
+                             0 0
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung         589/845
+ Degenerierter Fall III
+
+
+
+                                                     1
+                                                       exp − 12 (x1 − µ1 )2
+                                                                                        
+                                           f (x ) = 2π
+
+
+  ist keine Dichte bezüglich λ2 .
+
+     ▶ Marginale Verteilung von X1 ∼ N(µ1 , 1)
+     ▶ 1⊤ X = N(µ1 + µ2 , 1)
+     ▶ X2 hat uneigentliche Verteilung (engl. improper distribution):
+       „fX2 (x2 ) ∝ const.“ist keine Dichte bezüglich λ.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung       590/845
+ Kanonische Form der Normalverteilung
+
+
+
+  Definition 13.12 (Kanonische Form der mehrdimensonalen
+  Normalverteilung)
+  Sei X ∼ Nk (µ, Σ). Dann heißen Q = Σ−1 und m = Σ−1 µ die kanonischen
+  Parameter der Normalverteilung. Die Dichte läßt sich schreiben als
+                                                                    
+                   1          1/2        1 ⊤            ⊤       ⊤ −1
+        f (x) = p       det(Q) exp − (x Qx − 2x m − m Q m) .
+                  (2π)k                  2
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   591/845
+ Lineare Transformation
+
+
+
+  Satz 13.13
+  Ist X ∼ N(µ, Σ), dann ist Y = AX + b:
+
+                                                Y ∼ N(Aµ + b, AΣA⊤ )
+
+
+
+  Beweis wie bei Satz 13.11.
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   592/845
+ Marginale Verteilung I
+
+
+
+  Satz 13.14
+  Ist X ∼ N(µ, Σ), dann ist für alle i die marginale Verteilung Xi ∼ N(µi , σi2 ) mit
+  σi2 = Σii .
+
+  Beweis:
+  Setze Ai = (0, . . . , 0, |{z}
+                             1 , 0, . . . , 0). Dann ist Ai X = Xi , Ai µ = µi und
+                                    i−te Stelle
+  Ai ΣAi ⊤ = Σii .
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   593/845
+ Marginale Verteilung II
+                                     
+                            X1
+  Sei im Folgenden X =             mit X : Ω → Rk , X1 : Ω → Rk1 , X2 : Ω → Rk2
+                            X2
+  und k = k1 + k2 . Ist X ∼ Nk (µ, Σ), dann lassen sich Erwartungswertvektor und
+  Kovarianzmatrix zerlegen:
+
+                                                                                        
+                                     X1                          µ1         Σ11         Σ12
+                                               ∼ Nk                      ,
+                                     X2                          µ2         Σ21         Σ22
+
+
+  mit Σ12 = Σ⊤
+             21 . Wie in Satz 13.14 lässt sich zeigen:
+
+     ▶ X1 ∼ Nk1 (µ1 , Σ11 ),
+     ▶ X2 ∼ Nk2 (µ2 , Σ22 ),
+     ▶ Cov(X1 , X2 ) = Σ12 .
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung              594/845
+ Marginale Verteilung III
+
+
+  Beispiel 13.1
+  Sei
+                                                                                       
+                                              1      1                           0      0.5
+                                     X ∼ N3 2 ,  0                          1.5      1 
+                                              3     0.5                          1       2
+
+  Dann ist
+                                                                                      
+                                       ∗           X1              1    1                 0
+                                    X :=                    ∼ N2     ,
+                                                   X2              2    0                1.5
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung            595/845
+ Bedingte Verteilung I
+
+
+  Satz 13.15
+  Sei
+                                                                                        
+                                     X1                          µ1         Σ11         Σ12
+                                               ∼ Nk                      ,
+                                     X2                          µ2         Σ21         Σ22
+
+  Dann gilt:
+
+                  X1 | X2 ∼ Np1 µ1 + Σ12 Σ−1                        −1
+                                                                                                   
+                                          22 (X2 − µ2 ), Σ11 − Σ12 Σ22 Σ21
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung                  596/845
+ Bedingte Verteilung II
+  Beispiel 13.2
+  Sei
+                                                                                       
+                                              1      1                           0      0.5
+                                     X ∼ N3 2 ,  0                          1.5      1 
+                                              3     0.5                          1       2
+
+
+                                                               −1
+                             0    1                            0.5                        1 x2   2x3
+      E(X1 |X2 , X3 ) = 1 +                                           (x2 − 2, x3 − 3) = − −   +
+                            0.5  0.5                            2                         3  3    3
+
+
+                                                                                   −1
+                                              0    1                               0.5               2
+                       V(X1 |X2 , X3 ) = 1 −                                              (0, 0.5) =
+                                             0.5  0.5                               2                3
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung                    597/845
+ Bedingte Verteilung III
+
+
+
+                                                          1 x3 
+                                           1   1 1            −2 + 2
+                        E(X1 , X2 |X3 ) =    +     (x − 3) =
+                                           2   0 2 3             2
+
+
+                                                                                       
+                                             1      0    0.5 1              7/8         −1/4
+               V(X1 , X2 |X3 ) =                       −       (0.5, 1) =
+                                             0     1.5    1 2              −1/4         1/2
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung           598/845
+ Bedingte Verteilung IV
+
+
+
+
+        Marginale und bedingte Verteilungen der multivariaten Normalverteilung
+
+        Alle marginalen und bedingten Verteilungen                                      der   multivariaten
+        Normalverteilung sind wieder Normalverteilungen.
+        Vorsicht: Die Umkehrung gilt nicht unbedingt!
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung                         599/845
+ Bedingte Verteilung V
+
+
+  Gegenbeispiel
+     ▶ X1 |X2 ∼ N(α0 + α1 X2 , σ12 ),
+     ▶ X2 |X1 ∼ N(β0 + β1 X13 , σ22 ).
+  ⇒
+
+                      E(X1 ) = E(E(X1 |X2 )) = E(α0 + α1 X2 ) = α0 + α1 E(X2 )
+                      E(X2 ) = E(E(X2 |X1 )) = E(β0 + β1 X13 ) = β0 + β1 E(X13 )
+
+  Nicht konsistent (außer im trivialen Fall α1 = β1 = 0)!
+
+
+
+
+LMU München: Statistik 2 (WTG)   13.2 Normalverteilung: Multivariate Normalverteilung   600/845
+

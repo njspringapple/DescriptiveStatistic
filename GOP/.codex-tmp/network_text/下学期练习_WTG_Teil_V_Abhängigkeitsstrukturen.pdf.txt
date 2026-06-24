@@ -1,0 +1,1119 @@
+                    Teil V: Abhängigkeitsstrukturen
+
+
+
+
+LMU München: Statistik 2 (WTG)   15 Verteilungskonvergenz   708/847
+   Kapitel 16
+       Stochastische Prozesse
+
+
+
+16. Stochastische Prozesse
+16.1 Random Walk
+16.2 Markov-Ketten
+16.3 Stochastische Prozesse
+16. Stochastische Prozesse
+16.1 Random Walk
+16.2 Markov-Ketten
+16.3 Stochastische Prozesse
+ Random Walks I
+
+
+
+
+     ▶ Namensgebend ist die Vorstellung einer desorientierten Person, die sich in
+       jedem Schritt mit gewisser Wahrscheinlichkeit nach rechts bzw. links bewegt
+       bzw. stehenbleibt.
+     ▶ Irrfahrten (Random Walks) können ebenfalls als diskrete Idealisierung von
+       Kursverläufen (Aktien, Währungen) betrachtet werden.
+     ▶ Irrfahrten sind wichtiger Baustein oder Spezialfall von komplexeren
+       statistischen Modellen, z.B. in der Zeitreihenanalyse.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.1 Stochastische Prozesse: Random Walk      711/847
+ Diskrete einfache Irrfahrt auf der Geraden
+
+
+
+
+     ▶ Start in X0 = 0 (Zeit t = 0).
+     ▶ Bewegung: (t = 1, 2, . . .)
+             ▶ Ein Schritt nach rechts mit Wahrscheinlichkeit p
+             ▶ Ein Schritt nach links mit Wahrscheinlichkeit q
+             ▶ Verbleiben im Zustand mit Wahrscheinlichkeit r
+     ▶ p + q + r = 1.
+     ▶ Xt Position nach t-tem Schritt.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.1 Stochastische Prozesse: Random Walk   712/847
+ Simulation I
+  Z = sample(c(-1, 1), 100, replace = TRUE)
+  X = cumsum(Z)
+  plot(X, type = "s", xlab = "Schritt")
+
+
+
+
+                          0
+
+                          −2
+
+                          −4
+
+                      X   −6
+
+                          −8
+
+                          −10
+
+                          −12
+
+
+                                 0            20             40              60   80   100
+
+                                                                   Schritt
+
+
+
+
+                   Abbildung 32: Simulierte symmetrische einfache diskrete Irrfahrt
+
+
+LMU München: Statistik 2 (WTG)   16.1 Stochastische Prozesse: Random Walk                    713/847
+ Simulation II
+
+
+                          20
+
+
+                          10
+
+
+                      X   0
+
+
+
+                          −10
+
+
+                          −20
+
+
+
+                                 0            20             40              60   80   100
+
+                                                                   Schritt
+
+
+
+
+              Abbildung 33: Fünf simulierte symmetrische einfache diskrete Irrfahrten
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.1 Stochastische Prozesse: Random Walk                    714/847
+ Definitionen
+  Allgemeine Definition
+  Definition
+  Seien Zt unabhängig und identisch verteilt für t = 1, . . . , T . Dann heißt
+  X = (X0 , . . . , XT ) mit Xt = Xt−1 + Zt und X0 = 0 (einfache) Irrfahrt (Random
+  Walk).
+
+  Das vorherige Beispiel ergibt sich mit Zt ∈ {−1, 0, 1}. Zum Beispiel Spiel
+  zwischen zwei Spielpartnern.
+  Definition
+                                                                              i
+                                                                             ∑︂
+  Sei Zt ∼ N(0, σ 2 ). Dann bezeichnet man X = (X1 , . . . , XT ) mit Xi =         Zt als
+                                                                             t=1
+  Gauss-Irrfahrt.
+
+  Es gilt
+     ▶ Xt = ti=1 Zi ∼ N(0, tσ 2 )
+             ∑︁
+     ▶ Xt+1 |Xt = xt ∼ N(xt , σ 2 )
+     ▶ X ∼ NT (0, Σ) mit
+LMU München: Statistik 2 (WTG)   16.1 Stochastische Prozesse: Random Walk               715/847
+16. Stochastische Prozesse
+16.1 Random Walk
+16.2 Markov-Ketten
+16.3 Stochastische Prozesse
+ Markov-Eigenschaft
+
+
+  Definition
+  Sei X = (X0 , . . . , XT ). Sind (X0 , . . . , Xt−1 ) und (Xt+1 , . . . , XT ) unabhängig
+  gegeben Xt für alle t, dann erfüllt X die Markov-Eigenschaft:
+
+                                 P(Xt+1 | Xt , Xt−1 , . . . , X0 ) = P(Xt+1 | Xt ).
+
+
+  Man nennt X eine Markov-Kette
+
+  Ist t (diskrete) Zeit, bedeutet das: für X ist die Zukunft bedingt unabhängig von
+  der Vergangenheit gegeben der Gegenwart.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten                   717/847
+ Andrei Andrejewitsch Markow
+
+  Andrei Andrejewitsch Markow (2./14. Juni 1856 bis 20. Juli 1922)
+
+  In Rußland geborener Mathematiker,
+  1885 verteidigte er seine
+  Habilitationsschrift an der Universität
+  Sankt Petersburg und wurde dort 1886
+  Professor an der Fakultät für
+  Mathematik und Physik. Er berechnete
+  1913 die Buchstabensequenzen in
+  russischer Literatur, um die
+  Notwendigkeit der Unabhängigkeit für
+  das Gesetz der großen Zahlen
+  nachzuweisen. Aus diesem Ansatz
+  entwickelte sich der Markow-Prozess.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten   718/847
+ Beispiel Diskrete Markovkette I
+
+
+
+  Beispiel 16.1
+
+  Anna, Bert und Clara werfen sich einen Ball zu. Wenn sie den Ball haben, werfen
+  sie ihn wie folgt weiter:
+    ▶ Anna wirft mit Wahrscheinlichkeit 2/3 zu Bert
+     ▶ Bert wirft mit Wahrscheinlichkeit 2/3 zu Anna
+     ▶ Clara wirft mit Wahrscheinlichkeit 2/3 zu Anna
+
+  Frage: Wer hat nach einer großen Anzahl von Würfen den Ball?
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten   719/847
+ Beispiel Diskrete Markovkette II
+
+
+
+     ▶ Wir können die Übergangswahrscheinlichkeiten in Form einer Matrix
+       angeben:
+
+                                                      ⎛                       ⎞
+                                                     0                2/3 1/3
+                                              P = ⎝ 2/3                0  1/3 ⎠
+                                                    2/3               1/3  0
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten       720/847
+ Beispiel Diskrete Markovkette III
+
+
+
+  Bezeichne πn die Wahrscheinlichkeitsverteilung auf die drei Spieler nach n
+  Würfen. Nehmen wir an, dass Anna zu Beginn den Ball hat, dann ist
+
+     ▶ π0 = (1, 0, 0).
+     ▶ π1 = π0 P = (0, 2/3, 1/3)
+     ▶ π2 = π1 P = 32 · 32 + 13 · 23 , 31 · 13 , 32 · 13
+                     (︁                                  )︁
+     ▶ πn = π0 Pn
+     ▶ existiert lim πn ?
+                       n→∞
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten    721/847
+ Beispiel Diskrete Markovkette IV
+  P <- matrix(c(0, 2/3, 1/3, 2/3, 0, 1/3, 2/3, 1/3, 0), nrow = 3, byrow = TRUE)
+  pi <- c(1, 0, 0)
+  (pi <- pi %*% P) # Wurf 1
+
+
+  ##      [,1]      [,2]      [,3]
+  ## [1,]    0 0.6666667 0.3333333
+
+  (pi <- pi %*% P)         # Wurf 2
+
+
+  ##           [,1]      [,2]      [,3]
+  ## [1,] 0.6666667 0.1111111 0.2222222
+
+  (pi <- pi %*% P)         # Wurf 3
+
+
+  ##           [,1]      [,2]      [,3]
+  ## [1,] 0.2222222 0.5185185 0.2592593
+
+  (pi <- pi %*% P %*% P)           # Wurf 5
+
+
+  ##           [,1]      [,2]      [,3]
+  ## [1,] 0.3209877 0.4279835 0.2510288
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten       722/847
+ Beispiel Diskrete Markovkette V
+
+  (pi <- pi %*% P %*% P %*% P %*% P %*% P)                    # Wurf 10
+
+
+  ##           [,1]      [,2]      [,3]
+  ## [1,] 0.4104049 0.3395993 0.2499958
+
+  (pi <- pi %*% P %*% P %*% P %*% P %*% P)                    # Wurf 15
+
+
+  ##           [,1]      [,2] [,3]
+  ## [1,] 0.3986298 0.3513702 0.25
+
+  (pi <- pi %*% P %*% P %*% P %*% P %*% P)                    # Wurf 20
+
+
+  ##           [,1]      [,2] [,3]
+  ## [1,] 0.4001804 0.3498196 0.25
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten   723/847
+ Stationäre Verteilung I
+
+
+  Definition
+  Sei S eine Menge von
+                    ∑︁ Zuständen. Ein Vektor von Wahrscheinlichkeiten
+  π : S → [0, 1] mit i πi = 1 heißt stationäre Verteilung, falls
+
+                                                              π = πP
+
+
+  das heißt
+                                                    ∑︂
+                                           πj =           πi pij       für alle j ∈ S.
+                                                    i∈S
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten              724/847
+ Stationäre Verteilung II
+
+
+
+  Beispiel 16.2 (Fortsetzung Beispiel 16.1)
+  Nehmen wir an, wir geben den Ball zufällig mit folgender Startverteilung an
+  Anna, Bert oder Clara:
+   ▶ π0 = (0.4, 0.35, 0.25)
+   ▶ π1 = 0.35 · 23 + 0.25 · 23 , 0.4 · 32 + 0.25 · 13 , 0.4 · 31 + 0.35 · 31 =
+             (︁                                                              )︁
+
+      (0.4, 0.35, 0.25) = π0 !
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten       725/847
+ Stationäre Verteilung III
+
+
+  Satz (Ergodensatz)
+  Eine Markovkette besitzt eine stationäre Verteilung, falls sie
+    ▶ aperiodisch (kehrt nicht in regelmäßigen Abständen in einen Zustand zurück)
+     ▶ positiv-rekurrent (jeder Zustand wird mit Wahrscheinlichkeit größer 0 in
+       endlicher Zeit wieder erreicht und die erwartete Rückkehrzeit ist endlich)
+  ist.
+
+     ▶ Falls die Markovkette konvergiert, hängt für n → ∞ die stationäre Verteilung
+       nicht mehr von der Startverteilung ab.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten         726/847
+ Stationäre Verteilung IV
+
+     ▶ Um die stationäre Verteilung zu bekommen, müssen wir nur das
+       Gleichungssystem
+
+
+                                                              π = πP
+
+
+  lösen. Dazu transponieren wir die Gleichung
+
+
+                                                        P⊤ π ⊤ = 1π ⊤
+
+
+  Das entspricht der Eigenwertgleichung. π ist also der (unnormierte) Eigenvektor
+  von P⊤ bezüglich des Eigenwerts 1.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten    727/847
+ Stationäre Verteilung V
+
+
+
+  eigen(t(P)) -> e
+  pi <- Re(e$vector[, which(e$values == 1)])
+  (pi <- pi/sum(pi))
+
+
+
+  ## [1] 0.40 0.35 0.25
+
+
+
+     ▶ Die Ergebnisse lassen sich auch auf stetige Zustandsräume verallgemeinern.
+     ▶ Statt der Übergangsmatrix braucht man einen Übergangskern
+       P(x , A) := P(Xt+1 ∈ A|Xt = x ) = P(X1 ∈ A|X0 = x )
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten    728/847
+ Markov Chain Monte Carlo I
+
+
+
+     ▶ Ziel von Markov Chain Monte Carlo (MCMC) Techniken ist die
+       Konstruktion einer Markov-Kette, deren Übergangskern P gegen die
+       gesuchte Verteilung π ∗ konvergiert (d.h. π ∗ soll die invariante Verteilung der
+       Markov-Kette sein).
+     ▶ Problem: Finde zu gegebener Verteilung π ∗ eine Markov-Kette mit
+       Übergangskern P und π ∗ als invarianter Verteilung. P ist nicht eindeutig!
+     ▶ Der Ergodensatz fungiert hier wie das Gesetz der großen Zahlen bzw. der
+       Hauptsatz der Statistik, aber für abhängige Zufallsvariablen/Ziehungen.
+     ▶ Anwendung insbesondere in hochdimensionalen Problemen, wenn die
+       gemeinsame Verteilung analytisch nicht mehr berechenbar ist.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten         729/847
+ Markov Chain Monte Carlo II
+
+  Beispiel 16.3
+      (︃    )︃     (︃ (︃                             )︃)︃
+         X               1                      ρ
+  Für          ∼ N2 0,                                      gilt:
+         Y               ρ                      1
+                             X |Y ∼ N(ρY , 1 − ρ2 ),                    Y |X ∼ N(ρX , 1 − ρ2 )
+
+
+
+  set.seed(33)
+  rho <- 0.5
+  iterationen <- 100
+  x <- y <- rep(NA, iterationen)
+  x[1] <- y[1] <- 4.2
+  for (i in 2:iterationen) {
+      x[i] <- rnorm(1, rho * y[i - 1], sqrt(1 - rhoˆ2))
+      y[i] <- rnorm(1, rho * x[i], sqrt(1 - rhoˆ2))
+  }
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten                      730/847
+ Markov Chain Monte Carlo III
+
+
+                                  4
+
+
+                                  3
+
+
+                                  2
+
+
+
+
+                      mcmc <− x
+                                  1
+
+
+                                  0
+
+
+                                  −1
+
+
+                                  −2
+
+
+
+                                       0            20              40              60   80   100
+
+                                                                           Index
+
+
+
+
+LMU München: Statistik 2 (WTG)         16.2 Stochastische Prozesse: Markov-Ketten                   731/847
+ Markov Chain Monte Carlo IV
+
+
+                                0.5
+
+
+                                                   MCMC
+                                0.4                iid
+                                                   wahr
+
+
+                                0.3
+
+                      Density
+                                0.2
+
+
+
+                                0.1
+
+
+
+                                0.0
+
+                                                    −2                   0                 2   4
+
+                                                               N = 90 Bandwidth = 0.3431
+
+
+
+
+LMU München: Statistik 2 (WTG)        16.2 Stochastische Prozesse: Markov-Ketten                   732/847
+ Modellierung mit Random Walk I
+
+
+
+
+                                     10000 11000 12000 13000
+
+
+                      Anzahl Fälle
+
+
+                                     9000
+
+
+                                     8000
+
+
+                                     7000
+
+                                                               1940            1950          1960          1970    1980   1990
+
+                                                                                                          Jahr
+
+
+
+  Abbildung 34: Daten für COPD bei Frauen in England and Wales von 1942 bis 1996
+  (courtesy Anna Hansell, Imperial College).
+
+LMU München: Statistik 2 (WTG)                                        16.2 Stochastische Prozesse: Markov-Ketten                 733/847
+ Modellierung mit Random Walk II
+
+
+     ▶ Wir gehen davon aus, dass die Beobachtungen Poisson-verteilt sind:
+       Yt ∼ Po(λt ).
+     ▶ Aber offensichtlich nicht unabhängig. Es gibt einen zeitlichen Trend.
+       Annahme: Der Erwartungswert
+                         (︁             pro
+                                        )︁ Zeitpunkt t folgt einem Random Walk,
+       z.B. log(λt ) ∼ N log(λt−1 ), σ 2 .
+     ▶ Leider kennen wir σ 2 nicht. Nehmen wir an, σ 2 sei zufällig (Bayesianische
+       Herangehensweise), z.B. σ 2 ∼ IG(a, b).
+
+  Wir interessieren uns für die Verteilung der Parameter (λ, σ 2 ). Diese lässt sich
+  über einen MCMC-Algorithmus approximieren.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten            734/847
+ Modellierung mit Random Walk III
+
+
+  library(rjags)
+  library(coda)
+  model <- "model{
+      for (t in 1:T) {
+          y[t] ~ dpois(lambda[t])
+          lambda[t] = exp(gamma[t])
+      }
+      for (t in 2:T)
+      {
+        gamma[t] ~ dnorm(gamma[t-1], tau) #zweiter Parameter ist Präzision!
+      }
+      gamma[1] ~ dnorm(0, tau)
+      tau ~ dgamma(a,b)
+  }"
+  jagsmodel <- jags.model(file = textConnection(model), data = datalist, n.chains = 2)
+  update(jagsmodel, n.iter = 1000)
+  samples <- coda.samples(jagsmodel, variable.names = c("gamma", "tau"), n.iter = 1000)
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.2 Stochastische Prozesse: Markov-Ketten               735/847
+ Modellierung mit Random Walk IV
+
+                                                                            35
+                          9.02
+
+                                                                            30
+
+
+                                                                            25
+                          9.00
+
+                                                                            20
+
+
+                          8.98                                              15
+
+
+                                                                            10
+
+                          8.96                                              5
+
+
+                                                                            0
+
+                                 2000 2200 2400 2600 2800 3000                   8.94   8.96   8.98   9.00   9.02
+
+                                             Iterations                           N = 1000 Bandwidth = 0.002998
+
+
+
+                  Abbildung 35: Trace plot und geschätze Dichte eines log(lambda)
+
+
+
+
+LMU München: Statistik 2 (WTG)     16.2 Stochastische Prozesse: Markov-Ketten                                       736/847
+ Modellierung mit Random Walk V
+
+
+
+
+                               10000 11000 12000 13000
+
+                      lambda
+
+
+                               9000
+
+
+                               8000
+
+
+                               7000
+
+                                                         1940            1950          1960          1970    1980   1990
+
+                                                                                                    Jahr
+
+
+
+                                                                  Abbildung 36: Geschätzer zeitlicher Trend
+
+
+
+
+LMU München: Statistik 2 (WTG)                                  16.2 Stochastische Prozesse: Markov-Ketten                 737/847
+16. Stochastische Prozesse
+16.1 Random Walk
+16.2 Markov-Ketten
+16.3 Stochastische Prozesse
+ Stochastische Prozesse I
+
+
+  Definition
+  Sei
+
+                                               Xt : (Ω, F, P) −→ (S, S)
+
+
+  für alle t Zufallsvariablen auf (Ω, F , P). Dann heißt
+
+                                             X = {Ω, F, P, {Xt , t ∈ T }}
+
+
+  stochastischer Prozess. T heißt Indexmenge, S heißt Zustandsraum.
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.3 Stochastische Prozesse: Stochastische Prozesse   739/847
+ Stochastische Prozesse II
+
+  Die Indexmenge T kann zum Beispiel sein
+
+     ▶ diskrete Zeit: T ⊆ N+
+     ▶ stetige Zeit: T ⊆ R+
+     ▶ ungerichtete eindimensionale Indexmenge, z.B. Positionen im DNA-Strang
+       (Lange (1997))
+     ▶ Abzählbare Menge von räumlichen Einheiten, z.B. Länder auf einer Landkarte
+     ▶ zweidimensionale Fläche T ⊆ R2
+     ▶ höhere Dimensionen, Kombinationen davon (räumlich-zeitliche Prozesse), . . .
+
+  Beispiele
+     ▶ Markovketten
+     ▶ Poissonprozesse (siehe 820)
+     ▶ Gaussprozesse
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.3 Stochastische Prozesse: Stochastische Prozesse   740/847
+ Gaussprozesse I
+
+
+  Definition
+  T = R+
+       0 . X ist ein Gauß-Prozess, wenn gilt
+
+
+                                            (Xt1 , Xt2 , . . . , Xtk ) ∼ Nk (µ, Σ)
+
+
+  für alle ti ∈ T für i = 1, . . . , k und für alle k.
+
+     ▶ Speziell beim stationären, isotropen Gauß-Prozess gilt µ = 0 und
+       Cov(Xt , Xs ) = σ 2 ρ(|t − s|), wobei ρ eine Korrelationsfunktion ist.
+     ▶ Vgl. Bsp. 16.2
+
+
+
+
+LMU München: Statistik 2 (WTG)   16.3 Stochastische Prozesse: Stochastische Prozesse   741/847
+ Gaussprozesse II
+
+
+                                                25
+
+
+                                                20
+
+
+
+
+                      Durchschnittstemperatur
+                                                15
+
+
+                                                10
+
+
+                                                5
+
+
+                                                          2021−01                   2021−07                2022−01
+
+                                                                                         Monat
+
+
+
+
+  Abbildung 37: Durchschnittstemperatur in München Stadt von November 2020 bis Mai
+  2022
+
+
+
+
+LMU München: Statistik 2 (WTG)                       16.3 Stochastische Prozesse: Stochastische Prozesse             742/847
+ Gaussprozesse III
+
+
+                           0.6
+
+
+
+                           0.4
+
+
+
+                      xt   0.2
+
+
+
+                           0.0
+
+
+
+                           −0.2
+
+
+
+
+                                  0.0           0.2             0.4             0.6     0.8   1.0
+
+                                                                         t
+
+
+
+                   Abbildung 38: Simulierter Wienerprozess, ρ(s, t) = min(s, t)/σ 2
+
+
+
+
+LMU München: Statistik 2 (WTG)    16.3 Stochastische Prozesse: Stochastische Prozesse               743/847
+ Gaussprozesse IV
+
+                           1.0
+
+
+
+
+                           0.5
+
+
+
+
+                      xt   0.0
+
+
+
+
+                           −0.5
+
+
+
+
+                           −1.0
+
+
+                                  0.0           0.2             0.4             0.6     0.8   1.0
+
+                                                                         t
+
+
+
+  Abbildung 39:(︁ Simulierter )︁Gaussprozess mit Gausskorrelationsfunktion,
+  ρ(s, t) = exp −25(s − t)2
+
+
+
+LMU München: Statistik 2 (WTG)    16.3 Stochastische Prozesse: Stochastische Prozesse               744/847
+ Gaussprozesse V
+
+
+
+                                                                                       4000
+
+
+                                                                                       3000
+
+
+                                                                                       2000
+
+
+                                                                                       1000
+
+
+
+
+  Abbildung 40: Messungen des Regen an 100 Wetterstationen in der Schweiz am 8. Mai
+  1986
+
+
+
+LMU München: Statistik 2 (WTG)   16.3 Stochastische Prozesse: Stochastische Prozesse          745/847
+ Gaussprozesse VI
+
+                                                                                       50
+
+
+
+
+                                                                                       40
+
+
+
+
+                                                                                       30
+
+
+
+
+                                                                                       20
+
+
+
+
+                                                                                       10
+
+
+
+
+  Abbildung 41: Glatte Prädiktion des Regenfalls in der Schweiz am 8. Mai 1986,
+  basierend auf Gaussprozess (Kriging-Verfahren).
+
+
+
+LMU München: Statistik 2 (WTG)   16.3 Stochastische Prozesse: Stochastische Prozesse        746/847
+   Kapitel 17
+       Copula
+
+
+
+17. Copula
+17.1 Definition und Eigenschaften
+17.2 Spezielle Copulas
+17. Copula
+17.1 Definition und Eigenschaften
+17.2 Spezielle Copulas
+ Definition Copulas I
+
+
+  Definition
+  Eine Copula C : [0, 1]n → [0, 1] ist eine n-dimensionale Verteilungsfunktion
+
+                                 C (u1 , . . . , un ) := P(U1 ≤ u1 , . . . , Un ≤ un )
+
+
+  über [0, 1]n deren n Randverteilungen alle Standard-Gleichverteilungen U[0, 1]
+  sind.
+
+     ▶ C (u1 , . . . , un ) ist monoton ansteigend in jeder Komponente uj
+     ▶ Die Randverteilung der j-ten Komponente bekommt man mit ui = 1 ∀ i ̸= j,
+       und da sie eine Gleichverteilung ist muss gelten:
+
+
+
+
+LMU München: Statistik 2 (WTG)   17.1 Copula: Definition und Eigenschaften               749/847
+ Definition Copulas II
+
+                                             C (1, . . . , 1, uj , 1, . . . , 1) = uj
+
+
+  Satz (Verteilung durch Copula und Randverteilungen)
+
+  Sei C (u1 , . . . , un ) eine Copula, und F1 , . . . , Fn beliebige eindimensionale
+  Verteilungsfunktionen. Dann ist
+
+                                    F (x1 , . . . , xn ) = C (F1 (x1 ), . . . , Fn (xn ))
+
+
+  eine Verteilungsfunktion mit Randverteilungsfunktionen F1 , . . . , Fn .
+
+     ▶ P(F (X ) ≤ u) = u, u ∈ [0, 1] für stetige Verteilungsfunktionen F, also
+       F (X ) ∼ U[0, 1].
+     ▶ Damit gilt auch:
+
+
+LMU München: Statistik 2 (WTG)   17.1 Copula: Definition und Eigenschaften                  750/847
+ Definition Copulas III
+
+
+                                 C (u1 , . . . , un ) = F FX−1 (u1 ), . . . , FX−1
+                                                         (︁                             )︁
+                                                             1                   n
+                                                                                   (un ) .
+
+
+  Satz (Satz von Sklar)
+
+  Sei F eine n-dimensionale Verteilungsfunktion mit den Randverteilungen
+  F1 , . . . , Fn . Dann existiert eine Copula C , so dass Satz 17.2 gilt. Sind alle
+  Randverteilungen stetig, so ist C eindeutig.
+
+  Beweis siehe Sklar (1997).
+  Das heißt, dass jede stetige multivariate Verteilung in ihre Randverteilungen
+  (marginale Verteilungsfunktionen) und ihre Abhängigkeitsstruktur (Copula)
+  zerlegt werden kann.
+
+
+
+
+LMU München: Statistik 2 (WTG)   17.1 Copula: Definition und Eigenschaften                   751/847
+ Eigenschaften I
+
+
+
+  Satz (Copula unter monotonen Transformationen)
+
+  Seien X1 , . . . , Xn reellwertige Zufallsvariablen mit stetigen Randverteilungen und
+  einer Copula CX . Seien gi : R → R, i = 1, . . . , n strikt monoton steigende
+  Funktionen und Yi = gi (Xi ). Dann gilt für die Copula CY von Y1 , . . . , Yn :
+
+                                                             CY = CX .
+
+
+
+
+LMU München: Statistik 2 (WTG)   17.1 Copula: Definition und Eigenschaften           752/847
+ Eigenschaften II
+  Beweis:
+
+
+                       FY (y1 , . . . , yn ) = P (g1 (X1 ) ≤ y1 , . . . , gn (Xn ) ≤ yn )
+                                             = P X1 ≤ g1−1 (y1 ), . . . , Xn ≤ gn−1 (yn )
+                                                 (︁                                       )︁
+
+                                                = FX (g1−1 (y1 ), . . . , gn−1 (yn ))
+
+
+  also mit yi → ∞ ∀ i ̸= j : FYj (yj ) = FXj (gj−1 (yj )), und damit:
+
+
+                CY (u1 , . . . , un ) = FY FY−1 (u1 ), . . . , FY−1
+                                          (︁                              )︁
+                                              1                   n
+                                                                    (un )
+                                      = FX g1−1 FY−1   (u1 ) , . . . , gn−1 FY−1
+                                          (︁    (︁             )︁            (︁         )︁)︁
+                                                     1                          n
+                                                                                  (un )
+                                      = FX FX−1 (u1 ), . . . , FX−1
+                                          (︁                             )︁
+                                              1                   n
+                                                                    (un ) = CX (u1 , . . . , un )
+
+
+
+
+LMU München: Statistik 2 (WTG)   17.1 Copula: Definition und Eigenschaften                          753/847
+ Eigenschaften III
+
+  Satz (Fréchet-Hoeffding Schranken)
+
+  Für eine gültige Copula C (u1 , . . . , un ) muss gelten:
+                  (︄         n
+                                        )︄
+                           ∑︂
+             max 1 − n +         ui , 0 ≤ C (u1 , . . . , un ) ≤ min(u1 , . . . , un )
+                                            i=1
+
+
+
+     ▶ Die obere Schranke bezeichnet man als ko-monotone Copula. Sie entsteht
+       zum Beispiel wenn alle Xi , i ̸= 1 monotone Transformationen von X1 sind.
+       (“vollständige gleichsinnige Abhängigkeit”)
+     ▶ Die untere Schranke ist für n > 2 keine gültige Copula. Für n = 2 entsteht
+       sie durch die gemeinsame Verteilung von (X , 1 − X ) mit X ∼ U[0, 1].
+       (“vollständige gegensinnige Abhängigkeit”)
+     ▶ Unter Unabhängigkeit ist die Copula C (u1 , . . . , un ) = ni=1 ui .
+                                                                 ∏︁
+
+
+
+
+LMU München: Statistik 2 (WTG)   17.1 Copula: Definition und Eigenschaften               754/847
+17. Copula
+17.1 Definition und Eigenschaften
+17.2 Spezielle Copulas
+ Gauss-Copula I
+
+  Beispiel 17.1
+                                                                  (︂         )︂
+                                                                       1 ρ
+  Sei X = (X1 , X2 ) ∼ N2 (0, R) mit R =                               ρ 1        eine Korrelationsmatrix. Dann ist
+
+
+                                 FX1 ,X2 (x1 , x2 )         =      ΦR (x1 , x2 )
+                                                            =      ΦR (Φ−1 (u1 ), Φ−1 (u2 ))
+                                                            =      CRGa (u1 , u2 )
+
+
+  Dabei ist ΦR die Verteilungsfunktion für N2 (0, R).
+  CRGa heißt Gauss-Copula.
+  Für ρ = −1, 0, 1 bekommt man entsprechend jeweils die Copula für vollständige
+  gegensinnige Abhängigkeit, die Unabhängigkeitscopula, und die ko-monotone
+  Copula.
+
+
+
+LMU München: Statistik 2 (WTG)   17.2 Copula: Spezielle Copulas                                                   756/847
+ Gauss-Copula II
+
+
+
+
+  Abbildung 42: Gauss-Copula für extreme Parameter und Datenbeispiele mit
+  verschiedenen Randverteilungen
+
+
+
+LMU München: Statistik 2 (WTG)   17.2 Copula: Spezielle Copulas             757/847
+ Archimedische Copulas I
+
+
+  Definition (Archimedische Copula)
+  Sei ψ : [0, 1] × Θ → R+ 0 eine stetige, streng fallende und konvexe
+  Generator-Funktion
+         {︄             mit  ψ(1; θ) = 0 und Pseudo-Umkehrfunktion
+             −1
+           ψ     (p, θ) 0 ≤  p ≤ ψ(0, θ)
+  ψ− =                                         .
+           0            sonst
+  Eine Copula heißt archimedische Copula wenn sie sich darstellen läßt als
+                                                     (︄ n              )︄
+                                                       ∑︂
+                          C (u1 , . . . , un ) = ψ −      ψ(ui ; θ); θ
+                                                                  i=1
+
+
+
+
+LMU München: Statistik 2 (WTG)   17.2 Copula: Spezielle Copulas              758/847
+ Archimedische Copulas II
+  Beispiel 17.2 (Archimedische Copulas)
+  Die Clayton-Copula ist asymmetrisch mit stärkerer Abhängigkeit für kleine u:
+  ψ(u; θ) = θ1 (u −θ − 1); θ ∈ [−1, ∞) \ {0} ergibt
+
+                                                                      )︁)︁− θ1
+                                 C (u1 , u2 ) = max u1−θ + u2−θ − 1, 0
+                                               (︁  (︁
+                                                                               .
+
+
+  Die Gumbel-Copula ist asymmetrisch mit stärkerer Abhängigkeit für große u:
+  ψ(u; θ) = (− log(u))θ ; θ ∈ [1, ∞) ergibt
+                                 (︂ (︁                            )︁1/θ )︂
+               C (u1 , u2 ) = exp − (− log(u1 ))θ + (− log(u2 ))θ          .
+                                                     (︂            )︂
+  Die Frank-Copula ist symmetrisch: ψ(u; θ) = − log exp(−θu)−1
+                                                        exp(−θ)−1     ; θ ∈ R \ {0}
+  ergibt
+                               1   (︂                                )︂
+               C (u1 , u2 ) = − log 1 + (exp(−θu1exp(−θ)−1
+                                                  )−1)(exp(−θu2 )−1)
+                                                                        .
+                               θ
+
+
+
+LMU München: Statistik 2 (WTG)   17.2 Copula: Spezielle Copulas                       759/847
+ Archimedische Copulas III
+
+
+
+
+  Abbildung 43: Archimedische Copulas und Datenbeispiele mit verschiedenen
+  Randverteilungen
+
+
+
+LMU München: Statistik 2 (WTG)   17.2 Copula: Spezielle Copulas              760/847
+

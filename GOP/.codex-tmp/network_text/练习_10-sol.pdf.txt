@@ -1,0 +1,354 @@
+Deskriptive Statistik                                                                              Blatt 10
+Fabian Scheipl, Daniel Schlichting                                                         WiSe 2025/2026
+
+
+
+Hinweise:
+  • Abgabeschluss für bewertete Aufgaben ist immer Montag 12:00 der Folgewoche.
+    Nur Abgaben, die rechtzeitig und formgerecht (PDF in DIN A 4 Hochformat, Dateigröße < 20 MB) über
+    die Moodle-Seite zur Veranstaltung erfolgen, werden akzeptiert und bewertet.
+    Bewertete Aufgaben enthalten im Titel in rot den Zusatz, wie viel Punkte sie maximal bringen.
+  • Gruppenarbeit ist nicht zulässig und wird als versuchter Unterschleif an das Prüfungsamt gemeldet.
+  • Nur nachvollziehbare, lesbare Lösungen können gewertet werden.
+    Geben Sie für alle Berechnungen auch ihren formalen Ansatz und wesentliche Zwischenergebnisse an, um
+    die volle Punktzahl zu erreichen.
+    Wo Sie auf Sätze und Definitionen aus der Veranstaltung zurückgreifen, sollte klar erkennbar sein, was Sie
+    verwendet haben.
+  • Fassen Sie sich bei Textantworten kurz – Stichpunkte genügen.
+    Formulieren Sie präzise mit korrekter Verwendung der in der Vorlesung eingeführten Fachbegriffe um die
+    volle Punktzahl zu erreichen.
+  • Runden Sie Ihre Ergebnisse auf 2 Nachkommastellen und kürzen Sie Brüche vollständig.
+  • Wenn Sie bei einer Teilaufgabe Ergebnisse aus vorigen Teilaufgaben benötigen und diese nicht ermitteln
+    konnten, geben Sie ggf. an, mit welchen alternativen Werten Sie stattdessen weiterarbeiten.
+  • Grafiken und Berechnungen können Sie gegebenenfalls auch mit R oder Python erzeugen bzw. durchführen.
+    Übertragen Sie in diesem Fall den vollständigen, lauffähigen (!) und kommentierten Code sowie den
+    relevanten Output in Ihre abgegebene Lösung.
+  • In der Angabe bezeichnet log(x) = loge (x) immer den natürlichen Logarithmus zur Basis e ≈ 2.72.
+
+
+
+Eigenständigkeit:
+Durch die Abgabe zur Benotung erklären Sie, dass Sie die eingereichte Lösung selbständig verfasst und keine
+anderen als die angegebenen Hilfsmittel benutzt haben. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn
+nach aus anderen Werken (dazu zählen auch Internetquellen oder von Künstlicher Intelligenz verfasste Texte
+und Berechnungen) übernommen wurden, haben Sie unter Angabe der Quelle kenntlich gemacht.
+
+
+
+
+                                                      1
+Aufgabe 1       Stetige Verteilungen (15 P)
+  1. Sei U eine stetig gleichverteilte Zufallsvariable auf dem Intervall [a, b]
+       • [6 P] Leiten Sie Varianz von U her.
+          Hinweis: Angabe des Ergebnisses durch Einsetzen in die Formel aus der Vorlesung ist nicht ausreichend.
+       • [3 P] Bestimmen Sie die Dichte von Z := c · U + d, c ∈ R+ , d ∈ R mithilfe des Dichte-
+          Transformationssatzes.
+
+  2. Sei X eine normalverteilte ZV mit µ = 2.5 und σ 2 = 2.
+       • [4 P] Geben Sie die Dichte, die Verteilung und den Träger von Y = 1 + 3X an.
+          Hinweis: Sie benötigen dafür nicht den Dichte-Transformationssatz.
+       • [2 P] Bestimmen Sie E(X 2 )
+          Hinweis: Keine Integration nötig.
+
+Lösung
+Die Lösung wird in den Übungen am 12.01. und 14.01. besprochen.
+
+
+
+
+                                                      2
+Die restlichen Aufgaben orientieren sich stark am Kapitel „ Wichtige parametrische Verteilungen“ der Vorlesung:
+Wir betrachten einige dort dargestellte Zusammenhänge noch einmal detaillierter.
+Hinweis: Für einige Aufgaben auf diesem Übungsblatt kann es von Vorteil sein, bekannte Reihen (z.B. harmonische
+Reihe, geometrische Reihe, Exponentialreihe, . . . ) noch einmal nachzuschlagen.
+
+Aufgabe 2         Verteilungsfunktionen und Dichten: Eigenschaften
+Zeigen Sie für die nachfolgend genannten Verteilungen: die in der Vorlesungen jeweils angegebene Funktion f
+erfüllt die Eigenschaften einer Wahrscheinlichkeitsfunktion.
+   1. X diskret gleichverteilt auf der Menge {x1 , x2 , . . . , xk }, k ∈ N, k ≥ 3.
+   2. X geometrisch verteilt mit Parameter π ∈ (0, 1).
+
+Lösung
+  1. X diskret gleichverteilt auf der Menge T := {x1 , x2 , . . . , xk }, k ∈ N, k ≥ 3.
+      • Nichtnegativität:
+                                                       1                        √
+                                             f (x) =        I(x ∈ T ) ≥ 0
+                                                       k | {z }
+                                                     |{z}
+                                                                                 ≥0
+                                                                      >0
+
+        • Normiertheit:
+                                                                                   k
+                                  X                  X1                         1X                                  √
+                                        f (x) =                I(x ∈ T ) =            I(xi ∈ T ) = k/k = 1
+                                                           k                    k i=1 | {z }
+                                  x∈T               x∈T
+                                                                                              =1
+
+   2. X geometrisch verteilt mit Parameter π ∈ (0, 1) mit T := N+
+       • Nichtnegativität:                                                  √
+                                                       x−1
+                                       f (x) = (1 − π)      π I(x ∈ T ) ≥ 0
+                                                           |{z}
+                                               | {z }           | {z }
+                                                                 >0          >0         ≥0
+
+        • Normiertheit:
+                                X               X                                             X
+                                      f (x) =        (1 − π)x−1 πI(x ∈ T ) = π                       (1 − π)x−1 =
+                                x∈T             x∈T                                           x∈N+
+                                                  ∞                                    ∞
+                                                 X                        y:=x−1       X               (+)              √
+                                                π         (1 − π)x−1        =      π         (1 − π)y = π/π = 1
+                                                    x=1                                y=0
+
+                                                     ∞
+                                                                  1
+                                                           q k = 1−q
+                                                     P
+           geometrische Reihe für |q| < 1:                           .
+                                                    k=0
+
+             – Hier: q := 1 − π ∈ (0, 1), da π ∈ (0, 1), und k = y, also 1 − q = 1 − (1 − π) = π. (+)
+
+
+
+Aufgabe 3         Verteilungen: Verteilungsfunktion berechnen
+Leiten Sie die Verteilungsfunktion FX her für X
+   1. diskret gleichverteilt auf der Menge {1, 2, . . . , k}, k ∈ N, k ≥ 3.
+   2. stetig gleichverteilt auf [a, b], mit a, b ∈ R, a < b;
+   3. exponentialverteilt mit Parameter λ ∈ R+ .
+
+Lösung
+Leiten Sie die Verteilungsfunktion FX her für X
+   1.
+                                      X diskret
+                                                   X              X∼U {1,2,...,k} X 1
+                  FX (x) =PX (X ≤ x)     =               fX (xi )       =                  I{1,2,...,k} (xi )
+                                                                                         k
+                                                 i:xi ≤x                         i:xi ≤x
+                                                                  
+                                                                    1
+                            1                                     k · 0 = 0
+                                                                                                     x<1
+                                                                    1                        ⌊x⌋
+                         = · {xi ∈ {1, . . . , k} : xi ≤ x} = k · {1, . . . , ⌊x⌋} = k                1≤x≤k
+                            k                                     1
+                                                                  
+                                                                    k · k =   1                       x>k
+
+
+                                                                      3
+    2.
+                                                        Zx                              Zx
+                                             X stetig                       X∼U [a,b]         1
+                FX (x) =PX (X ≤ x)                =          fX (u) du           =               I[a,b] (u) du
+                                                                                             b−a
+                                                        −∞                              −∞
+                            Rx
+                                   1
+                                 b−a I[a,b] (u) du = 0                                                          x<a
+                           
+                           
+                           
+                            −∞
+                           
+                                        | {z }
+                           
+                           
+                                       =0 für x<a
+                           
+                            Za
+                           
+                                   1                     Rx 1                                 x
+                                                                                            · u a = x−a
+                                                                                        1
+                                          I[a,b] (u) du + b−a    I[a,b] (u) du = 0 + b−a                        a≤x≤b
+                           
+                           
+                                                                                                       b−a
+                           
+                           
+                           
+                                b−a                      a      | {z }
+                            −∞                                      =1
+                          = |            {z           }
+                           
+                               =0   siehe  1. Zeile
+                             Za                           Zb                        Zx
+                           
+                           
+                           
+                           
+                                   1                          1                         1
+                           
+                                         I[a,b] (u) du +           I[a,b] (u) du +           I[a,b] (u) du = 1 x > b
+                                 b −   a                     b −  a                    b − a | {z }
+                           
+                           
+                           
+                            −∞
+                                                         a                         b        =0 für x>b
+                           
+                           
+                                        {z           } |           {z          } |
+                           |
+                                                                                             {z           }
+                                            =0                    = b−a
+                                                                    b−a =1 siehe 2. Zeile                    =0
+
+    3.
+                                      Zx                            Zx
+                          X stetig                      X∼E(λ)
+FX (x) =PX (X ≤ x)              =          fX (u) du        =              λ · exp(−λ u)IR+ (u) du
+                                                                                          0
+                                                                           |        {z        }
+                                      −∞                           −∞     (
+                                                                            0               x<0
+                                                                         =
+                                                                            λ · exp(−λ u) x ≥ 0
+           Rx
+          
+          
+              0 du = 0                                                                             x<0
+          −∞
+         = R0         Rx                        x
+          
+          
+              0 du + λ · exp(−λ x) = − exp(−λ u) 0 = (− exp(−λ x)) − (− exp(−λ 0)) = 1 − exp(−λ x) x ≥ 0
+          −∞         0                                                  | {z }
+                                                                                                                   =1
+
+
+
+
+ Aufgabe 4             Verteilungen: Erwartungswert und Varianz
+ Berechnen Sie Erwartungswert und Varianz für X
+   1. diskret gleichverteilt auf der Menge {x1 , . . . , xk }, k ∈ N, k ≥ 3. Überlegen Sie sich dies auch spezifisch für
+      den Fall {x1 , . . . , xk } = {1, . . . , k}.
+   2. exponentialverteilt mit Parameter λ ∈ R+ .
+
+ Lösung
+   1. ges.: E(X), Var(X)
+      geg.: X diskret gleichverteilt auf der Menge {x1 , x2 , . . . , xk }, k ∈ N, k ≥ 3.
+
+         Da X diskret verteilt:                              X                               X
+                                              E(X) =                x · fX (x) =                           x · fX (x)
+                                                            x∈TX                     x∈{x1 ,x2 ,...,xk }
+                                                            k                   k
+                                                            X            1   1X
+                                                        =         xi ·     =       xi ,
+                                                            i=1
+                                                                         k   k i=1
+
+         also das arithmetische Mittel der Zahlen {x1 , x2 , . . . , xk }.
+         Analog: Var(X) entspricht der (empirischen) Varianz der {x1 , x2 , . . . , xk }.
+         Falls {x1 , x2 , . . . , xk } = {1, . . . , k}:
+                             k               k
+                                         1
+                                                 i = k1 k(k+1) = k+1
+                           P 1             P
+           • E(X) =               k ·i= k                  2      2 (Gauß’sche Summenformel)
+                          i=1               i=1
+                                k
+                   2
+                       ) = k1     i2 = k1 · k·(k+1)·(2k+1) = (k+1)·(2k+1)
+                                P
+           • E(X                                  6                6      (Summe der ersten k Quadratzahlen)
+                                i=1
+           • mit Verschiebungssatz also:
+
+
+
+                                                                             4
+                                                                                  2
+                                                   2   (k + 1) · (2k + 1)
+                                                                      2       k+1
+                         Var(X) = E(X ) − E(X) =                           −
+                                                                6                2
+                                          2
+                                                            2          2
+                                                                          
+                                    2 2k + 2k + k + 1 − 3 k + 2k + 1           2
+                                                                              k −1
+                                 =                                          =
+                                                    12                          12
+       (Var(X) = 0 für k = 1, positiv für k > 1.)
+
+2. geg.: X exponentialverteilt mit Parameter λ ∈ R+ ; fX (x) = λe−λx I[0,∞) (x)
+   Da X stetig verteilt:
+                                                                                                           Z∞
+                    E(X) =                                                                                        x · fX (x) dx
+                                                                                                         −∞
+                                                                                                Z∞
+                           =                                                              0+           x · λ exp(−λx) dx
+                                                                                                       |{z}  | {z }
+                                                                                                   0    g(x)         h′ (x)
+                                                                               ∞
+                                                                                          Z∞
+                           Parti. Integ.
+                                                   1                                              1
+                                   =        x · λ    exp(−λx)                       −        λ ·     exp(−λx) dx
+                                                             
+                                            |{z} |−λ {z                                          −λ
+                                                                                           |{z}
+                                                g(x)         }                              ′
+                                                                                          0 g (x) |     {z   }
+                                                              h(x)               0                               h(x)
+                                                                                                          Z∞
+                                                                                                   ∞
+                           =                                               [−x exp(−λx)]0 +                     exp(−λx) dx
+                                                                                                          0
+                                                                                         ∞
+                                                                         ∞       1
+                           =                               [−x exp(−λx)]0 + − exp(−λx)
+                                                                                 λ
+                                                                                      0
+                                                                               1           1
+                           =                  [−0 − (−0 · exp(0))] + −0 − − exp(0) =
+                                                          | {z }               λ | {z }    λ
+                                                                      =1                                        =1
+
+
+                                                                                           Z∞
+                               2
+                        E(X ) =                                                                 x2 λ exp(−λx) dx
+                                                                                                |{z} | {z }
+                                                                                           0    g(x)           h′ (x)
+                                                                          ∞
+                                                                                     Z∞
+                                   PI
+                                        
+                                         2     1                                             1
+                                   =      x λ     exp(−λx)                      −        xλ
+                                                                                       2|{z}     exp(−λx) dx
+                                                          
+                                              −λ                                             −λ
+                                        |{z}
+                                                        }
+                                            g(x)                                         ′
+                                              |     {z                               0 g (x) |     {z   }
+                                                           h(x)             0                             h(x)
+                                                                                               Z∞
+                                                                                           2
+                                   =                                       [0 − 0] −                   xλ exp(−λx)dx
+                                                                                          −λ
+                                                                                               0
+                                                                                               |               {z             }
+                                                                                                       =E(X)=1/λ
+                                                                                                                          2
+                                   =
+                                                                                                                          λ2
+  mit Verschiebungssatz:
+                                                                                                2
+                                                       2
+                                                                            2     2            1     1
+                                   Var(X) = E(X ) − E(X)                         = 2−               = 2
+                                                                                  λ             λ    λ
+
+
+
+
+                                                                  5
+

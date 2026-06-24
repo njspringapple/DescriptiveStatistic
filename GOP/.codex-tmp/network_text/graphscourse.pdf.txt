@@ -1,0 +1,4650 @@
+           P RINCIPLES OF G RAPH C ONSTRUCTION
+
+                                                                     Frank E Harrell Jr
+                                                            Department of Biostatistics
+                                               Vanderbilt University School of Medicine
+                                                           f.harrell@vanderbilt.edu
+                                                       biostat.mc.vanderbilt.edu at Jump: StatGraphCourse
+
+                                                    Office of Biostatistics, FDA CDER
+                                                         frank.harrell@fda.hhs.gov
+                                            Blog: fharrell.com Twitter: @f2harrell
+
+
+
+
+                                DIA/FDA S TATISTICS F ORUM
+N ORTH B ETHESDA MD                                                                         2017-04-24
+
+
+
+                      Copyright 2000-2017 FE Harrell   All Rights Reserved
+Chapter 1
+
+
+Principles of Graph Construction
+
+
+
+
+The ability to construct clear and informative graphs is
+related to the ability to understand the data. There are
+many excellent texts on statistical graphics (many of
+which are listed at the end of this chapter). Some of
+the best are Cleveland’s 1994 book The Elements of
+Graphing Data and the books by Tufte. The sugges-
+tions for making good statistical graphics outlined here
+are heavily influenced by Cleveland’s 1994 book. See
+also the excellent special issue of Journal of Computa-
+tional and Graphical Statistics vol. 22, March 2013.
+
+
+
+
+                           2
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                  3
+
+
+1.1   Graphical Perception
+
+
+  • Goals in communicating information: reader percep-
+    tion of data values and of data patterns. Both accu-
+    racy and speed are important.
+  • Pattern perception is done by
+      detection : recognition of geometry encoding physi-
+        cal values
+      assembly : grouping of detected symbol elements;
+        discerning overall patterns in data
+      estimation : assessment of relative magnitudes of
+        two physical values
+  • For estimation, many graphics involve discrimination,
+    ranking, and estimation of ratios
+  • Humans are not good at estimating differences with-
+    out directly seeing differences (especially for steep
+    curves)
+  • Humans do not naturally order color hues
+  • Only a limited number of hues can be discriminated
+    in one graphic
+  • Weber’s law: The probability of a human detecting a
+    difference in two lines is related to the ratio of the two
+    line lengths
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION              4
+
+
+
+  • This is why grid lines and frames improve percep-
+    tion and is related to the benefits of having multiple
+    graphs on a common scale.
+    – eye can see ratios of filled or of unfilled areas,
+      whichever is most extreme
+  • For categorical displays, sorting categories by order
+    of values attached to categories can improve accu-
+    racy of perception. Watch out for over-interpretation
+    of extremes though.
+  • The aspect ratio (height/width) does not have to be
+    unity. Using an aspect ratio such that the average
+    absolute curve angle is 45◦ results in better percep-
+    tion of shapes and differences (banking to 45◦).
+  • Optical illusions can be caused by:
+    – hues, e.g., red is emotional. A red area may be
+      perceived as larger.
+    – shading; larger regions appear to be darker
+    – orientation of pie chart with respect to the horizon
+  • Humans are bad at perceiving relative angles (the
+    principal perception task used in a pie chart)
+  • Here is a hierarchy of human graphical perception
+    abilities:
+    1. Position along a common scale (most accurate task)
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                  5
+
+
+      2. Position along identical nonaligned scales
+      3. Length
+      4. Angle and slope
+      5. Area
+      6. Volume
+      7. Color: hue (red, green, blue, etc.), saturation (pale/deep),
+         and lightness
+         – Hue can give good discrimination but poor order-
+           ing
+
+
+1.2    General Suggestions
+
+
+  • Exclude unneeded dimensions (e.g. width, depth of
+    bars)
+  • “Make the data stand out. Avoid Superfluity”; De-
+    crease ink to information ratio
+  • “There are some who argue that a graph is a suc-
+    cess only if the important information in the data can
+    be seen in a few seconds. . . . Many useful graphs
+    require careful, detailed study.”
+  • When actual data points need to be shown and they
+    are too numerous, consider showing a random sam-
+    ple of the data.
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                6
+
+
+
+  • Omit “chartjunk”
+  • Keep continuous variables continuous; avoid group-
+    ing them into intervals. Grouping may be necessary
+    for some tables but not for graphs.
+  • Beware of subsetting the data finer than the sample
+    size can support; conditioning on many variables si-
+    multaneously (instead of multivariable modeling) can
+    result in very imprecise estimates
+
+Murrell [23] has an excellent summary of recommenda-
+tions:
+
+     · Display data values using position or length.
+
+     · Use horizontal lengths in preference to vertical
+       lengths.
+
+     · Watch your data–ink ratio.
+
+     · Think very carefully before using color to repre-
+       sent data values.
+
+     · Do not use areas to represent data values.
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                   7
+
+
+       · Please do not use angles or slopes to represent
+        data values.
+
+       · Please, please do not use volumes to represent
+        data values.
+
+
+1.3    Tufte on “Chartjunk”
+
+
+      Chartjunk does not achieve the goals of its prop-
+      agators. The overwhelming fact of data graphics
+      is that they stand or fall on their content, grace-
+      fully displayed. Graphics do not become attractive
+      and interesting through the addition of ornamen-
+      tal hatching and false perspective to a few bars.
+      Chartjunk can turn bores into disasters, but it can
+      never rescue a thin data set. The best designs
+      . . . are intriguing and curiosity-provoking, drawing
+      the viewer into the wonder of the data, sometimes
+      by narrative power, sometimes by immense detail,
+      and sometimes by elegant presentation of simple
+      but interesting data. But no information, no sense
+      of discovery, no wonder, no substance is gener-
+      ated by chartjunk.
+
+— Tufte p. 121, 1983
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                 8
+
+
+1.4   Tufte’s Views on Graphical Excellence
+
+
+
+“Excellence in statistical graphics consists of complex
+ideas communicated with clarity, precision, and efficiency.
+Graphical displays should
+
+  • show the data
+  • induce the viewer to think about the substance rather
+    than about methodology, graphic design, the technol-
+    ogy of graphic production, or something else
+  • avoid distorting what the data have to say
+  • present many numbers in a small space
+  • make large data sets coherent
+  • encourage the eye to compare different pieces of data
+  • reveal the data at several levels of detail, from a broad
+    overview to the fine structure
+  • serve a reasonably clear purpose: description, ex-
+    ploration, tabulation, or decoration
+  • be closely integrated with the statistical and verbal
+    descriptions of a data set.”
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                9
+
+
+1.5   Formatting
+
+
+  • Tick Marks should point outward
+  • x- and y-axes should intersect to the left of the lowest
+    x value and below the lowest y value, to keep values
+    from being hidden by axes
+  • Minimize the use of remote legends. Curves can
+    be labeled at points of maximum separation (see the
+    Hmisc labcurve function).
+
+
+1.6   Color, Symbols, and Line Styles
+
+
+  • Some symbols (especially letters and solids) can be
+    hard to discern
+  • Use hues if needed to add another dimension of in-
+    formation, but try not to exceed 3 different hues. In-
+    stead, use different saturations in each of the three
+    different hues.
+  • Make notations and symbols in the plots as consis-
+    tent as possible with other parts, like tables and texts
+  • Different dashing patterns are hard to read especially
+    when curves inter-twine or when step functions are
+    being displayed
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                 10
+
+
+
+  • An effective coding scheme for two lines is to use a
+    thin black line and a thick gray scale line
+
+
+1.7   Scaling
+
+
+  • Consider the inclusion of 0 in your axis. Many times
+    it is essential to include 0 to tell the full story. Often
+    the inclusion of zero is unnecessary.
+  • Use a log scale when it is important to understand
+    percent change of multiplicative factors or to cure
+    skewness toward large values
+  • Humans have difficulty judging steep slopes; bank
+    to 45◦, i.e., choose the aspect ratio so that average
+    absolute angle in curves is 45◦.
+
+
+1.8   Displaying Estimates Stratified by Categories
+
+
+  • Perception of relative lengths is most accurate — ar-
+    eas of pie slices are difficult to discern
+  • Bar charts have many problems:
+      – High ink to information ratio
+      – Error bars cause perception errors
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                 11
+
+
+
+      – Can only show one-sided confidence intervals well
+      – Thick bars reduce the number of categories that
+        can be shown
+      – Labels on vertical bar charts are difficult to read
+  • Dot plots are almost always better
+  • Consider multi-panel side-by-side displays for com-
+    paring several contrasting or similar cases. Make
+    sure the scales in both x and y axes are the same
+    across different panels.
+  • Consider ordering categories by values represented,
+    for more accurate perception
+
+
+1.9   Displaying Distribution Characteristics
+
+
+  • When only summary or representative values are shown,
+    try to show their confidence bounds or distributional
+    properties, e.g., error bars for confidence bounds or
+    box plot
+  • It is better to show confidence limits than to show ±1
+    standard error
+  • Often it is better still to show variability of raw values
+    (quartiles as in a box plot so as to not assume nor-
+    mality, or S.D.)
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION               12
+
+
+
+  • For a quick comparison of distributions of a continu-
+    ous variable against many categories, try box plots.
+  • When comparing two or three groups, overlaid empir-
+    ical distribution function plots may be best, as these
+    show all aspects of the distribution of a continuous
+    variable.
+
+
+1.10   Showing Differences
+
+
+  • Often the only way to perceive differences accurately
+    is to actually compute differences; then plot them
+  • It is not a waste of space to show stratified estimates
+    and differences between them on the same page us-
+    ing multiple panels
+  • This also addresses the problem that confidence lim-
+    its for differences cannot be easily derived from inter-
+    vals for individual estimates; differences can easily
+    be significant even when individual confidence inter-
+    vals overlap.
+  • Humans can’t judge differences between steep curves;
+    one needs to actually compute differences and plot
+    them.
+
+The plot in figure 1.1 shows confidence limits for indi-
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                                                                           13
+
+
+
+
+                                       −0.25                     0.25                    0.75
+
+       Difference                                                  ●
+
+
+
+
+                   Male                                                  ●
+
+
+             Female                                          ●
+
+
+
+
+                                   5.0                     5.5                      6.0                     6.5
+
+                                                   Glycated Hemoglobin
+Figure 1.1: Means and nonparametric bootstrap 0.95 confidence limits for glycated hemoglobin for males and females, and
+confidence limits for males - females. Lower and upper x-axis scales have same spacings but different centers. Confidence
+intervals for differences are generally wider than those for the individual constituent variables.
+
+
+
+vidual means, using the nonparametric bootstrap per-
+centile method, along with bootstrap confidence inter-
+vals for the difference in the two means. The R code
+used to produce this figure is below.
+        attach ( diabetes )
+        bootmean ← function (x , B =1000) {
+          w ← smean.cl.boot (x , B =B , reps = T )
+          reps ← attr (w , ' reps ' )
+          attr (w , ' reps ' ) ← NULL
+          list ( stats =w , reps = reps )
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                               14
+
+
+     }
+
+      set.seed (1)
+      male   ← bootmean ( glyhb [ gender == ' male ' ])
+      female ← bootmean ( glyhb [ gender == ' female ' ])
+      dif ← c ( mean = male $ stats [ ' Mean ' ] -female $ stats [ ' Mean ' ] ,
+                quantile ( male $ reps-female $ reps , c ( .025 , .975 )))
+      male   ← male $ stats
+      female ← female $ stats
+
+      par ( mar = c (4 ,6 ,4 ,1))
+      plot (0 ,0 , xlab = ' Glycated Hemoglobin ' , ylab = ' ' ,
+             xlim = c (5 ,6 .5 ) , ylim = c (0 ,4) , axes = F )
+      axis (1)
+      axis (2 , at = c (1 ,2 ,4) ,
+             labels = c ( ' Female ' , ' Male ' , ' Difference ' ) ,
+             las =1 , adj =1 , lwd =0)
+
+
+      points ( c ( male [1] , female [1]) , 2:1)
+      segments ( female [2] , 1 , female [3] , 1)
+      segments ( male [2] ,      2,    male [3] , 2)
+
+      offset ← mean ( c ( male [1] , female [1])) - dif [1]
+      points ( dif [1] + offset , 4)
+      segments ( dif [2]+ offset , 4 , dif [3]+ offset , 4)
+
+     at ← c ( -.5 , -.25 ,0 , .25 , .5 , .75 ,1)
+     axis (3 , at = at + offset , label = format ( at ))
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                                                                              15
+
+
+
+
+  Difference in Survival Probability
+                                       −0.05
+
+
+
+                                       −0.15
+
+
+
+                                       −0.25
+                                                0    2    4    6     8            10           12           14
+                                                                  Years
+                                               sex=female − sex=male
+Figure 1.2: Difference in two Kaplan–Meier survival curve estimates with pointwise 0.95 confidence bands for the difference;
+produced by the survplotdiff function in the rms package.
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION              16
+
+
+1.11   Displaying Uncertainty
+
+
+
+There are are least five ways of depicting the uncer-
+tainty of statistical estimates in graphs:
+
+1. Bayesian posterior densities
+2. error bars showing confidence limits
+3. confidence bands drawn using two lines
+4. shaded confidence bands
+5. continuously graduated shading
+
+Examples of approaches 2-4 appear in later sections.
+Bayesian posterior distributions convey the most accu-
+rate perception of uncertainty, and are easy to construct
+for a scalar parameter such as a single group mean.
+Continuous shading as developed by Jackson (2008)
+has several advantages (especially when estimating a
+function evaluated at many points) relating to its provi-
+sion of the correct psychological effect of the limitations
+of information. Jackson has developed an R package
+called denstrip implementing these ideas. The exam-
+ple graphic below from the right panel of his Figure 5
+shows the beauty of this approach in conveying uncer-
+tainty about forecasts into the future.
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                                 17
+
+
+
+
+                          Figure 1.3: Displaying uncertainty with shading
+
+
+1.12   Choosing the Best Graph Type
+
+
+
+The recommendations that follow are good on the aver-
+age, but be sure to think about alternatives for your par-
+ticular data set. For nonparametric trend lines, it is ad-
+visable to add a “rug” plot to show the density of the data
+used to make the nonparametric regression estimate.
+Alternatively, use the bootstrap to derive nonparametric
+confidence bands for the nonparametric smoother.
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION             18
+
+
+1.12.1   Single Categorical Variable
+
+
+
+Use a dot plot or horizontal bar chart to show the propor-
+tion corresponding to each category. Second choices
+for values are percentages and frequencies. The total
+sample size and number of missing values should be
+displayed somewhere on the page. If there are many
+categories and they are not naturally ordered, you may
+want to order them by the relative frequency to help the
+reader estimate values.
+
+
+1.12.2   Single Continuous Numeric Variable
+
+
+
+An empirical cumulative distribution function, optionally
+showing selected quantiles, conveys the most informa-
+tion and requires no grouping of the variable. A box plot
+will show selected quantiles effectively, and box plots
+are especially useful when stratifying by multiple cate-
+gories of another variable. Histograms are also possi-
+ble.
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION                        19
+
+
+1.12.3   Categorical Response Variable vs. Categorical Ind. Var.
+
+
+
+This is essentially a frequency table. It can also be de-
+picted graphically
+
+
+1.12.4   Categorical Response vs. a Continuous Ind. Var.
+
+
+
+Choose one or more categories and use a nonpara-
+metric smoother to relate the independent variable to
+the proportion of subjects in the categories of interest.
+Show a rug plot on the x-axis.
+
+
+1.12.5   Continuous Response Variable vs. Categorical Ind. Var.
+
+
+
+If there are only two or three categories, superimposed
+empirical cumulative distribution plots with selected quan-
+tiles can be quite effective. Also consider box plots, or a
+dot plot with error bars, to depict the median and outer
+quartiles. Occasionally, a back-to-back histogram can
+be effective for two groups (see the Hmisc histbackback
+function).
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION             20
+
+
+1.12.6   Continuous Response vs. Continuous Ind. Var.
+
+
+
+A nonparametric smoother is often ideal. You can add
+rug plots for the x- and y-axes, and if the sample size
+is not too large, plot the raw data. If you don’t trust
+nonparametric smoothers, group the x-variable into in-
+tervals having a given number of observations, and for
+each x-interval plot characteristics (3 quartiles or mean
+± 2 SD, for example) vs. the mean x in the interval.
+This is done automatically with the Hmisc xYplot func-
+tion with the methods=’quantile’ option.
+
+
+1.13     Conditioning Variables
+
+
+
+You can condition (stratify) on one or more variables
+by making separate pages by strata, by making sepa-
+rate panels within a page, and by superposing groups
+of points (using different symbols or colors) or curves
+within a panel. The actual method of stratifying on the
+conditional variable(s) depends on the type of variables.
+
+Categorical variable(s) : The only choice to make in
+  conditioning (stratifying) on categorical variables is
+  whether to combine any low-frequency categories. If
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION             21
+
+
+
+    you decide to combine them on the basis of relative
+    frequencies you can use the combine.levels function
+    in Hmisc.
+Continuous numeric variable(s) : Unfortunately, to con-
+  dition on a continuous variable without the use of a
+  parametric statistical model, one must split the vari-
+  able into intervals. The first choice is whether the
+  intervals of the numeric variable should be overlap-
+  ping or non-overlapping. For the former the built-
+  in equal.count function can be used for a paneling
+  or grouping variable in trellis graphics (these over-
+  lapping intervals are called “shingles” in trellis). For
+  non-overlapping intervals the Hmisc cut2 function is
+  a good choice because of its many options and com-
+  pact labeling.
+
+
+1.14   Software
+
+
+
+Recommended software for statistical graphics: R
+
+  · Base graphics functions (an excellent introduction for
+    R is by Marc Schwartz at http://cran.r-project.
+    org/doc/Rnews/Rnews_2003-2.pdf)
+CHAPTER 1. PRINCIPLES OF GRAPH CONSTRUCTION           22
+
+
+
+  · R lattice packages for multi-panel displays and more
+    (for R documentation with graphical output see http:
+    //rgm3.lab.nig.ac.jp/RGM/R_image_list?package=
+    lattice&init=true; see also Deepayan (2008))
+
+  · R ggplot2 package implementing much of Wilkinson
+    (2005) (see http://docs.ggplot2.org/current/)
+
+See R graphics galleries such as http://scs.math.yorku.
+ca/index.php/R_Graphs_Gallery, http://www.sr.bham.
+ac.uk/~ajrs/R/r-gallery.html, http://rgraphgallery.
+blogspot.com.
+
+See ctspedia.org for much useful information about
+clinical trials and clinical safety graphics.
+Bibliography
+
+
+[1] C. F. Alzola and F. E. Harrell. An Introduction to S
+    and the Hmisc and Design Libraries. Available from
+    http://biostat.mc.vanderbilt.edu/s/Hmisc.
+[2] O. Amit, R. M. Heiberger, and P. W. Lane. Graphi-
+    cal approaches to the analysis of safety data from
+    clinical trials. Pharmaceutical Statistics, 7:20–35,
+    2008.
+[3] F. J. Anscombe. Graphs in statistical analysis.
+    American Statistician, 27:17–21, 1973.
+[4] J. Bertin.   Graphics and Graphic Information-
+    Processing. de Gruyter, Berlin, 1981.
+[5] D. B. Carr and S. M. Nusser. Converting tables
+    to plots: A challenge from Iowa State. Statistical
+    Computing and Graphics Newsletter, ASA, Decem-
+    ber 1995.
+[6] C.-H. Chen, W. Härdle, and A. Unwin (eds.) Hand-
+    book of Data Visualization. Springer, New York,
+    2008.
+                          23
+BIBLIOGRAPHY                                              24
+
+
+
+ [7] W. S. Cleveland. Graphs in scientific publica-
+     tions (c/r: 85v39 p238-239). American Statistician,
+     38:261–269, 1984.
+ [8] W. S. Cleveland. Visualizing Data. Hobart Press,
+     Summit, NJ, 1993.
+ [9] W. S. Cleveland. The Elements of Graphing Data.
+     Hobart Press, Summit, NJ, 1994.
+[10] W. S. Cleveland and R. McGill. A color-caused op-
+     tical illusion on a statistical graph. American Statis-
+     tician, 37:101–105, 1983.
+[11] W. S. Cleveland and R. McGill. Graphical percep-
+     tion: Theory, experimentation, and application to
+     the development of graphical methods. Journal of
+     the American Statistical Association, 79:531–554,
+     1984.
+[12] J. T. Connor. Statistical graphics in AJG: Save the
+     ink for the information. American Journal of Gas-
+     troenterology, 104:1624–1630, 2009.
+[13] S. Deepayan. Multivariate Data Visualization with
+     R. Springer, New York, 2008.
+[14] M. Friendly. The golden age of statistical graphics.
+     Statistical Science, 23:502–535, 2008.
+BIBLIOGRAPHY                                           25
+
+
+
+[15] A. Gelman, C. Pasarica, and R. Dodhia. Let’s prac-
+     tice what we preach: Turning tables into graphs.
+     The American Statistician, 56:121–130, 2002.
+[16] F. E. Harrell. Regression Modeling Strategies. New
+     York: Springer, 2001.
+[17] F. E. Harrell.            Statistical Tables and
+     Plots using S and LATEX.             Available from
+     http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport
+[18] G. T. Henry. Graphing Data. Sage, Newbury Park,
+     CA, 1995.
+[19] C. Jackson. Displaying uncertainty with shading.
+     The American Statistician, 62:340–347, 2008.
+[20] W. G. Jacoby. Statistical Graphics for Univariate
+     and Bivariate Data. Thousand Oaks CA: SAGE
+     Publications, 1997.
+[21] X. Li, J. Buechner, P. Tarwater, and A. Muñoz.
+     A diamond-shaped equiponderant graphical dis-
+     play of the effects of two categorical predictors on
+     continuous outcomes. The American Statistician,
+     57:193–199, 2003.
+[22] D. McNeil. On graphing paired data. American
+     Statistician, 46:307–311, 1992.
+[23] P. Murrell. Infovis and statistical graphics: Com-
+     ment. J Comp Graph Stat, 22(1):33–37, 2013.
+BIBLIOGRAPHY                                          26
+
+
+
+[24] S. M. Powsner and E. R. Tufte. Graphical summary
+     of patient status. Lancet, 344:386–389, 1994.
+[25] P. R. Rosenbaum. Exploratory plots for paired data.
+     American Statistician, 43:108–109, 1989.
+[26] P. D. Sasieni and P. Royston. Dotplots. Applied
+     Statistics, 45:219–234, 1996.
+[27] P. A. Singer and A. R. Feinstein. Graphical display
+     of categorical data. Journal of Clinical Epidemiol-
+     ogy, 46:231–236, 1993.
+[28] E. R. Tufte. The Visual Display of Quantitative In-
+     formation. Graphics Press, Cheshire, Connecticut,
+     1983.
+[29] E. R. Tufte. Envisioning Information. Graphics
+     Press, Cheshire, Connecticut, 1990.
+[30] E. R. Tufte. Visual Explanations. Graphics Press,
+     Cheshire, CT, 1997.
+[31] E. R. Tufte. Beautiful Evidence. Graphics Press,
+     Cheshire, CT, 2006.
+[32] H. Wainer. How to display data badly. American
+     Statistician, 38:137, 1984.
+[33] H. Wainer. Three graphic memorials. Chance,
+     7:52–55, 1994.
+[34] H. Wainer. Depicting error. American Statistician,
+     50:101–111, 1996.
+BIBLIOGRAPHY                                         27
+
+
+
+[35] H. Wainer. Improving data displays: Ours and the
+     media’s. Chance, 20:8-15, 2007.
+[36] A. Wallgren, B. Wallgren, R. Persson, U. Jorner,
+     and J. Haaland. Graphing Statistics & Data. Sage
+     Publications, Thousand Oaks, 1996.
+[37] C. Ware. Information Visualization: Perception for
+     Design. Morgan Kaufmann, San Francisco, 2004.
+[38] L. Wilkinson. The Grammar of Graphics, Second
+     Edition. Springer, New York, 2005.
+Chapter 2
+
+
+Examples
+
+
+
+
+2.1   General Examples
+
+
+
+
+                         28
+CHAPTER 2. EXAMPLES                                                                                                                                     29
+
+
+
+
+                            1.0                                                                 1.0
+                                                                                                 D-penicillamine
+                            0.8                                                                 0.8
+                                                                                                 placebo
+
+
+
+
+          Proportion <= x                                                     Proportion <= x
+                            0.6                                                                 0.6
+                                               D-penicillamine
+                            0.4                placebo                                          0.4
+
+                            0.2                                                                 0.2
+
+                            0.0                                                                 0.0
+                                  0        5      10      15        20   25                           2.0    2.5     3.0     3.5      4.0         4.5
+                                               Serum Bilirubin (mg/dl)                                              Albumin (gm/dl)
+
+                            1.0                                                                 1.0
+
+                            0.8                                                                 0.8
+
+
+
+
+          Proportion <= x                                                     Proportion <= x
+                            0.6                                                                 0.6
+                                                 D-penicillamine
+                            0.4                                                                 0.4                D-penicillamine
+                                                 placebo                                                           placebo
+                            0.2                                                                 0.2
+
+                            0.0                                                                 0.0
+                                      10           12          14        16                                 100      200        300         400
+                                               Prothrombin Time (sec.)                                               SGOT (U/ml)
+
+
+Figure 2.1: Empirical cumulative distribution function for four continuous variables in the pbc dataset,
+stratified by randomized treatment
+CHAPTER 2. EXAMPLES                                                                              30
+
+
+
+
+                               Similarity (Spearman rho^2)
+                           0.0            0.2            0.4           0.6
+
+                 chol
+                           age
+                                                               bp.1s
+                                                               bp.2s
+                                                    bp.1d
+                                                    bp.2d
+                                                                 hip
+                                                                weight
+                                                                  waist
+                                                                 hdl
+                                                                ratio
+                            stab.glu
+                               glyhb
+                       framemedium
+                          framelarge
+                                                gender
+                                                 height
+          time.ppn
+                            id
+                     location
+
+
+Figure 2.2: Clusters of variables from diabetes using pairwise Spearman ρ2 as the similarity measure
+CHAPTER 2. EXAMPLES                                                                                         31
+
+
+
+
+                                                                                                     9/10
+                                                                                              3/4
+                                                                                1/2              d
+                                                                                           overe
+                                                                 1/4                  ple C
+                                                                            ion of Sam
+                                                                       Fract
+
+
+
+
+                                            Median = Q2
+                                                          Mean
+                      Q1                                   ●               Q3
+
+
+
+
+       0.05 0.125     0.25       0.375      0.5     0.625                  0.75        0.875 0.95
+                                          Quantiles
+
+
+
+
+                             Figure 2.3: Key for extended box plot
+CHAPTER 2. EXAMPLES                                                                                       32
+
+
+
+
+                                                                      4   6   8       10   12   14   16
+
+                                           large                                   large
+                                           male                                   female
+                [62.0,92.0]
+
+                [50.2,62.0)
+
+                [41.0,50.2)
+
+                [31.0,41.0)
+
+                [19.0,31.0)
+                                          medium                                  medium
+                                           male                                   female
+                [62.0,92.0]
+
+                [50.2,62.0)
+
+                [41.0,50.2)
+
+                [31.0,41.0)
+
+                [19.0,31.0)
+                                           small                                   small
+                                           male                                   female
+                [62.0,92.0]
+
+                [50.2,62.0)
+
+                [41.0,50.2)
+
+                [31.0,41.0)
+
+                [19.0,31.0)
+
+                              4   6   8        10   12   14   16
+
+
+                                                              glyhb
+
+
+
+Figure 2.4: Extended box plot displaying quantiles such that 0.25, 0.5, 0.75, and 0.9 of the data are
+contained within each pair of quantiles. The median is shown with a line, and the mean with a
+dot.
+CHAPTER 2. EXAMPLES                                                                                                                               33
+
+
+
+                                                                                                                                             N
+                            age
+                [19.0,34.0)          [                     ]                                                                                 93
+                [34.0,44.5)                   [                    ]                                                                        102
+                [44.5,60.0)                    [                                               ]                                             95
+                [60.0,92.0]                                [                                           ]                                    100
+                      gender
+                            male              [                                ]                                                            162
+                          female              [                            ]                                                                228
+                       height
+                [52,63)                            [                       ]                                                                 76
+                [63,66)                        [                       ]                                                                    105
+                [66,69)                       [                                        ]                                                     93
+                [69,76]                        [                               ]                                                            111
+                          Missing            [                         ]                                                                      5
+                      weight
+                [ 99,150)                [                     ]                                                                             95
+                [150,173)                     [                                ]                                                             99
+                [173,200)                    [                                     ]                                                         97
+                [200,325]                              [                                   ]                                                 98
+                       Missing                                                                                                        []      1
+           Total Cholesterol
+                [ 78,179)                [                         ]                                                                         95
+                [179,203)                    [                         ]                                                                     94
+                [203,229)                        [                                     ]                                                    101
+                [229,443]                              [                                           ]                                         99
+                       Missing           []                                                                                                   1
+                     Overall
+                                              [                            ]                                                                390
+
+
+                                    4                                                  6                    8        10         12
+                                                                                                   Glycosolated Hemoglobin
+
+
+            Figure 2.5: Quartiles of glyhb stratified separately by several variables
+
+
+
+
+                                                                                                                             male
+       Body Frame                                                                                                            female
+                    small
+                medium
+                     large
+
+
+              County
+                  Louisa
+
+
+
+
+                                    0.0                                        0.2                         0.4     0.6         0.8    1.0
+                                                                                                           Proportion
+                Figure 2.6: Distribution of categorical varibles stratified by gender
+CHAPTER 2. EXAMPLES                                                                         34
+
+
+
+
+                                  Glycosolated Hemoglobin
+                         4.4               4.8               5.2               5.6
+
+                                  male
+                         female
+              20
+
+
+              30
+
+
+              40
+
+
+              50
+        age
+
+
+              60
+
+
+              70
+
+
+              80
+
+
+       Figure 2.7: Lowess nonparametric regression of glyhb vs. age, stratified by gender
+CHAPTER 2. EXAMPLES                                                                                                                                  35
+
+
+
+
+                                                                                                  4.5     5.0           5.5           6.0
+
+                                                           large                                                    large
+                                                           male                                                    female
+                  [62.0,92.0]
+                  [50.2,62.0)
+                  [41.0,50.2)
+                  [31.0,41.0)
+                  [19.0,31.0)
+                                                          medium                                                medium
+                                                           male                                                 female
+                  [62.0,92.0]
+                  [50.2,62.0)
+                  [41.0,50.2)
+                  [31.0,41.0)
+                  [19.0,31.0)
+                                                           small                                                    small
+                                                           male                                                    female
+                  [62.0,92.0]
+                  [50.2,62.0)
+                  [41.0,50.2)
+                  [31.0,41.0)
+                  [19.0,31.0)
+
+                                        4.5         5.0            5.5        6.0
+
+
+                                                                                       glyhb
+
+
+               Figure 2.8: Median glyhb stratified by gender, frame, and quintiles of age
+
+
+
+                                                                                                              20       40        60       80   100
+                        Male
+                        Female                                                      Specificity                             Specificity
+                                                                                      Mail                                  Telephone
+                                              Use of medication
+                                               Attack of asthma
+                                Waking with an attack of cough
+                            Waking with shortness of breath
+                          Waking with tightness in the chest
+                                      Wheezing without a cold
+                                     Wheezing and breathless
+                                         Wheezing at any time
+                                                                                    Sensitivity                             Sensitivity
+                                                                                      Mail                                  Telephone
+                                              Use of medication
+                                               Attack of asthma
+                                Waking with an attack of cough
+                            Waking with shortness of breath
+                          Waking with tightness in the chest
+                                      Wheezing without a cold
+                                     Wheezing and breathless
+                                         Wheezing at any time
+
+                                                                         20    40        60       80    100
+
+
+                                                                                                         y
+
+
+
+Figure 2.9: Dot plot depicting sensitivity and specificity stratified by method and sex, with the two
+sexes superposed. Data are from Galobardes, et al., J Clin Epi 51:875-881, 1998.
+CHAPTER 2. EXAMPLES                                                                          36
+
+
+
+
+                      8
+                                                                                Counts
+                                                                                       183
+                                                                                       156
+                      6                                                                132
+
+
+
+
+  Creatinine Day 14
+                                                                                       111
+                                                                                        92
+                                                                                        75
+                                                                                        60
+                      4                                                                 48
+                                                                                        37
+                                                                                        28
+                                                                                        21
+                                                                                        15
+                      2
+                                                                                        10
+                                                                                        7
+                                                                                        4
+                                                                                        2
+                      0                                                                 1
+
+                          0   2          4            6              8
+                                  Creatinine Day 3
+
+
+
+Figure 2.10: Scatterplot for showing large number of observations using hexagonal binning. Num-
+ber of observations in each bin is color-coded.
+CHAPTER 2. EXAMPLES                                                 37
+
+
+
+require ( hexbin )     # hexbin p a c k a g e on CRAN
+h ← hexbin ( pmin (8 , crea3 ) , pmin (8 , crea14 ) , xbins =40)
+plot (h , xlab = ' Creatinine Day 3 ' , ylab = ' Creatinine Day 14 ' ,
+      trans = function ( x ) x ∧ (1 / 3) , inv = function ( x ) x ∧ 3 ,
+      colramp = plinrain )
+
+
+See http://cran.r-project.org/web/packages/hexbin/
+vignettes/hexagon_binning.pdf
+
+
+2.1.1   Data Provided by Min Wu PhD, Novartis East Hanover
+
+
+
+Fasting serum tryglycerides measured longitudinally, mul-
+tiple treatments. For some displays only use Control
+and Treatment 1. Patients on Treatment 2 had a lead-in
+on Treatment 1.
+CHAPTER 2. EXAMPLES                                                                             38
+
+
+
+
+                            500
+
+
+                                                                                    Counts
+
+
+
+
+    Triglycerides Week 12
+                            400
+                                                                                           10
+
+                                                                                           8
+
+                            300                                                            7
+
+                                                                                           6
+
+                                                                                           4
+                            200                                                            3
+
+                                                                                           3
+
+                                                                                           2
+                            100
+                                                                                           1
+
+                                                                                           1
+
+                                  100   200    300    400        500
+
+
+                                    Triglycerides Week 0
+Figure 2.11: Hexagonal binning plot for week 12 against week 0 triglyceride levels for Treatment 1.
+Color mapping of sample sizes is on the cube root scale. Measurements are truncated at 500
+mg/dl.
+CHAPTER 2. EXAMPLES                                                                                39
+
+
+
+
+                                                                       50 100 150 200 250
+
+
+
+
+ Fasting Triglycerides at Week 12, mg dl
+                                                          Control         Treatment 1
+
+                                           400
+                                                                                           ●
+                                           300
+                                                                                       ●
+                                                                                   ●
+                                           200                                 ●
+                                                               ●            ●●●
+                                                                           ●
+                                                                          ●
+                                                          ●              ●
+                                                      ●                 ●
+                                           100    ●
+
+
+
+
+                                                 50 100 150 200 250
+
+                                                  Fasting Triglycerides at Week 0, mg dl
+
+Figure 2.12: Three quartiles of week 12 triglyceride stratified by baseline triglyceride (100 patients
+in each interval) and treatment
+CHAPTER 2. EXAMPLES                                                                                        40
+
+
+
+
+   Fasting Triglycerides at Week 12, mg dl
+                                                                                                 Treatment 1
+                                             300
+
+
+                                             250
+
+
+                                             200
+                                                                          Treatment 2
+
+
+                                             150
+
+
+                                             100
+                                                   Control
+
+                                                      50          100          150         200         250
+
+                                                             Fasting Triglycerides at Week 0, mg dl
+
+Figure 2.13: loess smoother of week 12 tryglyceride vs. week 0 stratified by treatment. Rug plots
+on each curve show distribution of week 0 measurements.
+CHAPTER 2. EXAMPLES                                                                                              41
+
+
+
+
+                                          Fasting triglycerides, mg dl
+   400
+
+
+
+
+   300
+
+
+
+
+   200                                                                     ●
+                                                                                    ●
+                          ●           ●   ●            ●                       ●                 ●
+                                                                      ●                     ●           ●
+                              ●
+                      ●
+
+                  ●
+                                      ●   ●                           ●                     ●           ●
+                      ●   ●   ●                        ●                   ●   ●
+                  ●                                                                              ●
+   100        ●                                                                     ●
+
+
+
+
+     0
+
+
+              0                   5             10               15                         20              25
+
+                                                     week                 Control       ●        Treatment 1     ●
+
+
+
+
+Figure 2.14: Longitudinal back–to–back violin plots showing the entire distribution of triglyceride by
+treatment and time. Circles indicate medians. The black vertical bars have lengths equal to
+one-half the length of the 0.95 confidence interval for the difference in medians. When this bar
+does not touch the circles, there is a significant difference in medians at the 0.05 level. This type
+of display is used in the greport package.
+CHAPTER 2. EXAMPLES                                                                                                              42
+
+
+2.1.2   Displaying Ranks and Confidence Intervals
+
+
+
+
+                                    Ranks and 0.95 Confidence Limits for Mean Overall Satisfaction with Patient Referrals
+
+                                                                                0         10           20           30      40
+
+                                                External                                               UVa
+                           k
+                           Z
+                           P
+                           Q
+                           D
+                           g
+                            l
+                           Y
+                           R
+                           T
+                           A
+                           E
+                           c
+                           X
+                            j
+                           O
+
+
+
+
+              Department
+                           F
+                           B
+                           W
+                           d
+                           h
+                           K
+                           M
+                           S
+                           J
+                           b
+                           G
+                            I
+                           a
+                           U
+                            f
+                           e
+                           H
+                           L
+                           V
+                           n
+                           C
+                           m
+                            i
+                           N
+
+                                0    10           20          30           40
+
+
+                                                           Rank of Department Mean Satisfaction
+
+
+
+
+Figure 2.15: Dot plot showing rank and bootstrap 0.95 confidence limits for the rank of mean sat-
+isfaction with service, stratified by UVa vs. outside referring physicians. Dots are sorted by
+descending order of the mean satisfaction across the two strata.
+CHAPTER 2. EXAMPLES                                                                            43
+
+
+2.2   Examples from R EGRESSION M ODELING S TRATEGIES, NY: Springer 2001
+
+
+
+
+Figure 2.16: Nomogram for estimating probability of bacterial (ABM) versus viral (AVM) meningitis.
+Step 1, place ruler on reading lines for patient’s age and month of presentation and mark inter-
+section with line A; step 2, place ruler on values for glucose ratio and total polymorphonuclear
+leukocyte (PMN) count in cerebrospinal fluid and mark intersection with line B; step 3, use ruler
+to join marks on lines A and B, then read off the probability of ABM versus AVM. Copyright 1989,
+American Medical Association. Reprinted by permission.
+CHAPTER 2. EXAMPLES                                                                             44
+
+
+
+
+                                                        Odds Ratio
+                                            0.10        0.50   1.00   2.00   4.00   8.00
+
+                         dose - 5:0
+                      dtime - 37:11
+                        age - 76:70
+                        wt - 106:89
+                            hx - 1:0
+                bp - 0.129:-0.645
+                         sz - 24.7:6
+                           sg - 12:9
+                          ap - 7:0.6
+                           bm - 1:0
+                       hg - 14.6:12
+                pf - ib<50%d:nact
+                pf - ib>50%d:nact      99     9    7             8    95
+                                       0.    0.    0.            0.   0.
+                    ekg - nrml:hrst
+                   ekg - bngn:hrst
+                  ekg - rd&ec:hrst
+                 ekg - hbocd:hrst
+                       ekg - MI:hrst
+
+
+
+
+Figure 2.17: Interquartile-range odds ratios for continuous predictors and simple odds ratios for
+categorical predictors. Numbers at left are upper quartile : lower quartile or current group : ref-
+erence group. The shaded bars represent 0.7, 0.8, 0.9, 0.95, 0.99 confidence limits. The intervals
+are drawn on the log odds ratio scale and labeled on the odds ratio scale. Ranges are on the
+original scale, even for transformed variables.
+CHAPTER 2. EXAMPLES                                                                                                                                                                                                                   45
+
+
+
+
+                   2                                             2                                            2                                               2                                         2
+
+                   1                                             1     -                                      1                                               1                                         1
+                                                                                               -                    -
+
+                   0                                             0                                            0                                               0                                         0
+          log(T)                                        log(T)         -                       -     log(T)         -                            -   log(T)                                    log(T)
+                   -1                                            -1                                           -1                -                             -1                                        -1
+
+                   -2                                            -2                                           -2                                              -2                                        -2
+                                                                                                                                                 -
+                   -3                                            -3                                           -3                -                             -3                                        -3
+                        20   40     60        80                      feml                    male     ARF/MOSFw/S                         MOSFw/M                 0   1     2  3    4     5                 0   20 40 60 80
+                                  age                                             sex                             dzgroup                                                   num.co                                  scoma
+
+                   2                                             2                                            2                                               2                                         2
+
+                   1                                             1                             -              1                                               1                                         1
+                                                                       -
+
+                   0                                             0                                            0                                               0                                         0
+          log(T)                                        log(T)         -                       -     log(T)                                          log(T)                                    log(T)
+                   -1                                            -1                                           -1                                              -1                                        -1
+
+                   -2                                            -2                                           -2                                              -2                                        -2
+
+                   -3                                            -3                                           -3                                              -3                                        -3
+                        0 1 2 3 4 5 6 7                               whit                    othr                 20    60   100          140                         50    100     150                     0   10 20 30 40 50
+                              adlsc                                              race2                                     meanbp                                            hrt                                     resp
+
+                   2                                             2                                            2                                               2                                         2
+
+                   1                                             1                                            1                                               1                                         1
+
+                   0                                             0                                            0                                               0                                         0
+          log(T)                                        log(T)                                       log(T)                                          log(T)                                    log(T)
+                   -1                                            -1                                           -1                                              -1                                        -1
+
+                   -2                                            -2                                           -2                                              -2                                        -2
+
+                   -3                                            -3                                           -3                                              -3                                        -3
+                        35   37          39        41                  0     2   4    6   8   10                   125   135         145     155                   0   10 20 30 40 50                        0    200     400   600
+                                  temp                                            crea                                         sod                                         wblc.i                                    pafi.i
+
+
+
+Figure 2.18: Effect of each predictor on log survival time. Predicted values have been centered so
+that predictions at predictor reference values are zero. Pointwise 0.95 confidence bands are also
+shown. As all Y -axes have the same scale, it is easy to see which predictors are strongest.
+CHAPTER 2. EXAMPLES                                                                             46
+
+
+
+
+             dzgroup
+             meanbp
+                 crea
+                  age
+               scoma
+                pafi.i
+                   hrt
+                adlsc
+              num.co
+               wblc.i
+                 resp
+                temp
+                race2
+                  sex
+                  sod
+
+                         0             10            20             30            40
+                                 Chi-Square Minus Degrees of Freedom
+      Figure 2.19: Contribution of variables in predicting survival time in log-normal model.
+CHAPTER 2. EXAMPLES                                                                                                                                                                                                        47
+
+
+
+
+                                             0                    10                  20                     30                 40          50              60          70              80                 90        100
+                Points
+                                            MOSF w/Malig
+                Disease Group
+                                           Coma                                                                    ARF/MOSF w/Sepsis
+                                                                                                                                                                                                                     180
+                Mean Arterial BP
+                                            0                                                             20                                            40                                       60             80   120
+                                            4     3                         2
+                Creatinine
+                                             5    6               7          8             9            10            11
+                                                                                                                      0         12
+
+                SUPPORT Coma Score
+                                           100            80                60         40               20        0
+
+                Age
+                                           100        90               80        70            60       50        40       30    20   10
+
+                Heart Rate
+                                           300    260             220           180        140            100          80        60    40         20        0
+
+                PaO2/(.01*FiO2)
+                                             0                         100                          200          300
+                                            4.5           7
+                ADL
+                                            4     2           1             0
+                                                      5                          3                  1
+                # Comorbidities
+                                            6                          4                   2                 0
+
+                Total Points
+                                             0                         50                      100                      150                 200                 250           300                    350             400
+
+                Linear Predictor
+                                                                                                                       -7        -6    -5         -4   -3         -2   -1     0         1        2         3
+
+                Median Survival Time (y)
+                                                                                                                                                                0.1 0.25 0.5 1      2        5       10 20
+
+                Mean Survival Time (y)
+                                                                                                                                       0.1 0.25 0.5 1              2    5    10 20 40
+
+
+
+
+Figure 2.20: Nomogram for predicting median and mean survival time, based on approximation of
+full model.
+CHAPTER 2. EXAMPLES                                                                                                                   48
+
+
+2.3       Other Devices for Obtaining Predictions
+
+
+2.3.1     Single-Axis Nomogram
+
+
+
+When one needs to transform a variable or to evaluate
+a prediction model that contains only a single predictor,
+a single-axis plot may be the most accurate device. In
+the following example, a binary logistic model of a single
+continuous predictor variable Score is evaluated to obtain
+the predicted probability of the event of interest.
+                                                        Estimated Risk
+               0.001             0.01        0.05        0.2       0.5       0.8       0.95       0.99            0.999
+
+      0         20         40          60         80        100 120                140       160        180        200        220
+                                                              Score
+
+                                             Figure 2.21: Single-axis nomogram.
+
+
+The R code producing this figure is belowa.
+pdf ( ' oneAxis.pdf ' , width =6 , height =1 .25 )
+par ( mar = c (3 , .5 ,1 , .5 ))
+beta ← ( qlogis ( .999 ) -qlogis ( .001 )) / 177
+alpha ← qlogis ( .001 ) -23 * beta
+plot.new ()
+par ( usr = c ( -10 ,230 , -.04 ,1 .04 ))
+par ( mgp = c (1 .5 , .5 ,0))
+axis (1 , at = seq (0 ,220 , by =20))
+axis (1 , at = seq (0 ,220 , by =5) , tcl = -.25 , labels = FALSE )
+title ( xlab = ' Score ' )
+    a The intercept alpha and slope beta were computed to match a published model. These would ordinarily be computed from coef(f) where f
+
+is the fit object.
+CHAPTER 2. EXAMPLES                                                     49
+
+
+p ← c ( .001 , .01 , .05 , seq ( .1 , .9 , by = .1 ) , .95 , .99 , .999 )
+s ← ( qlogis ( p ) -alpha ) / beta
+axis (1 , at =s , label = as.character ( p ) , col.ticks = gray ( .7 ) ,
+      tcl = .5 , mgp = c ( -3 , -1.7 ,0))
+p ← c ( seq ( .01 , .2 , by = .01 ) , seq ( .8 ,99 , by = .01 ))
+s ← ( qlogis ( p ) -alpha ) / beta
+axis (1 , at =s , labels = FALSE , col.ticks = gray ( .7 ) , tcl = .25 )
+title ( xlab = ' Estimated Risk ' , mgp = c ( -3 , -1.7 ,0))
+dev.off ()
+CHAPTER 2. EXAMPLES                                                                                                                                 50
+
+
+2.4     Example Pharmaceutical Safety Displays
+
+
+            Most Frequent On−Therapy Adverse Events Sorted by Risk Difference
+                                                              Proportion                    Risk Difference with 0.95 CI
+      CHRONIC OBSTRUCTIVE AIRWAY                                                      ●                                                   ●
+
+                        DYSPNEA                       ●                                                                         ●
+
+                      CHEST PAIN              ●                                                                             ●
+
+                      BRONCHITIS             ●                                                                              ●
+
+                         RHINITIS                ●                                                                          ●
+
+                         MELENA              ●                                                                              ●
+
+         URINARY TRACT INFECTION          ●                                                                             ●
+
+                         MYALGIA          ●                                                                             ●
+
+                       COUGHING                      ●                                                                  ●
+
+                            RASH         ●                                                                              ●
+
+                   HYPERKALEMIA          ●                                                                              ●
+
+       GASTROESOPHAGEAL REFLUX           ●                                                                              ●
+
+                  INFECTION VIRAL                 ●                                                                     ●
+
+                        SINUSITIS                    ●                                                                  ●
+
+      UPPER RESP TRACT INFECTION                                  ●                                                     ●
+
+           RESPIRATORY DISORDER          ●                                                                              ●
+
+                       BACK PAIN                 ●                                                                      ●
+
+               WEIGHT DECREASE       ●                                                                                  ●
+
+                          INJURY                  ●                                                                 ●
+
+                         FATIGUE         ●                                                                          ●
+
+                     FLATULENCE           ●                                                                         ●
+
+                       HEADACHE                      ●                                                              ●
+
+                             PAIN        ●                                                                          ●
+
+                      HEMATURIA      ●                                                                              ●
+
+                       ANOREXIA      ●                                                                              ●
+
+                       DIZZINESS              ●                                                                     ●
+
+                     ARTHRALGIA      ●                                                                          ●
+
+                        INSOMNIA         ●                                                                      ●
+
+                  ABDOMINAL PAIN                          ●                                                 ●
+
+                        VOMITING          ●                                                                 ●
+
+                       DYSPEPSIA             ●                                                              ●
+
+                       DIARRHEA                               ●                                       ●
+
+                         NAUSEA                  ●                                               ●
+
+
+
+                                    0.0                   0.1         0.2       0.3       −0.2       −0.1           0.0             0.1       0.2
+
+                                                                            ● A (N=216)      B (N=431)
+
+
+Figure 2.22: Side-by-side dot plots displaying crude incidence of commonly occuring adverse events
+in a clinical trial with two treatments (A and B, left panel) and the difference in proportions with
+0.95 confidence interval (right panel). AEs (both panels) are sorted by descending difference in
+proportions. Modification of Amit et al, 2008.
+CHAPTER 2. EXAMPLES                                                51
+
+
+
+##   The   following   functions   are   in   the   HH   package
+panel.ae.dotplot ←
+  function (x , y , groups , ... , col.AB , pch.AB , lower , upper )
+{
+     panel.num ← if.R ( s = get ( " cell " , frame = sys.parent ()) ,
+          r = panel.number ())
+     if ( panel.num == 1)
+          panel.ae.leftplot (x , y , groups = groups ,
+              col = col.AB , pch = pch.AB , ... )
+     if ( panel.num == 2)
+          panel.ae.rightplot (x , y , ... , lwd = 6 , pch = 16 ,
+                               lower = lower , upper = upper )
+}
+
+panel.ae.leftplot ← function (x , y , groups , col.AB , ... )
+{
+    panel.abline ( h = y , lty = 2 , lwd = 0 , col = 1)
+    panel.superpose (x , y , groups = groups ,
+                      col = col.AB , ... )
+}
+
+panel.ae.rightplot ←
+  function (x , y , ... , lwd = 6 , lower , upper )
+{
+     if.R ( r = {
+     }, s = {
+          panel.segments ← segments
+          panel.points ← points
+     })
+     panel.abline ( v = 0 , lty = 3 , lwd = 0)
+     panel.abline ( h = y , lty = 2 , lwd = 0 , col = 1)
+     panel.segments ( lower , y , upper , y , lwd = 2)
+     panel.xyplot (x , y , ... , col = 1 , cex = 0 .7 )
+     panel.points ( lower , y , pch = 3 , col = 1 , cex = 0 .4 )
+     panel.points ( upper , y , pch = 3 , col = 1 , cex = 0 .4 )
+CHAPTER 2. EXAMPLES                                                           52
+
+
+}
+
+
+##   Version   o f HH ' s   ae.dotplot      that   uses   risk   difference   and
+##   uses   proportions      instead   of    percents
+
+riskdiff ← function ( data , tx = ' treat ' , prefterm = ' PREF ' ,
+                        events = ' SAE ' , n = ' SN ' ,
+                        conf.int = .95 )
+  {
+    zcrit ← qnorm ((1+ conf.int ) / 2)
+    i ← order ( data [[ prefterm ]] , data [[ tx ]])
+    data ← data [i ,]
+
+     N        ← data [[ n ]]
+     prop ← data [[ events ]] / N
+     pt       ← data [[ prefterm ]]
+     treat ← data [[ tx ]]
+     if ( nrow ( data ) ! = 2 * length ( unique ( pt )))
+       stop ( ' asymmetric data ' )
+     utrt ← sort ( unique ( as.character ( treat )))
+
+     diff ← prop [ treat == utrt [1]] - prop [ treat == utrt [2]]
+     diff.order ← order ( diff )
+     pt ← ordered ( pt , levels =( pt [ treat == utrt [1]])[ diff.order ])
+     diff2 ← as.vector ( rbind ( diff , diff ))
+     p1 ← prop [ treat == utrt [1]]
+     n1 ← N [ treat == utrt [1]]
+     p2 ← prop [ treat == utrt [2]]
+     n2 ← N [ treat == utrt [2]]
+
+     se ← sqrt ( p1 * (1 -p1 ) / n1 + p2 * (1 -p2 ) / n2 )
+     se2 ← as.vector ( rbind ( se , se ))
+     lower ← diff2 - zcrit * se2
+     upper ← diff2 + zcrit * se2
+     data.frame ( pt , treat , prop , diff = diff2 , lower , upper )
+CHAPTER 2. EXAMPLES                                                                                  53
+
+
+}
+
+# To   get   aeanonym :        r e q u i r e ( HH );
+#   aeanonym    ←     r e a d . t a b l e ( hh (" d a t a s e t s / a e d o t p l o t . d a t ") ,   header = T
+
+
+w ← riskdiff ( aeanonym , tx = ' RAND ' , prefterm = ' PREF ' ,
+               events = ' SAE ' , n = ' SN ' )
+
+ae.dotplot ←
+  function ( data , A.name = ' A ' , B.name = ' B ' ,
+             col.AB = c ( " red " , " blue " ) , pch.AB = c (16 , 17) ,
+             main.title = " Most Frequent On-Therapy Adverse Event
+             main.cex = 1 , cex.AB.points = NULL ,
+             cex.AB.y.scale = 0 .6 ,
+             position.left = c (0 , 0 , 0 .7 , 1) ,
+             position.right = c (0 .61 , 0 , 0 .98 , 1) ,
+             key.y = -0.2 , conf.int =0 .95 )
+{
+  r ←
+    dotplot ( pt ∼ prop + diff ,
+              groups = data $ treat ,
+              data = data , outer = TRUE ,
+              lower = data $ lower ,
+              upper = data $ upper ,
+              panel = panel.ae.dotplot ,
+              scales = list ( x = list ( relation = " free " ,
+                                limits = list ( range ( data $ prop ) ,
+                                    range ( data $ lower , data $ upper ))) ,
+                y = list ( cex = cex.AB.y.scale )) ,
+              A.name = A.name , B.name = B.name ,
+              col.AB = col.AB , pch.AB = pch.AB ,
+              cex.AB.points = cex.AB.points ,
+              cex.AB.y.scale = cex.AB.y.scale ,
+              main = list ( main.title , cex = main.cex ) ,
+              xlab = NULL , between = list ( x = 1) ,
+              key = list ( y = key.y , x = 0 .15 ,
+CHAPTER 2. EXAMPLES                                                     54
+
+
+                   points = list ( col = col.AB , pch = pch.AB ) ,
+                   text = list ( c ( A.name , B.name ) , col = col.AB ,
+                                 cex = 0 .9 ) ,
+                   columns = 2 , between = 0 .5 , space = " bottom " ))
+    r $ condlevels [[1]] ← c ( " Proportion " ,
+                               paste ( " Risk Difference with " ,
+                                 conf.int , " CI " ))
+    r
+}
+
+ae.dotplot (w , A.name = ' A ( N =216) ' , B.name = ' B ( N =431) ' )
+
+
+
+
+2.5   Mixing Tables and Graphics
+CHAPTER 2. EXAMPLES                                                                                                                                                                               55
+
+
+
+
+                                        Treatment A (N=2005)                                                             Treatment B (N=2032)
+
+                               120    100    80    60    40    20    0   10      20           30        40      120    100     80    60    40    20    0   10        20           30       40
+
+                                                                               41 Myocardial infarction                                                          35 Myocardial infarction
+                                                                               23 Coronary artery disease                                                        20 Coronary artery disease
+                                                                               13 Arrhythmia                                                                     27 Arrhythmia
+                                                                               8 Myocardial ischaemia                                                            9 Myocardial ischaemia
+                                                                               5 Cardiogenic shock                                                               7 Cardiogenic shock
+                       Cardiac disorders 109                                   5 Cardiac arrest                 Cardiac... 114                                   5 Cardiac arrest
+                                                                               4 Cardio−respiratory arrest                                                       3 Cardio−respiratory arrest
+                                                                               3 Hypertrophic cardiomyopathy                                                     3 Hypertrophic cardiomyopathy
+                                                                               4 Pericarditis                                                                    2 Pericarditis
+                                                                               2 Sinus bradycardia                                                               3 Sinus bradycardia
+                                                                               1 Tachycardia                                                                     0 Tachycardia
+                                                                               29 Pneumonia                                                                      26 Pneumonia
+                                                                               14 Cellulitis                                                                     7 Cellulitis
+                                                                               14 Abscess                                                                        5 Abscess
+                Infections and infestations 81                                                                        Infecti... 51
+                                                                               11 Sepsis                                                                         6 Sepsis
+                                                                               6 Post procedural sepsis                                                          4 Post procedural sepsis
+                                                                               7 Sinusitis                                                                       3 Sinusitis
+                                                                               11 Gastritis                                                                      15 Gastritis
+                                                                               8 Inguinal hernia                                                                 13 Inguinal hernia
+                                                                               7 Abdominal pain                                                                  6 Abdominal pain
+                Gastrointestinal disorders 40                                  6 Pancreatitis                     Gastroi... 50                                  7 Pancreatitis
+                                                                               3 Rectal polyp                                                                    5 Rectal polyp
+                                                                               3 Haemorrhoids                                                                    2 Haemorrhoids
+                                                                               2 Ileus                                                                           2 Ileus
+                                                                               6 Dyspnoea                                                                        11 Dyspnoea
+                                                                               1 Pulmonary hypertension                                                          14 Pulmonary hypertension
+     Respiratory, thoracic and mediastin... 16                                 2 Sleep apnoea syndrome           Respira... 42                                   10 Sleep apnoea syndrome
+                                                                               4 Respiratory distress                                                            3 Respiratory distress
+                                                                               3 Pleural effusion                                                                4 Pleural effusion
+                                                                               12 Joint dislocation                                                              8 Joint dislocation
+                                                                               8 Post procedural complication                                                    7 Post procedural complication
+     Injury, poisoning and procedural co... 27                                                                        Injury,... 21
+                                                                               5 Road traffic accident                                                           3 Road traffic accident
+                                                                               2 Tibia fracture                                                                  3 Tibia fracture
+                                120    100    80    60    40    20   0    10       20           30       40      120     100    80    60    40    20   0    10         20          30       40
+
+
+
+
+Figure 2.23: Serious AE frequency display by body system and preferred term. Widths of body sys-
+tem rectangles is proportional to the number of subjects having an event in that body system. The
+small bars denote the number of subjects who had a particular event. If the between-treatment
+difference in proportions of subjects having events is significant (P < 0.05), the corresponding
+rectangles/bar charts in both treatment groups are pink/red. Graphic designed and implemented
+in R in the rreport package by Svetlana Eden, VU Dept. of Biostatistics.
+CHAPTER 2. EXAMPLES                                                                                                                                                                                   56
+
+
+
+
+                                10                                                                                                                            170
+
+
+
+
+glucose − random, MMOL L
+                                                                                    50
+                                  9                                                 48                                                                        160
+
+
+
+                                                                hematocrit, %                                                hemoglobin, G L
+                                  8                                                 46
+                                                                                                                                                              150
+                                  7                                                 44
+                                                                                    42                                                                        140
+                                  6
+                                                                                    40
+                                  5                                                                                                                           130
+                                                                                    38
+
+                                      0   5          10   15                              0       5          10        15                                           0       5          10        15
+                                              Week                                                    Week                                                                      Week
+
+
+                                5.0                                                                                                                           0.8
+                                                                                    3.0
+
+
+
+
+ potassium, MMOL L                                             lymphocytes, 109 L                                            monocytes, 109 L
+                                4.8                                                                                                                           0.7
+                                                                                    2.5                                                                       0.6
+                                4.6
+                                                                                    2.0                                                                       0.5
+                                4.4
+                                                                                                                                                              0.4
+                                4.2                                                 1.5
+                                                                                                                                                              0.3
+                                4.0
+                                                                                    1.0                                                                       0.2
+                                      0   5          10   15                              0   2   4    6      8   10    12                                          0   2   4    6      8   10    12
+                                              Week                                                    Week                                                                      Week
+
+                                                                                    350
+                                144
+
+
+
+
+ sodium, MMOL L                                                                                                              total protein, G L
+                                                                                    300                                                                       75
+
+
+
+                                                               platelets, 109 L
+                                142
+                                                                                    250
+                                140                                                                                                                           70
+                                                                                    200
+                                138
+                                                                                                                                                              65
+                                136                                                 150
+                                      0   5          10   15                              0       5          10        15                                           0       5          10        15
+                                              Week                                                    Week                                                                      Week
+
+
+
+
+                                                                                                                              white blood cell count, 109 L
+                                                                                                                                                              11
+
+
+
+
+ red blood cell count, 1012 L
+                                                                                    450
+                                                                                                                                                              10
+
+
+
+
+                                                                uric acid, UMOL L
+                                5.0                                                 400                                                                         9
+                                                                                    350                                                                         8
+                                4.5                                                 300                                                                         7
+                                                                                    250                                                                         6
+                                4.0                                                 200                                                                         5
+
+                                      0   5          10   15                              0       5          10        15                                           0       5          10        15
+                                              Week                                                    Week                                                                      Week
+
+Figure 2.24: Clinical chemistry quartiles over time for two treatments (one in black, the other in gray
+scale, thicker lines for medians), with half-width confidence intervals (small vertical lines) for the
+difference in medians. If the confidence bars do not overlap the two medians, differences are
+significant at the 0.05 level.
+CHAPTER 2. EXAMPLES   57
+Chapter 3
+
+
+Graphics for One or Two Variables
+
+
+
+
+Example code in this chapter uses the following func-
+tions in the Hmisc package. Other functions are built-in
+to R.
+
+datadensity, Ecdf, histSpike, mtitle, panel.bpplot, pstamp,
+scat1d, show.col, show.pch
+
+For more information see
+
+ · http://www.xmarks.com/site/exploringdata.cqu.edu.
+  au
+
+ · http://davidmlane.com/hyperstat/desc_univ.html
+
+                           58
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                                    59
+
+
+  · http://www.statsoft.com/Textbook/Graphical-Analytic
+
+  · http://www.itl.nist.gov/div898/handbook/eda/section
+      eda15.htm
+
+  · http://www.math.yorku.ca/SCS/StatResource.html
+
+3.1    One-Dimensional Scatterplot
+
+
+  · Rug plot; useful by itself or on curves or axes
+
+  · Shows all raw data values
+
+  · For large datasets, draw random thirds of vertical tick
+      to avoid black blob
+
+  · Old-style dot plots are similar to rug plots
+
+  · Can use Cleveland’s dot charts to show raw data
+rug ( x )                              #   basic    built-in    rug   plot    function
+datadensity ( mydataframe )            #   show    1 -d   scatterplot   for    all   varia
+dotplot ( x )                          #   one    variable
+dotplot (∼ x )                         #   same    thing
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                                       60
+
+
+stripplot ( x )                        #   Trellis / Lattice         version
+stripplot (∼ x )                       #   ditto
+hist ( x )
+scat1d ( x )                           #   add   rug    plot   at    top   of   histogram
+plot (x , y )
+scat1d ( x )                           #   rug   plot    for   x at    top
+scat1d (y , side =4)                   #   rug   plot    for   y at    right     side
+#   scat1d   has   many   options
+
+
+
+
+3.2    Histogram
+
+
+    · Used for estimating the probability density function
+                   f (x) = lim Prob(x − δ < X ≤ x)/δ                            (3.1)
+                             δ→0
+
+
+    · Very dependent on how bins formed, and number of
+      bins
+
+    · y-axis can be frequency or proportion
+
+    · No statistical estimates can be read directly off a his-
+      togram or density plot
+hist (x , nclass = i )                 #   use   i   bins
+histogram ( x )                        #   Trellis / Lattice         version
+histogram (∼ x )
+histSpike ( x )                        #   high-res      spike      histogram
+plot (x , y )
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                                     61
+
+
+histSpike (x , add = T )
+#   add   spike   histogram     to   existing        plot ,   x-axis
+
+
+
+Note: histSpike is called automatically by scat1d when n
+is large (by default, ≥ 2000)
+
+
+3.3    Density Plot
+
+
+    · Smoothed histogram
+
+    · Smooth estimate of f (x) above
+
+    · Depends on choice of a smoothing parameter
+plot ( density ( x ) , type = ' l ' )
+densityplot (∼ x ) # T r e l l i s / L a t t i c e v e r s i o n
+hist (x , probability =T , nclass =20); lines ( density ( x )) # d i t t o
+#     probability =T   scales     y-axes       so   area   under   curve   is 1 .0
+
+
+
+
+3.4    Empirical Cumulative Distribution Plot
+
+
+    · Population cumulative distribution function is
+                            F (x) = Prob(X ≤ x)                              (3.2)
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                                       62
+
+
+
+  · F (b) − F (a) = Prob(a < X ≤ b) and is the area under
+    the density function f (x) from a to b
+
+  · Estimate of F (x) is the empirical cumulative distribu-
+    tion function, which is the proportion of data values
+    ≤x
+
+  · Cumulative histogram
+
+  · Works fine if histogram has one observation per bin
+
+  · ECDF requires no binning and is unique
+
+  · Excellent for showing differences in entire distribu-
+    tions between two or three overlaid groups
+
+  · Quantiles can be read directly off ECDF
+Ecdf ( mydataframe )                           #   show    all    continuous      var
+Ecdf ( x )
+Ecdf (x , q = c ( .2 , .8 ))                   #   ref    lines    .2 , . 8   quantiles
+Ecdf (x , datadensity = ' rug ' )              #   add    rug    plot
+Ecdf (x , datadensity = ' hist ' )             #   add    spike histogram
+Ecdf (x , datadensity = ' density ' )          #   add    density plot
+Ecdf (∼ x )                                    #   Trellis / Lattice          version
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                               63
+
+
+3.5    Box Plot
+
+
+  · Most useful for comparing many groups
+
+  · Basically uses 3-number summary: 3 quartiles
+
+  · Easy to also show mean
+
+  · Can be extended to show other percentiles, espe-
+      cially farther out in the tails of the distribution
+
+  · Usually show lower and upper “adjacent” values (“whiskers”
+      and “outside” values; some find these not to be useful
+boxplot ( x )                        #         basic    function
+plot ( groups , x )                  #         stratified ,     vertical   boxes
+boxplot ( split (x , groups ))       #         same
+bpplot ( split (x , groups ))        #         box-101    percentile    plot
+bwplot ( x )        # basic horizontal         box   plot ,   Trellis / Lattice
+bwplot (∼ x )                        #         ditto
+bwplot (x , panel = panel.bpplot )   #         horiz.    box-percentile     plot
+
+
+
+
+3.6    Scatter Plots
+
+
+  · Excellent for showing relationship between a semi-
+      continuous X and a continuous Y
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                               64
+
+
+
+    · Does not work well for huge n unless relationship is
+      tight
+
+    · Can use transformed axes, or transformed data may
+      be plotted
+
+    · Can show a limited number of classes of points through
+      the use of different symbols
+plot (x , y )
+plot (x , y , log = ' xy ' )               # both axes nonlinear ( log )
+plot ( log ( x ) , log ( y ))              # log plot , log axes
+plot (x , y , main = ' Main Title ' )
+plot (x , y , xlab = ' X label ' , ylab = ' Y label ' ,
+       xlim = c (0 ,1) , ylim = c (20 ,100))
+xyplot ( y ∼ x )                           # Trellis / Lattice
+
+
+
+
+3.7     Optional Commands to Embellish Non-Trellis Plots
+
+
+3.7.1   Titles
+
+
+plot (x , y , main = ' Main Title ' )
+plot (x , y )
+title ( ' Main Title ' )
+title ( sub = ' Subtitle ' , adj =0)
+#   a d j =0 , .5 , 1    for   left ,    center ,    right-justification
+title ( ' First Line \ nSecond Line ' )
+#   Use    \ n to       jump   down     one   line   on   output
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                                              65
+
+
+
+
+par ( mfrow = c (2 ,2) , oma = c (0 ,0 ,2 ,0))
+# 2 x2     matrix      of   plots ,   leave   2   lines      for
+#   overall      top    title   ( oma = outer     margins )
+plot ( )
+hist ( )
+...
+mtitle ( ' Overall Title ' )
+pstamp ()                                          #   date-time         stamp   lower    right
+
+
+
+
+3.7.2   Adding Lines, Symbols, Text, and Axes
+
+
+plot (x , y )
+axis (3)                                           #   add axis ( ticks & labels )
+axis (4 , labels = FALSE )                         #   axis on right ( ticks only )
+lines (1:3 , c (2 ,4 , -1 ))                       #   add    x =1:3 ,    y =2 , 4 , -1
+points ( x2 , y2 )
+points ( locator ())                               #   add    clicked      points
+text ( .2 , 1 .3 , ' Text ' )                      #   add    text
+text ( locator (1) , ' Mytext ' )                  #   add    text   at    click
+
+
+
+
+3.7.3   Reference Lines
+
+
+abline ( a =0 , b =1)
+#   line    of   identity(a ,b= intercept , slope )
+abline ( a =0 , b =1 , lty =2)          # dotted                   line
+abline ( h = c (1 ,3))                             #   horizontal         line   at y =1 ,3
+abline ( v =0)                                     #   vertical      line     at x =0
+CHAPTER 3. GRAPHICS FOR ONE OR TWO VARIABLES                                 66
+
+
+3.8   Choosing Symbols, Colors, and Line Types
+
+
+show.pch ()                                    #   display   all   symbols
+points (x , y , pch = i )                      #   use symbol i from     display
+show.col ()                                    #   show all colors
+points (x , y , col = i )
+
+
+Line types are specified with an lty argument. See AH
+Figure 12.4.
+Chapter 4
+
+
+Conditioning and Plotting Three or More
+Variables
+
+
+
+
+4.1    Conditioning
+
+
+ · Choose one or two variables of principal interest
+      – Typically one for histograms, ECDFs, density plots
+
+      – Two for scatterplots
+
+      – One or two for dot plots
+
+ · Can condition on (hold constant) effects of other vari-
+      ables using a statistical model (not covered in this
+      course) or by subsetting data
+                               67
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   68
+
+
+
+  · Subsets usually non-overlapping for categorical con-
+    ditioning (stratification) variables
+
+  · May or may not be overlapping (shingles) intervals
+    for continuous conditioning variables
+
+  · Conditioning may be shown in many ways
+     – different symbols or colors for different groups on
+       a scatterplot or dot plot
+
+     – different line styles or colors on a lines plot show-
+       ing multiple curves, or carefully labeled curves which
+       use the same line styles
+
+     – adjacent lines of dots on a dot plot
+
+     – different vertical, horizontal (or both) panels
+
+     – different pages, including layered transparencies
+
+     – dynamically in real time using “brushing” and other
+       interactive techniques
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   69
+
+
+
+  · Cleveland’s principal of small multiples
+
+See Section 1.13 of these lecture notes.
+
+
+4.2    Dot Plots
+
+
+  · Ideal for showing how one or more categorical vari-
+      ables are related to a single continuous numeric re-
+      sponse variable
+
+  · Continuous conditioning variables must be catego-
+      rized
+
+  · This is usually done by creating intervals containing
+      equal sample sizes
+
+  · Can show error bars and other superpositioning
+
+  · Done using Trellis/Lattice dotplot or Hmisc Trellis/Lat-
+      tice Dotplot function (later) or using basic dotchart2
+      function in Hmisc
+
+  · Created automatically when plotting certain objects
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   70
+
+
+      created by summary.formula
+
+
+4.3     Thermometer Plots
+
+
+  · Useful in problems that are similar to those handled
+      by dot plots
+
+  · But thermometers may be positioned irregularly
+
+  · Ideal for geographical displays
+
+  · See example from online help file for symbols
+
+  · For depicting contingency tables see the Hmisc sym-
+      bol.freq function
+
+
+
+4.4     Extensions of Scatterplots
+
+
+4.4.1   Single Plots
+
+
+  · Vary symbols, colors—best for conditioning on cate-
+      gorical variables
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                    71
+
+
+  · Bubble plots: can depict an addition continuous vari-
+      able which may be a second response variable
+
+  · Radius of circles plotted is proportional to the third
+      variable
+      x ← 1:10
+      y ← runif (10)
+      z ← runif (10)
+      symbols (x , y , circles =z , inches = .2 )          #   largest   is   .2in
+
+
+
+
+4.4.2   Scatterplot Matrices
+
+
+  · Show all pairwise relationships from among 3 or more
+      continuous variables
+      x ← matrix ( rnorm (200 * 5) , ncol =5)
+      pairs ( x )
+      pairs ( mydataframe [ , c ( ' age ' , ' pressure ' , ' weight ' , ' height ' )])
+
+
+
+
+  · Trellis/Lattice function: splom
+
+4.5     3-D Plots for Almost Smooth Surfaces
+
+
+  · GUI plus several functions
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES            72
+
+
+
+  · Perspective plot: simulated 3-D surface
+
+  · Contour plot
+
+  · Image plot: 3rd variable categorized into, for exam-
+      ple, 10 intervals;
+      Shown using color (e.g., heat spectrum) or grayscale
+      See main web page for image plot examples
+
+  · Basic S functions: persp, contour, image
+
+4.6     Dynamic Graphics
+
+
+4.6.1   Interactively Identifying Points
+
+
+  · If use plot or points
+
+  · Use identify(x, y, labels=rowlabels)
+      plot ( state.x91 [ , ' Income ' ] , state.x91 [ , ' Murder ' ])
+      identify ( state.x91 [ , c ( ' Income ' , ' Murder ' )] ,
+                 labels = dimnames ( state.x91 )[[1]])
+
+
+
+
+  · First argument to identify may be a vector (then 2nd
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   73
+
+
+
+    argument is y-variable), a 2-column matrix, or a list
+
+
+4.6.2   Wireframe and Perspective Plots
+
+
+  · Works for smooth data or somewhat tight relation-
+    ships
+
+  · GUI is nice for this
+
+  · Can interactively look at 3-D plot from different per-
+    spectives
+
+  · Or can automatically get a matrix of plots from vary-
+    ing perspectives
+
+
+4.6.3   Brushing and Spinning
+
+
+  · Useful for examining relationships between multiple
+    continuous variables when some of the relationships
+    are somewhat tight (depending on the sample size)
+
+  · Brushing: highlight points in one 2-D scatterplot; shows
+    corresponding points in other 2-D plots
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES              74
+
+
+
+  · Spinning: use motion to simulation 3-D point clouds,
+    rotating 3rd variable in and out of display
+    brush ( cbind ( sbp , dbp , age , cholesterol ) , hist = T )
+    brush ( x [ , c ( ' sbp ' , ' dbp ' , ' age ' , ' cholesterol ' )])
+    brush ( x [ , Cs ( sbp , dbp , age , cholesterol )])
+    brush ( state.x91 )               # matrix b u i l t - i n to S
+    brush ( prim4 )                   # ''      ''
+
+
+
+
+  · First argument to brush (a matrix) may not contain NAs
+
+  · hist argument: draw marginal histograms
+
+4.6.4   “Live” Graphics on Web Sites
+
+
+  · In R: shiny, SVG graphics, javascript-based options
+
+  · Allows drilling down to other pre-programmed results
+
+  · Simple to use on web sites
+
+R on Web Servers
+
+
+
+  · Can build web sites at which users click on options,
+    R is run, non-pre-programmed graphics are created
+    on the fly
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                             75
+
+
+
+  · R can be freely used on web servers. Information
+      about R may be found at www.r-project.org.
+
+  · Consider rstudio.org
+
+4.7    Lattice Graphics
+
+
+               Function                        Purpose                           Formula Argument
+          barchart              Bar chart                                  y ~ x | g1*g2
+          bwplot                Box and whisker plot                       y ~ x | g1*g2
+          densityplot           Probability density plot                   ~ x | g1*g2
+          dotplot               Dot plot                                   y ~ x | g1*g2
+          Dotplot               Hmisc generalization of dotplot            y ~ x | g1*g2
+          Ecdf                  Hmisc ECDF plot                            ~ x | g1*g2,
+                                                                           groups=g3
+          histogram             Histogram                                  ~ x | g1*g2
+          parallel              Parallel coordinate plot                   ~ x | g1*g2
+          panel.bpplot          Hmisc enhanced box plots and
+                                box–%-tile plots with bwplot
+          panel.plsmo           Hmisc panel function for                   y ~ x | g1*g2,
+                                xyplot                                     groups=g3
+          splom                 Multi–panel scatterplot matrices           ~ x | g1*g2
+          stripplot             One–dimensional scatter plot               y ~ x | g1*g2
+          xyplot                Conditioning plots/scatter plots           y ~ x | g1*g2
+          xYplot                Hmisc generalization of xyplot             Cbind(y,y2,y3) ~ x | g1*g2,
+                                for multi–column y                         groups=g3
+          setTrellis            Hmisc trellis setup
+          trellis.strip.blank   Hmisc function to set trellis
+                                to use blank background for panel titles
+
+
+
+
+General form of first argument (statistical formula):
+vertical variable ∼ horizontal variable | row.conditioner *
+   column.conditioner * page.conditioner ,
+   groups = superposition.variable
+
+
+
+  · Variables after | are conditioned upon to make panels
+      (available for all graph types)
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                             76
+
+
+  · groups variable makes separate lines or symbols within
+      a panel (not available for all graph types)
+
+  · All Trellis/Lattice functions take data and subset argu-
+      ments.
+
+
+4.7.1    Appropriate Paneling/Grouping Variables
+
+
+  · These are assumed discretea
+
+  · Numeric continuous variables need to be discretized
+
+Panel Variables
+
+
+
+  · If panel variable is a discrete numeric and you want
+      the value to explicitly show in the panel strip, specify
+      e.g.
+        dotplot ( y ∼ x | factor ( g ))
+
+
+
+
+  · For continuous variable, panels may correspond to
+      overlapping intervals; to create these use equal.count
+      or shingle functions after the |
+  a The GUI will automatically discretize continuous numeric variables when they are used in paneling.
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   77
+
+
+
+  · For non-overlapping intervals, cut2 is flexible and pro-
+     vides nice panel labeling
+
+
+4.7.2   Classes of Trellis/Lattice Function
+
+
+Functions Plotting All Data Points
+
+
+
+
+The following functions are often used on raw data. They
+are also used to plot summary data computed on raw
+data, which will be covered later.
+
+  · barchart
+
+  · dotplot
+
+  · Hmisc version of dotplot: Dotplot
+
+  · parallel
+
+  · splom
+
+  · stripplot
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   78
+
+
+  · xyplot
+
+  · Hmisc version of xyplot: xYplot
+
+Functions That Summarize Data and then Plot
+
+
+
+  · bwplot: computes 3 quartiles, mean, outer values,
+    etc. on each group of points (panel, vertical box plot
+    within panel); then draws box plot
+
+  · density: computes smooth estimate of density func-
+    tion, then plots
+
+  · Ecdf: computes ECDF for each group or panel (this is
+    an Hmisc function; there is a simpler builtin R func-
+    tion ecdf)
+
+  · histogram: bins x-variable, computes frequencies for
+    each panel
+
+  · Note: for density, Ecdf, histogram user has no control
+    over y-axis as these are computed
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   79
+
+
+  · xYplot has an argument method that can do automatic
+     summarization of raw data; summaries fed immedi-
+     ately into plots
+
+
+Built-in vs. Hmisc
+
+
+
+  · For dotplot, xyplot you must specify panel=panel.superpose
+     to use superposition, in addition to specifying groups
+
+  · Dotplot, xYplot implicitly handle superposition when
+     groups is given
+
+
+  · Dotplot, xYplot allow for error bars (xYplot also allows
+     for error bands); these are covered later
+
+  · Dotplot, xYplot use label attributes of x and y vari-
+     ables for labeling axes (if not label defined, uses vari-
+     able names as with built-in Trellis/Lattice functions)
+
+  · xYplot sometimes uses different defaults for the type
+     argument
+      – User can take control by specifying type=’l’,’p’,’b’
+        for lines, points, or both
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   80
+
+
+
+  · Hmisc functions do some automatic key drawing
+
+  · xYplot will do some automatic data summarization
+
+  · Hmisc has panel functions to be discussed later:
+        – panel.bpplot: Hmisc function that can be used as a
+          replacement for panel.bwplot
+
+        – panel.plsmo: can use with xyplot to plot lowess trend
+          lines
+
+
+4.7.3   Panel Functions
+
+
+
+  · A strength of Trellis/Lattice is its ability to let the user
+    specify a panel argument
+
+  · This directs Trellis/Lattice in constructing each panel;
+    panel function does not need to know about other
+    panels
+
+  · Panel function can be a single function or it can call
+    many panel functions
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                      81
+
+
+
+  · Latter is how you combine graph types (e.g., raw data
+    + trend line)
+      xyplot ( y ∼ x ,
+               panel = function ( ... ) {
+                        panel.xyplot ( ... )
+                        panel.loess ( ... ) })
+
+
+
+
+  · You can more easily get raw data + trend line by using
+      xyplot ( y ∼ x , panel = panel.smooth )              # or :
+      xyplot ( y ∼ x , panel = panel.plsmo )               #   panel.plsmo   in        Hmisc
+
+
+
+
+Hmisc panel.bpplot
+
+
+
+  · Extends bwplot to do box-percentile plots
+
+  · By default plots mean using solid circle, and shows
+    0.25, 0.5, 0.75, and 0.9 coverage intervals, and does
+    not show any raw data
+
+  · Has many options
+
+  · Examples: ?panel.bpplot:
+    set.seed (13)
+    x ← rnorm (1000)
+    g ← sample (1:6 , 1000 , replace = T )
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                    82
+
+
+    x [ g ==1][1:20] ← rnorm (20)+3
+    #   contaminate          20 x ' s     for    group    1
+
+    #   default       trellis       box    plot
+    bwplot ( g ∼ x )
+
+    #   box-percentile             plot    with    data       density       ( rug    plot )
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             probs = seq ( .01 , .49 , by = .01 ) , datadensity = T )
+    #   add    , scat1d.opts = list ( tfrac =1)                to make all tick marks
+    #   the    same size when a group has                      > 125 observations
+
+
+    #   small    dot    for    means ,      show       only
+    # .05 , .125 , .25 , .375 , .625 , .75 , .875 , .95                quantiles
+    bwplot ( g ∼ x , panel = panel.bpplot , cex = .3 )
+
+    #   suppress       means       and    reference       lines       for
+    #   lower    and    upper       quartiles
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             probs = c ( .025 , .1 , .25 ) , means =F , qref = F )
+
+    #   continuous          plot    up    until    quartiles          (" T o o t s i e   Roll   plot ")
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             probs = seq ( .01 , .25 , by = .01 ))
+
+    # start at         quartiles          then    make    it    continuous
+    # (" coffin        plot ")
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             probs = seq ( .25 , .49 , by = .01 ))
+
+    #   same    as    previous       but    add    a    spike    to    give      0 .95    interval
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             probs = c ( .025 , seq ( .25 , .49 , by = .01 )))
+
+    #   decile       plot    with    reference          lines    at    outer
+    #   quintiles / median
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                     83
+
+
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             probs = c ( .1 , .2 , .3 , .4 ) , qref = c ( .5 , .2 , .8 ))
+
+    #   default          plot   with   tick     marks       showing      all
+    #   observations            outside       the    outer    box
+    # ( .05        and    .95   quantiles ),         with    very      small    ticks
+    bwplot ( g ∼ x , panel = panel.bpplot ,
+             nout = .05 , scat1d.opts = list ( frac = .01 ))
+
+    #   show       5    smallest   and    5    largest       observations
+    bwplot ( g ∼ x , panel = panel.bpplot , nout =5)
+
+    #   Use    a       scat1d   option    ( p r e s e r v e = T ) to    ensure      that   the
+    #   right peak          extends      to    the    same    position         as   the
+    #   extreme
+    bwplot (∼ x , panel = panel.bpplot ,
+            probs = seq ( .00 , .5 , by = .001 ) ,
+            datadensity =T , scat1d.opt = list ( preserve = T ))
+
+
+
+
+Hmisc panel.plsmo
+
+
+
+
+Lowess nonparametric trend lines (to be discussed later)
+with enhancements
+xyplot ( y ∼ x | year , panel = panel.plsmo , groups = country )
+
+
+Does automatic labeling of curves
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                     84
+
+
+4.7.4   Layout and Style Specification
+
+
+Vertical vs. Horizontal Paneling, Panel Order
+
+
+
+  · Example: Trellis/Lattice graph with 2 panels
+
+  · Default layout is 2 columns, 1 row
+
+  · To use 2 rows, 1 column specify
+        trellisfunction ( ... , layout = c (1 ,2))
+
+
+
+
+  · Can also use layout just to specify the number of pan-
+     els:
+        trellisfunction ( ... , layout = c (3 ,3))             # 9   panels   reserved
+
+
+
+
+  · Default order is lower left to upper right
+
+  · Add as.table=T to use LR Top-Bottom ordering
+
+Multiple Trellis/Lattice Plots in One Figure
+
+
+
+  · Store results of multiple Trellis/Lattice calls in multiple
+     objects
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                85
+
+
+
+  · Use the Trellis/Lattice print method to compose the
+    page
+        p1 ← trellisfunction1 ( ... )
+        p2 ← trellisfunction2 ( ... )
+        p3 ← ...
+        print ( p1 , split = c ( column , row , maxcolumn , maxrow ) , more = T )
+        print ( p2 , split = c ( ... ) , more = T )
+        print ( p3 , split = c ( ... ) , more = F ) # l a s t o n e
+
+
+
+
+4.7.5   Creating Postscript Graphics Files
+
+
+
+The Hmisc setps function uses decent defaults for B&W
+graphics
+setps ( plotname , trellis =T , h = ... )
+trellisfunction ( )
+dev.off ()
+
+
+
+
+4.7.6   Controlling Trellis/Lattice Graphical Parameters
+
+
+  · setps with trellis=T specifies that strip label panels
+    have a blank background for easy reading on black
+    and white graphs
+
+  · When making graphs interactively, you can achieve
+    the same effect easily by specifying trellis.strip.blank()
+    before creating the graphic. Alternatively, specify an
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   86
+
+
+
+    argument like to following to the Trellis/Lattice func-
+    tion:
+    strip=function(...) strip.default(..., style=1) .
+    If you have already created a Trellis/Lattice graph you
+    may have to issue dev.off() or close the graph sheet
+    window for this to take effect.
+
+  · The best way to set up for black and white R Lattice
+    graphics with transparent strips is to put the following
+    commands at the top of the script:
+     library ( lattice )
+     ltheme ← canonical.theme ( color = FALSE )
+     ltheme $ strip.background $ col ← " transparent "
+     lattice.options ( default.theme = ltheme )
+
+
+
+
+  · To see a list of arguments that can be specified to the
+    high-level Trellis/Lattice functions type ?trellis.args.
+    You will see arguments for specifying nonlinear axis
+    scales, panel label strip format, layout, customized
+    keys, axis limits, aspect ratio and banking to 45◦, etc.
+
+  · To use a √ scale, you can specify scales as in the
+    following
+     x ← 1:10
+     y ← x∧ 2
+     ys ← seq (0 ,100 , by =10)
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                   87
+
+
+     xyplot ( sqrt ( y ) ∼ x , type = ' l ' , ylab = ' y ' ,
+              ylim = sqrt ( c (0 ,100)) ,
+              scales = list ( y = list ( at = sqrt ( ys ) , labels = format ( ys ))))
+
+
+
+
+  · To see many of the current Trellis/Lattice settings,
+    type show.settings()
+
+  · Type ?trellis.par.get to learn how to retrieve the
+    current value of any Trellis/Lattice graphical parame-
+    ter (e.g., line styles, point symbols, dot symbols, strip
+    background, etc.)
+
+  · To change a parameter, use trellis.par.set
+     dev.off ()
+     #   Trellis / Lattice      needs    to   have   the   device   inactive   to
+     # do    this
+     tpl ← trellis.par.get ( ' plot.line ' )
+     tpl $ lwd ← 3          # change line width to 3
+     trellis.par.set ( ' plot.line ' , tpl )
+
+    This will affect all subsequent Trellis/Lattice graphs.
+    These three commands will for example cause the
+    line thickness of error bars drawn by the Dotplot func-
+    tion to be 3 instead of the default of 1.
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES          88
+
+
+4.7.7   Summarizing Data for Input to Trellis/Lattice Functions
+
+
+  · Most frequently, summarizations for Trellis/Lattice use
+    simultaneous cross-classification, unlike
+    summary(..., method=’response’)
+
+
+  · Hmisc summarize function is made for this
+
+  · Produces a ready-to-use data frame that will appear
+    to a Trellis/Lattice function to be raw data
+    set.seed (111)
+    dfr ← expand.grid ( month =1:12 , year = c (1997 ,1998) ,
+                          reps =1:100)
+    attach ( dfr )
+    y ← abs ( month-6.5 ) + 2 * runif ( length ( month )) + year - 1997
+    s ← summarize (y , llist ( month , year ) , mean , na.rm = T )
+    s
+    xYplot ( y ∼ month , groups = year , type = ' b ' , data = s )
+
+
+
+
+  · To compute proportions, take means of binary vari-
+    ables
+    s ← summarize ( y > 6 , llist ( month , year ) , mean ,
+                     stat.name = ' ygt6 ' , na.rm = T )
+    s
+    xYplot ( ygt6 ∼ month | factor ( year ) , type = ' b ' , data = s )
+
+
+
+
+  · FUN (3rd) argument to summarize may specify a function
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   89
+
+
+    that computes multiple statistics
+
+  · This is used to make error bars and bands
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   90
+
+
+4.7.8   Error Bars and Bands
+
+
+  · Used for
+        – Measures of precision: ± S.E., ±2× S.E., (possi-
+          bly asymmetric confidence limits for a population
+          mean)
+
+        – Measures of variability of raw data: ±2× S.D., quan-
+          tiles
+
+  · Think of upper and lower values as 2nd and 3rd re-
+    sponse variables
+
+  · Trellis/Lattice allows only a univariate response vari-
+    able
+
+  · Hmisc tricks Trellis/Lattice by using the Hmisc Cbind
+    function to “hide” the upper and lower values (and
+    possibly more) in an attribute ’other’ to a single re-
+    sponse variable
+
+  · Hmisc xYplot and Dotplot functions allow for such mul-
+    tiple response variables
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES         91
+
+
+  · Functions such as smean.cl.normal, smedian.hilow, smean.sdl
+     (Hmisc) are set up to create the central value (e.g.,
+     mean) and variables named Lower and Upper
+
+  · FUN argument of summarize can use these functions
+     nicely with xYplot and Dotplot
+
+
+xYplot
+
+
+
+  · If you have already computed the lower and upper
+     values (or the S.E.) you can give these directly to xY-
+     plot:
+         xYplot ( Cbind (y , lower , upper ) ∼ month )
+         xYplot ( Cbind (y ,2 * se ) ∼ month )
+
+     In the latter example, y-2*se and y+2*se are automati-
+     cally computed (because there are only 2 arguments
+     to Cbind).
+
+  · Note: In standard R Lattice package you can add
+     error bars to plots with xyplot by passing an auxiliary
+     variable and using the subscripts of the data being
+     plotted in the current panelb:
+          xyplot ( y ∼ x , data , sd = data $ sd ,
+               panel = function (x , y , subscripts , sd , ... ) {
+                     larrows (x , y - 2 * sd [ subscripts ] ,
+  b Example provided by Deepayan Sarkar on r-help, 6Sep04.
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                        92
+
+
+                               x , y + 2 * sd [ subscripts ] ,
+                               angle = 90 , code = 3 , ... )
+                       panel.xyplot (x , y , ... )
+                })
+
+
+
+  · More often we compute summaries to plot, e.g.:
+    #   The    following        example   uses   the   summarize       function
+    # in      Hmisc    to     compute   the   median   and    outer    quartiles.
+    #   The    outer    quartiles       are   displayed      using    " error   bars "
+    set.seed (111)
+    dfr ← expand.grid ( month =1:12 , year = c (1997 ,1998) ,
+                              reps =1:100)
+    attach ( dfr )
+    y ← abs ( month-6.5 ) + 2 * runif ( length ( month )) + year-1997
+    s ← summarize (y , llist ( month , year ) ,
+                        smedian.hilow , conf.int = .5 )
+    xYplot ( Cbind (y , Lower , Upper ) ∼ month , groups = year , data =s ,
+             keys = ' lines ' , method = ' alt ' ) # F i g u r e 4.1
+
+
+    #   Can    also    do :
+    s ← summarize (y , llist ( month , year ) , quantile ,
+                       probs = c ( .5 , .25 , .75 ) ,
+                       stat.name = c ( ' y ' , ' Q1 ' , ' Q3 ' ))
+    xYplot ( Cbind (y , Q1 , Q3 ) ∼ month , groups = year ,
+             data =s , keys = ' lines ' )
+
+
+
+  · To display means and bootstrapped nonparametric
+    confidence intervals:
+    s ← summarize (y , llist ( month , year ) , smean.cl.boot )
+    s
+      month year     y Lower Upper
+          1 1997 6 .55 6 .44 6 .67
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                       93
+
+
+
+
+                          8
+                                 +                                        +
+                                     +                                +
+                          6
+                                         +                        +
+                y                            +                +
+                          4
+                                                 +        +
+                                                     ++
+                          2
+
+
+                                     2       4       6    8 10
+
+                                                 month
+
+               Figure 4.1: Alternating error bars showing quartiles of raw data.
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                          94
+
+
+            1    1998 7 .51       7 .40      7 .62
+            2    1997 5 .58       5 .47      5 .69
+            2    1998 6 .44       6 .33      6 .55
+            .    . . . . .
+           12    1998 7 .47       7 .37      7 .58
+
+    xYplot ( Cbind (y , Lower , Upper ) ∼ month | factor ( year ) ,
+                type = ' l ' , data = s )
+    # F i g u r e 4.2
+    #    factor ( year )      causes      year   to    be   written   in    panel   labels
+
+    #    Can    also    use   Y   ←   cbind (y ,      Lower ,   Upper )
+    #                         xYplot ( Cbind ( Y ) ∼ ... )
+    # Or :
+    xYplot ( y ∼ month | year , nx =F , method = smean.cl.boot )
+    #    see    later
+
+    xYplot ( Cbind (y , Lower , Upper ) ∼ month | factor ( year ) ,
+                method = ' filled bands ' , type = ' l ' , data = s )
+    # F i g u r e 4.3
+    #    Use    method = ' bands '     for    ordinary       unfilled      bands
+
+
+
+
+  · Here is an example using double bands, to depict
+    the following quantiles: .1 .25 .5 .75 .9. The 0.25 and
+    0.75 quantiles are drawn with line thickness 2, and
+    the central line with a thickness of 4. Note that sum-
+    marize produces a matrix for y when type=’matrix’ is
+    specified, and Cbind(y) trusts the first column to be
+    the point estimate (here the median)
+        s ← summarize (y , llist ( month , year ) , quantile ,
+                       probs = c ( .5 , .1 , .25 , .75 , .9 ) ,
+                       type = ' matrix ' )
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                             95
+
+
+
+
+                                                    2    4     6      8    10       12
+
+                          1997                                 1998
+
+
+
+       7
+
+
+
+       6
+
+
+
+       5
+  y
+
+       4
+
+
+
+       3
+
+
+
+       2
+
+
+
+
+             2     4     6       8    10    12
+
+
+                                            month
+
+
+
+           Figure 4.2: Mean and nonparametric bootstrap 0.95 confidence intervals
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                     96
+
+
+
+
+                                                        2    4     6      8   10    12
+
+                               1997                                1998
+
+
+            7
+
+
+            6
+
+
+            5
+    y
+            4
+
+
+            3
+
+
+            2
+
+
+
+                   2     4     6      8    10    12
+
+
+                                                month
+
+
+Figure 4.3: Nonparametric bootstrap confidence limits for each month, but depicted with filled bands
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                        97
+
+
+      xYplot ( Cbind ( y ) ∼ month | factor ( year ) , data =s ,
+                  type = ' l ' , method = ' bands ' , lwd.bands = c (1 ,2 ,2 ,1) ,
+                  lwd =4)
+     # F i g u r e 4.4
+
+
+
+
+                                                         2     4     6      8    10     12
+
+                               1997                                  1998
+
+           8
+
+
+
+
+           6
+
+
+    y
+           4
+
+
+
+
+           2
+
+
+
+
+                   2     4      6     8     10    12
+
+
+                                                 month
+
+
+Figure 4.4: Central line depicts the median, and bands depict the 0.1, 0.25, 0.75, 0.9 quantiles of the
+raw data
+
+
+
+
+xYplot with method=’quantile’ or method=functionname
+
+
+
+  · method=’quantile’: xYplot automatically groups the x
+     variable into intervals containing a target of nx obser-
+     vations
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES    98
+
+
+
+  · Default value of nx is the lesser of 40 and 41 × stratum
+    size (specify nx=0 to do no grouping; useful when x
+    variable is discrete such as month)
+
+  · Quantiles given by the probs argument; default is
+    probs=c(.5,.25,.75)
+
+
+  · Within each x group computes three quantiles of y
+    and plots these as three lines
+
+  · Mean x within each x group is taken as the x-coordinate
+
+  · Useful empirical display for large datasets in which
+    scatterdiagrams are too busy to see patterns of cen-
+    tral tendency and variability; good for residual plots
+    for showing symmetry and lack of trend in central ten-
+    dency and variabilityc
+
+  · Can also specify a general function of a data vec-
+    tor that returns a matrix of statistics for method; the
+    statistic in the first column should be the measure of
+    central tendency
+ c Specify method=smean.sdl to instead plot mean and ±2× S.D.
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES           99
+
+
+
+  · Arguments can be passed to that function a list metho-
+    dArgs
+
+
+  · Example: Group x into intervals containing 40 obser-
+    vations, plot the 0.5, 0.25, 0.75 quantiles of y against
+    mean x in interval
+      set.seed (1)
+      age ← rnorm (1000 , 30 , 10)
+      sbp ← 0 .3 * ( age-30 ) + rnorm (1000 , 120 , 15)
+      xYplot ( sbp ∼ age , method = ' quantile ' ,     # F i g u r e 4.5
+               xlim = c (5 ,60) , ylim = c (100 ,140))
+
+
+
+
+  · Instead of quantiles of raw data, show parametric
+    confidence bands, and require 60 observations in a
+    group
+      xYplot ( sbp ∼ age , method = smean.cl.normal , # F i g u r e 4.6
+               xlim = c (5 ,60) , ylim = c (100 ,140) , nx =60)
+
+
+
+
+Dotplot
+
+
+
+  · “Multivariate response” packaged by Cbind appears
+    as the x-variable after the ∼
+
+  · Does not work well with superposition of groups
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                        100
+
+
+
+
+          140
+
+          130
+
+    sbp   120
+
+          110
+
+          100
+
+                          10         20         30        40         50         60
+
+                                                 age
+
+     Figure 4.5: 0.25, 0.5, 0.75 quantiles of sbp vs. intervals of age containing 40 observations
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                    101
+
+
+
+
+            140
+
+            130
+
+     sbp    120
+
+            110
+
+            100
+
+                           10        20        30        40        50         60
+
+                                                 age
+
+Figure 4.6: Mean and parametric 0.95 confidence limits for means, for intervals of age containing 60
+observations
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES          102
+
+
+  · Example: Display proportions and approximate 0.95
+    confidence limits from already-tabulated data
+     d ← expand.grid ( continent = c ( ' USA ' , ' Europe ' ) ,
+                          year =1999:2001)
+     d $ proportion ← c ( .2 , .18 , .19 , .22 , .23 , .20 )
+     d $ SE ← c ( .02 , .01 , .02 , .015 , .021 , .025 )
+
+     d
+         continent     year proportion      SE
+     1         USA     1999       0 .20 0 .020
+     2      Europe     1999       0 .18 0 .010
+     3         USA     2000       0 .19 0 .020
+     4      Europe     2000       0 .22 0 .015
+     5         USA     2001       0 .23 0 .021
+     6      Europe     2001       0 .20 0 .025
+
+     Dotplot ( year ∼ Cbind ( proportion , proportion-1.96 * SE ,
+                              proportion +1 .96 * SE ) |
+               continent , data =d , ylab = ' Year ' ) # F i g u r e 4.7
+
+
+
+  · To re-arrange the order of the vertical groups, use the
+    reorder.factor function
+
+
+  · First just reverse the order of years on the y-axis
+     yr ← factor ( d $ year , 2001:1999)
+     Dotplot ( yr ∼ Cbind ( proportion , proportion-1.96 * SE ,
+                            proportion +1 .96 * SE ) |
+               continent , data =d , ylab = ' Year ' )
+
+
+
+  · Next, reorder years by the average proportion over
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                              103
+
+
+
+
+                                                     0.16       0.20       0.24
+
+                               USA                                Europe
+
+
+
+
+            2001
+
+
+
+
+    Month   2000
+
+
+
+
+            1999
+
+
+
+
+                   0.16     0.20       0.24
+
+
+                                              proportion
+
+
+Figure 4.7: Dot plot showing proportions and approximate 0.95 confidence limits for population
+probabilities
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                        104
+
+
+    the two continents
+     yr ← factor ( d $ year ) # r e o r d e r . f a c t o r o n l y a c c e p t s f a c t o r s
+     yr ← reorder.factor ( yr , d $ proportion , mean )
+     levels ( yr )
+
+     [1] " 1999 " " 2000 " " 2001 "
+
+    This happens to be in the original order so the dot
+    plot will be the same as Figure 4.7
+
+  · To use more accurate Wilson confidence intervals on
+    raw data:
+     set.seed (3)
+     d ← expand.grid ( continent = c ( ' USA ' , ' Europe ' ) ,
+                       year =1999:2001 , reps =1:100)
+     #   Generate     binary     events     from    a    population     probability        of
+     # 0 .2   of   the   event ,    same    for    all    years   and   continents
+     d $ y ← ifelse ( runif (6 * 100) ≤ .2 , 1 , 0)
+     rm ( y )          # r e m o v e old y ; don ' t c o n f u s e the f o l l o w i n g
+     attach ( d )
+     s ← summarize (y , llist ( continent , year ) ,
+                             function ( y ) {
+                               n ← sum ( ! is.na ( y ))
+                               s ← sum (y , na.rm = T )
+                               binconf (s , n )
+                             } , type = ' matrix ' )
+     Dotplot ( year ∼ Cbind ( y ) | continent ,
+                 data =s , ylab = ' Year ' )
+     # S a m e f o r m a t o f o u t p u t a s F i g u r e 4.7
+
+
+
+
+  · Example: dfr data frame and associated raw response
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES                                        105
+
+
+
+    variable y from above
+
+  · Display a 5-number (5-quantile) summary (2 inter-
+    vals, dot=median)
+    s ← summarize (y , llist ( month , year ) , quantile ,
+                       probs = c ( .5 , .05 , .25 , .75 , .95 ) , type = ' matrix ' )
+    Dotplot ( month ∼ Cbind ( y ) | factor ( year ) ,
+              data =s , ylab = ' Month ' ) # F i g u r e 4.8
+    dev.off ()
+
+
+
+
+                                                                 2         4         6         8
+
+                                  1997                                      1998
+           12
+           11
+           10
+            9
+            8
+
+   Month
+            7
+            6
+            5
+            4
+            3
+            2
+            1
+
+
+                       2         4         6         8
+
+
+                                                         y
+
+
+           Figure 4.8: Multi-tiered dot plot showing .05, .25, .5, .75, .95 quantiles of raw data
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES     106
+
+
+4.7.9   Summary of Functions for Aggregating Data for Plotting
+
+
+tapply
+        · Stratifies a single variable by one or a list of strati-
+         fication variables
+
+        · When stratify by > 1 variable, result is a matrix
+         which difficult to plot directly
+
+        · Hmisc reShape function can be used to re–shape
+         the result into a data frame for plotting
+
+        · When stratify by a single variable, tapply creates a
+         vector of summary statistics suitable for making a
+         simple dot or bar plot without conditioning
+aggregate
+        · Input = vector or a data frame and a by list of one
+         or more stratification variables
+
+        · Handy to enclose the by variables in the llist func-
+         tion
+
+        · Can summarize many variables at once but only a
+         single number such as the mean is computed for
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   107
+
+
+       each one
+
+     · aggregate does not preserve numeric stratification
+       variables — it transforms them into factors which
+       are not suitable for certain graphics
+
+     · Result is data frame
+summary.formula
+     · Can compute separate summaries for each of the
+       stratification variables
+
+     · Can also do × classifications when method=’cross’
+
+     · Can summarize response variable using multiple
+       statistics (e.g., mean and median)
+
+     · If specify a fun function that can deal specially with
+       matrices, you can summarize multiple–column re-
+       sponse variables
+
+     · Creates special objects and has special methods
+       for presenting them
+       – print method for printing a table in ASCII text
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   108
+
+
+
+          format
+
+        – plot method for plotting the result (not available
+          for method=’cross’
+
+        – LATEX method for typesetting the table, allowing
+          the use of multiple fonts, character sizes, sub-
+          scripts, superscripts, bold, etc.
+
+     · Don’t plot the results of summary.formula using one
+       of the Trellis/Lattice functions.
+summarize
+     · Similar purpose as aggregate but with some differ-
+       ences
+
+     · Will summarize only a single response variable but
+       the FUN function can summarize it with many statis-
+       tics
+
+     · Can compute multiple quantiles or upper and lower
+       limits for error bars
+
+     · Will not convert numeric stratifiers to factors, so
+CHAPTER 4. CONDITIONING AND PLOTTING THREE OR MORE VARIABLES   109
+
+
+
+       output is suitable for summarizing data for xyplot
+       or xYplot when the stratification variable needs to
+       be on the x–axis
+
+     · Only does cross–classification
+
+     · Creates an ordinary data frame suitable for any
+       use in S, especially for passing as a data argument
+       to Trellis/Lattice graphics functions
+
+     · Can also easily use the GUI to graph this data
+       frame
+method=function with xYplot:   Automatically aggregates
+    data to be plotted when central tendency and upper
+    and lower bands are of interest.
+Chapter 5
+
+
+Nonparametric Trend Lines
+
+
+
+
+ · Continuous X, continuous or binary Y
+
+ · Nonparametric smoother only assumes that the shape
+  of the relationship between X and Y is smooth
+
+ · A smoother is like a moving average but better
+  – Moving average is a moving flat line approximation
+
+  – Moving averages have problems in the left and right
+    tails
+
+ · Best all-purpose smoother: loess
+
+                          110
+CHAPTER 5. NONPARAMETRIC TREND LINES                         111
+
+
+  · Is called a scatterplot smoother or moving weighted
+    linear regression
+
+  · By having moving slope and intercept, with overlap-
+    ping windows, the smooth curve is more accurate
+    and has no problems in left and right tails
+
+  · loess can handle binary response variable if you turn
+    off outlier rejection (i.e., tell the algorithm to do no
+    extra iterations)
+
+  · Basic R function for loess smoothing is lowess:
+     plot ( age , sysbp )
+     lines ( lowess ( age , sysbp ))
+
+
+
+
+  · To use more than two variables use the function called
+    loess which uses the statistical formula language
+
+
+  · Hmisc plsmo function plots loess or “super smoother”
+    (supsmu) estimates with several options including au-
+    tomatic stratification on a discrete variable
+     plsmo ( age , sysbp , group = sex , datadensity = T )
+     # 2   curves    with    rug   plots
+CHAPTER 5. NONPARAMETRIC TREND LINES                                                           112
+
+
+
+  · Example using titanic3 dataset from Web site
+      attach ( titanic3 )
+      plsmo ( age , survived , group = interaction ( pclass , sex ) ,
+              datadensity = T )  # F i g u r e 5.1
+      dev.off ()
+
+
+                       1.0
+                                                                               1st.female
+
+
+                       0.8
+
+                                                                  2nd.female
+
+                       0.6
+
+            survived     3rd.female
+
+
+                       0.4
+
+
+
+
+                       0.2       3rd.male
+
+
+
+                                                                                    1st.male
+                       0.0                             2nd.male
+                             0              20   40                  60                80
+                                                 age
+
+Figure 5.1: loess smoothed estimates of the probability of surviving the Titanic as a function of
+passenger age, sex, and ticket class
+
+    interaction(a,b) creates a new factor variable con-
+    taining the cross-classifications of the two constituent
+    variables
+
+  · plsmo automatically turns outlier rejection off if the y
+    variables has only two unique values
+
+  · plsmo automatically labels curves by levels of the group
+CHAPTER 5. NONPARAMETRIC TREND LINES                                                                                       113
+
+
+
+     variablea
+
+  · You can use plsmo as a panel function to xyplot:
+        xyplot ( sysbp ∼ age | race , groups = sex , panel = panel.plsmo )
+
+
+
+
+  · Other ways to get trend lines using Trellis/Lattice are
+     given in Section 4.7.3
+
+
+
+
+ a Note that group is not plural, which is inconsistent with the Trellis/Lattice groups variable used for superposition.
+Chapter 6
+
+
+A Newer Graphical Model in R: ggplot2
+
+
+
+
+The ggplot2 package by Hadley Wickham, RStudio, was developed
+several years after the lattice package in R. It is based on Wilkin-
+son’s Grammar of Graphics. Dr Wickham provided the following
+ggplot2 examples and text.
+
+
+
+6.1   Basics
+
+
+
+This example shows some of the basic features of ggplot2, focusing
+particularly on the scatterplot, one of the most important statistical
+graphics.
+
+There are two ways of specifying ggplot2 graphics: a concise way
+that uses some “magic” to figure out what you want, and a more
+verbose, but explicit form. These examples use the more explicit
+
+                                 114
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                              115
+
+
+form (so it’s easier to see what’s happening), but for everyday use
+you can use qplot, which mimics the base plot function, and can
+save a lot of typing.
+  require ( ggplot2 )
+  require ( plyr )
+  mpg ← subset ( mpg , cyl ! = 5)
+
+
+
+To create a ggplot2 graphic you start off with the ggplot2 function.
+This function specifies the default dataset and default mapping
+from the data to things that you can see on the plot, the aesthetics.
+
+The following call uses the mpg dataset (a set of economy related
+variables for 235 cars, measured in 1999 and 2008). The aesthetic
+mapping says we want to map the x-position to displacement and
+the y-position to mpg in the city. We then add a layer of points with
+geom_point(). The geom, short for geometric object, determines the
+basic type of plot. With points we get a scatterplot.
+
+Note: Like lattice, ggplot2 plotting commands must be enclosed in print() to
+render the graphic unless running R interactively. Here Sweave is used so print()
+is required.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                    116
+
+
+  print ( ggplot ( mpg , aes ( x = displ , y = cty )) +
+          geom_point ())
+
+
+
+        35          ●
+
+                    ●
+
+
+
+        30
+                    ●
+             ● ●
+
+               ●
+        25   ● ●
+             ● ●
+             ●          ●
+                  ●   ●
+  cty           ● ● ● ●
+        20        ●     ●
+                  ● ● ●●       ●   ● ●
+                ●     ●●     ● ●● ● ●    ●
+                            ●● ●● ●    ● ● ●
+                ●           ●●     ●     ● ● ●              ●   ●       ●
+        15                  ●●   ● ●●   ●● ●      ●             ●       ●       ●
+                                   ●    ● ●● ●      ●      ●●               ●
+                                           ●●     ●●    ●   ●   ●
+                                              ● ●   ●       ● ●    ●
+                                   ●        ●     ●●      ●●●   ● ● ●
+        10
+                                                   ●
+
+
+                    2          3            4           5           6           7
+                                           displ
+
+
+Because almost every plot uses both x and y positions, they are
+the first two arguments to aes, and we can omit their names. We’ll
+do that from here on.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                    117
+
+
+  print ( ggplot ( mpg , aes ( displ , cty )) +
+          geom_point ())
+
+
+
+        35          ●
+
+                    ●
+
+
+
+        30
+                    ●
+             ● ●
+
+               ●
+        25   ● ●
+             ● ●
+             ●          ●
+                  ●   ●
+  cty           ● ● ● ●
+        20        ●     ●
+                  ● ● ●●       ●   ● ●
+                ●     ●●     ● ●● ● ●    ●
+                            ●● ●● ●    ● ● ●
+                ●           ●●     ●     ● ● ●              ●   ●       ●
+        15                  ●●   ● ●●   ●● ●      ●             ●       ●       ●
+                                   ●    ● ●● ●      ●      ●●               ●
+                                           ●●     ●●    ●   ●   ●
+                                              ● ●   ●       ● ●    ●
+                                   ●        ●     ●●      ●●●   ● ● ●
+        10
+                                                   ●
+
+
+                    2          3            4           5           6           7
+                                           displ
+
+
+We can also map variables to other aesthetics like colour, size and
+shape. ggplot2 will automatically pick a sensible scale (here a con-
+tinuous colour gradient) and draw a legend for us.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                         118
+
+
+  print ( ggplot ( mpg , aes ( displ , cty , colour = cyl )) +
+          geom_point ())
+
+
+
+        35      ●
+
+                ●
+
+
+
+        30
+                ●
+             ● ●
+                                                                               cyl
+               ●
+        25   ● ●                                                                ●    4
+             ● ●
+             ●        ●
+                 ●   ●
+                                                                                ●    5
+  cty          ● ● ● ●
+                                                                                ●    6
+        20       ●    ●
+                 ● ● ●●      ● ● ●
+               ●     ●●    ● ●● ● ● ●                                           ●    7
+                          ●● ●● ● ● ● ●
+               ●          ●●    ●   ● ● ●              ●   ●       ●
+        15                ●● ● ●● ●● ●     ●               ●       ●       ●
+                                                                                ●    8
+                                ●  ● ●● ●   ●           ●●             ●
+                                     ●●    ●●      ●     ● ●
+                                        ● ● ●            ● ●  ●
+                                ●     ●    ●●          ●●● ● ● ●
+        10
+                                               ●
+
+
+                   2        3          4           5           6           7
+                                      displ
+
+
+If we use a categorical variable we get a different type of scale. We
+can also map the same variable to multiple aesthetics, and ggplot2
+knows what to do. Notice how both colour and shape vary in the
+the legend.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                  119
+
+
+  print ( ggplot ( mpg , aes ( displ , cty , colour = factor ( cyl ) ,
+                               shape = factor ( cyl ))) +
+          geom_point ())
+
+
+
+        35      ●
+
+                ●
+
+
+
+        30
+                ●
+             ● ●
+
+               ●
+        25   ● ●
+                                                                    factor(cyl)
+             ● ●
+             ●       ●
+                ●   ●
+                                                                     ●   4
+  cty         ● ● ● ●
+                                                                         6
+        20      ●    ●
+                ● ● ●●
+              ●     ●●                                                   8
+                         ●
+              ●          ●
+        15               ●
+
+
+
+
+        10
+
+                   2         3       4             5   6        7
+                                   displ
+
+
+Another powerful technique for visualisation is facetting (also known
+as conditioning or trellising). This makes a separate panel for each
+subset of the data:
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                            120
+
+
+  print ( ggplot ( mpg , aes ( displ , cty )) +
+          geom_point () +
+          facet_wrap (∼ cyl ))
+
+
+
+                                    4                                       6
+        35     ●
+               ●
+        30   ●●
+                ●
+               ●
+        25   ●●
+             ●●
+             ●        ●
+                 ● ●
+               ●● ● ●
+        20     ●
+                 ● ●
+                 ● ● ●●
+                     ●●
+                                                                 ● ●●
+                                                             ● ● ●● ● ● ●
+                        ●                                     ●● ●● ● ● ● ●
+               ●        ●                                     ●● ● ● ●
+        15              ●                                      ● ● ●● ●● ●
+                                                                    ● ● ●● ●
+                                                                         ●●
+                                                                    ●
+        10
+  cty                               8
+        35
+        30
+        25
+        20
+                                 ●       ● ● ●
+        15                          ●
+                                     ●   ●●
+                                    ●● ● ● ●
+                                            ● ●
+                                                 ●
+                                                     ●
+                                  ●● ●    ●● ●
+                                ●   ●● ●●● ● ● ●
+        10                           ●
+
+                2           3   4       5    6       7   2      3       4       5   6   7
+                                                 displ
+
+
+There are plenty of other geoms we could use with this data. For
+example, we could use the jitter geom, which jitters each point by
+a small amount:
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                                       121
+
+
+  print ( ggplot ( mpg , aes ( displ , cty )) +
+          geom_jitter ())
+
+
+
+        35       ●
+
+                 ●
+
+
+
+        30
+                    ●
+              ● ●
+
+               ●●
+                ●
+        25   ● ●●
+             ●
+               ●
+              ●●
+             ●            ●●
+                   ●
+                   ●
+                        ●●
+  cty
+                ● ●
+                ●  ● ● ●
+                   ●    ●
+                        ●●
+                   ● ●
+                   ●    ●
+                          ●●
+        20         ●
+                   ●
+                   ●
+                   ●
+                    ●
+                      ● ●
+                        ● ●
+                           ●
+                           ●
+                                             ●
+                ●
+                   ●
+                   ●
+                   ●●     ●●
+                           ●     ●● ●● ●● ●  ●
+                                             ●
+                                             ●
+                 ●
+                 ●      ●
+                        ●●●
+                          ●
+                          ●●        ●●
+                                     ●●●           ●
+                                                  ●●
+                                 ● ●  ● ●      ●
+                               ●●●    ●● ●     ● ● ●
+                                  ● ●
+                                 ●●      ●         ● ● ●
+                 ●              ●●
+                               ●●        ●        ● ●● ●                   ●    ●          ●
+                                       ●   ●●   ●      ●
+                                                       ●      ●●
+        15                     ● ●●      ●●
+                                          ●
+                                                  ●
+                                                ●● ● ●
+                                                ●
+                                                               ●
+                                                                ●●         ●     ●         ●       ●
+                                                       ●●
+                                                       ●
+                                                       ● ●      ●
+                                                                ●          ●
+                                                                           ●●                  ●
+                                                       ●
+                                                     ●●●
+                                                     ●        ●●
+                                                               ●●●
+                                                                 ●               ●●
+                                                                                  ●
+                                                                     ●●       ●  ●●   ●
+                                                         ●   ● ●             ●●
+                                                                ●          ●    ●
+                                                       ●       ●●          ●●●●
+                                                                              ●     ●  ●
+                                         ●                    ●           ●●● ●   ● ●
+        10
+                                                               ●●
+                                                               ●●
+
+
+                     2              3               4                5               6             7
+                                                   displ
+
+
+Or we could add a smooth curve
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                    122
+
+
+  print ( ggplot ( mpg , aes ( displ , cty )) +
+          geom_point () +
+          geom_smooth ())
+
+
+
+        35          ●
+
+                    ●
+
+
+
+        30
+                    ●
+             ● ●
+
+               ●
+        25   ● ●
+             ● ●
+             ●          ●
+                  ●   ●
+  cty           ● ● ● ●
+        20        ●     ●
+                  ● ● ●●       ●   ● ●
+                ●     ●●     ● ●● ● ●    ●
+                            ●● ●● ●    ● ● ●
+                ●           ●●     ●     ● ● ●              ●   ●       ●
+        15                  ●●   ● ●●   ●● ●      ●             ●       ●       ●
+                                   ●    ● ●● ●      ●      ●●               ●
+                                           ●●     ●●    ●   ●   ●
+                                              ● ●   ●       ● ●    ●
+                                   ●        ●     ●●      ●●●   ● ● ●
+        10
+                                                   ●
+
+
+                    2          3            4           5           6           7
+                                           displ
+
+
+Because we are specifying what we want in the graphic, instead of
+constructing it piece-by-piece, ggplot2 knows what to do if we add
+colour or facetting to a plot with a smooth line on it:
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                            123
+
+
+  print ( ggplot ( mpg , aes ( displ , cty )) +
+          geom_point () +
+          geom_smooth () +
+          facet_wrap (∼ cyl ))
+
+
+
+                                    4                                       6
+        35     ●
+               ●
+        30   ●●
+                ●
+               ●
+        25   ●●
+             ●●
+             ●        ●
+                 ● ●
+               ●● ● ●
+        20     ●
+                 ● ●
+                 ● ● ●●
+                     ●●
+                                                                 ● ●●
+                                                             ● ● ●● ● ● ●
+                        ●                                     ●● ●● ● ● ● ●
+               ●        ●                                     ●● ● ● ●
+        15              ●                                      ● ● ●● ●● ●
+                                                                    ● ● ●● ●
+                                                                         ●●
+                                                                    ●
+        10
+  cty                               8
+        35
+        30
+        25
+        20
+                                 ●       ● ● ●
+        15                          ●
+                                     ●   ●●
+                                    ●● ● ● ●
+                                            ● ●
+                                                 ●
+                                                     ●
+                                  ●● ●    ●● ●
+                                ●   ●● ●●● ● ● ●
+        10                           ●
+
+                2           3   4       5    6       7   2      3       4       5   6   7
+                                                 displ
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                             124
+
+
+  print ( ggplot ( mpg , aes ( displ , cty , colour = factor ( cyl ))) +
+          geom_point () +
+          geom_smooth ())
+
+
+
+        35      ●
+
+                ●
+
+
+
+        30
+                ●
+             ● ●
+
+               ●
+        25   ● ●
+                                                                               factor(cyl)
+             ● ●
+             ●       ●
+                ●   ●
+                                                                                ●   4
+  cty         ● ● ● ●
+                                                                                ●   6
+        20      ●    ●
+                ● ● ●●      ● ● ●
+              ●     ●●    ● ●● ● ● ●                                            ●   8
+                         ●● ●● ● ● ● ●
+              ●          ●●    ●   ● ● ●               ●   ●       ●
+        15               ●● ● ●● ●● ●     ●                ●       ●       ●
+                               ●  ● ●● ●   ●          ●●               ●
+                                    ●●    ●●       ●   ● ●
+                                       ● ● ●           ● ●  ●
+                               ●     ●    ●●         ●●● ● ● ●
+        10
+                                             ●
+
+
+                   2       3         4             5           6           7
+                                   displ
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                             125
+
+
+  print ( ggplot ( mpg , aes ( displ , cty , colour = factor ( cyl ) ,
+                               fill = factor ( cyl ))) +
+          geom_smooth ( colour = " grey50 " ) +
+          geom_point ())
+
+
+
+        35      ●
+
+                ●
+
+
+
+        30
+                ●
+             ● ●
+
+               ●
+        25   ● ●
+                                                                               factor(cyl)
+             ● ●
+             ●       ●
+                ●   ●
+                                                                                ●   4
+  cty         ● ● ● ●
+                                                                                ●   6
+        20      ●    ●
+                ● ● ●●      ● ● ●
+              ●     ●●    ● ●● ● ● ●                                            ●   8
+                         ●● ●● ● ● ● ●
+              ●          ●●    ●   ● ● ●               ●   ●       ●
+        15               ●● ● ●● ●● ●     ●                ●       ●       ●
+                               ●  ● ●● ●   ●          ●●               ●
+                                    ●●    ●●       ●   ● ●
+                                       ● ● ●           ● ●  ●
+                               ●     ●    ●●         ●●● ● ● ●
+        10
+                                             ●
+
+
+                   2       3         4             5           6           7
+                                   displ
+
+
+Note how the legend does its best to capture what’s on the plot.
+
+Each call to geom_xxx adds a new layer to the plot. Different layers
+can use different aesthetic mappings or even different datasets,
+making it possible to create rich, sophisticated graphics. In the
+following simple example we move the colour specification out of
+the defaults (which apply to all layers), into the point layer. Notice
+how we just get one smooth line.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                             126
+
+
+  print ( ggplot ( mpg , aes ( displ , cty )) +
+          geom_point ( aes ( colour = factor ( cyl ))) +
+          geom_smooth ())
+
+
+
+        35      ●
+
+                ●
+
+
+
+        30
+                ●
+             ● ●
+
+               ●
+        25   ● ●
+                                                                               factor(cyl)
+             ● ●
+             ●       ●
+                ●   ●
+                                                                                ●   4
+  cty         ● ● ● ●
+                                                                                ●   6
+        20      ●    ●
+                ● ● ●●      ● ● ●
+              ●     ●●    ● ●● ● ● ●                                            ●   8
+                         ●● ●● ● ● ● ●
+              ●          ●●    ●   ● ● ●               ●   ●       ●
+        15               ●● ● ●● ●● ●     ●                ●       ●       ●
+                               ●  ● ●● ●   ●          ●●               ●
+                                    ●●    ●●       ●   ● ●
+                                       ● ● ●           ● ●  ●
+                               ●     ●    ●●         ●●● ● ● ●
+        10
+                                             ●
+
+
+                   2       3         4             5           6           7
+                                   displ
+
+
+This quick introduction has only scratched the surface of ggplot2.
+To learn more, see http://had.co.nz/ggplot2.
+
+
+6.2     Time Series Examples
+
+
+
+This is a graphical exploration of time series of monthly housing
+sales in three interesting cities in Texas from 2000-2009. Houston
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                127
+
+
+is big, Austin medium sized, and College Station small, with a high
+proportion (55,000 / 80,000) of college students.
+  load ( ' houseSales.rda ' )
+  tx ← subset ( houseSales ,
+                  city % in % c ( " Austin " , " Houston " , " Bryan-College Station " ))
+
+
+
+  print ( ggplot ( tx , aes ( date , avgprice )) + geom_line ())
+
+
+
+
+             250000
+
+
+
+
+             200000
+
+
+
+  avgprice
+             150000
+
+
+
+
+             100000
+
+
+                      2000    2002          2004     2006          2008
+                                           date
+
+
+No good - need to specify which variable splits the data up into
+lines.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                            128
+
+
+  print ( ggplot ( tx , aes ( date , avgprice , group = city )) + geom_line ())
+
+
+
+
+             250000
+
+
+
+
+             200000
+
+
+
+  avgprice
+             150000
+
+
+
+
+             100000
+
+
+                      2000    2002          2004   2006        2008
+                                           date
+
+
+Alternatively we can specify an aesthetic and get a legend which
+tells us which line is which.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                  129
+
+
+  print ( ggplot ( tx , aes ( date , avgprice , colour = city )) + geom_line ())
+
+
+
+
+             250000
+
+
+
+
+             200000
+                                                   city
+
+
+  avgprice
+                                                          Austin
+                                                          Bryan−College Station
+             150000                                       Houston
+
+
+
+
+             100000
+
+
+                      2000 2002 2004 2006 2008
+                             date
+
+
+Is there a hint of a seasonal effect? Let’s investigate further by
+drawing a time series plot with month on the x-axis and a line for
+each year. We’ll also use facetting to divide up the cities.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                  130
+
+
+  print ( ggplot ( tx , aes ( month , avgprice , group = year )) +
+          geom_line () +
+          facet_wrap (∼ city ))
+
+
+
+                              Austin                 Bryan−College Station
+             250000
+
+             200000
+
+             150000
+
+             100000
+
+  avgprice
+                              Houston
+             250000
+
+             200000
+
+             150000
+
+             100000
+                      2   4    6       8   10   12   2   4   6    8   10     12
+                                           month
+
+
+We can also add to the previous plot. Here we add a thick red
+line showing the mean price for each month. We need to use a
+different grouping because otherwise we’d taking the mean of a
+single observation
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                    131
+
+
+  print ( last_plot () +
+          stat_summary ( aes ( group = 1) , fun.y = " mean " , geom = " line " ,
+          colour = " red " , size =2))
+
+
+
+                              Austin                 Bryan−College Station
+             250000
+
+             200000
+
+             150000
+
+             100000
+
+  avgprice
+                              Houston
+             250000
+
+             200000
+
+             150000
+
+             100000
+                      2   4    6       8   10   12   2    4    6     8    10   12
+                                           month
+
+
+Alternatively, we could draw a boxplot for each month.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                     132
+
+
+  print ( ggplot ( tx , aes ( month , avgprice , group = month )) +
+          geom_boxplot () +
+          facet_wrap (∼ city ))
+
+
+
+                              Austin                   Bryan−College Station
+             250000
+
+             200000
+                                                                   ●
+
+             150000
+
+             100000
+
+  avgprice
+                                                   ●
+
+                              Houston
+             250000
+
+             200000
+
+             150000
+
+             100000
+                      2   4    6    8    10   12       2   4   6       8   10   12
+                                          month
+
+
+Houston seems to have some seasonal differences, but it’s hard to
+see any different in Austin or College Station. We’d probably want
+to check this with more formal inferential procedures
+
+There’s a much strong seasonal effect on sales:
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                                    133
+
+
+  print ( ggplot ( tx , aes ( month , sales , group = year )) +
+          geom_line () +
+          facet_wrap (∼ city ))
+
+
+
+                           Austin                      Bryan−College Station
+          8000
+          6000
+          4000
+          2000
+
+
+  sales                    Houston
+          8000
+          6000
+          4000
+          2000
+
+
+                 2     4     6      8   10    12   2      4    6    8   10     12
+                                          month
+
+
+But it’s hard to compare the different cities because of large dif-
+ference in total sales. With free scales each panel has it’s own y
+scale, and you can see the seasonal pattern is a bit different in
+College Station. Maybe it’s because it’s a college town.
+CHAPTER 6. A NEWER GRAPHICAL MODEL IN R: GGPLOT2                              134
+
+
+  print ( ggplot ( tx , aes ( month , sales , group = year )) +
+          geom_line () +
+          facet_wrap (∼ city , scales = " free_y " ))
+
+
+
+                          Austin                     Bryan−College Station
+                                               350
+          3000                                 300
+          2500                                 250
+          2000                                 200
+                                               150
+          1500
+                                               100
+          1000
+
+  sales                   Houston
+          8000
+          7000
+          6000
+          5000
+          4000
+          3000
+                 2    4    6    8    10 12           2   4   6    8   10 12
+                                          month
+

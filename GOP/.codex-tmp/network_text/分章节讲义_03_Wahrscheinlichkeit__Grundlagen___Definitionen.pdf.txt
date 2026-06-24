@@ -1,0 +1,981 @@
+   Wahrscheinlichkeit: Grundlagen & Definitionen
+        Wahrscheinlichkeit: Begriffsbildung & Interpretation
+        Laplace-Wahrscheinlichkeiten
+        Axiome von Kolmogorov
+        Bedingte Wahrscheinlichkeiten
+        Stochastische Unabhängigkeit
+        Der Satz von Bayes
+
+
+
+
+LMU München                             Statistik I            80 / 637
+Wahrscheinlichkeit: Grundlagen & Definitionen
+   Wahrscheinlichkeit: Begriffsbildung & Interpretation
+   Laplace-Wahrscheinlichkeiten
+   Axiome von Kolmogorov
+   Bedingte Wahrscheinlichkeiten
+   Stochastische Unabhängigkeit
+   Der Satz von Bayes
+  Wahrscheinlichkeit
+
+
+   Grundbegriff der Stochastik:
+   Wahrscheinlichkeit 𝑃(𝐴) für das Auftreten eines bestimmten Ereignisses 𝐴
+
+
+              𝑃(𝐴) = 1            𝐴 tritt mit Sicherheit ein
+              𝑃(𝐴) = 0            𝐴 tritt mit Sicherheit nicht ein
+              𝑃(𝐴) = 𝑝 ∈ (0, 1)   𝐴 tritt mit Wahrscheinlichkeit 𝑝 ein
+
+
+
+   Interpretation?
+
+
+
+
+LMU München                          Statistik I                          82 / 637
+  Subjektivistische Interpretation
+
+
+
+   Wahrscheinlichkeit aus Wetteinsatz:
+   “Wie sicher bist Du, dass das Ereignis 𝐴 eintreten wird?”
+   ⟶ “Wie viel Einsatz 𝑒 bist Du maximal bereit zu setzen, wenn beim
+   Eintreten von 𝐴 ein Gewinn 𝑔 ausgezahlt wird?” (unter Risikoneutralität)
+
+                                                    𝑒
+                                  ⟹ 𝑃(𝐴) =
+                                                    𝑔
+
+    ⟹ Wahrscheinlichkeit als Maß für individuelle/subjektive Unsicherheit.
+
+
+
+
+LMU München                           Statistik I                             83 / 637
+  Beispiel: Sportwette
+
+
+
+
+   Nick zahlt Yolanda den doppelten Einsatz als Gewinn aus, falls Yolanda’s
+   Lieblingsteam die Meisterschaft gewinnt (Ereignis 𝑀).
+      ▶ Nur falls Yolanda glaubt, dass 𝑃(𝑀) ≥ 1 , lässt sie sich auf die Wette ein.
+                                                       2
+      ▶ Nick glaubt 𝑃(𝑀) ≤ 1 , sonst würde er die Wette nicht anbieten.
+                            2
+
+
+
+
+LMU München                              Statistik I                            84 / 637
+  Frequentistische Interpretation
+
+
+
+
+   Wahrscheinlichkeit als Häufigkeit:
+   Wenn der zufällige Vorgang beliebig oft wiederholt werden würde, dann
+   würde die relative Häufigkeit des Eintretens des Ereignisses 𝐴 gegen die
+   Wahrscheinlichkeit 𝑃(𝐴) konvergieren.
+   Klassisches Beispiel:
+   Wiederholtes Werfen eines “fairen” Würfels
+
+
+
+
+LMU München                             Statistik I                           85 / 637
+  Interpretation der Interpretationen
+
+      ▶ Für mathematische Theoriebildung weitestgehend irrelevant was
+        “𝑃(𝐴)” inhaltlich bedeutet.
+        (Für Kommunikation und Interpretation statistischer Analysen aber
+        höchst relevant!)
+      ▶ Beide Interpretationen jeweils (nicht) sinnvoll für bestimmte Arten von
+        Zufallsvorgängen:
+              ▶ Frequentistische Interpretation der W.keit von einzigartigen Ereignissen?
+                … von bereits eingetretenen, aber unbeobachteten Ereignissen?
+              ▶ Subjektivistische Interpretation von W.keiten für einfache &
+                wiederholbare physikalische Prozesse wie Würfelwurf? …
+
+      ▶ Anwendungen des subjektivistischen W.keitsbegriff:
+        → Bayesianische Statistik
+      ▶ Anwendungen des frequentistischen W.keitsbegriff:
+        → Klassische/Frequentistische Statistik
+
+
+
+LMU München                                  Statistik I                               86 / 637
+  Grundbegriffe der Stochastik
+   Def.: Ergebnisse 𝜔
+
+   𝜔: mögliches Ergebnis eines Zufallsexperiments.
+
+   Def.: Stochastische Grundgesamtheit Ω
+
+   Als stochastische Grundgesamtheit Ω bezeichnet man die Menge aller
+   möglichen Ergebnisse 𝜔 eines Zufallsexperiments.
+
+   Auch: “Grundraum”, “Basismenge”, “Ergebnisraum”.
+   Def.: Ereignis
+
+   Eine Teilmenge 𝐴 ⊆ Ω heißt Ereignis.
+
+   Def.: Elementarereignisse {𝜔}
+
+   Eine Teilmenge von Ω, die als einziges Element ein Ergebnis 𝜔 enthält,
+   nennt man Elementareignis.
+
+   Immer nur genau ein Elementarereignis tritt ein.
+LMU München                           Statistik I                           87 / 637
+Wahrscheinlichkeit: Grundlagen & Definitionen
+   Wahrscheinlichkeit: Begriffsbildung & Interpretation
+   Laplace-Wahrscheinlichkeiten
+   Axiome von Kolmogorov
+   Bedingte Wahrscheinlichkeiten
+   Stochastische Unabhängigkeit
+   Der Satz von Bayes
+  Laplace-Prinzip
+
+
+
+
+   Prinzip von Laplace (Pierre-Simon de Laplace [1749-1827]):
+   “Wenn nichts dagegen spricht, gehen wir davon aus, dass alle
+   Elementarereignisse gleichwahrscheinlich sind.”
+
+
+
+
+LMU München                           Statistik I                 89 / 637
+  Laplace-Wahrscheinlichkeiten
+
+   Betrachte die endliche Grundgesamtheit von Elementarereignissen
+
+
+                                Ω = {𝜔1 , 𝜔2 , ..., 𝜔𝑛 }
+
+
+   Def.: Laplace-Wahrscheinlichkeit
+
+   Für ein Ereignis 𝐴 ⊆ Ω ist die Laplace-Wahrscheinlichkeit
+
+                                          |𝐴| |𝐴|
+                                𝑃(𝐴) ∶=       =   ,
+                                          |Ω|   𝑛
+
+   wobei |𝐴| die Anzahl der Elemente in 𝐴 ist.
+
+   ⟹ “Anzahl günstiger und gleichwahrscheinlicher Fälle durch Anzahl
+   möglicher und gleichwahrscheinlicher Fälle”
+
+
+LMU München                             Statistik I                    90 / 637
+  Folgerungen und Erweiterungen
+
+
+      ▶ Jedes Elementarereignis {𝜔𝑖 }, 𝑖 = 1, … , 𝑛, eines Laplace-W.keitsraums
+          hat Wahrscheinlichkeit 𝑃({𝜔𝑖 }) = 𝑛1 .
+
+
+      ▶ Die entsprechende Abbildung 𝑃 ∶ 𝒫 (Ω) → [0, 1] nennt man auch
+      ▶ Die Wahrscheinlichkeit von Ω ist 𝑃(Ω) = 1.
+
+
+              ▶ 𝒫 (Ω) ist die Potenzmenge (Menge aller Teilmengen) von Ω – nicht zu
+        diskrete Gleichverteilung auf Ω
+
+                verwechseln mit 𝑃(Ω)!
+
+      ▶ Die Vereinigung 𝑈 = 𝐴 ∪ 𝐵 zweier Ereignisse 𝐴, 𝐵 definiert das Ereignis
+        “A oder B oder beide treten ein”
+      ▶ Der Schnitt 𝐼 = 𝐴 ∩ 𝐵 zweier Ereignisse 𝐴, 𝐵 definiert das Ereignis
+        “A und B treten beide ein”
+
+
+
+
+LMU München                                 Statistik I                               91 / 637
+  Beispiel: Augensumme von zwei Würfeln
+
+
+
+
+                           Ω = {(1, 1), (1, 2), ..., (6, 5), (6, 6)}
+                         |Ω| = 62 = 36
+
+
+   Sei 𝐴𝑘 das Ereignis “Augensumme ist 𝑘”. Dann gilt:
+
+                                  6 − |𝑘 − 7|
+                       𝑃(𝐴𝑘 ) =                     für 𝑘 = 2, ..., 12
+                                      36
+
+
+
+
+LMU München                                Statistik I                   92 / 637
+  Interlude: Kombinatorik auf 1er Folie
+   Wie viele unterschiedliche Möglichkeiten, 𝑘 Elemente aus 𝑛 auszuwählen?
+      ▶ Auswahl mit Zurücklegen, Ergebnis mit Reihenfolgen:
+
+                                      𝑛𝑘 = 𝑛 ⋅ 𝑛 ⋅ ⋯ ⋅ 𝑛
+        → je 𝑛 Möglichkeiten für alle 𝑘 Ziehungen
+      ▶ Auswahl ohne Zurücklegen, Ergebnis mit Reihenfolge:
+                               𝑛!
+                                     = 𝑛 ⋅ (𝑛 − 1) ⋅ … ⋅ (𝑛 − 𝑘 + 1)
+                            (𝑛 − 𝑘)!
+        → zuerst 𝑛 Möglichkeiten, dann je 𝑛 − 1, dann je 𝑛 − 2, …
+      ▶ Auswahl ohne Zurücklegen, Ergebnis ohne Reihenfolge:
+                                                           𝑛!
+                                  𝑛         𝑛!       (𝑛−𝑘)!
+                                 ( ) ∶=            =
+                                  𝑘     (𝑛 − 𝑘)!𝑘!     𝑘!
+
+        → Anzahl unterschiedlicher Auswahlen / Anzahl möglicher
+        Reihenfolgen
+      ▶ (mit Zurücklegen, ohne Reihenfolge: (𝑛+𝑘−1))
+                                               𝑘
+LMU München                               Statistik I                        93 / 637
+  Beispiel: Skatspiel
+
+
+
+   Beim Skatspiel werden 32 verschiedene Karten, darunter 4 Buben, an 3
+   Personen verteilt.
+   Jede:r erhält 10 Karten.
+   2 Karten kommen in den Skat.
+   Wie groß sind die Laplace-Wahrscheinlichkeiten der Ereignisse:
+      ▶ 𝐴1 ≃ “Person 1 erhält alle Buben”
+      ▶ 𝐴2 ≃ “Alle 3 erhalten genau einen Buben”
+
+
+
+
+LMU München                           Statistik I                         94 / 637
+  Laplace-Wahrscheinlichkeiten sind zu speziell:
+
+
+   Gegenbeispiele:
+      ▶ Unfairer Würfel
+      ▶ Seltene Ereignisse, z.B. hard disk failures, Mutationen, …
+
+   ⇝ Elementarereignisse hier nicht gleichwahrscheinlich!
+      ▶ Außerdem: Was wenn |Ω| unendlich?
+
+
+
+
+LMU München                             Statistik I                  95 / 637
+  Beispiel für unendliche Grundgesamtheiten
+
+   Man interessiere sich für die Anzahl der Würfe einer fairen Münze bis zum
+   ersten Mal Zahl eintritt.
+
+                Ω = {𝜔1 , 𝜔2 , 𝜔3 , 𝜔4 , ...} = {1, 2, 3, 4, ...} = ℕ ⟹ |Ω| = ∞!
+
+
+
+   Allgemein mit 𝜔𝑖 ∶= 𝑖:
+
+                                                 1
+                                    𝑃({𝜔𝑖 }) =                 𝑖 = 1, 2, 3, ...
+                                                 2𝑖
+                              ∞                  ∞
+                                                     1
+                              ∑ 𝑃({𝜔𝑖 }) = ∑            = 1
+                              𝑖=1                𝑖=1
+                                                     2𝑖
+
+   Beweis s. geom. Reihe
+
+
+
+
+LMU München                                      Statistik I                       96 / 637
+Wahrscheinlichkeit: Grundlagen & Definitionen
+   Wahrscheinlichkeit: Begriffsbildung & Interpretation
+   Laplace-Wahrscheinlichkeiten
+   Axiome von Kolmogorov
+   Bedingte Wahrscheinlichkeiten
+   Stochastische Unabhängigkeit
+   Der Satz von Bayes
+  Definitionen
+   Def.: Disjunkte Ereignisse
+
+   𝐴, 𝐵 ⊆ Ω sind disjunkte Ereignisse wenn gilt:
+
+                                     𝐴∩𝐵 =∅
+
+   .
+
+   Def.: Komplement/Gegenereignis
+
+   Das Gegenereignis oder Komplement 𝐴̄ von 𝐴 ⊆ Ω ist
+
+                            𝐴̄ ∶= Ω ∖ 𝐴 = {𝜔 ∈ Ω ∶ 𝜔 ∉ 𝐴}
+
+
+
+       ▶ Ereignis und Gegenereignis sind disjunkt.
+       ▶ Disjunkte Ereignisse können also nie gleichzeitig bzw. gemeinsam
+         eintreten
+          ⟹ Elementarereignisse in Ω bilden eine Menge von disjunkten
+         Ereignissen.
+LMU München                            Statistik I                          98 / 637
+  Kolmogorov-Axiome
+
+
+   Wir betrachten
+
+
+      ▶ und eine Funktion 𝑃 auf der Potenzmenge 𝒫 (Ω), die jedem Ereignis
+      ▶ eine beliebige (abzählbare) Grundgesamtheit Ω
+
+        𝐴 ⊆ Ω eine Wahrscheinlichkeit zuordnet.
+
+   Def.: Wahrscheinlichkeitsverteilung
+
+   𝑃 ist eine Wahrscheinlichkeitsverteilung auf Ω, wenn sie folgende
+   Eigenschaften erfüllt:
+     ▶ A1: 𝑃(𝐴) ≥ 0 für beliebige 𝐴 ⊆ Ω (Positivität)
+     ▶ A2: 𝑃(Ω) = 1 (Sicheres Ereignis)
+     ▶ A3: 𝑃(𝐴 ∪ 𝐵) = 𝑃(𝐴) + 𝑃(𝐵) für disjunkte Ereignisse 𝐴, 𝐵 ⊆ Ω (Additivität)
+
+
+
+
+LMU München                             Statistik I                             99 / 637
+  Folgerungen
+
+
+
+
+                      𝑛
+      ▶ 𝑃(∪𝑛𝑖=1 𝐴𝑖 ) = ∑ 𝑃(𝐴𝑖 ) für paarweise disjunkte Ereignisse 𝐴1 , 𝐴2 , ..., 𝐴𝑛 ⊂ Ω
+                     𝑖=1
+      ▶ 𝐴 ⊆ 𝐵 ⟹ 𝑃(𝐴) ≤ 𝑃(𝐵)
+      ▶ 𝑃(𝐴)̄ = 1 − 𝑃(𝐴)
+      ▶ 𝑃(𝐴 ∪ 𝐵) = 𝑃(𝐴) + 𝑃(𝐵) − 𝑃(𝐴 ∩ 𝐵) für beliebige 𝐴, 𝐵 ⊂ Ω
+
+
+
+
+LMU München                                 Statistik I                               100 / 637
+  Anwendung: Siebformel von Sylvester-Poincaré
+   James Sylvester [1814-1897], Jules Henri Poincaré [1854-1912]
+   Für beliebiges 𝑛 ∈ ℕ und Ereignisse 𝐴1 , 𝐴2 , ..., 𝐴𝑛 ⊆ Ω gilt:
+
+
+          𝑃(𝐴1 ∪ 𝐴2 ∪ ⋯ ∪ 𝐴𝑛 ) = ∑ 𝑃(𝐴𝑖 ) − ∑ 𝑃(𝐴𝑖 ∩ 𝐴𝑗 )
+                                 𝑖            𝑖<𝑗
+
+                                     + ∑ 𝑃(𝐴𝑖 ∩ 𝐴𝑗 ∩ 𝐴𝑘 )
+                                      𝑖<𝑗<𝑘
+
+                                          − ⋯ ± ⋯ ± ⋯ + (−1)𝑛+1 ⋅ 𝑃(𝐴1 ∩ 𝐴2 ∩ ... ∩ 𝐴𝑛 )
+
+
+   Bsp.:
+
+
+                      𝑃(𝐴 ∪ 𝐵 ∪ 𝐶) =(𝑃(𝐴) + 𝑃(𝐵) + 𝑃(𝐶))
+                                      − (𝑃(𝐴 ∩ 𝐵) + 𝑃(𝐴 ∩ 𝐶) + 𝑃(𝐵 ∩ 𝐶))
+                                      + 𝑃(𝐴 ∩ 𝐵 ∩ 𝐶)
+
+LMU München                                   Statistik I                                  101 / 637
+  Anwendung: Bonferroni Ungleichungen
+
+
+
+
+    ⟹ Abschätzung von 𝑃(𝐴1 ∪ 𝐴2 ∪ ... ∪ 𝐴𝑛 )
+   Für beliebige Ereignisse 𝐴1 , 𝐴2 , ...𝐴𝑛 gilt
+
+
+                                      ⋃ 𝑖
+                                      𝑛
+                     ∑ 𝑃(𝐴𝑖 ) ≥ 𝑃 (         𝐴 ) ≥ ∑ 𝑃(𝐴𝑖 ) − ∑ 𝑃(𝐴𝑖 ∩ 𝐴𝑗 )
+                      𝑖               𝑖=1             𝑖      𝑖<𝑗
+
+
+
+
+LMU München                                    Statistik I                   102 / 637
+Wahrscheinlichkeit: Grundlagen & Definitionen
+   Wahrscheinlichkeit: Begriffsbildung & Interpretation
+   Laplace-Wahrscheinlichkeiten
+   Axiome von Kolmogorov
+   Bedingte Wahrscheinlichkeiten
+   Stochastische Unabhängigkeit
+   Der Satz von Bayes
+  Bedingte Wahrscheinlichkeit
+   Def.: Bedingte Wahrscheinlichkeit
+
+   Die bedingte Wahrscheinlichkeit von 𝐴 gegeben 𝐵 für Ereignisse 𝐴, 𝐵 ⊆ Ω mit
+   𝑃(𝐵) > 0 ist
+                                         𝑃(𝐴 ∩ 𝐵)
+                              𝑃(𝐴|𝐵) ∶=
+                                           𝑃(𝐵)
+
+
+   Interpretation:
+      ▶ “Wie wahrscheinlich ist A wenn B bereits eingetreten ist?”
+      ▶ “Wie wahrscheinlich ist A unter der Annahme, dass B der Fall ist?”
+
+   Intuition:
+      ▶ “In welchem Anteil von den Fällen, in denen 𝐵 eintritt, tritt auch 𝐴 ein?”
+      ▶ “Welchen Anteil an der Wahrscheinlichkeit für Bedingung 𝐵 haben die
+        Elementarereignisse, die auch Teil des interessierenden Ereignisses 𝐴
+        sind?”
+
+LMU München                             Statistik I                           104 / 637
+  Beispiel: Würfelwurf
+
+   𝐺 ∶= “Würfelergebnis gerade Zahl”,
+   𝐹 ∶= “Würfelergebnis mindestens 5”
+   𝑆 ∶= “Würfelergebnis ist 6”
+   Dann z.B.:
+                                             1
+                                ⟹ 𝑃(𝐹|𝐺) =
+                                             3
+                                             1
+                                    𝑃(𝐺|𝐹) =
+                                             2
+                                         ̄
+                                    𝑃(𝑆|𝐺) = 0
+                                    𝑃(𝐺|𝑆) = 1
+
+
+
+
+LMU München                         Statistik I   105 / 637
+  Eigenschaften von bedingten Wahrscheinlichkeiten
+
+                 𝑃(𝐵|𝐵) = 1 (Sicheres Ereignis)
+                 𝑃( ̄𝐵|𝐵) = 0 (Unmögliches Ereignis)
+                 𝑃(𝐴|𝐵) ≥ 0 für beliebige 𝐴 ⊆ Ω (Positivität)
+
+   Außerdem gelten alle Aussagen über Wahrscheinlichkeiten bei fester
+   Bedingung auch für bedingte Wahrscheinlichkeiten, z.B.:
+
+         𝑃((𝐴1 ∪ 𝐴2 )|𝐵) = 𝑃(𝐴1 |𝐵) + 𝑃(𝐴2 |𝐵) für 𝐴1 und 𝐴2 disjunkt. (Additivität)
+
+    ⟹ Die bedingten Wahrscheinlichkeiten 𝑃(𝐴|𝐵) für 𝐴 ⊆ Ω definieren bei
+   fester Bedingung 𝐵 einfach eine Wahrscheinlichkeitsverteilung über die
+   neue, kleinere stochastische Grundgesamtheit 𝐵 ⊂ Ω.
+
+   Mehrfaches Bedingen ⟹ Bedingen auf den Schnitt der Bedingungen:
+
+              𝑃((𝐴|𝐵)|𝐶) = 𝑃(𝐴|(𝐵 ∩ 𝐶))
+
+
+LMU München                                Statistik I                                 106 / 637
+  Beispiel: Skat
+
+
+
+
+   Definiere
+   𝐴 ∶= “Mindestens eine der acht Karokarten liegt im Skat”
+   𝐵 ∶= “Spieler 1 erhält beim Austeilen keine der acht Karokarten”
+   Berechne 𝑃(𝐴) und 𝑃(𝐴|𝐵) und vergleiche diese.
+
+
+
+
+LMU München                           Statistik I                     107 / 637
+  Multiplikationssatz
+
+   Für beliebige Ereignisse 𝐴1 , 𝐴2 , ..., 𝐴𝑛 mit 𝑃(𝐴1 ∩ 𝐴2 ∩ ... ∩ 𝐴𝑛 ) > 0 gilt:
+
+     𝑃(𝐴1 ∩ 𝐴2 ∩ ... ∩ 𝐴𝑛 ) = 𝑃(𝐴1 ) ⋅ 𝑃(𝐴2 |𝐴1 ) ⋅ 𝑃(𝐴3 |𝐴1 ∩ 𝐴2 ) ⋅ ... ⋅ 𝑃(𝐴𝑛 |𝐴1 ∩ ... ∩ 𝐴𝑛−1 )
+
+   wobei man die rechte Seite offensichtlich auch in jeder anderen möglichen
+   Reihenfolge faktorisieren kann.
+
+
+
+   Alternative informelle Schreibweise:
+
+                                             𝑃(𝐴1 , 𝐴2 ) ∶= 𝑃(𝐴1 ∩ 𝐴2 )
+
+   insbesondere gilt also z.B.
+   𝑃(𝐴1 , 𝐴2 ) = 𝑃(𝐴1 ) ⋅ 𝑃(𝐴2 |𝐴1 ),
+   𝑃(𝐴1 , 𝐴2 , 𝐴3 ) = 𝑃(𝐴1 ) ⋅ 𝑃(𝐴2 |𝐴1 ) ⋅ 𝑃(𝐴3 |𝐴1 , 𝐴2 ), …
+
+
+
+LMU München                                             Statistik I                             108 / 637
+  Satz von der totalen Wahrscheinlichkeit
+
+   Def: Disjunkte Zerlegung (Partition)
+
+   Die Mengen 𝐵1 , 𝐵2 , ..., 𝐵𝑛 bilden eine disjunkte Zerlegung von Ω, falls
+     ▶ 𝐵1 , 𝐵2 , ..., 𝐵𝑛 paarweise disjunkt: 𝐵𝑖 ∩ 𝐵𝑗 = ∅ ∀𝑖 ≠ 𝑗
+     ▶ und 𝐵1 ∪ 𝐵2 ∪ ... ∪ 𝐵𝑛 = Ω
+
+   Satz von der totalen Wahrscheinlichkeit
+   Sei 𝐵1 , 𝐵2 , ..., 𝐵𝑛 eine disjunkte Zerlegung von Ω mit 𝑃(𝐵𝑖 ) > 0 für 𝑖 = 1, ..., 𝑛,
+   dann gilt für jedes 𝐴 ⊆ Ω:
+                                          𝑛
+                                 𝑃(𝐴) = ∑ 𝑃(𝐴|𝐵𝑖 ) ⋅ 𝑃(𝐵𝑖 )
+                                         𝑖=1
+
+
+
+
+LMU München                                    Statistik I                              109 / 637
+  Wichtiger Spezialfall
+
+
+
+
+   Insbesondere gilt
+                           𝑃(𝐴) = 𝑃(𝐴|𝐵)𝑃(𝐵) + 𝑃(𝐴| ̄𝐵)𝑃(𝐵)̄
+   da 𝐵, 𝐵̄ eine disjunkte Zerlegung von Ω ist.
+
+
+
+
+LMU München                             Statistik I            110 / 637
+Wahrscheinlichkeit: Grundlagen & Definitionen
+   Wahrscheinlichkeit: Begriffsbildung & Interpretation
+   Laplace-Wahrscheinlichkeiten
+   Axiome von Kolmogorov
+   Bedingte Wahrscheinlichkeiten
+   Stochastische Unabhängigkeit
+   Der Satz von Bayes
+  Stochastische Unabhängigkeit: Motivation
+   Frage: Wann sind 2 Ereignisse 𝐴, 𝐵 stochastisch unabhängig?
+   Motivation über bedingte Wahrscheinlichkeiten:
+   Zwei Ereignisse 𝐴, 𝐵 sind stochastisch unabhängig, wenn
+
+                                    ⏟ = 𝑃(𝐴)
+                                    𝑃(𝐴|𝐵)
+                                     𝑃(𝐴∩𝐵)
+
+
+
+                                    ⏟ = 𝑃(𝐵)
+                                      𝑃(𝐵)
+
+                               bzw. 𝑃(𝐵|𝐴)
+                                     𝑃(𝐴∩𝐵)
+                                      𝑃(𝐴)
+
+
+
+
+   Intuition:
+   Zwei Ereignisse sind stochastisch unabhängig, wenn das Eintreten des
+   einen nichts an der Wahrscheinlichkeit des Eintretens des anderen
+   verändert.
+
+
+LMU München                          Statistik I                          112 / 637
+  Stochastische Unabhängigkeit
+
+
+   Def.: Stochastische Unabhängigkeit
+
+   Zwei Ereignisse 𝐴, 𝐵 sind stochastisch unabhängig, wenn gilt:
+
+                                  𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐴) ⋅ 𝑃(𝐵)
+
+   Notation: 𝐴 ⟂ 𝐵 ∶ ⟺ 𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐴) ⋅ 𝑃(𝐵)
+
+      ▶ Voraussetzungen 𝑃(𝐵) > 0 und/oder 𝑃(𝐴) > 0 dafür nicht nötig.
+      ▶ Unabhängigkeit überträgt sich auf die Gegenereignisse:
+              ▶ 𝐴 ⟂ 𝐵 ⟺ 𝐴̄ ⟂ 𝐵
+              ▶ 𝐴 ⟂ 𝐵 ⟺ 𝐴 ⟂ 𝐵̄
+              ▶ 𝐴 ⟂ 𝐵 ⟺ 𝐴̄ ⟂ 𝐵̄
+
+
+
+
+LMU München                               Statistik I                   113 / 637
+  Beispiel: Zweimaliges Würfeln
+
+
+   Ein fairer Würfel wird zweimal hintereinander geworfen. Definiere
+     𝐴∶       ”Beim 1. Würfelwurf eine Sechs”
+     𝐵∶       ”Beim 2. Würfelwurf eine Sechs”
+   Bei jedem Würfelwurf ist die Grundgesamtheit Ω = {1, 2, 3, 4, 5, 6}.
+   Nach Laplace gilt 𝑃(𝐴) = 𝑃(𝐵) = 61 .
+   Bei “unabhängigem” Werfen gilt somit
+
+                                                          1
+                               𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐴) ⋅ 𝑃(𝐵) =
+                                                          36
+
+
+
+
+LMU München                               Statistik I                     114 / 637
+  Beispiel: Zweimaliges Würfeln mit Tricks
+
+   Angenommen die Würfelwerfende legt es darauf an einen Pasch zu würfeln.
+   Sie kann den zweiten Wurf so steuern, dass sie mit W.keit 0.5 das gleiche
+   Ergebnis wie beim ersten Wurf würfelt. Die fünf anderen möglichen
+   Ergebnisse haben dann jeweils W.keit 0.1.
+   Dann ist zwar 𝑃(𝐴) = 61 und auch 𝑃(𝐵) = 16 , aber
+
+                                                      1 1  1
+                         𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐴)𝑃(𝐵|𝐴) =       ⋅ =
+                                                      6 2 12
+   Die Ereignisse 𝐴 und 𝐵 sind also abhängig, da
+
+                           1                             1
+                              = 𝑃(𝐴 ∩ 𝐵) ≠ 𝑃(𝐴) ⋅ 𝑃(𝐵) =
+                           12                            36
+
+
+
+
+LMU München                             Statistik I                      115 / 637
+  Unabhängigkeit von mehr als zwei Ereignissen
+
+
+   Allgemeiner:
+
+   Def.: Stochastische Unabhängigkeit von mehr als zwei Ereignissen
+
+   Ereignisse 𝐴1 , 𝐴2 , ..., 𝐴𝑛 sind stochastisch unabhängig, wenn für alle
+   Teilmengen 𝐼 ⊆ {1, 2, ..., 𝑛} mit 𝐼 = {𝑖1 , 𝑖2 , ..., 𝑖𝑘 } gilt:
+
+                   𝑃(𝐴𝑖 ∩ 𝐴𝑖 ∩ ... ∩ 𝐴𝑖 ) = 𝑃(𝐴𝑖 ) ⋅ 𝑃(𝐴𝑖 ) ⋅ ... ⋅ 𝑃(𝐴𝑖 )
+                       1     2          𝑘                 1   2        𝑘
+
+
+
+
+   Bemerkung:
+   Aus paarweiser Unabhängigkeit folgt nicht die Unabhängigkeit von mehr
+   als zwei Ereignissen.
+
+
+
+
+LMU München                                 Statistik I                       116 / 637
+  Beispiel zur paarweisen Unabhängigkeit
+
+                                   Ω = {0, 1, 2, 3}       Laplace-Wahrscheinlichkeitsraum
+                                   𝐴𝑖 = {0} ∪ {𝑖}       mit 𝑖 = 1, 2, 3
+
+   (z.B.: einmaliges Ziehen aus einer Urne mit 4 numerierten Kugeln)
+
+                                   1
+                  Dann gilt: 𝑃(𝐴𝑖 ) =∀𝑖
+                                   2
+                                   1
+         und 𝑃(𝐴𝑖 ∩ 𝐴𝑗 ) = 𝑃({0}) = = 𝑃(𝐴𝑖 ) ⋅ 𝑃(𝐴𝑗 ) ∀ 𝑖 ≠ 𝑗.
+                                   4
+    ⟹ 𝐴𝑖 alle paarweise unabhängig – Aber:
+
+                                                    1
+                   𝑃(𝐴1 ∩ 𝐴2 ∩ 𝐴3 ) = 𝑃({0}) =
+                                                    4
+                                           1
+              𝑃(𝐴1 ) ⋅ 𝑃(𝐴2 ) ⋅ 𝑃(𝐴3 ) =
+                                           8
+    ⟹ 𝐴1 , 𝐴2 , 𝐴3 also nicht unabhängig.
+
+LMU München                                         Statistik I                             117 / 637
+  Bedingte Unabhängigkeit
+   Def.: Bedingte Unabhängigkeit
+
+   Sei 𝐶 ein beliebiges Ereignis mit 𝑃(𝐶) > 0. Zwei Ereignisse 𝐴 und 𝐵 nennt
+   man bedingt unabhängig gegeben 𝐶, genau dann wenn
+
+                           𝑃(𝐴 ∩ 𝐵|𝐶) = 𝑃(𝐴|𝐶) ⋅ 𝑃(𝐵|𝐶).
+
+
+
+   Notation: (𝐴 ⟂ 𝐵)|𝐶 ∶ ⟺ 𝑃(𝐴 ∩ 𝐵|𝐶) = 𝑃(𝐴|𝐶) ⋅ 𝑃(𝐵|𝐶)
+      ▶ Für feste Bedingung 𝐶 gelten die selben Folgerungen wie für
+        unbedingte stochastische Unabhängigkeit:
+        (𝐴 ⟂ 𝐵)|𝐶 ⟺ (𝐴̄ ⟂ 𝐵)|𝐶; (𝐴 ⟂ 𝐵)|𝐶;
+                                        ̄    (𝐴̄ ⟂ 𝐵)|𝐶
+                                                    ̄
+      ▶ Aus bedingter stochastischer Unabhängigkeit folgt nicht unbedingte
+        stochastische Unabhängigkeit!
+      ▶ Aus unbedingter stochastischer Unabhängigkeit folgt nicht bedingte
+        stochastische Unabhängigkeit!
+
+
+LMU München                            Statistik I                             118 / 637
+  Beispiel 1 zu bedingter (Un)abhängigkeit
+
+
+   Eine Box enthält 2 Münzen – eine normale und eine gezinkte, die auf
+   beiden Seiten “Kopf” zeigt.
+   Eine Münze wird zufällig aus der Box gezogen und zweimal geworfen.
+   Definiere
+   𝐴 ∶= “Kopf beim 1. Wurf”,
+   𝐵 ∶= “Kopf beim 2. Wurf”,
+   𝐶 ∶= “Normale Münze wurde ausgewählt”.
+   Dann gilt:
+    ⟂𝐵, aber (𝐴 ⟂ 𝐵)|𝐶!
+   𝐴 ̸
+   Also: aus “bedingt stochastisch unabhängig” folgt nicht “stochastisch
+   unabhängig”.
+
+
+
+
+LMU München                           Statistik I                          119 / 637
+  Beispiel 2 zu bedingter (Un)abhängigkeit
+
+
+
+
+   Szenario: Einfacher Würfelwurf
+   Definiere Ereignisse 𝐴 = {1, 2}; 𝐵 = {2, 4, 6}; 𝐶 = {1, 4}.
+   Dann gilt: 𝐴 ⟂ 𝐵 (!), aber (𝐴 ̸
+                                ⟂𝐵)|𝐶!
+   Also: aus “stochastisch unabhängig” folgt nicht “bedingt stochastisch
+   unabhängig”.
+
+
+
+
+LMU München                                 Statistik I                    120 / 637
+Wahrscheinlichkeit: Grundlagen & Definitionen
+   Wahrscheinlichkeit: Begriffsbildung & Interpretation
+   Laplace-Wahrscheinlichkeiten
+   Axiome von Kolmogorov
+   Bedingte Wahrscheinlichkeiten
+   Stochastische Unabhängigkeit
+   Der Satz von Bayes
+  Der Satz von Bayes
+
+
+   Thomas Bayes [1701-1761]
+   Dieser Satz beruht auf der Asymmetrie der Definition von bedingten
+   Wahrscheinlichkeiten:
+
+
+                        𝑃(𝐴 ∩ 𝐵)
+               𝑃(𝐴|𝐵) =           ⟹       𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐴|𝐵)𝑃(𝐵)
+                          𝑃(𝐵)
+                        𝑃(𝐴 ∩ 𝐵)
+               𝑃(𝐵|𝐴) =           ⟹       𝑃(𝐴 ∩ 𝐵) = 𝑃(𝐵|𝐴)𝑃(𝐴)
+                          𝑃(𝐴)
+                       ⟹ 𝑃(𝐴|𝐵)𝑃(𝐵) = 𝑃(𝐵|𝐴)𝑃(𝐴)
+
+
+
+
+LMU München                          Statistik I                        122 / 637
+  Der Satz von Bayes II
+
+   Satz von Bayes
+
+
+                                      𝑃(𝐴|𝐵)𝑃(𝐵)
+                           𝑃(𝐵|𝐴) =
+                                         𝑃(𝐴)
+                                            𝑃(𝐴|𝐵)𝑃(𝐵)
+                                  =
+                                      𝑃(𝐴|𝐵)𝑃(𝐵) + 𝑃(𝐴| ̄𝐵)𝑃(𝐵)̄
+
+
+   Allgemeiner gilt für eine disjunkte Zerlegung 𝐵1 , ..., 𝐵𝑛 :
+
+                                             𝑃(𝐴|𝐵𝑖 )𝑃(𝐵𝑖 )
+                              𝑃(𝐵𝑖 |𝐴) =    𝑛
+                                           ∑𝑗=1 𝑃(𝐴|𝐵𝑗 )𝑃(𝐵𝑗 )
+
+
+
+
+LMU München                                 Statistik I            123 / 637
+  Interpretation
+
+   𝑃(𝐵𝑖 ) als a-priori-Wahrscheinlichkeiten:
+      ▶ ≈ Vorwissen über bzw. Plausibilität der Annahmen/Hypothesen 𝐵𝑖
+
+   𝑃(𝐴|𝐵𝑖 ) als Likelihood von A:
+      ▶ wie plausibel ist die Beobachtung A unter der Annahme dass 𝐵𝑖 der Fall
+        ist
+
+   𝑃(𝐵𝑖 |𝐴) a-posteriori-Wahrscheinlichkeiten:
+      ▶ Durch die Beobachtung von 𝐴 ändert sich die Wahrscheinlichkeit der
+        Hypothese 𝐵𝑖 von 𝑃(𝐵𝑖 ) zu 𝑃(𝐵𝑖 |𝐴).
+        ⟹ Bayes liefert “Update-Regel”:
+        Wie verändert sich durch die Beobachtung von Daten 𝐴 die
+        Plausibilität der Annahme 𝐵𝑖 ?
+
+
+
+
+LMU München                            Statistik I                         124 / 637
+  Bedeutung
+
+
+   ⟹ Satz von Bayes liefert ein extrem mächtiges Verfahren zur
+   Umkehr der Bedingungsreihenfolge:
+      ▶ von 𝑃(𝐴|𝐵𝑖 ):
+        “Wie wahrscheinlich wäre es, Daten 𝐴 zu beobachten falls 𝐵𝑖 der Fall
+        wäre?”
+      ▶ zu 𝑃(𝐵𝑖 |𝐴):
+        “Wie plausibel/wahrscheinlich ist 𝐵𝑖 wenn ich Daten 𝐴 beobachtet
+        habe?”
+
+   Ermöglicht Rückschluss auf Plausibilität nicht direkt beobachtbarer
+   Phänomene/Modellannahmen 𝐵𝑖 , gegeben beobachtete Daten 𝐴 und
+   Wahrscheinlichkeitsmodell 𝑃(𝐴|𝐵𝑖 )
+
+
+
+
+LMU München                            Statistik I                             125 / 637
+  Beispiel: Diagnostischer Test
+
+
+   𝐾 ∶= “Person ist krank”
+   𝑇 ∶= “Test auf Krankheit ist positiv”
+   Gegeben:
+      ▶ Sensitivität 𝑃(𝑇|𝐾) (“wahr-positiv”-Rate) des Tests
+      ▶ Spezifität 𝑃(𝑇|
+                      ̄ 𝐾)̄ (“wahr-negativ”-Rate) des Tests
+      ▶ Prävalenz 𝑃(𝐾) der Krankheit in der Population.
+
+   Für Therapieentscheidungen relevant:
+      ▶ 𝑃(𝐾|𝑇) (“positiv prädiktiver Wert”)
+           ̄ 𝑇)̄ (“negativ prädiktiver Wert”)
+      ▶ 𝑃(𝐾|
+
+
+
+
+LMU München                                Statistik I        126 / 637
+  Beispiel: Diagnostischer Test II
+   Gegeben:
+
+                Sensitivität / wahr-positiv-Rate: 𝑃(𝑇|𝐾) = 0.8
+                 Spezifität / wahr-negativ-Rate: 𝑃( ̄𝑇|𝐾)̄ = 0.99
+                                            Prävalenz: 𝑃(𝐾) = 0.001
+
+
+
+
+              ⟹ 𝑃(𝑇) = 𝑃(𝑇|𝐾)𝑃(𝐾) + 𝑃(𝑇| ̄
+                                         𝐾)𝑃(𝐾)̄ =
+                     = 𝑃(𝑇|𝐾)𝑃(𝐾) + (1 − 𝑃( ̄𝑇| ̄
+                                               𝐾))(1 − 𝑃(𝐾)) ≈ 0.011
+                           𝑃(𝑇|𝐾)𝑃(𝐾)
+                𝑃(𝐾|𝑇) =              ≈ 0.073 (!!)
+                              𝑃(𝑇)
+                   ̄ 𝑇)̄ ≈ 0.989
+                𝑃(𝐾|
+
+
+
+LMU München                            Statistik I                     127 / 637
+  Odds / “Chancen”
+   Alternative Darstellung von W.keit als (Wett-)Chance
+   (z.B. 1:10 (“1 zu 10”) oder 3:1, engl. “odds”):
+
+                                                                                                 20.0
+
+
+                                                                                                 10.0
+
+
+                                                                                                  5.0
+
+
+  Def.: Odds (“Chance”)
+
+
+
+
+                                                           γ(A) = P(A) (1 − P(A)) [log2−Skala]
+                                                                                                  2.0
+
+  Die Odds 𝛾(𝐴) für ein Ereignis 𝐴 sind                                                           1.0
+
+
+
+                           𝑃(𝐴)                                                                   0.5
+
+               𝛾(𝐴) ∶=            ∈ [0, ∞]
+                         1 − 𝑃(𝐴)
+                                                                                                  0.1
+                      𝛾(𝐴)
+   ⟹          𝑃(𝐴) = 1+𝛾(𝐴)
+
+
+
+
+                                                                                                        0.0   0.1   0.3   0.5    0.7   0.8   0.9   1.0
+                                                                                                                          P(A)
+LMU München                                  Statistik I                                                                                           128 / 637
+  Satz von Bayes in Odds-Notation
+
+
+
+                          𝑃(𝐵|𝐴) 𝑃(𝐵)                   𝑃(𝐴|𝐵)
+                                 =                  ⋅
+                             ̄
+                          𝑃(𝐵|𝐴)   𝑃(𝐵)̄                𝑃(𝐴|𝐵)̄
+                                                        𝑃(𝐴|𝐵)
+                    also: 𝛾(𝐵|𝐴) = 𝛾(𝐵)             ⋅
+                                                        𝑃(𝐴|𝐵)̄
+                  Posterior Odds = Prior Odds ⋅ Likelihood Ratio
+
+
+   Je weiter der Likelihood Quotient (auch: Bayes-Faktor) von 1 weg ist, desto
+   aussagekräftiger ist die Beobachtung von 𝐴 bezüglich der Plausibilität der
+   Annahme 𝐵.
+
+
+
+
+LMU München                           Statistik I                           129 / 637
+  Bsp: Bayesianisches Update mit Odds
+   Mit
+                         𝑃(𝑇|𝐾) = 0.8;   𝑃( ̄𝑇|𝐾)̄ = 0.99;   𝑃(𝐾) = 0.001
+   ergibt sich:
+
+                                                        0.001
+                                     Prior Odds: 𝛾(𝐾) =       = 0.001 = 1 ∶ 999
+                                                        0.999
+                                               𝑃(𝑇|𝐾)    0.8
+              Likelihood Ratio (Bayes-Factor):        =      = 80 = 80 ∶ 1
+                                                    ̄
+                                               𝑃(𝑇|𝐾)   0.01
+                                                     1
+                         ⟹ Posterior Odds: 𝛾(𝐾|𝑇) = 999 ⋅ 80
+                                                          1
+                                                             = 0.080 ≈ 1 ∶ 12!!
+
+   Also: Nur bei 1 von 13 positiven Test liegt tatsächlich eine Krankheit vor….
+   Obacht, sehr häufiger Fehlschluss “base-rate fallacy” –
+   verwechselt Likelihood(-Ratio) (hier: positiver Test 80-mal
+   wahrscheinlicher bei Kranken)
+   mit Posteriori (hier: wahr positive Tests sind viel seltener als falsch
+   positive)
+   und vergisst/ignoriert Einfluss der Priori/base-rate (hier: 1000-mal mehr
+   Gesunde als Kranke)… remember your priors!
+LMU München                                   Statistik I                         130 / 637
+  Bsp 2: Bayes
+
+
+
+   75% der Mathestudierenden können Python.
+   15% der anderen Studierenden können Python.
+   Von 1100 Studierenden studieren 100 Mathe.
+   Sei 𝑀 ∶=“Kim studiert Mathe.”
+   Sei 𝑃 ∶=“Kim kann Python”
+   Berechnen Sie 𝛾(𝑀|𝑃) bzw 𝑃(𝑀|𝑃).
+
+
+
+
+LMU München                           Statistik I   131 / 637
+

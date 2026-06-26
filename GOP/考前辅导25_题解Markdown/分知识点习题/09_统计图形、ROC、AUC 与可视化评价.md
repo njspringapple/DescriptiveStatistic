@@ -8,27 +8,31 @@
 
 ## 公式速查
 
-### 可视化、描述统计、相关系数、ROC 与 AUC
+### 考试可用版
 
-- **图形语法**：数据、数据转换/统计、坐标系、分面、主题；美学元素包括位置、颜色、大小、形状。
-- **感知一致性**：位置和长度通常比颜色更容易精确比较；颜色要考虑色盲和亮度差异。
-- **直方图**：适合度量数据，展示分布形状、偏态和多峰；组距会强烈影响结果。
-- **直方图高度**：当组距不同，高度应为 $\frac{\text{relative Häufigkeit}}{\text{Klassenbreite}}$。
-- **箱线图流程**：排序 $\to$ 求 $Q_1,Q_2,Q_3$ $\to$ 算 $IQR$ $\to$ 栅栏 $\to$ 画图。
-- **IQR**：$IQR=Q_3-Q_1$；**改良箱线图栅栏**：$L=Q_1-1.5IQR$，$U=Q_3+1.5IQR$。
-- **均值**：$\bar X=\frac1n\sum_{i=1}^nX_i$；**加权均值**：$\bar X_w=\frac{\sum_iw_iX_i}{\sum_iw_i}$。
-- **几何均值**：$\bar X_g=\sqrt[n]{\prod_{i=1}^nX_i}$；**调和均值**：$\bar X_h=\frac n{\sum_{i=1}^n1/X_i}$。
-- **偏度方向**：负偏/左偏常见顺序是众数 $>$ 中位数 $>$ 均值；正偏/右偏常见顺序是均值 $>$ 中位数 $>$ 众数。
-- **矩偏度**：$g_m=\frac1n\sum_{i=1}^n(\frac{x_i-\bar x}{s_x})^3$。
-- **Bowley 偏态系数**：$g_p=\frac{(x_{1-p}-x_{med})-(x_{med}-x_p)}{x_{1-p}-x_p}$，基于分位数，更稳健。
-- **峰度**：$k=\frac1n\sum_{i=1}^n(\frac{x_i-\bar x}{s_x})^4$，超额峰度 $k^*=k-3$。
-- **Pearson 相关系数**：$r_{xy}=\frac{Cov(X,Y)}{s_Xs_Y}$，度量线性关系。
-- **Spearman 相关系数**：对秩次计算 Pearson；无重复时 $r^{SP}=1-\frac{6\sum_iD_i^2}{n(n^2-1)}$。
-- **Kendall tau**：$\tau=\frac{N_c-N_d}{n(n-1)/2}$，$N_c$ 为同向对数，$N_d$ 为反向对数。
-- **ROC: TPR**：$TPR=\frac{TP}{TP+FN}$；**ROC: FPR**：$FPR=\frac{FP}{FP+TN}$。
-- **ROC 曲线**：按 score 阈值排序，逐个计算 $(FPR,TPR)$ 并连线。
-- **AUC 含义**：$AUC=P(\text{Score}_+>\text{Score}_-)$，即随机正例分数高于随机负例的概率。
-- **AUC 梯形近似**：$AUC\approx\sum_i\frac{TPR_{i+1}+TPR_i}{2}(FPR_{i+1}-FPR_i)$。
+- **直方图高度**：$\frac{\text{relative Häufigkeit}}{\text{Klassenbreite}}$
+- **IQR**：$IQR=Q_3-Q_1$
+- **箱线图栅栏**：$Q_1-1.5IQR,\ Q_3+1.5IQR$
+- **均值**：$\bar X=\frac1n\sum_iX_i$
+- **加权均值**：$\bar X_w=\frac{\sum_iw_iX_i}{\sum_iw_i}$
+- **几何均值**：$\bar X_g=\sqrt[n]{\prod_iX_i}$
+- **调和均值**：$\bar X_h=\frac n{\sum_i1/X_i}$
+- **Pearson**：$r_{xy}=\frac{Cov(X,Y)}{s_Xs_Y}$
+- **Spearman 简式**：$r^{SP}=1-\frac{6\sum_iD_i^2}{n(n^2-1)}$
+- **Kendall tau**：$\tau=\frac{N_c-N_d}{n(n-1)/2}$
+- **TPR**：$\frac{TP}{TP+FN}$
+- **FPR**：$\frac{FP}{FP+TN}$
+- **AUC**：$P(\text{Score}_+>\text{Score}_-)$
+- **AUC 梯形**：$\sum_i\frac{TPR_{i+1}+TPR_i}{2}(FPR_{i+1}-FPR_i)$
+
+### 不会时怎么下手
+
+- **题目问图形选择**：先看变量类型，分类变量用条形/颜色，度量变量用点、线、直方图、箱线图。
+- **题目问直方图**：先看组距是否相等；不等组距必须用密度高度。
+- **题目问箱线图**：先排序，求 $Q_1,Q_2,Q_3$，再算 IQR 和异常值栅栏。
+- **题目问相关**：Pearson 看线性，Spearman 看秩次单调，Kendall 看配对同向/反向。
+- **题目问 ROC**：按阈值排序，每个阈值数 TP、FP、TN、FN，再算 TPR/FPR。
+- **题目问 AUC**：可以用梯形面积，也可以理解成正例分数高于负例的概率。
 
 ---
 
@@ -2514,5 +2518,29 @@ Begründung:
     - woanders in den USA geboren.
 - In der Grafik ist die Breite beziehungsweise Höhe des dunkelblauen Bereichs für „born in the state“ in 1850 und 2020 ungefähr ähnlich.
 - Daher ist der Anteil der nicht in Florida Geborenen ungefähr ähnlich.
+
+---
+
+## 常见错误提醒
+
+- **直方图组距不等还用频率高度**：组距不等必须用频率密度。
+  例：高度 $=\text{relative Häufigkeit}/\text{Klassenbreite}$。
+- **箱线图异常值边界算错**：先算 IQR，再算上下栅栏。
+  例：$Q_1-1.5IQR$ 和 $Q_3+1.5IQR$。
+- **Pearson/Spearman 混用**：Pearson 看线性，Spearman 看单调秩关系。
+  例：严格递增但弯曲的关系，Spearman 可能很高，Pearson 不一定。
+- **ROC 阈值方向弄反**：先确认 score 大判阳性还是 score 小判阳性。
+  例：若 score 大判阳性，阈值降低时 TPR 和 FPR 通常都会上升。
+- **AUC 坐标顺序写反**：ROC 横轴是 FPR，纵轴是 TPR。
+  例：点写成 $(FPR,TPR)$，不是 $(TPR,FPR)$。
+
+## 本章必会题型清单
+
+- 会根据变量类型选择合适图形。
+- 会计算直方图高度、均值、分位数、IQR 和箱线图栅栏。
+- 会判断偏态方向和异常值。
+- 会计算 Pearson、Spearman、Kendall 相关。
+- 会根据阈值计算 TP、FP、TN、FN、TPR、FPR。
+- 会画 ROC 点并用梯形法估计 AUC。
 
 ---

@@ -465,46 +465,81 @@ FORMULAS.update({
 """,
     "02": r"""## 公式速查
 
-### 古典概率、事件系统与 σ-代数
+### 考试可用版
 
-- **概率空间**：$(\Omega,\mathcal F,\mathbb P)$，其中 $\Omega$ 是结果空间，$\mathcal F$ 是事件系统，$\mathbb P$ 是概率测度。
-- **Kolmogorov 公理**：$\mathbb P(A)\ge0$，$\mathbb P(\Omega)=1$，两两不交时 $\mathbb P(\bigcup_i A_i)=\sum_i\mathbb P(A_i)$。
-- **补集公式**：$\mathbb P(A^c)=1-\mathbb P(A)$。
-- **容斥定理**：$\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)-\mathbb P(A\cap B)$。
-- **互不相容**：$A\cap B=\emptyset\Rightarrow\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)$。
-- **单调性**：$A\subseteq B\Rightarrow\mathbb P(A)\le\mathbb P(B)$。
-- **De Morgan**：$(A\cup B)^c=A^c\cap B^c$，$(A\cap B)^c=A^c\cup B^c$。
-- **独立事件**：$A\perp B\Longleftrightarrow\mathbb P(A\cap B)=\mathbb P(A)\mathbb P(B)\Longleftrightarrow\mathbb P(A|B)=\mathbb P(A)$。
-- **对立独立性**：$A\perp B\Longleftrightarrow A^c\perp B\Longleftrightarrow A\perp B^c\Longleftrightarrow A^c\perp B^c$。
-- **Laplace 概率**：所有基本结果等可能时，$\mathbb P(A)=\frac{|A|}{|\Omega|}$。
-- **点概率归一化**：若 $\mathbb P(\{\omega_x\})=\frac{c}{x!},x\in\mathbb N_0$，则 $1=\sum_{x=0}^{\infty}\frac{c}{x!}=ce$，所以 $c=e^{-1}$。
-- **σ-代数**：$\Omega\in\mathcal A$，$A\in\mathcal A\Rightarrow A^c\in\mathcal A$，$A_n\in\mathcal A\Rightarrow\bigcup_{n\ge1}A_n\in\mathcal A$。
-- **Dynkin-System**：$\Omega\in\mathcal D$，补集封闭，并且只要求两两不交的可数并封闭。
-- **生成的 σ-代数**：$\sigma(\mathcal E)=\bigcap_{\mathcal F\supseteq\mathcal E,\ \mathcal F\ \sigma\text{-Algebra}}\mathcal F$，即包含生成元的最小 σ-代数。
+- **概率空间**：$(\Omega,\mathcal F,\mathbb P)$
+- **概率公理**：$\mathbb P(A)\ge0$，$\mathbb P(\Omega)=1$，$A_i$ 两两不交 $\Rightarrow \mathbb P(\bigcup_iA_i)=\sum_i\mathbb P(A_i)$
+- **补集**：$\mathbb P(A^c)=1-\mathbb P(A)$
+- **容斥**：$\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)-\mathbb P(A\cap B)$
+- **不交并**：$A\cap B=\emptyset\Rightarrow\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)$
+- **单调性**：$A\subseteq B\Rightarrow\mathbb P(A)\le\mathbb P(B)$
+- **De Morgan**：$(A\cup B)^c=A^c\cap B^c$，$(A\cap B)^c=A^c\cup B^c$
+- **独立**：$A\perp B\Longleftrightarrow\mathbb P(A\cap B)=\mathbb P(A)\mathbb P(B)\Longleftrightarrow\mathbb P(A|B)=\mathbb P(A)$
+- **独立并集**：$A\perp B\Rightarrow\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)-\mathbb P(A)\mathbb P(B)$
+- **Laplace**：$\mathbb P(A)=\frac{|A|}{|\Omega|}$
+- **归一化**：$\sum_{\omega\in\Omega}\mathbb P(\{\omega\})=1$
+- **阶乘归一化**：$\sum_{x=0}^{\infty}\frac{c}{x!}=ce=1\Rightarrow c=e^{-1}$
+- **σ-代数**：$\Omega\in\mathcal A$，$A\in\mathcal A\Rightarrow A^c\in\mathcal A$，$A_n\in\mathcal A\Rightarrow\bigcup_nA_n\in\mathcal A$
+- **Dynkin-System**：$\Omega\in\mathcal D$，补集封闭，两两不交可数并封闭
+- **生成 σ-代数**：$\sigma(\mathcal E)=\bigcap_{\mathcal F\supseteq\mathcal E}\mathcal F$
+
+### 不会时怎么下手
+
+- **题目问 Ergebnisraum**：先把“随机实验的一次结果”写成一句话。  
+  例：三次掷骰且只关心点数和，可以先用 $\Omega=\{1,\dots,6\}^3$ 记录完整结果，再用 $X(i,j,k)=i+j+k$ 把它压成 $\Omega'=\{3,\dots,18\}$。
+- **题目问某个事件**：先写成模板 $A=\{\omega\in\Omega:\text{条件}\}$。  
+  例：至少一次成功就是 $A=\{(\omega_1,\dots,\omega_n):\sum_i\omega_i\ge1\}$。
+- **题目问 Laplace 概率**：必须先写两行：$|\Omega|=\cdots$，$|A|=\cdots$，最后才写 $\mathbb P(A)=|A|/|\Omega|$。如果基本结果不等可能，这条路不能直接用。
+- **题目问独立/不独立**：不要凭感觉，直接列三项：$\mathbb P(A)$、$\mathbb P(B)$、$\mathbb P(A\cap B)$。若第三项等于前两项乘积，就是独立。
+- **题目问互斥**：只看 $A\cap B$。若交集为空就是互斥；互斥和独立是两件事，考试里常拿来混。
+- **题目给 $c/x!$ 或类似点概率**：第一行固定写 $\sum_x\mathbb P(\{x\})=1$。  
+  例：$\sum_{x=0}^{\infty}c/x!=ce=1$，所以 $c=e^{-1}$。
+- **题目问是不是 σ-代数**：按检查表写，不要跳步：  
+  1. 有没有 $\Omega$；2. 补集是否还在里面；3. 任意可数并是否还在里面。  
+  反例只要找到一条失败即可。
+- **题目问 $\sigma(A,B)$**：画四格原子：$A\cap B$、$A\cap B^c$、$A^c\cap B$、$A^c\cap B^c$，删掉空集；答案就是这些非空原子的所有并集。
+- **题目问两个 σ-代数的并是不是 σ-代数**：通常找两个集合 $C,D$，它们分别在两个 σ-代数里，但 $C\cup D$ 不在并集里。这样就证明并集不封闭。
+- **题目问 Dynkin-System**：重点看“并”是不是要求两两不交。若题里并的集合不 disjunkt，不能直接套 Dynkin 的封闭性。
 """,
     "03": r"""## 公式速查
 
-### 分布函数、密度、常见分布与一维变换
+### 考试可用版
 
-- **分布函数**：$F_X(x)=\mathbb P(X\le x)$，性质是单调递增、右连续，且 $\lim_{x\to-\infty}F_X(x)=0$，$\lim_{x\to\infty}F_X(x)=1$。
-- **由分布函数求概率**：$\mathbb P(a<X\le b)=F_X(b)-F_X(a)$，$\mathbb P(X>a)=1-F_X(a)$。
-- **跳跃点概率**：$\mathbb P(X=a)=F_X(a)-F_X(a-)$；连续型随机变量单点概率为 $0$。
-- **密度定义**：$f_X(x)\ge0$ 且 $\int_{-\infty}^{\infty}f_X(x)\,dx=1$。
-- **CDF 和 PDF**：$F_X(x)=\int_{-\infty}^x f_X(t)\,dt$，在可导处 $F_X'(x)=f_X(x)$。
-- **分位数**：$q_p$ 满足 $F(q_p)=p$；有跳跃时用广义逆 $q_p=\inf\{x:F(x)\ge p\}$。
-- **众数/中位数**：众数是密度或频率最大点；中位数 $m$ 通常由 $F(m)=0.5$ 求出。
-- **一维密度变换**：若 $Y=g(X)$ 且 $g$ 单调，$h(y)=g^{-1}(y)$，则 $f_Y(y)=f_X(h(y))|h'(y)|$。
-- **单调递增变换**：$F_Y(y)=F_X(g^{-1}(y))$；**单调递减变换**：$F_Y(y)=1-F_X(g^{-1}(y))$。
-- **离散均匀分布**：$X\sim U(T)$，$p(x)=\frac1{|T|}I_T(x)$。
-- **连续均匀分布**：$X\sim U(a,b)$，$f(x)=\frac1{b-a}I_{(a,b)}(x)$，$E(X)=\frac{a+b}{2}$，$Var(X)=\frac{(b-a)^2}{12}$。
-- **Bernoulli/Binomial**：$X\sim B(n,p)$，$\mathbb P(X=k)=\binom nkp^k(1-p)^{n-k}$，$E(X)=np$，$Var(X)=np(1-p)$。
-- **几何分布**：$X\sim G(p)$ 表示首次成功所需次数，$E(X)=\frac1p$，$Var(X)=\frac{1-p}{p^2}$，具有无记忆性。
-- **超几何分布**：$X\sim H(n,M,N)$，$\mathbb P(X=x)=\frac{\binom Mx\binom{N-M}{n-x}}{\binom Nn}$，$E(X)=n\frac MN$。
-- **Poisson 分布**：$X\sim Po(\lambda)$，$\mathbb P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!}$，$E(X)=Var(X)=\lambda$。
-- **Poisson 近似**：当 $n\to\infty,p\to0,np\to\lambda$ 时，$B(n,p)\approx Po(\lambda)$。
-- **指数分布**：$X\sim Exp(\lambda)$，$f(x)=\lambda e^{-\lambda x}I_{x>0}$，$F(x)=1-e^{-\lambda x}$，$E(X)=\frac1\lambda$，$Var(X)=\frac1{\lambda^2}$。
-- **生存函数**：$S(t)=\mathbb P(X\ge t)=1-F(t)$，风险率 $h(t)=\frac{f(t)}{S(t)}$；指数分布的风险率恒为 $\lambda$。
-- **Gamma/Beta/Weibull**：先把密度整理成标准形式，再通过指数、支持集和归一化常数读参数。
+- **CDF 定义**：$F_X(x)=\mathbb P(X\le x)$
+- **CDF 性质**：单调递增、右连续，$\lim_{x\to-\infty}F_X(x)=0$，$\lim_{x\to\infty}F_X(x)=1$
+- **区间概率**：$\mathbb P(a<X\le b)=F_X(b)-F_X(a)$
+- **右尾概率**：$\mathbb P(X>a)=1-F_X(a)$
+- **跳跃点概率**：$\mathbb P(X=a)=F_X(a)-F_X(a-)$
+- **密度合法性**：$f_X(x)\ge0$，$\int_{-\infty}^{\infty}f_X(x)\,dx=1$
+- **CDF/PDF 互换**：$F_X(x)=\int_{-\infty}^x f_X(t)\,dt$，可导处 $f_X(x)=F_X'(x)$
+- **连续型单点概率**：若 $X$ 连续，则 $\mathbb P(X=a)=0$
+- **期望**：$E(X)=\int x f_X(x)\,dx$ 或 $E(X)=\sum_x xP(X=x)$
+- **分位数**：连续单调时 $F(q_p)=p$
+- **中位数**：$F(m)=0.5$
+- **众数**：找 $f(x)$ 最大的位置
+- **一维变换**：$Y=g(X)$ 单调，$h(y)=g^{-1}(y)$，$f_Y(y)=f_X(h(y))|h'(y)|$
+- **单调递增变换 CDF**：$F_Y(y)=F_X(g^{-1}(y))$
+- **单调递减变换 CDF**：$F_Y(y)=1-F_X(g^{-1}(y))$
+- **Binomial**：$P(X=k)=\binom nkp^k(1-p)^{n-k}$，$E=np$，$Var=np(1-p)$
+- **Poisson**：$P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!}$，$E=Var=\lambda$
+- **Exponential**：$f(x)=\lambda e^{-\lambda x}I_{x>0}$，$F(x)=1-e^{-\lambda x}$，$E=\frac1\lambda$
+- **Uniform**：$U(a,b)$，$f(x)=\frac1{b-a}I_{(a,b)}(x)$，$E=\frac{a+b}{2}$
+- **Hypergeometric**：$P(X=x)=\frac{\binom Mx\binom{N-M}{n-x}}{\binom Nn}$
+
+### 不会时怎么下手
+
+- **题目给 $F(x)$，问概率**：先判断端点形式。最常用模板是 $\mathbb P(a<X\le b)=F(b)-F(a)$。如果问 $\mathbb P(X=a)$，就算跳跃 $F(a)-F(a-)$。
+- **题目给 $F(x)$，问密度**：逐段求导。常数段导数是 $0$；跳跃点不是密度，而是点概率。
+- **题目给 $f(x)$，问是不是密度**：只检查两件事：第一 $f(x)\ge0$；第二 $\int f(x)\,dx=1$。有参数 $c$ 时，直接用第二条求 $c$。
+- **题目问 $P(X=a)$**：先问自己“这是连续型还是有跳跃”。连续型直接是 $0$；CDF 有跳跃就用 $F(a)-F(a-)$。
+- **题目问 $P(a<X<b)$**：连续型可以写 $F(b)-F(a)$；若 CDF 有跳跃，必须仔细看端点是否包含。
+- **题目问期望**：先写 $E(X)=\int x f(x)\,dx$，不要漏掉前面的 $x$；离散型就写 $\sum xP(X=x)$。
+- **题目问中位数/分位数**：先找 $p$ 落在哪个分段，再在那一段解 $F(x)=p$。
+- **题目问众数**：看密度 $f(x)$ 最大在哪里。若密度单调递增，众数通常在右端点；单调递减则在左端点。
+- **题目问 $Y=g(X)$ 的密度**：先写三行：1. $y=g(x)$；2. $x=h(y)=g^{-1}(y)$；3. $f_Y(y)=f_X(h(y))|h'(y)|$。最后一定写 $y$ 的取值范围。
+- **变换 $g$ 不单调**：不要直接套单调公式。把每个原像分支都找出来，然后把每个分支的密度贡献相加。
+- **题目问识别分布**：先看支持集，再看公式形状。$0,\dots,n$ 多半是 Binomial；$\mathbb N_0$ 且有 $k!$ 多半是 Poisson；$x>0$ 且 $e^{-\lambda x}$ 是 Exponential。
+- **题目问近似**：$n$ 大、$p$ 小用 Poisson 近似；$np$ 和 $n(1-p)$ 都不小，用正态近似。
 """,
     "04": r"""## 公式速查
 
@@ -643,6 +678,203 @@ FORMULAS.update({
 """,
 })
 
+FORMULAS.update({
+    "01": r"""## 公式速查
+
+### 考试可用版
+
+- **偏导**：$\partial_x f(x,y)$ 对 $x$ 求导，把 $y$ 当常数；$\partial_y f(x,y)$ 反过来。
+- **乘积法则**：$(fg)'=f'g+fg'$
+- **商法则**：$\left(\frac fg\right)'=\frac{f'g-fg'}{g^2}$
+- **链式法则**：$(f\circ g)'(x)=f'(g(x))g'(x)$
+- **对数**：$(\log x)'=\frac1x$，$(\log g(x))'=\frac{g'(x)}{g(x)}$
+- **指数**：$(e^{g(x)})'=g'(x)e^{g(x)}$，$(a^x)'=a^x\log a$
+- **三角**：$(\sin x)'=\cos x$，$(\cos x)'=-\sin x$
+- **幂函数积分**：$\int x^a dx=\frac{x^{a+1}}{a+1}+C,\ a\ne-1$
+- **倒数积分**：$\int\frac1x dx=\log|x|+C$
+- **分部积分**：$\int u\,dv=uv-\int v\,du$
+- **换元积分**：令 $u=g(x)$，$du=g'(x)dx$
+
+### 不会时怎么下手
+
+- **题目问偏导**：先圈出“对谁求导”。对 $x$ 求导时，所有 $y$、$a$、常数都当常数。
+- **看到乘积**：先判断是不是两个因子相乘。对 $x$ 求 $x^3\log y$ 时，$\log y$ 是常数。
+- **看到分式**：分母与求导变量无关就当常数；有关就用商法则。
+- **看到 $\log(\cdot)$**：先找括号里的内层函数，再写 $\frac{\text{内层导数}}{\text{内层}}$。
+- **看到 $e^{(\cdot)}$**：原样保留 $e^{(\cdot)}$，再乘内层导数。
+- **题目问分部积分**：优先选求导会变简单的因子当 $u$，例如 $\log x$ 或 $x$。
+- **题目问换元积分**：先找内层函数 $u$，再检查 $du$ 是否已经出现；定积分要换上下限。
+""",
+    "04": r"""## 公式速查
+
+### 考试可用版
+
+- **测度定义**：$\mu(\emptyset)=0$，$\mu(A)\ge0$，不交时 $\mu(\bigcup_nA_n)=\sum_n\mu(A_n)$
+- **概率测度**：$\mathbb P(\Omega)=1$
+- **单调性**：$A\subseteq B\Rightarrow\mu(A)\le\mu(B)$
+- **计数测度**：$\mu_z(A)=|A|$
+- **Lebesgue 测度**：$\lambda((a,b))=b-a$，$\lambda(\{x\})=0$
+- **Dirac 测度**：$\delta_x(A)=I_A(x)$
+- **原像**：$f^{-1}(B)=\{\omega:f(\omega)\in B\}$
+- **可测映射**：$f^{-1}(B)\in\mathcal F_1$ 对所有 $B\in\mathcal F_2$ 成立
+- **像测度**：$\mu_f(B)=\mu(f^{-1}(B))$
+- **随机变量分布**：$\mathbb P_X(B)=\mathbb P(X^{-1}(B))$
+- **指示函数积分**：$\int I_A\,d\mu=\mu(A)$
+- **简单函数积分**：$f=\sum_i a_iI_{A_i}\Rightarrow\int f\,d\mu=\sum_i a_i\mu(A_i)$
+- **离散积分**：$\int f\,d\mu=\sum_{\omega}f(\omega)\mu(\{\omega\})$
+
+### 不会时怎么下手
+
+- **题目问测度是否合法**：按三条检查：空集为 0、非负、不交可加。
+- **题目问可测性**：不要看像，永远看原像。把目标集合 $B$ 拉回去算 $f^{-1}(B)$。
+- **题目问 Bildmaß**：先写 $\mu_f(B)=\mu(f^{-1}(B))$，再算原像，最后算原像测度。
+- **题目给 Dirac 测度**：只问集合里有没有支撑点。包含就是 1，不包含就是 0。
+- **题目给 Lebesgue 测度**：区间算长度，单点测度是 0。
+- **题目给计数测度**：有限集合数元素个数。
+- **题目问积分**：有限/离散空间里，把积分改成“函数值 × 单点测度”的求和。
+""",
+    "05": r"""## 公式速查
+
+### 考试可用版
+
+- **期望**：$E(X)=\sum_xxP(X=x)$ 或 $E(X)=\int xf_X(x)dx$
+- **线性性**：$E(aX+bY)=aE(X)+bE(Y)$
+- **函数期望**：$E(g(X))=\sum_xg(x)P(X=x)$ 或 $\int g(x)f_X(x)dx$
+- **方差**：$Var(X)=E(X^2)-E(X)^2$
+- **样本方差**：$S^2=\frac1{n-1}\sum_i(x_i-\bar x)^2$
+- **方差缩放**：$Var(aX+b)=a^2Var(X)$
+- **和的方差**：$Var(X+Y)=Var(X)+Var(Y)+2Cov(X,Y)$
+- **协方差**：$Cov(X,Y)=E(XY)-E(X)E(Y)$
+- **相关系数**：$\rho=\frac{Cov(X,Y)}{\sigma_X\sigma_Y}$
+- **Markov**：$P(|X|\ge a)\le\frac{E|X|}{a}$
+- **Chebyshev**：$P(|X-\mu|\ge c)\le\frac{Var(X)}{c^2}$
+- **正态标准化**：$Z=\frac{X-\mu}{\sigma}\sim N(0,1)$
+- **配对 t**：$t=\frac{\bar D-\mu_0}{s_D/\sqrt n}$
+- **Welch t**：$t=\frac{\bar X-\bar Y-\Delta_0}{\sqrt{s_X^2/n_X+s_Y^2/n_Y}}$
+- **Wilcoxon**：$W^+=\sum_{D_i>0}Rang(|D_i|)$
+
+### 不会时怎么下手
+
+- **题目问期望**：先写定义，再代入；连续型别忘了多乘一个 $x$。
+- **题目问方差**：通常走 $Var(X)=E(X^2)-E(X)^2$，先算 $E(X)$ 和 $E(X^2)$。
+- **题目有线性变换**：期望乘 $a$，方差乘 $a^2$，加常数不影响方差。
+- **题目问协方差**：先算 $E(XY)$、$E(X)$、$E(Y)$，再用移项公式。
+- **题目问不等式上界**：只知道期望用 Markov；知道均值和方差用 Chebyshev。
+- **题目是正态概率**：先标准化成 $Z$，再查标准正态。
+- **题目是检验**：先判断配对/独立，再写假设、统计量、临界值或 p 值、结论。
+""",
+    "06": r"""## 公式速查
+
+### 考试可用版
+
+- **概率收敛**：$X_n\xrightarrow{P}X\Longleftrightarrow P(|X_n-X|>\varepsilon)\to0$
+- **分布收敛**：$X_n\xrightarrow{D}X\Longleftrightarrow F_{X_n}(x)\to F_X(x)$ 在连续点成立
+- **均方收敛**：$E[(X_n-X)^2]\to0$
+- **几乎必然收敛**：$P(\lim X_n=X)=1$
+- **强弱关系**：几乎必然 $\Rightarrow$ 均方 $\Rightarrow$ 概率 $\Rightarrow$ 分布
+- **连续映射**：$X_n\to X\Rightarrow g(X_n)\to g(X)$，$g$ 连续
+- **Slutsky**：$X_n\xrightarrow{D}X,\ Y_n\xrightarrow{P}c\Rightarrow X_n+Y_n\xrightarrow{D}X+c,\ X_nY_n\xrightarrow{D}cX$
+- **弱大数定律**：$\bar X_n\xrightarrow{P}\mu$
+- **强大数定律**：$\bar X_n\xrightarrow{f.s.}E(X_1)$
+- **CLT: 和**：$\frac{\sum_{i=1}^nX_i-n\mu}{\sqrt n\sigma}\xrightarrow{D}N(0,1)$
+- **CLT: 均值**：$\frac{\bar X_n-\mu}{\sigma/\sqrt n}\xrightarrow{D}N(0,1)$
+- **二项正态近似**：$B(n,p)\approx N(np,np(1-p))$
+- **二项 Poisson 近似**：$B(n,p)\approx Po(np)$
+
+### 不会时怎么下手
+
+- **题目问概率收敛**：目标永远是证明 $P(|X_n-X|>\varepsilon)\to0$。
+- **题目问分布收敛**：看分布函数极限，只在极限分布的连续点检查。
+- **题目有样本均值**：先想大数定律，结论通常是收敛到期望。
+- **题目有和或均值的近似分布**：先算单个变量的 $\mu,\sigma^2$，再用 CLT 标准化。
+- **题目有函数 $g(\bar X_n)$**：先找 $\bar X_n$ 的极限，再用连续映射或 Delta 方法。
+- **题目出现 Slutsky**：把表达式拆成“分布收敛的一块”和“概率收敛到常数的一块”。
+- **题目问二项近似**：$p$ 很小用 Poisson；$np,n(1-p)$ 都不小用正态。
+""",
+    "07": r"""## 公式速查
+
+### 考试可用版
+
+- **联合分布函数**：$F_{X,Y}(x,y)=P(X\le x,Y\le y)$
+- **边际密度**：$f_X(x)=\int f_{X,Y}(x,y)dy$
+- **边际概率**：$P_X(x)=\sum_yP(X=x,Y=y)$
+- **条件密度**：$f_{X|Y}(x|y)=\frac{f_{X,Y}(x,y)}{f_Y(y)}$
+- **条件期望**：$E(X|Y=y)=\int xf_{X|Y}(x|y)dx$
+- **全期望**：$E(E(X|Y))=E(X)$
+- **总方差**：$Var(X)=E[Var(X|Y)]+Var(E[X|Y])$
+- **卷积**：$f_{X+Y}(z)=\int f_X(x)f_Y(z-x)dx$
+- **二维变换**：$f_Y(y)=f_X(h(y))|\det Dh(y)|$
+- **协方差矩阵**：$\Sigma=E[(X-E X)(X-E X)^T]$
+- **线性变换**：$Cov(AX)=A\,Cov(X)A^T$
+- **多元正态**：$f(x)=\frac1{\sqrt{(2\pi)^d\det\Sigma}}\exp[-\frac12(x-\mu)^T\Sigma^{-1}(x-\mu)]$
+
+### 不会时怎么下手
+
+- **题目给联合密度**：先画或写支持集，再积分；上下限比积分更重要。
+- **题目问边际分布**：对不关心的变量积分或求和。
+- **题目问条件密度**：先求分母边际密度 $f_Y(y)$，再用联合除以边际。
+- **题目问卷积**：写 $z=x+y$，然后让 $x$ 同时满足两个支持集条件。
+- **题目问二维变换**：先写反变换，再算 Jacobian，最后写新支持集。
+- **题目问协方差矩阵**：先算每个方差和协方差，再排成矩阵。
+- **题目问矩阵是否合法**：检查对称、对角非负、半正定。
+""",
+    "08": r"""## 公式速查
+
+### 考试可用版
+
+- **条件概率**：$P(A|B)=\frac{P(A\cap B)}{P(B)}$
+- **乘法公式**：$P(A\cap B)=P(A|B)P(B)$
+- **全概率**：$P(A)=\sum_iP(A|B_i)P(B_i)$
+- **Bayes**：$P(A|B)=\frac{P(B|A)P(A)}{P(B)}$
+- **Bayes 二分类**：$P(A|B)=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|A^c)P(A^c)}$
+- **敏感度/TPR**：$\frac{TP}{TP+FN}=P(T+|K)$
+- **特异度/TNR**：$\frac{TN}{TN+FP}=P(T-|K^c)$
+- **FPR**：$\frac{FP}{FP+TN}=1-TNR$
+- **PPV**：$\frac{TP}{TP+FP}=P(K|T+)$
+- **NPV**：$\frac{TN}{TN+FN}=P(K^c|T-)$
+- **Odds**：$O(A)=\frac{P(A)}{1-P(A)}$
+- **Odds Ratio**：$OR=\frac{ad}{bc}$
+- **期望频数**：$E_{ij}=\frac{\text{行和}_i\text{列和}_j}{n}$
+- **Chi-square**：$\chi^2=\sum\frac{(O_{ij}-E_{ij})^2}{E_{ij}}$
+
+### 不会时怎么下手
+
+- **题目问条件概率**：先命名事件，再确认竖线后面的是“已知条件”。
+- **题目问原因概率**：例如阳性后患病概率，通常用 Bayes，不要直接拿敏感度。
+- **题目有多个来源/组别**：先用全概率公式算分母。
+- **题目有检测指标**：把 $K,T+$ 写清楚，再区分 $P(T+|K)$ 和 $P(K|T+)$。
+- **题目给列联表**：先补全行和列总数，再算条件比例。
+- **题目问关联强度**：二乘二表可用 Odds Ratio；多格表常用 $\chi^2$。
+""",
+    "09": r"""## 公式速查
+
+### 考试可用版
+
+- **直方图高度**：$\frac{\text{relative Häufigkeit}}{\text{Klassenbreite}}$
+- **IQR**：$IQR=Q_3-Q_1$
+- **箱线图栅栏**：$Q_1-1.5IQR,\ Q_3+1.5IQR$
+- **均值**：$\bar X=\frac1n\sum_iX_i$
+- **加权均值**：$\bar X_w=\frac{\sum_iw_iX_i}{\sum_iw_i}$
+- **几何均值**：$\bar X_g=\sqrt[n]{\prod_iX_i}$
+- **调和均值**：$\bar X_h=\frac n{\sum_i1/X_i}$
+- **Pearson**：$r_{xy}=\frac{Cov(X,Y)}{s_Xs_Y}$
+- **Spearman 简式**：$r^{SP}=1-\frac{6\sum_iD_i^2}{n(n^2-1)}$
+- **Kendall tau**：$\tau=\frac{N_c-N_d}{n(n-1)/2}$
+- **TPR**：$\frac{TP}{TP+FN}$
+- **FPR**：$\frac{FP}{FP+TN}$
+- **AUC**：$P(\text{Score}_+>\text{Score}_-)$
+- **AUC 梯形**：$\sum_i\frac{TPR_{i+1}+TPR_i}{2}(FPR_{i+1}-FPR_i)$
+
+### 不会时怎么下手
+
+- **题目问图形选择**：先看变量类型，分类变量用条形/颜色，度量变量用点、线、直方图、箱线图。
+- **题目问直方图**：先看组距是否相等；不等组距必须用密度高度。
+- **题目问箱线图**：先排序，求 $Q_1,Q_2,Q_3$，再算 IQR 和异常值栅栏。
+- **题目问相关**：Pearson 看线性，Spearman 看秩次单调，Kendall 看配对同向/反向。
+- **题目问 ROC**：按阈值排序，每个阈值数 TP、FP、TN、FN，再算 TPR/FPR。
+- **题目问 AUC**：可以用梯形面积，也可以理解成正例分数高于负例的概率。
+""",
+})
 
 HISTORY_EXAM_TOPIC_OVERRIDES = {
     ("2012", "Aufgabe 1"): "07 多维随机变量、条件分布、卷积与方差分解",
@@ -2654,6 +2886,239 @@ def filename_for(topic):
     return f"{code}_{safe}.md"
 
 
+def topic_appendix(topic):
+    def block_lines(text):
+        return text.strip().splitlines()
+
+    if topic.startswith("01"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **偏导时把另一个变量也求导了**：对 $x$ 求偏导时，$y$ 是常数。
+  例：$\partial_x(y\log x)=y/x$，不是 $1/x$。
+- **商法则分子顺序写反**：分子是 $f'g-fg'$。
+  例：$\left(\frac{x}{1+y^2}\right)_y=\frac{0\cdot(1+y^2)-x\cdot2y}{(1+y^2)^2}$。
+- **链式法则漏乘内层导数**：外层求完必须乘内层导数。
+  例：$\frac d{dx}e^{x^2}=2xe^{x^2}$。
+- **分部积分选错 $u$**：$u$ 应该越求导越简单。
+  例：$\int x\log x\,dx$ 选 $u=\log x$，$dv=x\,dx$。
+- **定积分换元忘改上下限**：换元后上下限也必须变。
+  例：$u=x^3$ 时，$x=0\to u=0$，$x=3\to u=27$。
+
+## 本章必会题型清单
+
+- 会对多元函数分别求 $\partial_x$ 和 $\partial_y$。
+- 会使用乘积法则、商法则、链式法则。
+- 会处理 $\log(\cdot)$、$e^{(\cdot)}$、$\sin$、$\cos$ 的求导。
+- 会用分部积分计算含 $x\log x$、$x\cos x$、$e^x\sin x$ 的积分。
+- 会用换元法计算定积分和不定积分，并正确处理上下限。
+""")
+
+    if topic.startswith("02"):
+        return [
+        "## 常见错误提醒",
+        "",
+        "- **把独立当成互斥**：互斥是 $A\\cap B=\\emptyset$，独立是 $\\mathbb P(A\\cap B)=\\mathbb P(A)\\mathbb P(B)$。除非某个事件概率为 $0$，否则互斥事件通常不独立。",
+        "- **默认使用 Laplace**：只有所有基本结果等可能时，才可以写 $\\mathbb P(A)=|A|/|\\Omega|$。题目没有说明等可能时，要先解释模型假设。",
+        "- **结果空间写得太细或太粗**：只问缺陷品总数时，$\\Omega$ 可以是 $\\{0,\\dots,n\\}$；若问每个产品是否缺陷，就要用 $\\{0,1\\}^n$。",
+        "- **事件没有写成集合**：概率题先写 $A=\\{\\omega:\\text{满足条件}\\}$，再计算 $\\mathbb P(A)$，否则容易把文字条件和概率公式混在一起。",
+        "- **忘记归一化条件**：给出点概率形如 $c/x!$、$cq^x$ 时，第一步永远是把所有点概率加起来等于 $1$。",
+        "- **σ-代数只检查有限并**：σ-代数要求补集和可数并封闭；在有限集合里可数并会退化成有限并，但证明时最好说明这一点。",
+        "- **生成 σ-代数漏原子**：由几个集合生成 σ-代数时，先找原子分割，再写所有原子的并；不要只把题目给出的集合和补集列出来。",
+        "- **反例没有完整定义概率空间**：反驳题要写清楚 $\\Omega$、事件和概率，否则只是直觉说明，不是形式反例。",
+        "",
+        "## 本章必会题型清单",
+        "",
+        "- 会根据题意写出合适的结果空间 $\\Omega$。",
+        "- 会把文字事件翻译成 $\\Omega$ 的子集。",
+        "- 会判断能否使用 Laplace 模型，并计算 $|A|/|\\Omega|$。",
+        "- 会用补集、容斥、不交并和单调性计算或估计概率。",
+        "- 会区分独立、互斥、对立事件，并能用公式证明或反驳。",
+        "- 会用归一化条件求未知常数 $c$。",
+        "- 会验证一个集合族是不是 σ-代数。",
+        "- 会由给定集合找原子分割，并写出生成的 σ-代数。",
+        "- 会说明两个 σ-代数的并不一定是 σ-代数，并给出反例。",
+        "- 会区分 σ-代数和 Dynkin-System 的封闭性要求。",
+        ]
+    if topic.startswith("03"):
+        return [
+            "## 常见错误提醒",
+            "",
+            "- **把密度值当概率**：$f(2)$ 不是 $P(X=2)$。\n  例：连续型 $P(1<X<3)=\\int_1^3 f(x)\\,dx$，且 $P(X=2)=0$；离散型 $P(1<X<3)=P(X=2)$。",
+            "- **忘记检查密度积分为 1**：求常数 $c$ 时不要先代数乱算，先归一化。\n  例：若 $f(x)=cx$ 在 $[0,2]$ 上，则 $1=\\int_0^2cx\\,dx=2c$，所以 $c=\\frac12$。",
+            "- **CDF 求概率时端点看错**：$F(b)-F(a)$ 对应 $P(a<X\\le b)$，不是所有端点形式。\n  例：若问 $P(a\\le X\\le b)$ 且 $a$ 有跳跃，要用 $F(b)-F(a-)$。",
+            "- **把跳跃点当密度处理**：CDF 的跳跃是点概率，不是普通密度。\n  例：若 $F(2)=0.7,F(2-)=0.4$，则 $P(X=2)=0.3$。",
+            "- **分段函数不看支持集**：公式只在对应区间有效，区间外也要写。\n  例：$f(x)=2x,0<x<1$，完整写法是 $f(x)=2xI_{(0,1)}(x)$ 或分段写区间外为 $0$。",
+            "- **变量变换忘记绝对值**：密度变换乘的是 $|h'(y)|$。\n  例：$Y=2X$，$h(y)=y/2$，所以 $f_Y(y)=f_X(y/2)\\cdot\\frac12$。",
+            "- **变量变换忘记新范围**：算出公式后一定写 $y\\in g(\\text{原支持集})$。\n  例：若 $X\\in[0,1]$ 且 $Y=X^2$，则 $Y\\in[0,1]$，区间外密度为 $0$。",
+            "- **非单调变换只取一个反函数**：多个原像分支要全部加上。\n  例：若 $Y=X^2$ 且 $X$ 可正可负，则 $f_Y(y)=f_X(\\sqrt y)\\frac1{2\\sqrt y}+f_X(-\\sqrt y)\\frac1{2\\sqrt y}$。",
+            "- **分位数直接套全局公式**：先判断 $p$ 落在哪个分段，再解 $F(x)=p$。\n  例：若 $F(x)=x^2$ 只在 $0\\le x<1/2$ 有效，求 $0.25$ 分位数时才解 $x^2=0.25$。",
+            "- **常见分布参数混淆**：先写分布名和参数含义，再代公式。\n  例：$X\\sim Po(3)$ 时 $E(X)=Var(X)=3$；$X\\sim B(10,0.3)$ 时 $E(X)=3$，$Var(X)=2.1$。",
+            "",
+            "## 本章必会题型清单",
+            "",
+            "- 会判断一个函数是不是合法的分布函数 CDF。",
+            "- 会由 CDF 计算区间概率和跳跃点概率。",
+            "- 会由 CDF 分段求导得到密度。",
+            "- 会判断一个函数是不是合法密度，并用归一化求常数 $c$。",
+            "- 会计算连续型随机变量的期望、中位数、众数和分位数。",
+            "- 会识别 Bernoulli、Binomial、Poisson、Hypergeometric、Uniform、Exponential 等常见分布。",
+            "- 会根据题意选择点概率、区间概率、尾概率或补集概率。",
+            "- 会做一维单调变量变换，写出反函数、导数绝对值和新支持集。",
+            "- 会处理非单调变换的多个原像分支。",
+            "- 会判断什么时候用 Poisson 近似或正态近似。",
+        ]
+    if topic.startswith("04"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **可测性看错方向**：可测性看原像，不是看像。
+  例：要查 $f$ 可测，检查 $f^{-1}(B)\in\mathcal F$，不是 $f(B)$。
+- **Dirac 测度当成长度**：Dirac 只看支撑点是否在集合里。
+  例：$\delta_2([0,1])=0$，$\delta_2([1,3])=1$。
+- **Lebesgue 测度把单点算成 1**：单点长度是 0。
+  例：$\lambda(\{2\})=0$，但计数测度 $\mu_z(\{2\})=1$。
+- **像测度忘记取原像**：先拉回原空间再算测度。
+  例：$\mu_f(\{3\})=\mu(f^{-1}(\{3\}))$。
+- **有限空间积分写成普通积分**：有限测度空间上是求和。
+  例：$\int_A f\,d\mu=\sum_{\omega\in A}f(\omega)\mu(\{\omega\})$。
+
+## 本章必会题型清单
+
+- 会验证一个函数是不是测度。
+- 会区分计数测度、Lebesgue 测度和 Dirac 测度。
+- 会判断映射可测性：通过原像检查。
+- 会计算 Bildmaß / 像测度。
+- 会计算指示函数、简单函数和有限空间上的积分。
+- 会解释密度相对于哪个测度存在。
+""")
+    if topic.startswith("05"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **方差线性变换忘记平方**：系数提出来要平方。
+  例：$Var(3X+2)=9Var(X)$。
+- **算方差只算了 $E(X^2)$**：方差还要减 $E(X)^2$。
+  例：$Var(X)=E(X^2)-E(X)^2$。
+- **独立和不相关混用**：独立推出协方差为 0，但协方差为 0 不一定独立。
+  例：只知道 $Cov(X,Y)=0$，不能直接说 $X,Y$ 独立。
+- **Markov/Chebyshev 用错条件**：Markov 要非负或绝对值，Chebyshev 要均值和方差。
+  例：$P(|X-\mu|\ge2)\le Var(X)/4$ 是 Chebyshev。
+- **正态标准化漏除以标准差**：不是除以方差。
+  例：$Z=(X-\mu)/\sigma$，不是 $(X-\mu)/\sigma^2$。
+- **检验题不写假设**：没有 $H_0,H_1$，后面算对也容易丢分。
+  例：配对题先写 $H_0:\mu_D=0$，再算 $t$。
+
+## 本章必会题型清单
+
+- 会计算期望、$E(X^2)$ 和方差。
+- 会处理线性变换下的期望和方差。
+- 会计算协方差和相关系数。
+- 会使用 Markov、Chebyshev、Jensen。
+- 会把正态变量标准化并查概率。
+- 会区分配对 t、Welch t 和 Wilcoxon 检验。
+- 会写假设、统计量、决策和结论。
+""")
+    if topic.startswith("06"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **把分布收敛当概率收敛**：分布收敛通常更弱。
+  例：$X_n\xrightarrow{D}X$ 不一定推出 $X_n\xrightarrow{P}X$。
+- **证明概率收敛没有写 $\varepsilon$**：概率收敛必须对任意 $\varepsilon>0$。
+  例：要证明 $P(|X_n-X|>\varepsilon)\to0$。
+- **CLT 标准化少了 $\sqrt n$**：和与均值的标准化不同。
+  例：$\frac{\sum X_i-n\mu}{\sqrt n\sigma}$，或 $\frac{\bar X-\mu}{\sigma/\sqrt n}$。
+- **大数定律忘记极限是期望**：样本均值收敛到单个变量的期望。
+  例：$\bar X_n\xrightarrow{P}E(X_1)$。
+- **Slutsky 拆不出常数项**：要找一块收敛到常数。
+  例：若 $Y_n\xrightarrow{P}2$，则 $X_nY_n\xrightarrow{D}2X$。
+
+## 本章必会题型清单
+
+- 会区分概率收敛、分布收敛、均方收敛、几乎必然收敛。
+- 会用定义证明简单概率收敛。
+- 会用连续映射定理和 Slutsky 定理。
+- 会用大数定律处理样本均值。
+- 会用 CLT 标准化和或均值。
+- 会判断二项分布用正态近似还是 Poisson 近似。
+""")
+    if topic.startswith("07"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **边际密度积分上下限写错**：上下限由联合支持集决定，不一定是固定常数。
+  例：若 $0<x<y<1$，求 $f_Y(y)$ 时 $x$ 从 $0$ 到 $y$。
+- **条件密度忘记除以边际**：条件密度不是联合密度。
+  例：$f_{X|Y}(x|y)=f_{X,Y}(x,y)/f_Y(y)$。
+- **卷积不看支持集**：积分范围要同时满足 $x$ 和 $z-x$ 都合法。
+  例：$X,Y\in[0,1]$ 时，$z<1$ 和 $z>1$ 的范围不同。
+- **Jacobian 用正变换而不是反变换**：常用公式需要反变换的导数绝对值。
+  例：先写 $x=h(y)$，再算 $|\det Dh(y)|$。
+- **协方差矩阵忘记对称**：合法协方差矩阵必须对称且半正定。
+  例：$\begin{pmatrix}1&2\\3&1\end{pmatrix}$ 不是协方差矩阵。
+
+## 本章必会题型清单
+
+- 会由联合密度求边际密度。
+- 会求条件密度和条件期望。
+- 会使用全期望和总方差公式。
+- 会用卷积求和变量密度。
+- 会做二维变量变换并计算 Jacobian。
+- 会判断协方差矩阵是否合法。
+- 会处理多元正态的边际、独立和线性变换。
+""")
+    if topic.startswith("08"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **把 $P(T+|K)$ 当成 $P(K|T+)$**：敏感度不是阳性预测值。
+  例：$P(T+|K)$ 要转成 $P(K|T+)$ 必须用 Bayes。
+- **Bayes 分母漏掉反面情况**：分母是所有能导致阳性的路径。
+  例：$P(T+)=P(T+|K)P(K)+P(T+|K^c)P(K^c)$。
+- **列联表只比人数不比比例**：组大小不同必须比条件比例。
+  例：A 组 30/100，B 组 20/40，不能只说 30 大于 20。
+- **Odds 和概率混淆**：Odds 是 $\frac p{1-p}$，不是 $p$。
+  例：$p=0.2$ 时 Odds $=0.25$。
+- **χ² 期望频数算错**：每格期望是行和乘列和再除以总数。
+  例：$E_{ij}=\frac{\text{行和}\cdot\text{列和}}n$。
+
+## 本章必会题型清单
+
+- 会命名事件并写条件概率。
+- 会用全概率公式算分母。
+- 会用 Bayes 求后验概率。
+- 会区分敏感度、特异度、PPV、NPV、FPR、FNR。
+- 会补全列联表并计算条件比例。
+- 会计算 Odds、Odds Ratio 和 χ² 统计量。
+""")
+    if topic.startswith("09"):
+        return block_lines(r"""
+## 常见错误提醒
+
+- **直方图组距不等还用频率高度**：组距不等必须用频率密度。
+  例：高度 $=\text{relative Häufigkeit}/\text{Klassenbreite}$。
+- **箱线图异常值边界算错**：先算 IQR，再算上下栅栏。
+  例：$Q_1-1.5IQR$ 和 $Q_3+1.5IQR$。
+- **Pearson/Spearman 混用**：Pearson 看线性，Spearman 看单调秩关系。
+  例：严格递增但弯曲的关系，Spearman 可能很高，Pearson 不一定。
+- **ROC 阈值方向弄反**：先确认 score 大判阳性还是 score 小判阳性。
+  例：若 score 大判阳性，阈值降低时 TPR 和 FPR 通常都会上升。
+- **AUC 坐标顺序写反**：ROC 横轴是 FPR，纵轴是 TPR。
+  例：点写成 $(FPR,TPR)$，不是 $(TPR,FPR)$。
+
+## 本章必会题型清单
+
+- 会根据变量类型选择合适图形。
+- 会计算直方图高度、均值、分位数、IQR 和箱线图栅栏。
+- 会判断偏态方向和异常值。
+- 会计算 Pearson、Spearman、Kendall 相关。
+- 会根据阈值计算 TP、FP、TN、FN、TPR、FPR。
+- 会画 ROC 点并用梯形法估计 AUC。
+""")
+    return []
+
+
 def insert_guide(text, guide):
     marker = "##### Lösung"
     if marker in text:
@@ -2805,6 +3270,9 @@ def main():
                     "---",
                     "",
                 ]
+        appendix = topic_appendix(topic)
+        if appendix:
+            lines += appendix + ["", "---", ""]
         out_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
         total += len(items)
         total_exam += len(exam_items)

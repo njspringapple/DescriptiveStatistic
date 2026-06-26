@@ -8,22 +8,31 @@
 
 ## 公式速查
 
-### 独立性、收敛性、大数定律与中心极限定理
+### 考试可用版
 
-- **随机独立性**：$A\perp B\Longleftrightarrow P(A\cap B)=P(A)P(B)\Longleftrightarrow P(A|B)=P(A)$。
-- **条件独立性**：$(A\perp B)|C\Longleftrightarrow P(A\cap B|C)=P(A|C)P(B|C)$。
-- **概率收敛**：$X_n\xrightarrow{P}X$，若对任意 $\varepsilon>0$，$\lim_{n\to\infty}P(|X_n-X|>\varepsilon)=0$。
-- **分布收敛**：$X_n\xrightarrow{D}X$，若 $F_{X_n}(x)\to F_X(x)$ 对所有 $F_X$ 的连续点成立。
-- **均方收敛**：$E[(X_n-X)^2]\to0$；**几乎必然收敛**：$P(\lim_{n\to\infty}X_n=X)=1$。
-- **收敛强度**：几乎必然收敛 $\Rightarrow$ 均方收敛 $\Rightarrow$ 概率收敛 $\Rightarrow$ 分布收敛。
-- **连续映射定理**：若 $X_n\xrightarrow{P}X$ 且 $g$ 连续，则 $g(X_n)\xrightarrow{P}g(X)$；分布收敛版本同理。
-- **Slutsky 定理**：若 $X_n\xrightarrow{D}X$，$Y_n\xrightarrow{P}c$，则 $X_n+Y_n\xrightarrow{D}X+c$，$X_nY_n\xrightarrow{D}cX$。
-- **弱大数定律**：若 $E(X_i)=\mu$ 且方差有限，则 $\bar X_n\xrightarrow{P}\mu$。
-- **强大数定律**：iid 且 $E|X_1|<\infty$ 时，$\bar X_n\xrightarrow{f.s.}E(X_1)$。
-- **中心极限定理：和**：$Z_n=\frac{\sum_{i=1}^nX_i-n\mu}{\sqrt n\sigma}\xrightarrow{D}N(0,1)$。
-- **中心极限定理：均值**：$\frac{\bar X_n-\mu}{\sigma/\sqrt n}\xrightarrow{D}N(0,1)$，等价于 $\sqrt n(\bar X_n-\mu)\xrightarrow{D}N(0,\sigma^2)$。
-- **多元 CLT**：$\frac1{\sqrt n}(\sum_{i=1}^nX_i-n\mu)\xrightarrow{D}N_k(0,\Sigma)$。
-- **二项正态近似**：$B(n,p)\approx N(np,np(1-p))$；**二项 Poisson 近似**：$B(n,p)\approx Po(np)$。
+- **概率收敛**：$X_n\xrightarrow{P}X\Longleftrightarrow P(|X_n-X|>\varepsilon)\to0$
+- **分布收敛**：$X_n\xrightarrow{D}X\Longleftrightarrow F_{X_n}(x)\to F_X(x)$ 在连续点成立
+- **均方收敛**：$E[(X_n-X)^2]\to0$
+- **几乎必然收敛**：$P(\lim X_n=X)=1$
+- **强弱关系**：几乎必然 $\Rightarrow$ 均方 $\Rightarrow$ 概率 $\Rightarrow$ 分布
+- **连续映射**：$X_n\to X\Rightarrow g(X_n)\to g(X)$，$g$ 连续
+- **Slutsky**：$X_n\xrightarrow{D}X,\ Y_n\xrightarrow{P}c\Rightarrow X_n+Y_n\xrightarrow{D}X+c,\ X_nY_n\xrightarrow{D}cX$
+- **弱大数定律**：$\bar X_n\xrightarrow{P}\mu$
+- **强大数定律**：$\bar X_n\xrightarrow{f.s.}E(X_1)$
+- **CLT: 和**：$\frac{\sum_{i=1}^nX_i-n\mu}{\sqrt n\sigma}\xrightarrow{D}N(0,1)$
+- **CLT: 均值**：$\frac{\bar X_n-\mu}{\sigma/\sqrt n}\xrightarrow{D}N(0,1)$
+- **二项正态近似**：$B(n,p)\approx N(np,np(1-p))$
+- **二项 Poisson 近似**：$B(n,p)\approx Po(np)$
+
+### 不会时怎么下手
+
+- **题目问概率收敛**：目标永远是证明 $P(|X_n-X|>\varepsilon)\to0$。
+- **题目问分布收敛**：看分布函数极限，只在极限分布的连续点检查。
+- **题目有样本均值**：先想大数定律，结论通常是收敛到期望。
+- **题目有和或均值的近似分布**：先算单个变量的 $\mu,\sigma^2$，再用 CLT 标准化。
+- **题目有函数 $g(\bar X_n)$**：先找 $\bar X_n$ 的极限，再用连续映射或 Delta 方法。
+- **题目出现 Slutsky**：把表达式拆成“分布收敛的一块”和“概率收敛到常数的一块”。
+- **题目问二项近似**：$p$ 很小用 Poisson；$np,n(1-p)$ 都不小用正态。
 
 ---
 
@@ -3869,5 +3878,29 @@ folgt:
 $$
 P(X>240)\approx 1-0.84=0.16
 $$
+
+---
+
+## 常见错误提醒
+
+- **把分布收敛当概率收敛**：分布收敛通常更弱。
+  例：$X_n\xrightarrow{D}X$ 不一定推出 $X_n\xrightarrow{P}X$。
+- **证明概率收敛没有写 $\varepsilon$**：概率收敛必须对任意 $\varepsilon>0$。
+  例：要证明 $P(|X_n-X|>\varepsilon)\to0$。
+- **CLT 标准化少了 $\sqrt n$**：和与均值的标准化不同。
+  例：$\frac{\sum X_i-n\mu}{\sqrt n\sigma}$，或 $\frac{\bar X-\mu}{\sigma/\sqrt n}$。
+- **大数定律忘记极限是期望**：样本均值收敛到单个变量的期望。
+  例：$\bar X_n\xrightarrow{P}E(X_1)$。
+- **Slutsky 拆不出常数项**：要找一块收敛到常数。
+  例：若 $Y_n\xrightarrow{P}2$，则 $X_nY_n\xrightarrow{D}2X$。
+
+## 本章必会题型清单
+
+- 会区分概率收敛、分布收敛、均方收敛、几乎必然收敛。
+- 会用定义证明简单概率收敛。
+- 会用连续映射定理和 Slutsky 定理。
+- 会用大数定律处理样本均值。
+- 会用 CLT 标准化和或均值。
+- 会判断二项分布用正态近似还是 Poisson 近似。
 
 ---

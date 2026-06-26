@@ -8,25 +8,31 @@
 
 ## 公式速查
 
-### 条件概率、Bayes、列联表与诊断指标
+### 考试可用版
 
-- **条件概率**：$P(A|B)=\frac{P(A\cap B)}{P(B)}$，也可写成 $P(X=x|Y=y)=\frac{P(X=x,Y=y)}{P(Y=y)}$。
-- **乘法公式**：$P(A\cap B)=P(A|B)P(B)=P(B|A)P(A)$。
-- **全概率公式**：若 $(B_i)$ 是划分，则 $P(A)=\sum_iP(A|B_i)P(B_i)$。
-- **Bayes 定理**：$P(A|B)=\frac{P(B|A)P(A)}{P(B)}$。
-- **Bayes 展开式**：$P(A|B)=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|A^c)P(A^c)}$。
-- **条件密度版 Bayes**：$f_{X|Y}(x|y)=\frac{f_{Y|X}(y|x)f_X(x)}{\int f_{Y|X}(y|x)f_X(x)\,dx}$。
-- **先验/后验/似然**：$P(A)$ 是先验，$P(A|B)$ 是后验，$P(B|A)$ 是似然。
-- **诊断记号**：$K$ 表示患病或真实阳性，$T$ 表示测试阳性。
-- **敏感度/TPR**：$P(T|K)=\frac{TP}{TP+FN}$。
-- **特异度/TNR**：$P(T^c|K^c)=\frac{TN}{TN+FP}$。
-- **FNR/FPR**：$FNR=1-TPR$，$FPR=1-TNR=\frac{FP}{FP+TN}$。
-- **阳性预测值 PPV**：$P(K|T)=\frac{P(K)P(T|K)}{P(K)P(T|K)+P(K^c)P(T|K^c)}$，不要和敏感度混淆。
-- **阴性预测值 NPV**：$P(K^c|T^c)=\frac{P(K^c)P(T^c|K^c)}{P(K)P(T^c|K)+P(K^c)P(T^c|K^c)}$。
-- **赔率 Odds**：$O(A)=\frac{P(A)}{1-P(A)}$，反推 $P(A)=\frac{O(A)}{1+O(A)}$。
-- **Odds Ratio**：二乘二表中 $OR=\frac{ad}{bc}$。
-- **列联表期望频数**：$E_{ij}=\frac{(\text{行和}_i)(\text{列和}_j)}n$。
-- **Pearson $\chi^2$ 统计量**：$\chi^2=\sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}$。
+- **条件概率**：$P(A|B)=\frac{P(A\cap B)}{P(B)}$
+- **乘法公式**：$P(A\cap B)=P(A|B)P(B)$
+- **全概率**：$P(A)=\sum_iP(A|B_i)P(B_i)$
+- **Bayes**：$P(A|B)=\frac{P(B|A)P(A)}{P(B)}$
+- **Bayes 二分类**：$P(A|B)=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|A^c)P(A^c)}$
+- **敏感度/TPR**：$\frac{TP}{TP+FN}=P(T+|K)$
+- **特异度/TNR**：$\frac{TN}{TN+FP}=P(T-|K^c)$
+- **FPR**：$\frac{FP}{FP+TN}=1-TNR$
+- **PPV**：$\frac{TP}{TP+FP}=P(K|T+)$
+- **NPV**：$\frac{TN}{TN+FN}=P(K^c|T-)$
+- **Odds**：$O(A)=\frac{P(A)}{1-P(A)}$
+- **Odds Ratio**：$OR=\frac{ad}{bc}$
+- **期望频数**：$E_{ij}=\frac{\text{行和}_i\text{列和}_j}{n}$
+- **Chi-square**：$\chi^2=\sum\frac{(O_{ij}-E_{ij})^2}{E_{ij}}$
+
+### 不会时怎么下手
+
+- **题目问条件概率**：先命名事件，再确认竖线后面的是“已知条件”。
+- **题目问原因概率**：例如阳性后患病概率，通常用 Bayes，不要直接拿敏感度。
+- **题目有多个来源/组别**：先用全概率公式算分母。
+- **题目有检测指标**：把 $K,T+$ 写清楚，再区分 $P(T+|K)$ 和 $P(K|T+)$。
+- **题目给列联表**：先补全行和列总数，再算条件比例。
+- **题目问关联强度**：二乘二表可用 Odds Ratio；多格表常用 $\chi^2$。
 
 ---
 
@@ -4126,5 +4132,29 @@ $$
 $$
 P(R_1\cap R_2)=\frac{1}{N-1}\cdot\frac{2(N-1)}{6}=\frac13
 $$
+
+---
+
+## 常见错误提醒
+
+- **把 $P(T+|K)$ 当成 $P(K|T+)$**：敏感度不是阳性预测值。
+  例：$P(T+|K)$ 要转成 $P(K|T+)$ 必须用 Bayes。
+- **Bayes 分母漏掉反面情况**：分母是所有能导致阳性的路径。
+  例：$P(T+)=P(T+|K)P(K)+P(T+|K^c)P(K^c)$。
+- **列联表只比人数不比比例**：组大小不同必须比条件比例。
+  例：A 组 30/100，B 组 20/40，不能只说 30 大于 20。
+- **Odds 和概率混淆**：Odds 是 $\frac p{1-p}$，不是 $p$。
+  例：$p=0.2$ 时 Odds $=0.25$。
+- **χ² 期望频数算错**：每格期望是行和乘列和再除以总数。
+  例：$E_{ij}=\frac{\text{行和}\cdot\text{列和}}n$。
+
+## 本章必会题型清单
+
+- 会命名事件并写条件概率。
+- 会用全概率公式算分母。
+- 会用 Bayes 求后验概率。
+- 会区分敏感度、特异度、PPV、NPV、FPR、FNR。
+- 会补全列联表并计算条件比例。
+- 会计算 Odds、Odds Ratio 和 χ² 统计量。
 
 ---

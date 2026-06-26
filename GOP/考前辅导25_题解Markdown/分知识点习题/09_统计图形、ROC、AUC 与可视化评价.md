@@ -115,8 +115,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 2 - 识别统计图中的变量、尺度和视觉映射。
 
 #### 题目
@@ -142,8 +140,6 @@ Merkmale und Zuordnungen:
 | Weltregion | nominal | Farbe, qualitative Farbskala |
 
 Die Untersuchungseinheiten sind Länder. Die Grafik ist ein Streudiagramm bzw. Bubbleplot.
-
----
 
 ---
 
@@ -197,8 +193,6 @@ Alternative: gruppierte Balken oder kleine Facetten pro Bildungsniveau.
 
 ---
 
----
-
 ### Aufgabe 4 - 识别统计图中的变量、尺度和视觉映射。
 
 #### 题目
@@ -232,8 +226,6 @@ Merkmale:
 Die Farbskala ist qualitativ grundsätzlich passend, aber eine fehlende oder unklare Legende verletzt die Prinzipien der Klarheit und Effizienz.
 
 Die zusätzliche Darstellung absoluter Zahlen ist wichtig, weil prozentuale Zuwächse bei kleiner Ausgangsbasis groß wirken können. Absolute Zahlen zeigen, wie viele Menschen tatsächlich zusätzlich Zugang erhalten haben.
-
----
 
 ---
 
@@ -276,8 +268,6 @@ Für einen Vergleich Asien/Europa:
 
 ---
 
----
-
 ### Aufgabe 6 - 识别统计图中的变量、尺度和视觉映射。
 
 #### 题目
@@ -310,8 +300,6 @@ Abweichungen von der einfachen Grammar of Graphics:
 - Text-Annotationen stehen direkt in der Grafik.
 - Eine Legende kann fehlen oder durch Labels ersetzt sein.
 - Einige Informationen werden nicht über reine Achsen/Farbe/Form, sondern über erläuternde Texte transportiert.
-
----
 
 ---
 
@@ -365,8 +353,6 @@ Für den Zusammenhang Kalorienmenge und Koffeingehalt sind Spearman- und Pearson
 ROC-Kurven verwenden $\operatorname{TPR}$ auf der y-Achse und $\operatorname{FPR}$ auf der x-Achse. AUC $=0.5$ bedeutet Zufallsniveau, AUC $=1$ perfekte Trennung.
 
 Bei statistischen Grafiken sind wichtig: Untersuchungseinheit, Grundgesamtheit, Merkmale, Skalenniveaus, Geometrien, ästhetische Zuordnungen, passende Farbskalen, klare Legenden und sparsame Annotationen.
-
----
 
 ---
 
@@ -462,8 +448,6 @@ Ein AUC von $0.82$ bedeutet: In $82\%$ der zufällig gebildeten Paare aus Treffe
 
 ---
 
----
-
 ### Aufgabe 9 - 计算 ROC 指标、AUC 或评价分类图形。
 
 #### 题目
@@ -549,8 +533,6 @@ $$
 $$
 
 Ein hoher Schwellenwert reduziert False Positives, übersieht aber mehr Positive. Das ist sinnvoll, wenn eine positive Entscheidung teuer oder riskant ist. Ein niedriger Schwellenwert reduziert False Negatives, etwa bei medizinischem Screening.
-
----
 
 ---
 
@@ -878,8 +860,6 @@ geom_col(aes(x = continent, y = yield))
 
 ---
 
----
-
 ### 真题 3（Altklausur3LV） - Aufgabe 2
 
 #### 题目
@@ -1022,8 +1002,6 @@ Es ist also nur ein **Kohorteneffekt** bzw. ein Unterschied zwischen Alterskohor
 Um die Entwicklung von Personen über den Alterungsprozess hinweg zu bewerten, bräuchte man wiederholte Messungen an denselben Untersuchungseinheiten.
 
 Dafür benötigt man **Longitudinaldaten** bzw. **Paneldaten**.
-
----
 
 ---
 
@@ -1224,8 +1202,6 @@ Voraussetzungen:
 
 ---
 
----
-
 ### 真题 5（GOP-Klausur-1） - Aufgabe 1 -- 19 Punkte
 
 #### 题目
@@ -1382,8 +1358,6 @@ Nein.
 Erstens wäre die $x$-Achse falsch herum orientiert, etwa von $8$ nach $1$.
 
 Zweitens wäre die $y$-Achse nicht der Anteil an Untersuchungseinheiten, also nicht der Anteil der Länder mit Gesamtfruchtbarkeitsrate $\leq x$, sondern der Anteil an der Weltbevölkerung, den diese Länder auf sich vereinen.
-
----
 
 ---
 
@@ -1588,8 +1562,6 @@ Der Wertebereich liegt zwischen $-1$ und $1$.
 
 ---
 
----
-
 ### 真题 7（GOP-Klausur-2） - Aufgabe 1 — 16 Punkte
 
 #### 题目
@@ -1748,8 +1720,6 @@ Grammar-of-Graphics-Beschreibung:
 - optional: Ertrag $\rightarrow$ sequentielle Farbe
 
 Diese Darstellung ist unverfälschter, weil alle Werte auf einer gemeinsamen Achse verglichen werden können. Sie ist kompakter und übersichtlicher als die dreidimensionale Sechseckgrafik.
-
----
 
 ---
 
@@ -1914,8 +1884,6 @@ Diese Darstellung ist unverfälschter, weil alle Werte auf einer gemeinsamen Ach
 
 ---
 
----
-
 ### 真题 9（ss2022） - Aufgabe 1 -- Statistische Grafik
 
 #### 题目
@@ -2055,8 +2023,6 @@ Gründe:
 
 1. Die Achse wäre falsch herum orientiert.
 2. Die vertikale Achse zeigt nicht den Anteil der Länder, sondern den Anteil der Weltbevölkerung, der auf diese Länder entfällt.
-
----
 
 ---
 
@@ -2280,8 +2246,6 @@ Der Wertebereich ist:
 $$
 [-1,1]
 $$
-
----
 
 ---
 
@@ -2550,7 +2514,5 @@ Begründung:
     - woanders in den USA geboren.
 - In der Grafik ist die Breite beziehungsweise Höhe des dunkelblauen Bereichs für „born in the state“ in 1850 und 2020 ungefähr ähnlich.
 - Daher ist der Anteil der nicht in Florida Geborenen ungefähr ähnlich.
-
----
 
 ---

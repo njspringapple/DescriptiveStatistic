@@ -174,8 +174,6 @@ ist der Unterschied zwischen den Behandlungen in Studie 1 größer.
 
 ---
 
----
-
 ### Aufgabe 2 - 用条件概率和 Bayes 公式解决诊断或来源判断。
 
 #### 题目
@@ -310,8 +308,6 @@ Der Anteil diverser Personen unter den Farbenblinden ist also deutlich kleiner a
 
 ---
 
----
-
 ### Aufgabe 3 - 用条件概率和 Bayes 公式解决诊断或来源判断。
 
 #### 题目
@@ -367,8 +363,6 @@ Obwohl das Gerät geblinkt hat, liegt die Wahrscheinlichkeit für einen tatsäch
 
 ---
 
----
-
 ### Aufgabe 4 - 用条件概率和 Bayes 公式解决诊断或来源判断。
 
 #### 题目
@@ -418,8 +412,6 @@ $$
 \frac{0.02}{0.032}
 =0.625.
 $$
-
----
 
 ---
 
@@ -473,8 +465,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 6 - 用条件概率和 Bayes 公式解决诊断或来源判断。
 
 #### 题目
@@ -512,8 +502,6 @@ $$
 =\frac{0.75\cdot0.04}{0.841}
 \approx 0.0357.
 $$
-
----
 
 ---
 
@@ -1042,8 +1030,6 @@ Also gilt es, die Sensitivität bzw. TPR zu maximieren.
 Ein Schwellenwert $>55$ erscheint angemessen. Eine Erhöhung auf mehr als ca. $65$ bringt keine deutliche Verbesserung der TPR mehr, produziert aber deutlich mehr Fehldiagnosen.
 
 Akzeptabel wären bei entsprechender Begründung auch Schwellenwerte im Bereich von etwa $40$ bis $70$.
-
----
 
 ---
 
@@ -1737,8 +1723,6 @@ Hier liegt ein Fall des **Simpson-Paradoxons** bzw. eine **Veränderung marginal
 
 ---
 
----
-
 ### 真题 7（Altklausur3LV） - Aufgabe 7 — 8 Punkte
 
 #### 题目
@@ -1916,8 +1900,6 @@ folgt:
 $$
 E(X)=\log(2).
 $$
-
----
 
 ---
 
@@ -2136,8 +2118,6 @@ Konkret bedeutet das:
 
 - Die Alarmwahrscheinlichkeit hängt nicht davon ab, wann der letzte Alarm war.
 - Die Verunreinigungsquote bzw. Alarmwahrscheinlichkeit ändert sich nicht über die Zeit.
-
----
 
 ---
 
@@ -2432,8 +2412,6 @@ Das bedeutet: Der Schwellenwert sollte eher niedrig gewählt werden, sodass fast
 Aus der ROC-Kurve sollte man also einen Schwellenwert im linken oberen Bereich wählen, bei dem die TPR nahe bei $1$ liegt, auch wenn die FPR dadurch etwas steigt.
 
 Ein geeigneter Schwellenwert wäre ungefähr im Bereich zwischen $5$ und $15$, je nachdem, wie stark man Fehlalarme akzeptiert.
-
----
 
 ---
 
@@ -3225,8 +3203,6 @@ Ein geeigneter Schwellenwert wäre ungefähr im Bereich zwischen $5$ und $15$, j
 
 ---
 
----
-
 ### 真题 12（GOP-Klausur-3） - Aufgabe 9 - 21 Punkte
 
 #### 题目
@@ -3940,8 +3916,6 @@ Annahmen:
 - jede Einheit wird entweder beanstandet oder nicht beanstandet
 - Alarmwahrscheinlichkeit hängt nicht davon ab, wann der letzte Alarm war
 - Verunreinigungsquote bzw. Alarmwahrscheinlichkeit ändert sich nicht über die Zeit
-
----
 
 ---
 

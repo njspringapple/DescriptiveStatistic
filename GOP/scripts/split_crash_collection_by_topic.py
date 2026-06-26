@@ -1991,6 +1991,10 @@ def compact_blank_lines(text):
     return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
+def strip_trailing_horizontal_rules(text):
+    return re.sub(r"(?:\n\s*-{3,}\s*)+\Z", "", text.strip())
+
+
 def split_solution_from_body(body):
     match = re.search(r"^#{1,6}\s+(?:Lösung|Lösungsvorschlag|Loesung|解答)\b.*$", body, re.M | re.I)
     if not match:
@@ -2332,7 +2336,7 @@ def structure_history_exam_body(body, task):
         "",
         solution_with_guides,
     ]
-    return compact_blank_lines("\n".join(part for part in parts if part is not None))
+    return strip_trailing_horizontal_rules(compact_blank_lines("\n".join(part for part in parts if part is not None)))
 
 
 def guide_for(task, topic):
@@ -2695,7 +2699,7 @@ def structure_exercise_body(body, guide):
         "",
         "\n".join(answer_parts).strip(),
     ]
-    return compact_blank_lines("\n".join(parts))
+    return strip_trailing_horizontal_rules(compact_blank_lines("\n".join(parts)))
 
 
 def strip_long_subpart_titles(text):
@@ -2707,7 +2711,7 @@ def strip_long_subpart_titles(text):
             return f"{hashes} ({label})"
         return match.group(0)
 
-    return re.sub(r"^(#{4,6})\s+\(([a-h]|\d+)\)\s+(.+)$", replace, text, flags=re.M | re.I)
+    return re.sub(r"^(#{4,6})[ \t]+\(([a-h]|\d+)\)[ \t]+(.+)$", replace, text, flags=re.M | re.I)
 
 
 def main():
@@ -2900,7 +2904,7 @@ def write_final_review_report(total_exercise, total_exam):
         "- 历史真题中文解题思路块：301 个",
         "- 缺失解答：0",
         "- 题干/解答结构异常：0",
-        "- `###### (a) $$` 这类坏标题：0",
+        "- 小问标题误吞公式块起始符这类坏标题：0",
         "- 方括号数字引用标记：0",
         "",
         "## 知识块分配",

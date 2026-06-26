@@ -195,8 +195,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 2 - 练习收敛、极限定理和近似。
 
 #### 题目
@@ -309,8 +307,6 @@ Damit ist die Behauptung gezeigt.
 
 ---
 
----
-
 ### Aufgabe 3 - 练习收敛、极限定理和近似。
 
 #### 题目
@@ -402,8 +398,6 @@ Da $\sum_{i=0}^{\infty}\frac1{i!}=e$, folgt:
 $$
 c=\frac1e.
 $$
-
----
 
 ---
 
@@ -510,8 +504,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 5 - 判断并证明随机变量序列的收敛关系。
 
 #### 题目
@@ -601,8 +593,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 6 - 判断并证明随机变量序列的收敛关系。
 
 #### 题目
@@ -672,8 +662,6 @@ Das geht nicht gegen $0$. Daher konvergiert $X_n$ nicht im ersten Moment gegen $
 
 ---
 
----
-
 ### Aufgabe 7 - 用中心极限定理或近似分布计算概率。
 
 #### 题目
@@ -722,8 +710,6 @@ $$
 \approx
 N\left(\frac{\alpha}{\beta},\frac{\alpha}{\beta^2}\right).
 $$
-
----
 
 ---
 
@@ -793,8 +779,6 @@ Für $\varepsilon=0.001$:
 $$
 n\geq \frac5{0.001^2}=5000000.
 $$
-
----
 
 ---
 
@@ -1021,8 +1005,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 11 - 练习收敛、极限定理和近似。
 
 #### 题目
@@ -1194,8 +1176,6 @@ Damit:
 $$
 c=e^{-1}.
 $$
-
----
 
 ---
 
@@ -1396,8 +1376,6 @@ Damit sind $A$ und $B$ unabhängig.
 
 ---
 
----
-
 ### Aufgabe 13 - 处理测度、可测性、Dirac 测度或积分。
 
 #### 题目
@@ -1481,8 +1459,6 @@ Damit folgt $x_n\to x$.
 
 ---
 
----
-
 ### Aufgabe 14 - 判断并证明随机变量序列的收敛关系。
 
 #### 题目
@@ -1539,8 +1515,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 15 - 判断并证明随机变量序列的收敛关系。
 
 #### 题目
@@ -1588,8 +1562,6 @@ Daraus folgt für die ursprüngliche Folge:
 $$
 f(X_n)\xrightarrow{P}f(X).
 $$
-
----
 
 ---
 
@@ -1889,6 +1861,8 @@ $$
 
 ###### (5)
 
+Nehmen Sie an, dass $f$ stetig differenzierbar ist. Welchen Einfluss hat $h$ auf Bias und Varianz?
+
 ###### Lösung
 
 Der Bias ist:
@@ -1916,8 +1890,6 @@ $$
 $$
 
 Kleines $h$ erhöht also die Varianz. Es gibt den typischen Bias-Varianz-Tradeoff.
-
----
 
 ---
 
@@ -2056,8 +2028,6 @@ $$
 
 ---
 
----
-
 ### Aufgabe 19 - 判断并证明随机变量序列的收敛关系。
 
 #### 题目
@@ -2124,8 +2094,6 @@ Also:
 $$
 X_n\xrightarrow{P}c.
 $$
-
----
 
 ---
 
@@ -2396,8 +2364,6 @@ $$
 
 ---
 
----
-
 ### 真题 2（2015） - Aufgabe 5: Rechenzeiten
 
 #### 题目
@@ -2631,8 +2597,6 @@ $$
 
 ---
 
----
-
 ### 真题 4（GOP-Klausur-1） - Aufgabe 7 -- 12 Punkte
 
 #### 题目
@@ -2764,8 +2728,6 @@ Gerundet:
 $$
 P(X>240)\approx 0.16
 $$
-
----
 
 ---
 
@@ -2991,8 +2953,6 @@ $$
 
 ---
 
----
-
 ### 真题 6（GOP-Klausur-3） - Aufgabe 4 - 13 Punkte
 
 #### 题目
@@ -3212,8 +3172,6 @@ Damit:
 $$
 P(900\leq X\leq 1100)\geq 0.917
 $$
-
----
 
 ---
 
@@ -3911,7 +3869,5 @@ folgt:
 $$
 P(X>240)\approx 1-0.84=0.16
 $$
-
----
 
 ---

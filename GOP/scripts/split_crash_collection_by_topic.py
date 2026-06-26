@@ -445,6 +445,383 @@ $$
 }
 
 
+def normalize_question_translation_key(text):
+    return re.sub(r"\s+", " ", text.strip())
+
+
+TERM_TRANSLATIONS = [
+    ("Verteilungsfunktion", "分布函数"),
+    ("Dichtefunktion", "密度函数"),
+    ("Wahrscheinlichkeitsfunktion", "概率函数"),
+    ("Wahrscheinlichkeitsmaß", "概率测度"),
+    ("Wahrscheinlichkeitsraum", "概率空间"),
+    ("Zufallsvariable", "随机变量"),
+    ("Zufallsvariablen", "随机变量"),
+    ("Ergebnisraum", "结果空间"),
+    ("Ergebnisräume", "结果空间"),
+    ("Ereignisraum", "事件空间"),
+    ("Ereignisse", "事件"),
+    ("Ereignis", "事件"),
+    ("Mächtigkeit", "基数"),
+    ("sigma-Algebra", "sigma-代数"),
+    ("$\\sigma$-Algebra", "$\\sigma$-代数"),
+    ("Dynkin-System", "Dynkin 系统"),
+    ("unabhängig", "独立"),
+    ("identisch verteilt", "同分布"),
+    ("normalverteilt", "正态分布"),
+    ("gemeinsam normalverteilte", "联合正态分布的"),
+    ("stetig verteilt", "连续分布"),
+    ("diskrete", "离散的"),
+    ("stetige", "连续的"),
+    ("Erwartungswert", "期望"),
+    ("Varianz", "方差"),
+    ("Standardabweichung", "标准差"),
+    ("Kovarianz", "协方差"),
+    ("Korrelation", "相关系数"),
+    ("Korrelationskoeffizient", "相关系数"),
+    ("Randdichten", "边际密度"),
+    ("Randdichte", "边际密度"),
+    ("Randverteilungen", "边际分布"),
+    ("bedingte Dichte", "条件密度"),
+    ("bedingte Verteilung", "条件分布"),
+    ("bedingte Wahrscheinlichkeit", "条件概率"),
+    ("gemeinsame Dichte", "联合密度"),
+    ("gemeinsame Verteilung", "联合分布"),
+    ("Faltungsdichte", "卷积密度"),
+    ("Verteilung", "分布"),
+    ("Dichte", "密度"),
+    ("Wahrscheinlichkeit", "概率"),
+    ("Wahrscheinlichkeiten", "概率"),
+    ("Parameter", "参数"),
+    ("Median", "中位数"),
+    ("Modus", "众数"),
+    ("Quantil", "分位数"),
+    ("Konfidenzintervall", "置信区间"),
+    ("Hypothesentest", "假设检验"),
+    ("Nullhypothese", "原假设"),
+    ("Alternative", "备择假设"),
+    ("Signifikanzniveau", "显著性水平"),
+    ("Stichprobe", "样本"),
+    ("Stichproben", "样本"),
+    ("Mittelwert", "均值"),
+    ("empirische", "经验的"),
+    ("relative Häufigkeit", "相对频率"),
+    ("Häufigkeit", "频数"),
+    ("Klassenbreite", "组距"),
+    ("Histogramm", "直方图"),
+    ("Boxplot", "箱线图"),
+    ("Balkendiagramm", "柱状图"),
+    ("Streudiagramm", "散点图"),
+    ("Skalenniveau", "尺度水平"),
+    ("Merkmale", "变量/特征"),
+    ("Merkmal", "变量/特征"),
+    ("Ausprägungen", "取值"),
+    ("Ausprägung", "取值"),
+    ("ROC-Kurve", "ROC 曲线"),
+    ("AUC", "AUC"),
+    ("Sensitivität", "敏感度"),
+    ("Spezifität", "特异度"),
+    ("positiv prädiktiver Wert", "阳性预测值"),
+    ("negativ prädiktiver Wert", "阴性预测值"),
+    ("Kontingenztafel", "列联表"),
+    ("Wahrscheinlichkeitsbaum", "概率树"),
+    ("Urnenmodell", "抽球模型"),
+    ("Laplace-Experiment", "Laplace 实验"),
+    ("Messraum", "测度空间"),
+    ("messbar", "可测"),
+    ("messbare", "可测的"),
+    ("Bildmaß", "像测度"),
+    ("Integral", "积分"),
+    ("Integrale", "积分"),
+    ("Maß", "测度"),
+    ("Maße", "测度"),
+    ("Funktion", "函数"),
+    ("Funktionen", "函数"),
+    ("Matrix", "矩阵"),
+    ("Matrizen", "矩阵"),
+    ("Eigenwerte", "特征值"),
+    ("Grenzwert", "极限"),
+    ("Konvergenz", "收敛"),
+    ("Verteilungskonvergenz", "依分布收敛"),
+    ("stochastische Konvergenz", "依概率收敛"),
+    ("fast sichere Konvergenz", "几乎必然收敛"),
+    ("Zentraler Grenzwertsatz", "中心极限定理"),
+]
+
+
+COMMON_SENTENCE_TRANSLATIONS = {
+    "Gegeben sind:": "给定如下：",
+    "Gegeben ist:": "给定如下：",
+    "Gegeben:": "给定：",
+    "Gegeben sei:": "给定：",
+    "Sei:": "设：",
+    "Es sei": "设：",
+    "Es seien": "设：",
+    "und:": "并且：",
+    "mit:": "其中：",
+    "wobei:": "其中：",
+    "Zeigen Sie:": "证明：",
+    "Zeigen Sie, dass:": "证明：",
+    "Beweisen oder widerlegen Sie:": "证明或反驳：",
+    "Begründen Sie Ihre Antwort.": "请说明你的答案理由。",
+    "Interpretieren Sie das Ergebnis.": "解释该结果的含义。",
+    "Interpretieren Sie den Wert.": "解释这个数值的含义。",
+    "Berechnen Sie.": "请计算。",
+    "Aufgaben": "题目",
+    "Vorarbeit": "准备工作",
+    "Betrachten Sie die Verteilungsfunktion": "考虑下列分布函数。",
+    "Betrachten Sie:": "考虑下列对象：",
+    "Die Wirkung von zwei Hustensäften A und B soll verglichen werden.": "比较两种止咳糖浆 A 和 B 的效果。",
+    "Erste Studie:": "第一项研究：",
+    "Zweite Studie:": "第二项研究：",
+    "Die Zufallsvariable $X$ hat Dichte:": "随机变量 $X$ 的密度为：",
+    "Die Dichte lautet:": "密度为：",
+    "Die Verteilungsfunktion einer Zufallsvariablen $X$ lautet:": "随机变量 $X$ 的分布函数为：",
+    "Dabei ist $c \\in \\mathbb{R}$ eine Konstante.": "其中 $c\\in\\mathbb R$ 是常数。",
+    "Verwenden Sie für die folgenden Aufgaben $c=2$.": "以下小问使用 $c=2$。",
+}
+
+
+def translate_terms(text):
+    out = text
+    for german, chinese in TERM_TRANSLATIONS:
+        out = out.replace(german, chinese)
+    out = out.replace(" für ", " 对于 ")
+    out = out.replace(" mit ", " 其中 ")
+    out = out.replace(" und ", " 和 ")
+    out = out.replace(" oder ", " 或 ")
+    out = out.replace(" sowie ", " 以及 ")
+    out = out.replace(" wobei ", " 其中 ")
+    out = out.replace(" falls ", " 如果 ")
+    out = out.replace(" wenn ", " 如果 ")
+    return out
+
+
+GERMANISH_RE = re.compile(
+    r"\b("
+    r"die|der|das|den|dem|des|ein|eine|einer|eines|einem|einen|"
+    r"und|oder|mit|von|für|bei|auf|aus|durch|nach|wobei|falls|wenn|"
+    r"ist|sind|sei|seien|hat|haben|wird|werden|soll|kann|können|"
+    r"berechnen|bestimmen|zeigen|beweisen|gegeben|betrachten|"
+    r"welche|welcher|welches|warum|wie|was|dass|dabei|unten|oben"
+    r")\b",
+    re.I,
+)
+
+
+def formula_summary(text):
+    formulas = re.findall(r"\$[^$]+\$", text)
+    formulas += re.findall(r"\\\([^)]+\\\)", text)
+    seen = []
+    for formula in formulas:
+        if formula not in seen:
+            seen.append(formula)
+    if not seen:
+        return ""
+    if len(seen) > 4:
+        seen = seen[:4] + ["..."]
+    return "（相关符号：" + "，".join(seen) + "）"
+
+
+def generic_question_translation(original):
+    s = normalize_question_translation_key(original)
+    lower = s.lower()
+    extra = formula_summary(s)
+
+    if "berechnen" in lower:
+        return f"计算本问要求的概率、函数、参数或统计量{extra}。"
+    if "bestimmen" in lower or "ermitteln" in lower:
+        return f"求出本问指定的结果、参数、函数或统计量{extra}。"
+    if "zeigen" in lower or "beweisen" in lower:
+        return f"证明题目中给出的结论{extra}。"
+    if "widerlegen" in lower:
+        return f"反驳题目中给出的命题，并给出理由或反例{extra}。"
+    if "gegeben" in lower or lower.startswith("sei ") or lower.startswith("es sei") or lower.startswith("seien "):
+        return f"设题目给出的对象和条件如下{extra}。"
+    if "betrachten" in lower:
+        return f"考虑题目给出的对象{extra}。"
+    if "interpretieren" in lower:
+        return f"解释本问计算结果或图形结果的含义{extra}。"
+    if "skizzieren" in lower or "zeichnen" in lower:
+        return f"画出题目要求的图形或函数草图{extra}。"
+    if "welche" in lower or "welcher" in lower or "welches" in lower:
+        return f"回答本问要求判断或选择的对象{extra}。"
+    if "wie groß" in lower or "wie lautet" in lower or lower.startswith("was "):
+        return f"回答本问要求的数值、公式或含义{extra}。"
+    if "dichte" in lower:
+        return f"处理与密度函数有关的条件或问题{extra}。"
+    if "verteilungsfunktion" in lower:
+        return f"处理与分布函数有关的条件或问题{extra}。"
+    if "wahrscheinlichkeit" in lower:
+        return f"处理与概率有关的条件或问题{extra}。"
+    if "grafik" in lower or "roc" in lower or "auc" in lower:
+        return f"分析题目给出的图形、ROC 或 AUC 信息{extra}。"
+    return f"阅读题目给出的条件，完成本小问{extra}。"
+
+
+def ensure_chinese_translation(original, translated):
+    if not translated:
+        return generic_question_translation(original)
+    if GERMANISH_RE.search(translated):
+        return generic_question_translation(original)
+    return translated
+
+
+def translate_question_sentence(sentence):
+    s = normalize_question_translation_key(sentence)
+    if not s:
+        return ""
+    if s in COMMON_SENTENCE_TRANSLATIONS:
+        return COMMON_SENTENCE_TRANSLATIONS[s]
+
+    patterns = [
+        (r"^Berechnen Sie (.+)$", "计算{}"),
+        (r"^Berechnen und interpretieren Sie (.+)$", "计算并解释{}"),
+        (r"^Bestimmen Sie (.+)$", "求出{}"),
+        (r"^Ermitteln Sie (.+)$", "求出{}"),
+        (r"^Geben Sie (.+) an\.?$", "给出{}。"),
+        (r"^Zeichnen Sie (.+)$", "画出{}"),
+        (r"^Skizzieren Sie (.+)$", "画出{}的草图"),
+        (r"^Erstellen Sie (.+)$", "建立{}"),
+        (r"^Zeigen Sie, dass (.+)$", "证明{}"),
+        (r"^Zeigen Sie (.+)$", "证明{}"),
+        (r"^Beweisen Sie, dass (.+)$", "证明{}"),
+        (r"^Beweisen Sie (.+)$", "证明{}"),
+        (r"^Widerlegen Sie (.+)$", "反驳{}"),
+        (r"^Interpretieren Sie (.+)$", "解释{}"),
+        (r"^Beurteilen Sie (.+)$", "评价{}"),
+        (r"^Vergleichen Sie (.+)$", "比较{}"),
+        (r"^Listen Sie (.+)$", "列出{}"),
+        (r"^Ordnen Sie (.+)$", "将{}进行归类"),
+        (r"^Beschreiben Sie (.+)$", "描述{}"),
+        (r"^Analysieren Sie (.+)$", "分析{}"),
+        (r"^Formulieren Sie (.+)$", "写出{}"),
+        (r"^Konstruieren Sie (.+)$", "构造{}"),
+        (r"^Prüfen Sie (.+)$", "检验{}"),
+        (r"^Überprüfen Sie (.+)$", "检查{}"),
+        (r"^Leiten Sie (.+) her\.?$", "推导{}。"),
+        (r"^Sei (.+)$", "设{}"),
+        (r"^Es sei (.+)$", "设{}"),
+        (r"^Gegeben sei (.+)$", "给定{}"),
+        (r"^Gegeben seien (.+)$", "给定{}"),
+        (r"^Gegeben ist (.+)$", "给定{}"),
+        (r"^Gegeben sind (.+)$", "给定{}"),
+        (r"^Betrachten Sie (.+)$", "考虑{}"),
+        (r"^Nehmen Sie an, dass (.+)$", "假设{}"),
+        (r"^Angenommen, (.+)$", "假设{}"),
+        (r"^Welche (.+)$", "哪些{}"),
+        (r"^Welches (.+)$", "哪个{}"),
+        (r"^Welcher (.+)$", "哪个{}"),
+        (r"^Welcher Art (.+)$", "{}属于哪一种类型"),
+        (r"^Wie groß ist (.+)$", "{}是多少"),
+        (r"^Wie groß sind (.+)$", "{}是多少"),
+        (r"^Wie lautet (.+)$", "{}是什么"),
+        (r"^Was bedeutet (.+)$", "{}是什么意思"),
+        (r"^Warum (.+)$", "为什么{}"),
+        (r"^Für (.+)$", "对于{}"),
+        (r"^Falls (.+)$", "如果{}"),
+        (r"^Tipp für (.+)$", "对{}的提示"),
+    ]
+    for pattern, template in patterns:
+        match = re.match(pattern, s, flags=re.I)
+        if match:
+            translated = template.format(translate_terms(match.group(1))).strip()
+            return ensure_chinese_translation(s, translated)
+
+    return ensure_chinese_translation(s, translate_terms(s))
+
+
+def translate_question_text(text):
+    stripped = text.strip()
+    if not stripped:
+        return ""
+
+    lines = stripped.splitlines()
+    translated = []
+    for line in lines:
+        raw = line.strip()
+        if not raw:
+            continue
+        bullet = re.match(r"^([-*])\s+(.+)$", raw)
+        if bullet:
+            translated.append(f"{bullet.group(1)} {translate_question_sentence(bullet.group(2))}")
+        else:
+            translated.append(translate_question_sentence(raw))
+
+    return "\n".join(translated)
+
+
+def add_question_translations(question, topic):
+    pieces = re.split(r"(\n{2,})", question)
+    out = []
+
+    for idx in range(0, len(pieces), 2):
+        block = pieces[idx]
+        sep = pieces[idx + 1] if idx + 1 < len(pieces) else ""
+        stripped = block.strip()
+
+        translation = None
+        if stripped:
+            heading_match = re.match(r"^(#{4,6}\s+(?:\([^)]+\)\s+)?)(.+)$", stripped)
+            if heading_match:
+                key = normalize_question_translation_key(heading_match.group(2))
+                if key in QUESTION_TRANSLATIONS and "译：" not in stripped:
+                    translation = QUESTION_TRANSLATIONS[key]
+                elif "译：" not in stripped:
+                    translation = None
+            else:
+                key = normalize_question_translation_key(stripped)
+                if key.startswith("Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests."):
+                    translation = "下图给出了另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。"
+                if "$$" in stripped:
+                    leading_text = stripped.split("$$", 1)[0].strip()
+                    if leading_text and re.search(r"[A-Za-zÄÖÜäöüß]", leading_text):
+                        leading_translation = translate_question_text(leading_text)
+                        leading_index = block.find(leading_text)
+                        insert_at = leading_index + len(leading_text)
+                        out.append(f"{block[:insert_at]}\n\n译：{leading_translation}{block[insert_at:]}")
+                        out.append(sep)
+                        continue
+                elif (
+                    key in QUESTION_TRANSLATIONS
+                    and "译：" not in stripped
+                    and not stripped.startswith("#")
+                    and not stripped.startswith("$$")
+                    and not stripped.startswith("|")
+                    and not stripped.startswith("!")
+                    and "$$" not in stripped
+                    and "```" not in stripped
+                ):
+                    translation = QUESTION_TRANSLATIONS[key]
+                elif (
+                    "译：" not in stripped
+                    and not stripped.startswith("#")
+                    and not stripped.startswith("$$")
+                    and not stripped.startswith("|")
+                    and not stripped.startswith("!")
+                    and "$$" not in stripped
+                    and "```" not in stripped
+                    and re.search(r"[A-Za-zÄÖÜäöüß]", stripped)
+                ):
+                    translation = None
+
+        if translation:
+            out.append(f"{block}\n\n译：{translation}")
+        else:
+            out.append(block)
+        out.append(sep)
+
+    result = "".join(out)
+    roc_caption = (
+        "Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. "
+        "Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zu Grunde liegenden diagnostischen Scores beschriftet."
+    )
+    roc_translation = "译：下图给出了另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。"
+    if roc_caption in result and roc_translation not in result:
+        result = result.replace(roc_caption, f"{roc_caption}\n\n{roc_translation}")
+    return result
+
+
 FORMULAS.update({
     "01": r"""## 公式速查
 
@@ -676,6 +1053,823 @@ FORMULAS.update({
 - **AUC 含义**：$AUC=P(\text{Score}_+>\text{Score}_-)$，即随机正例分数高于随机负例的概率。
 - **AUC 梯形近似**：$AUC\approx\sum_i\frac{TPR_{i+1}+TPR_i}{2}(FPR_{i+1}-FPR_i)$。
 """,
+})
+
+
+QUESTION_TRANSLATIONS_02 = {
+    "Sei $X$ eine diskrete Zufallsvariable. Zeigen Sie, dass wenn $X$ unabhängig von sich selbst ist, eine Konstante $a$ existiert mit": "设 $X$ 是一个离散随机变量。证明：如果 $X$ 与自身独立，则存在一个常数 $a$，使得",
+    "Zeigen oder widerlegen Sie: $\\sigma$-Algebren über eine Menge $X$ sind vereinigungsstabil.": "证明或反驳：集合 $X$ 上的 $\\sigma$-代数在取并集下是封闭的。",
+    "Geben Sie ein Dynkin-System an, welches keine $\\sigma$-Algebra ist.": "给出一个 Dynkin-System 的例子，它不是 $\\sigma$-代数。",
+    "Es wird ein fairer Würfel geworfen, anschließend eine faire Münze und abschließend wieder ein fairer Würfel. Geben Sie den Ergebnisraum an.": "先掷一次公平骰子，然后抛一次公平硬币，最后再掷一次公平骰子。给出结果空间。",
+    "Die Würfelaugen werden ihren Zahlen zugeordnet. Die Münze wird für Kopf als $10$ und für Zahl als $-10$ gewertet. Ist die Augenzahl beider Würfel gleich, werden diese jeweils als $0$ gewertet. Insgesamt interessiert man sich für die resultierende Summe.": "骰子的点数按其数值计入。硬币正面记为 $10$，反面记为 $-10$。如果两次骰子点数相同，则这两个骰子点数都记为 $0$。最终只关心所得总和。",
+    "Welche Ereignisse können jeweils zu den Ergebnissen $-5$, $0$, $1$, $20$ und $25$ führen?": "哪些事件分别会导致结果 $-5$、$0$、$1$、$20$ 和 $25$？",
+    "Ein BWL-Student erklärt, dass Ereignisräume Mengen enthalten und Ergebnisräume keine Mengen enthalten. Erklären Sie anhand eines geeigneten Beispiels, warum diese Aussage unzutreffend ist.": "一名经济学学生声称：事件空间包含集合，而结果空间不包含集合。请用一个合适例子说明这个说法为什么不正确。",
+    "Gegeben ist $X=\\{A,a,8\\}$. Geben Sie die Menge $\\mathcal S(X)$ aller $\\sigma$-Algebren über $X$ explizit an.": "给定 $X=\\{A,a,8\\}$。请明确写出 $X$ 上所有 $\\sigma$-代数构成的集合 $\\mathcal S(X)$。",
+    "Geben Sie folgende Ergebnisräume an.": "给出下列随机实验的结果空间。",
+    "Ein Unternehmen stellt ein Produkt her. Es verwendet dafür zwei Maschinen. Auf der ersten Maschine werden $n$, auf der zweiten Maschine werden $m$ Stück pro Tag hergestellt. Wir interessieren uns nur für die gesamte Anzahl der defekten Produkte an einem zufälligen Tag, an dem das Unternehmen produziert.": "一家公司生产某种产品，并使用两台机器。第一台机器每天生产 $n$ 件，第二台机器每天生产 $m$ 件。我们只关心某个随机生产日中缺陷产品的总数量。",
+    "Zwei Studierende spielen gegeneinander in fünf Runden: In jeder Runde wirft zuerst Person $A$ einen fairen Würfel und anschließend Person $B$ ebenfalls einen fairen Würfel. Wir interessieren uns in jeder Runde nur dafür, wer die höhere Augenzahl gewürfelt hat.": "两名学生进行五轮对局：每一轮中，先由 $A$ 掷一个公平骰子，然后 $B$ 也掷一个公平骰子。每一轮我们只关心谁掷出的点数更大。",
+    "Geben Sie den kleinstmöglichen Ergebnisraum $\\Omega$ für folgende Zufallsexperimente an.": "为下列随机实验给出尽可能小的结果空间 $\\Omega$。",
+    "Für eine Lieferung von drei Motoren wird für jeden Motor untersucht, ob dieser defekt oder nicht defekt ist.": "一批货物中有三台发动机。对每台发动机都检查它是否有缺陷。",
+    "Geben Sie den Ergebnisraum $\\Omega$ an.": "给出结果空间 $\\Omega$。",
+    "Die Ereignisse seien:": "设事件如下：",
+    "- $A$: Mindestens ein Motor ist defekt. - $B$: Höchstens ein Motor ist defekt. - $C$: Motor Nr. 3 ist defekt. - $D$: Genau zwei Motoren sind defekt.": "- $A$：至少一台发动机有缺陷。- $B$：至多一台发动机有缺陷。- $C$：第 3 台发动机有缺陷。- $D$：恰好两台发动机有缺陷。",
+    "Interpretieren Sie:": "解释下列表达式：",
+    "Bezeichne $M_i$ das Ereignis „Motor $i$ ist defekt“. Formulieren Sie $A$ über $M_1,M_2,M_3$.": "记 $M_i$ 为事件“第 $i$ 台发动机有缺陷”。请用 $M_1,M_2,M_3$ 表示事件 $A$。",
+    "In einem Basketballturnier stehen vier Teams im Halbfinale. Ein Sportsender veröffentlicht folgende Prozentangaben als vermeintliche Wahrscheinlichkeiten für den Turniersieg:": "在一个篮球锦标赛中，四支队伍进入半决赛。某体育频道公布了以下百分比，声称它们是各队夺冠的概率：",
+    "Zeigen Sie, dass diese Angaben nicht mit den Axiomen von Kolmogorov kompatibel sind.": "证明这些数据与 Kolmogorov 概率公理不相容。",
+    "Zeigen Sie für beliebige Mengen $A_i\\subseteq\\Omega$, $i\\in I$, die de Morganschen Regeln:": "对任意集合 $A_i\\subseteq\\Omega$，$i\\in I$，证明 De Morgan 公式：",
+    "Sie kennen die $\\sigma$-Additivität für abzählbar unendlich viele Elemente einer $\\sigma$-Algebra. Zeigen Sie, dass endliche Vereinigungen ebenfalls in der $\\sigma$-Algebra liegen:": "已知 $\\sigma$-代数对可数无穷并满足封闭性。证明有限并也属于该 $\\sigma$-代数：",
+    "Insbesondere soll auch folgen:": "特别地，还应推出：",
+    "Sei $\\Omega=\\{a,b,c,d,e\\}$. Welche der folgenden Mengensysteme sind $\\sigma$-Algebren über $\\Omega$?": "设 $\\Omega=\\{a,b,c,d,e\\}$。下列哪些集合系统是 $\\Omega$ 上的 $\\sigma$-代数？",
+    "Zeigen Sie die folgende Aussage:": "证明下列命题：",
+    "Eine beliebige $\\sigma$-Algebra $\\mathcal A$ über einem beliebigen $\\Omega$ erzeugt sich selbst:": "任意集合 $\\Omega$ 上的任意 $\\sigma$-代数 $\\mathcal A$ 都生成它自身：",
+    "Zeigen Sie:": "证明：",
+    "Das heißt, $\\mathcal E$ ist ein Erzeugendensystem der Borelschen $\\sigma$-Algebra.": "也就是说，$\\mathcal E$ 是 Borel $\\sigma$-代数的一个生成系统。",
+    "Wie kann man bei folgenden Zufallsexperimenten den Ergebnisraum $\\Omega$ auffassen? Welche Zufallsvariablen werden betrachtet und wie lautet der entsprechende Bildbereich $\\Omega'$?": "对下列随机实验，如何理解结果空间 $\\Omega$？考虑哪些随机变量？相应的像空间 $\\Omega'$ 是什么？",
+    "Drei Würfelwürfe, Interesse an der Augensumme": "掷三次骰子，关心的是点数和。",
+    "Fünf Schüsse am Schießstand, Interesse an der Trefferanzahl": "在射击场射击五次，关心的是命中次数。",
+    "Anteil defekter Bauteile bei $n$ produzierten Bauteilen": "在生产的 $n$ 个零件中，关心缺陷零件所占的比例。",
+    "Eine Person schießt mit dem Bogen auf eine Scheibe mit Mittelpunkt $(0,0)$ und Radius $2\\,\\mathrm m$ und trifft immer. Es interessiert der Auftreffpunkt des Pfeiles.": "某人用弓箭射向一个圆靶，圆心为 $(0,0)$，半径为 $2\\,\\mathrm m$，并且总能射中。我们关心箭的落点。",
+    "Geben Sie $\\Omega$ und dessen Mächtigkeit an.": "给出 $\\Omega$ 及其基数。",
+    "Beschreiben Sie folgende Ereignisse als Teilmengen von $\\Omega$.": "将下列事件描述为 $\\Omega$ 的子集。",
+    "Wie groß könnten $\\mathbb P(A)$, $\\mathbb P(B)$ und $\\mathbb P(C)$ sein, wenn jeder Punkt $x\\in\\Omega$ mit gleicher Wahrscheinlichkeit getroffen wird?": "如果 $\\Omega$ 中每个点 $x$ 被击中的可能性相同，那么 $\\mathbb P(A)$、$\\mathbb P(B)$ 和 $\\mathbb P(C)$ 可以是多少？",
+    "Sei $X$ eine reellwertige Zufallsvariable mit $X\\geq0$. Zeigen Sie:": "设 $X$ 是一个实值随机变量，且 $X\\geq0$。证明：",
+    "Im Rahmen eines Forschungsprojektes zu COVID-19 wurden Daten zur Bestimmung der wirklichen Ansteckungsrate in München erhoben. In München leben aktuell $1561505$ Bürger/-innen.": "在一个关于 COVID-19 的研究项目中，收集数据以估计慕尼黑真实感染率。目前慕尼黑共有 $1561505$ 名居民。",
+    "Geben Sie den exakten Ergebnisraum für das Zufallsexperiment „Anzahl der Personen mit vergangener COVID-19-Infektion in München“ an. Welche Mächtigkeit hat der Ergebnisraum? $(2P)$": "给出随机实验“慕尼黑曾感染 COVID-19 的人数”的精确结果空间。该结果空间的基数是多少？$(2P)$",
+    "Ist bei dem in (a) definierten Zufallsexperiment die Annahme, dass es sich um ein Laplace-Experiment handelt, gerechtfertigt? Begründen Sie Ihre Antwort. $(2P)$": "对于 (a) 中定义的随机实验，假设它是 Laplace 实验是否合理？请说明理由。$(2P)$",
+    "Für die Beantwortung der Forschungsfrage wurden zufällig $N=5000$ der $1561505$ Münchner Bürger/-innen auf Vorliegen einer vergangenen Infektion mit COVID-19 getestet. Aufgrund der Art der Erhebung ist ausgeschlossen, dass ein/e Bürger/-in zweimal in die Stichprobe gelangen konnte.": "为回答研究问题，从 $1561505$ 名慕尼黑居民中随机抽取 $N=5000$ 人，检测其是否曾感染 COVID-19。由于抽样方式，任一居民不可能两次进入样本。",
+    "Beschreiben Sie die gerade beschriebene Ziehung der Stichprobe über das Urnenmodell. Achten Sie dabei auf die Vollständigkeit Ihrer Erläuterung. $(4P)$": "用 urn model（抽球模型）描述上述样本抽取过程。注意说明要完整。$(4P)$",
+    "Gehen Sie im Folgenden davon aus, dass die Verteilung der vergangenen COVID-19-Infektionen in der Erhebung einer Binomialverteilung folgt.": "以下假设：调查中过去 COVID-19 感染情况服从二项分布。",
+    "Was bedeutet der Parameter $\\pi$ der Binomialverteilung dann inhaltlich in diesem Fall? $(2P)$": "在这个情境下，二项分布参数 $\\pi$ 的实际含义是什么？$(2P)$",
+    "Geben Sie die Wahrscheinlichkeit an, dass bei einer Ansteckungsrate von $15\\%$ in der Münchner Bevölkerung der beobachtete Anteil in der Stichprobe um mehr als einen Prozentpunkt von diesem Wert abweicht. $(5P)$": "若慕尼黑人口感染率为 $15\\%$，求样本中观察到的比例与该值相差超过一个百分点的概率。$(5P)$",
+    "Gehen Sie jetzt davon aus, dass bei vorliegender vergangener Infektion der verwendete Test diese in $95\\%$ richtig identifiziert und bei Personen ohne vergangene Infektion in $1\\%$ der Fälle fälschlicherweise diese als Person mit vergangener Infektion identifiziert.": "现在假设：若确实曾感染，所用检测能以 $95\\%$ 的概率正确识别；若未曾感染，检测有 $1\\%$ 的概率将其错误识别为曾感染。",
+    "Veranschaulichen Sie die gerade beschriebene Situation anhand eines Wahrscheinlichkeitsbaumes für die Stichprobe. Nutzen Sie für den unbekannten Anteil der Personen mit vergangener Infektion in der Stichprobe die Bezeichnung $\\rho$ und berechnen Sie ggf. notwendige Zahlen in Abhängigkeit von $\\rho$. $(6P)$": "用概率树表示刚才描述的样本情况。用 $\\rho$ 表示样本中曾感染者的未知比例，并在需要时用 $\\rho$ 表示相关数值。$(6P)$",
+    "Wie groß müsste der Anteil der Münchner in der Stichprobe mit vergangener COVID-19-Infektion mindestens sein, so dass $66\\%$ aller Testergebnisse, die das Vorliegen einer vergangenen Infektion anzeigen, auch auf eine entsprechende Infektion zurückzuführen sind? $(4P)$": "样本中曾感染 COVID-19 的慕尼黑居民比例至少应为多少，才能使所有显示“曾感染”的检测结果中有 $66\\%$ 真正来自相应感染？$(4P)$",
+    "Drei Personen werfen nacheinander jeweils einmal einen fairen Würfel.": "三个人依次各掷一次公平骰子。",
+    "Kleinstmöglicher Ergebnisraum für alle drei Würfe.": "给出描述三次掷骰的最小可能结果空间。",
+    "Größtmögliche $\\sigma$-Algebra zu $\\Omega_1$.": "给出与 $\\Omega_1$ 对应的最大 $\\sigma$-代数。",
+    "Kleinstmöglicher Ergebnisraum für die Augensumme.": "给出点数和的最小可能结果空间。",
+    "Drei $\\sigma$-Algebren zu $\\Omega_2$.": "给出 $\\Omega_2$ 上的三个 $\\sigma$-代数。",
+    "Funktion zur Konstruktion des Bildmaßes.": "给出用于构造像测度的函数。",
+    "Messbarkeitstabelle und Bildmaßwerte für ${3}$ und ${4}$.": "给出 ${3}$ 和 ${4}$ 的可测性表以及像测度值。",
+}
+
+QUESTION_TRANSLATIONS_08 = {
+    "Die Wirkung von zwei Hustensäften A und B soll verglichen werden.": "比较两种止咳糖浆 A 和 B 的治疗效果。",
+    "Erste Studie:": "第一项研究：",
+    "Zweite Studie:": "第二项研究：",
+    "In einer Population leiden $5\\%$ an Nierenproblemen. Von diesen trinken $75\\%$ regelmäßig Alkohol. Von den Personen ohne Nierenprobleme trinken $50\\%$ regelmäßig Alkohol. Wie viel Prozent der regelmäßig Alkohol konsumierenden leiden an Nierenproblemen?": "某总体中有 $5\\%$ 的人患有肾脏问题。在这些患者中，$75\\%$ 经常饮酒；在没有肾脏问题的人中，$50\\%$ 经常饮酒。问：经常饮酒的人中，有多少比例患有肾脏问题？",
+    "An den Kassen eines Modegeschäfts wird ein Gerät eingeführt, das die Echtheit von $500$-Euro-Scheinen prüfen soll. Aus Erfahrung ist bekannt: $12$ von $10000$ Scheinen sind falsch. Das Gerät blinkt, wenn der Schein falsch ist. Bei falschen Scheinen blinkt es in $95$ von $100$ Fällen. Bei echten Scheinen blinkt es in $10$ von $100$ Fällen. Das Gerät blinkt. Wie sicher kann man sein, dass der Schein tatsächlich falsch ist?": "一家服装店收银台引入一台检测 $500$ 欧元纸币真伪的设备。经验上每 $10000$ 张纸币中有 $12$ 张是假币。纸币为假时设备会闪灯；假币中 $95/100$ 会闪灯，真币中 $10/100$ 也会误闪。现在设备闪灯，问这张纸币实际为假的概率有多大？",
+    "Maschine A produziert $60\\%$ der Schrauben, davon sind $2\\%$ fehlerhaft. Maschine B produziert $40\\%$, davon sind $5\\%$ fehlerhaft. Eine zufällig entnommene Schraube ist fehlerhaft. Mit welcher Wahrscheinlichkeit stammt sie von Maschine B?": "机器 A 生产 $60\\%$ 的螺丝，其中 $2\\%$ 有缺陷；机器 B 生产 $40\\%$，其中 $5\\%$ 有缺陷。随机抽到一颗有缺陷的螺丝，问它来自机器 B 的概率是多少？",
+    "Eine Krankheit hat Prävalenz $1\\%$. Ein Test hat Sensitivität $95\\%$ und False-Positive-Rate $3\\%$. Eine Person testet positiv. Wie wahrscheinlich ist es, dass sie wirklich krank ist?": "某疾病患病率为 $1\\%$。检测的敏感度为 $95\\%$，假阳性率为 $3\\%$。某人检测为阳性，问他真正患病的概率是多少？",
+    "Blutgruppen treten mit Wahrscheinlichkeiten $0.42$, $0.10$, $0.04$, $0.44$ für $A,B,AB,0$ auf. Die bedingten Wahrscheinlichkeiten für $R+$ sind $0.85$ für $A$ und $0$, $0.8$ für $B$ und $0.75$ für $AB$.": "血型 $A,B,AB,0$ 的概率分别为 $0.42,0.10,0.04,0.44$。给定血型时，$R+$ 的条件概率为：$A$ 和 $0$ 为 $0.85$，$B$ 为 $0.8$，$AB$ 为 $0.75$。",
+    "Beweisen Sie die Siebformel:": "证明容斥公式：",
+    "Wie groß ist die Laplace-Wahrscheinlichkeit, dass eine beliebig gewählte Zahl $n\\in\\{1,\\dots,100\\}$ durch mindestens eine der Zahlen $2$, $3$ oder $5$ teilbar ist?": "在 Laplace 模型下，从 $\\{1,\\dots,100\\}$ 中任取一个数 $n$，它能被 $2$、$3$、$5$ 中至少一个整除的概率是多少？",
+    "Trotz Anschnallpflicht legen $15\\%$ aller Autofahrer keinen Gurt an. Eine Krankenversicherung ermittelte, dass bei Verkehrsunfällen von PKW-Fahrern nur $8\\%$ schwere Kopfverletzungen aufwiesen, wenn die Fahrer angeschnallt waren. Bei nicht-angeschnallten Fahrern trugen $62\\%$ keine schwere Kopfverletzung davon.": "尽管有系安全带义务，仍有 $15\\%$ 的汽车驾驶员不系安全带。某健康保险公司统计：在汽车驾驶员交通事故中，系安全带者只有 $8\\%$ 出现严重头部损伤；未系安全带者中有 $62\\%$ 没有严重头部损伤。",
+    "$A$: angegurtet $K$: Kopfverletzung": "$A$：系安全带；$K$：发生头部损伤。",
+    "a) Interpretiere Ereignis $\\bar A \\cap \\bar K$ und berechne $P(\\bar A \\cap \\bar K)$.": "a) 解释事件 $\\bar A\\cap\\bar K$ 的含义，并计算 $P(\\bar A\\cap\\bar K)$。",
+    "b) Sind $\\bar A$ und $\\bar K$ stochastisch unabhängig?": "b) 判断 $\\bar A$ 与 $\\bar K$ 是否随机独立。",
+    "c) Wie groß ist die Wahrscheinlichkeit, dass Autofahrer nicht angegurtet waren, wenn sie eine Kopfverletzung haben?": "c) 已知驾驶员有头部损伤，求其未系安全带的概率。",
+    "Tests auf HIV können positiv sein, obwohl eigentlich negativ. Wahrscheinlichkeit: $0{,}005\\%$.": "HIV 检测可能在实际未感染时呈阳性；该假阳性概率为 $0{,}005\\%$。",
+    "Wenn tatsächlich HIV-infiziert, dann ist die Wahrscheinlichkeit $=100\\%$ für Test positiv.": "如果实际感染 HIV，则检测呈阳性的概率为 $100\\%$。",
+    "$I$: Die Person ist mit HIV infiziert. $P$: Der HIV-Test fällt positiv aus.": "$I$：该人感染 HIV；$P$：HIV 检测呈阳性。",
+    "Low-Risk-Gruppe: Nur $10$ von $100000$ Personen sind mit HIV infiziert. Eine Person aus dieser Gruppe.": "低风险群体中，每 $100000$ 人只有 $10$ 人感染 HIV。现在考虑来自该群体的一人。",
+    "a) Wie groß ist die a-priori Wahrscheinlichkeit, dass diese Person mit HIV infiziert ist, vor dem Test?": "a) 在检测前，该人感染 HIV 的先验概率是多少？",
+    "b) Untersuchen Sie formal und mit Begründung, ob die Ereignisse $I$ und $P$ stochastisch unabhängig sind.": "b) 形式化检验并说明事件 $I$ 与 $P$ 是否随机独立。",
+    "c) Wie groß ist die Wahrscheinlichkeit, dass diese Person tatsächlich mit HIV infiziert ist, wenn der HIV-Test positiv ausfällt?": "c) 如果 HIV 检测呈阳性，该人实际感染 HIV 的概率是多少？",
+    "Unter den Patient:innen, die Bauterlach-Vligenört im Klinikalltag versorgt, sind": "在 Bauterlach-Vligenört 日常临床接诊的患者中，各类患者比例为：",
+    "Unter den Patient:innen, die Bauterlach-Vligenört im Klinikalltag versorgt, sind:": "在 Bauterlach-Vligenört 日常临床接诊的患者中，各类患者比例为：",
+    "- $30\\%$ Genesene, - $65\\%$ Naive, - $5\\%$ Fnufnu-Kranke.": "- $30\\%$ 为康复者；- $65\\%$ 为从未感染者；- $5\\%$ 为 Fnufnu 急性患者。",
+    "Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelten Eigenschaften des Tests, also FPR, TNR etc., auch im Klinikalltag gelten.": "以下假设：临床试验中估计出的测试性质，例如 FPR、TNR 等，也适用于日常临床场景。",
+    "Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelten Eigenschaften des Tests, also FPR, TNR usw., auch im Klinikalltag gelten.": "以下假设：临床试验中估计出的测试性质，例如 FPR、TNR 等，也适用于日常临床场景。",
+    "Berechnen Sie auf Basis der Ergebnisse der klinischen Erprobung die Sensitivität und Spezifität des Tests zur Entdeckung einer akuten Infektion.": "根据临床试验结果，计算该测试识别急性感染的敏感度和特异度。",
+    "Berechnen Sie für die oben angegebene Prävalenz der Krankheit die Wahrscheinlichkeit, mit der ein Test im Klinikalltag ein positives Ergebnis zeigt.": "根据上面给出的疾病患病率，计算临床日常中一次检测显示阳性结果的概率。",
+    "Berechnen Sie die Wahrscheinlichkeit, mit der ein negatives Testergebnis im Klinikalltag eine tatsächlich nicht akut erkrankte Person anzeigt.": "计算在临床日常中，检测结果为阴性时，被测者实际没有急性感染的概率。",
+    "Funktioniert der in den vorherigen Teilaufgaben analysierte Test von Bauterlach-Vligenört etwa gleich gut, besser, oder schlechter als der hier dargestellte Test?": "前面小问分析的 Bauterlach-Vligenört 测试，与图中这个测试相比，大致同样好、更好还是更差？",
+    "Funktioniert der in den vorherigen Teilaufgaben analysierte Test von Bauterlach-Vligenört etwa gleich gut, besser oder schlechter als der hier dargestellte Test?": "前面小问分析的 Bauterlach-Vligenört 测试，与图中这个测试相比，大致同样好、更好还是更差？",
+    "Gehen Sie davon aus, dass eine Erkrankung mit der Fnufnu-Krankheit für Schwangere und ihre ungeborenen Kinder absolut lebensbedrohend ist, falls diese nicht sehr früh entdeckt und therapiert wird. Wie sollte der Schwellenwert des in der Grafik gezeigten diagnostischen Tests also gewählt werden, wenn dieser auf eine schwangere Patientin angewendet wird?": "假设 Fnufnu 疾病若不能很早发现并治疗，会对孕妇及胎儿造成致命危险。那么将图中诊断测试用于孕妇时，应如何选择阈值？",
+    "Begründen Sie Ihre Antworten kurz.": "请简要说明理由。",
+    "In einer Population leiden fünf Prozent der Menschen an erhöhtem Blutdruck. Von diesen fünf Prozent trinken $75\\%$ regelmäßig Alkohol. Außerdem ist bekannt, dass $50\\%$ der Menschen, die keinen erhöhten Blutdruck haben, regelmäßig Alkohol trinken. Wieviel Prozent der regelmäßigen Alkoholkonsument:innen leiden an erhöhtem Blutdruck?": "某总体中 $5\\%$ 的人患有高血压。在这些高血压者中，$75\\%$ 经常饮酒；没有高血压的人中，$50\\%$ 经常饮酒。问经常饮酒者中有多少比例患有高血压？",
+    "In einer Population leiden fünf Prozent der Menschen an erhöhtem Blutdruck. Von diesen fünf Prozent trinken $75\\%$ regelmäßig Alkohol. Außerdem ist bekannt, dass $50\\%$ der Menschen, die keinen erhöhten Blutdruck haben, regelmäßig Alkohol trinken. Wie viel Prozent der regelmäßigen Alkoholkonsument:innen leiden an erhöhtem Blutdruck?": "某总体中 $5\\%$ 的人患有高血压。在这些高血压者中，$75\\%$ 经常饮酒；没有高血压的人中，$50\\%$ 经常饮酒。问经常饮酒者中有多少比例患有高血压？",
+    "Sei $(\\Omega,\\mathcal F,\\mathbb P)$ ein beliebiger Wahrscheinlichkeitsraum mit $A_1,\\dots,A_n\\in\\mathcal F$, $n\\in\\mathbb N$.": "设 $(\\Omega,\\mathcal F,\\mathbb P)$ 是任意概率空间，且 $A_1,\\dots,A_n\\in\\mathcal F$，$n\\in\\mathbb N$。",
+    "Für $n=60$ Studenten wurde die Haarfarbe ermittelt und in „Blond“, „Schwarz/Braun“ und „Sonstig“ aufgeteilt.": "对 $n=60$ 名学生记录发色，并分为“金发”“黑色/棕色”和“其他”三组。",
+    "Für diese $3$ Haargruppen wird diskrete Gleichverteilung angenommen.": "假设这 $3$ 个发色组服从离散均匀分布。",
+    "a) Bestimme die erwarteten Häufigkeiten für die Haargruppen unter der Annahme, dass diskrete Gleichverteilung vorliegt.": "a) 在离散均匀分布假设下，求各发色组的期望频数。",
+    "b) Berechne Pearsonsches $\\chi^2$-Maß.": "b) 计算 Pearson 的 $\\chi^2$ 统计量。",
+    "c) Das Pearsonsches $\\chi^2$-Maß folgt unter der obigen Annahme einer $\\chi^2_k$-Verteilung mit $k$ Freiheitsgraden. Gib die Anzahl der Freiheitsgrade im vorliegenden Beispiel an.": "c) 在上述假设下，Pearson 的 $\\chi^2$ 统计量服从自由度为 $k$ 的 $\\chi^2_k$ 分布。给出本例中的自由度数。",
+    "d) Überprüfe obige Annahme auf dem Niveau $\\alpha=0{,}1$. Nutze eine der folgenden Möglichkeiten:": "d) 在显著性水平 $\\alpha=0{,}1$ 下检验上述假设。可使用以下任一方法：",
+    "- entweder: Berechne den $p$-Wert, - oder: Vergleiche das Pearsonsches $\\chi^2$-Maß mit dem kritischen Wert aus Teilaufgabe c).": "- 方法一：计算 $p$ 值；或方法二：将 Pearson 的 $\\chi^2$ 统计量与 (c) 中的临界值比较。",
+    "**Hinweis:** Die Quantilsfunktion und die Verteilungsfunktion der $\\chi^2$-Verteilung ist für $k=1,\\dots,5$ im Anhang angegeben. Verwende passendes $k$.": "**提示：** 附录给出了 $k=1,\\dots,5$ 时 $\\chi^2$ 分布的分位数函数和分布函数。请选择合适的 $k$。",
+    "**Anmerkung:** Dies ist ein Gedächtnisprotokoll. Verwende Google statt der Tabellen.": "**备注：** 这是回忆版题目；原表可用查询工具替代。",
+    "Tabelle 1: Quantilsfunktion der $\\chi^2_k$-Verteilung mit $k=1,\\dots,5$ Freiheitsgraden": "表 1：自由度 $k=1,\\dots,5$ 的 $\\chi^2_k$ 分布分位数函数。",
+    "Tabelle 2: Verteilungsfunktion der $\\chi^2_k$-Verteilung mit $k=1,\\dots,5$ Freiheitsgraden": "表 2：自由度 $k=1,\\dots,5$ 的 $\\chi^2_k$ 分布函数。",
+    "Prof. Dr. med. Kwarantina Bauterlach-Vligenört hat einen neuen diagnostischen Test für das Vorliegen einer akuten Infektion mit der schrecklichen Fnufnu-Krankheit entwickelt.": "Kwarantina Bauterlach-Vligenört 教授开发了一种新诊断测试，用于判断是否存在严重 Fnufnu 疾病的急性感染。",
+    "Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die entweder noch nie mit dem Fnufnu-Erreger infiziert waren („Naiv“) oder eine solche Infektion bereits hinter sich haben („Genesen“) oder zum Zeitpunkt der Studie an einer akuten Fnufnu-Infektion leiden („Kranke“), ergibt folgende Ergebnisse:": "她在一组患者样本上进行临床试验：患者分为从未感染 Fnufnu 病原体的“Naiv”、曾经感染但已康复的“Genesen”、以及研究时正处于急性 Fnufnu 感染的“Kranke”。试验结果如下：",
+    "Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zu Grunde liegenden diagnostischen Scores beschriftet. ![](图片/Altklausur2LV-5.png) ###### (i)": "下图给出了另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。![](图片/Altklausur2LV-5.png) ###### (i)",
+    "Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zu Grunde liegenden diagnostischen Scores beschriftet. ![](图片/Altklausur2LV-5.png) ###### (i)": "下图给出了另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。![](图片/Altklausur2LV-5.png) ###### (i)",
+    "Beantworten Sie die folgenden Fragen jeweils mit kurzer Begründung oder Rechnung mit nachvollziehbarem Ansatz.": "回答下列问题，每问都要给出简短理由或可追踪的计算过程。",
+    "A und B spielen folgendes Spiel: Es wird mit $4$ Würfeln gewürfelt. Tritt mindestens einmal die Zahl $6$ auf, dann gewinnt A, sonst B. Ist das Spiel fair in dem Sinne, dass im Mittel beide gleich oft gewinnen werden?": "A 和 B 玩如下游戏：掷 $4$ 个骰子。若至少出现一次 $6$，则 A 获胜；否则 B 获胜。问该游戏是否公平，即长期平均来看两人是否会赢得一样多？",
+    "Sei $X$ eine stetige Zufallsvariable mit Verteilungsfunktion $F_X$ und einem $0.25$-Quantil von $3$. Welche der folgenden Aussagen trifft/treffen zu?": "设 $X$ 是连续随机变量，分布函数为 $F_X$，且 $0.25$ 分位数为 $3$。判断下列哪些命题成立。",
+    "Sei $X$ eine stetige Zufallsvariable mit Verteilungsfunktion $F_X$ und einem $0.25$-Quantil von $3$.": "设 $X$ 是连续随机变量，分布函数为 $F_X$，且 $0.25$ 分位数为 $3$。",
+    "Welche der folgenden Aussagen trifft bzw. treffen zu?": "下列哪些命题成立？",
+    "1. $F_X(3)=0.25$ 2. $F_X(0.25)=3$ 3. $F_X^{-1}(3)=0.25$": "1. $F_X(3)=0.25$；2. $F_X(0.25)=3$；3. $F_X^{-1}(3)=0.25$。",
+    "Sei $Y$ eine diskrete Zufallsvariable mit Träger $T_Y=\\mathbb N$ und Verteilungsfunktion $F_Y$ mit": "设 $Y$ 是离散随机变量，支撑集 $T_Y=\\mathbb N$，分布函数为 $F_Y$，并满足：",
+    "und": "并且：",
+    "Geben Sie für die folgenden Aussagen an, ob sie aus diesen Angaben folgen:": "判断下列命题是否能由这些已知信息推出：",
+    "1. Der Median von $Y$ ist $3$. 2. $P(Y<3)\\le 0.5$ 3. Der Erwartungswert von $Y$ ist $3$.": "1. $Y$ 的中位数是 $3$；2. $P(Y<3)\\le 0.5$；3. $Y$ 的期望为 $3$。",
+    "1. Der Median von $Y$ ist $3$. 2. $P(Y<3)\\leq 0.5$ 3. Der Erwartungswert von $Y$ ist $3$.": "1. $Y$ 的中位数是 $3$；2. $P(Y<3)\\leq 0.5$；3. $Y$ 的期望为 $3$。",
+    "Welche Verteilung hat die Zufallsvariable": "问下列随机变量服从什么分布：",
+    "falls": "在如下条件下：",
+    "Nehmen Sie an, ein Pfandautomat akzeptiert jede ihm zugeführte Flasche mit Wahrscheinlichkeit $p<1$. Sei $F$ die Anzahl der Flaschen, die man dem Automaten zuführen muss, um einen Pfandbon für $m$ akzeptierte Flaschen zu bekommen. Mit welcher aus der Vorlesung bekannten parametrischen Verteilung können Sie $F$ beschreiben, was sind die Parameterwerte und welche zusätzlichen Annahmen über den daten-generierenden Prozess müssen Sie dafür treffen?": "假设押金回收机以概率 $p<1$ 接受每个投入的瓶子。令 $F$ 为为了获得 $m$ 个被接受瓶子的押金凭条而必须投入的瓶子数。问可用课堂上哪种参数分布描述 $F$，参数值是什么，并且还需要对数据生成过程作哪些额外假设？",
+    "Folgender Mosaikplot stellt den beobachteten Zusammenhang der Merkmale Geschlecht $(m/w)$ und Klausurerfolg $(bestanden/nicht bestanden)$ für eine Statistikklausur dar.": "下列马赛克图展示了一次统计考试中性别 $(m/w)$ 与考试结果（通过/未通过）之间的观察关系。",
+    "1. Für welches Geschlecht ist die Durchfallrate höher? 2. Gibt es insgesamt mehr Männer, die bestehen oder mehr Frauen, die bestehen? 3. Das zusätzlich erhobene Merkmal „Studienfach“ mit möglichen Ausprägungen „Nebenfach“ und „Hauptfach“ ist empirisch unabhängig von „Geschlecht“ und von „Klausurerfolg“. Die Hälfte der Prüfungsteilnehmer:innen sind Nebenfachstudierende, die anderen Hauptfachstudierende. Skizzieren Sie einen Mosaikplot für die gemeinsame Verteilung dieser drei Merkmale. Nur schematische Skizze gefragt, keine exakte Zeichnung.": "1. 哪个性别的挂科率更高？2. 总体上，通过考试的男性更多还是女性更多？3. 额外记录的变量“专业类型”取值为“副修”和“主修”，且经验上与“性别”和“考试结果”都独立。一半考生为副修学生，另一半为主修学生。请画出这三个变量联合分布的马赛克图示意图，只需示意，不要求精确绘图。",
+    "Es liegt eine große Anzahl $n$ von unabhängig Poisson-verteilten Zufallsvariablen mit gleicher Rate $\\lambda$ vor. Wie ist die Summe dieser Zufallsvariablen exakt verteilt und welcher Verteilung folgt diese Summe approximativ?": "有大量 $n$ 个相互独立且参数同为 $\\lambda$ 的 Poisson 随机变量。它们的和精确服从什么分布？又可近似服从什么分布？",
+    "Eine Studie untersucht Zusammenhänge zwischen dem Fortbestand der Ehe nach sieben Ehejahren, der Aufteilung der Hausarbeit und den Einkommensunterschieden zwischen den Ehepartnern bei $1000$ heterosexuellen Ehepaaren.": "一项研究考察 $1000$ 对异性婚姻夫妻中，婚后七年婚姻是否持续、家务分配方式以及夫妻收入差异之间的关系。",
+    "Insgesamt waren $200$ der $1000$ Ehepaare nach sieben Jahren bereits wieder geschieden.": "$1000$ 对夫妻中共有 $200$ 对在七年后已经离婚。",
+    "Vervollständigen Sie die marginalen gemeinsamen Häufigkeiten des Fortbestands der Ehe und der Aufteilung der Hausarbeit ohne Berücksichtigung der Einkommensunterschiede sowie die gemeinsame Häufigkeitsverteilung aller drei Merkmale in den folgenden Kontingenztafeln.": "补全下列列联表：先不考虑收入差异，补全婚姻状态与家务分配的边际联合频数；再补全三个变量的联合频数分布。",
+    "Die Forscher:innen interessieren sich primär für mögliche Unterschiede in den Scheidungsraten zwischen Paaren, in denen Hausarbeit gerecht aufgeteilt ist und Paaren, in denen Hausarbeit ungerecht verteilt ist. Berechnen Sie die entsprechende Odds Ratio und interpretieren Sie Ihr Ergebnis kurz.": "研究者主要关心：家务公平分配与家务不公平分配的夫妻之间，离婚率是否存在差异。计算相应的 odds ratio，并简要解释结果。",
+    "Gibt es in Anbetracht der Daten aus der Studie Anhaltspunkte dafür, dass der Zusammenhang zwischen der Aufteilung der Hausarbeit und dem Fortbestand der Ehe durch Einkommensunterschiede zwischen den Ehepartnern modifiziert wird? Berechnen Sie die relevanten Odds Ratios und interpretieren Sie Ihr Ergebnis. Nennen Sie den Fachbegriff für das hier auftretende Phänomen.": "根据研究数据，是否有迹象表明：家务分配与婚姻是否持续之间的关系会受到夫妻收入差异的调节？计算相关 odds ratio，解释结果，并指出这里出现现象的专业名称。",
+    "In einer Population leiden zwei Prozent an einer Krankheit. Von diesen zwei Prozent rauchen $80\\%$ regelmäßig. Es sei weiterhin bekannt, dass $30\\%$ der Menschen, die die Krankheit nicht haben, regelmäßig rauchen. Wie viel Prozent der regelmäßigen Raucher:innen leiden an der Krankheit? Runden Sie Ihr Ergebnis bitte auf $3$ Nachkommastellen.": "某总体中 $2\\%$ 的人患有某病。在这些患者中，$80\\%$ 经常吸烟；没有该病的人中，$30\\%$ 经常吸烟。问经常吸烟者中有多少比例患病？结果保留 $3$ 位小数。",
+    "Sei $X$ gegeben $Y$ geometrisch verteilt mit": "设在给定 $Y$ 的条件下，$X$ 服从如下几何分布：",
+    "und $Y$ stetig gleichverteilt mit": "并且 $Y$ 服从如下连续均匀分布：",
+    "Berechnen Sie $E(X)$.": "计算 $E(X)$。",
+    "Die Firma „Loysent“ will zur Qualitätskontrolle in der Lebensmittelproduktion ein System zur automatischen Entdeckung verunreinigter Produkte einsetzen. Pro Monat soll das System im Alltagsbetrieb $5$ Millionen Einheiten überprüfen. Von einer Million Einheiten sind erwartungsgemäß zehn verunreinigt. In einem Pilotversuch des Systems mit einer bewusst ausgewählten Stichprobe von Produkten löste es bei $13$ von $15$ tatsächlich verunreinigten Einheiten und bei $22$ von $1100$ nicht verunreinigten Einheiten einen Alarm aus.": "公司 “Loysent” 希望在食品生产质控中使用自动发现污染产品的系统。日常运行中系统每月需检查 $5$ 百万个单位。预计每 $1$ 百万个单位中有 $10$ 个被污染。在一次有意抽取样本的试运行中，系统对 $15$ 个实际污染单位中的 $13$ 个报警，对 $1100$ 个未污染单位中的 $22$ 个也报警。",
+    "Berechnen Sie auf Basis der Ergebnisse des Pilotversuchs die erwarteten monatlichen Häufigkeiten von Fehlalarmen, zutreffenden Alarmen, übersehenen Verunreinigungen und vom System korrekt als beanstandungsfrei identifizierten Einheiten, falls das System in der Produktion zum Einsatz käme.": "基于试运行结果，若系统投入生产，计算每月期望出现的误报、正确报警、漏检污染以及被系统正确判为无问题的单位数量。",
+    "Halten Sie den Einsatz des Systems unter den gegebenen Umständen aus statistischer Sicht für sinnvoll? Begründen Sie Ihre Antwort quantitativ mit geeigneten Kennzahlen.": "在给定条件下，从统计角度看你认为该系统值得使用吗？请用合适指标进行定量说明。",
+    "Quantifizieren Sie die erwartete Stärke des Zusammenhangs zwischen der tatsächlichen Verunreinigung einer Einheit und der Reaktion des Systems auf diese Einheit im Alltagsbetrieb. Benutzen Sie dafür eine Maßzahl, deren Wertebereich $\\mathbb R_0^+$ ist. Interpretieren Sie Ihr Ergebnis.": "量化日常运行中“单位实际是否污染”与“系统对该单位的反应”之间的预期关联强度。请使用取值范围为 $\\mathbb R_0^+$ 的指标，并解释结果。",
+    "Die Grafik unten zeigt die ROC-Kurven zweier Systeme zur automatischen Entdeckung verunreinigter Produkte, die von den Firmen „Ponapticum“ und „Nopapcitom“ angeboten werden. Die ROC-Kurven sind an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zugrunde liegenden Scores beschriftet.": "下图显示了公司 “Ponapticum” 和 “Nopapcitom” 提供的两种自动发现污染产品系统的 ROC 曲线。曲线上若干点标注了对应评分阈值。",
+    "Funktioniert das in den vorherigen Teilaufgaben analysierte System etwa gleich gut, deutlich besser oder deutlich schlechter als die zwei hier dargestellten Systeme?": "前面小问分析的系统，与图中两个系统相比，大致同样好、明显更好还是明显更差？",
+    "Gehen Sie davon aus, dass der Verkauf verunreinigter Produkte für „Loysent“ existenzbedrohend ist und Einheiten, die vom System als verunreinigt eingestuft werden, einfach und kostengünstig automatisch gereinigt werden können. Welches der beiden in der Grafik gezeigten Systeme ist für diese Situation besser geeignet? Welcher Bereich von Schwellenwerten sollte für den praktischen Einsatz des präferierten Systems benutzt werden? Begründen Sie Ihre Antworten kurz.": "假设销售污染产品会危及 “Loysent” 的生存，而被系统判为污染的单位可以简单且低成本地自动清洁。图中两个系统哪一个更适合这种场景？实际使用时应选择该系统的哪个阈值范围？请简要说明理由。",
+    "Das System prüft nacheinander jede einzelne produzierte Einheit. Im Zuge der Erprobung des Systems wurde auch festgehalten, wie viele vom System nicht beanstandete Einheiten jeweils zwischen zwei beanstandeten Einheiten überprüft wurden. Sei die Anzahl der aufeinanderfolgenden, nicht beanstandeten Einheiten $X$.": "系统逐个检查每个生产单位。在系统测试过程中，还记录了两次被系统判为有问题的单位之间，连续通过了多少个未被判为有问题的单位。令这个连续未被判为有问题的单位数为 $X$。",
+    "Mit welcher parametrischen Verteilungsfamilie können Sie die Verteilung von $X$ beschreiben? Welche Annahmen müssen Sie dafür zusätzlich treffen? Geben Sie an, was die theoretischen Annahmen in der beschriebenen Situation konkret bedeuten.": "可以用哪一类参数分布描述 $X$ 的分布？为此还需要哪些额外假设？请说明这些理论假设在本情境中的具体含义。",
+    "Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die entweder noch nie mit dem Fnufnu-Erreger infiziert waren, „Naiv“, oder eine solche Infektion bereits hinter sich haben, „Genesen“, oder zum Zeitpunkt der Studie an einer akuten Fnufnu-Infektion leiden, „Kranke“, ergibt folgende Ergebnisse:": "该测试在一组患者样本上进行临床试验：患者分为从未感染 Fnufnu 病原体的“Naiv”、曾经感染的“Genesen”、以及研究时正处于急性感染的“Kranke”。结果如下：",
+    "Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zugrunde liegenden diagnostischen Scores beschriftet.": "下图显示另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。",
+    "Nehmen Sie an, ein Pfandautomat akzeptiert jede ihm zugeführte Flasche mit Wahrscheinlichkeit $p<1$. Sei $F$ die Anzahl der Flaschen, die man dem Automaten zuführen muss, um einen Pfandbon für $m$ akzeptierte Flaschen zu bekommen.": "假设押金回收机以概率 $p<1$ 接受每个投入的瓶子。令 $F$ 为了得到 $m$ 个被接受瓶子的押金凭条所需投入的瓶子数。",
+    "Mit welcher aus der Vorlesung bekannten parametrischen Verteilung können Sie $F$ beschreiben, was sind die Parameterwerte und welche zusätzlichen Annahmen über den daten-generierenden Prozess müssen Sie dafür treffen?": "可以用课堂上哪种已知参数分布描述 $F$？参数值是什么？还需要对数据生成过程作哪些额外假设？",
+    "Folgender Mosaikplot stellt den beobachteten Zusammenhang der Merkmale Geschlecht, $m/w$, und Klausurerfolg, bestanden/nicht bestanden, für eine Statistikklausur dar.": "下列马赛克图展示了一次统计考试中性别 $m/w$ 与考试结果（通过/未通过）的观察关系。",
+    "Für welches Geschlecht ist die Durchfallrate höher?": "哪个性别的挂科率更高？",
+    "Gibt es insgesamt mehr Männer, die bestehen, oder mehr Frauen, die bestehen?": "总体上通过考试的男性更多，还是通过考试的女性更多？",
+    "Das in den oben dargestellten Daten zusätzlich erhobene Merkmal „Studienfach“ mit möglichen Ausprägungen „Nebenfach“ und „Hauptfach“ ist empirisch unabhängig von „Geschlecht“ und von „Klausurerfolg“. Die Hälfte der Prüfungsteilnehmer:innen sind Nebenfachstudierende, die anderen Hauptfachstudierende. Skizzieren Sie einen Mosaikplot für die gemeinsame Verteilung dieser drei Merkmale. Nur schematische Skizze gefragt, keine exakte Zeichnung.": "上面数据中额外记录的变量“专业类型”取值为“副修”和“主修”，且经验上与“性别”和“考试结果”独立。一半考生是副修学生，另一半是主修学生。请画出三个变量联合分布的马赛克图示意图，只需示意，不要求精确绘制。",
+    "Gegeben:": "给定：",
+    "- $5$ Millionen Einheiten pro Monat - pro $1$ Million Einheiten sind $10$ verunreinigt": "- 每月 $5$ 百万个单位；- 每 $1$ 百万个单位中有 $10$ 个被污染。",
+    "Also beträgt die erwartete Anzahl verunreinigter Einheiten pro Monat:": "因此每月被污染单位的期望数量为：",
+    "Pilotversuch:": "试运行：",
+    "- $13$ von $15$ verunreinigten Einheiten erkannt - $22$ von $1100$ nicht verunreinigten Einheiten mit Alarm": "- $15$ 个污染单位中识别出 $13$ 个；- $1100$ 个未污染单位中有 $22$ 个触发报警。",
+    "Erwartete monatliche Häufigkeiten.": "求每月期望频数。",
+    "Sinnvoller Einsatz?.": "判断该系统是否值得使用。",
+    "Zusammenhangsmaß mit Wertebereich $\\mathbb R_0^+$.": "使用取值范围为 $\\mathbb R_0^+$ 的关联强度指标。",
+    "ROC-Kurven.": "分析 ROC 曲线。",
+    "Wartezeit zwischen beanstandeten Einheiten.": "分析两次被判为有问题的单位之间的等待时间。",
+    "Gegeben sind $N+1$ Stapel $s_0,\\dots,s_N$. Stapel $s_j$ enthält $j$ rote und $N-j$ blaue Chips. Aus den $N+1$ Stapeln wird zufällig einer ausgewählt und aus diesem Stapel werden ohne Zurücklegen zwei Chips gezogen.": "给定 $N+1$ 堆筹码 $s_0,\\dots,s_N$。第 $s_j$ 堆含有 $j$ 个红筹码和 $N-j$ 个蓝筹码。从这 $N+1$ 堆中随机选一堆，并从该堆中不放回抽取两个筹码。",
+    "Bezeichne $S_j$ das Ereignis, dass Stapel $s_j$ ausgewählt wurde. Sei $R_i$ das Ereignis, dass der $i$-te gezogene Chip rot ist.": "记 $S_j$ 为选中第 $s_j$ 堆的事件；记 $R_i$ 为第 $i$ 次抽到红筹码的事件。",
+    "Hinweise:": "提示：",
+    "Bestimmen Sie $P(R_1\\mid S_j)$ und interpretieren Sie die Größe.": "求 $P(R_1\\mid S_j)$，并解释该量的含义。",
+    "Zeigen Sie, dass $P(R_1)=\\frac12$.": "证明 $P(R_1)=\\frac12$。",
+    "Bestimmen Sie $P(R_1\\cap R_2\\mid S_j)$.": "求 $P(R_1\\cap R_2\\mid S_j)$。",
+    "Berechnen Sie $P(R_1\\cap R_2)$.": "计算 $P(R_1\\cap R_2)$。",
+}
+
+QUESTION_TRANSLATIONS_03 = {
+    "Betrachten Sie die Verteilungsfunktion": "考虑下列分布函数。",
+    "Sei $X\\sim F$. Bestimmen Sie die Wahrscheinlichkeiten:": "设 $X\\sim F$。求下列概率：",
+    "Sei $X$ eine stetige Zufallsvariable mit Dichte": "设 $X$ 是具有如下密度的连续随机变量：",
+    "mit Parametern $a,b>0$.": "其中参数 $a,b>0$。",
+    "Berechnen Sie den Modus von $X$.": "计算 $X$ 的众数。",
+    "Es gilt:": "已知：",
+    "Für welche Kombination von Werten ist die Verteilung von $X$ rechtsschief?": "在哪些取值组合下，$X$ 的分布是右偏的？",
+    "Betrachten Sie:": "考虑下列对象：",
+    "Sei $X\\sim F$. Bestimmen Sie $\\mathbb P(X=0)$, $\\mathbb P(X=1)$ und $\\mathbb P\\left(X\\in\\left[\\frac13,\\frac23\\right]\\right)$.": "设 $X\\sim F$。求 $\\mathbb P(X=0)$、$\\mathbb P(X=1)$ 以及 $\\mathbb P\\left(X\\in\\left[\\frac13,\\frac23\\right]\\right)$。",
+    "Für $\\lambda>0$ sei $F:\\mathbb R\\to\\mathbb R$ definiert durch:": "对 $\\lambda>0$，函数 $F:\\mathbb R\\to\\mathbb R$ 定义如下：",
+    "Begründen Sie, ob es sich bei $F$ um eine Verteilungsfunktion handelt.": "说明 $F$ 是否为一个分布函数，并给出理由。",
+    "Sei $X$ eine geometrisch verteilte Zufallsvariable mit Parameter $p\\in(0,1)$, d.h. die Zähldichte von $X$ ist:": "设 $X$ 是参数为 $p\\in(0,1)$ 的几何分布随机变量，即 $X$ 的计数密度为：",
+    "Bestimmen Sie explizit die Verteilungsfunktion $F_X$ von $X$.": "明确求出 $X$ 的分布函数 $F_X$。",
+    "Sei $X\\sim\\operatorname{LogN}(\\mu,\\sigma^2)$ mit Dichte:": "设 $X\\sim\\operatorname{LogN}(\\mu,\\sigma^2)$，其密度为：",
+    "Zeigen Sie mit dem Transformationssatz, dass $Y:=\\log(X)\\sim N(\\mu,\\sigma^2)$.": "用变量变换定理证明 $Y:=\\log(X)\\sim N(\\mu,\\sigma^2)$。",
+    "Welche der folgenden Funktionen sind Verteilungsfunktionen stetiger Zufallsvariablen?": "下列哪些函数是连续随机变量的分布函数？",
+    "Ein Wirt wird wöchentlich mit Bier beliefert. Der Wochenverbrauch $X$ in Hektolitern habe Dichte:": "某酒馆每周进一次啤酒。设每周啤酒消耗量 $X$（单位：百升）具有如下密度：",
+    "Gegeben sei die stetige Zufallsvariable $X$ mit Dichte:": "给定连续随机变量 $X$，其密度为：",
+    "Gegeben sei die stetige Zufallsvariable $X$ mit Dichte": "给定连续随机变量 $X$，其密度为：",
+    "Die Zufallsvariable $X$ hat Dichte:": "随机变量 $X$ 的密度为：",
+    "Bestimmen Sie den Erwartungswert von:": "求下列随机变量的期望：",
+    "Wie groß ist $\\mathbb P(Z=4)$?": "$\\mathbb P(Z=4)$ 是多少？",
+    "Geben Sie den Träger von $Z$ an und bestimmen Sie die Dichte von $Z$.": "给出 $Z$ 的支撑集，并求 $Z$ 的密度。",
+    "Sei:": "设：",
+    "Sei": "设：",
+    "Zeigen Sie, dass:": "证明：",
+    "Zeigen Sie, dass": "证明：",
+    "in Rate-Parametrisierung.": "这里采用率参数化。",
+    "Die Wahrscheinlichkeit, dass der HSV in einem Bundesligaspiel kein Tor schießt, beträgt $0.7788$.": "HSV 在一场德甲比赛中一球不进的概率为 $0.7788$。",
+    "Welche Verteilung eignet sich zur Beschreibung der Anzahl der Tore in $90$ Minuten?": "用哪种分布适合描述 $90$ 分钟内的进球数？",
+    "Bestimmen Sie die Wahrscheinlichkeit, dass der HSV mindestens zwei Tore schießt.": "求 HSV 至少进两球的概率。",
+    "Bayern erzielt durchschnittlich $2.8$ Tore pro Spiel. Berechnen Sie die Wahrscheinlichkeit für ein $4:0$ für Bayern, bei Unabhängigkeit der Torzahlen.": "拜仁平均每场进 $2.8$ 球。若两队进球数相互独立，计算拜仁 $4:0$ 获胜的概率。",
+    "Welche Verteilung hat die Wartezeit auf das nächste HSV-Tor?": "等待 HSV 下一粒进球的时间服从什么分布？",
+    "Welche Verteilungen besitzen die folgenden Zufallsvariablen? Geben Sie Dichtefunktion und Träger an.": "下列随机变量分别服从什么分布？请给出密度/概率函数和支撑集。",
+    "Fünf Aufgaben, vier vorbereitet, zwei werden zufällig ausgewählt. $X$ zählt die ausgewählten vorbereiteten Aufgaben.": "共有五道题，其中四道已准备；随机抽取两道。$X$ 表示被抽中的已准备题目数量。",
+    "Anzahl emittierter $\\alpha$-Teilchen pro Zeitintervall.": "每个时间区间内发射的 $\\alpha$ 粒子数量。",
+    "Ein Schlüssel passt von $10$ Schlüsseln. Nach jedem Fehlversuch werden die Schlüssel neu gemischt. $X$ sei die Anzahl der Versuche bis zum Erfolg.": "$10$ 把钥匙中有一把能打开。每次失败后钥匙重新混合。设 $X$ 为直到成功所需的尝试次数。",
+    "Ein Münchner kennt jeden $1000$-sten Einwohner persönlich. Auf einem Spaziergang trifft er $50$ Münchner. $X$ sei die Anzahl der Bekannten.": "某慕尼黑人平均每 $1000$ 个居民认识一个。一次散步中他遇到 $50$ 个慕尼黑人。设 $X$ 为其中熟人的数量。",
+    "Sei $X$ stetig mit Dichte $f$ und Verteilungsfunktion $F$. Entscheiden Sie, ob die Aussagen richtig oder falsch sind.": "设 $X$ 为连续随机变量，密度为 $f$，分布函数为 $F$。判断下列说法对错。",
+    "Für $\\lambda>0$ sei die Funktion $F:\\mathbb R\\to\\mathbb R$ definiert durch": "对 $\\lambda>0$，函数 $F:\\mathbb R\\to\\mathbb R$ 定义如下：",
+    "Zeigen Sie, dass $F$ eine gültige Verteilungsfunktion ist.": "证明 $F$ 是合法的分布函数。",
+    "Gegeben sei die Funktion": "给定函数：",
+    "Bestimmen Sie $a\\in\\mathbb R$, sodass $G_a$ eine Verteilungsfunktion ist.": "求 $a\\in\\mathbb R$，使得 $G_a$ 是一个分布函数。",
+    "Sei nun $X\\sim G_a$ mit $a=\\frac23$. Bestimmen Sie:": "现在设 $X\\sim G_a$ 且 $a=\\frac23$。求：",
+    "Es sei $X\\sim\\operatorname{Geo}(p)$, das heißt $X:\\Omega\\to\\mathbb N$ ist geometrisch verteilt mit": "设 $X\\sim\\operatorname{Geo}(p)$，即 $X:\\Omega\\to\\mathbb N$ 服从几何分布，并满足：",
+    "und $p\\in(0,1)$. Zeigen Sie:": "其中 $p\\in(0,1)$。证明：",
+    "für alle $n,k>0$.": "对所有 $n,k>0$ 成立。",
+    "Betrachten Sie die Funktion": "考虑函数：",
+    "Zeigen Sie, dass $F$ eine Verteilungsfunktion ist.": "证明 $F$ 是一个分布函数。",
+    "Sei $\\nu=\\lambda_F$ das zu $F$ gehörende Lebesgue-Stieltjes-Maß. Bestimmen Sie eine Dichte $f$ und ein Maß $\\mu$, sodass:": "设 $\\nu=\\lambda_F$ 为属于 $F$ 的 Lebesgue-Stieltjes 测度。求一个密度 $f$ 和一个测度 $\\mu$，使得：",
+    "Sei $X$ eine Zufallsvariable mit Bildmaß $\\nu$, also $X\\sim\\nu$. Berechnen Sie $E(X)$ und $\\operatorname{Var}(X)$.": "设 $X$ 是像测度为 $\\nu$ 的随机变量，即 $X\\sim\\nu$。计算 $E(X)$ 和 $\\operatorname{Var}(X)$。",
+    "Sei $X\\sim\\chi^2(10)$.": "设 $X\\sim\\chi^2(10)$。",
+    "Erstellen Sie in R eine Grafik der Dichte $f_X$ und der Verteilungsfunktion $F_X$ von $X$ nebeneinander und vergleichen Sie diese.": "在 R 中把 $X$ 的密度 $f_X$ 和分布函数 $F_X$ 并排画出，并比较二者。",
+    "Geben Sie Modus, Median und Erwartungswert von $X$ an und zeichnen Sie diese in die Grafiken ein.": "给出 $X$ 的众数、中位数和期望，并把它们画到图中。",
+    "Seien $X\\sim N(-5,1)$, $Y\\sim N(3,5)$ und $Z\\sim t(10)$. Die Zufallsvariable $V$ folgt einer Mischverteilung aus diesen drei Zufallsvariablen mit Gewichten $0.2$, $0.3$ und $0.5$.": "设 $X\\sim N(-5,1)$、$Y\\sim N(3,5)$、$Z\\sim t(10)$。随机变量 $V$ 服从由这三个随机变量按权重 $0.2,0.3,0.5$ 组成的混合分布。",
+    "Warum ist": "为什么下列表达式",
+    "eine gültige Dichte?": "是一个合法密度？",
+    "Wiederholen Sie Schritt (a) für $V$.": "对 $V$ 重复步骤 (a)。",
+    "Bonus": "附加题",
+    "Wiederholen Sie Schritt (b) für $V$.": "对 $V$ 重复步骤 (b)。",
+    "Sei $X$ eine Zufallsvariable mit Dichte $f_X$ und $g:\\mathbb R\\to\\mathbb R$ invertierbar. Sei $h=g^{-1}$ stetig differenzierbar. Leiten Sie den eindimensionalen Transformationssatz her.": "设 $X$ 是密度为 $f_X$ 的随机变量，$g:\\mathbb R\\to\\mathbb R$ 可逆，且 $h=g^{-1}$ 连续可微。推导一维变量变换定理。",
+    "Die Länge $X$ eines zufällig auf der Straße gefundenen Blattes eines Baumes in Dezimetern folge einer Verteilung mit der Dichtefunktion": "随机在街上捡到一片树叶，其长度 $X$（单位：分米）服从具有如下密度函数的分布：",
+    "Zeigen Sie, dass gelten muss:": "证明必须满足：",
+    "$(2\\text{ Pkt.})$": "（2 分）",
+    "Bestimmen Sie den Erwartungswert der Zufallsvariablen": "求该随机变量的期望：",
+    "Wie groß ist die Wahrscheinlichkeit, dass ein Blatt $0.75$ Dezimeter lang ist? $(1\\text{ Pkt.})$": "一片树叶长度恰好为 $0.75$ 分米的概率是多少？（1 分）",
+    "Die Fläche eines Blattes der Länge $X$ sei": "长度为 $X$ 的树叶面积定义为：",
+    "Bestimmen Sie die Dichte der Fläche $Y$ eines zufälligen Blattes. Welche Werte kann die Fläche eines Blattes annehmen, d.h. für welche Werte gilt": "求随机树叶面积 $Y$ 的密度。树叶面积可以取哪些值，也就是说下式在哪些值上成立：",
+    "$(4\\text{ Pkt.})$": "（4 分）",
+    "Es liegt eine Stichprobe von $\\mathcal{U}[0,1]$-verteilten Zufallszahlen vor. Skizzieren Sie kurz, wie und nach welcher Methode sich daraus Zufallszahlen aus einer Poisson-Verteilung erzeugen lassen. $(2\\text{ Pkt.})$": "给定一组服从 $\\mathcal U[0,1]$ 的随机数样本。简要说明可用什么方法以及如何由此生成 Poisson 分布随机数。（2 分）",
+    "Es seien": "设：",
+    "Zufallsvariablen für $n\\in \\mathbb{N}$. Definieren Sie: $X_1,X_2,X_3$ sind unabhängig. $(1\\text{ Pkt.})$": "它们是 $n\\in\\mathbb N$ 时的随机变量。定义“$X_1,X_2,X_3$ 相互独立”。（1 分）",
+    "Die Verteilungsfunktion einer Zufallsvariablen $X$ lautet:": "随机变量 $X$ 的分布函数为：",
+    "Bestimmen Sie das $0.25$-Quantil der Verteilung. Wie lässt sich dieses interpretieren? $(2\\text{ Pkt.})$": "求该分布的 $0.25$ 分位数，并解释其含义。（2 分）",
+    "Der Maximum-Likelihood-Schätzer des Parameters $\\lambda$ einer Exponentialverteilung lautet": "指数分布参数 $\\lambda$ 的最大似然估计量为：",
+    "Begründen Sie, weshalb für den Maximum-Likelihood-Schätzer von": "说明为什么下列最大似然估计量",
+    "gilt:": "满足：",
+    "$(1\\text{ Pkt.})$": "（1 分）",
+    "Unten stehende Abbildung zeigt die normierte Loglikelihood einer Stichprobe der Poisson-Verteilung. Zeichnen Sie ein $0.95\\%$ Likelihood-Intervall für den Parameter $\\lambda$ in die Grafik ein. $(3\\text{ Pkt.})$": "下图显示 Poisson 分布样本的标准化对数似然。请在图中画出参数 $\\lambda$ 的 $0.95\\%$ 似然区间。（3 分）",
+    "**Hinweis:** Die Verteilungsfunktion der $\\chi_1^2$-Verteilung finden Sie im Anhang.": "**提示：** $\\chi_1^2$ 分布的分布函数可在附录中找到。",
+    "Es wird ein Niveau-$\\alpha$-Test $\\psi$ für ein Testproblem $H_0$ versus $H_1$ durchgeführt. Die Testentscheidung lautet, dass die Nullhypothese abgelehnt wird. Welcher Fehler kann durch diese Testentscheidung eingetreten sein? Kann eine maximale Wahrscheinlichkeit, mit der dieser Fehler auftritt, angegeben werden? $(2\\text{ Pkt.})$": "对检验问题 $H_0$ 对 $H_1$ 进行水平为 $\\alpha$ 的检验 $\\psi$。检验结论为拒绝原假设。问这种决策可能发生哪类错误？能否给出该错误发生概率的最大值？（2 分）",
+    "Die stetige Zufallsvariable $X$ hat die Verteilungsfunktion": "连续随机变量 $X$ 的分布函数为：",
+    "a) Bestimme die Dichte $f_X(x)$ von $X$.": "a) 求 $X$ 的密度 $f_X(x)$。",
+    "b) Berechne $P(1<X<3)$.": "b) 计算 $P(1<X<3)$。",
+    "c) Betrachte die Funktion": "c) 考虑函数：",
+    "Ermittle $c$, sodass $h(x)$ eine Dichte ist.": "求 $c$，使得 $h(x)$ 是一个密度。",
+    "Seien $X_1,\\dots,X_n$ i.i.d. verteilte stetige Zufallsvariablen mit Dichte": "设 $X_1,\\dots,X_n$ 是独立同分布的连续随机变量，其密度为：",
+    "für $x_i>0$ und Verteilungsparameter $\\alpha>0$, $\\beta>0$.": "其中 $x_i>0$，分布参数为 $\\alpha>0$、$\\beta>0$。",
+    "a) Stelle $L(\\alpha)$ und $l(\\alpha)$ für gegebene Stichproben $x_1,\\dots,x_n$ auf.": "a) 对给定样本 $x_1,\\dots,x_n$，写出 $L(\\alpha)$ 和 $l(\\alpha)$。",
+    "b) Verwende $\\beta=1$ und bestimme aus resultierender Log-Likelihood den ML-Schätzer für $\\alpha$. Sie können davon ausgehen, dass das Ergebnis dem Maximum entspricht.": "b) 令 $\\beta=1$，由相应对数似然求 $\\alpha$ 的最大似然估计量。可以假设所得结果确实对应最大值。",
+    "c) Gegeben sei die Stichprobe": "c) 给定样本：",
+    "Berechnen Sie $\\hat{\\alpha}_{ML}$ für diese Stichprobe.": "计算该样本下的 $\\hat{\\alpha}_{ML}$。",
+    "Die diskrete Zufallsvariable $X$ mit Wahrscheinlichkeitsdichte": "离散随机变量 $X$ 的概率函数为：",
+    "Dabei ist $c \\in \\mathbb{R}$ eine Konstante.": "其中 $c\\in\\mathbb R$ 是常数。",
+    "a) Bestimmen Sie die Konstante $c$, sodass $p_X$ eine Wahrscheinlichkeitsdichte der diskreten Zufallsvariable $X$ ist.": "a) 求常数 $c$，使得 $p_X$ 是离散随机变量 $X$ 的合法概率函数。",
+    "Verwenden Sie für die folgenden Aufgaben $c=2$.": "以下小问使用 $c=2$。",
+    "b) Bestimmen Sie die Verteilungsfunktion von $X$ und skizzieren Sie diese.": "b) 求 $X$ 的分布函数，并画出草图。",
+    "c) Berechnen Sie Erwartungswert und Varianz von $X$.": "c) 计算 $X$ 的期望和方差。",
+    "Sei $X$ eine Cauchy-verteilte Zufallsvariable mit zugehöriger Dichte": "设 $X$ 是 Cauchy 分布随机变量，其密度为：",
+    "a) Bestimmen Sie anhand des Transformationssatzes für Dichten die Dichte der Zufallsvariablen": "a) 使用密度变换定理求下列随机变量的密度：",
+    "b) Welcher Verteilung folgt $Y$?": "b) $Y$ 服从什么分布？",
+    "Sei $X$ eine Zufallsvariable mit Dichte": "设随机变量 $X$ 的密度为：",
+    "mit Konstante $c>0$.": "其中常数 $c>0$。",
+    "Geben Sie an, was für eine Funktion $f$ gelten muss, sodass $f$ eine Dichte ist. $(2P)$": "说明函数 $f$ 需要满足哪些条件，才能成为密度。（2 分）",
+    "Bestimmen Sie die Konstante $c$ so, dass $f(x)$ eine Dichte ist und prüfen Sie, ob $f(x)$ die Eigenschaften aus Teilaufgabe (a)(i) erfüllt. $(4P)$": "求常数 $c$，使得 $f(x)$ 是密度，并检验 $f(x)$ 是否满足 (a)(i) 中的性质。（4 分）",
+    "Geben Sie den Träger von $f(x)$ an. $(2P)$": "给出 $f(x)$ 的支撑集。（2 分）",
+    "Bestimmen Sie den Erwartungswert der Zufallsvariable $X$. $(4P)$": "求随机变量 $X$ 的期望。（4 分）",
+    "Seien $X_1,\\dots,X_n$ für $n \\in \\mathbb{N}$ i.i.d. verteilt wie die Zufallsvariable $X$. Betrachtet wird jetzt": "设对 $n\\in\\mathbb N$，$X_1,\\dots,X_n$ 与随机变量 $X$ 独立同分布。现在考虑：",
+    "Sei $\\tilde{Y}_n$ die standardisierte Zufallsvariable von $Y_n$ für $n \\in \\mathbb{N}$. Welche Aussage können Sie über die Konvergenz von $\\tilde{Y}_n$ für $n \\to \\infty$ treffen und warum? $(3P)$": "设 $\\tilde Y_n$ 是 $Y_n$ 的标准化随机变量。对 $n\\to\\infty$，你能对 $\\tilde Y_n$ 的收敛作出什么结论？为什么？（3 分）",
+    "Bestimmen Sie": "求：",
+    "$(1P)$": "（1 分）",
+    "Berechnen Sie die Konstante $c$.": "计算常数 $c$。",
+    "Skizzieren Sie die Dichte.": "画出密度函数草图。",
+    "Welche der folgenden Aussagen ist richtig? Begründen Sie kurz, keine explizite Berechnung notwendig.": "下列哪些说法正确？请简要说明理由，不需要显式计算。",
+    "- Der Median von $X$ ist $2$. - Die Schiefe von $X$ ist größer $0$. - Der Erwartungswert von $X$ ist kleiner als der Modus von $X$.": "- $X$ 的中位数为 $2$；- $X$ 的偏度大于 $0$；- $X$ 的期望小于 $X$ 的众数。",
+    "Berechnen Sie mit Hilfe des Dichtetransformationssatzes die Dichte der Zufallsvariablen": "使用密度变换定理计算下列随机变量的密度：",
+    "Berechnen Sie den Erwartungswert von $X$.": "计算 $X$ 的期望。",
+    "Berechnen Sie den Median von $X$.": "计算 $X$ 的中位数。",
+    "Eine Person findet heraus, dass sie auch gänzlich ohne Lernen jede Klausur mit $20\\%$ Wahrscheinlichkeit besteht. Wie oft müsste sie im Mittel eine Klausur schreiben, um sie zu bestehen? Welche Varianz ergibt sich?": "某人发现即使完全不学习，每次考试也有 $20\\%$ 的概率通过。平均需要参加多少次考试才能通过？相应方差是多少？",
+    "Bei der Lufthansa ist aus Erfahrung bekannt, dass etwa $18\\%$ der Fluggäste ihre gebuchte Reise nicht antreten. Um die Auslastung der Flugzeugflotte möglichst hoch zu halten, werden mehr als die verfügbaren $150$ Plätze in einem Airbus A320 verkauft. Berechnen Sie mit Hilfe des zentralen Grenzwertsatzes die Wahrscheinlichkeit dafür, dass mehr als $150$ Passagiere die Reise antreten wollen, wenn $170$ Plätze verkauft werden. Runden Sie Ihr Ergebnis bitte auf $3$ Nachkommastellen.": "汉莎航空经验上约有 $18\\%$ 的旅客不会乘坐已预订航班。为尽量提高飞机利用率，A320 的 $150$ 个座位会超售。若售出 $170$ 个座位，用中心极限定理计算实际想登机人数超过 $150$ 的概率，结果保留 $3$ 位小数。",
+    "Hinweis:": "提示：",
+    "Für welche Werte von $a$ und $b$ ist $F(x)$ die Verteilungsfunktion einer stetigen Zufallsvariable?": "对哪些 $a$ 和 $b$，$F(x)$ 是某个连续随机变量的分布函数？",
+    "Wie lautet die zugehörige Dichte $f(x)$?": "对应密度 $f(x)$ 是什么？",
+    "Wie lautet die Quantilfunktion? Berechnen Sie das $95\\%$-Quantil.": "分位数函数是什么？计算 $95\\%$ 分位数。",
+    "Wird durch $F(x)$ eindeutig eine Verteilung festgelegt? Begründen Sie.": "$F(x)$ 是否唯一确定一个分布？请说明理由。",
+    "die stetige Dichte der Zufallsvariable $X$.": "这是随机变量 $X$ 的连续密度。",
+    "Skizzieren Sie die Dichte. Wie ist der Modus der Verteilung? Geben Sie ohne Berechnung, aber mit Begründung Erwartungswert, Median und Schiefe der Verteilung an.": "画出密度草图。该分布的众数是什么？不做计算但给出理由，说明其期望、中位数和偏度。",
+    "Berechnen Sie die Varianz der Verteilung.": "计算该分布的方差。",
+    "Berechnen Sie die Dichte von $Y=X^2$.": "计算 $Y=X^2$ 的密度。",
+    "Schätzen Sie den Erwartungswert von": "估计下列期望：",
+    "ab. Keine explizite Berechnung.": "不需要显式计算，只需估计。",
+    "Da $\\exp(1)=e$ ist, ist der Träger $[0,e]$.": "由于 $\\exp(1)=e$，支撑集为 $[0,e]$。",
+    "Werte von $a$ und $b$.": "$a$ 和 $b$ 的取值。",
+    "Dichte.": "密度。",
+    "Quantilfunktion.": "分位数函数。",
+    "Eindeutigkeit.": "唯一性。",
+    "Gegeben sei:": "给定：",
+    "Zeigen Sie, dass $F(x)$ für $a=1$ die Verteilungsfunktion einer stetigen Zufallsvariable ist.": "证明当 $a=1$ 时，$F(x)$ 是某个连续随机变量的分布函数。",
+    "Dichte für $a=1$.": "求 $a=1$ 时的密度。",
+    "Erwartungswert für $a=1$.": "求 $a=1$ 时的期望。",
+    "$0.99$-Quantil für $a=1$.": "求 $a=1$ 时的 $0.99$ 分位数。",
+    "Geben Sie $P(X=1)$ für $a=1$ und $a=0.5$ an.": "给出 $a=1$ 和 $a=0.5$ 时的 $P(X=1)$。",
+    "$0.25$-Quantil für $a=0.5$.": "求 $a=0.5$ 时的 $0.25$ 分位数。",
+    "Sei $X\\sim \\operatorname{Exp}(\\lambda)$ mit $\\lambda\\in\\mathbb R^+$.": "设 $X\\sim\\operatorname{Exp}(\\lambda)$，其中 $\\lambda\\in\\mathbb R^+$。",
+    "Die Dichte lautet:": "密度为：",
+    "Ist $X$ stetig oder diskret?.": "$X$ 是连续型还是离散型？",
+    "Sei $Y=a+bX$ mit $a,b\\in\\mathbb R^+$. Begründen Sie, dass $Y$ eine Zufallsvariable ist.": "设 $Y=a+bX$，其中 $a,b\\in\\mathbb R^+$。说明为什么 $Y$ 是随机变量。",
+    "Verteilungsfunktion von $Y$.": "求 $Y$ 的分布函数。",
+    "Faltung für $D=W-Z=\\nu U-\\lambda X$.": "求 $D=W-Z=\\nu U-\\lambda X$ 的卷积分布。",
+    "Poisson-Prozess am Bahnhof.": "车站中的 Poisson 过程。",
+    "Unimodale stetige Zufallsvariable.": "单峰连续随机变量。",
+    "Diagnosetest.": "诊断测试。",
+    "Fast sichere Konvergenz von $\\bar Y_n$.": "$\\bar Y_n$ 的几乎必然收敛。",
+    "Kovarianzmatrix.": "协方差矩阵。",
+}
+
+QUESTION_TRANSLATIONS_04 = {
+    "Konstruieren Sie einen Fall, sodass die geforderten Eigenschaften i) und ii) des Maßeindeutigkeitssatzes auf $(\\Omega,\\mathcal F)$ erfüllt sind, aber trotzdem $\\mu_1\\neq\\mu_2$ gilt.": "构造一个例子，使得在 $(\\Omega,\\mathcal F)$ 上测度唯一性定理要求的性质 i) 和 ii) 都成立，但仍有 $\\mu_1\\neq\\mu_2$。",
+    "Gegeben sei der Wahrscheinlichkeitsraum $(\\Omega,\\mathcal F,\\mu)$ mit:": "给定概率空间 $(\\Omega,\\mathcal F,\\mu)$，其中：",
+    "Bestimmen Sie für die Funktion $f:\\Omega\\to\\mathbb R$ mit:": "对于函数 $f:\\Omega\\to\\mathbb R$，其中：",
+    "das Integral $\\int f\\,d\\mu$.": "求积分 $\\int f\\,d\\mu$。",
+    "Es sei $\\Omega=\\mathbb N$ und $\\mathcal F=\\mathcal P(\\mathbb N)$. Für welche der folgenden Abbildungen $\\mu:\\mathcal F\\to\\mathbb R$ wird $(\\Omega,\\mathcal F,\\mu)$ ein Maßraum? Prüfen Sie die Maße außerdem auf Endlichkeit.": "设 $\\Omega=\\mathbb N$ 且 $\\mathcal F=\\mathcal P(\\mathbb N)$。下列哪些映射 $\\mu:\\mathcal F\\to\\mathbb R$ 使 $(\\Omega,\\mathcal F,\\mu)$ 成为测度空间？同时检查这些测度是否有限。",
+    "Sei der Messraum $(\\mathbb R,\\mathcal B)$ sowie die messbare Funktion:": "设测度空间为 $(\\mathbb R,\\mathcal B)$，并给定可测函数：",
+    "für ein festes $N\\in\\mathbb N$ gegeben. Berechnen Sie für das Lebesguemaß $\\lambda$ und das Zählmaß $\\mu_Z$ die Integrale über $[0,n]$ für $n\\in\\mathbb N$, $n\\leq N$.": "其中 $N\\in\\mathbb N$ 固定。分别对 Lebesgue 测度 $\\lambda$ 和计数测度 $\\mu_Z$，计算 $n\\in\\mathbb N, n\\leq N$ 时在 $[0,n]$ 上的积分。",
+    "Es sei der Messraum $(\\mathbb R,\\mathcal B)$ gegeben sowie die messbaren Funktionen:": "给定测度空间 $(\\mathbb R,\\mathcal B)$ 以及可测函数：",
+    "Berechnen Sie für das Lebesguemaß $\\lambda$ und das Zählmaß $\\mu_Z$:": "分别对 Lebesgue 测度 $\\lambda$ 和计数测度 $\\mu_Z$ 计算：",
+    "1. $\\int_{[0,n]} f\\,d\\lambda$ und $\\int_{[0,n]} f\\,d\\mu_Z$ für $n\\in\\mathbb N$, 2. $\\int g\\,d\\lambda$ und $\\int g\\,d\\mu_Z$.": "1. 对 $n\\in\\mathbb N$，计算 $\\int_{[0,n]} f\\,d\\lambda$ 和 $\\int_{[0,n]} f\\,d\\mu_Z$；2. 计算 $\\int g\\,d\\lambda$ 和 $\\int g\\,d\\mu_Z$。",
+    "Es sei $f:\\mathbb R\\to\\mathbb R$:": "设 $f:\\mathbb R\\to\\mathbb R$：",
+    "wobei $k>5$, $y_1=1$ und:": "其中 $k>5$，$y_1=1$，并且：",
+    "Schreiben Sie $f$ als Treppenfunktion auf.": "将 $f$ 写成阶梯函数形式。",
+    "Sei $y_3=a$ und $y_{k-1}<b<y_k$. Leiten Sie $\\int_{[a,b]}f\\,d\\mu$ her.": "设 $y_3=a$ 且 $y_{k-1}<b<y_k$。推导 $\\int_{[a,b]}f\\,d\\mu$。",
+    "$\\lambda$ sei das Lebesguemaß. Leiten Sie $\\int_{[a,b]}f\\,d\\lambda$ her.": "设 $\\lambda$ 为 Lebesgue 测度。推导 $\\int_{[a,b]}f\\,d\\lambda$。",
+    "Es sei $\\Omega=\\mathbb N=\\{1,2,\\dots\\}$ und $\\mathcal F=\\mathcal P(\\mathbb N)$. Für welche der folgenden Abbildungen $\\mu:\\mathcal F\\to\\mathbb R_0^+$ wird durch $(\\Omega,\\mathcal F,\\mu)$ ein Maßraum definiert? Überprüfen Sie zudem alle $\\mu$, die tatsächlich ein Maß darstellen, auf Endlichkeit.": "设 $\\Omega=\\mathbb N=\\{1,2,\\dots\\}$ 且 $\\mathcal F=\\mathcal P(\\mathbb N)$。下列哪些映射 $\\mu:\\mathcal F\\to\\mathbb R_0^+$ 使 $(\\Omega,\\mathcal F,\\mu)$ 成为测度空间？并检查所有合法测度是否有限。",
+    "Das Lebesgue-Maß sei $\\lambda:\\mathcal B(\\mathbb R)\\to\\mathbb R_0^+\\cup\\{\\infty\\}$ mit": "设 Lebesgue 测度 $\\lambda:\\mathcal B(\\mathbb R)\\to\\mathbb R_0^+\\cup\\{\\infty\\}$ 满足：",
+    "Zeigen Sie für $a<b$:": "证明对 $a<b$ 有：",
+    "Sei $A\\subset\\mathbb R$ abzählbar. Was gilt für $\\lambda(A)$?": "设 $A\\subset\\mathbb R$ 可数。$\\lambda(A)$ 等于什么？",
+    "jeweils mit $\\sigma$-Algebra": "分别配有如下 $\\sigma$-代数：",
+    "Betrachten Sie die Funktion:": "考虑函数：",
+    "Vorarbeit": "准备工作",
+    "Die von $\\mathcal E$ erzeugte $\\sigma$-Algebra hat die Atome": "由 $\\mathcal E$ 生成的 $\\sigma$-代数具有如下原子：",
+    "Also:": "因此：",
+    "Außerdem gilt:": "此外有：",
+    "Geben Sie explizit die Mengensysteme": "明确写出下列集合系统：",
+    "an und zeigen Sie, dass es sich jeweils um $\\sigma$-Algebren handelt.": "并证明它们分别都是 $\\sigma$-代数。",
+    "Ist $f$ $\\mathcal F_1$-$\\mathcal F_2$-messbar?": "$f$ 是否是 $\\mathcal F_1$-$\\mathcal F_2$ 可测的？",
+    "Zeigen Sie, dass $f(\\mathcal F_1)$ keine $\\sigma$-Algebra ist.": "证明 $f(\\mathcal F_1)$ 不是 $\\sigma$-代数。",
+    "Gegeben sei der Wahrscheinlichkeitsraum $(\\Omega,\\mathcal F,\\mu)$ mit": "给定概率空间 $(\\Omega,\\mathcal F,\\mu)$，其中：",
+    "sowie": "以及：",
+    "Geben Sie $\\mathcal F$ explizit an.": "明确写出 $\\mathcal F$。",
+    "Zeigen Sie, dass die Funktion $f:\\Omega\\to\\mathbb R$ mit": "证明函数 $f:\\Omega\\to\\mathbb R$，其中：",
+    "integrierbar ist bezüglich $\\mu$ und bestimmen Sie:": "关于 $\\mu$ 可积，并求：",
+    "Sei $G:\\mathbb R\\to\\mathbb R$ definiert durch:": "设 $G:\\mathbb R\\to\\mathbb R$ 定义为：",
+    "Berechnen Sie das Lebesgue-Stieltjes-Maß $\\lambda_G$ für die Mengen": "计算集合上的 Lebesgue-Stieltjes 测度 $\\lambda_G$：",
+    "Sei $F:\\mathbb R\\to\\mathbb R$ definiert durch:": "设 $F:\\mathbb R\\to\\mathbb R$ 定义为：",
+    "Sei $\\lambda_F$ das zu $F$ gehörende Lebesgue-Stieltjes-Maß.": "设 $\\lambda_F$ 为与 $F$ 对应的 Lebesgue-Stieltjes 测度。",
+    "Bestimmen Sie $\\lambda_F((-\\infty,a])$ für beliebige $a\\in\\mathbb R$.": "对任意 $a\\in\\mathbb R$，求 $\\lambda_F((-\\infty,a])$。",
+    "Gegeben sei die Funktionenfolge $f_n:\\mathbb R\\to\\mathbb R$, $n\\in\\mathbb N$, mit": "给定函数列 $f_n:\\mathbb R\\to\\mathbb R$，$n\\in\\mathbb N$，其中：",
+    "Entscheiden Sie, ob": "判断下列两个量是否：",
+    "gleich sind und bestimmen Sie diese Werte.": "相等，并求出这些值。",
+    "Zeigen Sie, dass die Funktion $f:\\mathbb R\\to\\mathbb R$ mit": "证明函数 $f:\\mathbb R\\to\\mathbb R$，其中：",
+    "nicht Riemann-, aber Lebesgue-integrierbar ist und berechnen Sie:": "不是 Riemann 可积，但 Lebesgue 可积，并计算：",
+    "Sei der Messraum $(\\mathbb R,\\mathcal B)$ sowie die messbare Funktion": "设测度空间为 $(\\mathbb R,\\mathcal B)$，并给定可测函数：",
+    "für ein festes $N\\in\\mathbb N$ gegeben.": "其中 $N\\in\\mathbb N$ 固定。",
+    "Berechnen Sie für das Lebesgue-Maß $\\lambda$ und das Zählmaß $\\mu_Z$:": "分别对 Lebesgue 测度 $\\lambda$ 和计数测度 $\\mu_Z$ 计算：",
+    "für $n\\in\\mathbb N$, $n\\leq N$.": "其中 $n\\in\\mathbb N$ 且 $n\\leq N$。",
+    "Für $x\\in\\mathbb R$ definiere das Dirac-Maß $\\delta_x$ auf $\\mathbb R$ durch": "对 $x\\in\\mathbb R$，在 $\\mathbb R$ 上定义 Dirac 测度 $\\delta_x$ 如下：",
+    "Zeigen Sie: $\\delta_x$ besitzt keine Dichte bezüglich des Lebesgue-Maßes.": "证明：$\\delta_x$ 关于 Lebesgue 测度没有密度。",
+    "Seien": "设：",
+    "mit": "其中：",
+    "Geben Sie": "给出：",
+    "an.": "。",
+    "Zeigen Sie, dass $\\mu$ ein Maß zum Messraum $(\\Omega,\\mathcal F)$ ist.": "证明 $\\mu$ 是测度空间 $(\\Omega,\\mathcal F)$ 上的一个测度。",
+    "Berechnen Sie": "计算：",
+    "Sei weiterhin $\\mu_Z$ das Zählmaß.": "继续设 $\\mu_Z$ 为计数测度。",
+    "Die Sigma-Algebra $\\sigma(\\mathcal E)$ wird über $\\Omega$ erzeugt. Bestimmen Sie $\\sigma(\\mathcal E)$.": "在 $\\Omega$ 上生成 $\\sigma(\\mathcal E)$。求 $\\sigma(\\mathcal E)$。",
+    "Geben Sie die Nullmenge des Maßes $\\mu_Z$ auf der durch $\\Omega$ erzeugten $\\sigma$-Algebra an.": "给出由 $\\Omega$ 生成的 $\\sigma$-代数上计数测度 $\\mu_Z$ 的零测集。",
+    "Seien:": "设：",
+    "sowie:": "以及：",
+    "mit:": "其中：",
+    "Geben Sie $\\mathcal F_1=\\sigma(\\{A,B\\})$ an.": "写出 $\\mathcal F_1=\\sigma(\\{A,B\\})$。",
+    "Zeigen Sie: Die Vereinigung von zwei $\\sigma$-Algebren muss keine $\\sigma$-Algebra sein. Definieren Sie dafür eine $\\sigma$-Algebra $\\mathcal F_2$ für $\\Omega$, so dass $\\mathcal F_1\\cup\\mathcal F_2$ keine $\\sigma$-Algebra ist.": "证明：两个 $\\sigma$-代数的并不一定是 $\\sigma$-代数。为此在 $\\Omega$ 上定义一个 $\\sigma$-代数 $\\mathcal F_2$，使得 $\\mathcal F_1\\cup\\mathcal F_2$ 不是 $\\sigma$-代数。",
+    "Zeigen Sie, dass $\\mu$ ein Maß zum Messraum $(\\Omega,\\mathcal F_1)$ ist.": "证明 $\\mu$ 是测度空间 $(\\Omega,\\mathcal F_1)$ 上的测度。",
+    "Berechnen Sie:": "计算：",
+    "Ist $f$ die Dichte einer Verteilung bezüglich des dominierenden Maßes $\\mu$? Begründen Sie.": "$f$ 是否是某个关于支配测度 $\\mu$ 的分布密度？请说明理由。",
+    "Zeigen Sie, dass $\\mu$ ein Maß zum Messraum $(\\Omega,F)$ ist.": "证明 $\\mu$ 是测度空间 $(\\Omega,F)$ 上的测度。",
+    "$\\mathcal F_1=\\sigma(\\{A,B\\})$.": "$\\mathcal F_1=\\sigma(\\{A,B\\})$。",
+    "Vereinigung zweier Sigma-Algebren muss keine Sigma-Algebra sein.": "两个 sigma-代数的并不一定是 sigma-代数。",
+    "$\\mu$ ist ein Maß.": "$\\mu$ 是一个测度。",
+    "Integral.": "积分。",
+    "Ist $f$ eine Dichte bezüglich $\\mu$?.": "$f$ 是否是关于 $\\mu$ 的密度？",
+}
+
+QUESTION_TRANSLATIONS_05 = {
+    "Sei $X$ eine reellwertige Zufallsvariable mit Dichte $f_X$. Für eine weitere Dichtefunktion $f_Y(y)$ ist die Kullback-Leibler-Divergenz der beiden Dichten definiert als": "设 $X$ 是实值随机变量，密度为 $f_X$。对另一个密度函数 $f_Y(y)$，两个密度之间的 Kullback-Leibler 散度定义为：",
+    "Der Erwartungswert wird bezüglich der Verteilung von $X$ mit Dichte $f_X$ gebildet.": "这里的期望是关于具有密度 $f_X$ 的 $X$ 的分布来计算的。",
+    "eine Zufallsvariable ist.": "是一个随机变量。",
+    "Hinweis: Verwenden Sie die Jensen'sche Ungleichung und $Z$ aus Aufgabe (a).": "提示：使用 Jensen 不等式以及 (a) 中的 $Z$。",
+    "Würfelspiel: Auf einem fairen Würfel wird die $1$ als $1$, die $2$ und $3$ als $2$, und die restlichen Augenzahlen als $3$ zugeordnet. Geben Sie Maßräume und Zufallsvariable an, begründen Sie die Wahrscheinlichkeitsräume und berechnen Sie den Erwartungswert.": "骰子游戏：掷一个公平骰子，点数 $1$ 记为 $1$，点数 $2$ 和 $3$ 记为 $2$，其余点数记为 $3$。给出测度空间和随机变量，说明概率空间为何成立，并计算期望。",
+    "Sei $(X_n)_{n\\in\\mathbb N}$ eine Folge unabhängiger, diskreter Zufallsvariablen mit:": "设 $(X_n)_{n\\in\\mathbb N}$ 是一列相互独立的离散随机变量，满足：",
+    "Bestimmen Sie $\\mathbb E(X_n)$ und $\\operatorname{Var}(X_n)$ für ein festes $n\\in\\mathbb N$.": "对固定的 $n\\in\\mathbb N$，求 $\\mathbb E(X_n)$ 和 $\\operatorname{Var}(X_n)$。",
+    "Die Zufallsvariable $X$ sei die Augenzahl beim Wurf eines fairen achtseitigen Würfels:": "设随机变量 $X$ 为掷一个公平八面骰得到的点数：",
+    "Berechnen Sie $\\mathbb E(X)$, $\\operatorname{Var}(X)$ und $\\mathbb P(X\\geq 6)$.": "计算 $\\mathbb E(X)$、$\\operatorname{Var}(X)$ 和 $\\mathbb P(X\\geq 6)$。",
+    "Bestimmen Sie eine obere Schranke für $\\mathbb P(X\\geq 6)$ mit der Markow-Ungleichung.": "用 Markov 不等式给出 $\\mathbb P(X\\geq 6)$ 的上界。",
+    "Bestimmen Sie eine obere Schranke für $\\mathbb P(X\\geq 6)$ mit der Chebyshev-Ungleichung.": "用 Chebyshev 不等式给出 $\\mathbb P(X\\geq 6)$ 的上界。",
+    "Sei $X$ eine stetige Zufallsvariable mit Dichte:": "设 $X$ 是具有如下密度的连续随机变量：",
+    "und $f(x)=0$ sonst. Dabei ist $k\\in\\mathbb R$.": "其余情况下 $f(x)=0$。其中 $k\\in\\mathbb R$。",
+    "Bestimmen Sie $k$, sodass $f$ eine gültige Dichte ist.": "求 $k$，使得 $f$ 是合法密度。",
+    "Bestimmen Sie $\\mathbb E(X)$.": "求 $\\mathbb E(X)$。",
+    "Verwenden Sie die Jensen-Ungleichung, um eine Schranke für $\\mathbb E(\\exp(X))$ zu finden.": "使用 Jensen 不等式，为 $\\mathbb E(\\exp(X))$ 找一个界。",
+    "Sie haben einen Zufallsprozess einer Standardnormalverteilung gegeben. Diesen möchten Sie nutzen, um einen fairen achtseitigen Würfel zu erhalten.": "给定一个标准正态分布的随机过程。希望利用它构造一个公平八面骰。",
+    "Nutzen Sie den gegebenen Zufallsprozess, um eine stetige Gleichverteilung $U(0,1)$ zu erhalten.": "利用给定随机过程得到一个连续均匀分布 $U(0,1)$。",
+    "Nutzen Sie $U$, um einen fairen stetigen Würfel auf $[1,8]$ zu erhalten. Berechnen Sie Erwartungswert und Varianz.": "利用 $U$ 构造 $[1,8]$ 上的公平连续骰子，并计算期望和方差。",
+    "Nutzen Sie $U$, um einen fairen achtseitigen diskreten Würfel zu erhalten. Berechnen Sie Erwartungswert und Varianz.": "利用 $U$ 构造一个公平八面离散骰子，并计算期望和方差。",
+    "Vergleichen Sie die Momente aus (b) und (c). Warum unterscheiden sie sich? Funktioniert das nur mit der Standardnormalverteilung?": "比较 (b) 与 (c) 中的矩。它们为什么不同？这种构造是否只适用于标准正态分布？",
+    "Sind $X_1\\sim N(\\mu_1,\\sigma_1^2)$ und $X_2\\sim N(\\mu_2,\\sigma_2^2)$ unabhängig, dann ist:": "若 $X_1\\sim N(\\mu_1,\\sigma_1^2)$ 与 $X_2\\sim N(\\mu_2,\\sigma_2^2)$ 独立，则：",
+    "Ist $X\\sim N(0,1)$, $\\mu\\in\\mathbb R$ und $\\sigma^2>0$, so gilt:": "若 $X\\sim N(0,1)$、$\\mu\\in\\mathbb R$ 且 $\\sigma^2>0$，则：",
+    "Es seien $X$ und $Y$ diskrete Zufallsvariablen mit gemeinsamer Verteilung:": "设 $X$ 和 $Y$ 是具有如下联合分布的离散随机变量：",
+    "Berechnen Sie den bedingten Erwartungswert $\\mathbb E(X\\mid Y)$.": "计算条件期望 $\\mathbb E(X\\mid Y)$。",
+    "Berechnen Sie $\\mathbb E(\\mathbb E(X\\mid Y))$.": "计算 $\\mathbb E(\\mathbb E(X\\mid Y))$。",
+    "Seien $X\\sim U(2,5)$ und $Y\\sim \\operatorname{Ga}(2,2)$ stochastisch unabhängige Zufallsvariablen.": "设 $X\\sim U(2,5)$ 与 $Y\\sim\\operatorname{Ga}(2,2)$ 是相互独立的随机变量。",
+    "Sind $X-Y$ und $X+Y$ ebenfalls stochastisch unabhängig?": "$X-Y$ 与 $X+Y$ 是否也随机独立？",
+    "Seien $U\\sim\\operatorname{Ga}(4,6)$ und $V\\sim\\operatorname{Exp}(\\lambda)$ stochastisch unabhängig. Welchen Wert muss $\\lambda$ haben, damit $U-V$ und $U+V$ unkorreliert sind?": "设 $U\\sim\\operatorname{Ga}(4,6)$ 与 $V\\sim\\operatorname{Exp}(\\lambda)$ 随机独立。$\\lambda$ 应取何值，才能使 $U-V$ 与 $U+V$ 不相关？",
+    "Vereinfachen Sie die folgenden Ausdrücke.": "化简下列表达式。",
+    "Bemerkung: Im Allgemeinen gilt $\\mathbb E(X^2)\\neq \\mathbb E(X)^2$.": "备注：一般而言，$\\mathbb E(X^2)\\neq \\mathbb E(X)^2$。",
+    "Berechnen Sie $\\mathbb E(X)$.": "计算 $\\mathbb E(X)$。",
+    "Berechnen Sie $\\operatorname{Var}(X)$.": "计算 $\\operatorname{Var}(X)$。",
+    "Sei zusätzlich $Y\\sim\\operatorname{Bin}(n,\\pi)$ und:": "另外设 $Y\\sim\\operatorname{Bin}(n,\\pi)$，且：",
+    "Berechnen Sie erneut $\\mathbb E(X)$ und $\\operatorname{Var}(X)$.": "再次计算 $\\mathbb E(X)$ 和 $\\operatorname{Var}(X)$。",
+    "Gegeben seien:": "给定：",
+    "Bestimmen Sie $\\rho(X,Y)$.": "求 $\\rho(X,Y)$。",
+    "$X$ ist gleichverteilt auf $\\{1,\\dots,n\\}$. $Y$ nimmt die Werte $1,2,3$ an mit:": "$X$ 在 $\\{1,\\dots,n\\}$ 上均匀分布。$Y$ 取值 $1,2,3$，并满足：",
+    "und $X,Y$ sind unabhängig.": "并且 $X,Y$ 相互独立。",
+    "Sei $X$ eine reellwertige Zufallsvariable mit endlichem zweitem Moment:": "设 $X$ 是具有有限二阶矩的实值随机变量：",
+    "Zeigen Sie: $X$ hat endlichen Erwartungswert und endliche Varianz.": "证明：$X$ 有有限期望和有限方差。",
+    "Sei eine Zufallsvariable": "设随机变量：",
+    "gegeben.": "给定。",
+    "Bestimmen Sie die Varianz von $X$.": "求 $X$ 的方差。",
+    "Sei $X$ eine reellwertige Zufallsvariable mit": "设 $X$ 是实值随机变量，并满足：",
+    "Zeigen Sie, dass ein $c\\in\\mathbb R$ existiert mit": "证明存在 $c\\in\\mathbb R$，使得：",
+    "für alle $\\varepsilon>0$.": "对所有 $\\varepsilon>0$ 成立。",
+    "Der Skisportverband eines Landes geht davon aus, dass $1\\%$ seiner Athleten unerlaubte leistungssteigernde Substanzen einnehmen. Im letzten Jahr mussten sich insgesamt $1000$ Sportler je einem Dopingtest unterziehen.": "某国滑雪协会认为，其运动员中有 $1\\%$ 使用违禁兴奋剂。去年共有 $1000$ 名运动员各接受了一次兴奋剂检测。",
+    "Dann:": "则：",
+    "Berechnen Sie mit der Markov-Ungleichung eine obere Schranke für die Wahrscheinlichkeit, dass mehr als $15$ Dopingtests positiv ausfallen.": "用 Markov 不等式计算超过 $15$ 个兴奋剂检测呈阳性的概率上界。",
+    "Schätzen Sie die Wahrscheinlichkeit, dass mehr als $5$, aber weniger als $15$ Tests positiv ausfallen, nach unten ab.": "给出超过 $5$ 个但少于 $15$ 个检测呈阳性的概率下界。",
+    "Vergleichen Sie die Schranken aus (a) und (b) mit den wahren Werten.": "将 (a) 和 (b) 的界与真实值比较。",
+    "Es seien $a_1,\\dots,a_n$ positive reelle Zahlen. Zeigen Sie mit Hilfe der Jensen-Ungleichung:": "设 $a_1,\\dots,a_n$ 是正实数。用 Jensen 不等式证明：",
+    "wobei": "其中：",
+    "das arithmetische Mittel,": "表示算术平均数，",
+    "das geometrische Mittel und": "表示几何平均数，以及",
+    "das harmonische Mittel bezeichnet.": "表示调和平均数。",
+    "Es seien $r\\in[1,\\infty)$, $p,q>r$ mit": "设 $r\\in[1,\\infty)$，$p,q>r$，并满足：",
+    "$X\\in L^p$ und $Y\\in L^q$. Beweisen Sie:": "$X\\in L^p$ 且 $Y\\in L^q$。证明：",
+    "Es seien $X$ und $Y$ absolut stetig verteilt mit Dichten:": "设 $X$ 和 $Y$ 绝对连续分布，密度分别为：",
+    "Berechnen Sie mit Hilfe der momenterzeugenden Funktion den Erwartungswert und die Varianz einer poissonverteilten Zufallsvariable": "利用矩母函数计算 Poisson 分布随机变量的期望和方差：",
+    "Vier Studierende beschließen, ihr Erspartes für ein Jahr anzulegen. Dabei sei $G_i$, für $i \\in \\{A,B,C,D\\}$, die Zufallsvariable, die den Gewinn der Investition des Studierenden $i$ beschreibt.": "四名学生决定把积蓄投资一年。设 $G_i$（$i\\in\\{A,B,C,D\\}$）为学生 $i$ 的投资收益随机变量。",
+    "Student A investiert $1000$ Euro in eine Kryptowährung. Der erwartete Gewinn für diese Investition nach einem Jahr betrage": "学生 A 将 $1000$ 欧元投资于加密货币。该投资一年后的期望收益为：",
+    "Euro bei einer Varianz von": "欧元，方差为：",
+    "Studentin B steckt $1000$ Euro in Aktien aus dem DAX. Für den Gewinn aus dieser Investition nach einem Jahr gelte": "学生 B 将 $1000$ 欧元投资于 DAX 股票。一年后该投资收益满足：",
+    "Studentin C legt ihre $1000$ Euro auf einem Festgeldkonto an, sie erhält nach einem Jahr garantiert $50$ Euro Zinsen, also Gewinn.": "学生 C 将 $1000$ 欧元存入定期账户，一年后保证获得 $50$ 欧元利息，即收益。",
+    "Gehen Sie davon aus, dass $G_A$ und $G_B$ jeweils normalverteilt sind. Außerdem sei bekannt:": "假设 $G_A$ 和 $G_B$ 分别服从正态分布。另外已知：",
+    "$(3P)$": "（3 分）",
+    "Berechnen Sie den Korrelationskoeffizienten": "计算相关系数：",
+    "und interpretieren Sie diesen. $(3P)$": "并解释该相关系数。（3 分）",
+    "Wie groß ist die Wahrscheinlichkeit, dass Student A nach einem Jahr einen höheren Gewinn erzielt hat als Studentin C? $(3P)$": "学生 A 一年后收益高于学生 C 的概率是多少？（3 分）",
+    "Studentin D möchte ihre $1550$ Euro zu einem Teil $\\alpha \\in [0,1]$ auf einem Festgeldkonto mit einer garantierten Verzinsung von $6\\%$ pro Jahr anlegen. Den Rest möchte sie in amerikanische Aktien mit einem erwarteten Gewinn von $10\\%$ bei einer Standardabweichung von $20\\%$ pro Jahr anlegen. Die Gewinne der beiden Investitionen können als unabhängig voneinander angenommen werden.": "学生 D 想把 $1550$ 欧元中的比例 $\\alpha\\in[0,1]$ 投入年保证收益率为 $6\\%$ 的定期账户，其余投入美国股票；股票年期望收益率为 $10\\%$，标准差为 $20\\%$。可假设两项投资收益相互独立。",
+    "Sei $\\alpha=0{,}5$. Berechnen Sie den erwarteten Gesamtgewinn in Prozent der Investition für die Investition der Studentin D nach einem Jahr. $(3P)$": "设 $\\alpha=0{,}5$。计算学生 D 一年后总期望收益占投资额的百分比。（3 分）",
+    "Welchen Anteil sollte Studentin D höchstens auf das Festgeldkonto legen, wenn der zu erwartende Gesamtgewinn mindestens $9\\%$ betragen soll? $(3P)$": "若期望总收益至少应为 $9\\%$，学生 D 最多应将多大比例投入定期账户？（3 分）",
+    "Welchen Anteil sollte Studentin D mindestens auf das Festgeldkonto legen, wenn die Standardabweichung des Gewinns nicht über $10\\%$ liegen soll? $(4P)$": "若收益标准差不应超过 $10\\%$，学生 D 至少应将多大比例投入定期账户？（4 分）",
+    "Ein Student möchte der Vermutung nachgehen, dass man beim Radfahren tagsüber schneller auf Gefahren reagiert als nachts. Dazu misst er die Reaktionszeit in Sekunden von fünf weiteren Studierenden, $i \\in \\{1,\\dots,5\\}$, auf eine Ampel, die von grün auf rot umspringt, und zwar nachts. Die Zufallsvariable zur Reaktionszeit nachts sei $X$ und tagsüber sei $Y$:": "一名学生想检验骑车时白天对危险的反应是否比夜晚更快。为此，他测量另外五名学生 $i\\in\\{1,\\dots,5\\}$ 在夜晚对红绿灯由绿变红的反应时间（秒）。夜晚反应时间随机变量记为 $X$，白天记为 $Y$：",
+    "Lässt sich die Vermutung anhand der vorliegenden Daten zu einem Signifikanzniveau von $\\alpha=0{,}05$ bestätigen? Benutzen Sie dazu einen verteilungsfreien Test und geben Sie die dazugehörigen Hypothesen an. Berechnen Sie die Teststatistik analytisch, ohne R. Sie dürfen jedoch für die Berechnung der Varianz, der Standardabweichung, des Mittelwertes und der Quantile R verwenden. Treffen Sie anhand dieser die Testentscheidung. $(6P)$": "基于给定数据，在显著性水平 $\\alpha=0{,}05$ 下能否支持该猜想？请使用一个非参数检验，写出相应假设；不用 R，解析计算检验统计量。方差、标准差、均值和分位数可用 R 计算。并据此作出检验决策。（6 分）",
+    "Der Student möchte im Folgenden einen parametrischen Test verwenden.": "接下来该学生希望使用参数检验。",
+    "Geben Sie einen geeigneten parametrischen Test und die zugehörigen Hypothesen an, den der Student verwenden kann. Gehen Sie dabei auch auf die benötigten Annahmen ein. $(4P)$": "给出一个合适的参数检验及相应假设，并说明所需假设条件。（4 分）",
+    "Gehen Sie im Folgenden davon aus, dass die Annahmen aus Teilaufgabe (b)(i) erfüllt sind. Führen Sie den Test aus Teilaufgabe (b)(i) analytisch, ohne R, durch. Sie dürfen jedoch für die Berechnung der Varianz, der Standardabweichung, des Mittelwertes und der Quantile R verwenden. Berechnen Sie dafür die Teststatistik und treffen Sie anhand dieser die Testentscheidung. $(4P)$": "以下假设 (b)(i) 中的检验前提成立。请不用 R 解析执行 (b)(i) 中的检验；方差、标准差、均值和分位数可用 R 计算。计算检验统计量并作出检验决策。（4 分）",
+    "Eine weitere Studentin untersucht, ob der Konsum eines Energy Drinks die nächtliche Reaktionszeit beeinflusst. Dazu misst sie die nächtliche Reaktionszeit nach dem Konsum von drei Dosen des Energy Drinks. Die zugehörige Zufallsvariable sei $Z$, bei fünf weiteren zufällig und unabhängig von (a) ausgewählten Studierenden, $i \\in \\{6,\\dots,10\\}$.": "另一名学生研究饮用能量饮料是否影响夜间反应时间。她测量另外五名随机且独立于 (a) 选出的学生 $i\\in\\{6,\\dots,10\\}$ 在喝下三罐能量饮料后的夜间反应时间，相应随机变量记为 $Z$。",
+    "Aus zeitlichen Gründen verwendet die Studentin die Daten ihres Kommilitonen aus (a) als Vergleichsgrundlage. Sie nimmt an, dass $X$ und $Z$ jeweils normalverteilt sind.": "由于时间原因，该学生使用同学在 (a) 中的数据作为比较基础。她假设 $X$ 和 $Z$ 分别服从正态分布。",
+    "Welcher Test eignet sich unter diesen Bedingungen zur Überprüfung der Hypothese, dass das Getränk die mittlere nächtliche Reaktionszeit verändert? Führen Sie diesen Test durch, $\\alpha=0{,}05$. Geben Sie die Hypothesen an und berechnen Sie die Teststatistik analytisch, ohne R. Sie dürfen jedoch für die Berechnung der Varianz, der Standardabweichung, des Mittelwertes und der Quantile R verwenden. Treffen Sie anhand dieser die Testentscheidung. $(8P)$": "在这些条件下，适合用哪个检验来检验“该饮料改变平均夜间反应时间”的假设？在 $\\alpha=0{,}05$ 下执行该检验。写出假设，不用 R 解析计算检验统计量；方差、标准差、均值和分位数可用 R 计算。并据此作出检验决策。（8 分）",
+    "Skizze, Modus, Erwartungswert, Median, Schiefe.": "草图、众数、期望、中位数和偏度。",
+    "Varianz.": "方差。",
+    "Dichte von $Y=X^2$.": "$Y=X^2$ 的密度。",
+    "Erwartungswert von $Z=X^4$ abschätzen.": "估计 $Z=X^4$ 的期望。",
+}
+
+QUESTION_TRANSLATIONS_06 = {
+    "Es sei $\\mathbb P$ ein Wahrscheinlichkeitsmaß, also ein normiertes Maß mit $\\mathbb P(\\Omega)=1$, auf dem Messraum $(\\Omega,\\mathcal F)$ und $A,B\\in\\mathcal F$.": "设 $\\mathbb P$ 是测度空间 $(\\Omega,\\mathcal F)$ 上的概率测度，即满足 $\\mathbb P(\\Omega)=1$ 的规范化测度，且 $A,B\\in\\mathcal F$。",
+    "Falls": "如果：",
+    "können $A$ und $B$ dann disjunkt sein? Beweisen oder widerlegen Sie.": "那么 $A$ 和 $B$ 能否不交？请证明或反驳。",
+    "Beweisen oder widerlegen Sie:": "证明或反驳：",
+    "mit Elementarereignissen $\\omega_x=x$. Außerdem gelte": "其基本事件为 $\\omega_x=x$。此外满足：",
+    "Wie groß ist $c$?": "$c$ 是多少？",
+    "Gegeben sei ein Wahrscheinlichkeitsraum $(\\Omega,\\mathcal F,\\mathbb P)$ und $B\\subset\\Omega$ mit $\\mathbb P(B)>0$.": "给定概率空间 $(\\Omega,\\mathcal F,\\mathbb P)$ 以及 $B\\subset\\Omega$，且 $\\mathbb P(B)>0$。",
+    "Es sei $\\mathbb P$ ein Wahrscheinlichkeitsmaß auf dem Messraum $(\\Omega,\\mathcal F)$ und $A,B\\in\\mathcal F$.": "设 $\\mathbb P$ 是测度空间 $(\\Omega,\\mathcal F)$ 上的概率测度，且 $A,B\\in\\mathcal F$。",
+    "Falls $\\mathbb P(A)=\\frac13$ und $\\mathbb P(\\bar B)=\\frac14$, können $A$ und $B$ dann disjunkt sein?": "若 $\\mathbb P(A)=\\frac13$ 且 $\\mathbb P(\\bar B)=\\frac14$，那么 $A$ 和 $B$ 能否不交？",
+    "Sei $\\Omega=\\{i\\mid i\\in\\mathbb N_0\\}$ mit Elementarereignissen $\\omega_i=i$. Außerdem gelte:": "设 $\\Omega=\\{i\\mid i\\in\\mathbb N_0\\}$，基本事件为 $\\omega_i=i$。此外满足：",
+    "Bestimmen Sie für die folgenden Situationen jeweils die passende Standardverteilung und berechnen Sie die gefragten Wahrscheinlichkeiten.": "对下列情形分别确定合适的标准分布，并计算所问概率。",
+    "Tombola": "抽奖。",
+    "Es gibt $k$ Lose, durchnummeriert von $1$ bis $k$. Genau ein Los gewinnt. $X_1$ sei die Gewinnlosnummer.": "共有 $k$ 张彩票，编号从 $1$ 到 $k$。恰好一张中奖。设 $X_1$ 为中奖彩票编号。",
+    "Lerngruppe": "学习小组。",
+    "Es gibt fünf Aufgaben, vier wurden vorbereitet, zwei werden zufällig ausgewählt. $X_2$ sei die Anzahl der vorbereiteten ausgewählten Aufgaben.": "共有五道题，其中四道已准备；随机抽取两道。设 $X_2$ 为被抽中的已准备题目数量。",
+    "Kontrolle eines Betriebs": "企业检查。",
+    "Jeden Tag wird unabhängig ein Anteil $a$ der Betriebe kontrolliert. $X_3$ sei die Anzahl der Tage bis zur ersten Kontrolle eines bestimmten Betriebs.": "每天独立地检查比例为 $a$ 的企业。设 $X_3$ 为某个特定企业首次被检查前经过的天数。",
+    "Test mit 10 Fragen": "10 道题测试。",
+    "Ein Schüler beantwortet jede von 10 Fragen unabhängig mit Wahrscheinlichkeit $0.9$ richtig. $X_4$ sei die Anzahl richtiger Antworten.": "一名学生独立作答 10 道题，每题答对概率为 $0.9$。设 $X_4$ 为答对题数。",
+    "Gegeben seien zwei Folgen unabhängiger identisch verteilter Zufallsvariablen mit:": "给定两列独立同分布随机变量，满足：",
+    "Außerdem seien:": "此外设：",
+    "Bestimmen Sie $a,b\\in\\mathbb R$, sodass:": "求 $a,b\\in\\mathbb R$，使得：",
+    "Gegeben sei der Wahrscheinlichkeitsraum:": "给定概率空间：",
+    "Untersuchen Sie, ob $X_n$ gegen $0$ fast sicher, in Wahrscheinlichkeit, in Verteilung und im ersten Moment konvergiert.": "检验 $X_n$ 是否几乎必然、依概率、依分布以及一阶矩收敛到 $0$。",
+    "Gegeben ist eine einzelne Zufallsvariable einer parametrischen Verteilungsfamilie. Nennen Sie Beispiele hinreichender Eigenschaften, unter denen $X$ selbst approximativ normalverteilt sein kann, ähnlich wie bei der Poisson-Approximation. Welche Prinzipien könnten zugrunde liegen?": "给定某参数分布族中的单个随机变量。请举出一些充分性质，使得 $X$ 本身可近似服从正态分布，类似 Poisson 近似。可能基于哪些原理？",
+    "Wie oft muss mit einer idealen Münze mindestens geworfen werden, sodass die relative Häufigkeit von Wappen mit Wahrscheinlichkeit mindestens $0.95$ höchstens $0.01$ beziehungsweise $0.001$ von $\\pi=0.5$ abweicht? Nutzen Sie eine geeignete Abschätzung durch eine Ungleichung.": "至少需要投掷一枚理想硬币多少次，才能使正面相对频率以至少 $0.95$ 的概率偏离 $\\pi=0.5$ 不超过 $0.01$ 或 $0.001$？请使用合适的不等式估计。",
+    "Ein Beamter verlässt an den $225$ Arbeitstagen eines Jahres sein Büro immer erst kurz nach Dienstschluss. Die täglichen zusätzlichen Arbeitszeiten seien unabhängig exponentialverteilt mit Erwartungswert $1/\\lambda=5$ Minuten.": "某公务员一年有 $225$ 个工作日，每天下班后都会稍晚离开办公室。每天额外工作时间相互独立且服从指数分布，期望为 $1/\\lambda=5$ 分钟。",
+    "Leiten Sie die approximative Verteilung der gesamten zusätzlichen Arbeitszeit eines Jahres her.": "推导一年总额外工作时间的近似分布。",
+    "Berechnen Sie approximativ die Wahrscheinlichkeit, dass der Beamte in einem Jahr mehr als $16$ Stunden zusätzlich arbeitet.": "近似计算该公务员一年额外工作超过 $16$ 小时的概率。",
+    "$X\\sim\\operatorname{Beta}(a,b)$. Berechnen Sie die Dichte von:": "设 $X\\sim\\operatorname{Beta}(a,b)$。计算下列随机变量的密度：",
+    "Sei $X$ Weibull-verteilt mit:": "设 $X$ 服从 Weibull 分布，满足：",
+    "Bestimmen Sie die Dichte von $Y=X^b$.": "求 $Y=X^b$ 的密度。",
+    "Es sei $\\mathbb P$ ein Wahrscheinlichkeitsmaß mit $\\mathbb P(\\Omega)=1$ auf dem Messraum $(\\Omega,\\mathcal F)$ und $A,B\\in\\mathcal F$.": "设 $\\mathbb P$ 是测度空间 $(\\Omega,\\mathcal F)$ 上满足 $\\mathbb P(\\Omega)=1$ 的概率测度，且 $A,B\\in\\mathcal F$。",
+    "können $A$ und $B$ dann disjunkt sein?": "$A$ 和 $B$ 能否不交？",
+    "mit Elementarereignissen $\\omega_i=i$. Außerdem gelte:": "基本事件为 $\\omega_i=i$。此外满足：",
+    "Es sei $(\\Omega,\\mathcal F,\\mathbb P)$ ein Wahrscheinlichkeitsraum und $A,B\\in\\mathcal F$.": "设 $(\\Omega,\\mathcal F,\\mathbb P)$ 是概率空间，且 $A,B\\in\\mathcal F$。",
+    "Bestimmen Sie $\\mathbb P(B)$, wenn:": "在下列情况下求 $\\mathbb P(B)$：",
+    "- $A$ und $B$ stochastisch unabhängig sind, - $A$ und $B$ disjunkt sind.": "- $A$ 与 $B$ 随机独立；- $A$ 与 $B$ 不交。",
+    "Betrachten Sie beim einmaligen fairen Würfelwurf das Ereignis": "考虑一次公平掷骰中的事件：",
+    "Geben Sie ein zu $A$ unabhängiges Ereignis $B\\in\\mathcal P(\\Omega)$ mit $B\\notin\\{\\emptyset,\\Omega\\}$ an.": "给出一个与 $A$ 独立的事件 $B\\in\\mathcal P(\\Omega)$，且 $B\\notin\\{\\emptyset,\\Omega\\}$。",
+    "Sei $(x_n)_{n\\in\\mathbb N}$ eine Folge reeller Zahlen und seien": "设 $(x_n)_{n\\in\\mathbb N}$ 是实数列，并设：",
+    "Dirac-verteilte Zufallsvariablen. Zeigen Sie:": "为 Dirac 分布随机变量。证明：",
+    "genau dann, wenn": "当且仅当：",
+    "in Wahrscheinlichkeit.": "依概率收敛。",
+    "Sei $(X_i)_{i\\in\\mathbb N}$ eine Folge iid Zufallsvariablen in $\\mathbb R$ und $g:\\mathbb R\\to\\mathbb R$ messbar. Nutzen Sie das schwache Gesetz der großen Zahlen, um zu zeigen:": "设 $(X_i)_{i\\in\\mathbb N}$ 是 $\\mathbb R$ 上一列 iid 随机变量，且 $g:\\mathbb R\\to\\mathbb R$ 可测。用弱大数定律证明：",
+    "Sei $f:\\mathbb R\\to\\mathbb R$ stetig und": "设 $f:\\mathbb R\\to\\mathbb R$ 连续，且：",
+    "Sei $(X_n)_{n\\in\\mathbb N}$ eine Folge diskreter Zufallsvariablen mit": "设 $(X_n)_{n\\in\\mathbb N}$ 是一列离散随机变量，满足：",
+    "Sei $f:\\mathbb R\\to\\mathbb R$ eine stetige Dichtefunktion. Seien $X_i\\sim f$ iid. Für den Bandbreitenparameter $h>0$ definiere den Dichteschätzer mit uniformem Kern:": "设 $f:\\mathbb R\\to\\mathbb R$ 是连续密度函数，且 $X_i\\sim f$ iid。对带宽参数 $h>0$，用均匀核定义密度估计量：",
+    "Sei $x\\in\\mathbb R$ fix.": "固定 $x\\in\\mathbb R$。",
+    "Nutzen Sie das schwache Gesetz der großen Zahlen, um zu zeigen:": "用弱大数定律证明：",
+    "Sei $\\Omega=\\{0,1\\}$ mit Potenzmenge als $\\sigma$-Algebra und": "设 $\\Omega=\\{0,1\\}$，以其幂集为 $\\sigma$-代数，并且：",
+    "Definiere $X_n,X:\\Omega\\to\\mathbb R$ durch:": "定义 $X_n,X:\\Omega\\to\\mathbb R$ 如下：",
+    "Sei $(X_n)$ eine Folge von Zufallsvariablen mit": "设 $(X_n)$ 是一列随机变量，满足：",
+    "wobei $c\\in\\mathbb R$ konstant ist. Zeigen Sie:": "其中 $c\\in\\mathbb R$ 为常数。证明：",
+    "Ein fairer Würfel werde $6000$-mal unabhängig geworfen. Bestimmen Sie für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird,": "独立掷一个公平骰子 $6000$ 次。对于掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率，求：",
+    "mit dem zentralen Grenzwertsatz eine Approximation. $(6\\text{ Pkt.})$": "用中心极限定理给出近似值。（6 分）",
+    "mit der Tschebyscheff-Ungleichung eine untere Schranke. $(4\\text{ Pkt.})$": "用 Chebyshev 不等式给出下界。（4 分）",
+    "**Hinweis zu (a):** Sie dürfen verwenden, dass für die Verteilungsfunktion $\\Phi(x)$ der Standardnormalverteilung die Identität": "**(a) 提示：** 可以使用标准正态分布函数 $\\Phi(x)$ 的恒等式：",
+    "gilt.": "成立。",
+    "Rechenzeit in Sekunden von $n=100$ Programmen auf einem Großrechner seien durch $100$ Zufallsvariablen": "大型计算机上 $n=100$ 个程序的运行时间（秒）由 $100$ 个随机变量表示：",
+    "beschrieben, die stochastisch unabhängig und identisch verteilt sind mit": "这些随机变量相互独立同分布，并满足：",
+    "a) Es wurde eine Gesamtrechenzeit der $100$ Programme von $1900$ Sekunden beobachtet. Basierend auf der Normalapproximation überprüfen Sie die Hypothese": "a) 观察到 $100$ 个程序总运行时间为 $1900$ 秒。基于正态近似检验假设：",
+    "gegen": "相对于：",
+    "zum Niveau": "在显著性水平：",
+    "b) Es sei nun $\\mu=20$. Geben Sie für die Wahrscheinlichkeit, dass die Gesamtrechenzeit der $100$ Programme zwischen $1800$ und $2200$ Sekunden liegt, einen Näherungswert durch Anwendung des zentralen Grenzwertsatzes an. Verwenden Sie die Verteilungsfunktion der Standardnormalverteilung im Anhang.": "b) 现在设 $\\mu=20$。用中心极限定理给出 $100$ 个程序总运行时间位于 $1800$ 到 $2200$ 秒之间的概率近似值。使用附录中的标准正态分布函数。",
+    "Ein fairer Würfel werde $6000$-mal unabhängig geworfen.": "独立掷一个公平骰子 $6000$ 次。",
+    "Bestimmen Sie mit Hilfe des zentralen Grenzwertsatzes eine Approximation für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.": "用中心极限定理近似计算掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率。",
+    "Bestimmen Sie mit der Tschebyscheff-Ungleichung eine untere Schranke für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.": "用 Chebyshev 不等式给出掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率下界。",
+    "Prof. S. nimmt täglich, also $n=225$-mal, den Bus zur Universität und ist immer pünktlich an der Bushaltestelle. Der Bus verspätet sich jedoch jeden Tag. Bezeichne $X_i$ die zufällige Zeitdauer der Verspätung in Minuten am Tag $i$. Nehmen Sie an, dass $X_i$, $i=1,\\dots,n$, unabhängig und identisch exponentialverteilt sind mit $E(X_i)=1$.": "S 教授每天乘公交去大学，一年共 $n=225$ 次，并且总是准时到公交站。但公交每天都会晚点。令 $X_i$ 为第 $i$ 天晚点分钟数。假设 $X_i$（$i=1,\\dots,n$）独立同分布且服从指数分布，$E(X_i)=1$。",
+    "Betrachten Sie die Zufallsgröße:": "考虑随机变量：",
+    "also die aufsummierte Verspätung in einem Jahr.": "即一年内累计晚点时间。",
+    "Zeigen Sie, dass $X$ approximativ normalverteilt ist. Wie lauten approximativer Erwartungswert und approximative Varianz?": "证明 $X$ 近似正态分布。其近似期望和近似方差是多少？",
+    "Bestimmen Sie approximativ die Wahrscheinlichkeit dafür, dass Prof. S. über das Jahr gesehen mehr als $4$ Stunden auf den Bus wartet.": "近似求 S 教授一年中等待公交总时间超过 $4$ 小时的概率。",
+    "Betrachten Sie eine Münze, die beim Münzwurf mit unbekannter Wahrscheinlichkeit $p\\in(0,1)$ Zahl anzeigt und dementsprechend mit Wahrscheinlichkeit $1-p$ Kopf.": "考虑一枚硬币，投掷时以未知概率 $p\\in(0,1)$ 出现反面，相应地以概率 $1-p$ 出现正面。",
+    "Es bezeichne $X$ die Anzahl an Würfen, die nötig ist, bis das erste Mal Zahl erscheint. Das Experiment werde $n=200$ mal wiederholt, d.h. $X_i$ bezeichnet die Anzahl der benötigten Würfe, bis das erste Mal Zahl erscheint, bei der $i$-ten Wiederholung des Experiments.": "令 $X$ 为首次出现反面前所需投掷次数。该实验重复 $n=200$ 次，即 $X_i$ 表示第 $i$ 次重复实验中首次出现反面所需投掷次数。",
+    "Mit": "用：",
+    "wird die durchschnittlich benötigte Anzahl an Versuchen bezeichnet.": "表示平均所需尝试次数。",
+    "Bestimmen Sie eine approximative Verteilung für $\\overline X$.": "求 $\\overline X$ 的近似分布。",
+    "Wie muss $p$ gewählt werden, damit mit einer Wahrscheinlichkeit von mindestens $0.9$ folgendes gilt:": "$p$ 应如何选择，才能使下列事件至少以 $0.9$ 的概率成立：",
+    "weicht betragsmäßig vom unbekannten Erwartungswert $E(X_i)$ um höchstens $0.1645$ ab?": "它与未知期望 $E(X_i)$ 的绝对偏差至多为 $0.1645$？",
+    "Hinweis: Das $0.95$-Quantil der Standardnormalverteilung ist $1.645$, d.h. für $Z\\sim \\mathcal N(0,1)$ gilt": "提示：标准正态分布的 $0.95$ 分位数为 $1.645$，即对 $Z\\sim\\mathcal N(0,1)$ 有：",
+    "Bestimmen Sie eine approximative Verteilung für $\\overline X^2$.": "求 $\\overline X^2$ 的近似分布。",
+    "Für die Exponentialverteilung gilt:": "对指数分布有：",
+    "Approximation durch Normalverteilung.": "用正态分布近似。",
+    "Wahrscheinlichkeit für mehr als $4$ Stunden Wartezeit.": "等待时间超过 $4$ 小时的概率。",
+}
+
+QUESTION_TRANSLATIONS_07 = {
+    "Zeigen Sie: Wenn zwei gemeinsam normalverteilte Zufallsvariablen unkorreliert sind, dann sind diese auch unabhängig.": "证明：若两个联合正态随机变量不相关，则它们独立。",
+    "Die zweidimensionale Zufallsvariable $(X,Y)$ sei stetig verteilt mit Dichte:": "设二维随机变量 $(X,Y)$ 连续分布，其密度为：",
+    "Zeigen Sie, dass $c=4$.": "证明 $c=4$。",
+    "Bestimmen Sie die Randdichten $f_X$ und $f_Y$.": "求边际密度 $f_X$ 和 $f_Y$。",
+    "Überprüfen Sie, ob $X$ und $Y$ unabhängig sind.": "检验 $X$ 与 $Y$ 是否独立。",
+    "Bestimmen Sie $\\mathbb E(X+Y)$.": "求 $\\mathbb E(X+Y)$。",
+    "Bestimmen Sie $\\mathbb P(X\\leq Y)$.": "求 $\\mathbb P(X\\leq Y)$。",
+    "Die gemeinsame Dichte von $(X,Y)$ sei:": "$(X,Y)$ 的联合密度为：",
+    "Was ist der Träger von $(X,Y)$?": "$(X,Y)$ 的支撑集是什么？",
+    "Zeigen Sie, dass $X$ gleichverteilt auf $[0,1]$ ist.": "证明 $X$ 在 $[0,1]$ 上均匀分布。",
+    "Bestimmen Sie die Randverteilung von $Y$.": "求 $Y$ 的边际分布。",
+    "Zeigen Sie, dass $Y\\mid X=x$ gleichverteilt auf $[0,x]$ ist.": "证明 $Y\\mid X=x$ 在 $[0,x]$ 上均匀分布。",
+    "Bestimmen Sie die bedingte Verteilung von $X\\mid Y=y$.": "求 $X\\mid Y=y$ 的条件分布。",
+    "Berechnen Sie $\\mathbb E(Y)$ und die Dichte von $X\\mid Y$.": "计算 $\\mathbb E(Y)$ 以及 $X\\mid Y$ 的密度。",
+    "Seien $X$ und $Y$ Zufallsvariablen mit gemeinsamer Wahrscheinlichkeitsfunktion:": "设 $X$ 和 $Y$ 是具有如下联合概率函数的随机变量：",
+    "Zwei stetige Zufallsvariablen $X$ und $Y$ haben die gemeinsame Dichte:": "两个连续随机变量 $X$ 和 $Y$ 具有如下联合密度：",
+    "Seien $X$ und $Y$ Zufallsvariablen mit:": "设随机变量 $X$ 和 $Y$ 满足：",
+    "Setze:": "令：",
+    "Bestimmen Sie $\\operatorname{Var}(W)$, $\\operatorname{Var}(T)$, $\\operatorname{Cov}(W,T)$ und $\\rho(W,T)$, wenn $X$ und $Y$ unabhängig sind.": "若 $X$ 与 $Y$ 独立，求 $\\operatorname{Var}(W)$、$\\operatorname{Var}(T)$、$\\operatorname{Cov}(W,T)$ 和 $\\rho(W,T)$。",
+    "Bestimmen Sie dieselben Größen, wenn $\\rho(X,Y)=-\\frac14$ gilt.": "若 $\\rho(X,Y)=-\\frac14$，求同样这些量。",
+    "Warum gilt in Szenario (b) $\\operatorname{Var}(W)<\\operatorname{Var}(T)$?": "为什么在情形 (b) 中有 $\\operatorname{Var}(W)<\\operatorname{Var}(T)$？",
+    "Seien $X\\sim U(0,1)$ und $Y\\sim U(0,1)$ unabhängig. Bestimmen Sie die Verteilung von:": "设 $X\\sim U(0,1)$ 与 $Y\\sim U(0,1)$ 独立。求下列随机变量的分布：",
+    "Seien $X\\sim\\operatorname{Exp}(\\lambda)$ und $Y\\sim\\operatorname{Exp}(\\lambda)$ unabhängig. Bestimmen Sie die Verteilung von $Z=X+Y$.": "设 $X\\sim\\operatorname{Exp}(\\lambda)$ 与 $Y\\sim\\operatorname{Exp}(\\lambda)$ 独立。求 $Z=X+Y$ 的分布。",
+    "Seien $X\\sim\\operatorname{Poi}(\\lambda_X)$ und $Y\\sim\\operatorname{Poi}(\\lambda_Y)$ unabhängig. Bestimmen Sie die Verteilung von $Z=X+Y$.": "设 $X\\sim\\operatorname{Poi}(\\lambda_X)$ 与 $Y\\sim\\operatorname{Poi}(\\lambda_Y)$ 独立。求 $Z=X+Y$ 的分布。",
+    "Sei $Z\\sim\\operatorname{Bernoulli}(0.5)$. Bedingt auf $Z=0$ sei:": "设 $Z\\sim\\operatorname{Bernoulli}(0.5)$。在条件 $Z=0$ 下，设：",
+    "und bedingt auf $Z=1$ sei:": "在条件 $Z=1$ 下，设：",
+    "Bestimmen Sie $\\mathbb E(X^2)$ und $\\operatorname{Var}(X)$.": "求 $\\mathbb E(X^2)$ 和 $\\operatorname{Var}(X)$。",
+    "Bestimmen Sie $\\operatorname{Var}(X)$ mit dem Satz der totalen Varianz.": "用总方差公式求 $\\operatorname{Var}(X)$。",
+    "Seien $X,Y$ unabhängig poissonverteilt mit Parameter $\\lambda$. Bestimmen Sie die Dichte von $Z=X+Y$.": "设 $X,Y$ 独立且都服从参数为 $\\lambda$ 的 Poisson 分布。求 $Z=X+Y$ 的概率函数。",
+    "$A\\sim\\operatorname{Geom}(p)$ und $B\\sim\\operatorname{Geom}(p)$ seien unabhängig. Zeigen Sie:": "设 $A\\sim\\operatorname{Geom}(p)$ 与 $B\\sim\\operatorname{Geom}(p)$ 独立。证明：",
+    "Zeigen Sie, dass für Zufallsvariablen $X$ und $Y$ mit endlichen Varianzen die Korrelation nicht größer als $1$ sein kann:": "证明：对具有有限方差的随机变量 $X,Y$，相关系数不可能大于 $1$：",
+    "Seien $X_1,\\dots,X_n$ Zufallsvariablen mit beschränktem zweitem Moment.": "设 $X_1,\\dots,X_n$ 是二阶矩有界的随机变量。",
+    "Gegeben seien $X$ und $Y$ mit gemeinsamer Dichte": "给定 $X$ 和 $Y$，其联合密度为：",
+    "Begründen Sie kurz ohne weitere Rechnung, warum $X$ und $Y$ nicht unabhängig sein können.": "不做进一步计算，简要说明为什么 $X$ 和 $Y$ 不可能独立。",
+    "Berechnen Sie die Randdichten von $X$ und $Y$.": "计算 $X$ 和 $Y$ 的边际密度。",
+    "Berechnen Sie die Kovarianz von $X$ und $Y$.": "计算 $X$ 与 $Y$ 的协方差。",
+    "Seien $X$ und $Y$ stochastisch unabhängig und standardnormalverteilt. Zeigen Sie mit Hilfe des multivariaten Transformationssatzes für Dichten, dass": "设 $X$ 和 $Y$ 随机独立且服从标准正态分布。用多元密度变换定理证明：",
+    "exponentialverteilt ist.": "服从指数分布。",
+    "Seien $X,Y\\in\\mathbb R$ unabhängige Zufallsvariablen mit beschränktem ersten Moment. Zeigen Sie:": "设 $X,Y\\in\\mathbb R$ 是独立随机变量且一阶矩有界。证明：",
+    "Seien $Y_1,Y_2,X$ Zufallsvariablen mit beschränktem zweitem Moment. Zeigen Sie den Kovarianzzerlegungssatz:": "设 $Y_1,Y_2,X$ 为二阶矩有界的随机变量。证明协方差分解公式：",
+    "Dabei:": "其中：",
+    "Seien $X,Y\\in\\mathbb R$ Zufallsvariablen mit beschränktem zweitem Moment. Betrachten Sie das lineare Modell": "设 $X,Y\\in\\mathbb R$ 是二阶矩有界的随机变量。考虑线性模型：",
+    "mit $\\beta\\in\\mathbb R$, wobei $\\varepsilon$ und $X$ unabhängig sind und": "其中 $\\beta\\in\\mathbb R$，并且 $\\varepsilon$ 与 $X$ 独立，且：",
+    "Definiere den Determinationskoeffizienten:": "定义决定系数：",
+    "In der Statistik interessiert man sich oft für die sogenannte empirische Dichtefunktion von zuvor erhobenen Daten. Im folgenden Beispiel wurden $200$ Daten erhoben und jeweils zwei Merkmale $X$ und $Y$ beobachtet. Die folgende Tabelle gibt die Beobachtungen an:": "统计中常关心已收集数据的所谓经验密度函数。下面例子中收集了 $200$ 条数据，并观察每条数据的两个特征 $X$ 和 $Y$。下表给出观察结果：",
+    "Die empirische Dichte von $X$ und $Y$ ist dabei gegeben durch": "$X$ 和 $Y$ 的经验密度由下式给出：",
+    "Bestimmen Sie die empirische gemeinsame Dichte von $X$ und $Y$. $(2\\text{ Pkt.})$": "求 $X$ 和 $Y$ 的经验联合密度。（2 分）",
+    "Bestimmen Sie die Dichte $f_Y(y)$. $(2\\text{ Pkt.})$": "求密度 $f_Y(y)$。（2 分）",
+    "Bestimmen Sie die Dichte $f_{X\\mid Y=1}(x)$. $(2\\text{ Pkt.})$": "求条件密度 $f_{X\\mid Y=1}(x)$。（2 分）",
+    "Sind $X$ und $Y$ unabhängig? Begründen Sie ihre Antwort. $(2\\text{ Pkt.})$": "$X$ 和 $Y$ 是否独立？请说明理由。（2 分）",
+    "Betrachte die Zufallsvariablen $X$ und $Y$, deren gemeinsame Verteilung soweit bekannt der Kontingenztabelle angegeben ist.": "考虑随机变量 $X$ 和 $Y$，其已知联合分布由列联表给出。",
+    "a) Vervollständige die Tabelle.": "a) 补全表格。",
+    "b) Berechne $\\operatorname{Cov}(X,Y)$ und $\\varphi$.": "b) 计算 $\\operatorname{Cov}(X,Y)$ 和 $\\varphi$。",
+    "c) Bestimme $F_X(x)$ und zeichne sie.": "c) 求 $F_X(x)$ 并画出图像。",
+    "d) Sind $X$ und $Y$ unabhängig?": "d) $X$ 和 $Y$ 是否独立？",
+    "Seien $X$ und $Y$ Zufallsvariablen mit gemeinsamer Wahrscheinlichkeitsfunktion $f_{X,Y}(x,y)$:": "设 $X$ 和 $Y$ 具有联合概率函数 $f_{X,Y}(x,y)$：",
+    "Bestimmen Sie die Randverteilungen von $X$ und $Y$.": "求 $X$ 和 $Y$ 的边际分布。",
+    "Bestimmen Sie $E(X)$ und $\\operatorname{Var}(X)$.": "求 $E(X)$ 和 $\\operatorname{Var}(X)$。",
+    "Bestimmen Sie die Kovarianz und Korrelation zwischen $X$ und $Y$ und interpretieren Sie diese.": "求 $X$ 与 $Y$ 的协方差和相关系数，并解释结果。",
+    "Bestimmen Sie die bedingte Verteilung von $Y\\mid X=0$.": "求 $Y\\mid X=0$ 的条件分布。",
+    "Sei $X$ betaverteilt mit": "设 $X$ 服从 Beta 分布，满足：",
+    "und $Y$ gegeben $X$ geometrisch verteilt mit": "并且在给定 $X$ 时，$Y$ 服从如下几何分布：",
+    "Berechnen Sie $E(Y)$. Hinweis:": "计算 $E(Y)$。提示：",
+    "Berechnen Sie die Dichte von $X\\mid Y$.": "计算 $X\\mid Y$ 的密度。",
+    "Berechnen Sie $E(X\\mid Y)$.": "计算 $E(X\\mid Y)$。",
+    "zwei stochastisch unabhängige Zufallsvariablen.": "两个随机独立的随机变量。",
+    "Bestimmen Sie Erwartungswert und Kovarianzmatrix des Zufallsvektors": "求该随机向量的期望和协方差矩阵：",
+    "multivariat normalverteilt mit": "服从多元正态分布，具有：",
+    "Geben Sie die Verteilungen von $X_1$ und $X_2$ mit Erwartungswert und Varianz an.": "给出 $X_1$ 和 $X_2$ 的分布、期望和方差。",
+    "Sind $X_1$ und $X_2$ stochastisch unabhängig? Begründen Sie.": "$X_1$ 和 $X_2$ 是否随机独立？请说明理由。",
+    "Berechnen Sie die Wahrscheinlichkeit": "计算概率：",
+    "Runden Sie bitte auf $3$ Nachkommastellen.": "请四舍五入到小数点后三位。",
+    "Schätzen Sie die untere Schranke von": "估计下列量的下界：",
+    "ab.": "。",
+    "Handelt es sich bei den folgenden Matrizen um gültige Kovarianzmatrizen? Begründen Sie.": "下列矩阵是否为合法协方差矩阵？请说明理由。",
+    "ein Zufallsvektor mit gemeinsamer Dichte:": "一个具有如下联合密度的随机向量：",
+    "Zeigen Sie, dass $X_1$ und $X_2$ stochastisch unabhängig sind.": "证明 $X_1$ 和 $X_2$ 随机独立。",
+    "Leiten Sie die Randdichten von $X_1$ und $X_2$ her. Handelt es sich um bekannte Verteilungen?": "推导 $X_1$ 和 $X_2$ 的边际密度。它们是否属于已知分布？",
+    "Leiten Sie die Dichte von $Y=X_1+X_2$ her.": "推导 $Y=X_1+X_2$ 的密度。",
+    "multivariat normalverteilt mit:": "服从多元正态分布，参数为：",
+    "und Kovarianzmatrix:": "以及协方差矩阵：",
+    "Geben Sie $A$ an und begründen Sie. Geben Sie mit Begründung eine möglichst hohe Untergrenze für $B$ an.": "给出 $A$ 并说明理由。再给出 $B$ 尽可能大的下界并说明理由。",
+    "Welche Verteilung hat": "下列随机变量服从什么分布：",
+    "Wie lauten Erwartungswert und Varianz? Begründen Sie.": "其期望和方差是多少？请说明理由。",
+    "an. Begründen Sie.": "并说明理由。",
+    "Seien $X$ und $Y$ Zufallsvariablen mit gemeinsamer Wahrscheinlichkeitsfunktion": "设 $X$ 和 $Y$ 具有如下联合概率函数：",
+    "Berechnen Sie $E(Y)$.": "计算 $E(Y)$。",
+    "Handelt es sich bei den folgenden Matrizen um gültige Kovarianzmatrizen? Begründen Sie kurz.": "下列矩阵是否为合法协方差矩阵？请简要说明理由。",
+    "Achtung: Damit das Produkt zweier Exponentialdichten entsteht, schreibt man:": "注意：为了得到两个指数密度的乘积，可写成：",
+    "Unabhängigkeit.": "独立性。",
+    "Randdichten.": "边际密度。",
+    "Dichte von $Y=X_1+X_2$.": "$Y=X_1+X_2$ 的密度。",
+    "$A$ und Abschätzung für $B$.": "$A$ 以及对 $B$ 的估计。",
+    "Verteilung von $Y=\\sum_{i=1}^3X_i$.": "$Y=\\sum_{i=1}^3X_i$ 的分布。",
+    "Gesucht.": "要求的量。",
+}
+
+QUESTION_TRANSLATIONS_09 = {
+    "Gegeben sind:": "给定：",
+    "Berechnen Sie TPR und FPR für mögliche Score-Cut-offs, zeichnen Sie die ROC-Kurve, berechnen Sie AUC und interpretieren Sie den Wert. Außerdem: Bewerten Sie in einem medizinischen Diagnosebeispiel False Positives, False Negatives und NPV/PPV bei Cut-off $0.65$.": "计算可能 score 阈值下的 TPR 和 FPR，画出 ROC 曲线，计算 AUC 并解释其含义。另外，在医学诊断例子中评价阈值 $0.65$ 下的假阳性、假阴性以及 NPV/PPV。",
+    "Eine Grafik zeigt den Zusammenhang zwischen BIP pro Kopf und Kindersterblichkeitsrate in verschiedenen Ländern. Listen Sie die dargestellten Merkmale, Skalenniveaus und ästhetischen Zuordnungen auf.": "某图展示不同国家人均 GDP 与儿童死亡率之间的关系。请列出图中变量、尺度水平以及美学映射。",
+    "Analysieren Sie eine gestapelte Balkengrafik zu Bildungsstand, Geschlecht und Altersgruppen.": "分析一张关于教育水平、性别和年龄组的堆叠柱状图。",
+    "Analysieren Sie eine WHO-Grafik zu WASH-Services, Wohnort und Zugangszuwächsen.": "分析一张关于 WASH 服务、居住地和可及性增长的 WHO 图形。",
+    "Diskutieren Sie kritisch die Aussage, die Grafik zeige eindeutig, dass höheres Einkommen bessere Bildungsqualität verursache. Zusätzlich: Identifizieren Sie Schwächen einer Alphabetisierungs-Grafik und schlagen Sie Verbesserungen für den Vergleich Asien/Europa vor.": "批判性讨论“该图明确表明更高收入导致更好教育质量”这一说法。另外，指出一张识字率图的弱点，并提出用于比较亚洲/欧洲的改进建议。",
+    "Eine Grafik stellt den Zusammenhang zwischen Human Development Index (HDI) und Planetary Pressures Index für Ländergruppen und Zeitpunkte dar.": "某图展示不同国家组和时间点下 Human Development Index (HDI) 与 Planetary Pressures Index 之间的关系。",
+    "Analysieren Sie eine Starbucks-Grafik zu Koffein, Zucker, Volumen und Getränken sowie eine alternative problematische Darstellung.": "分析一张关于星巴克饮品咖啡因、糖、容量和饮品类型的图，以及另一种有问题的替代表达。",
+    "Holstein Kiel untersucht $n=36$ Elfmeter:": "Holstein Kiel 分析 $n=36$ 个点球：",
+    "Gegeben sind Beobachtungen mit Kategorie $0/1$ und Score:": "给定带有 $0/1$ 类别和 score 的观测：",
+    "Im Rahmen einer Studie zu den wirtschaftlichen Auswirkungen des Klimawandels auf den Weinanbau in Deutschland soll der Weinmostertrag in $\\mathrm{hl}/\\mathrm{ha}$ in den $13$ deutschen Weinanbaugebieten miteinander verglichen werden. Anhand der jetzt bereits vorhandenen Unterschiede zwischen den Regionen erhofft man sich, Informationen für die Zukunft gewinnen zu können.": "在一项关于气候变化对德国葡萄种植经济影响的研究中，需要比较德国 $13$ 个葡萄酒产区的葡萄汁产量（单位 $\\mathrm{hl}/\\mathrm{ha}$）。研究者希望通过当前地区差异为未来获取信息。",
+    "Für das Jahr $2020$ liegen die folgenden Zahlen für die Regionen vor. Sie können für die folgenden Aufgaben davon ausgehen, dass der Rot- und Weißmostertrag zwischen den Regionen jeweils normalverteilt ist.": "给出 $2020$ 年各地区如下数据。以下小问可假设地区间红葡萄汁和白葡萄汁产量分别服从正态分布。",
+    "Quelle: Destatis, Datensatz: $41253$-$0002$.": "来源：Destatis，数据集 $41253$-$0002$。",
+    "Es soll überprüft werden, ob sich der mittlere Rot- und Weißmostertrag in den Regionen signifikant, $\\alpha=0{,}05$, voneinander unterscheidet.": "需要在显著性水平 $\\alpha=0{,}05$ 下检验各地区红葡萄汁与白葡萄汁的平均产量是否存在显著差异。",
+    "Welchen Test würden Sie hierfür verwenden? Begründen Sie ihre Entscheidung. Stellen Sie die zu testenden Hypothesen auf. $(4P)$": "你会使用哪个检验？请说明理由，并写出待检验的假设。（4 分）",
+    "Führen Sie den Test in R durch. Zu welchem Ergebnis kommen Sie? $(4P)$": "在 R 中执行该检验。你得到什么结论？（4 分）",
+    "Geben Sie für den mittleren Unterschied zwischen Rot- und Weißmostertrag in den Regionen ein $90\\%$-Konfidenzintervall an. $(2P)$": "给出各地区红葡萄汁与白葡萄汁平均产量差的 $90\\%$ 置信区间。（2 分）",
+    "Im zweiten Schritt soll jetzt überprüft werden, ob eine Abhängigkeit zwischen Rot- und Weißmostertrag in den Regionen besteht.": "第二步要检验各地区红葡萄汁和白葡萄汁产量之间是否存在依赖关系。",
+    "Welchen Test würden Sie hierfür verwenden? Begründen Sie ihre Entscheidung. Welche zusätzliche Annahme über die Verteilung der Daten ist hier notwendig? Stellen Sie die zu testenden Hypothesen auf. $(4P)$": "你会使用哪个检验？请说明理由。这里还需要对数据分布作出什么额外假设？写出待检验的假设。（4 分）",
+    "Führen Sie den Test in R durch. Gehen Sie davon aus, dass die zusätzliche Annahme aus (c)(i) gegeben ist. $(4P)$": "在 R 中执行该检验。假设 (c)(i) 中的额外条件成立。（4 分）",
+    "Betrachten Sie die untenstehende Grafik. Sie zeigt den durchschnittlichen Ertrag („crop yield“) für landwirtschaftliche Nutzflächen in Tonnen pro Hektar auf den Kontinenten der Erde im Jahr 2018. ![](图片/Altklausur2LV-1.png) Analysieren Sie die grafischen Mittel, die zur Visualisierung benutzt wurden.": "观察下图。它展示了 2018 年世界各大洲农业用地的平均产量（crop yield，吨/公顷）。![](图片/Altklausur2LV-1.png) 分析该可视化使用的图形手段。",
+    "Geben Sie für **alle** in der Grafik gezeigten Merkmale jeweils": "对图中显示的**所有**变量分别给出：",
+    "- das Skalenniveau - die verwendeten Zuordnungen auf ästhetische Eigenschaften der gezeichneten Sechsecke": "- 尺度水平；- 这些变量到所绘制六边形美学属性的映射。",
+    "Inwiefern verletzt die hier verwendete Farbpalette die in der Vorlesung besprochenen Kriterien für Farbskalen in statistischen Grafiken? Was für eine Art von Farbskala sollte stattdessen verwendet werden?": "这里使用的调色板在哪些方面违反了课堂上讨论的统计图形色标标准？应改用哪类色标？",
+    "Statistische Grafiken sollen die Datenlage möglichst unverfälscht darstellen. Inwiefern verfälscht die obige Darstellung die tatsächliche Datenlage?": "统计图形应尽量不失真地呈现数据。上图在哪些方面扭曲了真实数据情况？",
+    "Statistische Grafiken sollen die Datenlage möglichst kompakt darstellen, also: minimal viel verwendete Tinte für maximal viel vermittelte Information.": "统计图形应尽量紧凑地呈现数据，即用尽可能少的墨水传递尽可能多的信息。",
+    "Inwiefern verfehlt die obige Darstellung dieses Ziel?": "上图在哪些方面没有达到这一目标？",
+    "Statistische Grafiken sollen die Datenlage möglichst übersichtlich darstellen, um den Konsument:innen der Grafik schnelles und präzises Ablesen relevanter quantitativer Informationen zu ermöglichen.": "统计图形应尽量清晰，使读者能快速、准确读出相关定量信息。",
+    "Definieren Sie eine alternative grafische Darstellung für die in der obenstehenden Grafik gezeigten Daten, welche diese unverfälscht, kompakt und übersichtlich visualisiert. Verwenden Sie für die Beschreibung die in der Vorlesung eingeführten Begrifflichkeiten der *grammar of graphics* oder die entsprechende `{ggplot2}`-Syntax.": "为上图数据设计一种替代图形表示，使其不失真、紧凑且清晰。描述时请使用课堂中介绍的 *grammar of graphics* 概念或相应 `{ggplot2}` 语法。",
+    "Die obigen Grafiken visualisieren Antworthäufigkeiten auf die Frage „Wie oft fühlen Sie sich einsam?“, die im Rahmen des „Community Life Survey“ des nationalen britischen Statistikinstituts im Jahr 2016/2017 gestellt wurde. Alle drei Grafiken zeigen denselben Datensatz.": "上面的图形展示了英国国家统计机构在 2016/2017 年 “Community Life Survey” 中关于“你多久感到孤独？”这一问题的回答频数。三张图显示的是同一个数据集。",
+    "Geben Sie an, welche Merkmale in diesen Grafiken visualisiert werden und welches Skalenniveau diese besitzen.": "指出这些图中可视化了哪些变量，以及它们各自的尺度水平。",
+    "Welche Art von Farbskala wird in Grafiken B und C verwendet? Welche andere Art von Farbskala käme hier ebenso in Frage und warum?": "图 B 和图 C 使用了哪类色标？这里还可以使用哪类色标，为什么？",
+    "Beantworten Sie die folgenden inhaltlichen Fragen. Geben Sie jeweils an, welche der drei Grafiken sich am besten eignet, um die jeweilige Frage zu beantworten und warum.": "回答下列实质性问题。每问请指出三张图中哪一张最适合回答该问题，并说明原因。",
+    "Sind die hier dargestellten Merkmale empirisch unabhängig? Begründen Sie Ihre Antwort.": "这里显示的变量是否经验独立？请说明理由。",
+    "Der „Community Life Survey“ befragt die Bewohner:innen einer Zufallsstichprobe britischer Haushalte über mehrere Jahre wiederholt mit denselben Fragebögen. Um was für eine Art von Erhebung handelt es sich also?": "“Community Life Survey” 对英国家庭随机样本中的居民进行多年重复问卷调查。它属于哪种调查类型？",
+    "Warum können Aussagen wie": "为什么如下说法：",
+    "„Die meisten Menschen in Großbritannien fühlen sich tendenziell seltener einsam, umso älter sie werden.“": "“英国多数人随着年龄增长往往更少感到孤独。”",
+    "mit den in den Grafiken gezeigten Daten aus 2016/2017 nicht schlüssig begründet oder widerlegt werden? Mit was für Daten könnte so eine Aussage belegt oder widerlegt werden?": "不能用图中 2016/2017 年的数据得到有力支持或反驳？需要哪类数据才能支持或反驳这种说法？",
+    "Die Grafik zeigt Streudiagramme zu den Datensätzen A, B, C und D, die jeweils $n=200$ Beobachtungen zweier metrischer Merkmale enthalten.": "该图显示数据集 A、B、C、D 的散点图，每个数据集都包含两个度量变量的 $n=200$ 个观测。",
+    "Folgende Tabelle gibt die Pearson- und Spearman-Korrelationen der gezeigten Datensätze an.": "下表给出这些数据集的 Pearson 和 Spearman 相关系数。",
+    "Die linke obere Grafik zeigt Kerndichteschätzer für drei der Merkmale aus $y_A,y_B,y_C$ oder $y_D$. Welcher Kerndichteschätzer $(1,2,3)$ gehört zu welchem Merkmal $(y_A,y_B,y_C,y_D)$?": "左上图显示了 $y_A,y_B,y_C,y_D$ 中三个变量的核密度估计。核密度估计 $(1,2,3)$ 分别对应哪个变量 $(y_A,y_B,y_C,y_D)$？",
+    "Die rechte obere Grafik zeigt Boxplots für drei der Merkmale aus $y_A,y_B,y_C$ oder $y_D$. Welcher Boxplot $(i,ii,iii)$ gehört zu welchem Merkmal $(y_A,y_B,y_C,y_D)$? Falls für einen Boxplot mehrere Merkmale in Frage kommen, geben Sie alle an.": "右上图显示了 $y_A,y_B,y_C,y_D$ 中三个变量的箱线图。箱线图 $(i,ii,iii)$ 分别对应哪个变量？若一个箱线图可能对应多个变量，请全部列出。",
+    "Nehmen Sie nun an, dass die Boxplots i und ii in der vorherigen Teilaufgabe die Verteilungen des jährlichen Nettoeinkommens in zwei unterschiedlichen Populationen zeigen. In welcher der Populationen ist die Konzentration der Nettoeinkommen, gemessen mit dem Gini-Index, größer? Begründen Sie Ihre Antwort.": "现在假设上一小问中的箱线图 i 和 ii 表示两个不同总体的年净收入分布。按 Gini 指数衡量，哪个总体的净收入集中程度更高？请说明理由。",
+    "Wie verändert sich üblicherweise die Form einer Kerndichteschätzung, wenn die Bandbreite der verwendeten Kernfunktion verdoppelt wird? Warum?": "当核函数带宽加倍时，核密度估计的形状通常如何变化？为什么？",
+    "Warum sind Histogramme im Allgemeinen weniger gut zur Visualisierung empirischer Verteilungen geeignet als Kerndichteschätzer?": "为什么一般来说，直方图不如核密度估计适合可视化经验分布？",
+    "Durch was unterscheidet sich die Berechnung des Korrelationskoeffizienten nach Spearman von der Berechnung des Korrelationskoeffizienten nach Pearson? Was sind jeweils die Anwendungsvoraussetzungen der beiden Korrelationskoeffizienten?": "Spearman 相关系数的计算与 Pearson 相关系数有何不同？二者各自的适用前提是什么？",
+    "Betrachten Sie die folgende Grafik:": "观察下列图形：",
+    "Quelle: Ourworldindata.org": "来源：Ourworldindata.org。",
+    "Übersetzung der relevanten Grafikbeschriftungen:": "相关图形标注翻译如下：",
+    "- Titel: „Weltbevölkerung und Fruchtbarkeitsniveau über die Zeit“ - Untertitel: „Kumulative Anteile an Weltbevölkerung auf der x-Achse. Länder sind entlang der x-Achse absteigend nach ihrer Gesamtfruchtbarkeitsrate sortiert.“ - Linke Seite: - Global average fertility = Globale durchschnittliche Fruchtbarkeit - Global replacement fertility = Globale Fruchtbarkeitsrate für stabiles Bevölkerungsniveau - Horizontale Achse: „Kumulativer Anteil an Weltbevölkerung“ - Vertikale Achse: „Anzahl an Kindern pro Frau (Gesamtfruchtbarkeitsrate)“": "- 标题：“世界人口与生育水平随时间变化”；- 副标题：“x 轴为世界人口累计占比。国家沿 x 轴按总和生育率降序排列。”；- 左侧：Global average fertility = 全球平均生育率；Global replacement fertility = 维持稳定人口水平的替代生育率；- 横轴：“世界人口累计占比”；- 纵轴：“每名女性的孩子数（总和生育率）”。",
+    "Analysieren Sie im Folgenden die Datensituation, die der obigen Grafik zugrunde liegt, und die grafischen Mittel, die zur Visualisierung benutzt wurden.": "下面分析该图背后的数据情境以及可视化使用的图形手段。",
+    "Welche Untersuchungseinheiten aus welcher Grundgesamtheit werden in der Grafik dargestellt?": "图中展示的是来自哪个总体的哪些调查单位？",
+    "Was für eine Erhebungsart und Datenstruktur liegen hier vor?": "这里的数据收集类型和数据结构是什么？",
+    "Welches Skalenniveau haben Gesamtfruchtbarkeitsrate und Bevölkerungsanteil jeweils?": "总和生育率和人口占比分别是什么尺度水平？",
+    "Sind die auf der linken Seite angegebenen Zeiträume die Ausprägungen eines ordinal-, nominal- oder intervallskalierten Merkmals? Begründen Sie Ihre Antwort kurz.": "左侧给出的时间段是有序、名义还是区间尺度变量的取值？请简要说明。",
+    "Was für eine Art von Farbskala wurde in der Grafik verwendet? Welche Art von Farbskala wäre hier eventuell besser geeignet und warum?": "图中使用了哪类色标？哪类色标可能更合适，为什么？",
+    "Welche „Geometrie“ wird hier zur Darstellung benutzt?": "这里使用了哪种“几何对象”进行呈现？",
+    "Geben Sie für alle in der Grafik gezeigten Merkmale die verwendeten ästhetischen Zuordnungen an.": "给出图中所有变量所使用的美学映射。",
+    "Welche ästhetischen Eigenschaften welcher Geometrien würden Sie für welche Merkmale verwenden, um in einer wohlüberlegten statistischen Grafik auf Basis dieser Daten die zeitlichen Entwicklungen der Gesamtfruchtbarkeitsraten zwischen ausgewählten Ländern einfach vergleichbar zu machen?": "若要基于这些数据设计一张合理统计图，使选定国家之间总和生育率的时间变化易于比较，你会为哪些变量使用哪些几何对象的哪些美学属性？",
+    "Auch `ggplot2`-Befehle werden als Antwort akzeptiert.": "也可以用 `ggplot2` 命令作答。",
+    "Betrachten Sie die in der Grafik in Rot eingezeichnete Linie. Stellen Sie sich vor, wir vertauschen die horizontalen und vertikalen Achsen der Grafik durch eine Rotation um $90^\\circ$ gegen den Uhrzeigersinn. Wäre die dadurch entstehende Funktion äquivalent zur empirischen Verteilungsfunktion der Gesamtfruchtbarkeitsrate im angegebenen Zeitraum? Begründen Sie Ihre Antwort.": "观察图中红色曲线。设想将图形逆时针旋转 $90^\\circ$，从而交换横轴和纵轴。所得函数是否等价于给定时间段中总和生育率的经验分布函数？请说明理由。",
+    "Die folgenden Graphiken zeigen Streudiagramme zu den drei Datensätzen A, B und C, die jeweils $n=20$ Beobachtungen zweier metrischer Merkmale enthalten.": "下列图形展示三个数据集 A、B、C 的散点图，每个数据集包含两个度量变量的 $n=20$ 个观测。",
+    "Zeichnen Sie ein Histogramm der relativen Häufigkeiten des Merkmals $X_A$ aus Datensatz A mit gleichbleibender Klassenbreite der Länge $5$ und charakterisieren Sie die Verteilung. Wodurch werden im Histogramm die relativen Häufigkeiten dargestellt?": "对数据集 A 中变量 $X_A$，以固定组距 $5$ 画相对频率直方图，并描述该分布。在直方图中，相对频率由什么表示？",
+    "Nennen Sie jeweils einen allgemeinen Vor- und Nachteil der graphischen Darstellung eines metrischen Merkmals in einem Histogramm gegenüber der Darstellung in einem Boxplot.": "与箱线图相比，用直方图展示度量变量各有什么一般优点和缺点？",
+    "Geben Sie für die drei Streudiagramme jeweils an, ob der Korrelationskoeffizient nach Bravais-Pearson oder der Korrelationskoeffizient nach Spearman größer ist oder ob beide etwa den gleichen Wert haben. Geben Sie den genauen Wert für einen Korrelationskoeffizienten an, falls dieser direkt aus der Graphik abgelesen werden kann.": "对三个散点图分别说明 Bravais-Pearson 相关系数和 Spearman 相关系数哪个更大，或二者是否大致相等。若能直接从图中读出某个相关系数的精确值，请给出。",
+    "Welche Art von Zusammenhang misst der Korrelationskoeffizient nach Bravais-Pearson, welche Art von Zusammenhang der Korrelationskoeffizient nach Spearman? Für welche Skalenniveaus sind die beiden Maße jeweils geeignet?": "Bravais-Pearson 相关系数量度哪类关系？Spearman 相关系数量度哪类关系？二者分别适用于哪些尺度水平？",
+    "Für zwei Merkmale $X$ und $Y$ mit positivem Wertebereich sind der Korrelationskoeffizient nach Bravais-Pearson": "对两个取值为正的变量 $X$ 和 $Y$，Bravais-Pearson 相关系数为：",
+    "und der Korrelationskoeffizient nach Spearman": "而 Spearman 相关系数为：",
+    "Ändern sich die Werte der beiden Zusammenhangsmaße jeweils, wenn $Y$ folgendermaßen zu $Y_1$ bzw. $Y_2$ transformiert wird?": "当 $Y$ 按如下方式变换为 $Y_1$ 或 $Y_2$ 时，这两个关联度量的值是否改变？",
+    "$Y_1=-Y$": "$Y_1=-Y$。",
+    "$Y_2=Y^2$": "$Y_2=Y^2$。",
+    "Geben Sie konkrete Werte für die resultierenden Korrelationskoeffizienten $r_{X,Y_1}$, $r^{SP}_{X,Y_1}$, $r_{X,Y_2}$ und $r^{SP}_{X,Y_2}$ an, falls dies möglich ist.": "若可能，给出变换后相关系数 $r_{X,Y_1}$、$r^{SP}_{X,Y_1}$、$r_{X,Y_2}$ 和 $r^{SP}_{X,Y_2}$ 的具体值。",
+    "Ein weiteres Zusammenhangsmaß stellt Kendalls Tau dar. Was ist die Grundidee dieser Maßzahl? Erläutern Sie kurz das Vorgehen bei der Berechnung.": "另一种关联度量是 Kendall's tau。该指标的基本思想是什么？简要说明其计算步骤。",
+    "Betrachten Sie die untenstehende Grafik. Sie zeigt den durchschnittlichen Ertrag, „crop yield“, für landwirtschaftliche Nutzflächen in Tonnen pro Hektar auf den Kontinenten der Erde im Jahr 2018. ![](图片/Altklausur2LV-1.png) Analysieren Sie die grafischen Mittel, die zur Visualisierung benutzt wurden.": "观察下图。它展示了 2018 年世界各大洲农业用地平均产量（crop yield，吨/公顷）。![](图片/Altklausur2LV-1.png) 分析该可视化使用的图形手段。",
+    "Geben Sie für alle in der Grafik gezeigten Merkmale jeweils": "对图中所有变量分别给出：",
+    "- das Skalenniveau, - die verwendeten Zuordnungen auf ästhetische Eigenschaften der gezeichneten Sechsecke": "- 尺度水平；- 这些变量到所绘六边形美学属性的映射。",
+    "Statistische Grafiken sollen die Datenlage möglichst unverfälscht darstellen.": "统计图形应尽量不失真地呈现数据。",
+    "Inwiefern verfälscht die obige Darstellung die tatsächliche Datenlage?": "上图在哪些方面扭曲了真实数据情况？",
+    "Statistische Grafiken sollen die Datenlage möglichst kompakt darstellen, also minimal viel verwendete Tinte für maximal viel vermittelte Information.": "统计图形应尽量紧凑，即用尽可能少的墨水传递尽可能多的信息。",
+    "Statistische Grafiken sollen die Datenlage möglichst übersichtlich darstellen, um den Konsument:innen der Grafik schnelles und präzises Ablesen relevanter quantitativer Informationen zu ermöglichen. Inwiefern verfehlt die obige Darstellung dieses Ziel?": "统计图形应尽量清晰，使读者能快速准确读出相关定量信息。上图在哪些方面没有达到这一目标？",
+    "Definieren Sie eine alternative grafische Darstellung für die in der obenstehenden Grafik gezeigten Daten, welche diese unverfälscht, kompakt und übersichtlich visualisiert. Verwenden Sie für die Beschreibung die in der Vorlesung eingeführten Begrifflichkeiten der Grammar of Graphics oder die entsprechende `{ggplot2}`-Syntax.": "为上图数据设计一种替代图形表示，使其不失真、紧凑且清晰。描述时请使用课堂中介绍的 Grammar of Graphics 术语或相应 `{ggplot2}` 语法。",
+    "Betrachten Sie die untenstehende Grafik. Sie zeigt den durchschnittlichen Ertrag, „crop yield“, für landwirtschaftliche Nutzflächen in Tonnen pro Hektar auf den Kontinenten der Erde im Jahr 2018.": "观察下图。它展示了 2018 年世界各大洲农业用地平均产量（crop yield，吨/公顷）。",
+    "Analysieren Sie die grafischen Mittel, die zur Visualisierung benutzt wurden.": "分析可视化使用的图形手段。",
+    "Thema: Our-World-in-Data-Grafik zur Weltbevölkerung und Fruchtbarkeit.": "主题：Our World in Data 关于世界人口与生育率的图形。",
+    "Untersuchungseinheiten und Grundgesamtheit.": "调查单位和总体。",
+    "Erhebungsart und Datenstruktur.": "数据收集类型和数据结构。",
+    "Skalenniveaus.": "尺度水平。",
+    "Zeiträume.": "时间段。",
+    "Farbskala.": "色标。",
+    "Geometrie und Ästhetiken.": "几何对象和美学映射。",
+    "Alternative Grafik für Ländervergleiche.": "用于国家比较的替代图形。",
+    "Empirische Verteilungsfunktion?.": "是否为经验分布函数？",
+    "Gegeben sind drei Streudiagramme mit jeweils $n=20$.": "给定三个散点图，每个都有 $n=20$ 个观测。",
+    "Histogramm von $X_A$.": "$X_A$ 的直方图。",
+    "Histogramm vs. Boxplot.": "直方图与箱线图比较。",
+    "Pearson vs. Spearman.": "Pearson 与 Spearman 比较。",
+    "Pearson und Spearman.": "Pearson 和 Spearman。",
+    "Transformationen.": "变换。",
+    "Kendalls Tau.": "Kendall's tau。",
+    "Es geht um eine Grafik mit dem Titel:": "题目涉及一张标题为下列内容的图：",
+    "**“Where are Americans born?”**": "**“美国人出生在哪里？”**",
+    "Die Grafik zeigt für US-Bundesstaaten über die Zeit Anteile der Bevölkerung nach Geburtsort:": "该图展示美国各州随时间变化的、按出生地划分的人口比例：",
+    "- außerhalb der USA, - woanders in den USA, - im selben Bundesstaat, - keine Daten verfügbar.": "- 美国以外；- 美国其他地方；- 同一州；- 无可用数据。",
+    "Grundgesamtheit und Untersuchungseinheiten.": "总体和调查单位。",
+    "Art der Datengewinnung und Erhebungsform.": "数据获取方式和调查形式。",
+    "Grammar-of-Graphics-Analyse für den Teil „AK“ / Alaska.": "对 “AK”/Alaska 部分做 Grammar of Graphics 分析。",
+    "Typ der Farbskala.": "色标类型。",
+    "Grammar-of-Graphics-Analyse der gesamten Grafik.": "对整张图做 Grammar of Graphics 分析。",
+    "Skalenniveaus der gezeigten Merkmale und Statistiken.": "图中变量和统计量的尺度水平。",
+    "Geeignete Grafik für die Frage.": "适合该问题的图形。",
+    "Aussagen beurteilen.": "评价相关说法。",
+}
+
+QUESTION_TRANSLATIONS = {}
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_02)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_08)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_03)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_04)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_05)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_06)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_07)
+QUESTION_TRANSLATIONS.update(QUESTION_TRANSLATIONS_09)
+QUESTION_TRANSLATIONS.update({
+    "Bilde jeweils die partielle Ableitung nach $x$ und nach $y$.": "分别求关于 $x$ 和关于 $y$ 的偏导数。",
+    "Aufgaben": "题目",
+    "Bestimme die Stammfunktion oder das genaue Integral (falls Grenzen angegeben sind) der jeweiligen Funktion.": "求对应函数的原函数；如果给出了积分上下限，则求定积分的精确值。",
+    "Tipp für (c): Nutze zweimal partielle Integration. Nachdem du das zweite Mal partiell integriert hast, betrachte den Ausdruck vorsichtig.": "提示 (c)：使用两次分部积分。第二次分部积分后，要仔细整理得到的表达式。",
+    "Bestimme die Integrale.": "求下列积分。",
+    "Tipp für (b): Setze $u=1+x^2$.": "提示 (b)：令 $u=1+x^2$。",
+    "und:": "并且：",
+    "Es sei": "设：",
 })
 
 FORMULAS.update({
@@ -2555,6 +3749,7 @@ def structure_history_exam_body(body, task):
         question, solution = split_solution_from_body(rest)
     if not question:
         question = infer_question_from_solution(task, solution)
+    question = add_question_translations(question, task.get("topic", ""))
     guide = chinese_history_guide(task, question, solution)
     solution_with_guides = inject_history_guides_into_solution(solution, guide)
     parts = [
@@ -3126,7 +4321,7 @@ def insert_guide(text, guide):
     return text + f"\n\n##### 中文解题思路\n\n{guide}\n"
 
 
-def structure_exercise_body(body, guide):
+def structure_exercise_body(body, guide, topic=""):
     lines = body.strip().splitlines()
     if not lines:
         return body
@@ -3141,6 +4336,7 @@ def structure_exercise_body(body, guide):
     else:
         question, solution = split_solution_from_body(rest)
 
+    question = add_question_translations(question, topic)
     solution = strip_long_subpart_titles(solution)
 
     answer_parts = [
@@ -3245,7 +4441,7 @@ def main():
             body = remove_standalone_point_markers(body)
             body = renumber_task(body, i, summary_for(task, topic))
             guide = guide_for(task, topic)
-            body = structure_exercise_body(body, guide)
+            body = structure_exercise_body(body, guide, topic)
             lines += [
                 body,
                 "",

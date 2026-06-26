@@ -44,9 +44,13 @@
 
 Es sei $\mathbb P$ ein Wahrscheinlichkeitsmaß, also ein normiertes Maß mit $\mathbb P(\Omega)=1$, auf dem Messraum $(\Omega,\mathcal F)$ und $A,B\in\mathcal F$.
 
+译：设 $\mathbb P$ 是测度空间 $(\Omega,\mathcal F)$ 上的概率测度，即满足 $\mathbb P(\Omega)=1$ 的规范化测度，且 $A,B\in\mathcal F$。
+
 ###### (a)
 
 Falls
+
+译：如果：
 
 $$
 \mathbb P(A)=\frac{1}{3}
@@ -58,9 +62,13 @@ $$
 
 können $A$ und $B$ dann disjunkt sein? Beweisen oder widerlegen Sie.
 
+译：那么 $A$ 和 $B$ 能否不交？请证明或反驳。
+
 ###### (b)
 
 Beweisen oder widerlegen Sie:
+
+译：证明或反驳：
 
 $$
 \mathbb P(B)=0
@@ -72,17 +80,23 @@ $$
 
 Sei
 
+译：设：
+
 $$
 \Omega=\{x\mid x\in\mathbb N_0\}
 $$
 
 mit Elementarereignissen $\omega_x=x$. Außerdem gelte
 
+译：其基本事件为 $\omega_x=x$。此外满足：
+
 $$
 \mathbb P(\{\omega_x\})=\frac{c}{x!}.
 $$
 
 Wie groß ist $c$?
+
+译：$c$ 是多少？
 
 #### 解答
 
@@ -210,9 +224,13 @@ $$
 
 Gegeben sei ein Wahrscheinlichkeitsraum $(\Omega,\mathcal F,\mathbb P)$ und $B\subset\Omega$ mit $\mathbb P(B)>0$.
 
+译：给定概率空间 $(\Omega,\mathcal F,\mathbb P)$ 以及 $B\subset\Omega$，且 $\mathbb P(B)>0$。
+
 ###### (a)
 
 Beweisen oder widerlegen Sie:
+
+译：证明或反驳：
 
 $$
 \mathbb P(A\mid B)\geq \mathbb P(A)
@@ -223,6 +241,8 @@ $$
 ###### (b)
 
 Zeigen Sie:
+
+译：证明：
 
 $$
 \mathbb P(A\mid B)
@@ -322,13 +342,19 @@ Damit ist die Behauptung gezeigt.
 
 Es sei $\mathbb P$ ein Wahrscheinlichkeitsmaß auf dem Messraum $(\Omega,\mathcal F)$ und $A,B\in\mathcal F$.
 
+译：设 $\mathbb P$ 是测度空间 $(\Omega,\mathcal F)$ 上的概率测度，且 $A,B\in\mathcal F$。
+
 ###### (a)
 
 Falls $\mathbb P(A)=\frac13$ und $\mathbb P(\bar B)=\frac14$, können $A$ und $B$ dann disjunkt sein?
 
+译：若 $\mathbb P(A)=\frac13$ 且 $\mathbb P(\bar B)=\frac14$，那么 $A$ 和 $B$ 能否不交？
+
 ###### (b)
 
 Beweisen oder widerlegen Sie:
+
+译：证明或反驳：
 
 $$
 \mathbb P(A)=\mathbb P(\bar B)\Rightarrow \bar A=B.
@@ -338,6 +364,8 @@ $$
 
 Beweisen oder widerlegen Sie:
 
+译：证明或反驳：
+
 $$
 \mathbb P(B)=0\Rightarrow \mathbb P(A\cap B)=0.
 $$
@@ -346,11 +374,15 @@ $$
 
 Sei $\Omega=\{i\mid i\in\mathbb N_0\}$ mit Elementarereignissen $\omega_i=i$. Außerdem gelte:
 
+译：设 $\Omega=\{i\mid i\in\mathbb N_0\}$，基本事件为 $\omega_i=i$。此外满足：
+
 $$
 \mathbb P(\{\omega_i\})=\frac{c}{i!}.
 $$
 
 Wie groß ist $c$?
+
+译：$c$ 是多少？
 
 #### 解答
 
@@ -416,21 +448,39 @@ $$
 
 Bestimmen Sie für die folgenden Situationen jeweils die passende Standardverteilung und berechnen Sie die gefragten Wahrscheinlichkeiten.
 
+译：对下列情形分别确定合适的标准分布，并计算所问概率。
+
 ###### (a) Tombola
+
+译：抽奖。
 
 Es gibt $k$ Lose, durchnummeriert von $1$ bis $k$. Genau ein Los gewinnt. $X_1$ sei die Gewinnlosnummer.
 
+译：共有 $k$ 张彩票，编号从 $1$ 到 $k$。恰好一张中奖。设 $X_1$ 为中奖彩票编号。
+
 ###### (b) Lerngruppe
+
+译：学习小组。
 
 Es gibt fünf Aufgaben, vier wurden vorbereitet, zwei werden zufällig ausgewählt. $X_2$ sei die Anzahl der vorbereiteten ausgewählten Aufgaben.
 
+译：共有五道题，其中四道已准备；随机抽取两道。设 $X_2$ 为被抽中的已准备题目数量。
+
 ###### (c) Kontrolle eines Betriebs
+
+译：企业检查。
 
 Jeden Tag wird unabhängig ein Anteil $a$ der Betriebe kontrolliert. $X_3$ sei die Anzahl der Tage bis zur ersten Kontrolle eines bestimmten Betriebs.
 
+译：每天独立地检查比例为 $a$ 的企业。设 $X_3$ 为某个特定企业首次被检查前经过的天数。
+
 ###### (d) Test mit 10 Fragen
 
+译：10 道题测试。
+
 Ein Schüler beantwortet jede von 10 Fragen unabhängig mit Wahrscheinlichkeit $0.9$ richtig. $X_4$ sei die Anzahl richtiger Antworten.
+
+译：一名学生独立作答 10 道题，每题答对概率为 $0.9$。设 $X_4$ 为答对题数。
 
 #### 解答
 
@@ -519,6 +569,8 @@ $$
 
 Gegeben seien zwei Folgen unabhängiger identisch verteilter Zufallsvariablen mit:
 
+译：给定两列独立同分布随机变量，满足：
+
 $$
 X_i\sim U(\{1,2,3,4,5\}),
 \qquad
@@ -528,6 +580,8 @@ $$
 
 Außerdem seien:
 
+译：此外设：
+
 $$
 \bar X_n=\frac1n\sum_{i=1}^n X_i,
 \qquad
@@ -535,6 +589,8 @@ $$
 $$
 
 Bestimmen Sie $a,b\in\mathbb R$, sodass:
+
+译：求 $a,b\in\mathbb R$，使得：
 
 $$
 \bar X_n+\bar Y_n \xrightarrow{P} a,
@@ -608,17 +664,23 @@ $$
 
 Gegeben sei der Wahrscheinlichkeitsraum:
 
+译：给定概率空间：
+
 $$
 ([0,1],\mathcal B([0,1]),\lambda|_{[0,1]}).
 $$
 
 Betrachten Sie:
 
+译：考虑下列对象：
+
 $$
 X_n(\omega)=n\cdot\mathbf 1_{\left(0,\frac1n\right)}(\omega).
 $$
 
 Untersuchen Sie, ob $X_n$ gegen $0$ fast sicher, in Wahrscheinlichkeit, in Verteilung und im ersten Moment konvergiert.
+
+译：检验 $X_n$ 是否几乎必然、依概率、依分布以及一阶矩收敛到 $0$。
 
 #### 解答
 
@@ -677,6 +739,8 @@ Das geht nicht gegen $0$. Daher konvergiert $X_n$ nicht im ersten Moment gegen $
 
 Gegeben ist eine einzelne Zufallsvariable einer parametrischen Verteilungsfamilie. Nennen Sie Beispiele hinreichender Eigenschaften, unter denen $X$ selbst approximativ normalverteilt sein kann, ähnlich wie bei der Poisson-Approximation. Welche Prinzipien könnten zugrunde liegen?
 
+译：给定某参数分布族中的单个随机变量。请举出一些充分性质，使得 $X$ 本身可近似服从正态分布，类似 Poisson 近似。可能基于哪些原理？
+
 #### 解答
 
 ##### 中文解题思路
@@ -727,6 +791,8 @@ $$
 #### 题目
 
 Wie oft muss mit einer idealen Münze mindestens geworfen werden, sodass die relative Häufigkeit von Wappen mit Wahrscheinlichkeit mindestens $0.95$ höchstens $0.01$ beziehungsweise $0.001$ von $\pi=0.5$ abweicht? Nutzen Sie eine geeignete Abschätzung durch eine Ungleichung.
+
+译：至少需要投掷一枚理想硬币多少次，才能使正面相对频率以至少 $0.95$ 的概率偏离 $\pi=0.5$ 不超过 $0.01$ 或 $0.001$？请使用合适的不等式估计。
 
 #### 解答
 
@@ -797,13 +863,19 @@ $$
 
 Ein Beamter verlässt an den $225$ Arbeitstagen eines Jahres sein Büro immer erst kurz nach Dienstschluss. Die täglichen zusätzlichen Arbeitszeiten seien unabhängig exponentialverteilt mit Erwartungswert $1/\lambda=5$ Minuten.
 
+译：某公务员一年有 $225$ 个工作日，每天下班后都会稍晚离开办公室。每天额外工作时间相互独立且服从指数分布，期望为 $1/\lambda=5$ 分钟。
+
 ###### (a)
 
 Leiten Sie die approximative Verteilung der gesamten zusätzlichen Arbeitszeit eines Jahres her.
 
+译：推导一年总额外工作时间的近似分布。
+
 ###### (b)
 
 Berechnen Sie approximativ die Wahrscheinlichkeit, dass der Beamte in einem Jahr mehr als $16$ Stunden zusätzlich arbeitet.
+
+译：近似计算该公务员一年额外工作超过 $16$ 小时的概率。
 
 #### 解答
 
@@ -895,6 +967,8 @@ $$
 
 $X\sim\operatorname{Beta}(a,b)$. Berechnen Sie die Dichte von:
 
+译：设 $X\sim\operatorname{Beta}(a,b)$。计算下列随机变量的密度：
+
 $$
 Y=(X+2)^{-1}.
 $$
@@ -903,12 +977,16 @@ $$
 
 Sei $X$ Weibull-verteilt mit:
 
+译：设 $X$ 服从 Weibull 分布，满足：
+
 $$
 f_X(x)=abx^{b-1}e^{-ax^b}\mathbf 1_{\{x\geq 0\}},
 \qquad a,b>0.
 $$
 
 Bestimmen Sie die Dichte von $Y=X^b$.
+
+译：求 $Y=X^b$ 的密度。
 
 #### 解答
 
@@ -1020,9 +1098,13 @@ $$
 
 Es sei $\mathbb P$ ein Wahrscheinlichkeitsmaß mit $\mathbb P(\Omega)=1$ auf dem Messraum $(\Omega,\mathcal F)$ und $A,B\in\mathcal F$.
 
+译：设 $\mathbb P$ 是测度空间 $(\Omega,\mathcal F)$ 上满足 $\mathbb P(\Omega)=1$ 的概率测度，且 $A,B\in\mathcal F$。
+
 ###### (a)
 
 Falls
+
+译：如果：
 
 $$
 \mathbb P(A)=\frac13
@@ -1034,9 +1116,13 @@ $$
 
 können $A$ und $B$ dann disjunkt sein?
 
+译：$A$ 和 $B$ 能否不交？
+
 ###### (b)
 
 Beweisen oder widerlegen Sie:
+
+译：证明或反驳：
 
 $$
 \mathbb P(A)=\mathbb P(\bar B)
@@ -1048,6 +1134,8 @@ $$
 
 Beweisen oder widerlegen Sie:
 
+译：证明或反驳：
+
 $$
 \mathbb P(B)=0
 \Rightarrow
@@ -1058,17 +1146,23 @@ $$
 
 Sei
 
+译：设：
+
 $$
 \Omega=\{i\mid i\in\mathbb N_0\}
 $$
 
 mit Elementarereignissen $\omega_i=i$. Außerdem gelte:
 
+译：基本事件为 $\omega_i=i$。此外满足：
+
 $$
 \mathbb P(\{\omega_i\})=\frac{c}{i!}.
 $$
 
 Wie groß ist $c$?
+
+译：$c$ 是多少？
 
 #### 解答
 
@@ -1194,9 +1288,13 @@ $$
 
 Es sei $(\Omega,\mathcal F,\mathbb P)$ ein Wahrscheinlichkeitsraum und $A,B\in\mathcal F$.
 
+译：设 $(\Omega,\mathcal F,\mathbb P)$ 是概率空间，且 $A,B\in\mathcal F$。
+
 ###### (a)
 
 Beweisen oder widerlegen Sie:
+
+译：证明或反驳：
 
 $$
 A\text{ und }B\text{ disjunkt}
@@ -1208,6 +1306,8 @@ $$
 
 Sei
 
+译：设：
+
 $$
 \mathbb P(A)=0.5
 \qquad
@@ -1218,18 +1318,26 @@ $$
 
 Bestimmen Sie $\mathbb P(B)$, wenn:
 
+译：在下列情况下求 $\mathbb P(B)$：
+
 - $A$ und $B$ stochastisch unabhängig sind,
 - $A$ und $B$ disjunkt sind.
+
+译：- $A$ 与 $B$ 随机独立；- $A$ 与 $B$ 不交。
 
 ###### (c)
 
 Betrachten Sie beim einmaligen fairen Würfelwurf das Ereignis
+
+译：考虑一次公平掷骰中的事件：
 
 $$
 A=\text{„Die Augenzahl ist gerade“}.
 $$
 
 Geben Sie ein zu $A$ unabhängiges Ereignis $B\in\mathcal P(\Omega)$ mit $B\notin\{\emptyset,\Omega\}$ an.
+
+译：给出一个与 $A$ 独立的事件 $B\in\mathcal P(\Omega)$，且 $B\notin\{\emptyset,\Omega\}$。
 
 #### 解答
 
@@ -1391,6 +1499,8 @@ Damit sind $A$ und $B$ unabhängig.
 
 Sei $(x_n)_{n\in\mathbb N}$ eine Folge reeller Zahlen und seien
 
+译：设 $(x_n)_{n\in\mathbb N}$ 是实数列，并设：
+
 $$
 X_n\sim\delta_{x_n},
 \qquad
@@ -1399,17 +1509,23 @@ $$
 
 Dirac-verteilte Zufallsvariablen. Zeigen Sie:
 
+译：为 Dirac 分布随机变量。证明：
+
 $$
 x_n\to x
 $$
 
 genau dann, wenn
 
+译：当且仅当：
+
 $$
 X_n\to X
 $$
 
 in Wahrscheinlichkeit.
+
+译：依概率收敛。
 
 #### 解答
 
@@ -1474,6 +1590,8 @@ Damit folgt $x_n\to x$.
 
 Sei $(X_i)_{i\in\mathbb N}$ eine Folge iid Zufallsvariablen in $\mathbb R$ und $g:\mathbb R\to\mathbb R$ messbar. Nutzen Sie das schwache Gesetz der großen Zahlen, um zu zeigen:
 
+译：设 $(X_i)_{i\in\mathbb N}$ 是 $\mathbb R$ 上一列 iid 随机变量，且 $g:\mathbb R\to\mathbb R$ 可测。用弱大数定律证明：
+
 $$
 \frac1n\sum_{i=1}^n g(X_i)
 \xrightarrow{P}
@@ -1530,11 +1648,15 @@ $$
 
 Sei $f:\mathbb R\to\mathbb R$ stetig und
 
+译：设 $f:\mathbb R\to\mathbb R$ 连续，且：
+
 $$
 X_n\xrightarrow{P}X.
 $$
 
 Zeigen Sie:
+
+译：证明：
 
 $$
 f(X_n)\xrightarrow{P}f(X).
@@ -1580,11 +1702,15 @@ $$
 
 Sei $(X_n)_{n\in\mathbb N}$ eine Folge diskreter Zufallsvariablen mit
 
+译：设 $(X_n)_{n\in\mathbb N}$ 是一列离散随机变量，满足：
+
 $$
 \mathbb P(X_n=n)=\frac1n
 $$
 
 und
+
+译：并且：
 
 $$
 \mathbb P(X_n=0)=1-\frac1n.
@@ -1593,6 +1719,8 @@ $$
 ###### (1)
 
 Zeigen Sie:
+
+译：证明：
 
 $$
 X_n\xrightarrow{P}0.
@@ -1698,6 +1826,8 @@ Konvergenz in Wahrscheinlichkeit allein impliziert also keine Konvergenz der Erw
 
 Sei $f:\mathbb R\to\mathbb R$ eine stetige Dichtefunktion. Seien $X_i\sim f$ iid. Für den Bandbreitenparameter $h>0$ definiere den Dichteschätzer mit uniformem Kern:
 
+译：设 $f:\mathbb R\to\mathbb R$ 是连续密度函数，且 $X_i\sim f$ iid。对带宽参数 $h>0$，用均匀核定义密度估计量：
+
 $$
 \hat f_n(x)
 =
@@ -1707,9 +1837,13 @@ $$
 
 Sei $x\in\mathbb R$ fix.
 
+译：固定 $x\in\mathbb R$。
+
 ###### (1)
 
 Nutzen Sie das schwache Gesetz der großen Zahlen, um zu zeigen:
+
+译：用弱大数定律证明：
 
 $$
 \hat f_n(x)\xrightarrow{P}E[\hat f_n(x)].
@@ -1908,17 +2042,23 @@ Kleines $h$ erhöht also die Varianz. Es gibt den typischen Bias-Varianz-Tradeof
 
 Sei $\Omega=\{0,1\}$ mit Potenzmenge als $\sigma$-Algebra und
 
+译：设 $\Omega=\{0,1\}$，以其幂集为 $\sigma$-代数，并且：
+
 $$
 \mathbb P(\{0\})=\mathbb P(\{1\})=\frac12.
 $$
 
 Definiere $X_n,X:\Omega\to\mathbb R$ durch:
 
+译：定义 $X_n,X:\Omega\to\mathbb R$ 如下：
+
 $$
 X(1)=0,\quad X(0)=1,
 $$
 
 und:
+
+译：并且：
 
 $$
 X_n(0)=0,\quad X_n(1)=1.
@@ -1927,6 +2067,8 @@ $$
 ###### (1)
 
 Zeigen Sie:
+
+译：证明：
 
 $$
 \mathbb P(X_n\leq t)=\mathbb P(X\leq t).
@@ -2043,11 +2185,15 @@ $$
 
 Sei $(X_n)$ eine Folge von Zufallsvariablen mit
 
+译：设 $(X_n)$ 是一列随机变量，满足：
+
 $$
 X_n\xrightarrow{D}c,
 $$
 
 wobei $c\in\mathbb R$ konstant ist. Zeigen Sie:
+
+译：其中 $c\in\mathbb R$ 为常数。证明：
 
 $$
 X_n\xrightarrow{P}c.
@@ -2112,11 +2258,15 @@ $$
 
 Sei $(X_n)$ eine Folge von Zufallsvariablen mit
 
+译：设 $(X_n)$ 是一列随机变量，满足：
+
 $$
 \sqrt n(X_n-E[X_n])\xrightarrow{D}X.
 $$
 
 Zeigen Sie:
+
+译：证明：
 
 $$
 X_n-E[X_n]\xrightarrow{P}0.
@@ -2178,18 +2328,26 @@ $$
 
 Ein fairer Würfel werde $6000$-mal unabhängig geworfen. Bestimmen Sie für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird,
 
+译：独立掷一个公平骰子 $6000$ 次。对于掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率，求：
+
 ##### (a)
 
 mit dem zentralen Grenzwertsatz eine Approximation.  
 $(6\text{ Pkt.})$
+
+译：用中心极限定理给出近似值。（6 分）
 
 ##### (b)
 
 mit der Tschebyscheff-Ungleichung eine untere Schranke.  
 $(4\text{ Pkt.})$
 
+译：用 Chebyshev 不等式给出下界。（4 分）
+
 **Hinweis zu (a):**  
 Sie dürfen verwenden, dass für die Verteilungsfunktion $\Phi(x)$ der Standardnormalverteilung die Identität
+
+译：**(a) 提示：** 可以使用标准正态分布函数 $\Phi(x)$ 的恒等式：
 
 $$
 \Phi(-x)=1-\Phi(x)
@@ -2198,11 +2356,15 @@ $$
 
 sowie
 
+译：以及：
+
 $$
 \Phi(3.46)\approx 0.9997
 $$
 
 gilt.
+
+译：成立。
 
 ---
 
@@ -2379,17 +2541,23 @@ $$
 
 Rechenzeit in Sekunden von $n=100$ Programmen auf einem Großrechner seien durch $100$ Zufallsvariablen
 
+译：大型计算机上 $n=100$ 个程序的运行时间（秒）由 $100$ 个随机变量表示：
+
 $$
 X_1,\dots,X_{100}
 $$
 
 beschrieben, die stochastisch unabhängig und identisch verteilt sind mit
 
+译：这些随机变量相互独立同分布，并满足：
+
 $$
 E(X_i)=\mu
 $$
 
 und
+
+译：并且：
 
 $$
 \operatorname{Var}(X_i)=100.
@@ -2398,11 +2566,15 @@ $$
 a) Es wurde eine Gesamtrechenzeit der $100$ Programme von $1900$ Sekunden beobachtet.  
 Basierend auf der Normalapproximation überprüfen Sie die Hypothese
 
+译：a) 观察到 $100$ 个程序总运行时间为 $1900$ 秒。基于正态近似检验假设：
+
 $$
 H_0:\mu=20
 $$
 
 gegen
+
+译：相对于：
 
 $$
 H_1:\mu \ne 20
@@ -2410,12 +2582,16 @@ $$
 
 zum Niveau
 
+译：在显著性水平：
+
 $$
 \alpha=0{,}1.
 $$
 
 b) Es sei nun $\mu=20$. Geben Sie für die Wahrscheinlichkeit, dass die Gesamtrechenzeit der $100$ Programme zwischen $1800$ und $2200$ Sekunden liegt, einen Näherungswert durch Anwendung des zentralen Grenzwertsatzes an.  
 Verwenden Sie die Verteilungsfunktion der Standardnormalverteilung im Anhang.
+
+译：b) 现在设 $\mu=20$。用中心极限定理给出 $100$ 个程序总运行时间位于 $1800$ 到 $2200$ 秒之间的概率近似值。使用附录中的标准正态分布函数。
 
 ---
 
@@ -2472,7 +2648,11 @@ $$
 
 Ein fairer Würfel werde $6000$-mal unabhängig geworfen.
 
+译：独立掷一个公平骰子 $6000$ 次。
+
 Hinweis:
+
+译：提示：
 
 $$
 \Phi(3.46)\approx0.9997
@@ -2482,9 +2662,13 @@ $$
 
 Bestimmen Sie mit Hilfe des zentralen Grenzwertsatzes eine Approximation für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.
 
+译：用中心极限定理近似计算掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率。
+
 ##### (b)
 
 Bestimmen Sie mit der Tschebyscheff-Ungleichung eine untere Schranke für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.
+
+译：用 Chebyshev 不等式给出掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率下界。
 
 #### 解答
 
@@ -2612,7 +2796,11 @@ $$
 
 Prof. S. nimmt täglich, also $n=225$-mal, den Bus zur Universität und ist immer pünktlich an der Bushaltestelle. Der Bus verspätet sich jedoch jeden Tag. Bezeichne $X_i$ die zufällige Zeitdauer der Verspätung in Minuten am Tag $i$. Nehmen Sie an, dass $X_i$, $i=1,\dots,n$, unabhängig und identisch exponentialverteilt sind mit $E(X_i)=1$.
 
+译：S 教授每天乘公交去大学，一年共 $n=225$ 次，并且总是准时到公交站。但公交每天都会晚点。令 $X_i$ 为第 $i$ 天晚点分钟数。假设 $X_i$（$i=1,\dots,n$）独立同分布且服从指数分布，$E(X_i)=1$。
+
 Betrachten Sie die Zufallsgröße:
+
+译：考虑随机变量：
 
 $$
 X=\sum_{i=1}^n X_i
@@ -2620,15 +2808,23 @@ $$
 
 also die aufsummierte Verspätung in einem Jahr.
 
+译：即一年内累计晚点时间。
+
 ##### (a)
 
 Zeigen Sie, dass $X$ approximativ normalverteilt ist. Wie lauten approximativer Erwartungswert und approximative Varianz?
+
+译：证明 $X$ 近似正态分布。其近似期望和近似方差是多少？
 
 ##### (b)
 
 Bestimmen Sie approximativ die Wahrscheinlichkeit dafür, dass Prof. S. über das Jahr gesehen mehr als $4$ Stunden auf den Bus wartet.
 
+译：近似求 S 教授一年中等待公交总时间超过 $4$ 小时的概率。
+
 Hinweis:
+
+译：提示：
 
 $$
 \Phi(0.5)\approx 0.6915,\quad
@@ -2746,7 +2942,11 @@ $$
 
 Ein fairer Würfel werde $6000$-mal unabhängig geworfen.
 
+译：独立掷一个公平骰子 $6000$ 次。
+
 Hinweis:
+
+译：提示：
 
 $$
 \Phi(3.46)\approx 0.9997
@@ -2758,9 +2958,13 @@ $$
 
 Bestimmen Sie mit Hilfe des zentralen Grenzwertsatzes eine Approximation für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.
 
+译：用中心极限定理近似计算掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率。
+
 ##### (b)
 
 Bestimmen Sie mit der Tschebyscheff-Ungleichung eine untere Schranke für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.
+
+译：用 Chebyshev 不等式给出掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率下界。
 
 #### 解答
 
@@ -2968,7 +3172,11 @@ $$
 
 Ein fairer Würfel werde $6000$-mal unabhängig geworfen.
 
+译：独立掷一个公平骰子 $6000$ 次。
+
 Hinweis:
+
+译：提示：
 
 $$
 \Phi(3.46)\approx 0.9997
@@ -2980,9 +3188,13 @@ $$
 
 Bestimmen Sie mit Hilfe des zentralen Grenzwertsatzes eine Approximation für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.
 
+译：用中心极限定理近似计算掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率。
+
 ##### (b)
 
 Bestimmen Sie mit der Tschebyscheff-Ungleichung eine untere Schranke für die Wahrscheinlichkeit, dass zwischen $900$-mal und $1100$-mal eine Sechs geworfen wird.
+
+译：用 Chebyshev 不等式给出掷出 $6$ 的次数在 $900$ 到 $1100$ 之间的概率下界。
 
 #### 解答
 
@@ -3190,9 +3402,15 @@ $$
 
 Betrachten Sie eine Münze, die beim Münzwurf mit unbekannter Wahrscheinlichkeit $p\in(0,1)$ Zahl anzeigt und dementsprechend mit Wahrscheinlichkeit $1-p$ Kopf.
 
+译：考虑一枚硬币，投掷时以未知概率 $p\in(0,1)$ 出现反面，相应地以概率 $1-p$ 出现正面。
+
 Es bezeichne $X$ die Anzahl an Würfen, die nötig ist, bis das erste Mal Zahl erscheint. Das Experiment werde $n=200$ mal wiederholt, d.h. $X_i$ bezeichnet die Anzahl der benötigten Würfe, bis das erste Mal Zahl erscheint, bei der $i$-ten Wiederholung des Experiments.
 
+译：令 $X$ 为首次出现反面前所需投掷次数。该实验重复 $n=200$ 次，即 $X_i$ 表示第 $i$ 次重复实验中首次出现反面所需投掷次数。
+
 Mit
+
+译：用：
 
 $$
 \overline X
@@ -3202,15 +3420,21 @@ $$
 
 wird die durchschnittlich benötigte Anzahl an Versuchen bezeichnet.
 
+译：表示平均所需尝试次数。
+
 ---
 
 ##### (a)
 
 Bestimmen Sie eine approximative Verteilung für $\overline X$.
 
+译：求 $\overline X$ 的近似分布。
+
 ##### (b)
 
 Wie muss $p$ gewählt werden, damit mit einer Wahrscheinlichkeit von mindestens $0.9$ folgendes gilt:
+
+译：$p$ 应如何选择，才能使下列事件至少以 $0.9$ 的概率成立：
 
 $$
 \overline X
@@ -3218,7 +3442,11 @@ $$
 
 weicht betragsmäßig vom unbekannten Erwartungswert $E(X_i)$ um höchstens $0.1645$ ab?
 
+译：它与未知期望 $E(X_i)$ 的绝对偏差至多为 $0.1645$？
+
 Hinweis: Das $0.95$-Quantil der Standardnormalverteilung ist $1.645$, d.h. für $Z\sim \mathcal N(0,1)$ gilt
+
+译：提示：标准正态分布的 $0.95$ 分位数为 $1.645$，即对 $Z\sim\mathcal N(0,1)$ 有：
 
 $$
 P(Z\le 1.645)=0.95.
@@ -3227,6 +3455,8 @@ $$
 ##### (c)
 
 Bestimmen Sie eine approximative Verteilung für $\overline X^2$.
+
+译：求 $\overline X^2$ 的近似分布。
 
 #### 解答
 
@@ -3701,11 +3931,15 @@ $$
 
 Gegeben:
 
+译：给定：
+
 $$
 X_i\sim \operatorname{Exp}(\lambda)
 $$
 
 mit:
+
+译：其中：
 
 $$
 E(X_i)=1
@@ -3713,11 +3947,15 @@ $$
 
 Für die Exponentialverteilung gilt:
 
+译：对指数分布有：
+
 $$
 E(X_i)=\frac{1}{\lambda}
 $$
 
 Also:
+
+译：因此：
 
 $$
 \lambda=1
@@ -3725,11 +3963,15 @@ $$
 
 und:
 
+译：并且：
+
 $$
 \operatorname{Var}(X_i)=\frac{1}{\lambda^2}=1
 $$
 
 Es gilt:
+
+译：已知：
 
 $$
 X=\sum_{i=1}^{225}X_i
@@ -3739,9 +3981,13 @@ $$
 
 Approximation durch Normalverteilung.
 
+译：用正态分布近似。
+
 ###### (b)
 
 Wahrscheinlichkeit für mehr als $4$ Stunden Wartezeit.
+
+译：等待时间超过 $4$ 小时的概率。
 
 #### 解答
 

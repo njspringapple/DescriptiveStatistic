@@ -42,7 +42,11 @@
 
 Bilde jeweils die partielle Ableitung nach $x$ und nach $y$.
 
+译：分别求关于 $x$ 和关于 $y$ 的偏导数。
+
 ###### Aufgaben
+
+译：题目
 
 $$
 \begin{array}{ll}
@@ -185,6 +189,8 @@ $$
 
 Bestimme die Stammfunktion oder das genaue Integral (falls Grenzen angegeben sind) der jeweiligen Funktion.
 
+译：求对应函数的原函数；如果给出了积分上下限，则求定积分的精确值。
+
 $$
 \begin{array}{lll}
 \text{(a)}\quad \displaystyle \int x\ln(x)\,dx
@@ -196,6 +202,8 @@ $$
 $$
 
 Tipp für (c): Nutze zweimal partielle Integration. Nachdem du das zweite Mal partiell integriert hast, betrachte den Ausdruck vorsichtig.
+
+译：提示 (c)：使用两次分部积分。第二次分部积分后，要仔细整理得到的表达式。
 
 #### 解答
 
@@ -243,6 +251,8 @@ $$
 
 Bestimme die Integrale.
 
+译：求下列积分。
+
 $$
 \begin{array}{lll}
 \text{(a)}\quad \displaystyle \int_0^3 3x^2 e^{x^3}\,dx
@@ -254,6 +264,8 @@ $$
 $$
 
 Tipp für (b): Setze $u=1+x^2$.
+
+译：提示 (b)：令 $u=1+x^2$。
 
 #### 解答
 

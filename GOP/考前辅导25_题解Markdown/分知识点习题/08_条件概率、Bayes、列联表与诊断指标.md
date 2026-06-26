@@ -44,7 +44,11 @@
 
 Die Wirkung von zwei Hustensäften A und B soll verglichen werden.
 
+译：比较两种止咳糖浆 A 和 B 的治疗效果。
+
 Erste Studie:
+
+译：第一项研究：
 
 $$
 \begin{array}{c|cc|c}
@@ -58,6 +62,8 @@ $$
 $$
 
 Zweite Studie:
+
+译：第二项研究：
 
 $$
 \begin{array}{c|cc|c}
@@ -187,6 +193,8 @@ ist der Unterschied zwischen den Behandlungen in Studie 1 größer.
 ###### (i)
 
 In einer Population leiden $5\%$ an Nierenproblemen. Von diesen trinken $75\%$ regelmäßig Alkohol. Von den Personen ohne Nierenprobleme trinken $50\%$ regelmäßig Alkohol. Wie viel Prozent der regelmäßig Alkohol konsumierenden leiden an Nierenproblemen?
+
+译：某总体中有 $5\%$ 的人患有肾脏问题。在这些患者中，$75\%$ 经常饮酒；在没有肾脏问题的人中，$50\%$ 经常饮酒。问：经常饮酒的人中，有多少比例患有肾脏问题？
 
 #### 解答
 
@@ -320,6 +328,8 @@ Der Anteil diverser Personen unter den Farbenblinden ist also deutlich kleiner a
 
 An den Kassen eines Modegeschäfts wird ein Gerät eingeführt, das die Echtheit von $500$-Euro-Scheinen prüfen soll. Aus Erfahrung ist bekannt: $12$ von $10000$ Scheinen sind falsch. Das Gerät blinkt, wenn der Schein falsch ist. Bei falschen Scheinen blinkt es in $95$ von $100$ Fällen. Bei echten Scheinen blinkt es in $10$ von $100$ Fällen. Das Gerät blinkt. Wie sicher kann man sein, dass der Schein tatsächlich falsch ist?
 
+译：一家服装店收银台引入一台检测 $500$ 欧元纸币真伪的设备。经验上每 $10000$ 张纸币中有 $12$ 张是假币。纸币为假时设备会闪灯；假币中 $95/100$ 会闪灯，真币中 $10/100$ 也会误闪。现在设备闪灯，问这张纸币实际为假的概率有多大？
+
 #### 解答
 
 ##### 中文解题思路
@@ -375,6 +385,8 @@ Obwohl das Gerät geblinkt hat, liegt die Wahrscheinlichkeit für einen tatsäch
 
 Maschine A produziert $60\%$ der Schrauben, davon sind $2\%$ fehlerhaft. Maschine B produziert $40\%$, davon sind $5\%$ fehlerhaft. Eine zufällig entnommene Schraube ist fehlerhaft. Mit welcher Wahrscheinlichkeit stammt sie von Maschine B?
 
+译：机器 A 生产 $60\%$ 的螺丝，其中 $2\%$ 有缺陷；机器 B 生产 $40\%$，其中 $5\%$ 有缺陷。随机抽到一颗有缺陷的螺丝，问它来自机器 B 的概率是多少？
+
 #### 解答
 
 ##### 中文解题思路
@@ -427,6 +439,8 @@ $$
 
 Eine Krankheit hat Prävalenz $1\%$. Ein Test hat Sensitivität $95\%$ und False-Positive-Rate $3\%$. Eine Person testet positiv. Wie wahrscheinlich ist es, dass sie wirklich krank ist?
 
+译：某疾病患病率为 $1\%$。检测的敏感度为 $95\%$，假阳性率为 $3\%$。某人检测为阳性，问他真正患病的概率是多少？
+
 #### 解答
 
 ##### 中文解题思路
@@ -477,6 +491,8 @@ $$
 
 Blutgruppen treten mit Wahrscheinlichkeiten $0.42$, $0.10$, $0.04$, $0.44$ für $A,B,AB,0$ auf. Die bedingten Wahrscheinlichkeiten für $R+$ sind $0.85$ für $A$ und $0$, $0.8$ für $B$ und $0.75$ für $AB$.
 
+译：血型 $A,B,AB,0$ 的概率分别为 $0.42,0.10,0.04,0.44$。给定血型时，$R+$ 的条件概率为：$A$ 和 $0$ 为 $0.85$，$B$ 为 $0.8$，$AB$ 为 $0.75$。
+
 #### 解答
 
 ##### 中文解题思路
@@ -517,9 +533,13 @@ $$
 
 Sei $(\Omega,\mathcal F,\mathbb P)$ ein beliebiger Wahrscheinlichkeitsraum mit $A_1,\dots,A_n\in\mathcal F$, $n\in\mathbb N$.
 
+译：设 $(\Omega,\mathcal F,\mathbb P)$ 是任意概率空间，且 $A_1,\dots,A_n\in\mathcal F$，$n\in\mathbb N$。
+
 ###### (a)
 
 Beweisen Sie die Siebformel:
+
+译：证明容斥公式：
 
 $$
 \mathbb P\left(\bigcup_{i=1}^n A_i\right)
@@ -533,6 +553,8 @@ $$
 ###### (b)
 
 Wie groß ist die Laplace-Wahrscheinlichkeit, dass eine beliebig gewählte Zahl $n\in\{1,\dots,100\}$ durch mindestens eine der Zahlen $2$, $3$ oder $5$ teilbar ist?
+
+译：在 Laplace 模型下，从 $\{1,\dots,100\}$ 中任取一个数 $n$，它能被 $2$、$3$、$5$ 中至少一个整除的概率是多少？
 
 #### 解答
 
@@ -635,14 +657,24 @@ $$
 Trotz Anschnallpflicht legen $15\%$ aller Autofahrer keinen Gurt an.  
 Eine Krankenversicherung ermittelte, dass bei Verkehrsunfällen von PKW-Fahrern nur $8\%$ schwere Kopfverletzungen aufwiesen, wenn die Fahrer angeschnallt waren. Bei nicht-angeschnallten Fahrern trugen $62\%$ keine schwere Kopfverletzung davon.
 
+译：尽管有系安全带义务，仍有 $15\%$ 的汽车驾驶员不系安全带。某健康保险公司统计：在汽车驾驶员交通事故中，系安全带者只有 $8\%$ 出现严重头部损伤；未系安全带者中有 $62\%$ 没有严重头部损伤。
+
 $A$: angegurtet  
 $K$: Kopfverletzung
 
+译：$A$：系安全带；$K$：发生头部损伤。
+
 a) Interpretiere Ereignis $\bar A \cap \bar K$ und berechne $P(\bar A \cap \bar K)$.
+
+译：a) 解释事件 $\bar A\cap\bar K$ 的含义，并计算 $P(\bar A\cap\bar K)$。
 
 b) Sind $\bar A$ und $\bar K$ stochastisch unabhängig?
 
+译：b) 判断 $\bar A$ 与 $\bar K$ 是否随机独立。
+
 c) Wie groß ist die Wahrscheinlichkeit, dass Autofahrer nicht angegurtet waren, wenn sie eine Kopfverletzung haben?
+
+译：c) 已知驾驶员有头部损伤，求其未系安全带的概率。
 
 ---
 
@@ -709,32 +741,54 @@ $$
 
 Für $n=60$ Studenten wurde die Haarfarbe ermittelt und in „Blond“, „Schwarz/Braun“ und „Sonstig“ aufgeteilt.
 
+译：对 $n=60$ 名学生记录发色，并分为“金发”“黑色/棕色”和“其他”三组。
+
 | Blond | Schwarz/Braun | Sonst |
 |---:|---:|---:|
 | $30$ | $20$ | $10$ |
 
 Für diese $3$ Haargruppen wird diskrete Gleichverteilung angenommen.
 
+译：假设这 $3$ 个发色组服从离散均匀分布。
+
 a) Bestimme die erwarteten Häufigkeiten für die Haargruppen unter der Annahme, dass diskrete Gleichverteilung vorliegt.
+
+译：a) 在离散均匀分布假设下，求各发色组的期望频数。
 
 b) Berechne Pearsonsches $\chi^2$-Maß.
 
+译：b) 计算 Pearson 的 $\chi^2$ 统计量。
+
 c) Das Pearsonsches $\chi^2$-Maß folgt unter der obigen Annahme einer $\chi^2_k$-Verteilung mit $k$ Freiheitsgraden. Gib die Anzahl der Freiheitsgrade im vorliegenden Beispiel an.
 
+译：c) 在上述假设下，Pearson 的 $\chi^2$ 统计量服从自由度为 $k$ 的 $\chi^2_k$ 分布。给出本例中的自由度数。
+
 d) Überprüfe obige Annahme auf dem Niveau $\alpha=0{,}1$. Nutze eine der folgenden Möglichkeiten:
+
+译：d) 在显著性水平 $\alpha=0{,}1$ 下检验上述假设。可使用以下任一方法：
 
 - entweder: Berechne den $p$-Wert,
 - oder: Vergleiche das Pearsonsches $\chi^2$-Maß mit dem kritischen Wert aus Teilaufgabe c).
 
+译：- 方法一：计算 $p$ 值；或方法二：将 Pearson 的 $\chi^2$ 统计量与 (c) 中的临界值比较。
+
 **Hinweis:**  
 Die Quantilsfunktion und die Verteilungsfunktion der $\chi^2$-Verteilung ist für $k=1,\dots,5$ im Anhang angegeben. Verwende passendes $k$.
+
+译：**提示：** 附录给出了 $k=1,\dots,5$ 时 $\chi^2$ 分布的分位数函数和分布函数。请选择合适的 $k$。
 
 **Anmerkung:**  
 Dies ist ein Gedächtnisprotokoll. Verwende Google statt der Tabellen.
 
+译：**备注：** 这是回忆版题目；原表可用查询工具替代。
+
 Tabelle 1: Quantilsfunktion der $\chi^2_k$-Verteilung mit $k=1,\dots,5$ Freiheitsgraden
 
+译：表 1：自由度 $k=1,\dots,5$ 的 $\chi^2_k$ 分布分位数函数。
+
 Tabelle 2: Verteilungsfunktion der $\chi^2_k$-Verteilung mit $k=1,\dots,5$ Freiheitsgraden
+
+译：表 2：自由度 $k=1,\dots,5$ 的 $\chi^2_k$ 分布函数。
 
 ---
 
@@ -780,19 +834,33 @@ Da $\chi^2=10$ groß ist, wird die Gleichverteilungsannahme auf dem Niveau $\alp
 Tests auf HIV können positiv sein, obwohl eigentlich negativ.  
 Wahrscheinlichkeit: $0{,}005\%$.
 
+译：HIV 检测可能在实际未感染时呈阳性；该假阳性概率为 $0{,}005\%$。
+
 Wenn tatsächlich HIV-infiziert, dann ist die Wahrscheinlichkeit $=100\%$ für Test positiv.
+
+译：如果实际感染 HIV，则检测呈阳性的概率为 $100\%$。
 
 $I$: Die Person ist mit HIV infiziert.  
 $P$: Der HIV-Test fällt positiv aus.
 
+译：$I$：该人感染 HIV；$P$：HIV 检测呈阳性。
+
 Low-Risk-Gruppe: Nur $10$ von $100000$ Personen sind mit HIV infiziert.  
 Eine Person aus dieser Gruppe.
 
+译：低风险群体中，每 $100000$ 人只有 $10$ 人感染 HIV。现在考虑来自该群体的一人。
+
 a) Wie groß ist die a-priori Wahrscheinlichkeit, dass diese Person mit HIV infiziert ist, vor dem Test?
+
+译：a) 在检测前，该人感染 HIV 的先验概率是多少？
 
 b) Untersuchen Sie formal und mit Begründung, ob die Ereignisse $I$ und $P$ stochastisch unabhängig sind.
 
+译：b) 形式化检验并说明事件 $I$ 与 $P$ 是否随机独立。
+
 c) Wie groß ist die Wahrscheinlichkeit, dass diese Person tatsächlich mit HIV infiziert ist, wenn der HIV-Test positiv ausfällt?
+
+译：c) 如果 HIV 检测呈阳性，该人实际感染 HIV 的概率是多少？
 
 ---
 
@@ -849,7 +917,11 @@ Trotz positivem Test liegt die Wahrscheinlichkeit einer tatsächlichen Infektion
 
 Prof. Dr. med. Kwarantina Bauterlach-Vligenört hat einen neuen diagnostischen Test für das Vorliegen einer akuten Infektion mit der schrecklichen Fnufnu-Krankheit entwickelt.
 
+译：Kwarantina Bauterlach-Vligenört 教授开发了一种新诊断测试，用于判断是否存在严重 Fnufnu 疾病的急性感染。
+
 Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die entweder noch nie mit dem Fnufnu-Erreger infiziert waren („Naiv“) oder eine solche Infektion bereits hinter sich haben („Genesen“) oder zum Zeitpunkt der Studie an einer akuten Fnufnu-Infektion leiden („Kranke“), ergibt folgende Ergebnisse:
+
+译：她在一组患者样本上进行临床试验：患者分为从未感染 Fnufnu 病原体的“Naiv”、曾经感染但已康复的“Genesen”、以及研究时正处于急性 Fnufnu 感染的“Kranke”。试验结果如下：
 
 | Status | Naiv | Genesen | Krank | Summe |
 | --- | --: | --: | --: | --: |
@@ -859,37 +931,57 @@ Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die en
 
 Unter den Patient:innen, die Bauterlach-Vligenört im Klinikalltag versorgt, sind
 
+译：在 Bauterlach-Vligenört 日常临床接诊的患者中，各类患者比例为：
+
 - $30\%$ Genesene,
 - $65\%$ Naive,
 - $5\%$ Fnufnu-Kranke.
 
+译：- $30\%$ 为康复者；- $65\%$ 为从未感染者；- $5\%$ 为 Fnufnu 急性患者。
+
 Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelten Eigenschaften des Tests, also FPR, TNR etc., auch im Klinikalltag gelten.
+
+译：以下假设：临床试验中估计出的测试性质，例如 FPR、TNR 等，也适用于日常临床场景。
 
 ##### (a)
 
 Berechnen Sie auf Basis der Ergebnisse der klinischen Erprobung die Sensitivität und Spezifität des Tests zur Entdeckung einer akuten Infektion.
 
+译：根据临床试验结果，计算该测试识别急性感染的敏感度和特异度。
+
 ##### (b)
 
 Berechnen Sie für die oben angegebene Prävalenz der Krankheit die Wahrscheinlichkeit, mit der ein Test im Klinikalltag ein positives Ergebnis zeigt.
+
+译：根据上面给出的疾病患病率，计算临床日常中一次检测显示阳性结果的概率。
 
 ##### (c)
 
 Berechnen Sie die Wahrscheinlichkeit, mit der ein negatives Testergebnis im Klinikalltag eine tatsächlich nicht akut erkrankte Person anzeigt.
 
+译：计算在临床日常中，检测结果为阴性时，被测者实际没有急性感染的概率。
+
 ##### (d)
 
 Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zu Grunde liegenden diagnostischen Scores beschriftet.
+
+译：下图给出了另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。
 ![](图片/Altklausur2LV-5.png)
 ###### (i)
 
 Funktioniert der in den vorherigen Teilaufgaben analysierte Test von Bauterlach-Vligenört etwa gleich gut, besser, oder schlechter als der hier dargestellte Test?
 
+译：前面小问分析的 Bauterlach-Vligenört 测试，与图中这个测试相比，大致同样好、更好还是更差？
+
 ###### (ii)
 
 Gehen Sie davon aus, dass eine Erkrankung mit der Fnufnu-Krankheit für Schwangere und ihre ungeborenen Kinder absolut lebensbedrohend ist, falls diese nicht sehr früh entdeckt und therapiert wird. Wie sollte der Schwellenwert des in der Grafik gezeigten diagnostischen Tests also gewählt werden, wenn dieser auf eine schwangere Patientin angewendet wird?
 
+译：假设 Fnufnu 疾病若不能很早发现并治疗，会对孕妇及胎儿造成致命危险。那么将图中诊断测试用于孕妇时，应如何选择阈值？
+
 Begründen Sie Ihre Antworten kurz.
+
+译：请简要说明理由。
 
 #### 解答
 
@@ -1045,27 +1137,39 @@ Akzeptabel wären bei entsprechender Begründung auch Schwellenwerte im Bereich 
 
 Beantworten Sie die folgenden Fragen jeweils mit kurzer Begründung oder Rechnung mit nachvollziehbarem Ansatz.
 
+译：回答下列问题，每问都要给出简短理由或可追踪的计算过程。
+
 ---
 
 ##### (a)
 
 A und B spielen folgendes Spiel: Es wird mit $4$ Würfeln gewürfelt. Tritt mindestens einmal die Zahl $6$ auf, dann gewinnt A, sonst B. Ist das Spiel fair in dem Sinne, dass im Mittel beide gleich oft gewinnen werden?
 
+译：A 和 B 玩如下游戏：掷 $4$ 个骰子。若至少出现一次 $6$，则 A 获胜；否则 B 获胜。问该游戏是否公平，即长期平均来看两人是否会赢得一样多？
+
 ##### (b)
 
 In einer Population leiden fünf Prozent der Menschen an erhöhtem Blutdruck. Von diesen fünf Prozent trinken $75\%$ regelmäßig Alkohol. Außerdem ist bekannt, dass $50\%$ der Menschen, die keinen erhöhten Blutdruck haben, regelmäßig Alkohol trinken. Wieviel Prozent der regelmäßigen Alkoholkonsument:innen leiden an erhöhtem Blutdruck?
+
+译：某总体中 $5\%$ 的人患有高血压。在这些高血压者中，$75\%$ 经常饮酒；没有高血压的人中，$50\%$ 经常饮酒。问经常饮酒者中有多少比例患有高血压？
 
 ##### (c)
 
 Sei $X$ eine stetige Zufallsvariable mit Verteilungsfunktion $F_X$ und einem $0.25$-Quantil von $3$. Welche der folgenden Aussagen trifft/treffen zu?
 
+译：设 $X$ 是连续随机变量，分布函数为 $F_X$，且 $0.25$ 分位数为 $3$。判断下列哪些命题成立。
+
 1. $F_X(3)=0.25$
 2. $F_X(0.25)=3$
 3. $F_X^{-1}(3)=0.25$
 
+译：1. $F_X(3)=0.25$；2. $F_X(0.25)=3$；3. $F_X^{-1}(3)=0.25$。
+
 ##### (d)
 
 Sei $Y$ eine diskrete Zufallsvariable mit Träger $T_Y=\mathbb N$ und Verteilungsfunktion $F_Y$ mit
+
+译：设 $Y$ 是离散随机变量，支撑集 $T_Y=\mathbb N$，分布函数为 $F_Y$，并满足：
 
 $$
 F_Y\left(\frac{33}{10}\right)=0.5
@@ -1073,25 +1177,35 @@ $$
 
 und
 
+译：并且：
+
 $$
 F_Y(2)\neq F_Y(3)\neq F_Y(4).
 $$
 
 Geben Sie für die folgenden Aussagen an, ob sie aus diesen Angaben folgen:
 
+译：判断下列命题是否能由这些已知信息推出：
+
 1. Der Median von $Y$ ist $3$.
 2. $P(Y<3)\le 0.5$
 3. Der Erwartungswert von $Y$ ist $3$.
 
+译：1. $Y$ 的中位数是 $3$；2. $P(Y<3)\le 0.5$；3. $Y$ 的期望为 $3$。
+
 ##### (e)
 
 Welche Verteilung hat die Zufallsvariable
+
+译：问下列随机变量服从什么分布：
 
 $$
 Z=3U-12
 $$
 
 falls
+
+译：在如下条件下：
 
 $$
 U\sim \mathcal N(\mu=4,\sigma^2=5)?
@@ -1101,9 +1215,13 @@ $$
 
 Nehmen Sie an, ein Pfandautomat akzeptiert jede ihm zugeführte Flasche mit Wahrscheinlichkeit $p<1$. Sei $F$ die Anzahl der Flaschen, die man dem Automaten zuführen muss, um einen Pfandbon für $m$ akzeptierte Flaschen zu bekommen. Mit welcher aus der Vorlesung bekannten parametrischen Verteilung können Sie $F$ beschreiben, was sind die Parameterwerte und welche zusätzlichen Annahmen über den daten-generierenden Prozess müssen Sie dafür treffen?
 
+译：假设押金回收机以概率 $p<1$ 接受每个投入的瓶子。令 $F$ 为为了获得 $m$ 个被接受瓶子的押金凭条而必须投入的瓶子数。问可用课堂上哪种参数分布描述 $F$，参数值是什么，并且还需要对数据生成过程作哪些额外假设？
+
 ##### (g)
 
 Folgender Mosaikplot stellt den beobachteten Zusammenhang der Merkmale Geschlecht $(m/w)$ und Klausurerfolg $(bestanden/nicht bestanden)$ für eine Statistikklausur dar.
+
+译：下列马赛克图展示了一次统计考试中性别 $(m/w)$ 与考试结果（通过/未通过）之间的观察关系。
 
 ![](图片/Altklausur2LV-9.png)
 
@@ -1111,9 +1229,13 @@ Folgender Mosaikplot stellt den beobachteten Zusammenhang der Merkmale Geschlech
 2. Gibt es insgesamt mehr Männer, die bestehen oder mehr Frauen, die bestehen?
 3. Das zusätzlich erhobene Merkmal „Studienfach“ mit möglichen Ausprägungen „Nebenfach“ und „Hauptfach“ ist empirisch unabhängig von „Geschlecht“ und von „Klausurerfolg“. Die Hälfte der Prüfungsteilnehmer:innen sind Nebenfachstudierende, die anderen Hauptfachstudierende. Skizzieren Sie einen Mosaikplot für die gemeinsame Verteilung dieser drei Merkmale. Nur schematische Skizze gefragt, keine exakte Zeichnung.
 
+译：1. 哪个性别的挂科率更高？2. 总体上，通过考试的男性更多还是女性更多？3. 额外记录的变量“专业类型”取值为“副修”和“主修”，且经验上与“性别”和“考试结果”都独立。一半考生为副修学生，另一半为主修学生。请画出这三个变量联合分布的马赛克图示意图，只需示意，不要求精确绘图。
+
 ##### (h)
 
 Es liegt eine große Anzahl $n$ von unabhängig Poisson-verteilten Zufallsvariablen mit gleicher Rate $\lambda$ vor. Wie ist die Summe dieser Zufallsvariablen exakt verteilt und welcher Verteilung folgt diese Summe approximativ?
+
+译：有大量 $n$ 个相互独立且参数同为 $\lambda$ 的 Poisson 随机变量。它们的和精确服从什么分布？又可近似服从什么分布？
 
 #### 解答
 
@@ -1551,7 +1673,11 @@ $$
 
 Eine Studie untersucht Zusammenhänge zwischen dem Fortbestand der Ehe nach sieben Ehejahren, der Aufteilung der Hausarbeit und den Einkommensunterschieden zwischen den Ehepartnern bei $1000$ heterosexuellen Ehepaaren.
 
+译：一项研究考察 $1000$ 对异性婚姻夫妻中，婚后七年婚姻是否持续、家务分配方式以及夫妻收入差异之间的关系。
+
 Insgesamt waren $200$ der $1000$ Ehepaare nach sieben Jahren bereits wieder geschieden.
+
+译：$1000$ 对夫妻中共有 $200$ 对在七年后已经离婚。
 
 ---
 
@@ -1559,15 +1685,21 @@ Insgesamt waren $200$ der $1000$ Ehepaare nach sieben Jahren bereits wieder gesc
 
 Vervollständigen Sie die marginalen gemeinsamen Häufigkeiten des Fortbestands der Ehe und der Aufteilung der Hausarbeit ohne Berücksichtigung der Einkommensunterschiede sowie die gemeinsame Häufigkeitsverteilung aller drei Merkmale in den folgenden Kontingenztafeln.  
 
+译：补全下列列联表：先不考虑收入差异，补全婚姻状态与家务分配的边际联合频数；再补全三个变量的联合频数分布。
+
 ![](图片/Altklausur3LV-1.png)
 
 ##### (b)
 
 Die Forscher:innen interessieren sich primär für mögliche Unterschiede in den Scheidungsraten zwischen Paaren, in denen Hausarbeit gerecht aufgeteilt ist und Paaren, in denen Hausarbeit ungerecht verteilt ist. Berechnen Sie die entsprechende Odds Ratio und interpretieren Sie Ihr Ergebnis kurz.
 
+译：研究者主要关心：家务公平分配与家务不公平分配的夫妻之间，离婚率是否存在差异。计算相应的 odds ratio，并简要解释结果。
+
 ##### (c)
 
 Gibt es in Anbetracht der Daten aus der Studie Anhaltspunkte dafür, dass der Zusammenhang zwischen der Aufteilung der Hausarbeit und dem Fortbestand der Ehe durch Einkommensunterschiede zwischen den Ehepartnern modifiziert wird? Berechnen Sie die relevanten Odds Ratios und interpretieren Sie Ihr Ergebnis. Nennen Sie den Fachbegriff für das hier auftretende Phänomen.
+
+译：根据研究数据，是否有迹象表明：家务分配与婚姻是否持续之间的关系会受到夫妻收入差异的调节？计算相关 odds ratio，解释结果，并指出这里出现现象的专业名称。
 
 #### 解答
 
@@ -1737,9 +1869,13 @@ Hier liegt ein Fall des **Simpson-Paradoxons** bzw. eine **Veränderung marginal
 
 In einer Population leiden zwei Prozent an einer Krankheit. Von diesen zwei Prozent rauchen $80\%$ regelmäßig. Es sei weiterhin bekannt, dass $30\%$ der Menschen, die die Krankheit nicht haben, regelmäßig rauchen. Wie viel Prozent der regelmäßigen Raucher:innen leiden an der Krankheit? Runden Sie Ihr Ergebnis bitte auf $3$ Nachkommastellen.
 
+译：某总体中 $2\%$ 的人患有某病。在这些患者中，$80\%$ 经常吸烟；没有该病的人中，$30\%$ 经常吸烟。问经常吸烟者中有多少比例患病？结果保留 $3$ 位小数。
+
 ##### (b)
 
 Sei $X$ gegeben $Y$ geometrisch verteilt mit
+
+译：设在给定 $Y$ 的条件下，$X$ 服从如下几何分布：
 
 $$
 X\mid Y=y\sim \operatorname{Geom}(y)
@@ -1747,11 +1883,15 @@ $$
 
 und $Y$ stetig gleichverteilt mit
 
+译：并且 $Y$ 服从如下连续均匀分布：
+
 $$
 Y\sim U(1,2).
 $$
 
 Berechnen Sie $E(X)$.
+
+译：计算 $E(X)$。
 
 #### 解答
 
@@ -1915,35 +2055,53 @@ $$
 
 Die Firma „Loysent“ will zur Qualitätskontrolle in der Lebensmittelproduktion ein System zur automatischen Entdeckung verunreinigter Produkte einsetzen. Pro Monat soll das System im Alltagsbetrieb $5$ Millionen Einheiten überprüfen. Von einer Million Einheiten sind erwartungsgemäß zehn verunreinigt. In einem Pilotversuch des Systems mit einer bewusst ausgewählten Stichprobe von Produkten löste es bei $13$ von $15$ tatsächlich verunreinigten Einheiten und bei $22$ von $1100$ nicht verunreinigten Einheiten einen Alarm aus.
 
+译：公司 “Loysent” 希望在食品生产质控中使用自动发现污染产品的系统。日常运行中系统每月需检查 $5$ 百万个单位。预计每 $1$ 百万个单位中有 $10$ 个被污染。在一次有意抽取样本的试运行中，系统对 $15$ 个实际污染单位中的 $13$ 个报警，对 $1100$ 个未污染单位中的 $22$ 个也报警。
+
 ##### (a)
 
 Berechnen Sie auf Basis der Ergebnisse des Pilotversuchs die erwarteten monatlichen Häufigkeiten von Fehlalarmen, zutreffenden Alarmen, übersehenen Verunreinigungen und vom System korrekt als beanstandungsfrei identifizierten Einheiten, falls das System in der Produktion zum Einsatz käme.
+
+译：基于试运行结果，若系统投入生产，计算每月期望出现的误报、正确报警、漏检污染以及被系统正确判为无问题的单位数量。
 
 ##### (b)
 
 Halten Sie den Einsatz des Systems unter den gegebenen Umständen aus statistischer Sicht für sinnvoll? Begründen Sie Ihre Antwort quantitativ mit geeigneten Kennzahlen.
 
+译：在给定条件下，从统计角度看你认为该系统值得使用吗？请用合适指标进行定量说明。
+
 ##### (c)
 
 Quantifizieren Sie die erwartete Stärke des Zusammenhangs zwischen der tatsächlichen Verunreinigung einer Einheit und der Reaktion des Systems auf diese Einheit im Alltagsbetrieb. Benutzen Sie dafür eine Maßzahl, deren Wertebereich $\mathbb R_0^+$ ist. Interpretieren Sie Ihr Ergebnis.
+
+译：量化日常运行中“单位实际是否污染”与“系统对该单位的反应”之间的预期关联强度。请使用取值范围为 $\mathbb R_0^+$ 的指标，并解释结果。
 
 ##### (d)
 
 Die Grafik unten zeigt die ROC-Kurven zweier Systeme zur automatischen Entdeckung verunreinigter Produkte, die von den Firmen „Ponapticum“ und „Nopapcitom“ angeboten werden. Die ROC-Kurven sind an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zugrunde liegenden Scores beschriftet.
 
+译：下图显示了公司 “Ponapticum” 和 “Nopapcitom” 提供的两种自动发现污染产品系统的 ROC 曲线。曲线上若干点标注了对应评分阈值。
+
 ###### (i)
 
 Funktioniert das in den vorherigen Teilaufgaben analysierte System etwa gleich gut, deutlich besser oder deutlich schlechter als die zwei hier dargestellten Systeme?
+
+译：前面小问分析的系统，与图中两个系统相比，大致同样好、明显更好还是明显更差？
 
 ###### (ii)
 
 Gehen Sie davon aus, dass der Verkauf verunreinigter Produkte für „Loysent“ existenzbedrohend ist und Einheiten, die vom System als verunreinigt eingestuft werden, einfach und kostengünstig automatisch gereinigt werden können. Welches der beiden in der Grafik gezeigten Systeme ist für diese Situation besser geeignet? Welcher Bereich von Schwellenwerten sollte für den praktischen Einsatz des präferierten Systems benutzt werden? Begründen Sie Ihre Antworten kurz.
 
+译：假设销售污染产品会危及 “Loysent” 的生存，而被系统判为污染的单位可以简单且低成本地自动清洁。图中两个系统哪一个更适合这种场景？实际使用时应选择该系统的哪个阈值范围？请简要说明理由。
+
 ##### (e)
 
 Das System prüft nacheinander jede einzelne produzierte Einheit. Im Zuge der Erprobung des Systems wurde auch festgehalten, wie viele vom System nicht beanstandete Einheiten jeweils zwischen zwei beanstandeten Einheiten überprüft wurden. Sei die Anzahl der aufeinanderfolgenden, nicht beanstandeten Einheiten $X$.
 
+译：系统逐个检查每个生产单位。在系统测试过程中，还记录了两次被系统判为有问题的单位之间，连续通过了多少个未被判为有问题的单位。令这个连续未被判为有问题的单位数为 $X$。
+
 Mit welcher parametrischen Verteilungsfamilie können Sie die Verteilung von $X$ beschreiben? Welche Annahmen müssen Sie dafür zusätzlich treffen? Geben Sie an, was die theoretischen Annahmen in der beschriebenen Situation konkret bedeuten.
+
+译：可以用哪一类参数分布描述 $X$ 的分布？为此还需要哪些额外假设？请说明这些理论假设在本情境中的具体含义。
 
 #### 解答
 
@@ -2133,7 +2291,11 @@ Konkret bedeutet das:
 
 Prof. Dr. med. Kwarantina Bauterlach-Vligenört hat einen neuen diagnostischen Test für das Vorliegen einer akuten Infektion mit der schrecklichen Fnufnu-Krankheit entwickelt.
 
+译：Kwarantina Bauterlach-Vligenört 教授开发了一种新诊断测试，用于判断是否存在严重 Fnufnu 疾病的急性感染。
+
 Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die entweder noch nie mit dem Fnufnu-Erreger infiziert waren, „Naiv“, oder eine solche Infektion bereits hinter sich haben, „Genesen“, oder zum Zeitpunkt der Studie an einer akuten Fnufnu-Infektion leiden, „Kranke“, ergibt folgende Ergebnisse:
+
+译：该测试在一组患者样本上进行临床试验：患者分为从未感染 Fnufnu 病原体的“Naiv”、曾经感染的“Genesen”、以及研究时正处于急性感染的“Kranke”。结果如下：
 
 | Status | Naiv | Genesen | Krank | Gesamt |
 |---|---:|---:|---:|---:|
@@ -2143,11 +2305,17 @@ Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die en
 
 Unter den Patient:innen, die Bauterlach-Vligenört im Klinikalltag versorgt, sind:
 
+译：在 Bauterlach-Vligenört 日常临床接诊的患者中，各类患者比例为：
+
 - $30\%$ Genesene,
 - $65\%$ Naive,
 - $5\%$ Fnufnu-Kranke.
 
+译：- $30\%$ 为康复者；- $65\%$ 为从未感染者；- $5\%$ 为 Fnufnu 急性患者。
+
 Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelten Eigenschaften des Tests, also FPR, TNR usw., auch im Klinikalltag gelten.
+
+译：以下假设：临床试验中估计出的测试性质，例如 FPR、TNR 等，也适用于日常临床场景。
 
 ---
 
@@ -2155,17 +2323,25 @@ Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelt
 
 Berechnen Sie auf Basis der Ergebnisse der klinischen Erprobung die Sensitivität und Spezifität des Tests zur Entdeckung einer akuten Infektion.
 
+译：根据临床试验结果，计算该测试识别急性感染的敏感度和特异度。
+
 ##### (b)
 
 Berechnen Sie für die oben angegebene Prävalenz der Krankheit die Wahrscheinlichkeit, mit der ein Test im Klinikalltag ein positives Ergebnis zeigt.
+
+译：根据上面给出的疾病患病率，计算临床日常中一次检测显示阳性结果的概率。
 
 ##### (c)
 
 Berechnen Sie die Wahrscheinlichkeit, mit der ein negatives Testergebnis im Klinikalltag eine tatsächlich nicht akut erkrankte Person anzeigt.
 
+译：计算在临床日常中，检测结果为阴性时，被测者实际没有急性感染的概率。
+
 ##### (d)
 
 Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zugrunde liegenden diagnostischen Scores beschriftet.
+
+译：下图显示另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。
 
 ![](图片/Altklausur2LV-5.png)
 
@@ -2173,11 +2349,17 @@ Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagn
 
 Funktioniert der in den vorherigen Teilaufgaben analysierte Test von Bauterlach-Vligenört etwa gleich gut, besser oder schlechter als der hier dargestellte Test?
 
+译：前面小问分析的 Bauterlach-Vligenört 测试，与图中这个测试相比，大致同样好、更好还是更差？
+
 ###### (ii)
 
 Gehen Sie davon aus, dass eine Erkrankung mit der Fnufnu-Krankheit für Schwangere und ihre ungeborenen Kinder absolut lebensbedrohend ist, falls diese nicht sehr früh entdeckt und therapiert wird. Wie sollte der Schwellenwert des in der Grafik gezeigten diagnostischen Tests also gewählt werden, wenn dieser auf eine schwangere Patientin angewendet wird?
 
+译：假设 Fnufnu 疾病若不能很早发现并治疗，会对孕妇及胎儿造成致命危险。那么将图中诊断测试用于孕妇时，应如何选择阈值？
+
 Begründen Sie Ihre Antworten kurz.
+
+译：请简要说明理由。
 
 #### 解答
 
@@ -2427,29 +2609,43 @@ Ein geeigneter Schwellenwert wäre ungefähr im Bereich zwischen $5$ und $15$, j
 
 Beantworten Sie die folgenden Fragen jeweils mit kurzer Begründung oder Rechnung mit nachvollziehbarem Ansatz.
 
+译：回答下列问题，每问都要给出简短理由或可追踪的计算过程。
+
 ---
 
 ##### (a)
 
 A und B spielen folgendes Spiel: Es wird mit $4$ Würfeln gewürfelt. Tritt mindestens einmal die Zahl $6$ auf, dann gewinnt A, sonst B. Ist das Spiel fair in dem Sinne, dass im Mittel beide gleich oft gewinnen werden?
 
+译：A 和 B 玩如下游戏：掷 $4$ 个骰子。若至少出现一次 $6$，则 A 获胜；否则 B 获胜。问该游戏是否公平，即长期平均来看两人是否会赢得一样多？
+
 ##### (b)
 
 In einer Population leiden fünf Prozent der Menschen an erhöhtem Blutdruck. Von diesen fünf Prozent trinken $75\%$ regelmäßig Alkohol. Außerdem ist bekannt, dass $50\%$ der Menschen, die keinen erhöhten Blutdruck haben, regelmäßig Alkohol trinken. Wie viel Prozent der regelmäßigen Alkoholkonsument:innen leiden an erhöhtem Blutdruck?
+
+译：某总体中 $5\%$ 的人患有高血压。在这些高血压者中，$75\%$ 经常饮酒；没有高血压的人中，$50\%$ 经常饮酒。问经常饮酒者中有多少比例患有高血压？
 
 ##### (c)
 
 Sei $X$ eine stetige Zufallsvariable mit Verteilungsfunktion $F_X$ und einem $0.25$-Quantil von $3$.
 
+译：设 $X$ 是连续随机变量，分布函数为 $F_X$，且 $0.25$ 分位数为 $3$。
+
 Welche der folgenden Aussagen trifft bzw. treffen zu?
+
+译：下列哪些命题成立？
 
 1. $F_X(3)=0.25$
 2. $F_X(0.25)=3$
 3. $F_X^{-1}(3)=0.25$
 
+译：1. $F_X(3)=0.25$；2. $F_X(0.25)=3$；3. $F_X^{-1}(3)=0.25$。
+
 ##### (d)
 
 Sei $Y$ eine diskrete Zufallsvariable mit Träger $T_Y=\mathbb N$ und Verteilungsfunktion $F_Y$ mit
+
+译：设 $Y$ 是离散随机变量，支撑集 $T_Y=\mathbb N$，分布函数为 $F_Y$，并满足：
 
 $$
 F_Y(33/10)=0.5
@@ -2457,25 +2653,35 @@ $$
 
 und
 
+译：并且：
+
 $$
 F_Y(2)\neq F_Y(3)\neq F_Y(4)
 $$
 
 Geben Sie für die folgenden Aussagen an, ob sie aus diesen Angaben folgen:
 
+译：判断下列命题是否能由这些已知信息推出：
+
 1. Der Median von $Y$ ist $3$.
 2. $P(Y<3)\leq 0.5$
 3. Der Erwartungswert von $Y$ ist $3$.
 
+译：1. $Y$ 的中位数是 $3$；2. $P(Y<3)\leq 0.5$；3. $Y$ 的期望为 $3$。
+
 ##### (e)
 
 Welche Verteilung hat die Zufallsvariable
+
+译：问下列随机变量服从什么分布：
 
 $$
 Z=3U-12
 $$
 
 falls
+
+译：在如下条件下：
 
 $$
 U\sim N(\mu=4,\sigma^2=5)?
@@ -2485,28 +2691,42 @@ $$
 
 Nehmen Sie an, ein Pfandautomat akzeptiert jede ihm zugeführte Flasche mit Wahrscheinlichkeit $p<1$. Sei $F$ die Anzahl der Flaschen, die man dem Automaten zuführen muss, um einen Pfandbon für $m$ akzeptierte Flaschen zu bekommen.
 
+译：假设押金回收机以概率 $p<1$ 接受每个投入的瓶子。令 $F$ 为了得到 $m$ 个被接受瓶子的押金凭条所需投入的瓶子数。
+
 Mit welcher aus der Vorlesung bekannten parametrischen Verteilung können Sie $F$ beschreiben, was sind die Parameterwerte und welche zusätzlichen Annahmen über den daten-generierenden Prozess müssen Sie dafür treffen?
+
+译：可以用课堂上哪种已知参数分布描述 $F$？参数值是什么？还需要对数据生成过程作哪些额外假设？
 
 ##### (g)
 
 Folgender Mosaikplot stellt den beobachteten Zusammenhang der Merkmale Geschlecht, $m/w$, und Klausurerfolg, bestanden/nicht bestanden, für eine Statistikklausur dar.
+
+译：下列马赛克图展示了一次统计考试中性别 $m/w$ 与考试结果（通过/未通过）的观察关系。
 
 ![](图片/Altklausur2LV-9.png)
 ###### (i)
 
 Für welches Geschlecht ist die Durchfallrate höher?
 
+译：哪个性别的挂科率更高？
+
 ###### (ii)
 
 Gibt es insgesamt mehr Männer, die bestehen, oder mehr Frauen, die bestehen?
+
+译：总体上通过考试的男性更多，还是通过考试的女性更多？
 
 ###### (iii)
 
 Das in den oben dargestellten Daten zusätzlich erhobene Merkmal „Studienfach“ mit möglichen Ausprägungen „Nebenfach“ und „Hauptfach“ ist empirisch unabhängig von „Geschlecht“ und von „Klausurerfolg“. Die Hälfte der Prüfungsteilnehmer:innen sind Nebenfachstudierende, die anderen Hauptfachstudierende. Skizzieren Sie einen Mosaikplot für die gemeinsame Verteilung dieser drei Merkmale. Nur schematische Skizze gefragt, keine exakte Zeichnung.
 
+译：上面数据中额外记录的变量“专业类型”取值为“副修”和“主修”，且经验上与“性别”和“考试结果”独立。一半考生是副修学生，另一半是主修学生。请画出三个变量联合分布的马赛克图示意图，只需示意，不要求精确绘制。
+
 ##### (h)
 
 Es liegt eine große Anzahl $n$ von unabhängig Poisson-verteilten Zufallsvariablen mit gleicher Rate $\lambda$ vor. Wie ist die Summe dieser Zufallsvariablen exakt verteilt und welcher Verteilung folgt diese Summe approximativ?
+
+译：有大量 $n$ 个相互独立且参数同为 $\lambda$ 的 Poisson 随机变量。它们的和精确服从什么分布？又可近似服从什么分布？
 
 #### 解答
 
@@ -2927,7 +3147,11 @@ $$
 
 Prof. Dr. med. Kwarantina Bauterlach-Vligenört hat einen neuen diagnostischen Test für das Vorliegen einer akuten Infektion mit der schrecklichen Fnufnu-Krankheit entwickelt.
 
+译：Kwarantina Bauterlach-Vligenört 教授开发了一种新诊断测试，用于判断是否存在严重 Fnufnu 疾病的急性感染。
+
 Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die entweder noch nie mit dem Fnufnu-Erreger infiziert waren, „Naiv“, oder eine solche Infektion bereits hinter sich haben, „Genesen“, oder zum Zeitpunkt der Studie an einer akuten Fnufnu-Infektion leiden, „Kranke“, ergibt folgende Ergebnisse:
+
+译：该测试在一组患者样本上进行临床试验：患者分为从未感染 Fnufnu 病原体的“Naiv”、曾经感染的“Genesen”、以及研究时正处于急性感染的“Kranke”。结果如下：
 
 | Status | Naiv | Genesen | Krank | Gesamt |
 |---|---:|---:|---:|---:|
@@ -2937,11 +3161,17 @@ Ihre klinische Erprobung des Tests an einer Stichprobe von Patient:innen, die en
 
 Unter den Patient:innen, die Bauterlach-Vligenört im Klinikalltag versorgt, sind:
 
+译：在 Bauterlach-Vligenört 日常临床接诊的患者中，各类患者比例为：
+
 - $30\%$ Genesene,
 - $65\%$ Naive,
 - $5\%$ Fnufnu-Kranke.
 
+译：- $30\%$ 为康复者；- $65\%$ 为从未感染者；- $5\%$ 为 Fnufnu 急性患者。
+
 Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelten Eigenschaften des Tests, also FPR, TNR usw., auch im Klinikalltag gelten.
+
+译：以下假设：临床试验中估计出的测试性质，例如 FPR、TNR 等，也适用于日常临床场景。
 
 ---
 
@@ -2949,25 +3179,39 @@ Gehen Sie im Folgenden davon aus, dass die in der klinischen Erprobung ermittelt
 
 Berechnen Sie auf Basis der Ergebnisse der klinischen Erprobung die Sensitivität und Spezifität des Tests zur Entdeckung einer akuten Infektion.
 
+译：根据临床试验结果，计算该测试识别急性感染的敏感度和特异度。
+
 ##### (b)
 
 Berechnen Sie für die oben angegebene Prävalenz der Krankheit die Wahrscheinlichkeit, mit der ein Test im Klinikalltag ein positives Ergebnis zeigt.
+
+译：根据上面给出的疾病患病率，计算临床日常中一次检测显示阳性结果的概率。
 
 ##### (c)
 
 Berechnen Sie die Wahrscheinlichkeit, mit der ein negatives Testergebnis im Klinikalltag eine tatsächlich nicht akut erkrankte Person anzeigt.
 
+译：计算在临床日常中，检测结果为阴性时，被测者实际没有急性感染的概率。
+
 ##### (d)
 
 Die Grafik unten zeigt die ROC-Kurve eines alternativen, deutlich teureren diagnostischen Tests. Die ROC-Kurve ist an ausgewählten Punkten mit den entsprechenden Schwellenwerten des zugrunde liegenden diagnostischen Scores beschriftet.
 
+译：下图显示另一种明显更昂贵的诊断测试的 ROC 曲线。曲线上若干点标注了对应诊断评分的阈值。
+
 ###### (i)
 Funktioniert der in den vorherigen Teilaufgaben analysierte Test von Bauterlach-Vligenört etwa gleich gut, besser oder schlechter als der hier dargestellte Test?
+
+译：前面小问分析的 Bauterlach-Vligenört 测试，与图中这个测试相比，大致同样好、更好还是更差？
 
 ###### (ii)
 Gehen Sie davon aus, dass eine Erkrankung mit der Fnufnu-Krankheit für Schwangere und ihre ungeborenen Kinder absolut lebensbedrohend ist, falls diese nicht sehr früh entdeckt und therapiert wird. Wie sollte der Schwellenwert des in der Grafik gezeigten diagnostischen Tests also gewählt werden, wenn dieser auf eine schwangere Patientin angewendet wird?
 
+译：假设 Fnufnu 疾病若不能很早发现并治疗，会对孕妇及胎儿造成致命危险。那么将图中诊断测试用于孕妇时，应如何选择阈值？
+
 Begründen Sie Ihre Antworten kurz.
+
+译：请简要说明理由。
 
 #### 解答
 
@@ -3215,29 +3459,43 @@ Ein geeigneter Schwellenwert wäre ungefähr im Bereich zwischen $5$ und $15$, j
 
 Beantworten Sie die folgenden Fragen jeweils mit kurzer Begründung oder Rechnung mit nachvollziehbarem Ansatz.
 
+译：回答下列问题，每问都要给出简短理由或可追踪的计算过程。
+
 ---
 
 ##### (a)
 
 A und B spielen folgendes Spiel: Es wird mit $4$ Würfeln gewürfelt. Tritt mindestens einmal die Zahl $6$ auf, dann gewinnt A, sonst B. Ist das Spiel fair in dem Sinne, dass im Mittel beide gleich oft gewinnen werden?
 
+译：A 和 B 玩如下游戏：掷 $4$ 个骰子。若至少出现一次 $6$，则 A 获胜；否则 B 获胜。问该游戏是否公平，即长期平均来看两人是否会赢得一样多？
+
 ##### (b)
 
 In einer Population leiden fünf Prozent der Menschen an erhöhtem Blutdruck. Von diesen fünf Prozent trinken $75\%$ regelmäßig Alkohol. Außerdem ist bekannt, dass $50\%$ der Menschen, die keinen erhöhten Blutdruck haben, regelmäßig Alkohol trinken. Wie viel Prozent der regelmäßigen Alkoholkonsument:innen leiden an erhöhtem Blutdruck?
+
+译：某总体中 $5\%$ 的人患有高血压。在这些高血压者中，$75\%$ 经常饮酒；没有高血压的人中，$50\%$ 经常饮酒。问经常饮酒者中有多少比例患有高血压？
 
 ##### (c)
 
 Sei $X$ eine stetige Zufallsvariable mit Verteilungsfunktion $F_X$ und einem $0.25$-Quantil von $3$.
 
+译：设 $X$ 是连续随机变量，分布函数为 $F_X$，且 $0.25$ 分位数为 $3$。
+
 Welche der folgenden Aussagen trifft bzw. treffen zu?
+
+译：下列哪些命题成立？
 
 1. $F_X(3)=0.25$
 2. $F_X(0.25)=3$
 3. $F_X^{-1}(3)=0.25$
 
+译：1. $F_X(3)=0.25$；2. $F_X(0.25)=3$；3. $F_X^{-1}(3)=0.25$。
+
 ##### (d)
 
 Sei $Y$ eine diskrete Zufallsvariable mit Träger $T_Y=\mathbb N$ und Verteilungsfunktion $F_Y$ mit
+
+译：设 $Y$ 是离散随机变量，支撑集 $T_Y=\mathbb N$，分布函数为 $F_Y$，并满足：
 
 $$
 F_Y(33/10)=0.5
@@ -3245,25 +3503,35 @@ $$
 
 und
 
+译：并且：
+
 $$
 F_Y(2)\neq F_Y(3)\neq F_Y(4)
 $$
 
 Geben Sie für die folgenden Aussagen an, ob sie aus diesen Angaben folgen:
 
+译：判断下列命题是否能由这些已知信息推出：
+
 1. Der Median von $Y$ ist $3$.
 2. $P(Y<3)\leq 0.5$
 3. Der Erwartungswert von $Y$ ist $3$.
 
+译：1. $Y$ 的中位数是 $3$；2. $P(Y<3)\leq 0.5$；3. $Y$ 的期望为 $3$。
+
 ##### (e)
 
 Welche Verteilung hat die Zufallsvariable
+
+译：问下列随机变量服从什么分布：
 
 $$
 Z=3U-12
 $$
 
 falls
+
+译：在如下条件下：
 
 $$
 U\sim N(\mu=4,\sigma^2=5)?
@@ -3273,24 +3541,38 @@ $$
 
 Nehmen Sie an, ein Pfandautomat akzeptiert jede ihm zugeführte Flasche mit Wahrscheinlichkeit $p<1$. Sei $F$ die Anzahl der Flaschen, die man dem Automaten zuführen muss, um einen Pfandbon für $m$ akzeptierte Flaschen zu bekommen.
 
+译：假设押金回收机以概率 $p<1$ 接受每个投入的瓶子。令 $F$ 为了得到 $m$ 个被接受瓶子的押金凭条所需投入的瓶子数。
+
 Mit welcher aus der Vorlesung bekannten parametrischen Verteilung können Sie $F$ beschreiben, was sind die Parameterwerte und welche zusätzlichen Annahmen über den daten-generierenden Prozess müssen Sie dafür treffen?
+
+译：可以用课堂上哪种已知参数分布描述 $F$？参数值是什么？还需要对数据生成过程作哪些额外假设？
 
 ##### (g)
 
 Folgender Mosaikplot stellt den beobachteten Zusammenhang der Merkmale Geschlecht, $m/w$, und Klausurerfolg, bestanden/nicht bestanden, für eine Statistikklausur dar.
 
+译：下列马赛克图展示了一次统计考试中性别 $m/w$ 与考试结果（通过/未通过）的观察关系。
+
 ###### (i)
 Für welches Geschlecht ist die Durchfallrate höher?
+
+译：哪个性别的挂科率更高？
 
 ###### (ii)
 Gibt es insgesamt mehr Männer, die bestehen, oder mehr Frauen, die bestehen?
 
+译：总体上通过考试的男性更多，还是通过考试的女性更多？
+
 ###### (iii)
 Das in den oben dargestellten Daten zusätzlich erhobene Merkmal „Studienfach“ mit möglichen Ausprägungen „Nebenfach“ und „Hauptfach“ ist empirisch unabhängig von „Geschlecht“ und von „Klausurerfolg“. Die Hälfte der Prüfungsteilnehmer:innen sind Nebenfachstudierende, die anderen Hauptfachstudierende. Skizzieren Sie einen Mosaikplot für die gemeinsame Verteilung dieser drei Merkmale. Nur schematische Skizze gefragt, keine exakte Zeichnung.
+
+译：上面数据中额外记录的变量“专业类型”取值为“副修”和“主修”，且经验上与“性别”和“考试结果”独立。一半考生是副修学生，另一半是主修学生。请画出三个变量联合分布的马赛克图示意图，只需示意，不要求精确绘制。
 
 ##### (h)
 
 Es liegt eine große Anzahl $n$ von unabhängig Poisson-verteilten Zufallsvariablen mit gleicher Rate $\lambda$ vor. Wie ist die Summe dieser Zufallsvariablen exakt verteilt und welcher Verteilung folgt diese Summe approximativ?
+
+译：有大量 $n$ 个相互独立且参数同为 $\lambda$ 的 Poisson 随机变量。它们的和精确服从什么分布？又可近似服从什么分布？
 
 #### 解答
 
@@ -3708,10 +3990,16 @@ $$
 
 Gegeben:
 
+译：给定：
+
 - $5$ Millionen Einheiten pro Monat
 - pro $1$ Million Einheiten sind $10$ verunreinigt
 
+译：- 每月 $5$ 百万个单位；- 每 $1$ 百万个单位中有 $10$ 个被污染。
+
 Also beträgt die erwartete Anzahl verunreinigter Einheiten pro Monat:
+
+译：因此每月被污染单位的期望数量为：
 
 $$
 5\cdot 10=50
@@ -3719,28 +4007,42 @@ $$
 
 Pilotversuch:
 
+译：试运行：
+
 - $13$ von $15$ verunreinigten Einheiten erkannt
 - $22$ von $1100$ nicht verunreinigten Einheiten mit Alarm
+
+译：- $15$ 个污染单位中识别出 $13$ 个；- $1100$ 个未污染单位中有 $22$ 个触发报警。
 
 ###### (a)
 
 Erwartete monatliche Häufigkeiten.
 
+译：求每月期望频数。
+
 ###### (b)
 
 Sinnvoller Einsatz?.
+
+译：判断该系统是否值得使用。
 
 ###### (c)
 
 Zusammenhangsmaß mit Wertebereich $\mathbb R_0^+$.
 
+译：使用取值范围为 $\mathbb R_0^+$ 的关联强度指标。
+
 ###### (d)
 
 ROC-Kurven.
 
+译：分析 ROC 曲线。
+
 ###### (e)
 
 Wartezeit zwischen beanstandeten Einheiten.
+
+译：分析两次被判为有问题的单位之间的等待时间。
 
 #### 解答
 
@@ -3931,15 +4233,23 @@ Annahmen:
 
 Gegeben sind $N+1$ Stapel $s_0,\dots,s_N$. Stapel $s_j$ enthält $j$ rote und $N-j$ blaue Chips. Aus den $N+1$ Stapeln wird zufällig einer ausgewählt und aus diesem Stapel werden ohne Zurücklegen zwei Chips gezogen.
 
+译：给定 $N+1$ 堆筹码 $s_0,\dots,s_N$。第 $s_j$ 堆含有 $j$ 个红筹码和 $N-j$ 个蓝筹码。从这 $N+1$ 堆中随机选一堆，并从该堆中不放回抽取两个筹码。
+
 Bezeichne $S_j$ das Ereignis, dass Stapel $s_j$ ausgewählt wurde. Sei $R_i$ das Ereignis, dass der $i$-te gezogene Chip rot ist.
 
+译：记 $S_j$ 为选中第 $s_j$ 堆的事件；记 $R_i$ 为第 $i$ 次抽到红筹码的事件。
+
 Hinweise:
+
+译：提示：
 
 $$
 \sum_{j=0}^N j = \frac{N(N+1)}{2}
 $$
 
 und
+
+译：并且：
 
 $$
 \sum_{j=0}^N j^2 = \frac{N(N+1)(2N+1)}{6}
@@ -3951,17 +4261,25 @@ $$
 
 Bestimmen Sie $P(R_1\mid S_j)$ und interpretieren Sie die Größe.
 
+译：求 $P(R_1\mid S_j)$，并解释该量的含义。
+
 ###### (b)
 
 Zeigen Sie, dass $P(R_1)=\frac12$.
+
+译：证明 $P(R_1)=\frac12$。
 
 ###### (c)
 
 Bestimmen Sie $P(R_1\cap R_2\mid S_j)$.
 
+译：求 $P(R_1\cap R_2\mid S_j)$。
+
 ###### (d)
 
 Berechnen Sie $P(R_1\cap R_2)$.
+
+译：计算 $P(R_1\cap R_2)$。
 
 #### 解答
 

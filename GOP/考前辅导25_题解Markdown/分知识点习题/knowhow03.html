@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分布函数 · 密度 · 常见分布 复习卡</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a212b; --panel2:#222c38;
+    --accent:#4ea1ff; --accent2:#ffb454; --green:#5fd07d;
+    --red:#ff6b6b; --purple:#c084fc; --pink:#f472b6;
+    --text:#e3e8ef; --muted:#94a3b8; --border:#2c3744;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.75;}
+  a{color:var(--accent);text-decoration:none;}
+
+  header.top{background:linear-gradient(135deg,#16202c,#0f1419);
+    border-bottom:1px solid var(--border);padding:28px 20px 22px;text-align:center;}
+  header.top h1{margin:0 0 6px;font-size:1.5rem;letter-spacing:.5px;}
+  header.top p{margin:0;color:var(--muted);font-size:.9rem;}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 16px;min-width:90px;}
+  .stat b{display:block;font-size:1.3rem;color:var(--accent2);}
+  .stat span{font-size:.72rem;color:var(--muted);}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  nav.side{width:250px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;
+    height:100vh;overflow-y:auto;border-right:1px solid var(--border);padding:18px 10px 40px;font-size:.82rem;}
+  nav.side h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 8px 6px;}
+  nav.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--text);transition:.15s;border-left:3px solid transparent;}
+  nav.side a:hover{background:var(--panel);border-left-color:var(--accent);}
+  .navtag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+  .t-cdf{background:var(--green);}
+  .t-trans{background:var(--accent);}
+  .t-conv{background:var(--pink);}
+  .t-clt{background:var(--purple);}
+  .t-exam{background:var(--accent2);}
+
+  main{flex:1;min-width:0;padding:24px 22px 80px;}
+  section.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:22px 24px;margin-bottom:26px;scroll-margin-top:14px;}
+  section.block > h2{margin-top:0;font-size:1.25rem;border-bottom:2px solid var(--accent);
+    padding-bottom:8px;display:inline-block;}
+
+  .ex{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+    margin-bottom:18px;overflow:hidden;scroll-margin-top:14px;}
+  .ex-head{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;
+    background:#1e2733;transition:.15s;}
+  .ex-head:hover{background:#243140;}
+  .ex-num{font-weight:700;color:var(--accent);font-size:.9rem;background:#13202c;
+    border:1px solid var(--border);border-radius:8px;padding:3px 9px;white-space:nowrap;}
+  .ex-title{flex:1;font-size:.92rem;}
+  .badge{font-size:.64rem;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid;}
+  .b-cdf{color:var(--green);border-color:var(--green);}
+  .b-trans{color:var(--accent);border-color:var(--accent);}
+  .b-conv{color:var(--pink);border-color:var(--pink);}
+  .b-clt{color:var(--purple);border-color:var(--purple);}
+  .b-exam{color:var(--accent2);border-color:var(--accent2);}
+
+  .ex-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ex.open .ex-body{max-height:none;padding:6px 20px 20px;}
+
+  .q{background:#141c25;border-left:4px solid var(--accent);padding:12px 16px;
+    border-radius:0 8px 8px 0;margin:14px 0;}
+  .q .label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.5px;}
+  .trans{color:var(--muted);font-size:.84rem;font-style:italic;}
+
+  .toggle-sol{background:var(--accent);color:#06121f;border:none;padding:8px 18px;
+    border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin:6px 0 4px;transition:.15s;}
+  .toggle-sol:hover{background:#6bb3ff;}
+  .sol{display:none;}
+  .sol.show{display:block;}
+
+  .think{background:#1d2417;border-left:4px solid var(--green);padding:10px 16px;
+    border-radius:0 8px 8px 0;margin:12px 0;font-size:.86rem;}
+  .think .label{color:var(--green);font-weight:700;font-size:.72rem;letter-spacing:.5px;}
+
+  .ans{background:#161e28;border:1px dashed var(--border);padding:8px 16px;border-radius:8px;margin:12px 0;}
+  .subq{font-weight:700;color:var(--accent2);margin-top:14px;}
+
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-size:.84rem;}
+  .fcard b{color:var(--accent2);}
+
+  .strat li,.warn li,.checklist li{margin-bottom:10px;}
+  .strat b,.warn b{color:var(--accent2);}
+  .warn b{color:var(--red);}
+  .checklist li::marker{color:var(--green);}
+
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+  .vcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;}
+  .vcard .de{color:var(--accent);font-weight:700;font-size:.9rem;}
+  .vcard .zh{color:var(--muted);font-size:.8rem;}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.84rem;}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;}
+  th{background:#1e2733;color:var(--accent2);}
+
+  pre{background:#0c1118;border:1px solid var(--border);border-radius:8px;padding:12px;
+    overflow-x:auto;font-size:.8rem;color:#cbd5e1;}
+  code{font-family:"SF Mono",Consolas,monospace;}
+
+  .controls{position:sticky;top:0;z-index:50;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);padding:10px 0;margin:-24px -22px 22px;display:flex;gap:10px;
+    padding-left:22px;flex-wrap:wrap;}
+  .ctrl-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;}
+  .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .menu-toggle{display:none;}
+  @media(max-width:860px){
+    nav.side{position:fixed;left:-270px;z-index:200;background:var(--bg);
+      transition:left .3s;width:260px;box-shadow:4px 0 20px rgba(0,0,0,.5);}
+    nav.side.open{left:0;}
+    .menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:201;
+      background:var(--accent);color:#06121f;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;}
+    .fgrid{grid-template-columns:1fr;}
+    main{padding:24px 14px 80px;}
+    .controls{margin:-24px -14px 22px;padding-left:14px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('nav.side').classList.toggle('open')">☰ 目录</button>
+
+<header class="top">
+  <h1>分布函数 · 密度与常见分布</h1>
+  <p>Verteilungsfunktion · Dichte · gängige Verteilungen</p>
+  <div class="stats">
+    <div class="stat"><b>21</b><span>练习题</span></div>
+    <div class="stat"><b>18</b><span>考试真题</span></div>
+    <div class="stat"><b>39</b><span>合计题目</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="side">
+  <h3>核心板块</h3>
+  <a href="#formulas">📐 公式速查</a>
+  <a href="#strategy">🧭 不会时怎么下手</a>
+  <a href="#vocab">🇩🇪 德语词汇强化</a>
+
+  <h3>练习题（颜色=题型）</h3>
+  <a href="#a1"><span class="navtag t-cdf"></span>1 · CDF 跳跃与区间概率</a>
+  <a href="#a2"><span class="navtag t-trans"></span>2 · Beta 众数与右偏</a>
+  <a href="#a3"><span class="navtag t-cdf"></span>3 · 闭区间概率</a>
+  <a href="#a4"><span class="navtag t-cdf"></span>4 · 指数 CDF 验证</a>
+  <a href="#a5"><span class="navtag t-cdf"></span>5 · 几何分布 CDF</a>
+  <a href="#a6"><span class="navtag t-trans"></span>6 · 对数正态变换</a>
+  <a href="#a7"><span class="navtag t-cdf"></span>7 · 判断是否 CDF</a>
+  <a href="#a8"><span class="navtag t-cdf"></span>8 · 啤酒消耗密度</a>
+  <a href="#a9"><span class="navtag t-cdf"></span>9 · 1/x² 密度/偏度</a>
+  <a href="#a10"><span class="navtag t-cdf"></span>10 · x² 密度/中位数</a>
+  <a href="#a11"><span class="navtag t-trans"></span>11 · (X+1)² 变换</a>
+  <a href="#a12"><span class="navtag t-conv"></span>12 · 指数卷积→Gamma</a>
+  <a href="#a13"><span class="navtag t-clt"></span>13 · HSV 进球 Poisson</a>
+  <a href="#a14"><span class="navtag t-clt"></span>14 · 分布识别</a>
+  <a href="#a15"><span class="navtag t-cdf"></span>15 · CDF/密度判断</a>
+  <a href="#a16"><span class="navtag t-cdf"></span>16 · 指数 CDF 证明</a>
+  <a href="#a17"><span class="navtag t-cdf"></span>17 · 带参 CDF</a>
+  <a href="#a18"><span class="navtag t-clt"></span>18 · 几何无记忆性</a>
+  <a href="#a19"><span class="navtag t-cdf"></span>19 · 混合型 LS 测度</a>
+  <a href="#a20"><span class="navtag t-clt"></span>20 · χ²与混合分布(R)</a>
+  <a href="#a21"><span class="navtag t-trans"></span>21 · 变换定理推导</a>
+
+  <h3>考试真题</h3>
+  <a href="#e1"><span class="navtag t-exam"></span>真题1 · 树叶长度(2012)</a>
+  <a href="#e2"><span class="navtag t-exam"></span>真题2 · 综合(2012)</a>
+  <a href="#e3"><span class="navtag t-exam"></span>真题3 · x/(1+x)(2014)</a>
+  <a href="#e4"><span class="navtag t-exam"></span>真题4 · Weibull ML(2014)</a>
+  <a href="#e5"><span class="navtag t-exam"></span>真题5 · 离散变量(2015)</a>
+  <a href="#e6"><span class="navtag t-exam"></span>真题6 · Cauchy(2015)</a>
+  <a href="#e7"><span class="navtag t-exam"></span>真题7 · (x-1)(4-x)(2021)</a>
+  <a href="#e8"><span class="navtag t-exam"></span>真题8 · cx 密度+变换</a>
+  <a href="#e9"><span class="navtag t-exam"></span>真题9 · cx² 密度+变换</a>
+  <a href="#e10"><span class="navtag t-exam"></span>真题10 · 几何+超售 CLT</a>
+  <a href="#e11"><span class="navtag t-exam"></span>真题11 · ln(ax+b) CDF</a>
+  <a href="#e12"><span class="navtag t-exam"></span>真题12 · U形密度</a>
+  <a href="#e13"><span class="navtag t-exam"></span>真题13 · cx 密度(GOP2)</a>
+  <a href="#e14"><span class="navtag t-exam"></span>真题14 · cx 密度(GOP3)</a>
+  <a href="#e15"><span class="navtag t-exam"></span>真题15 · ln(ax+b)(ss22)</a>
+  <a href="#e16"><span class="navtag t-exam"></span>真题16 · 1-ax⁻²(ss24)</a>
+  <a href="#e17"><span class="navtag t-exam"></span>真题17 · 指数线性变换</a>
+  <a href="#e18"><span class="navtag t-exam"></span>真题18 · 综合大题(ss24)</a>
+
+  <h3>总结</h3>
+  <a href="#mistakes">⚠️ 常见错误</a>
+  <a href="#mustknow">✅ 必会题型清单</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleAll(true)">展开全部</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">收起全部</button>
+    <button class="ctrl-btn" onclick="showAllSol(true)">显示全部答案</button>
+    <button class="ctrl-btn" onclick="showAllSol(false)">隐藏全部答案</button>
+  </div>
+
+  <!-- ===== 公式速查 ===== -->
+  <section class="block" id="formulas">
+    <h2>📐 公式速查（考试可用版）</h2>
+    <div class="fgrid">
+      <div class="fcard"><b>CDF 定义</b><br>$F_X(x)=\mathbb P(X\le x)$</div>
+      <div class="fcard"><b>CDF 性质</b><br>单调递增、右连续，$F(-\infty)=0$，$F(\infty)=1$</div>
+      <div class="fcard"><b>区间概率</b><br>$\mathbb P(a<X\le b)=F(b)-F(a)$</div>
+      <div class="fcard"><b>右尾概率</b><br>$\mathbb P(X>a)=1-F(a)$</div>
+      <div class="fcard"><b>跳跃点概率</b><br>$\mathbb P(X=a)=F(a)-F(a-)$</div>
+      <div class="fcard"><b>密度合法性</b><br>$f(x)\ge0$，$\int_{-\infty}^{\infty}f(x)\,dx=1$</div>
+      <div class="fcard"><b>CDF↔PDF</b><br>$F(x)=\int_{-\infty}^x f$；可导处 $f=F'$</div>
+      <div class="fcard"><b>连续型单点</b><br>$X$ 连续 $\Rightarrow\mathbb P(X=a)=0$</div>
+      <div class="fcard"><b>期望</b><br>$E(X)=\int xf(x)\,dx$ 或 $\sum_x xP(X=x)$</div>
+      <div class="fcard"><b>分位数 / 中位数</b><br>$F(q_p)=p$；$F(m)=0.5$</div>
+      <div class="fcard"><b>众数 Modus</b><br>找 $f(x)$ 最大的位置</div>
+      <div class="fcard"><b>一维变换</b><br>$f_Y(y)=f_X(h(y))\,|h'(y)|,\ h=g^{-1}$</div>
+      <div class="fcard"><b>单调增变换 CDF</b><br>$F_Y(y)=F_X(g^{-1}(y))$</div>
+      <div class="fcard"><b>单调减变换 CDF</b><br>$F_Y(y)=1-F_X(g^{-1}(y))$</div>
+      <div class="fcard"><b>Binomial</b><br>$P=\binom nkp^k(1-p)^{n-k}$，$E=np$，$Var=np(1-p)$</div>
+      <div class="fcard"><b>Poisson</b><br>$P=e^{-\lambda}\frac{\lambda^k}{k!}$，$E=Var=\lambda$</div>
+      <div class="fcard"><b>Exponential</b><br>$f=\lambda e^{-\lambda x}I_{x>0}$，$F=1-e^{-\lambda x}$，$E=\frac1\lambda$</div>
+      <div class="fcard"><b>Uniform $U(a,b)$</b><br>$f=\frac1{b-a}$，$E=\frac{a+b}{2}$</div>
+      <div class="fcard"><b>Hypergeometric</b><br>$P=\dfrac{\binom Mx\binom{N-M}{n-x}}{\binom Nn}$</div>
+      <div class="fcard"><b>Geometric</b><br>$P=p(1-p)^{k-1}$，$E=\frac1p$，$Var=\frac{1-p}{p^2}$</div>
+    </div>
+  </section>
+
+  <!-- ===== 解题入门 ===== -->
+  <section class="block" id="strategy">
+    <h2>🧭 不会时怎么下手</h2>
+    <ul class="strat">
+      <li><b>给 $F(x)$ 问概率</b>：先判断端点形式。最常用 $\mathbb P(a<X\le b)=F(b)-F(a)$；问 $\mathbb P(X=a)$ 就算跳跃 $F(a)-F(a-)$。</li>
+      <li><b>给 $F(x)$ 问密度</b>：逐段求导。常数段导数为 $0$；跳跃点不是密度，而是点概率。</li>
+      <li><b>给 $f(x)$ 问是否密度</b>：只检查两件事 —— $f\ge0$ 且 $\int f=1$。有参数 $c$ 时直接用第二条求 $c$。</li>
+      <li><b>问 $P(X=a)$</b>：先问"连续型还是有跳跃"。连续型直接 $0$；有跳跃用 $F(a)-F(a-)$。</li>
+      <li><b>问期望</b>：先写 $E(X)=\int xf(x)\,dx$，别漏前面的 $x$；离散型写 $\sum xP(X=x)$。</li>
+      <li><b>问中位数/分位数</b>：先找 $p$ 落在哪个分段，再在那段解 $F(x)=p$。</li>
+      <li><b>问众数</b>：看 $f(x)$ 最大在哪。单调递增众数在右端点，单调递减在左端点。</li>
+      <li><b>问 $Y=g(X)$ 密度</b>：写三行 —— ① $y=g(x)$；② $x=h(y)=g^{-1}(y)$；③ $f_Y(y)=f_X(h(y))|h'(y)|$。最后一定写 $y$ 范围。</li>
+      <li><b>$g$ 不单调</b>：别套单调公式。找出每个原像分支，把各分支密度贡献相加。</li>
+      <li><b>问识别分布</b>：先看支持集再看形状。$0..n$ 多半 Binomial；$\mathbb N_0$ 带 $k!$ 是 Poisson；$x>0$ 带 $e^{-\lambda x}$ 是 Exponential。</li>
+      <li><b>问近似</b>：$n$ 大 $p$ 小用 Poisson 近似；$np$ 和 $n(1-p)$ 都不小用正态近似。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 德语词汇 ===== -->
+  <section class="block" id="vocab">
+    <h2>🇩🇪 德语关键词强化</h2>
+    <p style="color:var(--muted);font-size:.85rem;">本章高频术语对照，考场上看到要立刻反应。</p>
+    <div class="vocab">
+      <div class="vcard"><span class="de">die Verteilungsfunktion (CDF)</span><br><span class="zh">分布函数 $F$</span></div>
+      <div class="vcard"><span class="de">die Dichte / Dichtefunktion</span><br><span class="zh">密度函数 $f$</span></div>
+      <div class="vcard"><span class="de">die Zähldichte</span><br><span class="zh">计数密度（离散）</span></div>
+      <div class="vcard"><span class="de">monoton wachsend</span><br><span class="zh">单调递增</span></div>
+      <div class="vcard"><span class="de">rechtsstetig</span><br><span class="zh">右连续</span></div>
+      <div class="vcard"><span class="de">der Grenzwert</span><br><span class="zh">极限</span></div>
+      <div class="vcard"><span class="de">der Sprung / die Sprunghöhe</span><br><span class="zh">跳跃 / 跳跃高度</span></div>
+      <div class="vcard"><span class="de">die Normierung</span><br><span class="zh">归一化</span></div>
+      <div class="vcard"><span class="de">der Erwartungswert</span><br><span class="zh">期望值</span></div>
+      <div class="vcard"><span class="de">die Varianz</span><br><span class="zh">方差</span></div>
+      <div class="vcard"><span class="de">der Modus</span><br><span class="zh">众数</span></div>
+      <div class="vcard"><span class="de">der Median</span><br><span class="zh">中位数</span></div>
+      <div class="vcard"><span class="de">das Quantil</span><br><span class="zh">分位数</span></div>
+      <div class="vcard"><span class="de">die Quantilfunktion</span><br><span class="zh">分位数函数（逆 CDF）</span></div>
+      <div class="vcard"><span class="de">die Schiefe</span><br><span class="zh">偏度</span></div>
+      <div class="vcard"><span class="de">rechtsschief / linksschief</span><br><span class="zh">右偏 / 左偏</span></div>
+      <div class="vcard"><span class="de">der Träger</span><br><span class="zh">支撑集 (Support)</span></div>
+      <div class="vcard"><span class="de">der Transformationssatz</span><br><span class="zh">变量变换定理</span></div>
+      <div class="vcard"><span class="de">die Umkehrfunktion</span><br><span class="zh">反函数 $g^{-1}$</span></div>
+      <div class="vcard"><span class="de">streng monoton steigend/fallend</span><br><span class="zh">严格单调增 / 减</span></div>
+      <div class="vcard"><span class="de">die Faltung</span><br><span class="zh">卷积</span></div>
+      <div class="vcard"><span class="de">der zentrale Grenzwertsatz (ZGS)</span><br><span class="zh">中心极限定理 (CLT)</span></div>
+      <div class="vcard"><span class="de">das starke Gesetz der großen Zahlen</span><br><span class="zh">强大数定律</span></div>
+      <div class="vcard"><span class="de">fast sicher (f.s.)</span><br><span class="zh">几乎必然</span></div>
+      <div class="vcard"><span class="de">die Stetigkeitskorrektur</span><br><span class="zh">连续性修正</span></div>
+      <div class="vcard"><span class="de">unabhängig identisch verteilt (i.i.d.)</span><br><span class="zh">独立同分布</span></div>
+      <div class="vcard"><span class="de">die Gedächtnislosigkeit</span><br><span class="zh">无记忆性</span></div>
+      <div class="vcard"><span class="de">die Mischverteilung</span><br><span class="zh">混合分布</span></div>
+      <div class="vcard"><span class="de">der Maximum-Likelihood-Schätzer</span><br><span class="zh">最大似然估计量</span></div>
+      <div class="vcard"><span class="de">die Loglikelihood</span><br><span class="zh">对数似然</span></div>
+      <div class="vcard"><span class="de">die Sensitivität / Spezifität</span><br><span class="zh">灵敏度 / 特异度</span></div>
+      <div class="vcard"><span class="de">die Tschebyscheff-Ungleichung</span><br><span class="zh">切比雪夫不等式</span></div>
+      <div class="vcard"><span class="de">die Jensen-Ungleichung</span><br><span class="zh">Jensen 不等式</span></div>
+      <div class="vcard"><span class="de">die Kovarianzmatrix</span><br><span class="zh">协方差矩阵</span></div>
+      <div class="vcard"><span class="de">positiv semidefinit</span><br><span class="zh">半正定</span></div>
+      <div class="vcard"><span class="de">die Inversionsmethode</span><br><span class="zh">逆变换法</span></div>
+      <div class="vcard"><span class="de">der Fehler 1. Art</span><br><span class="zh">第一类错误</span></div>
+    </div>
+  </section>
+
+  <!-- ===== 练习题 ===== -->
+  <section class="block">
+    <h2>📝 习题与讲解</h2>
+    <p style="color:var(--muted);font-size:.85rem;">点击标题展开/收起；做完再点"显示解答"自测。颜色：
+      <span style="color:var(--green)">●CDF/密度</span>
+      <span style="color:var(--accent)">●变换</span>
+      <span style="color:var(--pink)">●卷积</span>
+      <span style="color:var(--purple)">●CLT/近似</span></p>
+
+    <!-- A1 -->
+    <div class="ex" id="a1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">1</span>
+        <span class="ex-title">CDF 跳跃点与区间概率</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F(x)=0\,(x<0);\ x^2\,(0\le x<\tfrac12);\ 1\,(x\ge\tfrac12)$。求 (a) $\mathbb P(X=0)$；(b) $\mathbb P(X=\tfrac12)$；(c) $\mathbb P(X\in(\tfrac13,\tfrac23])$。
+          <div class="trans">注意 $x=\tfrac12$ 处有跳跃。</div></div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>点概率=跳跃高度 $F(a)-F(a-)$；区间 $(a,b]$ 用 $F(b)-F(a)$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$F(0)=0,\ F(0-)=0\Rightarrow\mathbb P(X=0)=0.$
+            <div class="subq">(b)</div>$F(\tfrac12)=1,\ F(\tfrac12-)=(\tfrac12)^2=\tfrac14\Rightarrow\mathbb P(X=\tfrac12)=1-\tfrac14=\tfrac34.$
+            <div class="subq">(c)</div>$\tfrac23\ge\tfrac12\Rightarrow F(\tfrac23)=1$，$F(\tfrac13)=\tfrac19$。故 $\mathbb P=1-\tfrac19=\tfrac89.$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="ex" id="a2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">2</span>
+        <span class="ex-title">Beta 型密度的众数与右偏判断</span><span class="badge b-trans">变换</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f(x)=c(0.5+x)^a(0.5-x)^b I_{(-0.5,0.5)}(x)$，$a,b>0$。(a) 求众数；(b) 已知 $E(X)=\frac{a-b}{2(a+b+2)}$，何时右偏？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>对数求导找众数；平移 $T=X+\tfrac12$ 变成 Beta$(a+1,b+1)$ 判断偏度。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>令 $\ell(x)=a\log(0.5+x)+b\log(0.5-x)$，$\ell'(x)=\frac{a}{0.5+x}-\frac{b}{0.5-x}=0$，
+            解得 $a(0.5-x)=b(0.5+x)$，故
+            $$x_{\text{mod}}=\frac{a-b}{2(a+b)}.$$
+            <div class="subq">(b)</div>$T=X+\tfrac12\sim\text{Beta}(a+1,b+1)$。右偏（正偏）当第一形状参数更小：$a+1<b+1$，即 $\boxed{a<b}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="ex" id="a3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">3</span>
+        <span class="ex-title">闭区间概率（含左端点）</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F(x)=0\,(x<0);\ x^2\,(0\le x<1);\ 1\,(x\ge1)$。求 $\mathbb P(X=0)$、$\mathbb P(X=1)$、$\mathbb P(X\in[\tfrac13,\tfrac23])$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            两端无跳跃：$\mathbb P(X=0)=0-0=0$，$\mathbb P(X=1)=1-1=0$。<br>
+            闭区间用左极限：$\mathbb P(X\in[\tfrac13,\tfrac23])=F(\tfrac23)-F(\tfrac13-)=\tfrac49-\tfrac19=\tfrac13$（连续型故等于 $F(\tfrac23)-F(\tfrac13)$）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="ex" id="a4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">4</span>
+        <span class="ex-title">指数分布 CDF 验证</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F(x)=0\,(x<0);\ 1-e^{-\lambda x}\,(x\ge0)$，$\lambda>0$。说明是否为分布函数。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            是。$F(-\infty)=0,\ F(\infty)=1$；单调递增、右连续。在 $x=0$：$F(0)=1-e^0=0=\lim_{x\uparrow0}F(x)$，无跳跃。
+            即参数 $\lambda$ 的指数分布 CDF。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5 -->
+    <div class="ex" id="a5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">5</span>
+        <span class="ex-title">几何分布的 CDF</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X(x)=p(1-p)^{x-1},\ x\in\mathbb N$。求 $F_X$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>离散 CDF 求和到 $\lfloor x\rfloor$，用等比级数。</div>
+          <div class="ans">
+            $x<1$ 时 $F_X=0$。$x\ge1$ 时
+            $$F_X(x)=\sum_{i=1}^{\lfloor x\rfloor}p(1-p)^{i-1}=1-(1-p)^{\lfloor x\rfloor}.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A6 -->
+    <div class="ex" id="a6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">6</span>
+        <span class="ex-title">对数正态 → 正态（变换定理）</span><span class="badge b-trans">变换</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X\sim\text{LogN}(\mu,\sigma^2)$，用变换定理证明 $Y=\log X\sim N(\mu,\sigma^2)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $g(x)=\log x,\ g^{-1}(y)=e^y,\ \frac{d}{dy}e^y=e^y$。
+            $$f_Y(y)=f_X(e^y)\cdot e^y=\frac{1}{e^y\sigma\sqrt{2\pi}}\exp\!\Big(-\tfrac12\tfrac{(y-\mu)^2}{\sigma^2}\Big)\cdot e^y.$$
+            $e^y$ 抵消，得 $f_Y(y)=\frac{1}{\sigma\sqrt{2\pi}}\exp(-\tfrac12\tfrac{(y-\mu)^2}{\sigma^2})$，即 $N(\mu,\sigma^2)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A7 -->
+    <div class="ex" id="a7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">7</span>
+        <span class="ex-title">判断哪些是连续型 CDF</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) $1-x^{-2}\,(x\ge1)$；(b) $\log(1+\sin x)\,(0\le x<\tfrac{3\pi}4)$；(c) $1-e^{-x}\,(x\ge0)$。哪些是连续型分布函数？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a) ✅</div>单调增、$x=1$ 处连续、极限 $0\to1$。是 CDF。
+            <div class="subq">(b) ❌</div>过渡点不接 $1$：$\lim_{x\uparrow3\pi/4}\log(1+\sin x)=\log(1+\tfrac{\sqrt2}{2})\ne1$；且含 sin 段非整体单调。
+            <div class="subq">(c) ✅</div>速率 $1$ 的指数分布 CDF。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A8 -->
+    <div class="ex" id="a8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">8</span>
+        <span class="ex-title">啤酒消耗：归一化/CDF/中位数</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X(x)=(cx-6x^2)I_{[0,1]}(x)$。求 $c$、$F_X$、$\mathbb P(X>0.8)$、$\mathbb P(X=0.5)$、$\mathbb P(0.5\le X\le0.8)$、中位数。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            归一化：$\int_0^1(cx-6x^2)dx=\tfrac c2-2=1\Rightarrow c=6$，故 $f=6x-6x^2=6x(1-x)$。<br>
+            $F_X(x)=3x^2-2x^3$ 于 $[0,1]$。<br>
+            $\mathbb P(X>0.8)=1-(3\cdot0.64-2\cdot0.512)=0.104$。<br>
+            连续型：$\mathbb P(X=0.5)=0$。<br>
+            $\mathbb P(0.5\le X\le0.8)=F(0.8)-F(0.5)=0.396$。<br>
+            密度 $6x(1-x)$ 关于 $0.5$ 对称 $\Rightarrow$ 中位数 $=0.5$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A9 -->
+    <div class="ex" id="a9">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">9</span>
+        <span class="ex-title">密度 c/x²：期望/众数/偏度</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X(x)=\frac{c}{x^2}I_{[1,2]}(x)$。求 $c$、$E(X)$，判断偏度等说法。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $1=\int_1^2\frac c{x^2}dx=c[-\tfrac1x]_1^2=\tfrac c2\Rightarrow c=2$。<br>
+            $E(X)=\int_1^2 x\cdot\frac2{x^2}dx=2\int_1^2\frac1x dx=2\log2\approx1.386$。<br>
+            密度在 $[1,2]$ 严格递减 $\Rightarrow$ 众数 $=1$，右偏（偏度 $>0$），中位数不在 $1.5$（左侧质量更多）。
+            <br>故只有"偏度 $>0$"正确。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A10 -->
+    <div class="ex" id="a10">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">10</span>
+        <span class="ex-title">密度 cx²：期望与中位数</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X(x)=cx^2 I_{[0,3]}(x)$。求 $c$、$E(X)$、中位数。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $1=\int_0^3 cx^2dx=9c\Rightarrow c=\tfrac19$。<br>
+            $E(X)=\int_0^3 x\cdot\tfrac19 x^2dx=\tfrac19\cdot\tfrac{81}{4}=\tfrac94=2.25$。<br>
+            $F_X(x)=\tfrac{x^3}{27}$；中位数 $\tfrac{m^3}{27}=\tfrac12\Rightarrow m=3\sqrt[3]{1/2}\approx2.381$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A11 -->
+    <div class="ex" id="a11">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">11</span>
+        <span class="ex-title">$Z=(X+1)^2$ 的期望与密度</span><span class="badge b-trans">变换</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X(x)=c(1-\tfrac1{x+1})I_{[0,1]}$。(a) 证 $c=\tfrac1{1-\log2}$；(b) $E(Z),Z=(X+1)^2$；(c) $\mathbb P(Z=4)$；(d) $Z$ 的支撑集与密度。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$1=c[x-\log(x+1)]_0^1=c(1-\log2)\Rightarrow c=\tfrac1{1-\log2}$。
+            <div class="subq">(b)</div>$(x+1)^2(1-\tfrac1{x+1})=x^2+x$，故 $E(Z)=\tfrac1{1-\log2}\int_0^1(x^2+x)dx=\tfrac{5}{6(1-\log2)}\approx2.716$。
+            <div class="subq">(c)</div>连续且单调 $\Rightarrow\mathbb P(Z=4)=0$。
+            <div class="subq">(d)</div>$Z\in[1,4]$；$x=\sqrt z-1,\ |\tfrac{dx}{dz}|=\tfrac1{2\sqrt z}$，
+            $$f_Z(z)=\frac{\sqrt z-1}{2z(1-\log2)}I_{[1,4]}(z).$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A12 -->
+    <div class="ex" id="a12">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">12</span>
+        <span class="ex-title">两指数卷积 → Gamma(2,λ)</span><span class="badge b-conv">卷积</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X,Y\overset{iid}{\sim}\text{Exp}(\lambda)$，$Z=X+Y$。证明 $Z\sim\text{Ga}(2,\lambda)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>卷积积分，支持集决定上下限 $0\le x\le z$。</div>
+          <div class="ans">
+            $z\ge0$：
+            $$f_Z(z)=\int_0^z\lambda e^{-\lambda x}\lambda e^{-\lambda(z-x)}dx=\lambda^2 e^{-\lambda z}\int_0^z dx=\lambda^2 z e^{-\lambda z}.$$
+            正是 $\text{Ga}(2,\lambda)$ 的密度。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A13 -->
+    <div class="ex" id="a13">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">13</span>
+        <span class="ex-title">HSV 进球数：Poisson 建模</span><span class="badge b-clt">近似</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          HSV 一场不进球概率 $0.7788$。(a) 用什么分布？(b) 至少进 2 球的概率；(c) 拜仁 $\lambda=2.8$，独立时 $4:0$ 概率；(d) 等待下个进球的分布。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$X\sim\text{Poi}(\lambda)$，$P(X=0)=e^{-\lambda}=0.7788\Rightarrow\lambda=-\log0.7788\approx0.25$。
+            <div class="subq">(b)</div>$P(X\ge2)=1-e^{-0.25}(1+0.25)\approx0.0265$。
+            <div class="subq">(c)</div>$P(B=4,H=0)=\frac{e^{-2.8}2.8^4}{4!}\cdot e^{-0.25}\approx0.1213$。
+            <div class="subq">(d)</div>Poisson 过程的等待时间服从指数分布；按每分钟速率 $\tfrac{0.25}{90}$：$Y\sim\text{Exp}(\tfrac{0.25}{90})$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A14 -->
+    <div class="ex" id="a14">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">14</span>
+        <span class="ex-title">四种情境的分布识别</span><span class="badge b-clt">识别</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 5题选2，数已备题目；(b) α粒子数；(c) 10钥匙每次重洗到成功；(d) 每千人识一人，遇50人识熟人数。给分布、密度和支撑集。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>看支持集+抽样方式：无放回→超几何；稀有计数→Poisson；重复独立直到成功→几何；固定 n 次独立→二项。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$X\sim\text{Hyp}(N=5,K=4,n=2)$，支撑 $\{1,2\}$，$P(X=x)=\frac{\binom4x\binom1{2-x}}{\binom52}$。
+            <div class="subq">(b)</div>$X\sim\text{Poi}(\lambda)$，$P(X=x)=e^{-\lambda}\frac{\lambda^x}{x!},\ x\in\mathbb N_0$。
+            <div class="subq">(c)</div>每次 $p=\tfrac1{10}$ 独立：$X\sim\text{Geom}(\tfrac1{10})$，$P(X=x)=(\tfrac9{10})^{x-1}\tfrac1{10}$。
+            <div class="subq">(d)</div>精确 $X\sim\text{Bin}(50,\tfrac1{1000})$；小概率可近似 $\text{Poi}(0.05)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A15 -->
+    <div class="ex" id="a15">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">15</span>
+        <span class="ex-title">关于 f 和 F 的真假判断</span><span class="badge b-cdf">概念</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X$ 连续，密度 $f$、CDF $F$。判断 (a) $f(x)\le x$；(b) $F(x)\le1$；(c) $\int_x^\infty f=1-F(x)$；(d) $x_i<x_j\Rightarrow F(x_i)\le F(x_j)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <b>(a) 错</b>：密度可 $>1$，且负 $x$ 处右边为负。<br>
+            <b>(b) 对</b>：$F$ 是概率，$\le1$。<br>
+            <b>(c) 对</b>：$\int_x^\infty f=1-F(x)$（连续型）。<br>
+            <b>(d) 对</b>：CDF 单调递增。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A16 -->
+    <div class="ex" id="a16">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">16</span>
+        <span class="ex-title">指数 CDF 的完整证明</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F(x)=0\,(x<0);\ 1-e^{-\lambda x}\,(x\ge0)$，证明它是合法分布函数。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            需单调、右连续、极限 $0/1$。$x\ge0$ 时 $F'(x)=\lambda e^{-\lambda x}>0$ 单调增。
+            $x=0$：$F(0)=0=\lim_{x\downarrow0}F(x)$，右连续。
+            $\lim_{x\to-\infty}F=0,\ \lim_{x\to\infty}(1-e^{-\lambda x})=1$。故为合法 CDF。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A17 -->
+    <div class="ex" id="a17">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">17</span>
+        <span class="ex-title">带参数 $a$ 的 CDF</span><span class="badge b-cdf">CDF</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $G_a(x)=0\,(x<0);\ a+\tfrac13(1-e^{-x})\,(x\ge0)$。(a) 求使其为 CDF 的 $a$；(b) $a=\tfrac23$ 时求 $\mathbb P(X\in(0,2])$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\lim_{x\to\infty}G_a=a+\tfrac13=1\Rightarrow a=\tfrac23$（$0$ 处允许跳跃）。
+            <div class="subq">(b)</div>$G_a(2)=\tfrac23+\tfrac13(1-e^{-2})$，$G_a(0)=\tfrac23$，
+            故 $\mathbb P(X\in(0,2])=\tfrac13(1-e^{-2})$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A18 -->
+    <div class="ex" id="a18">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">18</span>
+        <span class="ex-title">几何分布的无记忆性</span><span class="badge b-clt">证明</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X\sim\text{Geo}(p)$，证 $\mathbb P(X=n+k\mid X>n)=\mathbb P(X=k)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $\mathbb P(X>n)=\sum_{j=n+1}^\infty p(1-p)^{j-1}=(1-p)^n$。又 $\{X=n+k\}\subseteq\{X>n\}$。
+            $$\mathbb P(X=n+k\mid X>n)=\frac{p(1-p)^{n+k-1}}{(1-p)^n}=p(1-p)^{k-1}=\mathbb P(X=k).$$
+            即无记忆性 (Gedächtnislosigkeit)。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A19 -->
+    <div class="ex" id="a19">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">19</span>
+        <span class="ex-title">混合型分布：LS 测度/期望/方差</span><span class="badge b-cdf">进阶</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F(x)=e^{2x}(x<-1);\ \tfrac12(1+\tfrac xe)(-1\le x<1);\ 1-e^{-2x}(x\ge1)$。(a) 证为 CDF；(b) 求密度 $f$ 与测度 $\mu$ 使 $\nu=f\cdot\mu$；(c) $E(X),\text{Var}(X)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>这是连续+离散混合：在 $-1$ 和 $1$ 处有跳跃。用 $\mu=\lambda+\delta_{-1}+\delta_1$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>三段导数均 $>0$ 单调增，$F(-\infty)=0,F(\infty)=1$。过渡点 $F(-1-)=e^{-2}\le\tfrac12(1-\tfrac1e)=F(-1)$，$F(1-)=\tfrac12(1+\tfrac1e)\le1-e^{-2}=F(1)$；端点归右段故右连续。是 CDF。
+            <div class="subq">(b)</div>取 $\mu=\lambda+\delta_{-1}+\delta_1$。密度：
+            $2e^{2x}(x<-1)$；$\tfrac1{2e}(-1<x<1)$；$2e^{-2x}(x>1)$；
+            在 $x=-1$ 取跳跃高 $\tfrac12(1-\tfrac1e)-e^{-2}$，$x=1$ 取 $1-e^{-2}-\tfrac12(1+\tfrac1e)$。
+            <div class="subq">(c)</div>关于 $0$ 对称 $\Rightarrow E(X)=0$。二阶矩连续部分 $=5e^{-2}+\tfrac1{3e}$，两跳跃质量共贡献 $2m=1-\tfrac1e-2e^{-2}$。
+            故 $\text{Var}(X)=E(X^2)=1-\tfrac2{3e}+3e^{-2}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A20 -->
+    <div class="ex" id="a20">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">20</span>
+        <span class="ex-title">χ²(10) 与混合分布（R 实现）</span><span class="badge b-clt">R/混合</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X\sim\chi^2(10)$ 画密度/CDF；给众数中位数期望。再设混合 $V=0.2X+0.3Y+0.5Z$ 验证密度合法、求 $E(V)$ 等。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(b) χ²(10)</div>$E(X)=k=10$，众数 $k-2=8$，中位数无闭式，数值 $\approx9.34$。密度右偏单峰。
+            <div class="subq">(c) 混合密度合法</div>各分量密度 $\ge0$ 且积分为 $1$，加权和积分 $=0.2+0.3+0.5=1$，故 $f_V\ge0$ 且积分 $1$。CDF 也是加权和。
+            <div class="subq">期望</div>$E(V)=0.2(-5)+0.3(3)+0.5(0)=-0.1$。
+            <div class="subq">(d) R 代码</div>
+            <pre><code>v <- seq(-10,10,length.out=2000)
+fV <- 0.2*dnorm(v,-5,1)+0.3*dnorm(v,3,sqrt(5))+0.5*dt(v,10)
+FV <- 0.2*pnorm(v,-5,1)+0.3*pnorm(v,3,sqrt(5))+0.5*pt(v,10)
+par(mfrow=c(1,2))
+plot(v,fV,type="l"); plot(v,FV,type="l")</code></pre>
+            众数/中位数需数值求解（<code>which.max(fV)</code> / <code>uniroot</code>）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A21 -->
+    <div class="ex" id="a21">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">21</span>
+        <span class="ex-title">一维变换定理的推导</span><span class="badge b-trans">变换</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $g$ 可逆，$h=g^{-1}$ 连续可微。推导 $f_{g(X)}(y)=f_X(h(y))|h'(y)|$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <b>$g$ 增：</b>$F_{g(X)}(y)=\mathbb P(X\le h(y))=F_X(h(y))$，链式求导 $f_{g(X)}(y)=f_X(h(y))h'(y)$，$h'>0$ 故 $=f_X(h(y))|h'(y)|$。<br>
+            <b>$g$ 减：</b>$F_{g(X)}(y)=\mathbb P(X\ge h(y))=1-F_X(h(y))$，求导 $f_{g(X)}(y)=-f_X(h(y))h'(y)$，$h'<0$ 故同样 $=f_X(h(y))|h'(y)|$。<br>
+            综合：$f_{g(X)}(y)=f_X(h(y))|h'(y)|$。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 真题 ===== -->
+  <section class="block">
+    <h2>🎯 考试真题</h2>
+
+    <!-- E1 -->
+    <div class="ex" id="e1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题1</span>
+        <span class="ex-title">2012 · 树叶长度 cx(1-x)</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f(x)=cx(1-x),x\in[0,1]$。(a) 证 $c=6$；(b) $E(1/X)$；(c) $P(X=0.75)$；(d) $Y=\tfrac12X^2$ 的密度及支撑。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\int_0^1cx(1-x)dx=c\cdot\tfrac16=1\Rightarrow c=6$。
+            <div class="subq">(b)</div>$E(1/X)=\int_0^1\tfrac1x6x(1-x)dx=6\int_0^1(1-x)dx=6-3=3$。
+            <div class="subq">(c)</div>连续型 $\Rightarrow P(X=0.75)=0$。
+            <div class="subq">(d)</div>$X=\sqrt{2y}=h(y),\ h'=\tfrac1{\sqrt{2y}}$，$y\in[0,\tfrac12]$：
+            $$f_Y(y)=6\sqrt{2y}(1-\sqrt{2y})\cdot\tfrac1{\sqrt{2y}}=6-6\sqrt{2y}.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2 -->
+    <div class="ex" id="e2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题2</span>
+        <span class="ex-title">2012 · 综合（逆变换/分位数/ML/检验）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 由 $U[0,1]$ 生成 Poisson；(b) 定义独立；(c) $F=1-x^{-2}(x>1)$ 的 0.25 分位数；(d) ML 不变性；(f) 拒绝 $H_0$ 的错误类型。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>逆变换法 (Inversionsmethode)：把 $U\sim U[0,1]$ 代入 Poisson 的广义逆 CDF。
+            <div class="subq">(b)</div>$X_1,X_2,X_3$ 独立 $\Leftrightarrow$ 联合密度 $=\prod_{i=1}^3 f_{X_i}(x_i)$。
+            <div class="subq">(c)</div>$1-\tfrac1{x^2}=0.25\Rightarrow x^2=\tfrac1{0.75}\Rightarrow x\approx1.1547$。含义：以 25% 概率落在 $[1,1.1547]$。
+            <div class="subq">(d)</div>ML 对一一变换不变：$\hat\vartheta_{ML}=\vartheta(\hat\lambda_{ML})=1/\hat\lambda=\bar X$。
+            <div class="subq">(e)</div>$95\%$ 似然区间：归一化对数似然 $>-\tfrac12\cdot3.842=-1.921$ 的所有 $\lambda$。
+            <div class="subq">(f)</div>第一类错误（$H_0$ 真却被拒），其概率上界为水平 $\alpha$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E3 -->
+    <div class="ex" id="e3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题3</span>
+        <span class="ex-title">2014 · F=x/(1+x)</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F_X(x)=\tfrac{x}{1+x}(x>0)$。(a) 密度；(b) $P(1<X<3)$；(c) $h(x)=cx^3+x$ 在 $[0,1]$ 为密度时求 $c$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$f_X(x)=\tfrac{1}{(1+x)^2},\ x>0$。
+            <div class="subq">(b)</div>$F(3)-F(1)=\tfrac34-\tfrac12=\tfrac14$。
+            <div class="subq">(c)</div>$\int_0^1(cx^3+x)dx=\tfrac c4+\tfrac12=1\Rightarrow c=2$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E4 -->
+    <div class="ex" id="e4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题4</span>
+        <span class="ex-title">2014 · Weibull 型 ML 估计</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f=\alpha\beta x^{\beta-1}e^{-\alpha x^\beta}$。(a) $L,\ell$；(b) $\beta=1$ 求 $\hat\alpha_{ML}$；(c) 给定样本计算。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $\ell(\alpha)=n\log\alpha+n\log\beta+(\beta-1)\sum\log x_i-\alpha\sum x_i^\beta$。<br>
+            $\beta=1$：$\ell'(\alpha)=\tfrac n\alpha-\sum x_i=0\Rightarrow\hat\alpha_{ML}=\tfrac{n}{\sum x_i}$。<br>
+            $\sum x_i=0.483$，$\hat\alpha_{ML}=\tfrac5{0.483}\approx10.35$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E5 -->
+    <div class="ex" id="e5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题5</span>
+        <span class="ex-title">2015 · 离散变量 c/CDF/期望方差</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $p_X$：$x=2$ 取 $0.2c$，$x=4$ 取 $0.25c$，$x=6$ 取 $2.1-c$。求 $c$、CDF、$E(X)$、$\text{Var}(X)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $0.2c+0.25c+(2.1-c)=1\Rightarrow 2.1-0.55c=1\Rightarrow c=2$。
+            故 $P(2)=0.4,P(4)=0.5,P(6)=0.1$。<br>
+            CDF：$0(x<2);0.4;0.9;1(x\ge6)$。<br>
+            $E(X)=0.8+2+0.6=3.4$；$E(X^2)=1.6+8+3.6=13.2$；$\text{Var}=13.2-3.4^2=1.64$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E6 -->
+    <div class="ex" id="e6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题6</span>
+        <span class="ex-title">2015 · Cauchy 的倒数变换</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X=\tfrac1\pi\tfrac1{1+x^2}$。(a) $Y=1/X$ 的密度；(b) $Y$ 服从什么分布？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $x=1/y,\ |\tfrac{d}{dy}g^{-1}|=\tfrac1{y^2}$：
+            $$f_Y(y)=\tfrac1\pi\tfrac1{1+1/y^2}\tfrac1{y^2}=\tfrac1\pi\tfrac1{1+y^2}.$$
+            即 $Y$ 仍为标准 Cauchy 分布。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E7 -->
+    <div class="ex" id="e7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题7</span>
+        <span class="ex-title">2021 · c(x-1)(4-x) 密度</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f=c(x-1)(4-x),1\le x\le4$。(a) 密度条件+求 $c$+支撑；(b) $E(X)$；(c) $\tilde Y_n$ 的收敛；(d) $P(X=2)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>需 $f\ge0$ 且 $\int f=1$。$\int_1^4(x-1)(4-x)dx=\tfrac92$，故 $c=\tfrac29$，支撑 $[1,4]$。
+            <div class="subq">(b)</div>$\int_1^4 x(x-1)(4-x)dx=\tfrac{45}4$，$E(X)=\tfrac29\cdot\tfrac{45}4=\tfrac52$。
+            <div class="subq">(c)</div>i.i.d.+有限方差 $\Rightarrow$ 由 CLT，$\tilde Y_n\xrightarrow{d}N(0,1)$。
+            <div class="subq">(d)</div>连续型 $\Rightarrow P(X=2)=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E8 -->
+    <div class="ex" id="e8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题8</span>
+        <span class="ex-title">cx 密度 + Y=1/(1+X) 变换</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X=cx\,I_{[1,3]}$。(a) $c$；(b) 草图；(c) 中位数/偏度/期望与众数关系；(d) $Y=\tfrac1{1+X}$ 密度。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\int_1^3 cx\,dx=4c=1\Rightarrow c=\tfrac14$。
+            <div class="subq">(b)</div>$[1,3]$ 上线性增，$f(1)=\tfrac14,f(3)=\tfrac34$。
+            <div class="subq">(c)</div>密度右增 $\Rightarrow$ 众数在 $x=3$，期望 $<3$。故"$E(X)<$ 众数"正确（中位数 $>2$、偏度 $<0$）。
+            <div class="subq">(d)</div>单调减，$Y\in[\tfrac14,\tfrac12]$，$x=\tfrac1y-1,\ |h'|=\tfrac1{y^2}$：
+            $$f_Y(y)=\tfrac14(\tfrac1y-1)\tfrac1{y^2}=\frac{1-y}{4y^3}I_{[1/4,1/2]}(y).$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E9 -->
+    <div class="ex" id="e9">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题9</span>
+        <span class="ex-title">cx² 密度 + Y=exp(X+1) 变换</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X=cx^2 I_{[0,3]}$。(a) $c=\tfrac19$；(b) 草图；(c) $E(X)$；(d) 中位数；(e) $Y=e^{X+1}$ 密度。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\int_0^3 cx^2dx=9c=1\Rightarrow c=\tfrac19$。
+            <div class="subq">(c)</div>$E(X)=\tfrac19\int_0^3 x^3dx=\tfrac19\cdot\tfrac{81}4=\tfrac94$。
+            <div class="subq">(d)</div>$\tfrac{m^3}{27}=0.5\Rightarrow m=\sqrt[3]{13.5}=\tfrac3{\sqrt[3]2}\approx2.381$。
+            <div class="subq">(e)</div>$x=\log y-1,\ Y\in[e,e^4],\ h'=\tfrac1y$：
+            $$f_Y(y)=\frac{(\log y-1)^2}{9y}I_{[e,e^4]}(y).$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E10 -->
+    <div class="ex" id="e10">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题10</span>
+        <span class="ex-title">几何期望方差 + 机票超售 CLT</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 通过率 $0.2$，平均尝试次数与方差；(b) 18% 不登机，售 170 票，求登机 $>150$ 的概率（$\Phi(2.116)=0.983$）。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$X\sim\text{Geom}(0.2)$：$E(X)=\tfrac1p=5$，$\text{Var}=\tfrac{1-p}{p^2}=\tfrac{0.8}{0.04}=20$。
+            <div class="subq">(b)</div>登机概率 $p=0.82$，$X\sim B(170,0.82)$。$np=139.4,\ np(1-p)=25.092$。
+            $$\tfrac{150-139.4}{\sqrt{25.092}}\approx2.116,\quad P(X>150)\approx1-\Phi(2.116)=1-0.983=0.017.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E11 -->
+    <div class="ex" id="e11">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题11</span>
+        <span class="ex-title">GOP-1 · ln(ax+b) CDF</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F=\ln(ax+b)$ 于 $[0,e]$。(a) $a,b$；(b) 密度；(c) 分位数函数与 0.95 分位；(d) 唯一性。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$F(0)=\log b=0\Rightarrow b=1$；$F(e)=\log(ae+1)=1\Rightarrow ae+1=e\Rightarrow a=\tfrac{e-1}{e}$。
+            <div class="subq">(b)</div>$f(x)=\tfrac{a}{ax+b}=\tfrac{e-1}{(e-1)x+e}I_{[0,e]}$。
+            <div class="subq">(c)</div>$Q(p)=\tfrac{e^p-1}{(e-1)/e}=\tfrac{e(e^p-1)}{e-1}$，$Q(0.95)\approx2.509$。
+            <div class="subq">(d)</div>CDF 唯一确定分布（对应定理）；但密度只在几乎处处意义下唯一（零测集上改变不影响分布）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E12 -->
+    <div class="ex" id="e12">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题12</span>
+        <span class="ex-title">GOP-1 · U 形密度 (3/2)(x-1)²</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f=\tfrac32(x-1)^2 I_{[0,2]}$。(a) 草图/众数/期望中位数偏度；(b) 方差；(c) $Y=X^2$ 密度；(d) 估 $E(\sin X)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>U 形、关于 $x=1$ 对称；双峰众数 $x=0,2$；$E=$ 中位数 $=1$，偏度 $=0$。
+            <div class="subq">(b)</div>$E(X^2)=\tfrac32\int_0^2 x^2(x-1)^2dx=\tfrac32\cdot\tfrac{16}{15}=\tfrac85$，$\text{Var}=\tfrac85-1=\tfrac35$。
+            <div class="subq">(c)</div>$h(y)=\sqrt y,\ Y\in[0,4]$：$f_Y(y)=\tfrac34(\sqrt y-1)^2 y^{-1/2}I_{[0,4]}$。
+            <div class="subq">(d)</div>Jensen：$\sin$ 在 $[0,2]$ 凹，$E(\sin X)\le\sin(E(X))=\sin1$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E13 -->
+    <div class="ex" id="e13">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题13</span>
+        <span class="ex-title">GOP-2 · cx 密度（同真题8）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_X=cx\,I_{[1,3]}$。$c$、草图、说法判断、$Y=\tfrac1{1+X}$ 密度。（与真题8同题）</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $c=\tfrac14$；众数 $x=3$ 故 $E(X)<$ 众数为真；中位数 $>2$（说法1假）；左偏故偏度 $<0$（说法2假）。
+            $$f_Y(y)=\frac{1-y}{4y^3}I_{[1/4,1/2]}(y).$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E14 -->
+    <div class="ex" id="e14">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题14</span>
+        <span class="ex-title">GOP-3 · cx 密度（同真题8/13）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          与真题8、13 完全相同：$f_X=cx\,I_{[1,3]}$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $c=\tfrac14$，线性增 $f(1)=\tfrac14,f(3)=\tfrac34$。众数 $3$，$E(X)<$ 众数（真）；中位数 $>2$；偏度 $<0$。
+            $$f_Y(y)=\frac{1-y}{4y^3}I_{[1/4,1/2]}(y).$$
+            <span style="color:var(--muted);font-size:.82rem;">提示：这是反复出现的高频题型，务必熟练。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E15 -->
+    <div class="ex" id="e15">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题15</span>
+        <span class="ex-title">ss2022 · ln(ax+b)（同真题11）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F=\log(ax+b)$ 于 $[0,e]$。求 $a,b$、密度、分位数函数、唯一性。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $b=1,\ a=\tfrac{e-1}{e}$；$f(x)=\tfrac{e-1}{(e-1)x+e}I_{[0,e]}$。
+            $Q(p)=\tfrac{e(e^p-1)}{e-1}$，$Q(0.95)\approx2.509$。
+            CDF 唯一确定分布；密度仅几乎处处唯一。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E16 -->
+    <div class="ex" id="e16">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题16</span>
+        <span class="ex-title">ss2024 · F=1-ax⁻²（含混合型）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $F=1-ax^{-2}(x\ge1)$。(a) $a=1$ 验证 CDF；(b) 密度；(c) 期望；(d) 0.99 分位；(e) $a=1,0.5$ 时 $P(X=1)$；(f) $a=0.5$ 的 0.25 分位。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$a=1$ 时 $F(1)=0$ 无跳跃（连续）；$a=0.5$ 时 $F(1)=0.5$ 有跳跃（混合型）。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$a=1$：$F(1)=0$ 无跳，$F'=2x^{-3}>0$，极限 $0\to1$。是 CDF。
+            <div class="subq">(b)</div>$f(x)=\tfrac{2}{x^3}I_{[1,\infty)}$。
+            <div class="subq">(c)</div>$E(X)=\int_1^\infty x\tfrac2{x^3}dx=2\int_1^\infty x^{-2}dx=2$。
+            <div class="subq">(d)</div>$1-x^{-2}=0.99\Rightarrow x^2=100\Rightarrow x=10$。
+            <div class="subq">(e)</div>$a=1$：$P(X=1)=0$（连续）。$a=0.5$：$F(1)=1-0.5=0.5$，$F(1-)=0$，故 $P(X=1)=0.5$（混合型，离散质量）。
+            <div class="subq">(f)</div>$a=0.5$：$x=1$ 处从 $0$ 跳到 $0.5$，所有 $0<p\le0.5$ 的分位都在 $x=1$，故 $x_{0.25}=1$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E17 -->
+    <div class="ex" id="e17">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题17</span>
+        <span class="ex-title">ss2024 · 指数线性变换+卷积</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X\sim\text{Exp}(\lambda)$。(a) 连续还是离散；(b) $Y=a+bX$ 为何是随机变量；(c) $Y$ 的 CDF；(d) $Z=\lambda X$；(e) $D=W-Z$ 卷积。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>连续型（由 Lebesgue 密度描述）。
+            <div class="subq">(b)</div>$g(x)=a+bx$ 连续故可测，$Y=g(X)$ 是可测复合 $\Rightarrow$ 随机变量。
+            <div class="subq">(c)</div>$b>0$ 严格增，$g^{-1}(y)=\tfrac{y-a}b$：
+            $$F_Y(y)=\begin{cases}0,&y\le a\\1-\exp(-\tfrac\lambda b(y-a)),&y>a\end{cases}$$
+            <div class="subq">(d)</div>$Z=\lambda X$：$f_Z(z)=\lambda e^{-z}\cdot\tfrac1\lambda=e^{-z}\Rightarrow Z\sim\text{Exp}(1)$。
+            <div class="subq">(e)</div>$Z,W\sim\text{Exp}(1)$ 独立，$d\ge0$：
+            $$f_D(d)=\int_0^\infty e^{-z}e^{-(d+z)}dz=\tfrac12e^{-d}.$$
+            全 $\mathbb R$ 上为 Laplace 分布 $\tfrac12 e^{-|d|}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E18 -->
+    <div class="ex" id="e18">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题18</span>
+        <span class="ex-title">ss2024 · 综合大题（Poisson/切比雪夫/Bayes/SLLN/协方差）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 车站 Poisson；(b) 单峰分布切比雪夫界；(c) 诊断测试 Bayes；(d) $\bar Y_n$ 几乎必然收敛；(e) 协方差矩阵条件。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a) Poisson</div>每小时 3 班 → 20 分钟 $\lambda=1$。$P(X\ge1)=1-e^{-1}\approx0.632$。
+            60 分钟等待 $T\sim\text{Exp}(1)$（20分钟尺度 $t=3$）：$P(T<3)=1-e^{-3}\approx0.950$。
+            <div class="subq">(b) 切比雪夫</div>$E=55$，中位数 $=35$ → 右偏，大值离群更多。
+            $\{X<40\text{ 或 }X>70\}=\{|X-55|>15\}$，$P\le\tfrac{9^2}{15^2}=\tfrac{81}{225}=0.36$。
+            <div class="subq">(c) Bayes</div>$P(K)=0.001$，灵敏度 $0.95$，FPR $0.01$：
+            $$P(K\mid+)=\frac{0.001\cdot0.95}{0.001\cdot0.95+0.999\cdot0.01}=\frac{0.00095}{0.01094}\approx0.0868\ (8.68\%).$$
+            <div class="subq">(d) SLLN</div>$E(X_i)=0$ 故 $E(Y_i)=E(X_i^2)=\sigma^2<\infty$；$Y_i$ iid，由强大数定律 $\bar Y_n\xrightarrow{f.s.}\sigma^2$。
+            <div class="subq">(e) 协方差矩阵</div>$A=\begin{pmatrix}1&2\\a&b\end{pmatrix}$ 需对称 $a=2$ 且半正定 $\det=b-4\ge0$，即 $a=2,\ b\ge4$。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 常见错误 ===== -->
+  <section class="block" id="mistakes">
+    <h2>⚠️ 常见错误提醒</h2>
+    <ul class="warn">
+      <li><b>把密度值当概率</b>：$f(2)$ 不是 $P(X=2)$。连续型 $P(1<X<3)=\int_1^3 f$，$P(X=2)=0$。</li>
+      <li><b>忘记检查密度积分为 1</b>：求 $c$ 先归一化。如 $f=cx$ 于 $[0,2]$：$1=\int_0^2cx\,dx=2c\Rightarrow c=\tfrac12$。</li>
+      <li><b>CDF 端点看错</b>：$F(b)-F(a)$ 对应 $P(a<X\le b)$。若 $P(a\le X\le b)$ 且 $a$ 有跳跃，用 $F(b)-F(a-)$。</li>
+      <li><b>把跳跃点当密度</b>：CDF 跳跃是点概率。$F(2)=0.7,F(2-)=0.4\Rightarrow P(X=2)=0.3$。</li>
+      <li><b>分段不看支持集</b>：公式只在对应区间有效。$f=2x,0<x<1$ 应写 $2xI_{(0,1)}(x)$。</li>
+      <li><b>变换忘绝对值</b>：乘的是 $|h'(y)|$。$Y=2X\Rightarrow f_Y(y)=f_X(y/2)\cdot\tfrac12$。</li>
+      <li><b>变换忘新范围</b>：算完写 $y\in g(\text{原支持集})$。$X\in[0,1],Y=X^2\Rightarrow Y\in[0,1]$。</li>
+      <li><b>非单调只取一支</b>：多原像要相加。$Y=X^2,X$ 可正负：$f_Y(y)=[f_X(\sqrt y)+f_X(-\sqrt y)]\tfrac1{2\sqrt y}$。</li>
+      <li><b>分位数套全局公式</b>：先判断 $p$ 所在分段再解 $F(x)=p$。</li>
+      <li><b>分布参数混淆</b>：$Po(3)\Rightarrow E=Var=3$；$B(10,0.3)\Rightarrow E=3,Var=2.1$。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 必会题型 ===== -->
+  <section class="block" id="mustknow">
+    <h2>✅ 本章必会题型清单</h2>
+    <ul class="checklist">
+      <li>会判断一个函数是不是合法 CDF（单调、右连续、极限 0/1）。</li>
+      <li>会由 CDF 计算区间概率和跳跃点概率。</li>
+      <li>会由 CDF 分段求导得到密度。</li>
+      <li>会判断密度合法性，并用归一化求常数 $c$。</li>
+      <li>会计算连续型的期望、中位数、众数、分位数。</li>
+      <li>会识别 Bernoulli、Binomial、Poisson、Hypergeometric、Uniform、Exponential、Geometric。</li>
+      <li>会根据题意选择点概率、区间、尾概率或补集。</li>
+      <li>会做一维单调变换：写反函数、$|h'|$、新支持集。</li>
+      <li>会处理非单调变换的多原像分支与卷积求和分布。</li>
+      <li>会判断何时用 Poisson 近似或正态近似（含连续性修正）。</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<script>
+function toggleEx(head){head.parentElement.classList.toggle('open');}
+function toggleSol(btn){
+  const sol=btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent=sol.classList.contains('show')?'隐藏解答':'显示解答';
+}
+function toggleAll(open){
+  document.querySelectorAll('.ex').forEach(ex=>ex.classList.toggle('open',open));
+}
+function showAllSol(show){
+  document.querySelectorAll('.sol').forEach(sol=>{
+    sol.classList.toggle('show',show);
+    const btn=sol.previousElementSibling;
+    if(btn&&btn.classList.contains('toggle-sol'))
+      btn.textContent=show?'隐藏解答':'显示解答';
+  });
+  if(show) toggleAll(true);
+}
+document.querySelectorAll('nav.side a').forEach(a=>{
+  a.addEventListener('click',()=>document.querySelector('nav.side').classList.remove('open'));
+});
+</script>
+</body>
+</html>

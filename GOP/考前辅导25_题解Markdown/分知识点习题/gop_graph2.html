@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsklausur – Deskriptive Statistik & Grafik</title>
+<style>
+  :root{ --rot:#c0392b; --blau:#1c4587; --gelb:#b8860b; }
+  body{
+    font-family:"Georgia","Times New Roman",serif;
+    max-width:960px; margin:0 auto; padding:0 18px 60px;
+    line-height:1.5; color:#1a1a1a; background:#f4f4f2;
+  }
+  header{ text-align:center; padding:26px 0 10px; }
+  header h1{ font-size:1.5em; margin:0; }
+  header p{ color:#555; margin:6px 0 0; font-size:.95em; }
+
+  /* Tabs */
+  .tabbar{ display:flex; flex-wrap:wrap; gap:4px; margin:18px 0 0; }
+  .tabbtn{
+    flex:1 1 auto; min-width:150px; padding:11px 8px; cursor:pointer;
+    border:1px solid #bbb; border-bottom:none; background:#e3e3df;
+    font-family:inherit; font-size:.92em; border-radius:6px 6px 0 0;
+    color:#333; transition:.15s;
+  }
+  .tabbtn:hover{ background:#d3d3ce; }
+  .tabbtn.active{ background:#fff; font-weight:bold; color:#000; box-shadow:0 -2px 0 var(--rot) inset; }
+
+  .panel{ display:none; background:#fff; border:1px solid #bbb; padding:22px 26px; border-radius:0 0 8px 8px; }
+  .panel.active{ display:block; }
+
+  h2{ font-size:1.2em; border-bottom:2px solid #333; padding-bottom:6px; }
+  .task{ margin:24px 0; }
+  .task-head{ font-weight:bold; }
+  .points{ color:#555; font-weight:bold; }
+
+  .zh{ color:var(--blau); background:#eef3fb; border-left:3px solid var(--blau);
+       padding:4px 11px; margin:6px 0; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .idea{ color:#5b3a00; background:#fcf6e8; border-left:3px solid var(--gelb);
+         padding:8px 13px; margin:10px 0; font-size:.94em;
+         font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .loesung{ border:1px solid #333; background:#fafafa; padding:11px 17px;
+            margin:11px 0 24px 24px; border-radius:4px; }
+  .loesung b{ display:block; margin-bottom:4px; }
+  .loesung .zh{ margin-top:8px; }
+  .p{ color:var(--rot); font-weight:bold; }
+
+  figure{ border:1px solid #ccc; background:#fff; padding:14px; text-align:center; margin:16px 0; }
+  figcaption{ font-size:.83em; color:#666; margin-top:8px; }
+  code{ background:#eee; padding:1px 5px; border-radius:3px; font-size:.92em; }
+  .toggle{ cursor:pointer; color:var(--rot); font-size:.85em; user-select:none; margin-left:8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Übungsklausur: Deskriptive Statistik & Statistische Grafik</h1>
+  <p>5 Aufgaben im Stil der Altklausuren · Grammar of Graphics · Skalenniveaus · Farbskalen<br>
+  <em>Tipp: Versuchen Sie zuerst selbst zu antworten, bevor Sie die Lösung lesen.</em></p>
+</header>
+
+<div class="tabbar">
+  <button class="tabbtn active" onclick="show(0)">1 · Stapel-Balken</button>
+  <button class="tabbtn" onclick="show(1)">2 · Streudiagramm</button>
+  <button class="tabbtn" onclick="show(2)">3 · Boxplot</button>
+  <button class="tabbtn" onclick="show(3)">4 · 3D-Tortendiagramm</button>
+  <button class="tabbtn" onclick="show(4)">5 · Heatmap</button>
+</div>
+
+<!-- ===================================================================== -->
+<!-- AUFGABE 1: STAPEL-BALKENDIAGRAMM -->
+<!-- ===================================================================== -->
+<section class="panel active">
+  <h2>Aufgabe 1 (16 Punkte) – Energiemix</h2>
+  <p>Die Grafik zeigt die Zusammensetzung der Stromerzeugung (in %) für vier
+  Länder im Jahr 2022. Beantworten Sie die Fragen <b>in Stichpunkten</b>.</p>
+  <p class="zh">该图展示四个国家 2022 年发电构成（百分比）。请以要点形式回答。</p>
+
+  <figure>
+  <svg viewBox="0 0 560 320" width="100%" style="max-width:560px">
+    <text x="280" y="20" font-size="13" font-weight="bold" text-anchor="middle">Stromerzeugung nach Energieträger 2022 (%)</text>
+    <!-- y axis -->
+    <line x1="70" y1="40" x2="70" y2="260" stroke="#333"/>
+    <text x="60" y="263" font-size="10" text-anchor="end">0</text>
+    <text x="60" y="153" font-size="10" text-anchor="end">50</text>
+    <text x="60" y="44"  font-size="10" text-anchor="end">100</text>
+    <!-- bars: each 70px wide -->
+    <!-- DE -->
+    <g>
+      <rect x="100" y="180" width="70" height="80" fill="#444"/>      <!-- fossil -->
+      <rect x="100" y="110" width="70" height="70" fill="#2c6fbb"/>   <!-- kern -->
+      <rect x="100" y="44"  width="70" height="66" fill="#27ae60"/>   <!-- erneuer -->
+      <text x="135" y="278" font-size="11" text-anchor="middle">DE</text>
+    </g>
+    <!-- FR -->
+    <g>
+      <rect x="200" y="240" width="70" height="20" fill="#444"/>
+      <rect x="200" y="90"  width="70" height="150" fill="#2c6fbb"/>
+      <rect x="200" y="44"  width="70" height="46" fill="#27ae60"/>
+      <text x="235" y="278" font-size="11" text-anchor="middle">FR</text>
+    </g>
+    <!-- PL -->
+    <g>
+      <rect x="300" y="80" width="70" height="180" fill="#444"/>
+      <rect x="300" y="80" width="70" height="0"  fill="#2c6fbb"/>
+      <rect x="300" y="44" width="70" height="36" fill="#27ae60"/>
+      <text x="335" y="278" font-size="11" text-anchor="middle">PL</text>
+    </g>
+    <!-- NO -->
+    <g>
+      <rect x="400" y="252" width="70" height="8"  fill="#444"/>
+      <rect x="400" y="252" width="70" height="0"  fill="#2c6fbb"/>
+      <rect x="400" y="44"  width="70" height="208" fill="#27ae60"/>
+      <text x="435" y="278" font-size="11" text-anchor="middle">NO</text>
+    </g>
+    <!-- legende -->
+    <rect x="100" y="296" width="12" height="12" fill="#27ae60"/><text x="116" y="306" font-size="10">Erneuerbare</text>
+    <rect x="210" y="296" width="12" height="12" fill="#2c6fbb"/><text x="226" y="306" font-size="10">Kernkraft</text>
+    <rect x="300" y="296" width="12" height="12" fill="#444"/>   <text x="316" y="306" font-size="10">Fossil</text>
+  </svg>
+  <figcaption>Gestapeltes Balkendiagramm · fiktive Daten in Anlehnung an Our World in Data</figcaption>
+  </figure>
+
+  <div class="task">
+    <p class="task-head">(a) Geben Sie die Grundgesamtheit und die Untersuchungseinheiten an. <span class="points">[2]</span></p>
+    <p class="zh">(a) 说明总体与研究单位。</p>
+    <div class="idea">思路：每根柱=一个国家 → 研究单位为国家；总体为所考察的全部国家。</div>
+    <div class="loesung"><b>Lösung:</b>
+      GG: (alle betrachteten) Länder <span class="p">[1P.]</span>; UE: einzelnes Land <span class="p">[1P.]</span>
+      <p class="zh">总体：（所考察的）国家；研究单位：单个国家。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(b) Analysieren Sie die Grafik mit den Begriffen der <i>grammar of graphics</i>:
+    Geometrie und alle ästhetischen Zuordnungen. <span class="points">[5]</span></p>
+    <p class="zh">(b) 用 grammar of graphics 分析：几何对象与所有美学映射。</p>
+    <div class="idea">思路：堆叠矩形 → Geom = Balken/Rechteck。x=国家，y/高度=百分比（累积堆叠！），颜色=Energieträger。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Geom: Balken (Rechteck) <span class="p">[1P.]</span><br>
+      x-Position: Land <span class="p">[1P.]</span><br>
+      y-Position / Höhe: Anteil in % (gestapelt/kumulativ!) <span class="p">[2P.]</span><br>
+      Farbe (Füllung): Energieträger <span class="p">[1P.]</span>
+      <p class="zh">几何：矩形条。x=国家；高度=百分比（堆叠累积！）；填充色=能源类型。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(c) Geben Sie für die Merkmale „Land“, „Energieträger“ und „Anteil“
+    jeweils das Skalenniveau an. <span class="points">[3]</span></p>
+    <p class="zh">(c) 为"国家""能源类型""占比"分别给出标度水平。</p>
+    <div class="idea">思路：国家、能源类型均无序→名义；百分比有自然零点且可比例→比率（亦可说绝对标度）。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Land: nominal <span class="p">[1P.]</span>; Energieträger: nominal <span class="p">[1P.]</span>;
+      Anteil (%): Verhältnis-/Absolutskala (metr. mit nat. Nullpunkt) <span class="p">[1P.]</span>
+      <p class="zh">国家：名义；能源类型：名义；占比：比率/绝对标度（有自然零点的度量型）。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(d) Welcher Typ von Farbskala wird verwendet? Ist er angemessen? <span class="points">[2]</span></p>
+    <p class="zh">(d) 使用了哪种色阶？是否合适？</p>
+    <div class="idea">思路：能源类型是名义特征→应用定性色阶；图中三种不同 hue 无顺序 → 合适。</div>
+    <div class="loesung"><b>Lösung:</b>
+      qualitativ <span class="p">[1P.]</span> – angemessen, da nominales Merkmal (Energieträger), drei gut unterscheidbare Hues ohne Ordnung <span class="p">[1P.]</span>
+      <p class="zh">定性色阶；合适，因能源类型为名义特征，三种可区分且无顺序的色相。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(e) Aussage: <i>„Frankreich (FR) erzeugte 2022 absolut mehr Strom aus Erneuerbaren als Polen (PL).“</i>
+    Zutreffend, nicht zutreffend oder nicht entscheidbar? <span class="points">[2]</span></p>
+    <p class="zh">(e) 陈述："法国 2022 年用可再生能源发电的绝对量高于波兰。"正确/错误/无法判定？</p>
+    <div class="idea">思路：图只显示百分比（相对量），未给总发电量 → 绝对量无法算出。</div>
+    <div class="loesung"><b>Lösung:</b>
+      nicht entscheidbar <span class="p">[1P.]</span> – Grafik zeigt nur Anteile (%), nicht die absolute Gesamterzeugung <span class="p">[1P.]</span>
+      <p class="zh">无法判定——图只显示百分比，未给出绝对总发电量。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(f) Welche grafische Verbesserung würden Sie vorschlagen, wenn präzise der
+    <i>Erneuerbaren-Anteil</i> zwischen Ländern verglichen werden soll? <span class="points">[2]</span></p>
+    <p class="zh">(f) 若要精确比较各国可再生能源占比，你建议如何改进图形？</p>
+    <div class="idea">思路：堆叠图里只有最底层段落起点对齐、便于比较；其它段难比。把"可再生"单独放到共同基线（单独条形/点）即可精确比较。</div>
+    <div class="loesung"><b>Lösung:</b>
+      nur das Merkmal „Erneuerbaren-Anteil“ auf gemeinsamer Basislinie darstellen, z. B.
+      <code>geom_col(aes(x = land, y = erneuerbar))</code> oder geom_point <span class="p">[1P.]</span>;
+      Begründung: in gestapelten Balken sind nur die untersten Segmente an gemeinsamer Nulllinie vergleichbar <span class="p">[1P.]</span>
+      <p class="zh">将"可再生占比"单独置于共同基线上（条形或点）；理由：堆叠图中只有最底层段落基于共同零线，才便于精确比较。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- AUFGABE 2: STREUDIAGRAMM -->
+<!-- ===================================================================== -->
+<section class="panel">
+  <h2>Aufgabe 2 (15 Punkte) – Lebenserwartung vs. BIP</h2>
+  <p>Jeder Punkt steht für ein Land. Dargestellt sind BIP pro Kopf (x),
+  Lebenserwartung (y), Bevölkerung (Punktgröße) und Kontinent (Farbe).</p>
+  <p class="zh">每个点代表一个国家：x=人均 GDP，y=预期寿命，点大小=人口，颜色=大洲。</p>
+
+  <figure>
+  <svg viewBox="0 0 560 320" width="100%" style="max-width:560px">
+    <text x="280" y="18" font-size="13" font-weight="bold" text-anchor="middle">Lebenserwartung vs. BIP pro Kopf (2020)</text>
+    <line x1="60" y1="270" x2="535" y2="270" stroke="#333"/>
+    <line x1="60" y1="270" x2="60" y2="35" stroke="#333"/>
+    <text x="295" y="298" font-size="11" text-anchor="middle">BIP pro Kopf (US$, log)</text>
+    <text x="20" y="160" font-size="11" transform="rotate(-90 20 160)" text-anchor="middle">Lebenserwartung (Jahre)</text>
+    <text x="56" y="273" font-size="9" text-anchor="end">0</text>
+    <text x="56" y="160" font-size="9" text-anchor="end">60</text>
+    <text x="56" y="60"  font-size="9" text-anchor="end">85</text>
+    <!-- Punkte (cx,cy,r,farbe) -->
+    <circle cx="100" cy="225" r="14" fill="#e67e22" opacity=".8"/>
+    <circle cx="140" cy="205" r="9"  fill="#e67e22" opacity=".8"/>
+    <circle cx="190" cy="175" r="20" fill="#9b59b6" opacity=".8"/>
+    <circle cx="250" cy="150" r="30" fill="#9b59b6" opacity=".8"/>
+    <circle cx="300" cy="120" r="11" fill="#2c6fbb" opacity=".8"/>
+    <circle cx="370" cy="95"  r="13" fill="#2c6fbb" opacity=".8"/>
+    <circle cx="430" cy="80"  r="16" fill="#27ae60" opacity=".8"/>
+    <circle cx="490" cy="70"  r="10" fill="#27ae60" opacity=".8"/>
+    <circle cx="455" cy="78"  r="22" fill="#2c6fbb" opacity=".8"/>
+    <!-- legende farben -->
+    <circle cx="380" cy="250" r="6" fill="#e67e22"/><text x="390" y="254" font-size="9">Afrika</text>
+    <circle cx="380" cy="265" r="6" fill="#9b59b6"/><text x="390" y="269" font-size="9">Asien</text>
+    <circle cx="460" cy="250" r="6" fill="#2c6fbb"/><text x="470" y="254" font-size="9">Europa</text>
+    <circle cx="460" cy="265" r="6" fill="#27ae60"/><text x="470" y="269" font-size="9">Amerika</text>
+  </svg>
+  <figcaption>Streudiagramm (Bubble Chart) · fiktive Daten</figcaption>
+  </figure>
+
+  <div class="task">
+    <p class="task-head">(a) Analysieren Sie die Grafik mit der <i>grammar of graphics</i>:
+    Geometrie und <b>alle vier</b> ästhetischen Zuordnungen. <span class="points">[5]</span></p>
+    <p class="zh">(a) 用 grammar of graphics 分析：几何对象与全部四个美学映射。</p>
+    <div class="idea">思路：图元是点 → Geom = Punkt。四个映射：x=BIP，y=Lebenserwartung，Größe=Bevölkerung，Farbe=Kontinent。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Geom: Punkt <span class="p">[1P.]</span><br>
+      x-Position: BIP pro Kopf <span class="p">[1P.]</span>;
+      y-Position: Lebenserwartung <span class="p">[1P.]</span><br>
+      Größe: Bevölkerung <span class="p">[1P.]</span>;
+      Farbe: Kontinent <span class="p">[1P.]</span>
+      <p class="zh">几何：点。x=人均 GDP；y=预期寿命；点大小=人口；颜色=大洲。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(b) Geben Sie das Skalenniveau für alle vier Merkmale an. <span class="points">[4]</span></p>
+    <p class="zh">(b) 给出全部四个特征的标度水平。</p>
+    <div class="idea">思路：GDP、人口都有自然零点→比率；预期寿命可视为比率（0 岁有意义，区间也可接受）；大洲名义。</div>
+    <div class="loesung"><b>Lösung:</b>
+      BIP pro Kopf: Verhältnisskala <span class="p">[1P.]</span>;
+      Lebenserwartung: Verhältnisskala (Intervall auch okee) <span class="p">[1P.]</span><br>
+      Bevölkerung: Verhältnis-/Absolutskala <span class="p">[1P.]</span>;
+      Kontinent: nominal <span class="p">[1P.]</span>
+      <p class="zh">人均 GDP：比率；预期寿命：比率（区间亦可）；人口：比率/绝对；大洲：名义。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(c) Die x-Achse ist logarithmisch skaliert. Nennen Sie einen Vor- und
+    einen Nachteil dieser Wahl. <span class="points">[3]</span></p>
+    <p class="zh">(c) x 轴为对数标度。请各举一个优点和缺点。</p>
+    <div class="idea">思路：对数轴优点——压缩极右偏数据、揭示百分比/乘法关系；缺点——直接读绝对差被扭曲，外行易误读。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Vorteil: stark rechtsschiefe Daten werden auseinandergezogen, multiplikative/prozentuale Zusammenhänge erkennbar <span class="p">[1.5P.]</span><br>
+      Nachteil: absolute Abstände werden verzerrt dargestellt, leicht fehlinterpretierbar für ungeübte Leser <span class="p">[1.5P.]</span>
+      <p class="zh">优点：将强右偏数据展开，便于看出乘法/百分比关系；缺点：绝对差被扭曲，外行易误读。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(d) Welche der vier ästhetischen Zuordnungen ermöglicht das
+    <b>präziseste</b> Ablesen von Werten, welche das <b>ungenaueste</b>? Begründen Sie. <span class="points">[3]</span></p>
+    <p class="zh">(d) 四个映射中，哪个读数最精确？哪个最不精确？请说明。</p>
+    <div class="idea">思路：感知精度排序——位置 &gt; 长度 &gt; 面积/大小 &gt; 颜色。点的 x/y 位置最准；面积（点大小）最难精确判读。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Präziseste: Position (x/y) <span class="p">[1P.]</span>; Ungenaueste: Größe/Fläche (Bevölkerung) <span class="p">[1P.]</span><br>
+      Begründung: menschliche Wahrnehmung schätzt Position am genauesten, Flächen werden systematisch unterschätzt <span class="p">[1P.]</span>
+      <p class="zh">最精确：位置（x/y）；最不精确：面积/点大小（人口）。理由：人对位置判读最准，对面积往往系统性低估。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- AUFGABE 3: BOXPLOT -->
+<!-- ===================================================================== -->
+<section class="panel">
+  <h2>Aufgabe 3 (14 Punkte) – Klausurpunkte nach Studiengang</h2>
+  <p>Die Boxplots zeigen die Verteilung der Klausurpunkte (0–100) in drei
+  Studiengängen.</p>
+  <p class="zh">箱线图展示三个专业的考试成绩（0–100）分布。</p>
+
+  <figure>
+  <svg viewBox="0 0 560 320" width="100%" style="max-width:560px">
+    <text x="280" y="18" font-size="13" font-weight="bold" text-anchor="middle">Klausurpunkte nach Studiengang</text>
+    <line x1="80" y1="40" x2="80" y2="270" stroke="#333"/>
+    <line x1="80" y1="270" x2="520" y2="270" stroke="#333"/>
+    <text x="25" y="160" font-size="11" transform="rotate(-90 25 160)" text-anchor="middle">Punkte</text>
+    <text x="72" y="273" font-size="9" text-anchor="end">0</text>
+    <text x="72" y="155" font-size="9" text-anchor="end">50</text>
+    <text x="72" y="44"  font-size="9" text-anchor="end">100</text>
+
+    <!-- Box A (BWL): median 55 -->
+    <g stroke="#1c4587" stroke-width="1.6" fill="#cfe0f5">
+      <line x1="160" y1="100" x2="160" y2="135"/>           <!-- oberer whisker -->
+      <line x1="160" y1="225" x2="160" y2="200"/>           <!-- unterer whisker -->
+      <rect x="135" y="135" width="50" height="65"/>        <!-- box -->
+      <line x1="135" y1="170" x2="185" y2="170" stroke-width="2.4"/> <!-- median -->
+      <line x1="145" y1="100" x2="175" y2="100"/>
+      <line x1="145" y1="225" x2="175" y2="225"/>
+    </g>
+    <text x="160" y="288" font-size="11" text-anchor="middle">BWL</text>
+
+    <!-- Box B (Info): median 70, weniger streuung -->
+    <g stroke="#27ae60" stroke-width="1.6" fill="#d5f0df">
+      <line x1="300" y1="70" x2="300" y2="100"/>
+      <line x1="300" y1="160" x2="300" y2="140"/>
+      <rect x="275" y="100" width="50" height="40"/>
+      <line x1="275" y1="113" x2="325" y2="113" stroke-width="2.4"/>
+      <line x1="285" y1="70" x2="315" y2="70"/>
+      <line x1="285" y1="160" x2="315" y2="160"/>
+      <circle cx="300" cy="245" r="3.5" fill="#27ae60"/>   <!-- ausreißer -->
+    </g>
+    <text x="300" y="288" font-size="11" text-anchor="middle">Informatik</text>
+
+    <!-- Box C (Jura): median 50, große streuung -->
+    <g stroke="#c0392b" stroke-width="1.6" fill="#f7d6d2">
+      <line x1="440" y1="60" x2="440" y2="110"/>
+      <line x1="440" y1="245" x2="440" y2="210"/>
+      <rect x="415" y="110" width="50" height="100"/>
+      <line x1="415" y1="175" x2="465" y2="175" stroke-width="2.4"/>
+      <line x1="425" y1="60" x2="455" y2="60"/>
+      <line x1="425" y1="245" x2="455" y2="245"/>
+    </g>
+    <text x="440" y="288" font-size="11" text-anchor="middle">Jura</text>
+  </svg>
+  <figcaption>Boxplots · fiktive Daten</figcaption>
+  </figure>
+
+  <div class="task">
+    <p class="task-head">(a) Welche Geometrie liegt vor und welche Merkmale werden auf x- und
+    y-Achse abgebildet? <span class="points">[3]</span></p>
+    <p class="zh">(a) 使用了哪种几何对象？x、y 轴分别映射哪些特征？</p>
+    <div class="idea">思路：Geom = Boxplot；x=Studiengang（名义），y=Punkte（数值分布）。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Geom: Boxplot <span class="p">[1P.]</span>; x: Studiengang <span class="p">[1P.]</span>; y: Klausurpunkte <span class="p">[1P.]</span>
+      <p class="zh">几何：箱线图；x：专业；y：考试分数。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(b) Welche fünf Kennzahlen (bzw. Statistiken) werden in einem
+    Standard-Boxplot dargestellt? <span class="points">[3]</span></p>
+    <p class="zh">(b) 标准箱线图展示哪五个统计量？</p>
+    <div class="idea">思路：五数概括 = 最小、Q1、中位数、Q3、最大（须在 1.5·IQR 内），框为四分位距，须外为离群点。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Minimum (innerhalb 1.5·IQR), 1. Quartil, Median, 3. Quartil, Maximum (Whisker-Ende) <span class="p">[2.5P.]</span>;
+      Box = Interquartilsabstand (IQR); Punkte außerhalb = Ausreißer <span class="p">[0.5P.]</span>
+      <p class="zh">最小值、下四分位 Q1、中位数、上四分位 Q3、最大值（须线末端）；箱体=四分位距 IQR；须外的点=离群值。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(c) Welches Skalenniveau muss das auf der y-Achse dargestellte
+    Merkmal mindestens haben, damit ein Boxplot sinnvoll ist? Begründen Sie. <span class="points">[2]</span></p>
+    <p class="zh">(c) 为使箱线图有意义，y 轴特征至少需何种标度水平？请说明。</p>
+    <div class="idea">思路：中位数/分位数需要排序→至少 ordinal；但常规箱线图（whisker = 1.5·IQR）需可算差→实务上 metrisch。最低要求：ordinal。</div>
+    <div class="loesung"><b>Lösung:</b>
+      mindestens ordinal <span class="p">[1P.]</span> – da Median und Quartile eine Ordnung der Werte voraussetzen
+      (für 1.5·IQR-Whisker streng genommen metrisch) <span class="p">[1P.]</span>
+      <p class="zh">至少 ordinal——中位数与四分位需要数值可排序（若用 1.5·IQR 须线则严格需度量型）。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(d) Aussagen: 1. „Informatik hat den höchsten Median.“ 2. „In Jura
+    streuen die Punkte am stärksten.“ 3. „Die meisten Studierenden gibt es in BWL.“
+    Beurteilen Sie jede Aussage. <span class="points">[3]</span></p>
+    <p class="zh">(d) 判断三句话：1.信息学中位数最高；2.法学离散最大；3.工商管理人数最多。</p>
+    <div class="idea">思路：1 看中位数线最高者→Informatik，对；2 看箱+须跨度最大→Jura，对；3 标准箱线图不显示样本量→无法判定。</div>
+    <div class="loesung"><b>Lösung:</b>
+      1. zutreffend – Median-Linie von Informatik am höchsten <span class="p">[1P.]</span><br>
+      2. zutreffend – größte Spannweite/IQR bei Jura <span class="p">[1P.]</span><br>
+      3. nicht entscheidbar – Boxplot zeigt keine Fallzahlen/Stichprobengröße <span class="p">[1P.]</span>
+      <p class="zh">1.正确（信息学中位数线最高）；2.正确（法学跨度/IQR 最大）；3.无法判定（箱线图不显示样本量）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- AUFGABE 4: 3D-TORTENDIAGRAMM (irreführend) -->
+<!-- ===================================================================== -->
+<section class="panel">
+  <h2>Aufgabe 4 (16 Punkte) – Marktanteile (3D-Torte)</h2>
+  <p>Ein Unternehmen präsentiert die Marktanteile von fünf Anbietern als
+  perspektivisches 3D-Tortendiagramm.</p>
+  <p class="zh">某公司用立体 3D 饼图展示五家供应商的市场份额。</p>
+
+  <figure>
+  <svg viewBox="0 0 560 320" width="100%" style="max-width:520px">
+    <text x="280" y="20" font-size="13" font-weight="bold" text-anchor="middle">Marktanteile 2023</text>
+    <!-- "3D" untere Ellipse Schatten -->
+    <ellipse cx="280" cy="200" rx="150" ry="62" fill="#2c4a6b"/>
+    <!-- obere Torte -->
+    <!-- Wir zeichnen Segmente als Pfade auf Ellipse cx280 cy180 rx150 ry60 -->
+    <g stroke="#fff" stroke-width="1.5">
+      <path d="M280,180 L430,180 A150,60 0 0,0 360,128 Z" fill="#c0392b"/>      <!-- A vorne rechts -->
+      <path d="M280,180 L360,128 A150,60 0 0,0 200,128 Z" fill="#e67e22"/>      <!-- B hinten -->
+      <path d="M280,180 L200,128 A150,60 0 0,0 138,168 Z" fill="#27ae60"/>      <!-- C -->
+      <path d="M280,180 L138,168 A150,60 0 0,0 210,228 Z" fill="#2c6fbb"/>      <!-- D vorne links -->
+      <path d="M280,180 L210,228 A150,60 0 0,0 430,180 Z" fill="#9b59b6"/>      <!-- E vorne -->
+    </g>
+    <!-- legende -->
+    <rect x="455" y="120" width="12" height="12" fill="#c0392b"/><text x="471" y="130" font-size="10">A 24%</text>
+    <rect x="455" y="138" width="12" height="12" fill="#e67e22"/><text x="471" y="148" font-size="10">B 22%</text>
+    <rect x="455" y="156" width="12" height="12" fill="#27ae60"/><text x="471" y="166" font-size="10">C 20%</text>
+    <rect x="455" y="174" width="12" height="12" fill="#2c6fbb"/><text x="471" y="184" font-size="10">D 18%</text>
+    <rect x="455" y="192" width="12" height="12" fill="#9b59b6"/><text x="471" y="202" font-size="10">E 16%</text>
+  </svg>
+  <figcaption>3D-Tortendiagramm · fiktive Daten</figcaption>
+  </figure>
+
+  <div class="task">
+    <p class="task-head">(a) Welches Merkmal mit welchem Skalenniveau wird hier visualisiert,
+    und über welche ästhetische Eigenschaft? <span class="points">[3]</span></p>
+    <p class="zh">(a) 此处可视化哪个特征、何种标度水平、通过何种美学属性？</p>
+    <div class="idea">思路：被可视化的是各供应商的"市场份额"（比率/绝对标度），美学属性为扇区角度/弧度（Winkel）。供应商=名义。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Anbieter: nominal <span class="p">[1P.]</span>; Marktanteil: Verhältnis-/Absolutskala <span class="p">[1P.]</span>;
+      Ästhetik: Winkel / Segmentfläche der Torte <span class="p">[1P.]</span>
+      <p class="zh">供应商：名义；市场份额：比率/绝对；美学属性：扇区角度/面积。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(b) Statistische Grafiken sollen die Datenlage <b>unverfälscht</b>
+    darstellen. Inwiefern verfälscht die 3D-Perspektive die Darstellung? <span class="points">[3]</span></p>
+    <p class="zh">(b) 图形应不失真地呈现数据。3D 透视如何造成失真？</p>
+    <div class="idea">思路：透视使前方扇区显得更大、后方更小，相同百分比看起来不等 → 视觉印象与真实比例不符。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Durch die Perspektive erscheinen vordere Segmente größer, hintere kleiner als sie tatsächlich sind <span class="p">[2P.]</span>;
+      gleiche Anteile wirken ungleich → verzerrter visueller Eindruck <span class="p">[1P.]</span>
+      <p class="zh">透视使前方扇区显大、后方显小；相同份额看起来不相等 → 视觉印象失真。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(c) Auch ohne 3D-Effekt gilt das Tortendiagramm als problematisch, wenn
+    viele ähnlich große Kategorien verglichen werden sollen. Warum? <span class="points">[3]</span></p>
+    <p class="zh">(c) 即使没有 3D 效果，当要比较多个大小相近的类别时饼图仍有问题。为什么？</p>
+    <div class="idea">思路：人对角度/面积的感知精度低于长度/位置；五个相近份额很难用眼分辨大小、也难排序。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Winkel/Flächen werden vom Auge ungenauer geschätzt als Längen/Positionen <span class="p">[1.5P.]</span>;
+      ähnlich große Segmente sind kaum unterscheidbar und schwer zu ordnen <span class="p">[1.5P.]</span>
+      <p class="zh">人眼对角度/面积的判断不如长度/位置精确；大小相近的扇区难以区分和排序。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(d) Definieren Sie eine alternative Darstellung in der Sprache der
+    <i>grammar of graphics</i> (oder <code>ggplot2</code>), die die Daten unverfälscht
+    und gut vergleichbar zeigt. <span class="points">[3]</span></p>
+    <p class="zh">(d) 用 grammar of graphics（或 ggplot2）给出一种能不失真且便于比较的替代图。</p>
+    <div class="idea">思路：把份额映射到共同长度轴 → 用（排序后的）条形图，位置/长度可精确比较。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Geom: Balken <span class="p">[1P.]</span>; Mappings: Marktanteil → Länge/Position (gemeinsame Achse), Anbieter → zweite Achse <span class="p">[1P.]</span>;
+      möglichst nach Größe sortiert <span class="p">[1P.]</span><br>
+      z. B. <code>geom_col(aes(x = reorder(anbieter, anteil), y = anteil))</code>
+      <p class="zh">几何：条形；映射：份额→长度/位置（共用轴），供应商→另一轴；并按大小排序。例：<code>geom_col(aes(x = reorder(anbieter, anteil), y = anteil))</code>。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(e) Welcher Typ von Farbskala ist hier passend? <span class="points">[2]</span></p>
+    <p class="zh">(e) 此处应使用何种类型的色阶？</p>
+    <div class="idea">思路：供应商为名义→定性色阶（不同 hue、无顺序）。</div>
+    <div class="loesung"><b>Lösung:</b>
+      qualitativ <span class="p">[1P.]</span> – nominales Merkmal (Anbieter), wahrnehmungseinheitliche gut unterscheidbare Hues <span class="p">[1P.]</span>
+      <p class="zh">定性色阶——供应商为名义特征，应选感知均匀、可区分的不同色相。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- AUFGABE 5: HEATMAP -->
+<!-- ===================================================================== -->
+<section class="panel">
+  <h2>Aufgabe 5 (15 Punkte) – Heatmap der Niederschlagsmenge</h2>
+  <p>Die Heatmap zeigt die durchschnittliche monatliche Niederschlagsmenge (mm)
+  für vier Städte über die Monate Jan–Jun.</p>
+  <p class="zh">热力图展示四座城市 1–6 月的月均降水量（mm）。</p>
+
+  <figure>
+  <svg viewBox="0 0 560 300" width="100%" style="max-width:560px">
+    <text x="280" y="20" font-size="13" font-weight="bold" text-anchor="middle">Monatlicher Niederschlag (mm)</text>
+    <!-- Zellen: 4 Zeilen (Städte) x 6 Spalten (Monate). Start x=130 y=40, cell 60x40 -->
+    <!-- Farbskala: hell (wenig) -> dunkelblau (viel) -->
+    <!-- Stadt1 -->
+    <g>
+      <rect x="130" y="40" width="60" height="40" fill="#deebf7"/>
+      <rect x="190" y="40" width="60" height="40" fill="#c6dbef"/>
+      <rect x="250" y="40" width="60" height="40" fill="#9ecae1"/>
+      <rect x="310" y="40" width="60" height="40" fill="#6baed6"/>
+      <rect x="370" y="40" width="60" height="40" fill="#4292c6"/>
+      <rect x="430" y="40" width="60" height="40" fill="#2171b5"/>
+    </g>
+    <!-- Stadt2 -->
+    <g>
+      <rect x="130" y="80" width="60" height="40" fill="#08519c"/>
+      <rect x="190" y="80" width="60" height="40" fill="#2171b5"/>
+      <rect x="250" y="80" width="60" height="40" fill="#4292c6"/>
+      <rect x="310" y="80" width="60" height="40" fill="#9ecae1"/>
+      <rect x="370" y="80" width="60" height="40" fill="#c6dbef"/>
+      <rect x="430" y="80" width="60" height="40" fill="#deebf7"/>
+    </g>
+    <!-- Stadt3 -->
+    <g>
+      <rect x="130" y="120" width="60" height="40" fill="#9ecae1"/>
+      <rect x="190" y="120" width="60" height="40" fill="#9ecae1"/>
+      <rect x="250" y="120" width="60" height="40" fill="#6baed6"/>
+      <rect x="310" y="120" width="60" height="40" fill="#6baed6"/>
+      <rect x="370" y="120" width="60" height="40" fill="#4292c6"/>
+      <rect x="430" y="120" width="60" height="40" fill="#4292c6"/>
+    </g>
+    <!-- Stadt4 -->
+    <g>
+      <rect x="130" y="160" width="60" height="40" fill="#f7fbff"/>
+      <rect x="190" y="160" width="60" height="40" fill="#deebf7"/>
+      <rect x="250" y="160" width="60" height="40" fill="#deebf7"/>
+      <rect x="310" y="160" width="60" height="40" fill="#c6dbef"/>
+      <rect x="370" y="160" width="60" height="40" fill="#c6dbef"/>
+      <rect x="430" y="160" width="60" height="40" fill="#9ecae1"/>
+    </g>
+    <!-- y labels -->
+    <text x="123" y="65" font-size="10" text-anchor="end">Berlin</text>
+    <text x="123" y="105" font-size="10" text-anchor="end">Bergen</text>
+    <text x="123" y="145" font-size="10" text-anchor="end">Rom</text>
+    <text x="123" y="185" font-size="10" text-anchor="end">Madrid</text>
+    <!-- x labels -->
+    <text x="160" y="214" font-size="10" text-anchor="middle">Jan</text>
+    <text x="220" y="214" font-size="10" text-anchor="middle">Feb</text>
+    <text x="280" y="214" font-size="10" text-anchor="middle">Mär</text>
+    <text x="340" y="214" font-size="10" text-anchor="middle">Apr</text>
+    <text x="400" y="214" font-size="10" text-anchor="middle">Mai</text>
+    <text x="460" y="214" font-size="10" text-anchor="middle">Jun</text>
+    <!-- farblegende -->
+    <text x="130" y="248" font-size="10">wenig</text>
+    <rect x="170" y="238" width="20" height="12" fill="#deebf7"/>
+    <rect x="190" y="238" width="20" height="12" fill="#9ecae1"/>
+    <rect x="210" y="238" width="20" height="12" fill="#4292c6"/>
+    <rect x="230" y="238" width="20" height="12" fill="#08519c"/>
+    <text x="255" y="248" font-size="10">viel (mm)</text>
+  </svg>
+  <figcaption>Heatmap · sequenzielle Farbskala · fiktive Daten</figcaption>
+  </figure>
+
+  <div class="task">
+    <p class="task-head">(a) Analysieren Sie die Grafik mit der <i>grammar of graphics</i>:
+    Geometrie und alle ästhetischen Zuordnungen. <span class="points">[4]</span></p>
+    <p class="zh">(a) 用 grammar of graphics 分析：几何对象与所有美学映射。</p>
+    <div class="idea">思路：Geom = Kachel/Rechteck（Tile）。x=Monat，y=Stadt，Farbe=Niederschlagsmenge。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Geom: Kachel / Rechteck (tile) <span class="p">[1P.]</span><br>
+      x-Position: Monat <span class="p">[1P.]</span>; y-Position: Stadt <span class="p">[1P.]</span>;
+      Farbe: Niederschlagsmenge (mm) <span class="p">[1P.]</span>
+      <p class="zh">几何：方块/矩形（tile）。x=月份；y=城市；颜色=降水量（mm）。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(b) Geben Sie das Skalenniveau für „Monat“, „Stadt“ und
+    „Niederschlagsmenge“ an. <span class="points">[3]</span></p>
+    <p class="zh">(b) 给出"月份""城市""降水量"的标度水平。</p>
+    <div class="idea">思路：月份有序但循环、间距相等→ordinal（也可论 intervall）；城市名义；降水量有自然零点→比率/绝对。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Monat: ordinal (geordnet; intervall vertretbar) <span class="p">[1P.]</span>;
+      Stadt: nominal <span class="p">[1P.]</span>;
+      Niederschlag: Verhältnis-/Absolutskala <span class="p">[1P.]</span>
+      <p class="zh">月份：ordinal（有序；区间亦可）；城市：名义；降水量：比率/绝对。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(c) Welcher Typ von Farbskala wird verwendet und warum ist er hier
+    angemessen? <span class="points">[3]</span></p>
+    <p class="zh">(c) 使用了哪类色阶？为什么在此合适？</p>
+    <div class="idea">思路：被编码的是有序/度量的降水量 → sequenzielle（单色渐变）色阶，亮度随数值递增，符合"多即深"。</div>
+    <div class="loesung"><b>Lösung:</b>
+      sequenzielle Farbskala <span class="p">[1P.]</span>;
+      angemessen, da das kodierte Merkmal (Niederschlag) metrisch/geordnet ist und Helligkeit monoton mit dem Wert variiert <span class="p">[2P.]</span>
+      <p class="zh">连续（顺序）色阶；合适，因被编码的降水量为度量/有序特征，明度随数值单调变化。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(d) Nennen Sie einen Vorteil und einen Nachteil der Farbe (gegenüber
+    z. B. der Position) als ästhetisches Mittel zur Kodierung der Menge. <span class="points">[3]</span></p>
+    <p class="zh">(d) 与位置等相比，用颜色编码数量各有什么优点和缺点？</p>
+    <div class="idea">思路：优点——可在二维表格中第三维紧凑呈现大量数值、易看整体模式；缺点——颜色读数不精确，难读出具体数值。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Vorteil: kompakte Darstellung vieler Werte in 2D-Matrix, Muster/Trends schnell erkennbar <span class="p">[1.5P.]</span><br>
+      Nachteil: Farbe erlaubt nur ungenaues Ablesen konkreter Zahlenwerte (Position/Länge wäre präziser) <span class="p">[1.5P.]</span>
+      <p class="zh">优点：在二维矩阵中紧凑呈现大量数值，整体模式/趋势一目了然；缺点：颜色读数不精确，难读出具体数值（位置/长度更准）。</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <p class="task-head">(e) Aussage: <i>„Bergen hat im Januar mehr Niederschlag als Madrid im
+    Juni.“</i> Ist das aus der Grafik präzise quantifizierbar? <span class="points">[2]</span></p>
+    <p class="zh">(e) 陈述："卑尔根 1 月降水多于马德里 6 月。"能否从图中精确量化？</p>
+    <div class="idea">思路：可定性判断（颜色更深=更多），但具体毫米数无法精确读出，因颜色只能粗略对应数值。</div>
+    <div class="loesung"><b>Lösung:</b>
+      Tendenz erkennbar (dunklere Farbe = mehr) <span class="p">[1P.]</span>, aber nicht präzise quantifizierbar,
+      da Farbe nur grob auf Werte abbildbar ist <span class="p">[1P.]</span>
+      <p class="zh">可看出趋势（颜色越深越多），但无法精确量化，因为颜色只能粗略对应数值。</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const panels = document.querySelectorAll('.panel');
+  const btns   = document.querySelectorAll('.tabbtn');
+  function show(i){
+    panels.forEach((p,k)=>p.classList.toggle('active',k===i));
+    btns.forEach((b,k)=>b.classList.toggle('active',k===i));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+</script>
+</body>
+</html>

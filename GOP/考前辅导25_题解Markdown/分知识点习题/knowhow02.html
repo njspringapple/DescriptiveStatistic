@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概率空间 · 事件 · σ-代数 复习卡</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1419;
+    --panel:#1a212b;
+    --panel2:#222c38;
+    --accent:#4ea1ff;
+    --accent2:#ffb454;
+    --green:#5fd07d;
+    --red:#ff6b6b;
+    --purple:#c084fc;
+    --text:#e3e8ef;
+    --muted:#94a3b8;
+    --border:#2c3744;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.75;
+  }
+  a{color:var(--accent);text-decoration:none;}
+
+  header.top{
+    background:linear-gradient(135deg,#16202c,#0f1419);
+    border-bottom:1px solid var(--border);
+    padding:28px 20px 22px;
+    text-align:center;
+  }
+  header.top h1{
+    margin:0 0 6px;
+    font-size:1.5rem;
+    letter-spacing:.5px;
+  }
+  header.top p{margin:0;color:var(--muted);font-size:.9rem;}
+  .stats{
+    display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;
+  }
+  .stat{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;padding:8px 16px;min-width:90px;
+  }
+  .stat b{display:block;font-size:1.3rem;color:var(--accent2);}
+  .stat span{font-size:.72rem;color:var(--muted);}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  nav.side{
+    width:230px;flex-shrink:0;
+    position:sticky;top:0;align-self:flex-start;
+    height:100vh;overflow-y:auto;
+    border-right:1px solid var(--border);
+    padding:18px 10px 40px;
+    font-size:.84rem;
+  }
+  nav.side h3{
+    font-size:.7rem;text-transform:uppercase;letter-spacing:1px;
+    color:var(--muted);margin:18px 8px 6px;
+  }
+  nav.side a{
+    display:block;padding:5px 10px;border-radius:6px;color:var(--text);
+    transition:.15s;border-left:3px solid transparent;
+  }
+  nav.side a:hover{background:var(--panel);border-left-color:var(--accent);}
+  .navtag{
+    display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;
+  }
+  .t-build{background:var(--green);}
+  .t-sigma{background:var(--accent);}
+  .t-measure{background:var(--purple);}
+  .t-exam{background:var(--accent2);}
+
+  main{flex:1;min-width:0;padding:24px 22px 80px;}
+
+  section.block{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:26px;
+    scroll-margin-top:14px;
+  }
+  section.block > h2{
+    margin-top:0;font-size:1.25rem;
+    border-bottom:2px solid var(--accent);
+    padding-bottom:8px;display:inline-block;
+  }
+
+  /* exercise cards */
+  .ex{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    margin-bottom:18px;
+    overflow:hidden;
+    scroll-margin-top:14px;
+  }
+  .ex-head{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 18px;cursor:pointer;
+    background:#1e2733;
+    transition:.15s;
+  }
+  .ex-head:hover{background:#243140;}
+  .ex-num{
+    font-weight:700;color:var(--accent);font-size:.95rem;
+    background:#13202c;border:1px solid var(--border);
+    border-radius:8px;padding:3px 9px;white-space:nowrap;
+  }
+  .ex-title{flex:1;font-size:.95rem;}
+  .badge{
+    font-size:.66rem;padding:2px 8px;border-radius:20px;white-space:nowrap;
+    border:1px solid;
+  }
+  .b-build{color:var(--green);border-color:var(--green);}
+  .b-sigma{color:var(--accent);border-color:var(--accent);}
+  .b-measure{color:var(--purple);border-color:var(--purple);}
+  .b-exam{color:var(--accent2);border-color:var(--accent2);}
+
+  .ex-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ex.open .ex-body{max-height:none;padding:6px 20px 20px;}
+
+  .q{
+    background:#141c25;border-left:4px solid var(--accent);
+    padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;
+  }
+  .q .label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.5px;}
+  .trans{color:var(--muted);font-size:.86rem;font-style:italic;}
+
+  .toggle-sol{
+    background:var(--accent);color:#06121f;border:none;
+    padding:8px 18px;border-radius:8px;font-weight:700;cursor:pointer;
+    font-size:.85rem;margin:6px 0 4px;transition:.15s;
+  }
+  .toggle-sol:hover{background:#6bb3ff;}
+  .sol{display:none;}
+  .sol.show{display:block;}
+
+  .think{
+    background:#1d2417;border-left:4px solid var(--green);
+    padding:10px 16px;border-radius:0 8px 8px 0;margin:12px 0;
+    font-size:.88rem;
+  }
+  .think .label{color:var(--green);font-weight:700;font-size:.72rem;letter-spacing:.5px;}
+
+  .ans{
+    background:#161e28;border:1px dashed var(--border);
+    padding:8px 16px;border-radius:8px;margin:12px 0;
+  }
+  .subq{font-weight:700;color:var(--accent2);margin-top:14px;}
+
+  /* formula grid */
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fcard{
+    background:var(--panel2);border:1px solid var(--border);
+    border-radius:9px;padding:10px 14px;font-size:.86rem;
+  }
+  .fcard b{color:var(--accent2);}
+
+  .strat li{margin-bottom:10px;}
+  .strat b{color:var(--accent2);}
+
+  .warn li{margin-bottom:10px;}
+  .warn b{color:var(--red);}
+
+  .checklist li{margin-bottom:7px;}
+  .checklist li::marker{color:var(--green);}
+
+  /* German glossary */
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+  .vcard{
+    background:var(--panel2);border:1px solid var(--border);
+    border-radius:9px;padding:10px 14px;
+  }
+  .vcard .de{color:var(--accent);font-weight:700;font-size:.92rem;}
+  .vcard .zh{color:var(--muted);font-size:.82rem;}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.85rem;}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;}
+  th{background:#1e2733;color:var(--accent2);}
+
+  .controls{
+    position:sticky;top:0;z-index:50;
+    background:rgba(15,20,25,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);
+    padding:10px 0;margin:-24px -22px 22px;display:flex;gap:10px;
+    padding-left:22px;flex-wrap:wrap;
+  }
+  .ctrl-btn{
+    background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;
+  }
+  .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .menu-toggle{display:none;}
+
+  @media(max-width:860px){
+    nav.side{
+      position:fixed;left:-260px;z-index:200;background:var(--bg);
+      transition:left .3s;width:240px;box-shadow:4px 0 20px rgba(0,0,0,.5);
+    }
+    nav.side.open{left:0;}
+    .menu-toggle{
+      display:block;position:fixed;top:12px;left:12px;z-index:201;
+      background:var(--accent);color:#06121f;border:none;border-radius:8px;
+      padding:8px 12px;font-weight:700;cursor:pointer;
+    }
+    .fgrid{grid-template-columns:1fr;}
+    main{padding:24px 14px 80px;}
+    .controls{margin:-24px -14px 22px;padding-left:14px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('nav.side').classList.toggle('open')">☰ 目录</button>
+
+<header class="top">
+  <h1>概率空间 · 事件 · σ-代数与建模</h1>
+  <p>Wahrscheinlichkeitsraum · Ereignis · σ-Algebra · Modellierung</p>
+  <div class="stats">
+    <div class="stat"><b>18</b><span>练习题</span></div>
+    <div class="stat"><b>2</b><span>考试真题</span></div>
+    <div class="stat"><b>20</b><span>合计题目</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="side">
+  <h3>核心板块</h3>
+  <a href="#formulas">📐 公式速查</a>
+  <a href="#strategy">🧭 不会时怎么下手</a>
+  <a href="#vocab">🇩🇪 德语词汇强化</a>
+
+  <h3>练习题索引</h3>
+  <a href="#a1"><span class="navtag t-sigma"></span>1 · 自独立 ⇒ 常数</a>
+  <a href="#a2"><span class="navtag t-sigma"></span>2 · σ-代数并不封闭</a>
+  <a href="#a3"><span class="navtag t-measure"></span>3 · Dynkin 非 σ-代数</a>
+  <a href="#a4"><span class="navtag t-build"></span>4 · 骰子+硬币建模</a>
+  <a href="#a5"><span class="navtag t-build"></span>5 · 结果/事件空间辨析</a>
+  <a href="#a6"><span class="navtag t-build"></span>6 · 三元素全部σ-代数</a>
+  <a href="#a7"><span class="navtag t-build"></span>7 · 最小结果空间</a>
+  <a href="#a8"><span class="navtag t-build"></span>8 · 多实验结果空间</a>
+  <a href="#a9"><span class="navtag t-build"></span>9 · 发动机缺陷事件</a>
+  <a href="#a10"><span class="navtag t-build"></span>10 · Kolmogorov 公理</a>
+  <a href="#a11"><span class="navtag t-build"></span>11 · De Morgan 证明</a>
+  <a href="#a12"><span class="navtag t-measure"></span>12 · 有限并/交封闭</a>
+  <a href="#a13"><span class="navtag t-sigma"></span>13 · 判断σ-代数</a>
+  <a href="#a14"><span class="navtag t-sigma"></span>14 · σ(𝒜)=𝒜</a>
+  <a href="#a15"><span class="navtag t-sigma"></span>15 · 生成 Borel</a>
+  <a href="#a16"><span class="navtag t-build"></span>16 · 像空间 Ω'</a>
+  <a href="#a17"><span class="navtag t-measure"></span>17 · 射靶几何概率</a>
+  <a href="#a18"><span class="navtag t-build"></span>18 · 期望积分公式</a>
+
+  <h3>考试真题</h3>
+  <a href="#e1"><span class="navtag t-exam"></span>真题1 · COVID-19（2021）</a>
+  <a href="#e2"><span class="navtag t-exam"></span>真题2 · 三骰子（ss2024）</a>
+
+  <h3>总结</h3>
+  <a href="#mistakes">⚠️ 常见错误</a>
+  <a href="#mustknow">✅ 必会题型清单</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleAll(true)">展开全部</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">收起全部</button>
+    <button class="ctrl-btn" onclick="showAllSol(true)">显示全部答案</button>
+    <button class="ctrl-btn" onclick="showAllSol(false)">隐藏全部答案</button>
+  </div>
+
+  <!-- ============ 公式速查 ============ -->
+  <section class="block" id="formulas">
+    <h2>📐 公式速查（考试可用版）</h2>
+    <div class="fgrid">
+      <div class="fcard"><b>概率空间</b><br>$(\Omega,\mathcal F,\mathbb P)$</div>
+      <div class="fcard"><b>概率公理</b><br>$\mathbb P(A)\ge0,\ \mathbb P(\Omega)=1$；两两不交 $\Rightarrow \mathbb P(\bigcup_iA_i)=\sum_i\mathbb P(A_i)$</div>
+      <div class="fcard"><b>补集 Komplement</b><br>$\mathbb P(A^c)=1-\mathbb P(A)$</div>
+      <div class="fcard"><b>容斥</b><br>$\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)-\mathbb P(A\cap B)$</div>
+      <div class="fcard"><b>不交并 disjunkt</b><br>$A\cap B=\emptyset\Rightarrow\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)$</div>
+      <div class="fcard"><b>单调性 Monotonie</b><br>$A\subseteq B\Rightarrow\mathbb P(A)\le\mathbb P(B)$</div>
+      <div class="fcard"><b>De Morgan</b><br>$(A\cup B)^c=A^c\cap B^c$；$(A\cap B)^c=A^c\cup B^c$</div>
+      <div class="fcard"><b>独立 unabhängig</b><br>$\mathbb P(A\cap B)=\mathbb P(A)\mathbb P(B)\Leftrightarrow\mathbb P(A|B)=\mathbb P(A)$</div>
+      <div class="fcard"><b>独立并集</b><br>$\mathbb P(A\cup B)=\mathbb P(A)+\mathbb P(B)-\mathbb P(A)\mathbb P(B)$</div>
+      <div class="fcard"><b>Laplace</b><br>$\mathbb P(A)=\dfrac{|A|}{|\Omega|}$（仅等可能时）</div>
+      <div class="fcard"><b>归一化 Normierung</b><br>$\sum_{\omega\in\Omega}\mathbb P(\{\omega\})=1$</div>
+      <div class="fcard"><b>阶乘归一化</b><br>$\sum_{x=0}^{\infty}\dfrac{c}{x!}=ce=1\Rightarrow c=e^{-1}$</div>
+      <div class="fcard"><b>σ-代数</b><br>$\Omega\in\mathcal A$；补集封闭；可数并封闭</div>
+      <div class="fcard"><b>Dynkin-System</b><br>$\Omega\in\mathcal D$；补集封闭；<i>两两不交</i>可数并封闭</div>
+      <div class="fcard"><b>生成 σ-代数</b><br>$\sigma(\mathcal E)=\bigcap_{\mathcal F\supseteq\mathcal E}\mathcal F$</div>
+    </div>
+  </section>
+
+  <!-- ============ 解题入门 ============ -->
+  <section class="block" id="strategy">
+    <h2>🧭 不会时怎么下手</h2>
+    <ul class="strat">
+      <li><b>问 Ergebnisraum（结果空间）</b>：先把"一次实验结果"写成一句话。例：三次掷骰只关心点数和，先用 $\Omega=\{1,\dots,6\}^3$ 记录完整结果，再用 $X(i,j,k)=i+j+k$ 压成 $\Omega'=\{3,\dots,18\}$。</li>
+      <li><b>问某个事件 Ereignis</b>：套模板 $A=\{\omega\in\Omega:\text{条件}\}$。例：至少一次成功 $A=\{(\omega_1,\dots,\omega_n):\sum_i\omega_i\ge1\}$。</li>
+      <li><b>问 Laplace 概率</b>：必须先写两行 $|\Omega|=\cdots$、$|A|=\cdots$，再写 $\mathbb P(A)=|A|/|\Omega|$。基本结果不等可能时不能用。</li>
+      <li><b>问独立/不独立</b>：直接列三项 $\mathbb P(A)$、$\mathbb P(B)$、$\mathbb P(A\cap B)$，第三项等于前两项乘积才独立。</li>
+      <li><b>问互斥 disjunkt</b>：只看 $A\cap B$ 是否为空。互斥 ≠ 独立。</li>
+      <li><b>给 $c/x!$ 点概率</b>：第一行固定写 $\sum_x\mathbb P(\{x\})=1$。</li>
+      <li><b>问是不是 σ-代数</b>：按检查表逐条——① 含 $\Omega$？② 补集封闭？③ 可数并封闭？找到一条失败即可反驳。</li>
+      <li><b>问 $\sigma(A,B)$</b>：画四格原子 $A\cap B,\ A\cap B^c,\ A^c\cap B,\ A^c\cap B^c$，删空集；答案是非空原子的所有并集。</li>
+      <li><b>问两个 σ-代数的并</b>：找 $C,D$ 各属一个，但 $C\cup D$ 不在并里，即可证不封闭。</li>
+      <li><b>问 Dynkin-System</b>：重点看"并"是否要求两两不交（disjunkt），不 disjunkt 不能直接套封闭性。</li>
+    </ul>
+  </section>
+
+  <!-- ============ 德语词汇 ============ -->
+  <section class="block" id="vocab">
+    <h2>🇩🇪 德语关键词强化</h2>
+    <p style="color:var(--muted);font-size:.85rem;">考场上看到这些德语词要立刻反应，下面是本章高频术语对照。</p>
+    <div class="vocab">
+      <div class="vcard"><span class="de">der Wahrscheinlichkeitsraum</span><br><span class="zh">概率空间</span></div>
+      <div class="vcard"><span class="de">der Ergebnisraum</span><br><span class="zh">结果空间 (Ω)</span></div>
+      <div class="vcard"><span class="de">der Ereignisraum</span><br><span class="zh">事件空间 / σ-代数</span></div>
+      <div class="vcard"><span class="de">das Ereignis</span><br><span class="zh">事件</span></div>
+      <div class="vcard"><span class="de">die Zufallsvariable</span><br><span class="zh">随机变量</span></div>
+      <div class="vcard"><span class="de">unabhängig</span><br><span class="zh">独立</span></div>
+      <div class="vcard"><span class="de">disjunkt</span><br><span class="zh">不交 / 互斥</span></div>
+      <div class="vcard"><span class="de">das Komplement</span><br><span class="zh">补集</span></div>
+      <div class="vcard"><span class="de">vereinigungsstabil</span><br><span class="zh">并封闭</span></div>
+      <div class="vcard"><span class="de">die Vereinigung / der Schnitt</span><br><span class="zh">并集 / 交集</span></div>
+      <div class="vcard"><span class="de">abzählbar / überabzählbar</span><br><span class="zh">可数 / 不可数</span></div>
+      <div class="vcard"><span class="de">die Mächtigkeit</span><br><span class="zh">基数 (势)</span></div>
+      <div class="vcard"><span class="de">messbar</span><br><span class="zh">可测的</span></div>
+      <div class="vcard"><span class="de">das Bildmaß / der Bildbereich</span><br><span class="zh">像测度 / 像空间 (Ω')</span></div>
+      <div class="vcard"><span class="de">das Zählmaß</span><br><span class="zh">计数测度</span></div>
+      <div class="vcard"><span class="de">das Dirac-Maß</span><br><span class="zh">Dirac 测度</span></div>
+      <div class="vcard"><span class="de">die Potenzmenge</span><br><span class="zh">幂集 𝒫(Ω)</span></div>
+      <div class="vcard"><span class="de">das Erzeugendensystem</span><br><span class="zh">生成系统</span></div>
+      <div class="vcard"><span class="de">die Borelsche σ-Algebra</span><br><span class="zh">Borel σ-代数</span></div>
+      <div class="vcard"><span class="de">der Würfel / die Augenzahl</span><br><span class="zh">骰子 / 点数</span></div>
+      <div class="vcard"><span class="de">die Augensumme</span><br><span class="zh">点数和</span></div>
+      <div class="vcard"><span class="de">defekt / nicht defekt</span><br><span class="zh">有缺陷 / 无缺陷</span></div>
+      <div class="vcard"><span class="de">die Stichprobe</span><br><span class="zh">样本</span></div>
+      <div class="vcard"><span class="de">das Urnenmodell</span><br><span class="zh">抽球模型</span></div>
+      <div class="vcard"><span class="de">ohne Zurücklegen</span><br><span class="zh">无放回</span></div>
+      <div class="vcard"><span class="de">die Ansteckungsrate</span><br><span class="zh">感染率</span></div>
+      <div class="vcard"><span class="de">der Wahrscheinlichkeitsbaum</span><br><span class="zh">概率树</span></div>
+      <div class="vcard"><span class="de">die Stetigkeitskorrektur</span><br><span class="zh">连续性修正</span></div>
+      <div class="vcard"><span class="de">Zeigen oder widerlegen Sie</span><br><span class="zh">证明或反驳</span></div>
+      <div class="vcard"><span class="de">Geben Sie ... an</span><br><span class="zh">请给出 ...</span></div>
+      <div class="vcard"><span class="de">das Gegenbeispiel</span><br><span class="zh">反例</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 练习题 ============ -->
+  <section class="block">
+    <h2>📝 习题与讲解</h2>
+    <p style="color:var(--muted);font-size:.85rem;">点击题目标题展开/收起；做完再点"显示解答"自测。颜色：<span style="color:var(--green)">●建模</span> <span style="color:var(--accent)">●σ-代数</span> <span style="color:var(--purple)">●测度</span></p>
+
+    <!-- A1 -->
+    <div class="ex" id="a1">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">1</span>
+        <span class="ex-title">证明：与自身独立的随机变量必为常数</span>
+        <span class="badge b-sigma">σ-代数 / 独立</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          Sei $X$ eine diskrete Zufallsvariable. Zeigen Sie: Ist $X$ unabhängig von sich selbst, so existiert eine Konstante $a$ mit $\mathbb P(X=a)=1$.
+          <div class="trans">设 $X$ 是离散随机变量。证明：若 $X$ 与自身独立，则存在常数 $a$ 使 $\mathbb P(X=a)=1$。</div>
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>把对象放回定义：自独立意味着事件 $\{X=x\}$ 与自身独立。关键等式链：定义→代入→化简→结论。</div>
+          <div class="ans">
+            自独立 $\Rightarrow$ 每个事件 $\{X=x\}$ 与自身独立：
+            $$\mathbb P(X=x)=\mathbb P(\{X=x\}\cap\{X=x\})=\mathbb P(X=x)^2.$$
+            因此对每个 $x$：$\mathbb P(X=x)\in\{0,1\}$。又因 $X$ 离散：$\sum_x\mathbb P(X=x)=1$。
+            故至少有一个值 $a$ 概率为 $1$，且由求和限制只能有一个。于是 $\mathbb P(X=a)=1$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="ex" id="a2">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">2</span>
+        <span class="ex-title">σ-代数对并集封闭吗？</span>
+        <span class="badge b-sigma">σ-代数</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          Zeigen oder widerlegen Sie: $\sigma$-Algebren über eine Menge $X$ sind vereinigungsstabil.
+          <div class="trans">证明或反驳：$X$ 上的 σ-代数在取并集下封闭。</div>
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>反驳题最有效：构造小反例。找两个 σ-代数，各含一个单点集，但其并不封闭。</div>
+          <div class="ans">
+            命题为<b>假</b>（指两个 σ-代数之并仍是 σ-代数）。反例：
+            $$X=\{1,2,3\},\quad \mathcal F_1=\{\emptyset,X,\{1\},\{2,3\}\},\quad \mathcal F_2=\{\emptyset,X,\{2\},\{1,3\}\}.$$
+            二者都是 σ-代数。$\mathcal F_1\cup\mathcal F_2$ 含 $\{1\}$ 和 $\{2\}$，但
+            $$\{1\}\cup\{2\}=\{1,2\}\notin\mathcal F_1\cup\mathcal F_2.$$
+            故并集不是 σ-代数。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="ex" id="a3">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">3</span>
+        <span class="ex-title">给出一个不是 σ-代数的 Dynkin-System</span>
+        <span class="badge b-measure">测度 / Dynkin</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          Geben Sie ein Dynkin-System an, welches keine $\sigma$-Algebra ist.
+          <div class="trans">给出一个 Dynkin-System 的例子，它不是 σ-代数。</div>
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>Dynkin 只要求<i>两两不交</i>可数并封闭；σ-代数要求任意可数并（含交）封闭。围绕这个差异构造：交集跑出系统即可。</div>
+          <div class="ans">
+            取 $\Omega=\{1,2,3,4\}$，
+            $$\mathcal D=\{\emptyset,\Omega,\{1,2\},\{3,4\},\{1,3\},\{2,4\}\}.$$
+            含 $\Omega$、补集封闭、两两不交并封闭 ⇒ 是 Dynkin-System。
+            但不是 σ-代数，因为
+            $$\{1,2\}\cap\{1,3\}=\{1\}\notin\mathcal D.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="ex" id="a4">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">4</span>
+        <span class="ex-title">骰子+硬币+骰子：建模与事件</span>
+        <span class="badge b-build">建模</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          (a) 先掷骰、再抛硬币、再掷骰，给出结果空间。<br>
+          (b) 骰子按点数计；硬币正面 $+10$、反面 $-10$；若两骰点数相同则两骰都记 $0$；关心总和。<br>
+          (c) 哪些事件导致结果 $-5,0,1,20,25$？
+          <div class="trans">Würfel–Münze–Würfel；硬币 Kopf=$10$, Zahl=$-10$；两骰相同则记 $0$。</div>
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>最小结果空间建模：先用完整三元组记录，再定义随机变量压成总和。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>
+            $$\Omega=\{1,\dots,6\}\times\{K,Z\}\times\{1,\dots,6\}.$$
+            <div class="subq">(b)</div>
+            对 $\omega=(w_1,m,w_2)$，记 $s(K)=10,\ s(Z)=-10$：
+            $$X(w_1,m,w_2)=\begin{cases}s(m),& w_1=w_2,\\ w_1+s(m)+w_2,& w_1\neq w_2.\end{cases}$$
+            <div class="subq">(c)</div>
+            $$\{X=-5\}=\{(1,Z,4),(2,Z,3),(3,Z,2),(4,Z,1)\}.$$
+            $$\{X=0\}=\{(4,Z,6),(6,Z,4)\}.$$
+            $$\{X=1\}=\{(5,Z,6),(6,Z,5)\}.$$
+            $$\{X=20\}=\{(4,K,6),(6,K,4)\}.$$
+            $$\{X=25\}=\emptyset.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5 -->
+    <div class="ex" id="a5">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">5</span>
+        <span class="ex-title">结果空间真的不含集合吗？（辨析）</span>
+        <span class="badge b-build">概念辨析</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          一名学生称"事件空间含集合，结果空间不含集合"。用例子说明该说法不正确。
+          <div class="trans">Ereignisraum enthält Mengen, Ergebnisraum nicht — widerlegen.</div>
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            结果空间的元素本身也可以是集合。从 $\{1,2,3\}$ 无序抽两个：
+            $$\Omega=\{\{1,2\},\{1,3\},\{2,3\}\}.$$
+            这里每个<b>结果</b>就是一个集合。而事件空间（σ-代数）是 $\Omega$ 的<b>子集</b>所构成的集族——两者层级不同，不是"含不含集合"的区别。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A6 -->
+    <div class="ex" id="a6">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">6</span>
+        <span class="ex-title">三元素集合上的全部 σ-代数</span>
+        <span class="badge b-sigma">σ-代数</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          $X=\{A,a,8\}$。明确写出 $X$ 上所有 σ-代数构成的集合 $\mathcal S(X)$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>三元素集合上的 σ-代数对应 $X$ 的划分（Partition）。</div>
+          <div class="ans">
+            $$\{\emptyset,X\},$$
+            $$\{\emptyset,\{A\},\{a,8\},X\},$$
+            $$\{\emptyset,\{a\},\{A,8\},X\},$$
+            $$\{\emptyset,\{8\},\{A,a\},X\},$$
+            $$\mathcal P(X).$$
+            共 $5$ 个。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A7 -->
+    <div class="ex" id="a7">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">7</span>
+        <span class="ex-title">两台机器缺陷数 / 五轮对局赢家</span>
+        <span class="badge b-build">建模</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          (a) 机器一每天 $n$ 件、机器二 $m$ 件，只关心某日缺陷总数。<br>
+          (b) 两人五轮，每轮 $A$、$B$ 各掷一骰，只关心每轮谁点数大。给出结果空间。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>最小结果空间：只把"真正关心的信息"放进 Ω。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>
+            $$\Omega=\{0,1,\dots,n+m\}.$$
+            <div class="subq">(b)</div>
+            每轮三种结果 $A$ 赢 / $B$ 赢 / $U$ 平：
+            $$\Omega=\{A,B,U\}^5.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A8 -->
+    <div class="ex" id="a8">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">8</span>
+        <span class="ex-title">五个实验的最小结果空间</span>
+        <span class="badge b-build">建模</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          为下列实验给出尽可能小的结果空间 $\Omega$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a) 某地某日黑色汽车数量</div>
+            $$\Omega=\mathbb N_0=\{0,1,2,\dots\}.$$
+            <div class="subq">(b) 两次掷骰</div>
+            $$\Omega=\{1,2,3,4,5,6\}^2.$$
+            <div class="subq">(c) 三次抛硬币</div>
+            $$\Omega=\{K,Z\}^3.$$
+            <div class="subq">(d) 灯泡寿命（小时）</div>
+            $$\Omega=[0,\infty).$$
+            <div class="subq">(e) 实值指数</div>
+            $$\Omega=\mathbb R.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A9 -->
+    <div class="ex" id="a9">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">9</span>
+        <span class="ex-title">三台发动机缺陷：事件运算</span>
+        <span class="badge b-build">建模 / 事件</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          检查三台发动机是否缺陷。$A$ 至少一台坏；$B$ 至多一台坏；$C$ 第3台坏；$D$ 恰好两台坏。
+          (a) 给出 $\Omega$；(b) 解释 $\bar A,\bar B,A\cap B,A\cup B,C\setminus B,B\cap D$；(c) 用 $M_i$ 表示 $A$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>
+            缺陷记 $D$、正常记 $N$：$\Omega=\{D,N\}^3.$
+            <div class="subq">(b)</div>
+            <ul>
+              <li>$\bar A$：没有发动机缺陷。</li>
+              <li>$\bar B$：多于一台缺陷。</li>
+              <li>$A\cap B$：至少一台且至多一台 ⇒ <b>恰好一台</b>缺陷。</li>
+              <li>$A\cup B$：恒成立 ⇒ $\Omega$。</li>
+              <li>$C\setminus B$：第3台缺陷且多于一台缺陷。</li>
+              <li>$B\cap D$：至多一台且恰好两台 ⇒ 不可能 ⇒ $\emptyset$。</li>
+            </ul>
+            <div class="subq">(c)</div>
+            $$A=M_1\cup M_2\cup M_3.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A10 -->
+    <div class="ex" id="a10">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">10</span>
+        <span class="ex-title">篮球夺冠概率违反 Kolmogorov 公理</span>
+        <span class="badge b-build">公理</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          四队夺冠概率被报为 $50\%,19\%,19\%,10\%$。证明与 Kolmogorov 公理不相容。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            "队 $i$ 夺冠"两两不交且并为全空间，恰一队夺冠，故应有
+            $$\sum_{i=1}^4\mathbb P(\text{队 }i)=1.$$
+            但 $0.50+0.19+0.19+0.10=0.98\neq1$。故不能构成概率分布。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A11 -->
+    <div class="ex" id="a11">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">11</span>
+        <span class="ex-title">证明 De Morgan 公式（任意指标）</span>
+        <span class="badge b-build">证明</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          对任意 $A_i\subseteq\Omega$ 证明 $\left(\bigcup_i A_i\right)^c=\bigcap_i A_i^c$ 与 $\left(\bigcap_i A_i\right)^c=\bigcup_i A_i^c$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>元素法：取任意 $x$，写出"属于"的逻辑等价条件。</div>
+          <div class="ans">
+            <b>第一式：</b>$x\in\left(\bigcup_i A_i\right)^c$ ⟺ $x$ 不在任何 $A_i$ 中 ⟺ $\forall i:\ x\in A_i^c$ ⟺ $x\in\bigcap_i A_i^c$。<br><br>
+            <b>第二式：</b>$x\in\left(\bigcap_i A_i\right)^c$ ⟺ $x$ 不在所有 $A_i$ 中 ⟺ $\exists i:\ x\notin A_i$ ⟺ $x\in\bigcup_i A_i^c$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A12 -->
+    <div class="ex" id="a12">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">12</span>
+        <span class="ex-title">由可数并封闭推出有限并 / 交封闭</span>
+        <span class="badge b-measure">σ-代数</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          已知 σ-代数对可数并封闭。证明有限并 $\bigcup_{i=1}^n A_i\in\mathcal F$，并由此得 $A\cap B\in\mathcal F$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            有限并补零成可数并：令 $B_i=A_i\ (i\le n)$，$B_i=\emptyset\ (i>n)$，则
+            $$\bigcup_{i=1}^n A_i=\bigcup_{i=1}^\infty B_i.$$
+            因 $\emptyset\in\mathcal F$，故 $\bigcup_{i=1}^n A_i\in\mathcal F$。<br><br>
+            交集用 De Morgan：$A\cap B=(A^c\cup B^c)^c$。$\mathcal F$ 对补集与并封闭，故 $A\cap B\in\mathcal F$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A13 -->
+    <div class="ex" id="a13">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">13</span>
+        <span class="ex-title">判断四个集合系统是否 σ-代数</span>
+        <span class="badge b-sigma">σ-代数</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          $\Omega=\{a,b,c,d,e\}$，判断 (i)-(iv) 哪些是 σ-代数。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>逐条查：含Ω？补集封闭？任意并/交封闭？找原子最快。</div>
+          <div class="ans">
+            <div class="subq">(i) $\{\emptyset,\{a\},\{b,c,d,e\},\Omega\}$ ✅</div>
+            是。由一集合与其补集 + $\emptyset,\Omega$ 构成。
+            <div class="subq">(ii) $\{\emptyset,\{a\},\{b\},\{a,b\},\{c,d,e\},\{a,c,d,e\},\{b,c,d,e\},\Omega\}$ ✅</div>
+            是。原子为 $\{a\},\{b\},\{c,d,e\}$，系统含其所有并。
+            <div class="subq">(iii) $\{\emptyset,\{a\},\{b\},\{c,d,e\},\{a,c,d,e\},\{b,c,d,e\},\Omega\}$ ❌</div>
+            否。$\{a\}\cup\{b\}=\{a,b\}$ 应含却缺失。
+            <div class="subq">(iv) $\{\emptyset,\{a,b,c\},\{c,d,e\},\{a,b\},\{d,e\},\{a,b,d,e\},\Omega\}$ ❌</div>
+            否。$\{a,b,c\}\cap\{c,d,e\}=\{c\}$ 应含却缺失，对交不封闭。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A14 -->
+    <div class="ex" id="a14">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">14</span>
+        <span class="ex-title">σ-代数生成自身：$\sigma(\mathcal A)=\mathcal A$</span>
+        <span class="badge b-sigma">σ-代数</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          证明任意 σ-代数 $\mathcal A$ 满足 $\sigma(\mathcal A)=\mathcal A$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $\sigma(\mathcal A)$ 是含 $\mathcal A$ 的最小 σ-代数。<br>
+            因 $\mathcal A$ 本身是 σ-代数且 $\mathcal A\subseteq\mathcal A$，故它是被取交的候选之一 ⇒ $\sigma(\mathcal A)\subseteq\mathcal A$。<br>
+            又由定义 $\mathcal A\subseteq\sigma(\mathcal A)$。<br>
+            两包含 ⇒ $\sigma(\mathcal A)=\mathcal A$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A15 -->
+    <div class="ex" id="a15">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">15</span>
+        <span class="ex-title">半开射线生成 Borel σ-代数</span>
+        <span class="badge b-sigma">σ-代数 / Borel</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          $\mathcal E=\{(-\infty,c)\mid c\in\mathbb R\}$。证明 $\sigma(\mathcal E)=\mathcal B(\mathbb R)$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>双向包含。⊆ 显然；⊇ 只需证开区间 $(a,b)$ 能由 $\mathcal E$ 经补、可数交并得到。</div>
+          <div class="ans">
+            <b>$\subseteq$：</b>每个 $(-\infty,c)$ 是开集 ⇒ $\in\mathcal B(\mathbb R)$，故 $\sigma(\mathcal E)\subseteq\mathcal B(\mathbb R)$。<br><br>
+            <b>$\supseteq$：</b>对 $a<b$：
+            $$(a,b)=(-\infty,b)\cap(-\infty,a]^c,\qquad (-\infty,a]=\bigcap_{n=1}^\infty\left(-\infty,a+\tfrac1n\right).$$
+            右式各项属 $\mathcal E$，故 $(-\infty,a]\in\sigma(\mathcal E)$，进而 $(a,b)\in\sigma(\mathcal E)$。
+            开区间生成 $\mathcal B(\mathbb R)$ ⇒ $\mathcal B(\mathbb R)\subseteq\sigma(\mathcal E)$。<br><br>
+            综上 $\sigma(\mathcal E)=\mathcal B(\mathbb R)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A16 -->
+    <div class="ex" id="a16">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">16</span>
+        <span class="ex-title">随机变量与像空间 Ω'</span>
+        <span class="badge b-build">建模 / 像空间</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          给出 $\Omega$、随机变量及像空间 $\Omega'$：(1) 三次掷骰点数和；(2) 五次射击命中数；(3) $n$ 个零件中缺陷比例。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(1) 点数和</div>
+            $\Omega=\{1,\dots,6\}^3$，$X(\omega_1,\omega_2,\omega_3)=\omega_1+\omega_2+\omega_3$，$\Omega'=\{3,\dots,18\}$。
+            <div class="subq">(2) 命中数</div>
+            $\Omega=\{0,1\}^5$（1=命中），$X=\sum_{i=1}^5\omega_i$，$\Omega'=\{0,1,2,3,4,5\}$。
+            <div class="subq">(3) 缺陷比例</div>
+            $\Omega=\{0,1\}^n$（1=缺陷），$X=\frac1n\sum_{i=1}^n\omega_i$，$\Omega'=\left\{0,\frac1n,\frac2n,\dots,1\right\}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A17 -->
+    <div class="ex" id="a17">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">17</span>
+        <span class="ex-title">射靶：几何概率（面积比）</span>
+        <span class="badge b-measure">测度 / 几何概率</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          射靶圆心 $(0,0)$，半径 $2\,$m，必中。(a) 给出 $\Omega$ 及基数；(b) 用子集描述事件；(c) 均匀分布下 $\mathbb P(A),\mathbb P(B),\mathbb P(C)$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>均匀分布 ⇒ 概率 = 面积比，不能用计数 Laplace。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>
+            $\Omega=\{(x,y)\in\mathbb R^2\mid x^2+y^2\le4\}$，基数<b>不可数 (überabzählbar)</b>。
+            <div class="subq">(b)</div>
+            $A=\{x^2+y^2<1\}$（距心 $<1$m）；$B=\{x\ge0,y\ge0\}$（右上 $\frac14$）；$C=\{x^2+y^2>0.25\}$（距心 $>0.5$m）。
+            <div class="subq">(c)</div>
+            总面积 $4\pi$。
+            $$\mathbb P(A)=\frac{\pi}{4\pi}=\frac14,\qquad \mathbb P(B)=\frac14,$$
+            $$\mathbb P(C)=\frac{4\pi-\pi(0.5)^2}{4\pi}=\frac{4\pi-\frac14\pi}{4\pi}=\frac{15}{16}.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A18 -->
+    <div class="ex" id="a18">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">18</span>
+        <span class="ex-title">期望的尾概率积分公式</span>
+        <span class="badge b-build">证明 / 积分</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">AUFGABE</div>
+          设 $X\ge0$ 为实值随机变量，证明 $E[X]=\int_0^\infty\mathbb P(X\ge t)\,dt$。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>层蛋糕公式：把 $X(\omega)$ 写成指示函数的积分，再用 Tonelli 交换积分次序。</div>
+          <div class="ans">
+            对每个 $\omega$：$\displaystyle X(\omega)=\int_0^\infty I_{\{X(\omega)\ge t\}}\,dt$。
+            $$E[X]=\int_\Omega\!\left(\int_0^\infty I_{\{X(\omega)\ge t\}}\,dt\right)d\mathbb P(\omega).$$
+            由 Tonelli/Fubini 交换次序：
+            $$E[X]=\int_0^\infty\!\left(\int_\Omega I_{\{X\ge t\}}\,d\mathbb P\right)dt=\int_0^\infty\mathbb P(X\ge t)\,dt.$$
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 真题 1 ============ -->
+  <section class="block">
+    <h2>🎯 考试真题</h2>
+
+    <div class="ex" id="e1">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">真题1</span>
+        <span class="ex-title">2021 · COVID-19 慕尼黑感染率（Aufgabe 2）</span>
+        <span class="badge b-exam">真题</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">背景</div>
+          慕尼黑 $1561505$ 名居民，研究真实感染率。随机抽 $N=5000$ 人无放回检测。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a) 结果空间与基数 (2P)</div>
+            "曾感染人数"：$\Omega=\{0,1,\dots,1561505\}$，$|\Omega|=1561506$。
+            <div class="subq">(b) 是否 Laplace？(2P)</div>
+            <b>否</b>。Laplace 要求各种"感染人数"等可能，毫无理由；且这些人数由大量个体状态组合而成，不会在数值上均匀分布。
+            <div class="subq">(c) Urnenmodell (4P)</div>
+            瓮中 $1561505$ 个球，每居民一球，类型为"曾感染/未感染"；从中<b>无放回 (ohne Zurücklegen)</b> 抽 $5000$ 个。若总感染 $M$ 人，则样本感染数服从超几何分布
+            $$X\sim\operatorname{Hyp}(1561505,M,5000).$$
+            <div class="subq">(d)(i) 参数 π 的含义 (2P)</div>
+            $\pi$ = 慕尼黑人口曾感染 COVID-19 的<b>感染率/比例</b>。
+            <div class="subq">(d)(ii) 偏离超过 1 个百分点的概率 (5P)</div>
+            $\pi=0.15$，$X\sim\operatorname{Bin}(5000,0.15)$，求
+            $$\mathbb P\!\left(\left|\tfrac{X}{5000}-0.15\right|>0.01\right)=\mathbb P(X<700)+\mathbb P(X>800).$$
+            正态逼近：$\mu=750,\ \sigma=\sqrt{5000\cdot0.15\cdot0.85}\approx25.25$。连续性修正：
+            $$z_{1,2}=\frac{699.5-750}{25.25}\approx-2.00,\ \frac{800.5-750}{25.25}\approx2.00.$$
+            $$\approx 2(1-\Phi(2.00))\approx 0.046.$$
+            <div class="subq">(e)(i) 概率树 (6P)</div>
+            记 $I$=曾感染，先验 $\mathbb P(I)=\rho,\ \mathbb P(I^c)=1-\rho$。检测：
+            $$\mathbb P(T+|I)=0.95,\ \mathbb P(T+|I^c)=0.01.$$
+            $$\mathbb P(I\cap T+)=0.95\rho,\quad \mathbb P(I^c\cap T+)=0.01(1-\rho),$$
+            $$\mathbb P(T+)=0.95\rho+0.01(1-\rho)=0.01+0.94\rho.$$
+            <div class="subq">(e)(ii) 使阳性预测值 ≥ 66% 的最小 ρ (4P)</div>
+            Bayes：
+            $$\mathbb P(I|T+)=\frac{0.95\rho}{0.01+0.94\rho}\ge0.66.$$
+            $$0.95\rho\ge0.0066+0.6204\rho\Rightarrow0.3296\rho\ge0.0066\Rightarrow\rho\ge\frac{0.0066}{0.3296}\approx0.020.$$
+            即比例至少约 $\mathbf{2.0\%}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 真题 2 -->
+    <div class="ex" id="e2">
+      <div class="ex-head" onclick="toggleEx(this)">
+        <span class="ex-num">真题2</span>
+        <span class="ex-title">ss2024 · 三人各掷一骰（Aufgabe 3, 10P）</span>
+        <span class="badge b-exam">真题</span>
+      </div>
+      <div class="ex-body">
+        <div class="q">
+          <div class="label">背景</div>
+          三人依次各掷一次公平骰子。
+        </div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a) 三次掷骰最小结果空间</div>
+            $$\Omega_1=\{1,2,3,4,5,6\}^3=\{(i,j,k):i,j,k\in\{1,\dots,6\}\}.$$
+            <div class="subq">(b) Ω₁ 上最大 σ-代数</div>
+            幂集 $\mathcal F_1=\mathcal P(\Omega_1)$。
+            <div class="subq">(c) 点数和最小结果空间</div>
+            最小 $1+1+1=3$，最大 $6+6+6=18$：$\Omega_2=\{3,4,\dots,18\}$。
+            <div class="subq">(d) Ω₂ 上三个 σ-代数</div>
+            最大：$\mathcal F_2=\mathcal P(\Omega_2)$；最小：$\mathcal F_2'=\{\emptyset,\Omega_2\}$；
+            含一个三元素集合者，取 $A=\{3,4,5\}$：
+            $$\mathcal F_2''=\{\emptyset,\{3,4,5\},\{6,7,\dots,18\},\Omega_2\}.$$
+            <div class="subq">(e) 构造像测度的函数</div>
+            $f:\Omega_1\to\Omega_2,\ f(i,j,k)=i+j+k.$
+            <div class="subq">(f) 可测性表与像测度值（计数测度 Zählmaß）</div>
+            像测度 $\mu_f(B)=\mu_Z(f^{-1}(B))$。
+            <table>
+              <tr><th>$B$</th><th>$f^{-1}(B)$</th><th>$\mu_f(B)$</th></tr>
+              <tr><td>$\{3\}$</td><td>$\{(1,1,1)\}$</td><td>$1$</td></tr>
+              <tr><td>$\{4\}$</td><td>$\{(1,1,2),(1,2,1),(2,1,1)\}$</td><td>$3$</td></tr>
+            </table>
+            因 $\mathcal F_1=\mathcal P(\Omega_1)$，两原像均可测。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 常见错误 ============ -->
+  <section class="block" id="mistakes">
+    <h2>⚠️ 常见错误提醒</h2>
+    <ul class="warn">
+      <li><b>把独立当成互斥</b>：互斥 $A\cap B=\emptyset$；独立 $\mathbb P(A\cap B)=\mathbb P(A)\mathbb P(B)$。除非某事件概率为 $0$，互斥事件通常不独立。</li>
+      <li><b>默认使用 Laplace</b>：只有所有基本结果等可能才能写 $\mathbb P(A)=|A|/|\Omega|$，否则先说明模型假设。</li>
+      <li><b>结果空间太细或太粗</b>：只问缺陷总数 ⇒ $\{0,\dots,n\}$；问每件是否缺陷 ⇒ $\{0,1\}^n$。</li>
+      <li><b>事件没写成集合</b>：先写 $A=\{\omega:\text{条件}\}$ 再算 $\mathbb P(A)$。</li>
+      <li><b>忘记归一化</b>：给出 $c/x!$、$cq^x$ 时第一步永远是令点概率之和为 $1$。</li>
+      <li><b>σ-代数只查有限并</b>：要求补集与<i>可数</i>并封闭；有限集里可数并退化为有限并也应说明。</li>
+      <li><b>生成 σ-代数漏原子</b>：先找原子分割，再写所有原子的并，别只列原集合及补集。</li>
+      <li><b>反例没给完整概率空间</b>：反驳题要写清 $\Omega$、事件、概率，否则只是直觉而非形式反例。</li>
+    </ul>
+  </section>
+
+  <!-- ============ 必会题型 ============ -->
+  <section class="block" id="mustknow">
+    <h2>✅ 本章必会题型清单</h2>
+    <ul class="checklist">
+      <li>会根据题意写出合适的结果空间 $\Omega$。</li>
+      <li>会把文字事件翻译成 $\Omega$ 的子集。</li>
+      <li>会判断能否使用 Laplace 模型并计算 $|A|/|\Omega|$。</li>
+      <li>会用补集、容斥、不交并和单调性计算或估计概率。</li>
+      <li>会区分独立、互斥、对立事件，并用公式证明或反驳。</li>
+      <li>会用归一化条件求未知常数 $c$。</li>
+      <li>会验证一个集合族是不是 σ-代数。</li>
+      <li>会由给定集合找原子分割，写出生成的 σ-代数。</li>
+      <li>会说明两个 σ-代数的并不一定是 σ-代数，并给出反例。</li>
+      <li>会区分 σ-代数与 Dynkin-System 的封闭性要求。</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<script>
+function toggleEx(head){
+  const ex=head.parentElement;
+  ex.classList.toggle('open');
+}
+function toggleSol(btn){
+  const sol=btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent=sol.classList.contains('show')?'隐藏解答':'显示解答';
+}
+function toggleAll(open){
+  document.querySelectorAll('.ex').forEach(ex=>{
+    ex.classList.toggle('open',open);
+  });
+}
+function showAllSol(show){
+  document.querySelectorAll('.sol').forEach(sol=>{
+    sol.classList.toggle('show',show);
+    const btn=sol.previousElementSibling;
+    if(btn&&btn.classList.contains('toggle-sol'))
+      btn.textContent=show?'隐藏解答':'显示解答';
+  });
+  if(show) toggleAll(true);
+}
+// 移动端点击导航后关闭侧栏
+document.querySelectorAll('nav.side a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.querySelector('nav.side').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

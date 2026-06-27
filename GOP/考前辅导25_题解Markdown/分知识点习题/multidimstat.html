@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multivariate Statistik · 协方差与 Hessian 矩阵</title>
+<script>
+  window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1e2433;--muted:#5a6478;--indigo:#6366f1;
+    --indigo-d:#4338ca;--teal:#0d9488;--amber:#f59e0b;--rose:#e11d48;--green:#16a34a;--line:#e2e6f0;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.65;scroll-behavior:smooth;}
+  header.hero{background:linear-gradient(135deg,#0f766e 0%,#6366f1 55%,#9333ea 100%);
+    color:#fff;padding:46px 20px 38px;text-align:center;}
+  header.hero h1{margin:0;font-size:1.8em;font-weight:800;letter-spacing:.3px;}
+  header.hero .sub{font-size:1.02em;opacity:.95;margin-top:8px;}
+  header.hero .zh{display:block;font-size:.9em;opacity:.85;margin-top:4px;}
+  nav.pills{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;gap:7px;
+    overflow-x:auto;padding:11px 14px;}
+  nav.pills a{flex:0 0 auto;text-decoration:none;font-size:.82em;font-weight:600;padding:7px 13px;
+    border-radius:20px;color:var(--muted);background:#eef1f8;white-space:nowrap;transition:.15s;}
+  nav.pills a:hover{color:#fff;background:var(--indigo);}
+  main{max-width:1040px;margin:0 auto;padding:24px 16px 80px;}
+  section.blk{background:var(--card);border-radius:18px;padding:26px;margin-bottom:30px;
+    box-shadow:0 6px 24px rgba(40,50,90,.07);border:1px solid var(--line);scroll-margin-top:64px;}
+  .head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:2px solid var(--line);
+    padding-bottom:14px;margin-bottom:18px;}
+  .head .num{font-size:1.5em;font-weight:800;color:var(--indigo);}
+  .head h2{margin:0;font-size:1.25em;}
+  .head h2 .zh{font-size:.78em;color:var(--muted);font-weight:600;margin-left:6px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  .card{background:#fbfcfe;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:16px;}
+  .card h3{margin:0 0 10px;font-size:1.02em;display:flex;align-items:center;gap:7px;}
+  .card.formula{background:#f5f7ff;}
+  .card.concept{background:#fffdf7;border-left:4px solid var(--amber);}
+  .card.mem{background:#f3faf8;border-left:4px solid var(--teal);}
+  .bi .de{display:block;color:var(--ink);}
+  .bi .zh{display:block;color:var(--indigo-d);font-size:.92em;margin-top:3px;}
+  .viz-controls{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:12px;align-items:flex-end;}
+  .ctrl{display:flex;flex-direction:column;font-size:.85em;min-width:150px;flex:1;}
+  .ctrl .lab{font-weight:700;margin-bottom:3px;display:flex;justify-content:space-between;}
+  .ctrl .lab .v{color:var(--indigo);font-variant-numeric:tabular-nums;}
+  input[type=range]{width:100%;accent-color:var(--indigo);}
+  canvas{width:100%;display:block;border-radius:10px;background:#fff;}
+  .triple{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:760px){.triple{grid-template-columns:1fr;}}
+  .canvas-wrap{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:10px;}
+  .canvas-wrap .ct{font-size:.82em;font-weight:700;color:var(--muted);margin-bottom:6px;text-align:center;}
+  .matbox{font-variant-numeric:tabular-nums;font-size:.9em;display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-top:10px;}
+  .mat{display:inline-grid;grid-template-columns:auto auto;gap:4px 16px;padding:8px 14px;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:3px;}
+  .mat span{text-align:center;min-width:46px;font-weight:700;}
+  .metrics{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px;}
+  .metric{background:#eef1f8;border-radius:10px;padding:8px 14px;text-align:center;min-width:108px;}
+  .metric .mv{font-size:1.2em;font-weight:800;color:var(--indigo-d);font-variant-numeric:tabular-nums;}
+  .metric .ml{font-size:.78em;color:var(--muted);}
+  .verdict{text-align:center;font-weight:800;font-size:1.05em;padding:10px;border-radius:10px;margin-top:12px;}
+  .v-min{background:#d1f5ef;color:#0f766e;} .v-max{background:#fde2e7;color:#b91c4a;}
+  .v-saddle{background:#fef3d4;color:#92600a;} .v-deg{background:#eef1f8;color:#5a6478;}
+  .btn{font:inherit;font-size:.83em;font-weight:700;cursor:pointer;border:none;padding:8px 16px;border-radius:8px;color:#fff;}
+  .btn.idg{background:var(--indigo);} .btn.tl{background:var(--teal);} .btn.am{background:var(--amber);color:#3a2a00;}
+  .btn:hover{filter:brightness(1.06);}
+  .btnrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px;}
+  .chip{font:inherit;font-size:.78em;font-weight:700;cursor:pointer;border:1px solid var(--line);
+    background:#fff;padding:6px 11px;border-radius:18px;color:var(--muted);}
+  .chip.on{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+  .ex{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px 16px;margin-bottom:13px;background:#fffdf7;}
+  .ex .q{font-weight:600;}
+  .ex .qzh{color:var(--indigo-d);font-size:.9em;margin:5px 0 8px;}
+  .ex button.sol-btn{font:inherit;font-size:.82em;font-weight:700;cursor:pointer;background:var(--amber);color:#3a2a00;border:none;padding:6px 14px;border-radius:8px;}
+  .ex .sol{display:none;margin-top:11px;padding:12px 14px;background:#fff;border:1px dashed #e0c990;border-radius:9px;font-size:.94em;}
+  .ex .sol.open{display:block;}
+  .ex .sol .lbl{font-weight:700;color:var(--amber);display:block;margin-bottom:4px;}
+  table.cmp{width:100%;border-collapse:collapse;font-size:.88em;margin-top:6px;}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+  table.cmp th{background:#eef1f8;}
+  .tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.8em;font-weight:700;}
+  .tag.pos{background:#d1f5ef;color:#0f766e;} .tag.neg{background:#fde2e7;color:#b91c4a;}
+  footer{text-align:center;color:var(--muted);font-size:.85em;padding:20px;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Multivariate Statistik</h1>
+  <div class="sub">Kovarianz · Kovarianzmatrix · Hesse-Matrix · Eigenwerte
+    <span class="zh">多维统计 · 协方差 · 协方差矩阵 · Hessian 矩阵 · 特征值 · 由浅入深</span>
+  </div>
+</header>
+
+<nav class="pills">
+  <a href="#why">0. 为什么</a>
+  <a href="#cov">1. 协方差</a>
+  <a href="#mat">2. 协方差矩阵</a>
+  <a href="#corr">3. 相关系数</a>
+  <a href="#lab1">4. 椭圆实验室</a>
+  <a href="#eig">5. 特征值/PCA</a>
+  <a href="#hess">6. Hessian</a>
+  <a href="#lab2">7. 临界点实验室</a>
+  <a href="#link">8. 二者关系</a>
+  <a href="#ex">9. 例题</a>
+</nav>
+
+<main>
+
+<!-- 0 WHY -->
+<section class="blk" id="why">
+  <div class="head"><span class="num">0</span><h2>Warum mehrere Dimensionen?<span class="zh">为什么要研究"多维"？</span></h2></div>
+  <div class="card concept">
+    <h3>💡 一维不够用</h3>
+    <p class="bi"><span class="de">In einer Dimension beschreibt die <b>Varianz</b> die Streuung. Bei zwei oder mehr Variablen reicht das nicht: Größe und Gewicht eines Menschen schwanken nicht nur einzeln, sie schwanken <b>gemeinsam</b> — größere Menschen sind tendenziell schwerer.</span>
+    <span class="zh">一维时,<b>方差</b>就能描述数据的分散程度。但现实中变量往往成对出现:身高和体重不仅各自波动,还会<b>一起波动</b>——高的人往往更重。描述这种"共同变化"的工具,就是<b>协方差</b>。</span></p>
+    <p class="bi"><span class="de">Zwei symmetrische Matrizen tauchen dabei immer wieder auf: die <b>Kovarianzmatrix</b> (Form einer Datenwolke) und die <b>Hesse-Matrix</b> (Krümmung einer Funktion). Beide versteht man über dieselbe Idee — <b>Eigenwerte</b>.</span>
+    <span class="zh">本章的两个主角都是<b>对称矩阵</b>:<b>协方差矩阵</b>(描述数据云的形状)和 <b>Hessian 矩阵</b>(描述函数的弯曲方式)。理解它们的钥匙是同一把——<b>特征值分解</b>。</span></p>
+  </div>
+</section>
+
+<!-- 1 COVARIANCE -->
+<section class="blk" id="cov">
+  <div class="head"><span class="num">1</span><h2>Von Varianz zu Kovarianz<span class="zh">第一步:从方差到协方差</span></h2></div>
+  <div class="grid2">
+    <div class="card formula">
+      <h3>📐 方差(复习)</h3>
+      \[\mathrm{Var}(X)=E\big[(X-\mu_X)^2\big]\]
+      <p class="bi"><span class="zh">衡量 \(X\) 自己离均值有多远,平方后必<b>非负</b>。</span></p>
+    </div>
+    <div class="card formula">
+      <h3>📐 协方差</h3>
+      \[\mathrm{Cov}(X,Y)=E\big[(X-\mu_X)(Y-\mu_Y)\big]\]
+      <p class="bi"><span class="zh">把两个偏差<b>相乘</b>:当 \(X,Y\) 同时偏大或同时偏小时乘积为正;一个偏大另一个偏小时为负。</span></p>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🧠 符号怎么看 · 一句话记住</h3>
+    <p class="bi"><span class="zh"><b>协方差为正</b>=同涨同跌(正相关);<b>为负</b>=此消彼长(负相关);<b>≈0</b>=没有线性关系。注意:<b>\(\mathrm{Cov}(X,X)=\mathrm{Var}(X)\)</b>——方差只是"自己和自己的协方差"。样本估计用 \(n-1\) 做无偏修正:</span></p>
+    \[\widehat{\mathrm{Cov}}(X,Y)=\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar x)(y_i-\bar y)\]
+  </div>
+  <div class="card concept">
+    <h3>⚠️ 协方差的缺点</h3>
+    <p class="bi"><span class="zh">协方差<b>带量纲、无上限</b>:身高用厘米还是米算,数值差 100 倍,但相关程度没变。所以它适合比较"方向",不适合比较"强弱"。要比较强弱,需要归一化成<b>相关系数</b>(第 3 节)。</span></p>
+  </div>
+</section>
+
+<!-- 2 COV MATRIX -->
+<section class="blk" id="mat">
+  <div class="head"><span class="num">2</span><h2>Die Kovarianzmatrix<span class="zh">第二步:协方差矩阵</span></h2></div>
+  <p class="bi"><span class="de">Bei mehreren Variablen sammelt man alle paarweisen Kovarianzen in einer Matrix \(\Sigma\). Auf der Diagonale stehen die Varianzen, außerhalb die Kovarianzen.</span>
+  <span class="zh">多个变量时,把所有两两协方差排成一张表,就是协方差矩阵 \(\Sigma\)。<b>对角线是各自的方差,非对角线是两两协方差</b>。</span></p>
+  <div class="card formula">
+    \[\Sigma=\begin{pmatrix}\sigma_X^2 & \sigma_{XY}\\[4pt] \sigma_{XY} & \sigma_Y^2\end{pmatrix}\qquad(\text{2 维})\]
+    <p class="bi"><span class="zh">它的三大性质,务必记牢:</span></p>
+    <p class="bi"><span class="zh">
+    ①<b>对称</b>:\(\sigma_{XY}=\sigma_{YX}\),因为乘法可交换。<br>
+    ②<b>对角线非负</b>:方差永远 \(\ge 0\)。<br>
+    ③<b>半正定 (PSD)</b>:任何方向上的方差都不可能为负——这是协方差矩阵<b>最深刻</b>的性质,第 8 节会解释为什么。</span></p>
+  </div>
+</section>
+
+<!-- 3 CORRELATION -->
+<section class="blk" id="corr">
+  <div class="head"><span class="num">3</span><h2>Korrelationskoeffizient<span class="zh">第三步:相关系数(归一化的协方差)</span></h2></div>
+  <div class="grid2">
+    <div class="card formula">
+      <h3>📐 Pearson 相关系数</h3>
+      \[\rho_{XY}=\frac{\sigma_{XY}}{\sigma_X\,\sigma_Y}\in[-1,\,1]\]
+      <p class="bi"><span class="zh">用两者标准差去除,<b>消掉量纲</b>,锁定在 \([-1,1]\) 之间,可直接比较强弱。</span></p>
+    </div>
+    <div class="card mem">
+      <h3>🧠 数值含义</h3>
+      <p class="bi"><span class="zh"><b>+1</b>=完美正相关(点全在一条上升直线上);<b>−1</b>=完美负相关;<b>0</b>=无线性关系。<br><b>⚠️ 关键陷阱</b>:\(\rho=0\) 只说明<b>没有线性关系</b>,不代表独立!如 \(Y=X^2\) 时相关系数可能为 0,但二者显然强相关。</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 LAB1 -->
+<section class="blk" id="lab1">
+  <div class="head"><span class="num">4</span><h2>Labor: Kovarianz-Ellipse<span class="zh">第四步:协方差椭圆实验室(核心!)</span></h2></div>
+  <p class="bi"><span class="de">Ziehe an den Reglern und beobachte, wie sich die Datenwolke und ihre <b>Konfidenz-Ellipse</b> verformen. Die Ellipse zeigt die Geometrie von \(\Sigma\).</span>
+  <span class="zh">拖动滑块,看点云和它的<b>置信椭圆</b>如何随协方差矩阵改变形状。椭圆就是 \(\Sigma\) 的"可视化身体"。</span></p>
+  <div class="viz-controls">
+    <div class="ctrl"><div class="lab"><span>σ²ₓ (X 方差)</span><span class="v" id="vx_v">1.5</span></div>
+      <input type="range" id="vx" min="0.2" max="4" step="0.1" value="1.5"></div>
+    <div class="ctrl"><div class="lab"><span>σ²ᵧ (Y 方差)</span><span class="v" id="vy_v">1.0</span></div>
+      <input type="range" id="vy" min="0.2" max="4" step="0.1" value="1.0"></div>
+    <div class="ctrl"><div class="lab"><span>σₓᵧ (协方差)</span><span class="v" id="cv_v">0.8</span></div>
+      <input type="range" id="cv" min="-2" max="2" step="0.05" value="0.8"></div>
+  </div>
+  <div class="triple">
+    <div class="canvas-wrap">
+      <div class="ct">数据云 + 椭圆 (紫=主特征向量, 绿=次特征向量)</div>
+      <canvas id="cov_canvas"></canvas>
+    </div>
+    <div class="canvas-wrap">
+      <div class="ct">协方差矩阵 Σ 与其特征分解</div>
+      <div class="matbox" style="flex-direction:column;gap:8px">
+        <div>\(\Sigma=\)</div>
+        <div class="mat"><span id="s11">–</span><span id="s12">–</span><span id="s21">–</span><span id="s22">–</span></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mv" id="o_rho">–</div><div class="ml">相关系数 ρ</div></div>
+        <div class="metric"><div class="mv" id="o_l1">–</div><div class="ml">特征值 λ₁ (主轴)</div></div>
+        <div class="metric"><div class="mv" id="o_l2">–</div><div class="ml">特征值 λ₂ (次轴)</div></div>
+        <div class="metric"><div class="mv" id="o_ang">–</div><div class="ml">主轴方向 (°)</div></div>
+        <div class="metric" style="background:#e9fbf6"><div class="mv" id="o_det" style="color:#0f766e">–</div><div class="ml">det Σ (总分散)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🔬 动手观察</h3>
+    <p class="bi"><span class="zh">① 协方差设为 <b>0</b>:椭圆的轴正好水平/垂直,无倾斜(X、Y 不相关)。② 加大协方差:椭圆<b>沿对角线倾斜拉长</b>,ρ 趋近 ±1。③ 把协方差拖到极端,你会发现 <b>det Σ 趋于 0、λ₂ 趋于 0</b>——椭圆塌成一条线,说明数据几乎落在一条直线上(强共线性)。④ <b>特征值 = 椭圆两个半轴长度的平方</b>,特征向量 = 椭圆轴的方向。这就是 PCA 的几何起点。</span></p>
+  </div>
+</section>
+
+<!-- 5 EIGEN / PCA -->
+<section class="blk" id="eig">
+  <div class="head"><span class="num">5</span><h2>Eigenwerte, Eigenvektoren & PCA<span class="zh">第五步:特征值、特征向量与主成分分析</span></h2></div>
+  <div class="card formula">
+    <h3>📐 特征分解</h3>
+    \[\Sigma\,\mathbf{v}=\lambda\,\mathbf{v}\qquad\Longrightarrow\qquad \Sigma=Q\,\Lambda\,Q^{\top}\]
+    <p class="bi"><span class="zh">对协方差矩阵做特征分解:<b>特征向量 \(\mathbf v\)</b> 是数据分散的"主方向",<b>特征值 \(\lambda\)</b> 是该方向上的方差大小。因为 \(\Sigma\) 对称,特征向量<b>互相垂直</b>,正好构成椭圆的两条主轴。</span></p>
+  </div>
+  <div class="grid2">
+    <div class="card concept">
+      <h3>🎯 这就是 PCA</h3>
+      <p class="bi"><span class="zh"><b>主成分分析 (PCA)</b> 就是:找出协方差矩阵<b>特征值最大</b>的方向,因为那是数据变化最剧烈、信息最多的方向。把数据投影到前几个主方向,就能用更少维度保留大部分信息——降维的本质。</span></p>
+    </div>
+    <div class="card mem">
+      <h3>🧠 2×2 特征值速算</h3>
+      <p class="bi"><span class="zh">对 \(\begin{pmatrix}a&c\\c&b\end{pmatrix}\):迹 \(\text{tr}=a+b\),行列式 \(\det=ab-c^2\)。</span></p>
+      \[\lambda=\frac{\text{tr}\pm\sqrt{\text{tr}^2-4\det}}{2}\]
+      <p class="bi"><span class="zh">两特征值之<b>和=迹</b>,之<b>积=行列式</b>。考试常用这个秒验算。</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 HESSIAN -->
+<section class="blk" id="hess">
+  <div class="head"><span class="num">6</span><h2>Die Hesse-Matrix<span class="zh">第六步:Hessian 矩阵(二阶导数的矩阵)</span></h2></div>
+  <p class="bi"><span class="de">Während der Gradient die <b>Steigung</b> einer Funktion beschreibt, beschreibt die Hesse-Matrix die <b>Krümmung</b> — alle zweiten partiellen Ableitungen.</span>
+  <span class="zh">如果说梯度描述函数的<b>坡度(一阶)</b>,那么 Hessian 矩阵描述函数的<b>弯曲方式(二阶)</b>,它装着所有二阶偏导数。</span></p>
+  <div class="card formula">
+    \[H=\nabla^2 f=\begin{pmatrix}\dfrac{\partial^2 f}{\partial x^2} & \dfrac{\partial^2 f}{\partial x\,\partial y}\\[10pt] \dfrac{\partial^2 f}{\partial y\,\partial x} & \dfrac{\partial^2 f}{\partial y^2}\end{pmatrix}=\begin{pmatrix}f_{xx}&f_{xy}\\ f_{yx}&f_{yy}\end{pmatrix}\]
+    <p class="bi"><span class="zh"><b>对称性</b>(Schwarz 定理):只要二阶偏导连续,则 \(f_{xy}=f_{yx}\),所以 Hessian 和协方差矩阵一样是<b>对称矩阵</b>——又能用特征值分析了。</span></p>
+  </div>
+  <div class="card mem">
+    <h3>🧠 它有什么用?二阶泰勒展开</h3>
+    <p class="bi"><span class="zh">在临界点 \(\mathbf x_0\)(梯度为零)附近,函数近似为:</span></p>
+    \[f(\mathbf x)\approx f(\mathbf x_0)+\underbrace{\nabla f^{\top}\Delta\mathbf x}_{=0\text{ 在临界点}}+\tfrac12\,\Delta\mathbf x^{\top}H\,\Delta\mathbf x\]
+    <p class="bi"><span class="zh">既然一阶项为零,<b>函数往哪边弯、是凸是凹,全由 Hessian 决定</b>。这正是判断极值点类型的依据——机器学习里的损失函数优化、牛顿法,核心都在这。</span></p>
+  </div>
+</section>
+
+<!-- 7 LAB2 -->
+<section class="blk" id="lab2">
+  <div class="head"><span class="num">7</span><h2>Labor: Kritische Punkte<span class="zh">第七步:临界点分类实验室(核心!)</span></h2></div>
+  <p class="bi"><span class="de">Wir betrachten die quadratische Form \(f(x,y)=a\,x^2+2c\,xy+b\,y^2\). Ihre Hesse-Matrix ist \(\begin{pmatrix}2a&2c\\2c&2b\end{pmatrix}\). Die <b>Vorzeichen der Eigenwerte</b> entscheiden über den Typ des kritischen Punkts im Ursprung.</span>
+  <span class="zh">考察二次型 \(f(x,y)=a\,x^2+2c\,xy+b\,y^2\),它的 Hessian 是 \(\begin{pmatrix}2a&2c\\2c&2b\end{pmatrix}\)。原点是临界点,其类型由 Hessian <b>特征值的符号</b>决定。</span></p>
+  <div class="btnrow" style="margin-bottom:8px">
+    <span style="font-size:.82em;font-weight:700;color:#5a6478;align-self:center">预设:</span>
+    <button class="chip on" data-p="bowl">碗形(最小值)</button>
+    <button class="chip" data-p="dome">穹顶(最大值)</button>
+    <button class="chip" data-p="saddle">鞍点</button>
+    <button class="chip" data-p="valley">山谷(退化)</button>
+  </div>
+  <div class="viz-controls">
+    <div class="ctrl"><div class="lab"><span>a (x² 系数)</span><span class="v" id="ha_v">1.0</span></div>
+      <input type="range" id="ha" min="-2" max="2" step="0.1" value="1.0"></div>
+    <div class="ctrl"><div class="lab"><span>b (y² 系数)</span><span class="v" id="hb_v">1.0</span></div>
+      <input type="range" id="hb" min="-2" max="2" step="0.1" value="1.0"></div>
+    <div class="ctrl"><div class="lab"><span>c (xy 交叉项)</span><span class="v" id="hc_v">0.0</span></div>
+      <input type="range" id="hc" min="-2" max="2" step="0.1" value="0.0"></div>
+  </div>
+  <div class="triple">
+    <div class="canvas-wrap">
+      <div class="ct">等高线图 (红=高 / 蓝=低), 黑线=Hessian 特征向量方向</div>
+      <canvas id="hess_canvas"></canvas>
+    </div>
+    <div class="canvas-wrap">
+      <div class="ct">Hessian 矩阵 H 与特征值</div>
+      <div class="matbox" style="flex-direction:column;gap:8px">
+        <div>\(H=\)</div>
+        <div class="mat"><span id="h11">–</span><span id="h12">–</span><span id="h21">–</span><span id="h22">–</span></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mv" id="h_l1">–</div><div class="ml">特征值 λ₁</div></div>
+        <div class="metric"><div class="mv" id="h_l2">–</div><div class="ml">特征值 λ₂</div></div>
+        <div class="metric"><div class="mv" id="h_det">–</div><div class="ml">det H</div></div>
+      </div>
+      <div class="verdict" id="h_verdict">–</div>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🧠 判别法则 · 背下这张表</h3>
+    <table class="cmp">
+      <tr><th>特征值符号</th><th>临界点类型</th><th>等高线形状</th><th>定性</th></tr>
+      <tr><td>λ₁>0 且 λ₂>0</td><td><span class="tag pos">局部最小值</span></td><td>同心椭圆,中心是谷底</td><td>正定 (PD)</td></tr>
+      <tr><td>λ₁<0 且 λ₂<0</td><td><span class="tag neg">局部最大值</span></td><td>同心椭圆,中心是峰顶</td><td>负定 (ND)</td></tr>
+      <tr><td>一正一负</td><td>鞍点 Sattelpunkt</td><td>双曲线,马鞍形</td><td>不定 (indefinite)</td></tr>
+      <tr><td>含 0</td><td>退化(需更高阶判断)</td><td>退化为平行线/平坦</td><td>半定 (semidef.)</td></tr>
+    </table>
+    <p class="bi" style="margin-top:8px"><span class="zh">速记:<b>行列式判别法</b>。\(\det H>0\) 且 \(f_{xx}>0\) → 最小值;\(\det H>0\) 且 \(f_{xx}<0\) → 最大值;\(\det H<0\) → 鞍点(因为 \(\det=\lambda_1\lambda_2<0\) 意味着两特征值异号)。</span></p>
+  </div>
+</section>
+
+<!-- 8 LINK -->
+<section class="blk" id="link">
+  <div class="head"><span class="num">8</span><h2>Die tiefe Verbindung<span class="zh">第八步:协方差矩阵 ↔ Hessian 的深层联系</span></h2></div>
+  <div class="card concept">
+    <h3>⭐ 同一种数学,两个故事</h3>
+    <p class="bi"><span class="zh">协方差矩阵和 Hessian 都是<b>对称矩阵</b>,都靠<b>特征值分解</b>读懂几何。它们之间有一座最美的桥:<b>多元高斯分布</b>。</span></p>
+    \[p(\mathbf x)\propto \exp\!\Big(-\tfrac12\,(\mathbf x-\boldsymbol\mu)^{\top}\,\Sigma^{-1}\,(\mathbf x-\boldsymbol\mu)\Big)\]
+    <p class="bi"><span class="zh">取对数后,负对数似然(可看作"能量")是个二次型,它的 <b>Hessian 恰好等于 \(\Sigma^{-1}\)</b>(协方差矩阵的逆,即精度矩阵)。也就是说:</span></p>
+    <p class="bi"><span class="zh"><b>协方差大的方向 → 概率曲面平缓 → Hessian(曲率)小;协方差小的方向 → 概率曲面陡峭 → Hessian 大。</b>二者互为倒数关系。</span></p>
+  </div>
+  <div class="grid2">
+    <div class="card mem">
+      <h3>🧠 为什么 Σ 一定半正定?</h3>
+      <p class="bi"><span class="zh">任取一个方向 \(\mathbf w\),投影后的方差是 \(\mathbf w^{\top}\Sigma\,\mathbf w=\mathrm{Var}(\mathbf w^{\top}\mathbf X)\ge 0\)。方差不可能为负,所以对任意 \(\mathbf w\) 都有 \(\mathbf w^{\top}\Sigma\,\mathbf w\ge 0\)——这正是<b>半正定</b>的定义。同理,损失函数在最小值处 Hessian 半正定,因为往哪个方向走都不会下降。</span></p>
+    </div>
+    <div class="card formula">
+      <h3>📋 对照速查</h3>
+      <table class="cmp">
+        <tr><th></th><th>协方差矩阵 Σ</th><th>Hessian H</th></tr>
+        <tr><td>来自</td><td>数据/随机变量</td><td>函数二阶导</td></tr>
+        <tr><td>对称?</td><td>是</td><td>是</td></tr>
+        <tr><td>特征向量</td><td>数据主方向(PCA)</td><td>主曲率方向</td></tr>
+        <tr><td>特征值</td><td>各方向方差</td><td>各方向曲率</td></tr>
+        <tr><td>正定意味</td><td>所有方向都有正方差</td><td>临界点是最小值</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 9 EXERCISES -->
+<section class="blk" id="ex">
+  <div class="head"><span class="num">9</span><h2>Übungen<span class="zh">第九步:例题</span></h2></div>
+
+  <div class="ex">
+    <div class="q">Beispiel 9.1: Daten \(X=(2,4,6)\), \(Y=(3,7,8)\). Berechne die Stichproben-Kovarianz.</div>
+    <div class="qzh">例题 9.1:数据 \(X=(2,4,6)\),\(Y=(3,7,8)\)。求样本协方差。</div>
+    <button class="sol-btn" data-t="s1">显示解答</button>
+    <div class="sol" id="s1"><span class="lbl">解答</span>
+    均值 \(\bar x=4,\ \bar y=6\)。偏差乘积:<br>
+    \((2-4)(3-6)=(-2)(-3)=6\);\((4-4)(7-6)=0\);\((6-4)(8-6)=(2)(2)=4\)。<br>
+    \[\widehat{\mathrm{Cov}}=\frac{6+0+4}{3-1}=\frac{10}{2}=5.\]
+    协方差为正 → X、Y 正相关(同涨同跌)。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 9.2: Mit \(\sigma_X^2=4,\ \sigma_Y^2=9,\ \sigma_{XY}=3\). Schreibe \(\Sigma\) und berechne \(\rho\).</div>
+    <div class="qzh">例题 9.2:已知 \(\sigma_X^2=4,\ \sigma_Y^2=9,\ \sigma_{XY}=3\)。写出 \(\Sigma\) 并求相关系数。</div>
+    <button class="sol-btn" data-t="s2">显示解答</button>
+    <div class="sol" id="s2"><span class="lbl">解答</span>
+    \[\Sigma=\begin{pmatrix}4&3\\3&9\end{pmatrix},\quad \rho=\frac{\sigma_{XY}}{\sigma_X\sigma_Y}=\frac{3}{\sqrt{4}\cdot\sqrt{9}}=\frac{3}{2\cdot3}=0{,}5.\]
+    中等强度正相关。验算半正定:\(\det=4\cdot9-3^2=36-9=27>0\) 且对角为正 → 正定,合法的协方差矩阵。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 9.3: \(f(x,y)=x^2-y^2\). Bestimme die Hesse-Matrix und klassifiziere den kritischen Punkt im Ursprung.</div>
+    <div class="qzh">例题 9.3:\(f(x,y)=x^2-y^2\)。求 Hessian 并判断原点的临界点类型。</div>
+    <button class="sol-btn" data-t="s3">显示解答</button>
+    <div class="sol" id="s3"><span class="lbl">解答</span>
+    \(f_x=2x,\ f_y=-2y\),在原点梯度为零 → 临界点。二阶:\(f_{xx}=2,\ f_{yy}=-2,\ f_{xy}=0\)。
+    \[H=\begin{pmatrix}2&0\\0&-2\end{pmatrix},\quad \lambda_1=2>0,\ \lambda_2=-2<0.\]
+    特征值<b>一正一负</b> → <b>鞍点</b>。沿 x 方向向上弯(谷),沿 y 方向向下弯(峰),正是马鞍形。也可用 \(\det H=-4<0\) 直接判定为鞍点。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 9.4: \(f(x,y)=2x^2+2xy+2y^2\). Hesse-Matrix, Eigenwerte, Typ?</div>
+    <div class="qzh">例题 9.4:\(f(x,y)=2x^2+2xy+2y^2\)。求 Hessian、特征值、类型。</div>
+    <button class="sol-btn" data-t="s4">显示解答</button>
+    <div class="sol" id="s4"><span class="lbl">解答</span>
+    \(f_{xx}=4,\ f_{yy}=4,\ f_{xy}=2\)。
+    \[H=\begin{pmatrix}4&2\\2&4\end{pmatrix}.\]
+    迹 \(=8\),行列式 \(=16-4=12\)。
+    \[\lambda=\frac{8\pm\sqrt{64-48}}{2}=\frac{8\pm4}{2}=6\ \text{oder}\ 2.\]
+    两特征值都 \(>0\) → <b>正定 → 局部最小值</b>。验算:\(\lambda_1\lambda_2=6\cdot2=12=\det\),\(\lambda_1+\lambda_2=8=\text{tr}\) ✓。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 9.5: Warum kann eine Kovarianzmatrix niemals einen negativen Eigenwert haben?</div>
+    <div class="qzh">例题 9.5:为什么协方差矩阵永远不可能有负特征值?</div>
+    <button class="sol-btn" data-t="s5">显示解答</button>
+    <div class="sol" id="s5"><span class="lbl">解答</span>
+    设 \(\mathbf v\) 是特征向量,\(\lambda\) 是对应特征值。沿 \(\mathbf v\) 方向投影数据得到的方差为
+    \[\mathbf v^{\top}\Sigma\,\mathbf v=\mathbf v^{\top}(\lambda\mathbf v)=\lambda\,\|\mathbf v\|^2.\]
+    左边是某个随机变量的方差,必 \(\ge 0\);而 \(\|\mathbf v\|^2>0\),所以 \(\lambda\ge 0\)。换言之,协方差矩阵<b>半正定</b>,其几何含义是:协方差椭圆的任何半轴长度(\(\propto\sqrt\lambda\))都是实数,椭圆不会"翻转"。</div>
+  </div>
+</section>
+
+</main>
+<footer>Interaktives Lernmodul · Kovarianz & Hesse-Matrix · 多维统计 · MathJax + Canvas</footer>
+
+<script>
+function r(x,d=2){if(!isFinite(x))return'–';return parseFloat(x.toFixed(d)).toString();}
+function prep(cv,H){const dpr=window.devicePixelRatio||1;const W=cv.clientWidth||400;
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);return{ctx,W,H};}
+/* symmetric 2x2 eig: matrix [[a,c],[c,b]] */
+function eig2(a,b,c){
+  const tr=a+b, det=a*b-c*c, disc=Math.sqrt(Math.max(0,tr*tr-4*det));
+  const l1=(tr+disc)/2, l2=(tr-disc)/2;
+  let v1;
+  if(Math.abs(c)>1e-9){v1=[l1-b,c];}
+  else {v1=(a>=b)?[1,0]:[0,1];}
+  const n=Math.hypot(v1[0],v1[1])||1; v1=[v1[0]/n,v1[1]/n];
+  const v2=[-v1[1],v1[0]];
+  return {l1,l2,v1,v2,det,tr,angle:Math.atan2(v1[1],v1[0])};
+}
+
+/* ===== LAB 1: covariance ellipse ===== */
+const N=320; const z1=[],z2=[];
+function rnorm(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+for(let i=0;i<N;i++){z1.push(rnorm());z2.push(rnorm());}
+
+function getCov(){let vx=+document.getElementById('vx').value,
+  vy=+document.getElementById('vy').value, cv=+document.getElementById('cv').value;
+  const lim=Math.sqrt(vx*vy)*0.985; if(cv>lim)cv=lim; if(cv<-lim)cv=-lim;
+  return {vx,vy,cv};}
+
+function drawCov(){
+  const cv=document.getElementById('cov_canvas');const{ctx,W,H}=prep(cv,300);
+  const{vx,vy,cv:cxy}=getCov();
+  const cx=W/2, cy=H/2; const scale=Math.min(W,H)/14; // units: ±7
+  // axes
+  ctx.strokeStyle='#e6e9f2';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // cholesky
+  const L11=Math.sqrt(vx), L21=cxy/L11, L22=Math.sqrt(Math.max(vy-L21*L21,1e-6));
+  // points
+  ctx.fillStyle='rgba(99,102,241,.5)';
+  for(let i=0;i<N;i++){
+    const x=L11*z1[i], y=L21*z1[i]+L22*z2[i];
+    ctx.beginPath();ctx.arc(cx+x*scale, cy-y*scale, 2.2,0,2*Math.PI);ctx.fill();
+  }
+  // eigen ellipse (2 sd)
+  const e=eig2(vx,vy,cxy);
+  const ax=2*Math.sqrt(Math.max(e.l1,0)), bx=2*Math.sqrt(Math.max(e.l2,0));
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(-e.angle);
+  ctx.beginPath();ctx.ellipse(0,0,ax*scale,bx*scale,0,0,2*Math.PI);
+  ctx.strokeStyle='#4338ca';ctx.lineWidth=2.4;ctx.stroke();
+  ctx.restore();
+  // eigenvectors
+  function arrow(vec,len,col){ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();
+    ctx.moveTo(cx,cy);ctx.lineTo(cx+vec[0]*len*scale, cy-vec[1]*len*scale);ctx.stroke();}
+  arrow(e.v1, 2*Math.sqrt(Math.max(e.l1,0)), '#6366f1');
+  arrow(e.v2, 2*Math.sqrt(Math.max(e.l2,0)), '#0d9488');
+  // readouts
+  document.getElementById('vx_v').textContent=r(vx,1);
+  document.getElementById('vy_v').textContent=r(vy,1);
+  document.getElementById('cv_v').textContent=r(cxy,2);
+  document.getElementById('s11').textContent=r(vx,2);
+  document.getElementById('s12').textContent=r(cxy,2);
+  document.getElementById('s21').textContent=r(cxy,2);
+  document.getElementById('s22').textContent=r(vy,2);
+  document.getElementById('o_rho').textContent=r(cxy/Math.sqrt(vx*vy),2);
+  document.getElementById('o_l1').textContent=r(e.l1,2);
+  document.getElementById('o_l2').textContent=r(e.l2,2);
+  document.getElementById('o_ang').textContent=r(e.angle*180/Math.PI,1);
+  document.getElementById('o_det').textContent=r(e.det,2);
+}
+
+/* ===== LAB 2: Hessian / quadratic form ===== */
+function getH(){return {a:+document.getElementById('ha').value,
+  b:+document.getElementById('hb').value, c:+document.getElementById('hc').value};}
+
+function divColor(t){ // t in [-1,1], banded
+  const band=Math.round(t*6)/6;
+  if(band>=0){const k=1-band;return `rgb(255,${Math.round(110+145*k)},${Math.round(110+145*k)})`;}
+  else{const k=1+band;return `rgb(${Math.round(110+145*k)},${Math.round(120+135*k)},255)`;}
+}
+
+function drawHess(){
+  const cv=document.getElementById('hess_canvas');const{ctx,W,H}=prep(cv,300);
+  const{a,b,c}=getH();
+  const cx=W/2, cy=H/2; const R=3; const scale=Math.min(W,H)/(2*R);
+  const f=(x,y)=>a*x*x+2*c*x*y+b*y*y;
+  // find max abs over domain for normalization
+  let fmax=1e-6;
+  for(let gx=-R;gx<=R;gx+=0.3)for(let gy=-R;gy<=R;gy+=0.3){fmax=Math.max(fmax,Math.abs(f(gx,gy)));}
+  // fill blocks
+  const step=5;
+  for(let px=0;px<W;px+=step){for(let py=0;py<H;py+=step){
+    const x=(px+step/2-cx)/scale, y=-(py+step/2-cy)/scale;
+    const t=Math.max(-1,Math.min(1,f(x,y)/fmax));
+    ctx.fillStyle=divColor(t);ctx.fillRect(px,py,step,step);
+  }}
+  // axes
+  ctx.strokeStyle='rgba(30,36,51,.25)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // hessian eigenvectors (matrix [[2a,2c],[2c,2b]])
+  const e=eig2(2*a,2*b,2*c);
+  function line(vec,col){ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(cx-vec[0]*R*scale,cy+vec[1]*R*scale);
+    ctx.lineTo(cx+vec[0]*R*scale,cy-vec[1]*R*scale);ctx.stroke();ctx.setLineDash([]);}
+  line(e.v1,'#1e2433');line(e.v2,'#1e2433');
+  // origin
+  ctx.fillStyle='#111';ctx.beginPath();ctx.arc(cx,cy,4,0,2*Math.PI);ctx.fill();
+  // readouts
+  document.getElementById('ha_v').textContent=r(a,1);
+  document.getElementById('hb_v').textContent=r(b,1);
+  document.getElementById('hc_v').textContent=r(c,1);
+  document.getElementById('h11').textContent=r(2*a,1);
+  document.getElementById('h12').textContent=r(2*c,1);
+  document.getElementById('h21').textContent=r(2*c,1);
+  document.getElementById('h22').textContent=r(2*b,1);
+  document.getElementById('h_l1').textContent=r(e.l1,2);
+  document.getElementById('h_l2').textContent=r(e.l2,2);
+  document.getElementById('h_det').textContent=r(e.det,2);
+  // classify
+  const eps=0.05; const vd=document.getElementById('h_verdict');
+  const l1=e.l1,l2=e.l2;
+  if(Math.abs(l1)<eps||Math.abs(l2)<eps){vd.textContent='退化 / 半定 Degeneriert';vd.className='verdict v-deg';}
+  else if(l1>0&&l2>0){vd.textContent='✓ 局部最小值 Minimum (正定)';vd.className='verdict v-min';}
+  else if(l1<0&&l2<0){vd.textContent='✓ 局部最大值 Maximum (负定)';vd.className='verdict v-max';}
+  else{vd.textContent='⨯ 鞍点 Sattelpunkt (不定)';vd.className='verdict v-saddle';}
+}
+
+const presets={bowl:[1,1,0],dome:[-1,-1,0],saddle:[1,-1,0],valley:[1,1,1]};
+document.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+  ch.classList.add('on');
+  const p=presets[ch.dataset.p];
+  document.getElementById('ha').value=p[0];
+  document.getElementById('hb').value=p[1];
+  document.getElementById('hc').value=p[2];
+  drawHess();
+}));
+
+/* wiring */
+['vx','vy','cv'].forEach(id=>document.getElementById(id).addEventListener('input',drawCov));
+['ha','hb','hc'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));drawHess();}));
+document.querySelectorAll('.sol-btn').forEach(b=>b.addEventListener('click',()=>{
+  const el=document.getElementById(b.dataset.t);el.classList.toggle('open');
+  b.textContent=el.classList.contains('open')?'隐藏解答':'显示解答';}));
+
+function initAll(){drawCov();drawHess();}
+window.addEventListener('resize',initAll);
+if(window.MathJax&&MathJax.startup){MathJax.startup.promise.then(initAll);}
+else{window.addEventListener('load',()=>setTimeout(initAll,400));}
+</script>
+</body>
+</html>

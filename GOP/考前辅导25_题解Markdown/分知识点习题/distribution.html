@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wahrscheinlichkeitsverteilungen · 概率分布交互课堂</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1e2433; --muted:#5a6478;
+    --indigo:#6366f1; --indigo-d:#4338ca; --teal:#0d9488; --amber:#f59e0b;
+    --rose:#e11d48; --green:#16a34a; --line:#e2e6f0;
+    --disc:#6366f1; --cont:#0d9488;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.6;scroll-behavior:smooth;}
+  /* ---- Header ---- */
+  header.hero{background:linear-gradient(135deg,#4338ca 0%,#6366f1 45%,#0d9488 100%);
+    color:#fff;padding:46px 20px 38px;text-align:center;}
+  header.hero h1{margin:0;font-size:1.85em;font-weight:800;letter-spacing:.5px;}
+  header.hero .sub{font-size:1.05em;opacity:.95;margin-top:8px;}
+  header.hero .zh{display:block;font-size:.92em;opacity:.85;margin-top:4px;}
+  /* ---- Nav ---- */
+  nav.pills{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    display:flex;gap:7px;overflow-x:auto;padding:11px 14px;}
+  nav.pills a{flex:0 0 auto;text-decoration:none;font-size:.82em;font-weight:600;
+    padding:7px 13px;border-radius:20px;color:var(--muted);background:#eef1f8;
+    white-space:nowrap;transition:.15s;border:1px solid transparent;}
+  nav.pills a:hover{color:#fff;background:var(--indigo);}
+  nav.pills a.cont:hover{background:var(--teal);}
+  /* ---- Layout ---- */
+  main{max-width:1000px;margin:0 auto;padding:24px 16px 80px;}
+  .intro{background:var(--card);border-radius:16px;padding:22px 26px;margin-bottom:28px;
+    box-shadow:0 4px 18px rgba(40,50,90,.06);border:1px solid var(--line);}
+  .intro h2{margin:0 0 8px;font-size:1.2em;}
+  table.ref{width:100%;border-collapse:collapse;margin-top:14px;font-size:.86em;}
+  table.ref th,table.ref td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+  table.ref th{background:#eef1f8;font-weight:700;}
+  table.ref tr td:first-child{font-weight:700;white-space:nowrap;}
+  .tag{display:inline-block;font-size:.72em;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;}
+  .tag.d{background:var(--disc);} .tag.c{background:var(--cont);}
+  /* ---- Distribution section ---- */
+  section.dist{background:var(--card);border-radius:18px;padding:26px;margin-bottom:30px;
+    box-shadow:0 6px 24px rgba(40,50,90,.07);border:1px solid var(--line);scroll-margin-top:64px;}
+  .dist-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+    border-bottom:2px solid var(--line);padding-bottom:14px;margin-bottom:18px;}
+  .dist-head .num{font-size:1.5em;font-weight:800;color:var(--indigo);}
+  .dist-head h2{margin:0;font-size:1.3em;}
+  .dist-head h2 .zh{font-size:.78em;color:var(--muted);font-weight:600;margin-left:6px;}
+  .dist-head .notation{margin-left:auto;font-size:1.05em;background:#f1f3fb;
+    padding:5px 14px;border-radius:10px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr;} .dist-head .notation{margin-left:0;}}
+  .card{background:#fbfcfe;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:16px;}
+  .card h3{margin:0 0 10px;font-size:1.02em;display:flex;align-items:center;gap:7px;}
+  .bi{display:block;}
+  .bi .de{color:var(--ink);}
+  .bi .zh{color:var(--indigo-d);font-size:.93em;display:block;margin-top:3px;}
+  .card.formula{background:#f5f7ff;}
+  .fline{padding:5px 0;border-bottom:1px dashed #dfe4f2;}
+  .fline:last-child{border-bottom:none;}
+  .card.scenario ul{margin:6px 0 0;padding-left:20px;}
+  .card.scenario li{margin-bottom:5px;}
+  .card.scenario .zh{color:var(--muted);font-size:.88em;}
+  /* ---- Viz ---- */
+  .viz-controls{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:8px;}
+  .ctrl{display:flex;flex-direction:column;font-size:.85em;min-width:150px;flex:1;}
+  .ctrl .lab{font-weight:700;margin-bottom:3px;display:flex;justify-content:space-between;}
+  .ctrl .lab .v{color:var(--indigo);font-variant-numeric:tabular-nums;}
+  input[type=range]{width:100%;accent-color:var(--indigo);}
+  canvas{width:100%;display:block;border-radius:10px;background:#fff;}
+  .stats{margin-top:10px;text-align:center;background:#eef1f8;border-radius:10px;padding:8px;font-size:.95em;}
+  /* ---- Examples ---- */
+  .ex{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;
+    padding:13px 16px;margin-bottom:13px;background:#fffdf7;}
+  .ex .q{font-weight:600;}
+  .ex .qzh{color:var(--indigo-d);font-size:.9em;margin:5px 0 8px;}
+  .ex button.sol-btn{font:inherit;font-size:.82em;font-weight:700;cursor:pointer;
+    background:var(--amber);color:#3a2a00;border:none;padding:6px 14px;border-radius:8px;}
+  .ex button.sol-btn:hover{filter:brightness(1.05);}
+  .ex .sol{display:none;margin-top:11px;padding:12px 14px;background:#fff;
+    border:1px dashed #e0c990;border-radius:9px;font-size:.94em;}
+  .ex .sol.open{display:block;}
+  .ex .sol .lbl{font-weight:700;color:var(--amber);display:block;margin-bottom:4px;}
+  /* timeline */
+  #poisproc_timeline{margin-top:10px;height:90px;}
+  .sim-btn{font:inherit;font-size:.83em;font-weight:700;cursor:pointer;background:var(--teal);
+    color:#fff;border:none;padding:7px 16px;border-radius:8px;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.85em;padding:20px;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Wahrscheinlichkeitsverteilungen — interaktiv</h1>
+  <div class="sub">Diskrete & stetige Verteilungen · Formeln, Intuition, Anwendung, Übungen
+    <span class="zh">常用概率分布交互课堂 · 公式 / 直觉 / 应用场景 / 例题</span>
+  </div>
+</header>
+
+<nav class="pills" id="nav"></nav>
+
+<main>
+  <div class="intro">
+    <h2>📖 Wozu welche Verteilung? <span style="color:var(--muted);font-size:.8em;">用哪个分布？速查表</span></h2>
+    <p class="bi"><span class="de">Die Wahl der Verteilung hängt davon ab, <b>was</b> gezählt/gemessen wird und ob die Größe <b>diskret</b> oder <b>stetig</b> ist. Bewege unten die Regler — die Form der Verteilung und \(E(X), Var(X)\) ändern sich live.</span>
+    <span class="zh">选择哪个分布取决于你在<b>数什么 / 量什么</b>，以及量是<b>离散</b>还是<b>连续</b>。拖动下面每个滑块，分布形状与 \(E(X), Var(X)\) 会实时变化。</span></p>
+    <table class="ref">
+      <tr><th>Verteilung 分布</th><th>Typ</th><th>Modelliert / 用于建模</th><th>Schlüssel 关键词</th></tr>
+      <tr><td>Diskrete Gleichvert.<br><span style="font-weight:400;color:var(--muted)">离散均匀</span></td><td><span class="tag d">diskret</span></td><td>endlich viele, gleich wahrscheinliche Ergebnisse 有限个等可能结果</td><td>Würfel 骰子</td></tr>
+      <tr><td>Stetige Gleichvert.<br><span style="font-weight:400;color:var(--muted)">连续均匀</span></td><td><span class="tag c">stetig</span></td><td>gleichmäßig auf Intervall 区间内均匀</td><td>Wartezeit 等待</td></tr>
+      <tr><td>Geometrisch<br><span style="font-weight:400;color:var(--muted)">几何</span></td><td><span class="tag d">diskret</span></td><td>Versuche bis 1. Erfolg 首次成功前的尝试次数</td><td>gedächtnislos 无记忆</td></tr>
+      <tr><td>Hypergeometrisch<br><span style="font-weight:400;color:var(--muted)">超几何</span></td><td><span class="tag d">diskret</span></td><td>Ziehen <b>ohne</b> Zurücklegen 不放回抽样</td><td>Qualitätskontrolle 质检</td></tr>
+      <tr><td>Binomial<br><span style="font-weight:400;color:var(--muted)">二项</span></td><td><span class="tag d">diskret</span></td><td>\(n\) unabh. Ja/Nein-Versuche, p fest 独立两点试验</td><td>Anzahl Erfolge 成功数</td></tr>
+      <tr><td>Poisson<br><span style="font-weight:400;color:var(--muted)">泊松</span></td><td><span class="tag d">diskret</span></td><td>seltene Ereignisse pro Zeit/Raum 单位时间稀有事件</td><td>Ankünfte 到达</td></tr>
+      <tr><td>Exponential<br><span style="font-weight:400;color:var(--muted)">指数</span></td><td><span class="tag c">stetig</span></td><td>Wartezeit bis Ereignis 到事件的等待时间</td><td>Lebensdauer 寿命</td></tr>
+      <tr><td>Survival / Hazard<br><span style="font-weight:400;color:var(--muted)">生存分析</span></td><td><span class="tag c">stetig</span></td><td>Überlebenswkt. & Risiko 存活与风险</td><td>\(S(t),h(t)\)</td></tr>
+      <tr><td>Chi-Quadrat<br><span style="font-weight:400;color:var(--muted)">卡方</span></td><td><span class="tag c">stetig</span></td><td>Summe quadrierter Normalvar. 标准正态平方和</td><td>Tests 检验</td></tr>
+      <tr><td>Poisson-Prozess<br><span style="font-weight:400;color:var(--muted)">泊松过程</span></td><td><span class="tag d">Prozess</span></td><td>Ereigniszahl \(N_t\) über Zeit 随时间的事件计数</td><td>\((N_t)_{t\ge0}\)</td></tr>
+    </table>
+  </div>
+
+  <div id="sections"></div>
+</main>
+
+<footer>Interaktives Lernmodul · 拖动滑块体会分布如何随参数变化 · MathJax + Canvas</footer>
+
+<script>
+/* ============ MATH HELPERS ============ */
+function logGamma(z){
+  const c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+    -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+  let x=z,y=z,tmp=x+5.5; tmp-=(x+0.5)*Math.log(tmp);
+  let ser=1.000000000190015;
+  for(let j=0;j<6;j++){y+=1;ser+=c[j]/y;}
+  return -tmp+Math.log(2.5066282746310005*ser/x);
+}
+function gammaF(z){
+  if(z<0.5) return Math.PI/(Math.sin(Math.PI*z)*gammaF(1-z));
+  return Math.exp(logGamma(z));
+}
+function logChoose(n,k){ if(k<0||k>n) return -Infinity; return logGamma(n+1)-logGamma(k+1)-logGamma(n-k+1); }
+function choose(n,k){ const v=logChoose(n,k); return v===-Infinity?0:Math.exp(v); }
+function r(x,d=3){ if(!isFinite(x)) return '–'; return parseFloat(x.toFixed(d)).toString(); }
+
+/* ============ CANVAS CHART HELPERS ============ */
+function prep(cv,H=300){
+  const dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||600;
+  cv.width=W*dpr; cv.height=H*dpr; cv.style.height=H+'px';
+  const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  return {ctx,W,H};
+}
+function axes(ctx,L,T,pw,ph){
+  ctx.strokeStyle='#c9cfde'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,T+ph); ctx.lineTo(L+pw,T+ph); ctx.stroke();
+}
+function barChart(cv,xs,ys,o={}){
+  const {ctx,W,H}=prep(cv); const L=46,T=22,R=14,B=40;
+  const pw=W-L-R, ph=H-T-B;
+  const maxY=o.maxY||Math.max(...ys,1e-9)*1.15;
+  axes(ctx,L,T,pw,ph);
+  // y gridlines
+  ctx.fillStyle='#8a93a8'; ctx.font='10px sans-serif'; ctx.textAlign='right';
+  for(let g=0;g<=4;g++){ const yv=maxY*g/4, yy=T+ph-ph*g/4;
+    ctx.strokeStyle='#eef1f8'; ctx.beginPath(); ctx.moveTo(L,yy); ctx.lineTo(L+pw,yy); ctx.stroke();
+    ctx.fillText(r(yv,2),L-5,yy+3); }
+  const n=xs.length, gap=pw/n, bw=Math.min(gap*0.72,46);
+  const step=Math.ceil(n/16);
+  xs.forEach((x,i)=>{
+    const bx=L+gap*i+(gap-bw)/2, bh=ys[i]/maxY*ph, by=T+ph-bh;
+    const hl=o.highlight&&o.highlight.includes(x);
+    ctx.fillStyle=hl?(o.hc||'#f59e0b'):(o.color||'#6366f1');
+    ctx.fillRect(bx,by,bw,bh);
+    if(i%step===0){ ctx.fillStyle='#5a6478'; ctx.textAlign='center';
+      ctx.fillText(x,bx+bw/2,T+ph+14); }
+  });
+  ctx.fillStyle='#5a6478'; ctx.textAlign='center';
+  ctx.fillText(o.xlabel||'',L+pw/2,H-4);
+}
+function lineChart(cv,series,o={}){
+  const {ctx,W,H}=prep(cv); const L=46,T=22,R=14,B=40;
+  const pw=W-L-R, ph=H-T-B;
+  let xmin=o.xmin,xmax=o.xmax,ymax=o.ymax;
+  series.forEach(s=>s.pts.forEach(p=>{ if(ymax==null)ymax=p.y; ymax=Math.max(ymax,p.y); }));
+  ymax=(o.ymax!=null?o.ymax:ymax)*1.12;
+  const X=v=>L+(v-xmin)/(xmax-xmin)*pw;
+  const Y=v=>T+ph-v/ymax*ph;
+  axes(ctx,L,T,pw,ph);
+  ctx.fillStyle='#8a93a8'; ctx.font='10px sans-serif'; ctx.textAlign='right';
+  for(let g=0;g<=4;g++){ const yy=T+ph-ph*g/4;
+    ctx.strokeStyle='#eef1f8'; ctx.beginPath(); ctx.moveTo(L,yy); ctx.lineTo(L+pw,yy); ctx.stroke();
+    ctx.fillText(r(ymax*g/4,2),L-5,yy+3); }
+  ctx.textAlign='center'; ctx.fillStyle='#5a6478';
+  for(let g=0;g<=5;g++){ const xv=xmin+(xmax-xmin)*g/5; ctx.fillText(r(xv,1),X(xv),T+ph+14); }
+  series.forEach(s=>{
+    // optional area fill
+    if(s.fill){ ctx.beginPath(); ctx.moveTo(X(s.pts[0].x),Y(0));
+      s.pts.forEach(p=>ctx.lineTo(X(p.x),Y(p.y)));
+      ctx.lineTo(X(s.pts[s.pts.length-1].x),Y(0)); ctx.closePath();
+      ctx.fillStyle=s.fill; ctx.fill(); }
+    ctx.beginPath(); ctx.lineWidth=2.4; ctx.strokeStyle=s.color;
+    if(s.dash)ctx.setLineDash([6,5]); else ctx.setLineDash([]);
+    s.pts.forEach((p,i)=> i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)));
+    ctx.stroke(); ctx.setLineDash([]);
+  });
+  // legend
+  let lx=L+8, ly=T+10;
+  series.filter(s=>s.label).forEach(s=>{
+    ctx.strokeStyle=s.color; ctx.lineWidth=3; ctx.beginPath();
+    ctx.moveTo(lx,ly); ctx.lineTo(lx+18,ly); ctx.stroke();
+    ctx.fillStyle='#3a4256'; ctx.textAlign='left'; ctx.font='11px sans-serif';
+    ctx.fillText(s.label,lx+23,ly+4); lx+=ctx.measureText(s.label).width+58;
+  });
+  ctx.fillStyle='#5a6478'; ctx.textAlign='center';
+  ctx.fillText(o.xlabel||'',L+pw/2,H-4);
+}
+
+/* ============ DISTRIBUTIONS CONFIG ============ */
+const dists=[
+{
+  id:'dunif',cls:'',num:'1',badge:'d',name_de:'Diskrete Gleichverteilung',name_zh:'离散均匀分布',
+  notation:'X\\sim U(T)',
+  concept_de:'Jedes der \\(|T|\\) möglichen Ergebnisse tritt mit <b>gleicher</b> Wahrscheinlichkeit auf. Klassisches Modell für einen fairen Würfel.',
+  concept_zh:'集合 \\(T\\) 中每个可能结果出现的概率<b>相等</b>。公平骰子的经典模型。',
+  formulas:['f(x)=\\dfrac{1}{|T|}\\,I_T(x)','E(X)=\\dfrac{n+1}{2}','Var(X)=\\dfrac{n^2-1}{12}'],
+  scen_de:['Fairer Würfel / Münze 公平骰子','Zufällige Auswahl aus n Optionen','Glücksrad mit gleich großen Feldern'],
+  scen_zh:['公平骰子、抽签','从 n 个等可能选项随机抽取','等分转盘'],
+  controls:[{id:'n',label:'n (Anzahl Werte 取值个数)',min:2,max:12,step:1,value:6}],
+  stats:p=>`\\( E(X)=\\frac{n+1}{2}=${r((p.n+1)/2)}\\quad Var(X)=\\frac{n^2-1}{12}=${r((p.n*p.n-1)/12)}\\)`,
+  draw(cv,p){const xs=[],ys=[];for(let k=1;k<=p.n;k++){xs.push(k);ys.push(1/p.n);}
+    barChart(cv,xs,ys,{color:'#6366f1',maxY:1/p.n*1.4,xlabel:'x (Ergebnis 结果)'});},
+  examples:[
+   {q_de:'Ein fairer Würfel wird geworfen. Bestimme \\(E(X)\\) und \\(Var(X)\\).',
+    q_zh:'掷一枚公平骰子，求 \\(E(X)\\) 与 \\(Var(X)\\)。',
+    sol:'Es ist \\(T=\\{1,\\dots,6\\},\\ n=6\\). 每个结果概率 \\(f(x)=\\tfrac16\\).<br>\\[E(X)=\\frac{6+1}{2}=3{,}5,\\qquad Var(X)=\\frac{6^2-1}{12}=\\frac{35}{12}\\approx2{,}92.\\]'},
+   {q_de:'Aus den Zahlen 1 bis 50 wird eine zufällig gezogen. Wie groß ist \\(E(X)\\)?',
+    q_zh:'从 1 到 50 中等可能抽一个数，求 \\(E(X)\\)。',
+    sol:'\\(n=50\\Rightarrow E(X)=\\dfrac{50+1}{2}=25{,}5\\), 方差 \\(Var(X)=\\dfrac{50^2-1}{12}=\\dfrac{2499}{12}\\approx208{,}25.\\)'}
+  ]
+},
+{
+  id:'cunif',cls:'cont',num:'2',badge:'c',name_de:'Stetige Gleichverteilung',name_zh:'连续均匀分布',
+  notation:'X\\sim U(a,b)',
+  concept_de:'Die Dichte ist über das Intervall \\((a,b)\\) <b>konstant</b> — jeder Punkt ist gleich „wahrscheinlich“. Die Verteilungsfunktion \\(F\\) steigt linear.',
+  concept_zh:'密度在区间 \\((a,b)\\) 上<b>恒定</b>，每个点同样可能；分布函数 \\(F\\) 线性上升。',
+  formulas:['f(x)=\\dfrac{1}{b-a}\\,I_{(a,b)}(x)','F(x)=\\dfrac{x-a}{b-a},\\ x\\in(a,b]','E(X)=\\dfrac{a+b}{2},\\ Var(X)=\\dfrac{(b-a)^2}{12}'],
+  scen_de:['Wartezeit auf Bus bei Zufallsankunft','Rundungsfehler 舍入误差','Zufallszahlengenerator [0,1)'],
+  scen_zh:['随机到站时的公交等待时间','测量/舍入误差','随机数生成器 [0,1)'],
+  controls:[{id:'a',label:'a',min:0,max:8,step:0.5,value:2},{id:'b',label:'b',min:1,max:14,step:0.5,value:8}],
+  stats:p=>{const a=Math.min(p.a,p.b-0.5);return `\\( f(x)=\\frac{1}{b-a}=${r(1/(p.b-a))}\\quad E(X)=\\frac{a+b}{2}=${r((a+p.b)/2)}\\quad Var(X)=${r(Math.pow(p.b-a,2)/12)}\\)`;},
+  draw(cv,p){let a=p.a,b=p.b; if(b<=a)b=a+0.5; const h=1/(b-a);const m=(b-a)*0.4+0.5;
+    const pdf=[{x:a-m,y:0},{x:a,y:0},{x:a,y:h},{x:b,y:h},{x:b,y:0},{x:b+m,y:0}];
+    const cdf=[];for(let i=0;i<=60;i++){const x=a-m+(b-a+2*m)*i/60;let F=x<a?0:x>b?1:(x-a)/(b-a);cdf.push({x,y:F});}
+    lineChart(cv,[{pts:pdf,color:'#0d9488',label:'f(x) Dichte',fill:'rgba(13,148,136,.15)'},{pts:cdf,color:'#e11d48',label:'F(x) Verteilungsf.',dash:true}],
+      {xmin:a-m,xmax:b+m,ymax:Math.max(1,h),xlabel:'x'});},
+  examples:[
+   {q_de:'Ein Bus kommt zufällig gleichverteilt in den nächsten 15 Minuten: \\(X\\sim U(0,15)\\). Wie groß ist \\(P(X>10)\\) und \\(E(X)\\)?',
+    q_zh:'公交在未来 15 分钟内均匀随机到达：\\(X\\sim U(0,15)\\)。求 \\(P(X>10)\\) 与 \\(E(X)\\)。',
+    sol:'\\[P(X>10)=\\frac{15-10}{15}=\\frac13\\approx0{,}333,\\qquad E(X)=\\frac{0+15}{2}=7{,}5\\text{ min}.\\]'},
+   {q_de:'Sei \\(X\\sim U(2,8)\\). Bestimme \\(P(3<X<5)\\) und \\(Var(X)\\).',
+    q_zh:'设 \\(X\\sim U(2,8)\\)，求 \\(P(3<X<5)\\) 与 \\(Var(X)\\)。',
+    sol:'Dichte \\(f=\\tfrac1{8-2}=\\tfrac16\\). \\[P(3<X<5)=\\frac{5-3}{6}=\\frac13,\\quad Var(X)=\\frac{(8-2)^2}{12}=3.\\]'}
+  ]
+},
+{
+  id:'geom',cls:'',num:'3',badge:'d',name_de:'Geometrische Verteilung',name_zh:'几何分布',
+  notation:'X\\sim G(p)',
+  concept_de:'Anzahl der Versuche bis zum <b>ersten Erfolg</b> (Erfolgswkt. \\(p\\) pro Versuch). Besitzt die <b>Gedächtnislosigkeit</b>: vergangene Misserfolge ändern nichts.',
+  concept_zh:'直到<b>首次成功</b>所需的尝试次数（每次成功概率 \\(p\\)）。具有<b>无记忆性</b>：过去的失败不影响未来。',
+  formulas:['f(k)=(1-p)^{k-1}p,\\ k=1,2,\\dots','E(X)=\\dfrac{1}{p},\\ Var(X)=\\dfrac{1-p}{p^2}','P(X>k)=(1-p)^k'],
+  scen_de:['Münzwürfe bis zum ersten Kopf','Anzahl Bewerbungen bis zur 1. Zusage','Versuche bis erstes defektes Teil'],
+  scen_zh:['投硬币直到第一次正面','投多少次简历才首次被录用','测试到第一个次品'],
+  controls:[{id:'p',label:'p (Erfolgswkt. 成功概率)',min:0.05,max:0.9,step:0.05,value:0.3}],
+  stats:p=>`\\( E(X)=\\frac1p=${r(1/p.p)}\\quad Var(X)=\\frac{1-p}{p^2}=${r((1-p.p)/(p.p*p.p))}\\)`,
+  draw(cv,p){const xs=[],ys=[];const K=Math.min(25,Math.ceil(8/p.p));for(let k=1;k<=K;k++){xs.push(k);ys.push(Math.pow(1-p.p,k-1)*p.p);}
+    barChart(cv,xs,ys,{color:'#6366f1',xlabel:'k (Versuch bis 1. Erfolg)'});},
+  examples:[
+   {q_de:'Eine faire Münze (\\(p=0{,}5\\)) wird geworfen, bis erstmals Kopf erscheint. Bestimme \\(E(X)\\) und \\(P(X=3)\\).',
+    q_zh:'抛公平硬币（\\(p=0{,}5\\)）直到首次出现正面，求 \\(E(X)\\) 与 \\(P(X=3)\\)。',
+    sol:'\\[E(X)=\\frac{1}{0{,}5}=2,\\qquad P(X=3)=(1-0{,}5)^2\\cdot0{,}5=0{,}125.\\]'},
+   {q_de:'<b>Gedächtnislosigkeit:</b> Mit \\(p=0{,}1\\): Wie groß ist \\(P(X>10\\mid X>5)\\)?',
+    q_zh:'<b>无记忆性：</b>设 \\(p=0{,}1\\)，求 \\(P(X>10\\mid X>5)\\)。',
+    sol:'Wegen Gedächtnislosigkeit \\(P(X>m+n\\mid X>m)=P(X>n)\\):<br>\\[P(X>10\\mid X>5)=P(X>5)=(1-0{,}1)^5=0{,}9^5\\approx0{,}590.\\] Die schon „verbrauchten“ 5 Versuche sind irrelevant.'}
+  ]
+},
+{
+  id:'hyper',cls:'',num:'4',badge:'d',name_de:'Hypergeometrische Verteilung',name_zh:'超几何分布',
+  notation:'X\\sim H(n,M,N)',
+  concept_de:'Ziehen <b>ohne Zurücklegen</b>: aus \\(N\\) Objekten (davon \\(M\\) mit Merkmal) werden \\(n\\) gezogen. \\(X\\)=Anzahl der gezogenen Merkmalsträger.',
+  concept_zh:'<b>不放回</b>抽样：总体 \\(N\\) 个（其中 \\(M\\) 个有特征），抽 \\(n\\) 个，\\(X\\)=抽中的特征个体数。',
+  formulas:['f(x)=\\dfrac{\\binom{M}{x}\\binom{N-M}{n-x}}{\\binom{N}{n}}','E(X)=n\\cdot\\dfrac{M}{N}','0\\le M\\le N,\\ 0\\le n\\le N'],
+  scen_de:['Qualitätskontrolle (Stichprobe)','Lotto „6 aus 49“','Karten ohne Zurücklegen'],
+  scen_zh:['抽样质检（不放回）','彩票“49 选 6”','发牌、不放回抽卡'],
+  controls:[{id:'N',label:'N (Population 总体)',min:5,max:40,step:1,value:20},
+            {id:'M',label:'M (Merkmal 特征数)',min:0,max:40,step:1,value:6},
+            {id:'n',label:'n (Stichprobe 样本)',min:1,max:40,step:1,value:5}],
+  stats:p=>{const N=p.N,M=Math.min(p.M,N),n=Math.min(p.n,N);const E=n*M/N;const V=n*(M/N)*(1-M/N)*((N-n)/(N-1||1));return `\\( E(X)=n\\frac{M}{N}=${r(E)}\\quad Var(X)=${r(V)}\\)`;},
+  draw(cv,p){const N=p.N,M=Math.min(p.M,N),n=Math.min(p.n,N);
+    const lo=Math.max(0,n-(N-M)),hi=Math.min(n,M);const xs=[],ys=[];
+    for(let x=lo;x<=hi;x++){xs.push(x);ys.push(choose(M,x)*choose(N-M,n-x)/choose(N,n));}
+    barChart(cv,xs,ys,{color:'#6366f1',xlabel:'x (gezogene Merkmalsträger)'});},
+  examples:[
+   {q_de:'In einer Urne sind 10 Kugeln, davon 4 rote. Es werden 3 ohne Zurücklegen gezogen. Wie groß ist \\(P(X=2)\\)?',
+    q_zh:'罐中 10 个球（4 红），不放回抽 3 个，求 \\(P(X=2)\\)（恰好 2 红）。',
+    sol:'\\(N=10,M=4,n=3\\):<br>\\[P(X=2)=\\frac{\\binom{4}{2}\\binom{6}{1}}{\\binom{10}{3}}=\\frac{6\\cdot6}{120}=\\frac{36}{120}=0{,}3.\\]'},
+   {q_de:'Eine Lieferung von 20 Teilen enthält 5 defekte. Es werden 4 entnommen. Wie viele defekte erwartet man?',
+    q_zh:'一批 20 件含 5 件次品，抽 4 件，期望次品数？',
+    sol:'\\[E(X)=n\\cdot\\frac{M}{N}=4\\cdot\\frac{5}{20}=1.\\] Im Mittel ein defektes Teil pro Stichprobe.'}
+  ]
+},
+{
+  id:'binom',cls:'',num:'5',badge:'d',name_de:'Bernoulli & Binomialverteilung',name_zh:'伯努利与二项分布',
+  notation:'X\\sim B(n,p)',
+  concept_de:'Summe von \\(n\\) <b>unabhängigen</b> Bernoulli-Versuchen (je Erfolgswkt. \\(p\\), Ziehen <b>mit</b> Zurücklegen). \\(B(1,p)\\) ist der Einzelversuch (Bernoulli).',
+  concept_zh:'\\(n\\) 次<b>独立</b>伯努利试验之和（每次成功概率 \\(p\\)，相当于<b>有放回</b>）。\\(B(1,p)\\) 即单次伯努利试验。',
+  formulas:['f(x)=\\binom{n}{x}p^x(1-p)^{n-x}','E(X)=np,\\ Var(X)=np(1-p)','X_i\\sim B(1,p)\\Rightarrow\\sum X_i\\sim B(n,p)'],
+  scen_de:['Anzahl Köpfe bei n Münzwürfen','Richtige Antworten beim Raten (MC)','Anzahl funktionierender Bauteile'],
+  scen_zh:['n 次抛硬币的正面数','选择题瞎猜对的题数','一批元件中正常工作的个数'],
+  controls:[{id:'n',label:'n (Versuche 试验次数)',min:1,max:30,step:1,value:10},
+            {id:'p',label:'p (Erfolgswkt.)',min:0.05,max:0.95,step:0.05,value:0.5}],
+  stats:p=>`\\( E(X)=np=${r(p.n*p.p)}\\quad Var(X)=np(1-p)=${r(p.n*p.p*(1-p.p))}\\)`,
+  draw(cv,p){const xs=[],ys=[];for(let x=0;x<=p.n;x++){xs.push(x);ys.push(choose(p.n,x)*Math.pow(p.p,x)*Math.pow(1-p.p,p.n-x));}
+    barChart(cv,xs,ys,{color:'#6366f1',xlabel:'x (Anzahl Erfolge 成功数)'});},
+  examples:[
+   {q_de:'Eine faire Münze wird 10-mal geworfen. Wie groß ist \\(P(\\text{genau }6\\text{ Köpfe})\\)? Bestimme \\(E(X),Var(X)\\).',
+    q_zh:'抛公平硬币 10 次，求恰好 6 次正面的概率，并求 \\(E(X),Var(X)\\)。',
+    sol:'\\(n=10,p=0{,}5\\):<br>\\[P(X=6)=\\binom{10}{6}0{,}5^{10}=\\frac{210}{1024}\\approx0{,}205,\\quad E(X)=5,\\ Var(X)=2{,}5.\\]'},
+   {q_de:'8 Multiple-Choice-Fragen mit je 4 Optionen werden geraten (\\(p=0{,}25\\)). Wie groß ist \\(P(X=0)\\) und \\(E(X)\\)?',
+    q_zh:'8 道四选一题全靠猜（\\(p=0{,}25\\)），求 \\(P(X=0)\\)（一题不对）与 \\(E(X)\\)。',
+    sol:'\\[E(X)=8\\cdot0{,}25=2,\\qquad P(X=0)=0{,}75^{8}\\approx0{,}100.\\] Reines Raten bringt im Mittel 2 richtige Antworten.'}
+  ]
+},
+{
+  id:'pois',cls:'',num:'6',badge:'d',name_de:'Poisson-Verteilung',name_zh:'泊松分布',
+  notation:'X\\sim Po(\\lambda)',
+  concept_de:'Anzahl <b>seltener</b> Ereignisse in einem festen Intervall, wenn sie unabhängig und mit konstanter Rate auftreten. Grenzfall der Binomialverteilung für \\(n\\to\\infty,\\ p\\to0,\\ np\\to\\lambda\\). Besonderheit: \\(E(X)=Var(X)=\\lambda\\).',
+  concept_zh:'固定区间内<b>稀有</b>事件的发生次数（独立、恒定速率）。是二项分布在 \\(n\\to\\infty,p\\to0,np\\to\\lambda\\) 时的极限。特点：\\(E(X)=Var(X)=\\lambda\\)。',
+  formulas:['f(x)=\\dfrac{\\lambda^x e^{-\\lambda}}{x!}','E(X)=Var(X)=\\lambda','M(s)=\\exp\\!\\big(\\lambda(e^{s}-1)\\big)'],
+  scen_de:['Anrufe pro Minute im Callcenter','Druckfehler pro Buchseite','Schadensmeldungen pro Tag'],
+  scen_zh:['呼叫中心每分钟来电数','每页书的印刷错误数','每天的理赔报案数'],
+  controls:[{id:'lam',label:'λ (Rate / Erwartungswert)',min:0.5,max:15,step:0.5,value:3}],
+  stats:p=>`\\( E(X)=Var(X)=\\lambda=${r(p.lam)}\\)`,
+  draw(cv,p){const K=Math.ceil(p.lam+4*Math.sqrt(p.lam))+1;const xs=[],ys=[];
+    for(let k=0;k<=K;k++){xs.push(k);ys.push(Math.exp(-p.lam+k*Math.log(p.lam)-logGamma(k+1)));}
+    barChart(cv,xs,ys,{color:'#6366f1',xlabel:'x (Ereigniszahl 事件数)'});},
+  examples:[
+   {q_de:'In einem Callcenter gehen im Schnitt 3 Anrufe pro Minute ein (\\(\\lambda=3\\)). Wie groß ist \\(P(X=5)\\)?',
+    q_zh:'呼叫中心平均每分钟 3 个来电（\\(\\lambda=3\\)），求一分钟恰好 5 个来电的概率。',
+    sol:'\\[P(X=5)=\\frac{3^5 e^{-3}}{5!}=\\frac{243\\,e^{-3}}{120}\\approx0{,}101.\\]'},
+   {q_de:'<b>Approximation:</b> \\(n=1000\\) Bauteile, Ausfallwkt. \\(p=0{,}002\\). Approximiere \\(P(X=0)\\) per Poisson.',
+    q_zh:'<b>近似：</b>\\(n=1000\\) 个元件，故障率 \\(p=0{,}002\\)，用泊松近似 \\(P(X=0)\\)。',
+    sol:'\\(\\lambda=np=2\\):<br>\\[P(X=0)=\\frac{2^0 e^{-2}}{0!}=e^{-2}\\approx0{,}135.\\] (Exakt binomial: \\(0{,}998^{1000}\\approx0{,}135\\) — sehr nahe.)'}
+  ]
+},
+{
+  id:'exp',cls:'cont',num:'7',badge:'c',name_de:'Exponentialverteilung',name_zh:'指数分布',
+  notation:'X\\sim Exp(\\lambda)',
+  concept_de:'<b>Wartezeit</b> bis zum nächsten Ereignis eines Poisson-Prozesses (Rate \\(\\lambda\\)). Ebenfalls gedächtnislos. \\(F(x)\\to1\\) für \\(x\\to\\infty\\).',
+  concept_zh:'泊松过程中到下一个事件的<b>等待时间</b>（速率 \\(\\lambda\\)）。同样无记忆。当 \\(x\\to\\infty\\) 时 \\(F(x)\\to1\\)。',
+  formulas:['f(x)=\\lambda e^{-\\lambda x}\\,I_{x>0}','F(x)=1-e^{-\\lambda x}','E(X)=\\tfrac1\\lambda,\\ Var(X)=\\tfrac1{\\lambda^2}','\\min(X_i)\\sim Exp\\big(\\textstyle\\sum\\lambda_i\\big)'],
+  scen_de:['Lebensdauer von Glühbirnen','Zeit bis zum nächsten Anruf','Abstand zwischen Erdbeben'],
+  scen_zh:['灯泡寿命','到下一通来电的时间','两次地震之间的间隔'],
+  controls:[{id:'lam',label:'λ (Rate)',min:0.2,max:3,step:0.1,value:1}],
+  stats:p=>`\\( E(X)=\\frac1\\lambda=${r(1/p.lam)}\\quad Var(X)=\\frac1{\\lambda^2}=${r(1/(p.lam*p.lam))}\\)`,
+  draw(cv,p){const xmax=5/p.lam;const pdf=[],cdf=[];for(let i=0;i<=80;i++){const x=xmax*i/80;
+    pdf.push({x,y:p.lam*Math.exp(-p.lam*x)});cdf.push({x,y:1-Math.exp(-p.lam*x)});}
+    lineChart(cv,[{pts:pdf,color:'#0d9488',label:'f(x) Dichte',fill:'rgba(13,148,136,.15)'},{pts:cdf,color:'#e11d48',label:'F(x)',dash:true}],
+      {xmin:0,xmax,ymax:Math.max(1,p.lam),xlabel:'x (Wartezeit 等待时间)'});},
+  examples:[
+   {q_de:'Eine Glühbirne hat Lebensdauer \\(X\\sim Exp(\\lambda)\\) mit \\(\\lambda=\\tfrac{1}{1000}\\) (Stunden). Bestimme \\(P(X>1500)\\) und \\(E(X)\\).',
+    q_zh:'灯泡寿命 \\(X\\sim Exp(\\lambda),\\ \\lambda=\\tfrac{1}{1000}\\)（小时）。求 \\(P(X>1500)\\) 与 \\(E(X)\\)。',
+    sol:'\\[P(X>1500)=e^{-1500/1000}=e^{-1{,}5}\\approx0{,}223,\\qquad E(X)=\\frac1\\lambda=1000\\text{ h}.\\]'},
+   {q_de:'<b>Minimum:</b> Zwei Maschinen mit \\(\\lambda_1=\\tfrac1{100}\\), \\(\\lambda_2=\\tfrac1{150}\\). Verteilung der Zeit bis zum ersten Ausfall \\(Y=\\min(X_1,X_2)\\)?',
+    q_zh:'<b>最小值：</b>两台机器 \\(\\lambda_1=\\tfrac1{100},\\lambda_2=\\tfrac1{150}\\)，求首次故障时间 \\(Y=\\min(X_1,X_2)\\) 的分布。',
+    sol:'\\[Y\\sim Exp(\\lambda_1+\\lambda_2)=Exp\\Big(\\tfrac1{100}+\\tfrac1{150}\\Big)=Exp\\Big(\\tfrac1{60}\\Big),\\quad E(Y)=60.\\] Das System fällt im Mittel nach 60 Zeiteinheiten aus.'}
+  ]
+},
+{
+  id:'surv',cls:'cont',num:'8',badge:'c',name_de:'Survivalanalyse (Hazard)',name_zh:'生存分析（风险）',
+  notation:'S(t)=P(X\\ge t)',
+  concept_de:'Die <b>Survivorfunktion</b> \\(S(t)=1-F(t)\\) ist die Wkt., bis \\(t\\) zu „überleben“. Die <b>Hazardrate</b> \\(h(t)=\\tfrac{f(t)}{S(t)}\\) misst das Risiko im „nächsten Augenblick“. Bei \\(Exp(\\lambda)\\) ist \\(h(t)=\\lambda\\) <b>konstant</b>.',
+  concept_zh:'<b>生存函数</b> \\(S(t)=1-F(t)\\) 是存活到 \\(t\\) 的概率；<b>风险率</b> \\(h(t)=\\tfrac{f(t)}{S(t)}\\) 衡量“下一刻”发生事件的风险。指数分布时 \\(h(t)=\\lambda\\) 为<b>常数</b>。',
+  formulas:['S(t)=P(X\\ge t)=1-F_T(t)','h(t)=\\dfrac{f(t)}{S(t)}','Exp:\\ S(t)=e^{-\\lambda t},\\ h(t)=\\lambda','\\text{Median}=\\dfrac{\\ln 2}{\\lambda}'],
+  scen_de:['Patientenüberleben in der Medizin','Ausfallzeiten von Bauteilen','Kündigungsraten von Kunden'],
+  scen_zh:['医学中的患者生存','部件失效时间','客户流失/留存分析'],
+  controls:[{id:'lam',label:'λ (Hazard 常数风险)',min:0.05,max:1,step:0.05,value:0.3}],
+  stats:p=>`\\( h(t)=\\lambda=${r(p.lam)}\\ (\\text{konstant})\\quad \\text{Median}=\\frac{\\ln2}{\\lambda}=${r(Math.LN2/p.lam)}\\)`,
+  draw(cv,p){const xmax=5/p.lam;const S=[],F=[];for(let i=0;i<=80;i++){const t=xmax*i/80;
+    S.push({x:t,y:Math.exp(-p.lam*t)});F.push({x:t,y:1-Math.exp(-p.lam*t)});}
+    lineChart(cv,[{pts:S,color:'#16a34a',label:'S(t) Überleben',fill:'rgba(22,163,74,.13)'},{pts:F,color:'#e11d48',label:'F(t)=1-S(t)',dash:true}],
+      {xmin:0,xmax,ymax:1,xlabel:'t (Zeit 时间)'});},
+  examples:[
+   {q_de:'Überlebenszeit \\(T\\sim Exp(\\lambda)\\) mit \\(\\lambda=0{,}02\\). Wie groß ist \\(S(50)\\)? Was ist die Hazardrate?',
+    q_zh:'生存时间 \\(T\\sim Exp(\\lambda),\\ \\lambda=0{,}02\\)，求 \\(S(50)\\)？风险率是多少？',
+    sol:'\\[S(50)=e^{-0{,}02\\cdot50}=e^{-1}\\approx0{,}368.\\] Hazard \\(h(t)=\\lambda=0{,}02\\) — <b>konstant</b>, das Risiko hängt nicht vom Alter ab (gedächtnislos).'},
+   {q_de:'Bestimme die <b>mediane Überlebenszeit</b> für \\(\\lambda=0{,}02\\).',
+    q_zh:'求 \\(\\lambda=0{,}02\\) 时的<b>中位生存时间</b>。',
+    sol:'\\(S(t)=0{,}5\\Rightarrow e^{-\\lambda t}=0{,}5\\):<br>\\[t=\\frac{\\ln 2}{\\lambda}=\\frac{0{,}693}{0{,}02}\\approx34{,}7.\\] Die Hälfte „überlebt“ bis ca. \\(t=34{,}7\\).'}
+  ]
+},
+{
+  id:'chisq',cls:'cont',num:'9',badge:'c',name_de:'Chi-Quadrat-Verteilung',name_zh:'卡方分布',
+  notation:'X\\sim \\chi^2(k)',
+  concept_de:'Summe von \\(k\\) <b>quadrierten unabhängigen Standardnormalvariablen</b>. \\(k\\) ist die Anzahl der <b>Freiheitsgrade</b>. Für große \\(k\\) wird sie symmetrischer.',
+  concept_zh:'\\(k\\) 个<b>独立标准正态变量的平方和</b>，\\(k\\) 为<b>自由度</b>。\\(k\\) 越大越对称。',
+  formulas:['f(x)=\\dfrac{(1/2)^{k/2}}{\\Gamma(k/2)}x^{k/2-1}e^{-x/2}','E(X)=k,\\ Var(X)=2k','Z_i\\sim N(0,1)\\Rightarrow\\textstyle\\sum_{i=1}^k Z_i^2\\sim\\chi^2(k)'],
+  scen_de:['Chi-Quadrat-Anpassungstest','Unabhängigkeitstest (Kontingenztafel)','Varianzschätzung'],
+  scen_zh:['卡方拟合优度检验','独立性检验（列联表）','方差的区间估计'],
+  controls:[{id:'k',label:'k (Freiheitsgrade 自由度)',min:1,max:15,step:1,value:4}],
+  stats:p=>`\\( E(X)=k=${r(p.k)}\\quad Var(X)=2k=${r(2*p.k)}\\)`,
+  draw(cv,p){const k=p.k;const xmax=k+5*Math.sqrt(2*k);const pts=[];
+    const c=Math.pow(0.5,k/2)/gammaF(k/2);
+    for(let i=0;i<=100;i++){let x=xmax*i/100; if(x<1e-3)x=1e-3;
+      let y=c*Math.pow(x,k/2-1)*Math.exp(-x/2); if(!isFinite(y))y=0; pts.push({x,y});}
+    lineChart(cv,[{pts,color:'#0d9488',label:'f(x)',fill:'rgba(13,148,136,.15)'}],
+      {xmin:0,xmax,xlabel:'x'});},
+  examples:[
+   {q_de:'Sei \\(X\\sim\\chi^2(5)\\). Bestimme \\(E(X)\\) und \\(Var(X)\\).',
+    q_zh:'设 \\(X\\sim\\chi^2(5)\\)，求 \\(E(X)\\) 与 \\(Var(X)\\)。',
+    sol:'\\[E(X)=k=5,\\qquad Var(X)=2k=10.\\]'},
+   {q_de:'Seien \\(Z_1,Z_2,Z_3\\) unabhängig \\(N(0,1)\\). Welche Verteilung hat \\(Y=Z_1^2+Z_2^2+Z_3^2\\) und wie groß ist \\(E(Y)\\)?',
+    q_zh:'设 \\(Z_1,Z_2,Z_3\\) 独立 \\(N(0,1)\\)，\\(Y=Z_1^2+Z_2^2+Z_3^2\\) 服从什么分布？\\(E(Y)\\)？',
+    sol:'Summe von 3 quadrierten Standardnormalen \\(\\Rightarrow Y\\sim\\chi^2(3)\\), also \\(E(Y)=3,\\ Var(Y)=6.\\)'}
+  ]
+},
+{
+  id:'poisproc',cls:'',num:'10',badge:'d',name_de:'Poisson-Prozess',name_zh:'泊松过程',
+  notation:'(N_t)_{t\\ge0}',
+  concept_de:'Ein <b>stochastischer Prozess</b>, der zufällige Ereignisse über die Zeit zählt. Die Zahl \\(N_t\\) der Ereignisse bis \\(t\\) ist \\(Po(\\lambda t)\\)-verteilt; die <b>Wartezeiten</b> zwischen Ereignissen sind \\(Exp(\\lambda)\\).',
+  concept_zh:'一个随时间计数随机事件的<b>随机过程</b>。到时刻 \\(t\\) 的事件数 \\(N_t\\sim Po(\\lambda t)\\)；事件<b>间隔时间</b>服从 \\(Exp(\\lambda)\\)。',
+  formulas:['P(N_t=k)=e^{-\\lambda t}\\dfrac{(\\lambda t)^k}{k!}','E(N_t)=Var(N_t)=\\lambda t','\\text{Zwischenzeiten}\\sim Exp(\\lambda)'],
+  scen_de:['Kundenankünfte im Geschäft','Webserver-Anfragen über Zeit','Zerfälle radioaktiver Atome'],
+  scen_zh:['顾客陆续到店','一段时间内服务器请求','放射性原子衰变'],
+  controls:[{id:'lam',label:'λ (Rate / Zeit)',min:0.5,max:8,step:0.5,value:2},
+            {id:'t',label:'t (Zeitfenster 时间窗)',min:1,max:6,step:0.5,value:3}],
+  stats:p=>`\\( E(N_t)=Var(N_t)=\\lambda t=${r(p.lam*p.t)}\\)`,
+  draw(cv,p){const m=p.lam*p.t;const K=Math.ceil(m+4*Math.sqrt(m))+1;const xs=[],ys=[];
+    for(let k=0;k<=K;k++){xs.push(k);ys.push(Math.exp(-m+k*Math.log(m)-logGamma(k+1)));}
+    barChart(cv,xs,ys,{color:'#6366f1',xlabel:'k (Ereignisse bis t  到 t 的事件数)'});},
+  hasSim:true,
+  examples:[
+   {q_de:'Kunden treffen mit Rate \\(\\lambda=2\\) pro Stunde ein (Poisson-Prozess). Wie groß ist \\(P(N_3=4)\\) (4 Kunden in 3 Stunden)?',
+    q_zh:'顾客以速率 \\(\\lambda=2\\)/小时到达（泊松过程），求 3 小时内恰好 4 位顾客 \\(P(N_3=4)\\)。',
+    sol:'\\(\\lambda t=2\\cdot3=6\\):<br>\\[P(N_3=4)=e^{-6}\\frac{6^4}{4!}=e^{-6}\\cdot54\\approx0{,}134.\\]'},
+   {q_de:'Bei \\(\\lambda=2\\)/h: Wie groß ist \\(P(\\text{kein Kunde in 1 Stunde})\\) und die erwartete Wartezeit bis zum ersten Kunden?',
+    q_zh:'\\(\\lambda=2\\)/小时：求 1 小时内无顾客的概率，以及到第一位顾客的期望等待时间。',
+    sol:'\\[P(N_1=0)=e^{-2}\\approx0{,}135.\\] Zwischenzeiten \\(\\sim Exp(2)\\Rightarrow E=\\tfrac1\\lambda=\\tfrac12\\text{ h}=30\\text{ min}.\\)'}
+  ]
+}
+];
+
+/* ============ RENDER ============ */
+const nav=document.getElementById('nav');
+const root=document.getElementById('sections');
+const state={};
+
+dists.forEach(d=>{
+  // nav pill
+  const a=document.createElement('a');
+  a.href='#'+d.id; a.textContent=d.num+'. '+d.name_zh;
+  if(d.cls==='cont')a.className='cont';
+  nav.appendChild(a);
+  // params
+  state[d.id]={}; d.controls.forEach(c=>state[d.id][c.id]=c.value);
+  // build section html
+  const fHTML=d.formulas.map(f=>`<div class="fline">\\[${f}\\]</div>`).join('');
+  const scenDe=d.scen_de.map((s,i)=>`<li><span class="de">${s}</span><br><span class="zh">${d.scen_zh[i]}</span></li>`).join('');
+  const ctrlHTML=d.controls.map(c=>`
+     <div class="ctrl">
+       <div class="lab"><span>${c.label}</span><span class="v" id="${d.id}_${c.id}_v">${c.value}</span></div>
+       <input type="range" id="${d.id}_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.value}">
+     </div>`).join('');
+  const exHTML=d.examples.map((e,i)=>`
+     <div class="ex">
+       <div class="q">Beispiel ${d.num}.${i+1}: ${e.q_de}</div>
+       <div class="qzh">例题 ${d.num}.${i+1}：${e.q_zh}</div>
+       <button class="sol-btn" data-t="${d.id}_sol_${i}">Lösung zeigen / 显示解答</button>
+       <div class="sol" id="${d.id}_sol_${i}"><span class="lbl">Lösung / 解答</span>${e.sol}</div>
+     </div>`).join('');
+  const simHTML=d.hasSim?`
+     <div style="margin-top:14px">
+       <div class="bi"><span class="de" style="font-weight:600">Simulation eines Pfads (Ereignisse auf der Zeitachse):</span>
+       <span class="zh">模拟一条路径（时间轴上的随机事件，间隔 ~ Exp(λ)）：</span></div>
+       <canvas id="poisproc_timeline"></canvas>
+       <button class="sim-btn" id="poisproc_sim">🎲 Neu simulieren / 重新模拟</button>
+     </div>`:'';
+
+  const sec=document.createElement('section');
+  sec.className='dist'; sec.id=d.id;
+  sec.innerHTML=`
+    <div class="dist-head">
+      <span class="num">${d.num}</span>
+      <h2>${d.name_de}<span class="zh">${d.name_zh}</span></h2>
+      <span class="tag ${d.badge}" style="margin-left:4px">${d.badge==='d'?'diskret 离散':'stetig 连续'}</span>
+      <div class="notation">\\(${d.notation}\\)</div>
+    </div>
+    <div class="grid2">
+      <div class="card concept">
+        <h3>💡 Idee · 直觉</h3>
+        <p class="bi"><span class="de">${d.concept_de}</span><span class="zh">${d.concept_zh}</span></p>
+      </div>
+      <div class="card formula">
+        <h3>📐 Formeln · 公式</h3>${fHTML}
+      </div>
+    </div>
+    <div class="card scenario">
+      <h3>🎯 Einsatzszenarien · 应用场景</h3>
+      <ul>${scenDe}</ul>
+    </div>
+    <div class="card viz">
+      <h3>📊 Interaktiv · 交互可视化 <span style="font-size:.75em;color:var(--muted);font-weight:400">（拖动滑块）</span></h3>
+      <div class="viz-controls">${ctrlHTML}</div>
+      <canvas id="${d.id}_canvas"></canvas>
+      <div class="stats" id="${d.id}_stats"></div>
+      ${simHTML}
+    </div>
+    <div class="card examples">
+      <h3>✏️ Beispiele · 例题</h3>${exHTML}
+    </div>`;
+  root.appendChild(sec);
+});
+
+/* ---- wire up controls ---- */
+function redraw(d){
+  const cv=document.getElementById(d.id+'_canvas');
+  d.draw(cv,state[d.id]);
+  const st=document.getElementById(d.id+'_stats');
+  st.innerHTML=d.stats(state[d.id]);
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([st]);
+}
+dists.forEach(d=>{
+  d.controls.forEach(c=>{
+    const inp=document.getElementById(d.id+'_'+c.id);
+    const vlab=document.getElementById(d.id+'_'+c.id+'_v');
+    inp.addEventListener('input',()=>{
+      state[d.id][c.id]=parseFloat(inp.value);
+      vlab.textContent=inp.value; redraw(d);
+    });
+  });
+});
+/* solution toggles */
+document.querySelectorAll('.sol-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const el=document.getElementById(b.dataset.t);
+    el.classList.toggle('open');
+    b.textContent=el.classList.contains('open')?'Lösung verbergen / 隐藏解答':'Lösung zeigen / 显示解答';
+  });
+});
+
+/* ---- Poisson process timeline simulation ---- */
+function simTimeline(){
+  const cv=document.getElementById('poisproc_timeline'); if(!cv)return;
+  const {ctx,W,H}=prep(cv,90);
+  const lam=state.poisproc.lam,t=state.poisproc.t;
+  const L=20,Rr=W-20,y=52;
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(Rr,y); ctx.stroke();
+  // ticks
+  ctx.fillStyle='#64748b'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  for(let s=0;s<=t;s++){const x=L+(Rr-L)*s/t; ctx.beginPath();ctx.moveTo(x,y-4);ctx.lineTo(x,y+4);ctx.stroke();
+    ctx.fillText(s,x,y+18);}
+  // generate events
+  let time=0,count=0;
+  while(true){ time+=-Math.log(Math.random())/lam; if(time>t)break;
+    const x=L+(Rr-L)*time/t; count++;
+    ctx.fillStyle='#0d9488'; ctx.beginPath(); ctx.arc(x,y,5,0,7); ctx.fill();
+    ctx.strokeStyle='#0d9488'; ctx.beginPath(); ctx.moveTo(x,y);ctx.lineTo(x,y-18);ctx.stroke();
+  }
+  ctx.fillStyle='#334155'; ctx.textAlign='left'; ctx.font='bold 12px sans-serif';
+  ctx.fillText(`N_${t} = ${count}  Ereignisse · 事件 (λt=${r(lam*t,1)})`,L,18);
+}
+
+/* ---- init after MathJax ready ---- */
+function initAll(){
+  dists.forEach(redraw);
+  const sb=document.getElementById('poisproc_sim');
+  if(sb){ sb.addEventListener('click',simTimeline); simTimeline(); }
+}
+window.addEventListener('resize',()=>{ dists.forEach(d=>d.draw(document.getElementById(d.id+'_canvas'),state[d.id])); simTimeline(); });
+
+if(window.MathJax&&MathJax.startup){
+  MathJax.startup.promise.then(initAll);
+}else{
+  window.addEventListener('load',()=>setTimeout(initAll,400));
+}
+</script>
+</body>
+</html>

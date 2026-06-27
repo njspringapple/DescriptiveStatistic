@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Konvergenz, Ungleichungen & Grenzwertsätze · 收敛与极限定理</title>
+<script>
+  window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1e2433;--muted:#5a6478;--indigo:#6366f1;
+    --indigo-d:#4338ca;--teal:#0d9488;--amber:#f59e0b;--rose:#e11d48;--green:#16a34a;--line:#e2e6f0;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.65;scroll-behavior:smooth;}
+  header.hero{background:linear-gradient(135deg,#5b21b6 0%,#6366f1 50%,#0d9488 100%);
+    color:#fff;padding:46px 20px 38px;text-align:center;}
+  header.hero h1{margin:0;font-size:1.8em;font-weight:800;letter-spacing:.3px;}
+  header.hero .sub{font-size:1.02em;opacity:.95;margin-top:8px;}
+  header.hero .zh{display:block;font-size:.9em;opacity:.85;margin-top:4px;}
+  nav.pills{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;gap:7px;
+    overflow-x:auto;padding:11px 14px;}
+  nav.pills a{flex:0 0 auto;text-decoration:none;font-size:.82em;font-weight:600;padding:7px 13px;
+    border-radius:20px;color:var(--muted);background:#eef1f8;white-space:nowrap;transition:.15s;}
+  nav.pills a:hover{color:#fff;background:var(--indigo);}
+  main{max-width:1000px;margin:0 auto;padding:24px 16px 80px;}
+  section.blk{background:var(--card);border-radius:18px;padding:26px;margin-bottom:30px;
+    box-shadow:0 6px 24px rgba(40,50,90,.07);border:1px solid var(--line);scroll-margin-top:64px;}
+  .head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:2px solid var(--line);
+    padding-bottom:14px;margin-bottom:18px;}
+  .head .num{font-size:1.5em;font-weight:800;color:var(--indigo);}
+  .head h2{margin:0;font-size:1.25em;}
+  .head h2 .zh{font-size:.78em;color:var(--muted);font-weight:600;margin-left:6px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr;}}
+  .card{background:#fbfcfe;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:16px;}
+  .card h3{margin:0 0 10px;font-size:1.02em;display:flex;align-items:center;gap:7px;}
+  .card.formula{background:#f5f7ff;}
+  .card.concept{background:#fffdf7;border-left:4px solid var(--amber);}
+  .card.proof{background:#f3faf8;border-left:4px solid var(--teal);}
+  .bi .de{display:block;color:var(--ink);}
+  .bi .zh{display:block;color:var(--indigo-d);font-size:.92em;margin-top:3px;}
+  .fline{padding:5px 0;border-bottom:1px dashed #dfe4f2;}
+  .fline:last-child{border-bottom:none;}
+  /* hierarchy */
+  .hier{display:flex;flex-direction:column;align-items:center;gap:6px;margin:10px 0;}
+  .hbox{background:#eef1f8;border:2px solid var(--indigo);border-radius:10px;padding:9px 16px;
+    font-weight:700;text-align:center;font-size:.92em;width:100%;max-width:380px;}
+  .hbox .zh{font-weight:400;color:var(--muted);font-size:.85em;display:block;}
+  .harrow{color:var(--indigo);font-size:1.4em;line-height:1;}
+  .hsplit{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;width:100%;}
+  .hbox.teal{border-color:var(--teal);}
+  .hbox.rose{border-color:var(--rose);}
+  .hbox.green{border-color:var(--green);}
+  /* viz */
+  .viz-controls{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:10px;align-items:flex-end;}
+  .ctrl{display:flex;flex-direction:column;font-size:.85em;min-width:150px;flex:1;}
+  .ctrl .lab{font-weight:700;margin-bottom:3px;display:flex;justify-content:space-between;}
+  .ctrl .lab .v{color:var(--indigo);font-variant-numeric:tabular-nums;}
+  input[type=range]{width:100%;accent-color:var(--indigo);}
+  select{font:inherit;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:#fff;}
+  canvas{width:100%;display:block;border-radius:10px;background:#fff;}
+  .btn{font:inherit;font-size:.83em;font-weight:700;cursor:pointer;border:none;
+    padding:8px 16px;border-radius:8px;color:#fff;}
+  .btn.idg{background:var(--indigo);} .btn.tl{background:var(--teal);} .btn.am{background:var(--amber);color:#3a2a00;}
+  .btn:hover{filter:brightness(1.06);}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+  .stats{margin-top:10px;text-align:center;background:#eef1f8;border-radius:10px;padding:8px;font-size:.93em;}
+  .ex{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;
+    padding:13px 16px;margin-bottom:13px;background:#fffdf7;}
+  .ex .q{font-weight:600;}
+  .ex .qzh{color:var(--indigo-d);font-size:.9em;margin:5px 0 8px;}
+  .ex button.sol-btn{font:inherit;font-size:.82em;font-weight:700;cursor:pointer;background:var(--amber);
+    color:#3a2a00;border:none;padding:6px 14px;border-radius:8px;}
+  .ex .sol{display:none;margin-top:11px;padding:12px 14px;background:#fff;border:1px dashed #e0c990;
+    border-radius:9px;font-size:.94em;}
+  .ex .sol.open{display:block;}
+  .ex .sol .lbl{font-weight:700;color:var(--amber);display:block;margin-bottom:4px;}
+  table.cmp{width:100%;border-collapse:collapse;font-size:.88em;margin-top:6px;}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+  table.cmp th{background:#eef1f8;}
+  footer{text-align:center;color:var(--muted);font-size:.85em;padding:20px;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Konvergenz · Ungleichungen · Grenzwertsätze</h1>
+  <div class="sub">Konvergenzarten → Markov & Tschebyscheff → Gesetz der großen Zahlen → Zentraler Grenzwertsatz
+    <span class="zh">收敛类型 → 马尔可夫与切比雪夫不等式 → 大数定律 → 中心极限定理</span>
+  </div>
+</header>
+
+<nav class="pills">
+  <a href="#conv">1. 收敛类型</a>
+  <a href="#hier">2. 层级关系</a>
+  <a href="#markov">3. 马尔可夫</a>
+  <a href="#cheby">4. 切比雪夫</a>
+  <a href="#wlln">5. 弱大数定律</a>
+  <a href="#slln">6. 强大数定律</a>
+  <a href="#clt">7. 中心极限定理</a>
+</nav>
+
+<main>
+
+<!-- ============ 1. CONVERGENCE TYPES ============ -->
+<section class="blk" id="conv">
+  <div class="head"><span class="num">1</span><h2>Konvergenzarten<span class="zh">随机变量序列的收敛类型</span></h2></div>
+  <p class="bi"><span class="de">Eine Folge von Zufallsvariablen \((X_n)\) kann auf <b>verschiedene Weisen</b> gegen \(X\) „konvergieren“. Die vier wichtigsten Begriffe:</span>
+  <span class="zh">随机变量序列 \((X_n)\) 可以用<b>多种不同方式</b>收敛到 \(X\)。最重要的四种：</span></p>
+
+  <div class="grid2">
+    <div class="card formula">
+      <h3>① Fast sichere Konvergenz · 几乎必然收敛</h3>
+      <p class="bi"><span class="de">Notation \(X_n\xrightarrow{f.s.}X\) — der Pfad selbst konvergiert mit Wkt. 1.</span>
+      <span class="zh">记 \(X_n\xrightarrow{f.s.}X\)：以概率 1，<b>每条样本轨道本身</b>都收敛到 \(X\)。最强。</span></p>
+      \[P\Big(\lim_{n\to\infty}X_n=X\Big)=1\]
+    </div>
+    <div class="card formula">
+      <h3>② Konvergenz in Wkt. · 依概率收敛</h3>
+      <p class="bi"><span class="de">Notation \(X_n\xrightarrow{P}X\) — die Wkt. einer großen Abweichung verschwindet.</span>
+      <span class="zh">记 \(X_n\xrightarrow{P}X\)：发生大偏差的<b>概率</b>趋于 0（轨道不一定收敛）。</span></p>
+      \[\forall\varepsilon>0:\ \lim_{n\to\infty}P\big(|X_n-X|>\varepsilon\big)=0\]
+    </div>
+    <div class="card formula">
+      <h3>③ \(L^p\)-Konvergenz · \(L^p\)（均值）收敛</h3>
+      <p class="bi"><span class="de">Notation \(X_n\xrightarrow{L^p}X\) — Konvergenz im \(p\)-ten Mittel (oft \(p=2\)).</span>
+      <span class="zh">记 \(X_n\xrightarrow{L^p}X\)：\(p\) 阶矩意义下收敛（常取 \(p=2\)，即均方收敛）。</span></p>
+      \[\lim_{n\to\infty}E\big(|X_n-X|^p\big)=0\]
+    </div>
+    <div class="card formula">
+      <h3>④ Konvergenz in Verteilung · 依分布收敛</h3>
+      <p class="bi"><span class="de">Notation \(X_n\xrightarrow{d}X\) — nur die Verteilungsfunktionen nähern sich an. Am schwächsten.</span>
+      <span class="zh">记 \(X_n\xrightarrow{d}X\)：只要求<b>分布函数</b>在连续点处收敛。最弱（CLT 用的就是它）。</span></p>
+      \[\lim_{n\to\infty}F_{X_n}(x)=F_X(x)\quad\text{(an Stetigkeitsstellen)}\]
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. HIERARCHY ============ -->
+<section class="blk" id="hier">
+  <div class="head"><span class="num">2</span><h2>Hierarchie der Konvergenz<span class="zh">收敛之间的强弱关系（蕴含链）</span></h2></div>
+  <p class="bi"><span class="de">Die Pfeile bedeuten „impliziert“. Stärkere Konvergenz steht oben, sie zieht alle schwächeren nach sich. Die Umkehrungen gelten <b>nicht</b> allgemein.</span>
+  <span class="zh">箭头表示"蕴含"。越强的收敛越靠上，它能推出所有更弱的收敛；反方向<b>一般不成立</b>。</span></p>
+
+  <div class="hier">
+    <div class="hsplit">
+      <div class="hbox">Fast sicher \(X_n\xrightarrow{f.s.}X\)<span class="zh">几乎必然收敛（最强）</span></div>
+      <div class="hbox teal">\(L^p\): \(X_n\xrightarrow{L^p}X\)<span class="zh">\(L^p\) 收敛</span></div>
+    </div>
+    <div class="harrow">↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓</div>
+    <div class="hbox rose">In Wahrscheinlichkeit \(X_n\xrightarrow{P}X\)<span class="zh">依概率收敛</span></div>
+    <div class="harrow">↓</div>
+    <div class="hbox green">In Verteilung \(X_n\xrightarrow{d}X\)<span class="zh">依分布收敛（最弱）</span></div>
+  </div>
+
+  <div class="card concept">
+    <h3>💡 Merkregel · 记忆要点</h3>
+    <p class="bi"><span class="de">\(f.s.\Rightarrow P\Rightarrow d\) und \(L^p\Rightarrow P\Rightarrow d\). „In Verteilung“ ist der schwächste Begriff — er sagt nichts über die gemeinsame Lage von \(X_n\) und \(X\) aus, nur über ihre Verteilungen.</span>
+    <span class="zh">\(f.s.\Rightarrow P\Rightarrow d\)，且 \(L^p\Rightarrow P\Rightarrow d\)。"依分布收敛"最弱——它只关心分布形状，不关心 \(X_n\) 与 \(X\) 是否取值接近。<b>大数定律</b>讲的是收敛到常数（依概率 / 几乎必然），<b>中心极限定理</b>讲的是依分布收敛到正态。</span></p>
+  </div>
+</section>
+
+<!-- ============ 3. MARKOV ============ -->
+<section class="blk" id="markov">
+  <div class="head"><span class="num">3</span><h2>Markov-Ungleichung<span class="zh">马尔可夫不等式</span></h2></div>
+  <div class="grid2">
+    <div class="card concept">
+      <h3>💡 Idee · 直觉</h3>
+      <p class="bi"><span class="de">Für eine <b>nichtnegative</b> Zufallsvariable \(X\ge0\) und \(a>0\) begrenzt der Erwartungswert die Wkt. großer Werte. Eine Verteilung kann nicht „zu oft“ groß sein, wenn ihr Mittelwert klein ist.</span>
+      <span class="zh">对<b>非负</b>随机变量 \(X\ge0\) 和 \(a>0\)：均值限制了取大值的概率。若平均值很小，就不可能"经常"取到很大的值。这是最基础的尾部界。</span></p>
+    </div>
+    <div class="card formula">
+      <h3>📐 Aussage · 不等式</h3>
+      \[P(X\ge a)\le\frac{E(X)}{a}\]
+      <div class="bi" style="margin-top:8px"><span class="de" style="font-weight:600">Beweisidee:</span>
+      <span class="zh">证明思路：\(E(X)\ge E(X\,I_{X\ge a})\ge a\,P(X\ge a)\)。</span></div>
+      \[E(X)\ge a\,P(X\ge a)\ \Rightarrow\ P(X\ge a)\le\tfrac{E(X)}{a}\]
+    </div>
+  </div>
+  <div class="card">
+    <h3>📊 Interaktiv · 上界与真实概率对比（以 \(Exp(1)\) 为例，\(E(X)=1\)）</h3>
+    <div class="viz-controls">
+      <div class="ctrl"><div class="lab"><span>a (Schwelle 阈值)</span><span class="v" id="mk_a_v">2</span></div>
+        <input type="range" id="mk_a" min="0.5" max="6" step="0.25" value="2"></div>
+    </div>
+    <canvas id="mk_canvas"></canvas>
+    <div class="stats" id="mk_stats"></div>
+  </div>
+  <div class="ex">
+    <div class="q">Beispiel 3.1: Eine Fabrik produziert im Mittel \(E(X)=50\) defekte Teile pro Tag (\(X\ge0\)). Schranke für \(P(X\ge200)\)?</div>
+    <div class="qzh">例题 3.1：某工厂平均每天 \(E(X)=50\) 个次品（\(X\ge0\)），求 \(P(X\ge200)\) 的上界。</div>
+    <button class="sol-btn" data-t="mk_s0">显示解答</button>
+    <div class="sol" id="mk_s0"><span class="lbl">解答</span>\[P(X\ge200)\le\frac{E(X)}{200}=\frac{50}{200}=0{,}25.\] 在任何一天，次品数达到 200 以上的概率不超过 25%（仅用均值，不需知道分布）。</div>
+  </div>
+</section>
+
+<!-- ============ 4. CHEBYSHEV ============ -->
+<section class="blk" id="cheby">
+  <div class="head"><span class="num">4</span><h2>Tschebyscheff-Ungleichung<span class="zh">切比雪夫不等式</span></h2></div>
+  <div class="grid2">
+    <div class="card concept">
+      <h3>💡 Idee · 直觉</h3>
+      <p class="bi"><span class="de">Begrenzt die Wkt., dass \(X\) <b>weit vom Mittelwert</b> \(\mu\) abweicht — über die Varianz. Folgt direkt aus Markov, angewendet auf \((X-\mu)^2\).</span>
+      <span class="zh">用<b>方差</b>限制 \(X\) <b>偏离均值</b> \(\mu\) 的概率。它是把马尔可夫不等式用在 \((X-\mu)^2\geq0\) 上的直接推论——这就是"另一个不等式"。</span></p>
+    </div>
+    <div class="card formula">
+      <h3>📐 Aussage · 不等式</h3>
+      \[P\big(|X-\mu|\ge\varepsilon\big)\le\frac{Var(X)}{\varepsilon^2}\]
+      <div class="bi" style="margin-top:6px"><span class="zh" style="color:var(--muted)">等价地，令 \(\varepsilon=k\sigma\)：</span></div>
+      \[P\big(|X-\mu|\ge k\sigma\big)\le\frac{1}{k^2}\]
+    </div>
+  </div>
+  <div class="card proof">
+    <h3>🔗 Herleitung aus Markov · 由马尔可夫推导</h3>
+    <p class="bi"><span class="de">Wende Markov auf die nichtnegative Variable \(Y=(X-\mu)^2\) mit Schwelle \(a=\varepsilon^2\) an:</span>
+    <span class="zh">令 \(Y=(X-\mu)^2\ge0\)，对其用马尔可夫不等式，阈值取 \(a=\varepsilon^2\)：</span></p>
+    \[P\big(|X-\mu|\ge\varepsilon\big)=P\big((X-\mu)^2\ge\varepsilon^2\big)\le\frac{E[(X-\mu)^2]}{\varepsilon^2}=\frac{Var(X)}{\varepsilon^2}.\]
+  </div>
+  <div class="card">
+    <h3>📊 Interaktiv · 切比雪夫上界 \(1/k^2\) vs 真实概率</h3>
+    <div class="viz-controls">
+      <div class="ctrl"><div class="lab"><span>Verteilung 分布</span></div>
+        <select id="cb_dist">
+          <option value="norm">Normal 正态 N(0,1)</option>
+          <option value="unif">Gleichvert. 均匀 U(0,1)</option>
+          <option value="exp">Exponential 指数 Exp(1)</option>
+        </select></div>
+      <div class="ctrl"><div class="lab"><span>k (Std.-Abweichungen 倍标准差)</span><span class="v" id="cb_k_v">2</span></div>
+        <input type="range" id="cb_k" min="1" max="4" step="0.25" value="2"></div>
+    </div>
+    <canvas id="cb_canvas"></canvas>
+    <div class="stats" id="cb_stats"></div>
+  </div>
+  <div class="ex">
+    <div class="q">Beispiel 4.1: \(X\) hat \(\mu=100,\ \sigma=15\). Schranke für \(P(|X-100|\ge30)\)?</div>
+    <div class="qzh">例题 4.1：\(X\) 满足 \(\mu=100,\ \sigma=15\)，求 \(P(|X-100|\ge30)\) 的上界。</div>
+    <button class="sol-btn" data-t="cb_s0">显示解答</button>
+    <div class="sol" id="cb_s0"><span class="lbl">解答</span>\(\varepsilon=30=2\sigma\Rightarrow k=2\):
+    \[P(|X-100|\ge30)\le\frac{\sigma^2}{\varepsilon^2}=\frac{225}{900}=\frac14=0{,}25.\] 等价于 \(1/k^2=1/4\)。无论分布如何，偏离均值 2 个标准差以上的概率不超过 25%。</div>
+  </div>
+</section>
+
+<!-- ============ 5. WLLN ============ -->
+<section class="blk" id="wlln">
+  <div class="head"><span class="num">5</span><h2>Schwaches Gesetz der großen Zahlen<span class="zh">弱大数定律 (WLLN)</span></h2></div>
+  <div class="card formula">
+    <h3>📐 Aussage · 定理</h3>
+    <p class="bi"><span class="de">Seien \(X_1,X_2,\dots\) i.i.d. mit \(E(X_i)=\mu,\ Var(X_i)=\sigma^2<\infty\). Das Stichprobenmittel \(\bar X_n=\frac1n\sum_{i=1}^n X_i\) konvergiert <b>in Wahrscheinlichkeit</b> gegen \(\mu\):</span>
+    <span class="zh">设 \(X_1,X_2,\dots\) 独立同分布，\(E(X_i)=\mu,\ Var(X_i)=\sigma^2<\infty\)。样本均值 \(\bar X_n=\frac1n\sum X_i\) <b>依概率</b>收敛到 \(\mu\)：</span></p>
+    \[\bar X_n\xrightarrow{P}\mu,\quad\text{d.h. }\forall\varepsilon>0:\ \lim_{n\to\infty}P\big(|\bar X_n-\mu|\ge\varepsilon\big)=0.\]
+  </div>
+  <div class="card proof">
+    <h3>🔗 Beweis via Tschebyscheff · 用切比雪夫证明（核心结合点！）</h3>
+    <p class="bi"><span class="zh">先算样本均值的期望与方差：</span></p>
+    \[E(\bar X_n)=\mu,\qquad Var(\bar X_n)=\frac{1}{n^2}\sum_{i=1}^n Var(X_i)=\frac{\sigma^2}{n}.\]
+    <p class="bi"><span class="zh">对 \(\bar X_n\) 应用切比雪夫不等式：</span></p>
+    \[P\big(|\bar X_n-\mu|\ge\varepsilon\big)\le\frac{Var(\bar X_n)}{\varepsilon^2}=\frac{\sigma^2}{n\,\varepsilon^2}\xrightarrow[n\to\infty]{}0.\]
+    <p class="bi"><span class="de" style="font-weight:600">Fertig:</span> <span class="zh">右端随 \(n\to\infty\) 趋于 0，故 \(\bar X_n\xrightarrow{P}\mu\)。这正是"切比雪夫 ⟹ 弱大数定律"的经典链条。</span></p>
+  </div>
+  <div class="card">
+    <h3>📊 Simulation · 样本均值轨迹随 n 收敛到 μ</h3>
+    <div class="viz-controls">
+      <div class="ctrl"><div class="lab"><span>Verteilung 分布</span></div>
+        <select id="lln_dist">
+          <option value="coin">Münzwurf 抛硬币 (μ=0.5)</option>
+          <option value="die">Würfel 骰子 (μ=3.5)</option>
+          <option value="exp">Exponential 指数 (μ=1)</option>
+        </select></div>
+      <div class="ctrl"><div class="lab"><span>n (max. Versuche)</span><span class="v" id="lln_n_v">500</span></div>
+        <input type="range" id="lln_n" min="100" max="2000" step="100" value="500"></div>
+    </div>
+    <canvas id="lln_canvas"></canvas>
+    <div class="btnrow">
+      <button class="btn idg" id="lln_add">➕ Pfad hinzufügen / 加一条轨迹</button>
+      <button class="btn am" id="lln_reset">↺ Zurücksetzen / 重置</button>
+    </div>
+    <div class="stats" id="lln_stats"></div>
+  </div>
+  <div class="ex">
+    <div class="q">Beispiel 5.1: Wie viele Würfe \(n\) garantieren laut Tschebyscheff \(P(|\bar X_n-\mu|\ge0{,}1)\le0{,}05\), wenn \(\sigma^2=0{,}25\)?</div>
+    <div class="qzh">例题 5.1：设 \(\sigma^2=0{,}25\)，由切比雪夫，要保证 \(P(|\bar X_n-\mu|\ge0{,}1)\le0{,}05\)，至少需多少次 \(n\)？</div>
+    <button class="sol-btn" data-t="lln_s0">显示解答</button>
+    <div class="sol" id="lln_s0"><span class="lbl">解答</span>令上界 \(\dfrac{\sigma^2}{n\varepsilon^2}\le0{,}05\)：
+    \[n\ge\frac{\sigma^2}{0{,}05\,\varepsilon^2}=\frac{0{,}25}{0{,}05\cdot0{,}01}=500.\] 至少需要 \(n=500\) 次（切比雪夫给的是保守界，实际所需常更少）。</div>
+  </div>
+</section>
+
+<!-- ============ 6. SLLN ============ -->
+<section class="blk" id="slln">
+  <div class="head"><span class="num">6</span><h2>Starkes Gesetz der großen Zahlen<span class="zh">强大数定律 (SLLN)</span></h2></div>
+  <div class="card formula">
+    <h3>📐 Aussage · 定理 (Kolmogorov)</h3>
+    <p class="bi"><span class="de">Unter denselben i.i.d.-Annahmen (es genügt sogar \(E|X_i|<\infty\)) konvergiert \(\bar X_n\) <b>fast sicher</b> gegen \(\mu\):</span>
+    <span class="zh">在相同的独立同分布假设下（甚至只需 \(E|X_i|<\infty\)），\(\bar X_n\) <b>几乎必然</b>收敛到 \(\mu\)：</span></p>
+    \[\bar X_n\xrightarrow{f.s.}\mu,\quad\text{d.h. }P\Big(\lim_{n\to\infty}\bar X_n=\mu\Big)=1.\]
+  </div>
+  <div class="card">
+    <h3>⚖️ Schwach vs. Stark · 弱 vs 强 对比</h3>
+    <table class="cmp">
+      <tr><th></th><th>Schwach (WLLN) 弱</th><th>Stark (SLLN) 强</th></tr>
+      <tr><td><b>Konvergenz 收敛方式</b></td><td>in Wkt. \(\xrightarrow{P}\) 依概率</td><td>fast sicher \(\xrightarrow{f.s.}\) 几乎必然</td></tr>
+      <tr><td><b>Aussage 含义</b></td><td>Für großes \(n\) ist Abweichung <i>unwahrscheinlich</i>.<br>对每个大 \(n\)，偏差<i>不太可能</i></td><td>Die Folge \(\bar X_n\) <i>selbst</i> konvergiert (mit Wkt. 1).<br>整条序列<i>本身</i>收敛（概率 1）</td></tr>
+      <tr><td><b>Stärke 强弱</b></td><td>schwächer 较弱</td><td>stärker (impliziert WLLN) 更强（蕴含弱）</td></tr>
+      <tr><td><b>Beweis 证明</b></td><td>Tschebyscheff 切比雪夫 (kurz 简短)</td><td>Kolmogorov (aufwändiger 较难)</td></tr>
+    </table>
+  </div>
+  <div class="card concept">
+    <h3>💡 Anschaulich · 直观区别</h3>
+    <p class="bi"><span class="de">WLLN: „Schaue ich bei festem großem \(n\) hin, liegt \(\bar X_n\) fast sicher nahe \(\mu\).“ SLLN: „Die <b>gesamte Trajektorie</b> rastet bei \(\mu\) ein und bleibt dort.“ In der Simulation oben siehst du die SLLN: jeder einzelne Pfad nähert sich \(\mu\) und bleibt.</span>
+    <span class="zh">弱：固定一个大 \(n\) 去看，\(\bar X_n\) 几乎一定离 \(\mu\) 很近。强：<b>整条轨迹</b>最终锁定在 \(\mu\) 附近不再离开。上一节的模拟图正是强大数定律的体现——每一条轨迹都收敛并稳定在 \(\mu\)。</span></p>
+  </div>
+</section>
+
+<!-- ============ 7. CLT ============ -->
+<section class="blk" id="clt">
+  <div class="head"><span class="num">7</span><h2>Zentraler Grenzwertsatz<span class="zh">中心极限定理 (CLT)</span></h2></div>
+  <div class="grid2">
+    <div class="card concept">
+      <h3>💡 Idee · 直觉</h3>
+      <p class="bi"><span class="de">Egal welche Verteilung die \(X_i\) haben — die <b>standardisierte Summe / das standardisierte Mittel</b> ist für großes \(n\) <b>näherungsweise normalverteilt</b>. Das erklärt, warum die Normalverteilung überall auftaucht.</span>
+      <span class="zh">无论 \(X_i\) 服从什么分布，只要独立同分布且方差有限，<b>标准化后的和/均值</b>在 \(n\) 大时<b>近似服从正态分布</b>。这解释了正态分布为何无处不在。</span></p>
+    </div>
+    <div class="card formula">
+      <h3>📐 Aussage · 定理</h3>
+      <p class="bi"><span class="zh">设 \(X_i\) i.i.d.，\(E=\mu,\ Var=\sigma^2\)，则依分布收敛：</span></p>
+      \[\frac{\sum_{i=1}^n X_i-n\mu}{\sigma\sqrt{n}}=\frac{\sqrt{n}(\bar X_n-\mu)}{\sigma}\xrightarrow{d}N(0,1).\]
+      <p class="bi" style="margin-top:6px"><span class="zh" style="color:var(--muted)">等价：\(\bar X_n\approx N\!\big(\mu,\tfrac{\sigma^2}{n}\big)\)。</span></p>
+    </div>
+  </div>
+  <div class="card concept" style="border-left-color:var(--rose)">
+    <h3>🔍 LLN vs CLT · 大数定律与中心极限的分工</h3>
+    <p class="bi"><span class="de">LLN: \(\bar X_n\to\mu\) (Konvergenz gegen eine <b>Konstante</b>). CLT: die <b>Schwankung</b> \(\bar X_n-\mu\) skaliert mit \(1/\sqrt n\) und wird nach Streckung <b>normalverteilt</b>. LLN sagt <i>wohin</i>, CLT sagt <i>wie schnell und in welcher Form</i>.</span>
+    <span class="zh">大数定律说 \(\bar X_n\to\mu\)（收敛到<b>常数</b>）；中心极限定理刻画其<b>波动</b>：\(\bar X_n-\mu\) 以 \(1/\sqrt n\) 的速度缩小，放大 \(\sqrt n\) 倍后<b>呈正态</b>。前者说"收敛到哪"，后者说"以何速度、何形状收敛"。</span></p>
+  </div>
+  <div class="card">
+    <h3>📊 Simulation · 样本均值直方图逼近正态（即使原分布很偏）</h3>
+    <div class="viz-controls">
+      <div class="ctrl"><div class="lab"><span>Urverteilung 原始分布</span></div>
+        <select id="clt_dist">
+          <option value="unif">Gleichvert. 均匀 U(0,1)</option>
+          <option value="exp">Exponential 指数（很偏）</option>
+          <option value="bern">Bernoulli (p=0.3)</option>
+          <option value="die">Würfel 骰子</option>
+        </select></div>
+      <div class="ctrl"><div class="lab"><span>n (Stichprobengröße 每组样本量)</span><span class="v" id="clt_n_v">5</span></div>
+        <input type="range" id="clt_n" min="1" max="50" step="1" value="5"></div>
+    </div>
+    <canvas id="clt_canvas"></canvas>
+    <div class="btnrow">
+      <button class="btn tl" id="clt_add">➕ 1000 Mittel ziehen / 再抽 1000 组均值</button>
+      <button class="btn am" id="clt_reset">↺ Zurücksetzen / 重置</button>
+    </div>
+    <div class="stats" id="clt_stats"></div>
+  </div>
+  <div class="ex">
+    <div class="q">Beispiel 7.1: \(X_i\) i.i.d. mit \(\mu=3,\ \sigma=2\). Approximiere \(P(\bar X_{100}>3{,}3)\).</div>
+    <div class="qzh">例题 7.1：\(X_i\) i.i.d.，\(\mu=3,\ \sigma=2\)，用 CLT 近似 \(P(\bar X_{100}>3{,}3)\)。</div>
+    <button class="sol-btn" data-t="clt_s0">显示解答</button>
+    <div class="sol" id="clt_s0"><span class="lbl">解答</span>\(\bar X_{100}\approx N(3,\ 2^2/100)=N(3,\,0{,}04)\)，标准差 \(0{,}2\)。
+    \[Z=\frac{3{,}3-3}{0{,}2}=1{,}5,\quad P(\bar X_{100}>3{,}3)\approx1-\Phi(1{,}5)\approx0{,}0668.\]</div>
+  </div>
+  <div class="ex">
+    <div class="q">Beispiel 7.2: Summe von \(n=50\) Würfelwürfen (\(\mu=3{,}5,\ \sigma^2=\tfrac{35}{12}\)). Approximiere \(P(S_{50}>190)\).</div>
+    <div class="qzh">例题 7.2：50 次掷骰子之和（\(\mu=3{,}5,\ \sigma^2=\tfrac{35}{12}\)），用 CLT 近似 \(P(S_{50}>190)\)。</div>
+    <button class="sol-btn" data-t="clt_s1">显示解答</button>
+    <div class="sol" id="clt_s1"><span class="lbl">解答</span>\(E(S_{50})=50\cdot3{,}5=175\)，\(Var(S_{50})=50\cdot\tfrac{35}{12}\approx145{,}8\)，\(\sigma_S\approx12{,}08\)。
+    \[Z=\frac{190-175}{12{,}08}\approx1{,}24,\quad P(S_{50}>190)\approx1-\Phi(1{,}24)\approx0{,}107.\]</div>
+  </div>
+</section>
+
+</main>
+<footer>Interaktives Lernmodul · 收敛 → 不等式 → 大数定律 → 中心极限定理 · MathJax + Canvas</footer>
+
+<script>
+/* ===== math + chart helpers ===== */
+function r(x,d=3){if(!isFinite(x))return'–';return parseFloat(x.toFixed(d)).toString();}
+function erf(x){const t=1/(1+0.3275911*Math.abs(x));
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return x>=0?y:-y;}
+function Phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function normpdf(x,m,s){return Math.exp(-((x-m)**2)/(2*s*s))/(s*Math.sqrt(2*Math.PI));}
+function prep(cv,H=300){const dpr=window.devicePixelRatio||1;const W=cv.clientWidth||600;
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);return{ctx,W,H};}
+function frame(ctx,W,H){const L=46,T=20,R=14,B=38;const pw=W-L-R,ph=H-T-B;
+  ctx.strokeStyle='#c9cfde';ctx.lineWidth=1;ctx.beginPath();
+  ctx.moveTo(L,T);ctx.lineTo(L,T+ph);ctx.lineTo(L+pw,T+ph);ctx.stroke();return{L,T,pw,ph};}
+function ygrid(ctx,L,T,pw,ph,maxY){ctx.fillStyle='#8a93a8';ctx.font='10px sans-serif';ctx.textAlign='right';
+  for(let g=0;g<=4;g++){const yy=T+ph-ph*g/4;ctx.strokeStyle='#eef1f8';
+    ctx.beginPath();ctx.moveTo(L,yy);ctx.lineTo(L+pw,yy);ctx.stroke();ctx.fillText(r(maxY*g/4,2),L-5,yy+3);}}
+function xlabel(ctx,L,pw,W,H,t){ctx.fillStyle='#5a6478';ctx.textAlign='center';ctx.fillText(t,L+pw/2,H-4);}
+
+/* ===== samplers ===== */
+function rexp(lam){return -Math.log(Math.random())/lam;}
+const samplers={
+  coin:()=>Math.random()<0.5?1:0,
+  die:()=>1+Math.floor(Math.random()*6),
+  exp:()=>rexp(1),
+  unif:()=>Math.random(),
+  bern:()=>Math.random()<0.3?1:0,
+  norm:()=>{let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+};
+const meta={
+  coin:{mu:0.5,s2:0.25,lab:'Münzwurf'},die:{mu:3.5,s2:35/12,lab:'Würfel'},
+  exp:{mu:1,s2:1,lab:'Exp(1)'},unif:{mu:0.5,s2:1/12,lab:'U(0,1)'},
+  bern:{mu:0.3,s2:0.21,lab:'Bernoulli'},norm:{mu:0,s2:1,lab:'N(0,1)'}
+};
+
+/* ===== 3. MARKOV ===== */
+function drawMarkov(){
+  const cv=document.getElementById('mk_canvas');const{ctx,W,H}=prep(cv,260);
+  const{L,T,pw,ph}=frame(ctx,W,H);
+  const a=parseFloat(document.getElementById('mk_a').value);
+  const xmax=7;const X=v=>L+v/xmax*pw;
+  const lam=1;const fmax=lam*1.05;ygrid(ctx,L,T,pw,ph,fmax);
+  // exp pdf
+  ctx.beginPath();for(let i=0;i<=120;i++){const x=xmax*i/120;const y=lam*Math.exp(-lam*x);
+    const px=X(x),py=T+ph-y/fmax*ph;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+  ctx.lineWidth=2.2;ctx.strokeStyle='#0d9488';ctx.stroke();
+  // shade tail x>=a
+  ctx.beginPath();ctx.moveTo(X(a),T+ph);
+  for(let i=0;i<=80;i++){const x=a+(xmax-a)*i/80;const y=lam*Math.exp(-lam*x);
+    ctx.lineTo(X(x),T+ph-y/fmax*ph);}
+  ctx.lineTo(X(xmax),T+ph);ctx.closePath();ctx.fillStyle='rgba(225,29,72,.22)';ctx.fill();
+  // line at a
+  ctx.strokeStyle='#e11d48';ctx.setLineDash([4,4]);ctx.beginPath();
+  ctx.moveTo(X(a),T);ctx.lineTo(X(a),T+ph);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#e11d48';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText('a='+r(a,2),X(a),T-6);
+  xlabel(ctx,L,pw,W,H,'x  (rote Fläche = P(X≥a) 真实尾概率)');
+  const real=Math.exp(-lam*a);const bound=Math.min(1,1/a);
+  document.getElementById('mk_stats').innerHTML=
+    `\\( P(X\\ge a)=${r(real,3)}\\ \\le\\ \\dfrac{E(X)}{a}=\\dfrac{1}{${r(a,2)}}=${r(bound,3)}\\) ✓`;
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('mk_stats')]);
+}
+
+/* ===== 4. CHEBYSHEV ===== */
+function realTail(dist,k){
+  // P(|X-mu|>=k*sigma)
+  if(dist==='norm')return 2*(1-Phi(k));
+  if(dist==='unif'){const sg=Math.sqrt(1/12);const d=k*sg;
+    // |x-0.5|>=d on [0,1]
+    let p=0; if(d<0.5)p=2*(0.5-d); else p=0; return p;}
+  if(dist==='exp'){const mu=1,sg=1;const lo=mu-k*sg,hi=mu+k*sg;
+    let p=0; if(lo>0)p+=1-Math.exp(-lo); else p+=0; p+=Math.exp(-hi); return p;}
+}
+function drawCheby(){
+  const cv=document.getElementById('cb_canvas');const{ctx,W,H}=prep(cv,260);
+  const{L,T,pw,ph}=frame(ctx,W,H);
+  const dist=document.getElementById('cb_dist').value;
+  const k=parseFloat(document.getElementById('cb_k').value);
+  let mu,sg,fpdf,xmin,xmax;
+  if(dist==='norm'){mu=0;sg=1;fpdf=x=>normpdf(x,0,1);xmin=-4;xmax=4;}
+  if(dist==='unif'){mu=0.5;sg=Math.sqrt(1/12);fpdf=x=>(x>=0&&x<=1)?1:0;xmin=-0.3;xmax=1.3;}
+  if(dist==='exp'){mu=1;sg=1;fpdf=x=>x>=0?Math.exp(-x):0;xmin=-0.3;xmax=6;}
+  const X=v=>L+(v-xmin)/(xmax-xmin)*pw;
+  let fmax=0;for(let i=0;i<=200;i++){fmax=Math.max(fmax,fpdf(xmin+(xmax-xmin)*i/200));}fmax*=1.1;
+  ygrid(ctx,L,T,pw,ph,fmax);
+  // pdf
+  ctx.beginPath();for(let i=0;i<=200;i++){const x=xmin+(xmax-xmin)*i/200;const y=fpdf(x);
+    const px=X(x),py=T+ph-y/fmax*ph;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+  ctx.lineWidth=2.2;ctx.strokeStyle='#0d9488';ctx.stroke();
+  // shade tails |x-mu|>=k*sigma
+  const lo=mu-k*sg,hi=mu+k*sg;
+  function shade(x0,x1){ctx.beginPath();ctx.moveTo(X(x0),T+ph);
+    for(let i=0;i<=60;i++){const x=x0+(x1-x0)*i/60;ctx.lineTo(X(x),T+ph-fpdf(x)/fmax*ph);}
+    ctx.lineTo(X(x1),T+ph);ctx.closePath();ctx.fillStyle='rgba(225,29,72,.22)';ctx.fill();}
+  shade(xmin,lo);shade(hi,xmax);
+  // mu line + band
+  ctx.strokeStyle='#6366f1';ctx.setLineDash([4,4]);
+  [lo,hi].forEach(v=>{ctx.beginPath();ctx.moveTo(X(v),T);ctx.lineTo(X(v),T+ph);ctx.stroke();});
+  ctx.setLineDash([]);
+  ctx.fillStyle='#6366f1';ctx.font='11px sans-serif';ctx.textAlign='center';
+  ctx.fillText('μ±'+r(k,2)+'σ',X(mu),T-6);
+  xlabel(ctx,L,pw,W,H,'x  (rote Flächen = P(|X-μ|≥kσ) 真实概率)');
+  const real=realTail(dist,k);const bound=Math.min(1,1/(k*k));
+  document.getElementById('cb_stats').innerHTML=
+    `\\( P(|X-\\mu|\\ge ${r(k,2)}\\sigma)=${r(real,3)}\\ \\le\\ \\dfrac{1}{k^2}=${r(bound,3)}\\) ✓`;
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('cb_stats')]);
+}
+
+/* ===== 5. LLN ===== */
+const llnPaths=[];const llnColors=['#6366f1','#e11d48','#0d9488','#f59e0b','#16a34a','#9333ea'];
+function llnDist(){return document.getElementById('lln_dist').value;}
+function llnN(){return parseInt(document.getElementById('lln_n').value);}
+function addLLN(){const d=llnDist();const N=llnN();const arr=[];let s=0;
+  for(let i=1;i<=N;i++){s+=samplers[d]();arr.push(s/i);}llnPaths.push(arr);drawLLN();}
+function resetLLN(){llnPaths.length=0;drawLLN();}
+function drawLLN(){
+  const cv=document.getElementById('lln_canvas');const{ctx,W,H}=prep(cv,300);
+  const{L,T,pw,ph}=frame(ctx,W,H);
+  const d=llnDist();const N=llnN();const mu=meta[d].mu;
+  let ymin,ymax;
+  if(d==='die'){ymin=1;ymax=6;}else if(d==='exp'){ymin=0;ymax=3;}else{ymin=0;ymax=1;}
+  const Xp=i=>L+(i/N)*pw;const Yp=v=>T+ph-(v-ymin)/(ymax-ymin)*ph;
+  // y ticks
+  ctx.fillStyle='#8a93a8';ctx.font='10px sans-serif';ctx.textAlign='right';
+  for(let g=0;g<=4;g++){const yv=ymin+(ymax-ymin)*g/4;const yy=Yp(yv);
+    ctx.strokeStyle='#eef1f8';ctx.beginPath();ctx.moveTo(L,yy);ctx.lineTo(L+pw,yy);ctx.stroke();
+    ctx.fillText(r(yv,2),L-5,yy+3);}
+  // mu line
+  ctx.strokeStyle='#1e2433';ctx.setLineDash([6,4]);ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(L,Yp(mu));ctx.lineTo(L+pw,Yp(mu));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#1e2433';ctx.textAlign='left';ctx.fillText('μ='+r(mu,2),L+pw-46,Yp(mu)-5);
+  // paths (log-ish: just index)
+  llnPaths.forEach((arr,idx)=>{ctx.beginPath();ctx.lineWidth=1.4;
+    ctx.strokeStyle=llnColors[idx%llnColors.length];
+    const step=Math.max(1,Math.floor(arr.length/pw));
+    for(let i=0;i<arr.length;i+=step){const px=Xp(i+1),py=Yp(Math.max(ymin,Math.min(ymax,arr[i])));
+      i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();});
+  xlabel(ctx,L,pw,W,H,'n (Anzahl Versuche 试验次数)');
+  document.getElementById('lln_stats').innerHTML=
+    `\\( ${llnPaths.length}\\) Pfade · 轨迹 · alle nähern sich \\(\\mu=${r(mu,2)}\\) — Gesetz der großen Zahlen 各轨迹收敛到 μ`;
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('lln_stats')]);
+}
+
+/* ===== 7. CLT ===== */
+let cltMeans=[];
+function cltDist(){return document.getElementById('clt_dist').value;}
+function cltN(){return parseInt(document.getElementById('clt_n').value);}
+function addCLT(){const d=cltDist();const n=cltN();
+  for(let m=0;m<1000;m++){let s=0;for(let i=0;i<n;i++)s+=samplers[d]();cltMeans.push(s/n);}drawCLT();}
+function resetCLT(){cltMeans=[];drawCLT();}
+function drawCLT(){
+  const cv=document.getElementById('clt_canvas');const{ctx,W,H}=prep(cv,300);
+  const{L,T,pw,ph}=frame(ctx,W,H);
+  const d=cltDist();const n=cltN();const mu=meta[d].mu;const sg=Math.sqrt(meta[d].s2/n);
+  // x-range around mu +-4 sigma_of_mean (but n=1 use raw range)
+  let xmin=mu-4*Math.max(sg,0.05),xmax=mu+4*Math.max(sg,0.05);
+  if(cltMeans.length){xmin=Math.min(xmin,...cltMeans);xmax=Math.max(xmax,...cltMeans);}
+  const X=v=>L+(v-xmin)/(xmax-xmin)*pw;
+  // histogram
+  const B=30;const counts=new Array(B).fill(0);
+  cltMeans.forEach(v=>{let b=Math.floor((v-xmin)/(xmax-xmin)*B);if(b<0)b=0;if(b>=B)b=B-1;counts[b]++;});
+  const bw=(xmax-xmin)/B;const total=cltMeans.length||1;
+  // densities
+  const dens=counts.map(c=>c/total/bw);
+  let fmax=normpdf(mu,mu,sg);dens.forEach(v=>fmax=Math.max(fmax,v));fmax*=1.15;
+  if(fmax<=0)fmax=1;
+  ygrid(ctx,L,T,pw,ph,fmax);
+  // bars
+  for(let b=0;b<B;b++){const x0=xmin+b*bw;const px=X(x0);const pw2=X(x0+bw)-px-1;
+    const bh=dens[b]/fmax*ph;ctx.fillStyle='rgba(99,102,241,.55)';
+    ctx.fillRect(px,T+ph-bh,Math.max(pw2,1),bh);}
+  // normal overlay
+  ctx.beginPath();for(let i=0;i<=160;i++){const x=xmin+(xmax-xmin)*i/160;const y=normpdf(x,mu,sg);
+    const py=T+ph-y/fmax*ph;i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py);}
+  ctx.lineWidth=2.6;ctx.strokeStyle='#e11d48';ctx.stroke();
+  // legend
+  ctx.fillStyle='#e11d48';ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillText('— N(μ, σ²/n) Grenzverteilung 极限正态',L+8,T+12);
+  xlabel(ctx,L,pw,W,H,'Stichprobenmittel  x̄  (样本均值)');
+  document.getElementById('clt_stats').innerHTML=
+    `Urverteilung 原分布: <b>${meta[d].lab}</b> · n=${n} · ${cltMeans.length} Mittel 组均值 · \\(\\bar X_n\\approx N(${r(mu,2)},\\,${r(meta[d].s2/n,4)})\\)`;
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('clt_stats')]);
+}
+
+/* ===== wiring ===== */
+document.getElementById('mk_a').addEventListener('input',e=>{document.getElementById('mk_a_v').textContent=e.target.value;drawMarkov();});
+document.getElementById('cb_k').addEventListener('input',e=>{document.getElementById('cb_k_v').textContent=e.target.value;drawCheby();});
+document.getElementById('cb_dist').addEventListener('change',drawCheby);
+document.getElementById('lln_n').addEventListener('input',e=>{document.getElementById('lln_n_v').textContent=e.target.value;resetLLN();});
+document.getElementById('lln_dist').addEventListener('change',resetLLN);
+document.getElementById('lln_add').addEventListener('click',addLLN);
+document.getElementById('lln_reset').addEventListener('click',resetLLN);
+document.getElementById('clt_n').addEventListener('input',e=>{document.getElementById('clt_n_v').textContent=e.target.value;resetCLT();});
+document.getElementById('clt_dist').addEventListener('change',resetCLT);
+document.getElementById('clt_add').addEventListener('click',addCLT);
+document.getElementById('clt_reset').addEventListener('click',resetCLT);
+document.querySelectorAll('.sol-btn').forEach(b=>b.addEventListener('click',()=>{
+  const el=document.getElementById(b.dataset.t);el.classList.toggle('open');
+  b.textContent=el.classList.contains('open')?'隐藏解答':'显示解答';}));
+
+function initAll(){
+  drawMarkov();drawCheby();
+  addLLN();addLLN();addLLN();
+  addCLT();
+}
+window.addEventListener('resize',()=>{drawMarkov();drawCheby();drawLLN();drawCLT();});
+if(window.MathJax&&MathJax.startup){MathJax.startup.promise.then(initAll);}
+else{window.addEventListener('load',()=>setTimeout(initAll,400));}
+</script>
+</body>
+</html>

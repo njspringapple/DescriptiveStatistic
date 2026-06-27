@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROC & AUC · 受试者工作特征曲线与曲线下面积</title>
+<script>
+  window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1e2433;--muted:#5a6478;--indigo:#6366f1;
+    --indigo-d:#4338ca;--teal:#0d9488;--amber:#f59e0b;--rose:#e11d48;--green:#16a34a;--line:#e2e6f0;
+    --pos:#0d9488;--neg:#e11d48;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.65;scroll-behavior:smooth;}
+  header.hero{background:linear-gradient(135deg,#0f766e 0%,#6366f1 60%,#7c3aed 100%);
+    color:#fff;padding:46px 20px 38px;text-align:center;}
+  header.hero h1{margin:0;font-size:1.8em;font-weight:800;letter-spacing:.3px;}
+  header.hero .sub{font-size:1.02em;opacity:.95;margin-top:8px;}
+  header.hero .zh{display:block;font-size:.9em;opacity:.85;margin-top:4px;}
+  nav.pills{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;gap:7px;
+    overflow-x:auto;padding:11px 14px;}
+  nav.pills a{flex:0 0 auto;text-decoration:none;font-size:.82em;font-weight:600;padding:7px 13px;
+    border-radius:20px;color:var(--muted);background:#eef1f8;white-space:nowrap;transition:.15s;}
+  nav.pills a:hover{color:#fff;background:var(--indigo);}
+  main{max-width:1040px;margin:0 auto;padding:24px 16px 80px;}
+  section.blk{background:var(--card);border-radius:18px;padding:26px;margin-bottom:30px;
+    box-shadow:0 6px 24px rgba(40,50,90,.07);border:1px solid var(--line);scroll-margin-top:64px;}
+  .head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:2px solid var(--line);
+    padding-bottom:14px;margin-bottom:18px;}
+  .head .num{font-size:1.5em;font-weight:800;color:var(--indigo);}
+  .head h2{margin:0;font-size:1.25em;}
+  .head h2 .zh{font-size:.78em;color:var(--muted);font-weight:600;margin-left:6px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  .card{background:#fbfcfe;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:16px;}
+  .card h3{margin:0 0 10px;font-size:1.02em;display:flex;align-items:center;gap:7px;}
+  .card.formula{background:#f5f7ff;}
+  .card.concept{background:#fffdf7;border-left:4px solid var(--amber);}
+  .card.mem{background:#f3faf8;border-left:4px solid var(--teal);}
+  .bi .de{display:block;color:var(--ink);}
+  .bi .zh{display:block;color:var(--indigo-d);font-size:.92em;margin-top:3px;}
+  /* confusion matrix */
+  .cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:5px;font-size:.85em;max-width:380px;margin:0 auto;}
+  .cm .ch{background:#eef1f8;font-weight:700;text-align:center;padding:8px 4px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+  .cm .cell{border-radius:8px;padding:12px 6px;text-align:center;color:#fff;font-weight:700;}
+  .cm .cell .lab{font-size:.78em;font-weight:600;opacity:.9;display:block;}
+  .cm .cell .val{font-size:1.5em;}
+  .cm .tp{background:#0d9488;} .cm .tn{background:#16a34a;}
+  .cm .fp{background:#f59e0b;} .cm .fn{background:#e11d48;}
+  .cm .corner{background:transparent;}
+  .metrics{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px;}
+  .metric{background:#eef1f8;border-radius:10px;padding:8px 14px;text-align:center;min-width:110px;}
+  .metric .mv{font-size:1.25em;font-weight:800;color:var(--indigo-d);font-variant-numeric:tabular-nums;}
+  .metric .ml{font-size:.78em;color:var(--muted);}
+  /* viz */
+  .viz-controls{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:12px;align-items:flex-end;}
+  .ctrl{display:flex;flex-direction:column;font-size:.85em;min-width:160px;flex:1;}
+  .ctrl .lab{font-weight:700;margin-bottom:3px;display:flex;justify-content:space-between;}
+  .ctrl .lab .v{color:var(--indigo);font-variant-numeric:tabular-nums;}
+  input[type=range]{width:100%;accent-color:var(--indigo);}
+  canvas{width:100%;display:block;border-radius:10px;background:#fff;}
+  .triple{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:760px){.triple{grid-template-columns:1fr;}}
+  .canvas-wrap{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:10px;}
+  .canvas-wrap .ct{font-size:.82em;font-weight:700;color:var(--muted);margin-bottom:6px;text-align:center;}
+  .btn{font:inherit;font-size:.83em;font-weight:700;cursor:pointer;border:none;
+    padding:8px 16px;border-radius:8px;color:#fff;}
+  .btn.idg{background:var(--indigo);} .btn.tl{background:var(--teal);} .btn.am{background:var(--amber);color:#3a2a00;}
+  .btn:hover{filter:brightness(1.06);}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+  .ex{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;
+    padding:13px 16px;margin-bottom:13px;background:#fffdf7;}
+  .ex .q{font-weight:600;}
+  .ex .qzh{color:var(--indigo-d);font-size:.9em;margin:5px 0 8px;}
+  .ex button.sol-btn{font:inherit;font-size:.82em;font-weight:700;cursor:pointer;background:var(--amber);
+    color:#3a2a00;border:none;padding:6px 14px;border-radius:8px;}
+  .ex .sol{display:none;margin-top:11px;padding:12px 14px;background:#fff;border:1px dashed #e0c990;
+    border-radius:9px;font-size:.94em;}
+  .ex .sol.open{display:block;}
+  .ex .sol .lbl{font-weight:700;color:var(--amber);display:block;margin-bottom:4px;}
+  table.cmp{width:100%;border-collapse:collapse;font-size:.88em;margin-top:6px;}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+  table.cmp th{background:#eef1f8;}
+  .tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.8em;font-weight:700;}
+  .tag.pos{background:#d1f5ef;color:#0f766e;} .tag.neg{background:#fde2e7;color:#b91c4a;}
+  .aucbar{height:26px;border-radius:13px;background:linear-gradient(90deg,#e11d48 0%,#f59e0b 50%,#16a34a 100%);position:relative;margin:10px 0;}
+  .aucbar .mk{position:absolute;top:-4px;width:4px;height:34px;background:#1e2433;border-radius:2px;transform:translateX(-50%);}
+  .aucbar .mk::after{content:attr(data-l);position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+    font-size:.72em;font-weight:700;white-space:nowrap;color:#1e2433;}
+  footer{text-align:center;color:var(--muted);font-size:.85em;padding:20px;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>ROC-Kurve & AUC</h1>
+  <div class="sub">Receiver Operating Characteristic · Area Under the Curve
+    <span class="zh">受试者工作特征曲线 与 曲线下面积 · 由浅入深 · 一次看懂不再忘</span>
+  </div>
+</header>
+
+<nav class="pills">
+  <a href="#why">0. 为什么需要</a>
+  <a href="#cm">1. 混淆矩阵</a>
+  <a href="#rates">2. TPR 与 FPR</a>
+  <a href="#roc">3. ROC 怎么画</a>
+  <a href="#lab">4. 联动实验室</a>
+  <a href="#auc">5. AUC 含义</a>
+  <a href="#prob">6. AUC 概率解释</a>
+  <a href="#mem">7. 记忆 & 误区</a>
+  <a href="#ex">8. 例题</a>
+</nav>
+
+<main>
+
+<!-- ===== 0. WHY ===== -->
+<section class="blk" id="why">
+  <div class="head"><span class="num">0</span><h2>Warum nicht einfach „Accuracy“?<span class="zh">为什么不能只看准确率？</span></h2></div>
+  <div class="card concept">
+    <h3>💡 Das Problem · 一个会骗人的例子</h3>
+    <p class="bi"><span class="de">Bei 99 % gesunden und 1 % kranken Patienten erreicht ein Modell, das <b>immer „gesund“</b> sagt, schon 99 % Accuracy — und ist trotzdem völlig nutzlos, weil es keinen einzigen Kranken findet.</span>
+    <span class="zh">假设 99% 的人健康、1% 的人生病。一个<b>永远预测"健康"</b>的模型准确率高达 99%，却毫无用处——它一个病人都查不出。准确率在<b>类别不平衡</b>时极具误导性。</span></p>
+    <p class="bi"><span class="de">Wir brauchen ein Maß, das <b>unabhängig von der Schwelle</b> und <b>unabhängig vom Klassenverhältnis</b> bewertet, wie gut das Modell Positive von Negativen <b>trennt</b>. Das leisten ROC und AUC.</span>
+    <span class="zh">我们需要一个指标：<b>不依赖某个具体阈值</b>、<b>不受正负样本比例影响</b>，专门衡量模型把正类和负类<b>区分开</b>的能力。这正是 ROC 与 AUC 的作用。</span></p>
+  </div>
+</section>
+
+<!-- ===== 1. CONFUSION MATRIX ===== -->
+<section class="blk" id="cm">
+  <div class="head"><span class="num">1</span><h2>Die Konfusionsmatrix<span class="zh">第一步：混淆矩阵（一切的基础）</span></h2></div>
+  <p class="bi"><span class="de">Ein Klassifikator vergibt einen <b>Score</b> (z. B. „Wkt. krank = 0,7“). Mit einer <b>Schwelle</b> wird daraus ein Ja/Nein. Vier Fälle sind möglich:</span>
+  <span class="zh">分类器先给每个样本一个<b>分数</b>（如"患病概率 = 0.7"），再用一个<b>阈值</b>把分数变成"是/否"。对照真实标签，有四种结果：</span></p>
+  <div class="grid2">
+    <div class="card">
+      <div class="cm" style="max-width:420px">
+        <div class="ch corner"></div>
+        <div class="ch">Vorhersage: Positiv<br><span style="font-weight:400;color:#5a6478">预测为正</span></div>
+        <div class="ch">Vorhersage: Negativ<br><span style="font-weight:400;color:#5a6478">预测为负</span></div>
+        <div class="ch">Wahr: Positiv<br><span style="font-weight:400;color:#5a6478">真实为正</span></div>
+        <div class="cell tp"><span class="lab">TP 真阳性</span><span class="val">✓</span></div>
+        <div class="cell fn"><span class="lab">FN 假阴性（漏报）</span><span class="val">✗</span></div>
+        <div class="ch">Wahr: Negativ<br><span style="font-weight:400;color:#5a6478">真实为负</span></div>
+        <div class="cell fp"><span class="lab">FP 假阳性（误报）</span><span class="val">✗</span></div>
+        <div class="cell tn"><span class="lab">TN 真阴性</span><span class="val">✓</span></div>
+      </div>
+    </div>
+    <div class="card formula">
+      <h3>🔑 四个字母 · 记牢它们</h3>
+      <p class="bi"><span class="zh"><b>第一个字母 T/F</b>：预测对不对（True/False）。<b>第二个字母 P/N</b>：预测说了啥（Positiv/Negativ）。</span></p>
+      <p class="bi"><span class="zh">所以 <span class="tag pos">FP</span>=预测说"正"但错了=<b>误报</b>；<span class="tag neg">FN</span>=预测说"负"但错了=<b>漏报</b>。医学里漏报一个癌症（FN）通常比误报（FP）后果严重得多——这就是为什么要调阈值。</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. TPR & FPR ===== -->
+<section class="blk" id="rates">
+  <div class="head"><span class="num">2</span><h2>Die zwei Achsen: TPR & FPR<span class="zh">第二步：ROC 的两根轴——TPR 与 FPR</span></h2></div>
+  <div class="grid2">
+    <div class="card formula">
+      <h3><span class="tag pos">纵轴 Y</span> TPR · 真阳性率 (Sensitivität)</h3>
+      \[\text{TPR}=\frac{TP}{TP+FN}\]
+      <p class="bi"><span class="de">Anteil der echten Positiven, die <b>korrekt gefunden</b> werden. Auch Recall / Sensitivität / Trefferquote.</span>
+      <span class="zh">在<b>所有真实正样本</b>中，被正确揪出来的比例。又叫<b>召回率 / 灵敏度</b>。越高越好——抓得越全。</span></p>
+    </div>
+    <div class="card formula">
+      <h3><span class="tag neg">横轴 X</span> FPR · 假阳性率</h3>
+      \[\text{FPR}=\frac{FP}{FP+TN}=1-\text{Spezifität}\]
+      <p class="bi"><span class="de">Anteil der echten Negativen, die <b>fälschlich als positiv</b> markiert werden.</span>
+      <span class="zh">在<b>所有真实负样本</b>中，被错误报成正的比例（误报率）。越低越好——别冤枉好人。等于 \(1-\)特异度。</span></p>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🧠 记忆口诀</h3>
+    <p class="bi"><span class="zh"><b>TPR 看正样本，FPR 看负样本，各算各的、互不干扰。</b>正因为分母分别是"全部真正"和"全部真负"，所以即使正负比例 1:99，这两个比率也<b>不会被比例稀释</b>——这就是 ROC 抗类别不平衡的根本原因。理想分类器：TPR=1，FPR=0（左上角）。</span></p>
+  </div>
+</section>
+
+<!-- ===== 3. HOW ROC IS DRAWN ===== -->
+<section class="blk" id="roc">
+  <div class="head"><span class="num">3</span><h2>Wie entsteht die ROC-Kurve?<span class="zh">第三步：ROC 曲线是怎么"扫"出来的</span></h2></div>
+  <div class="card concept">
+    <h3>💡 核心思想 · 一句话</h3>
+    <p class="bi"><span class="de">Ein Punkt \((\text{FPR},\text{TPR})\) gehört zu <b>einer</b> Schwelle. Lässt man die Schwelle von hoch nach niedrig wandern, zeichnet die Punktfolge die <b>ROC-Kurve</b>.</span>
+    <span class="zh">每选定<b>一个阈值</b>，就得到一对 \((\text{FPR},\text{TPR})\)，即图上<b>一个点</b>。把阈值从最高<b>连续降到</b>最低，这些点就<b>连成一条曲线</b>——这就是 ROC。</span></p>
+  </div>
+  <div class="card">
+    <table class="cmp">
+      <tr><th>阈值很高 hoch</th><th>阈值适中 mittel</th><th>阈值很低 niedrig</th></tr>
+      <tr>
+        <td>几乎没人被判为正 → TP 和 FP 都≈0 → 点在<b>左下角 (0,0)</b>，保守</td>
+        <td>正常工作点，TPR 和 FPR 折中</td>
+        <td>几乎所有人都判为正 → 全抓住也全误报 → 点在<b>右上角 (1,1)</b>，激进</td>
+      </tr>
+    </table>
+    <p class="bi" style="margin-top:10px"><span class="zh">所以 ROC 曲线<b>必然从 (0,0) 走到 (1,1)</b>。降低阈值 = 沿曲线<b>向右上方移动</b>（抓得更多，但误报也更多）。下面的实验室让你亲手拖动阈值，看这个点在曲线上跑。</span></p>
+  </div>
+</section>
+
+<!-- ===== 4. INTERACTIVE LAB ===== -->
+<section class="blk" id="lab">
+  <div class="head"><span class="num">4</span><h2>Interaktives Labor<span class="zh">第四步：三联屏联动实验室（核心！）</span></h2></div>
+  <p class="bi"><span class="de">Links: Score-Verteilungen der <span class="tag pos">Positiven</span> und <span class="tag neg">Negativen</span> mit beweglicher Schwelle. Mitte: die zugehörige Konfusionsmatrix. Rechts: der aktuelle Punkt auf der ROC-Kurve.</span>
+  <span class="zh">左图：<span class="tag pos">正类</span>与<span class="tag neg">负类</span>的得分分布及可拖动阈值线；中间：对应混淆矩阵；右图：当前阈值在 ROC 曲线上的位置。三者实时联动。</span></p>
+
+  <div class="viz-controls">
+    <div class="ctrl"><div class="lab"><span>Trennschärfe 区分度 (两类分布间距)</span><span class="v" id="sep_v">2.0</span></div>
+      <input type="range" id="sep" min="0" max="4" step="0.1" value="2.0"></div>
+    <div class="ctrl"><div class="lab"><span>Schwelle 阈值</span><span class="v" id="thr_v">5.0</span></div>
+      <input type="range" id="thr" min="0" max="10" step="0.05" value="5.0"></div>
+  </div>
+
+  <div class="triple">
+    <div class="canvas-wrap">
+      <div class="ct">① Score-Verteilungen 得分分布（拖阈值滑块）</div>
+      <canvas id="dist_canvas"></canvas>
+    </div>
+    <div class="canvas-wrap">
+      <div class="ct">③ ROC-Kurve（红点=当前阈值）</div>
+      <canvas id="roc_canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="ct" style="text-align:center;font-weight:700;color:#5a6478;margin-bottom:10px">② Konfusionsmatrix 当前混淆矩阵</div>
+    <div class="cm">
+      <div class="ch corner"></div>
+      <div class="ch">预测正</div><div class="ch">预测负</div>
+      <div class="ch">真实正</div>
+      <div class="cell tp"><span class="lab">TP</span><span class="val" id="v_tp">0</span></div>
+      <div class="cell fn"><span class="lab">FN 漏报</span><span class="val" id="v_fn">0</span></div>
+      <div class="ch">真实负</div>
+      <div class="cell fp"><span class="lab">FP 误报</span><span class="val" id="v_fp">0</span></div>
+      <div class="cell tn"><span class="lab">TN</span><span class="val" id="v_tn">0</span></div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="mv" id="m_tpr">–</div><div class="ml">TPR 召回率</div></div>
+      <div class="metric"><div class="mv" id="m_fpr">–</div><div class="ml">FPR 误报率</div></div>
+      <div class="metric"><div class="mv" id="m_prec">–</div><div class="ml">Precision 精确率</div></div>
+      <div class="metric"><div class="mv" id="m_acc">–</div><div class="ml">Accuracy 准确率</div></div>
+      <div class="metric" style="background:#e9fbf6"><div class="mv" id="m_auc" style="color:#0f766e">–</div><div class="ml">AUC（不随阈值变）</div></div>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🔬 试试看 · 动手观察</h3>
+    <p class="bi"><span class="zh">① 把<b>区分度</b>拖到 0：两类分布完全重叠 → ROC 贴着对角线，AUC≈0.5（瞎猜）。② 拖到 4：两类几乎分开 → ROC 鼓向左上角，AUC≈1（完美）。③ 固定区分度，只拖<b>阈值</b>：混淆矩阵剧烈变化，但<b>AUC 纹丝不动</b>——因为 AUC 是整条曲线的属性，与单个阈值无关。这一条最值得记住。</span></p>
+  </div>
+</section>
+
+<!-- ===== 5. AUC MEANING ===== -->
+<section class="blk" id="auc">
+  <div class="head"><span class="num">5</span><h2>Was ist AUC?<span class="zh">第五步：AUC = 曲线下的面积</span></h2></div>
+  <div class="grid2">
+    <div class="card formula">
+      <h3>📐 定义</h3>
+      <p class="bi"><span class="de">AUC ist die <b>Fläche unter der ROC-Kurve</b> — eine einzige Zahl zwischen 0 und 1, die die ganze Kurve zusammenfasst.</span>
+      <span class="zh">AUC 就是<b>ROC 曲线下方的面积</b>，把整条曲线压缩成 0~1 之间的<b>一个数字</b>，方便比较不同模型。</span></p>
+      \[\text{AUC}=\int_0^1 \text{TPR}\,\mathrm{d}(\text{FPR})\]
+    </div>
+    <div class="card concept">
+      <h3>📊 数值含义 · 一眼分级</h3>
+      <div class="aucbar">
+        <div class="mk" data-l="0.5 瞎猜" style="left:50%"></div>
+        <div class="mk" data-l="0.8 不错" style="left:80%"></div>
+        <div class="mk" data-l="1.0 完美" style="left:100%"></div>
+      </div>
+      <p class="bi"><span class="zh"><b>1.0</b>=完美区分；<b>0.9~1.0</b>=优秀；<b>0.8~0.9</b>=良好；<b>0.7~0.8</b>=一般；<b>0.5</b>=和抛硬币一样毫无能力。<b>低于 0.5</b>？说明模型把正负预测<b>反了</b>——把它的输出取反就能 >0.5。</span></p>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🧠 为什么 AUC 不随阈值变？</h3>
+    <p class="bi"><span class="zh">阈值决定你站在 ROC 曲线上的<b>哪个点</b>；AUC 描述的是<b>整条曲线</b>。换阈值=换站位，但脚下的"地形（曲线）"没变。所以 AUC 衡量的是模型<b>排序好坏的内在能力</b>，与你最终选哪个工作点无关。</span></p>
+  </div>
+</section>
+
+<!-- ===== 6. PROBABILISTIC INTERPRETATION ===== -->
+<section class="blk" id="prob">
+  <div class="head"><span class="num">6</span><h2>Die geniale Deutung von AUC<span class="zh">第六步：AUC 最妙的概率解释（永远记住的关键）</span></h2></div>
+  <div class="card concept">
+    <h3>⭐ 核心结论 · 背下这一句</h3>
+    <p class="bi" style="font-size:1.05em"><span class="de">AUC = Wahrscheinlichkeit, dass ein <b>zufällig gewähltes Positiv</b> einen <b>höheren Score</b> bekommt als ein <b>zufällig gewähltes Negativ</b>.</span>
+    <span class="zh"><b>AUC = 随机抽一个正样本和一个负样本，模型给正样本打分更高的概率。</b></span></p>
+    \[\text{AUC}=P\big(\text{Score}(X^{+})>\text{Score}(X^{-})\big)\]
+  </div>
+  <p class="bi"><span class="zh">这就是为什么 AUC=0.5 等于瞎猜（正样本得分更高的概率只有一半，跟扔硬币没区别），而 AUC=1 表示<b>每一个</b>正样本得分都高于<b>每一个</b>负样本（完美排序）。下面这个实验直接验证它：随机配对正负样本，统计"正样本得分更高"的比例，看它如何逼近上面算出的 AUC。</span></p>
+  <div class="card">
+    <h3>🎲 Monte-Carlo-Verifikation · 蒙特卡洛验证</h3>
+    <div class="viz-controls">
+      <div class="ctrl"><div class="lab"><span>Trennschärfe 区分度</span><span class="v" id="psep_v">2.0</span></div>
+        <input type="range" id="psep" min="0" max="4" step="0.1" value="2.0"></div>
+    </div>
+    <canvas id="pair_canvas"></canvas>
+    <div class="btnrow">
+      <button class="btn tl" id="pair_run">🎲 随机配对 200 次 / 200 Paare ziehen</button>
+      <button class="btn am" id="pair_reset">↺ 重置 Reset</button>
+    </div>
+    <div class="metrics" style="margin-top:12px">
+      <div class="metric"><div class="mv" id="p_win">–</div><div class="ml">正赢次数 / 总数</div></div>
+      <div class="metric" style="background:#e9fbf6"><div class="mv" id="p_emp" style="color:#0f766e">–</div><div class="ml">经验概率（≈AUC）</div></div>
+      <div class="metric" style="background:#eef1f8"><div class="mv" id="p_theo" style="color:#4338ca">–</div><div class="ml">理论 AUC</div></div>
+    </div>
+  </div>
+  <div class="card mem">
+    <h3>🔗 与排序、Gini、Mann-Whitney 的联系</h3>
+    <p class="bi"><span class="zh">因为只关心"谁的分更高"这种<b>相对排序</b>，AUC 对分数的任何<b>单调变换</b>都不变（×2、取 log 都不影响）。它在数值上等于 <b>Mann-Whitney U 统计量</b>归一化的结果。常用衍生指标 <b>Gini 系数 = 2·AUC − 1</b>，在信用评分领域非常常见。</span></p>
+  </div>
+</section>
+
+<!-- ===== 7. MEMORY & PITFALLS ===== -->
+<section class="blk" id="mem">
+  <div class="head"><span class="num">7</span><h2>Merksätze & Fallstricke<span class="zh">第七步：记忆卡片 & 常见误区</span></h2></div>
+  <div class="grid2">
+    <div class="card mem">
+      <h3>🧠 五张记忆卡 · 不再忘</h3>
+      <p class="bi"><span class="zh">
+      ①<b>ROC 两轴</b>：Y=TPR(抓得全)，X=FPR(别误报)，理想点在<b>左上角</b>。<br>
+      ②<b>曲线怎么来</b>：阈值从高到低扫，点从(0,0)爬到(1,1)。<br>
+      ③<b>AUC 是面积</b>，把曲线浓缩成一个 0~1 的数。<br>
+      ④<b>AUC 的灵魂</b>：随机正样本分>随机负样本分的概率。<br>
+      ⑤<b>AUC 与阈值无关</b>，只衡量排序能力。</span></p>
+    </div>
+    <div class="card concept">
+      <h3>⚠️ 三个常见误区</h3>
+      <p class="bi"><span class="zh">
+      ①<b>"AUC 高 = 模型好用"？</b> 不一定。AUC 看整体排序，但实际部署只用<b>一个阈值</b>；该阈值下的 TPR/FPR 才是真正起作用的。<br>
+      ②<b>极端不平衡时</b>，ROC 可能看起来很美但 FP 绝对数巨大，此时 <b>PR 曲线（Precision-Recall）</b>往往更有参考价值。<br>
+      ③<b>AUC 无法区分</b>两条相交的 ROC：面积相同不代表在你关心的低 FPR 区域表现一样。</span></p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>📋 ROC/AUC vs Accuracy · 速查表</h3>
+    <table class="cmp">
+      <tr><th>维度</th><th>Accuracy 准确率</th><th>ROC / AUC</th></tr>
+      <tr><td>依赖阈值？</td><td>是（必须先定阈值）</td><td>否（AUC 扫遍所有阈值）</td></tr>
+      <tr><td>受类别不平衡影响？</td><td>严重</td><td>几乎不受（按真正/真负分别归一）</td></tr>
+      <tr><td>衡量什么？</td><td>某阈值下答对比例</td><td>模型把正负<b>排序</b>开的能力</td></tr>
+      <tr><td>取值</td><td>0~1</td><td>0.5（瞎猜）~1（完美）</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 8. EXERCISES ===== -->
+<section class="blk" id="ex">
+  <div class="head"><span class="num">8</span><h2>Übungen<span class="zh">第八步：例题（动手算一遍最难忘）</span></h2></div>
+
+  <div class="ex">
+    <div class="q">Beispiel 8.1: 100 Kranke, 900 Gesunde. Bei einer Schwelle: TP=80, FN=20, FP=90, TN=810. Berechne TPR, FPR, Accuracy.</div>
+    <div class="qzh">例题 8.1：100 个病人，900 个健康人。某阈值下：TP=80, FN=20, FP=90, TN=810。求 TPR、FPR、准确率。</div>
+    <button class="sol-btn" data-t="s1">显示解答</button>
+    <div class="sol" id="s1"><span class="lbl">解答</span>
+    \[\text{TPR}=\frac{80}{80+20}=0{,}80,\quad \text{FPR}=\frac{90}{90+810}=0{,}10.\]
+    \[\text{Accuracy}=\frac{TP+TN}{1000}=\frac{80+810}{1000}=0{,}89.\]
+    注意：准确率 0.89 看着不错，但模型漏掉了 20% 的病人（FN=20）。ROC 上这个工作点是 \((0{,}10,\ 0{,}80)\)。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 8.2: Ein Modell gibt 3 Positiven die Scores {0,9; 0,6; 0,4} und 3 Negativen {0,7; 0,5; 0,2}. Berechne die AUC über die Paar-Definition.</div>
+    <div class="qzh">例题 8.2：3 个正样本得分 {0.9, 0.6, 0.4}，3 个负样本得分 {0.7, 0.5, 0.2}。用"配对"定义算 AUC。</div>
+    <button class="sol-btn" data-t="s2">显示解答</button>
+    <div class="sol" id="s2"><span class="lbl">解答</span>共 \(3\times3=9\) 对。逐对比较"正 > 负"（正赢计 1，平局计 0.5）：<br>
+    正=0.9：胜 0.7,0.5,0.2 → 3 分<br>
+    正=0.6：胜 0.5,0.2，输 0.7 → 2 分<br>
+    正=0.4：胜 0.2，输 0.7,0.5 → 1 分<br>
+    总胜 \(=3+2+1=6\)。
+    \[\text{AUC}=\frac{6}{9}\approx0{,}667.\]
+    这正是"随机正样本得分高于随机负样本"的概率。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 8.3: Warum bleibt die AUC unverändert, wenn man alle Scores \(s\) durch \(2s+1\) ersetzt?</div>
+    <div class="qzh">例题 8.3：把所有分数 \(s\) 替换成 \(2s+1\)，为什么 AUC 不变？</div>
+    <button class="sol-btn" data-t="s3">显示解答</button>
+    <div class="sol" id="s3"><span class="lbl">解答</span>\(2s+1\) 是<b>严格单调递增</b>变换：若原来 \(s^+>s^-\)，则 \(2s^++1>2s^-+1\) 仍成立。AUC 只取决于<b>分数的相对大小排序</b>，不依赖具体数值。任何单调变换都保持所有配对的胜负关系，故 AUC 完全不变。这也说明 AUC 衡量的是<b>排序能力</b>，而非分数的标定（calibration）。</div>
+  </div>
+
+  <div class="ex">
+    <div class="q">Beispiel 8.4: Modell A hat AUC=0,85, Modell B hat AUC=0,85, aber ihre ROC-Kurven schneiden sich. Welches ist besser?</div>
+    <div class="qzh">例题 8.4：模型 A 和 B 的 AUC 都是 0.85，但两条 ROC 曲线相交。哪个更好？</div>
+    <button class="sol-btn" data-t="s4">显示解答</button>
+    <div class="sol" id="s4"><span class="lbl">解答</span>无法仅凭 AUC 判断——这正是 AUC 的局限。要看<b>你关心的工作区域</b>：若应用要求极低误报率（小 FPR，如垃圾邮件过滤），就选在该区域 TPR 更高的那个；若要求高召回（如癌症筛查），就看高 TPR 区域。结论：<b>AUC 是单一汇总数，相交曲线必须结合具体阈值/业务目标再做选择。</b></div>
+  </div>
+</section>
+
+</main>
+<footer>Interaktives Lernmodul · ROC & AUC · 由浅入深 · MathJax + Canvas</footer>
+
+<script>
+/* ===== helpers ===== */
+function r(x,d=2){if(!isFinite(x))return'–';return parseFloat(x.toFixed(d)).toString();}
+function erf(x){const t=1/(1+0.3275911*Math.abs(x));
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return x>=0?y:-y;}
+function Phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function normpdf(x,m,s){return Math.exp(-((x-m)**2)/(2*s*s))/(s*Math.sqrt(2*Math.PI));}
+function prep(cv,H){const dpr=window.devicePixelRatio||1;const W=cv.clientWidth||400;
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);return{ctx,W,H};}
+
+/* model: two gaussians on scale 0..10. neg mean=5-sep/2*1.5, pos mean=5+sep/2*1.5, sd=1.5 */
+const SD=1.6;
+function means(sep){const gap=sep*1.5;return{mNeg:5-gap/2,mPos:5+gap/2};}
+/* theoretical AUC for two gaussians equal sd: Phi((mPos-mNeg)/(sd*sqrt2)) */
+function theoAUC(sep){const{mNeg,mPos}=means(sep);return Phi((mPos-mNeg)/(SD*Math.SQRT2));}
+
+/* ===== 4. LAB ===== */
+function getSep(){return parseFloat(document.getElementById('sep').value);}
+function getThr(){return parseFloat(document.getElementById('thr').value);}
+
+function drawDist(){
+  const cv=document.getElementById('dist_canvas');const{ctx,W,H}=prep(cv,250);
+  const L=10,R=10,T=14,B=30;const pw=W-L-R,ph=H-T-B;
+  const sep=getSep();const thr=getThr();const{mNeg,mPos}=means(sep);
+  const X=v=>L+v/10*pw;
+  let fmax=0;for(let i=0;i<=200;i++){const x=10*i/200;
+    fmax=Math.max(fmax,normpdf(x,mNeg,SD),normpdf(x,mPos,SD));}fmax*=1.12;
+  const Y=v=>T+ph-v/fmax*ph;
+  // axis
+  ctx.strokeStyle='#c9cfde';ctx.beginPath();ctx.moveTo(L,T+ph);ctx.lineTo(L+pw,T+ph);ctx.stroke();
+  function curve(m,col,fill){ctx.beginPath();
+    for(let i=0;i<=200;i++){const x=10*i/200;const px=X(x),py=Y(normpdf(x,m,SD));
+      i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+    ctx.lineTo(X(10),T+ph);ctx.lineTo(X(0),T+ph);ctx.closePath();
+    ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();}
+  curve(mNeg,'#e11d48','rgba(225,29,72,.16)');
+  curve(mPos,'#0d9488','rgba(13,148,136,.16)');
+  // threshold line
+  ctx.strokeStyle='#1e2433';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(X(thr),T);ctx.lineTo(X(thr),T+ph);ctx.stroke();ctx.setLineDash([]);
+  // labels
+  ctx.font='11px sans-serif';ctx.textAlign='center';
+  ctx.fillStyle='#e11d48';ctx.fillText('Negativ 负',X(mNeg),Y(normpdf(mNeg,mNeg,SD))-4);
+  ctx.fillStyle='#0d9488';ctx.fillText('Positiv 正',X(mPos),Y(normpdf(mPos,mPos,SD))-4);
+  ctx.fillStyle='#1e2433';ctx.fillText('阈值→正',X(thr),T+ph+18);
+}
+
+function computeCM(sep,thr){
+  // population proportions, equal prior (focus on rates). Use counts scaled.
+  const{mNeg,mPos}=means(sep);const Npos=100,Nneg=100;
+  const TPR=1-Phi((thr-mPos)/SD); // P(score>thr | pos)
+  const FPR=1-Phi((thr-mNeg)/SD);
+  const TP=TPR*Npos, FN=Npos-TP, FP=FPR*Nneg, TN=Nneg-FP;
+  return{TP,FN,FP,TN,TPR,FPR,Npos,Nneg};
+}
+
+function fullROC(sep){const pts=[];for(let t=12;t>=-2;t-=0.05){
+  const cm=computeCM(sep,t);pts.push([cm.FPR,cm.TPR]);}return pts;}
+
+function drawROC(){
+  const cv=document.getElementById('roc_canvas');const{ctx,W,H}=prep(cv,250);
+  const L=34,R=12,T=12,B=30;const pw=W-L-R,ph=H-T-B;
+  const sep=getSep();const thr=getThr();
+  const X=v=>L+v*pw;const Y=v=>T+ph-v*ph;
+  // grid
+  ctx.strokeStyle='#eef1f8';ctx.lineWidth=1;
+  for(let g=0;g<=4;g++){ctx.beginPath();ctx.moveTo(X(g/4),T);ctx.lineTo(X(g/4),T+ph);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(L,Y(g/4));ctx.lineTo(L+pw,Y(g/4));ctx.stroke();}
+  // diagonal
+  ctx.strokeStyle='#c9cfde';ctx.setLineDash([4,4]);ctx.beginPath();
+  ctx.moveTo(X(0),Y(0));ctx.lineTo(X(1),Y(1));ctx.stroke();ctx.setLineDash([]);
+  // ROC curve + fill
+  const pts=fullROC(sep);
+  ctx.beginPath();ctx.moveTo(X(pts[0][0]),Y(pts[0][1]));
+  pts.forEach(p=>ctx.lineTo(X(p[0]),Y(p[1])));
+  ctx.lineTo(X(1),Y(0));ctx.closePath();ctx.fillStyle='rgba(99,102,241,.14)';ctx.fill();
+  ctx.beginPath();ctx.moveTo(X(pts[0][0]),Y(pts[0][1]));
+  pts.forEach(p=>ctx.lineTo(X(p[0]),Y(p[1])));
+  ctx.strokeStyle='#6366f1';ctx.lineWidth=2.4;ctx.stroke();
+  // current point
+  const cm=computeCM(sep,thr);
+  ctx.beginPath();ctx.arc(X(cm.FPR),Y(cm.TPR),6,0,2*Math.PI);
+  ctx.fillStyle='#e11d48';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  // axis labels
+  ctx.fillStyle='#5a6478';ctx.font='10px sans-serif';ctx.textAlign='center';
+  ctx.fillText('FPR →',L+pw/2,H-4);
+  ctx.save();ctx.translate(11,T+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('TPR →',0,0);ctx.restore();
+  ctx.textAlign='right';ctx.fillText('0',L-3,Y(0)+3);ctx.fillText('1',L-3,Y(1)+3);
+}
+
+function updateLab(){
+  const sep=getSep();const thr=getThr();
+  document.getElementById('sep_v').textContent=r(sep,1);
+  document.getElementById('thr_v').textContent=r(thr,2);
+  drawDist();drawROC();
+  const cm=computeCM(sep,thr);
+  document.getElementById('v_tp').textContent=Math.round(cm.TP);
+  document.getElementById('v_fn').textContent=Math.round(cm.FN);
+  document.getElementById('v_fp').textContent=Math.round(cm.FP);
+  document.getElementById('v_tn').textContent=Math.round(cm.TN);
+  const prec=cm.TP/(cm.TP+cm.FP);
+  const acc=(cm.TP+cm.TN)/(cm.Npos+cm.Nneg);
+  document.getElementById('m_tpr').textContent=r(cm.TPR,2);
+  document.getElementById('m_fpr').textContent=r(cm.FPR,2);
+  document.getElementById('m_prec').textContent=isFinite(prec)?r(prec,2):'–';
+  document.getElementById('m_acc').textContent=r(acc,2);
+  document.getElementById('m_auc').textContent=r(theoAUC(sep),3);
+}
+
+/* ===== 6. PAIR / MONTE CARLO ===== */
+let pairWins=0,pairTotal=0,pairHist=[];
+function getPSep(){return parseFloat(document.getElementById('psep').value);}
+function rnorm(m,s){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  return m+s*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function runPairs(){const sep=getPSep();const{mNeg,mPos}=means(sep);
+  for(let i=0;i<200;i++){const sp=rnorm(mPos,SD),sn=rnorm(mNeg,SD);
+    pairTotal++; if(sp>sn)pairWins++; else if(sp===sn)pairWins+=0.5;
+    pairHist.push(sp>sn);}
+  drawPair();updatePairStats();}
+function resetPairs(){pairWins=0;pairTotal=0;pairHist=[];drawPair();updatePairStats();}
+function updatePairStats(){
+  document.getElementById('p_win').textContent=pairTotal?Math.round(pairWins)+'/'+pairTotal:'–';
+  document.getElementById('p_emp').textContent=pairTotal?r(pairWins/pairTotal,3):'–';
+  document.getElementById('p_theo').textContent=r(theoAUC(getPSep()),3);
+}
+function drawPair(){
+  const cv=document.getElementById('pair_canvas');const{ctx,W,H}=prep(cv,160);
+  const sep=getPSep();const{mNeg,mPos}=means(sep);
+  const L=10,R=10,T=10,B=26;const pw=W-L-R,ph=H-T-B;
+  const X=v=>L+v/10*pw;
+  // running empirical convergence vs theo
+  const theo=theoAUC(sep);
+  // draw bars: last up-to 60 pairs as ticks, plus a convergence line
+  ctx.strokeStyle='#c9cfde';ctx.beginPath();ctx.moveTo(L,T+ph);ctx.lineTo(L+pw,T+ph);ctx.stroke();
+  // theo line (target)
+  const Y=v=>T+ph-v*ph;
+  ctx.strokeStyle='#4338ca';ctx.setLineDash([5,4]);ctx.lineWidth=1.8;
+  ctx.beginPath();ctx.moveTo(L,Y(theo));ctx.lineTo(L+pw,Y(theo));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#4338ca';ctx.font='10px sans-serif';ctx.textAlign='left';
+  ctx.fillText('理论 AUC='+r(theo,3),L+4,Y(theo)-4);
+  // running empirical
+  if(pairHist.length){let cum=0;ctx.beginPath();
+    for(let i=0;i<pairHist.length;i++){cum+=pairHist[i]?1:0;const emp=cum/(i+1);
+      const px=L+(i/Math.max(1,pairHist.length-1))*pw;const py=Y(emp);
+      i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+    ctx.strokeStyle='#0d9488';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#0d9488';ctx.textAlign='right';
+    ctx.fillText('经验比例 →',L+pw-4,Y(pairWins/pairTotal)-6);}
+  ctx.fillStyle='#5a6478';ctx.textAlign='center';ctx.font='10px sans-serif';
+  ctx.fillText('随配对次数增加，经验比例（青）收敛到理论 AUC（紫）',L+pw/2,H-6);
+}
+
+/* ===== wiring ===== */
+document.getElementById('sep').addEventListener('input',updateLab);
+document.getElementById('thr').addEventListener('input',updateLab);
+document.getElementById('psep').addEventListener('input',()=>{
+  document.getElementById('psep_v').textContent=r(getPSep(),1);resetPairs();});
+document.getElementById('pair_run').addEventListener('click',runPairs);
+document.getElementById('pair_reset').addEventListener('click',resetPairs);
+document.querySelectorAll('.sol-btn').forEach(b=>b.addEventListener('click',()=>{
+  const el=document.getElementById(b.dataset.t);el.classList.toggle('open');
+  b.textContent=el.classList.contains('open')?'隐藏解答':'显示解答';}));
+
+function initAll(){updateLab();resetPairs();}
+window.addEventListener('resize',()=>{drawDist();drawROC();drawPair();});
+if(window.MathJax&&MathJax.startup){MathJax.startup.promise.then(initAll);}
+else{window.addEventListener('load',()=>setTimeout(initAll,400));}
+</script>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>收敛 · 近似 · LLN 与 CLT 复习卡</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a212b; --panel2:#222c38;
+    --accent:#4ea1ff; --accent2:#ffb454; --green:#5fd07d;
+    --red:#ff6b6b; --purple:#c084fc; --pink:#f472b6; --teal:#2dd4bf;
+    --text:#e3e8ef; --muted:#94a3b8; --border:#2c3744;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.75;}
+  a{color:var(--accent);text-decoration:none;}
+
+  header.top{background:linear-gradient(135deg,#16202c,#0f1419);
+    border-bottom:1px solid var(--border);padding:28px 20px 22px;text-align:center;}
+  header.top h1{margin:0 0 6px;font-size:1.5rem;letter-spacing:.5px;}
+  header.top p{margin:0;color:var(--muted);font-size:.9rem;}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 16px;min-width:90px;}
+  .stat b{display:block;font-size:1.3rem;color:var(--accent2);}
+  .stat span{font-size:.72rem;color:var(--muted);}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  nav.side{width:255px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;
+    height:100vh;overflow-y:auto;border-right:1px solid var(--border);padding:18px 10px 40px;font-size:.82rem;}
+  nav.side h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 8px 6px;}
+  nav.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--text);transition:.15s;border-left:3px solid transparent;}
+  nav.side a:hover{background:var(--panel);border-left-color:var(--accent);}
+  .navtag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+  .t-base{background:var(--accent);}
+  .t-conv{background:var(--teal);}
+  .t-clt{background:var(--accent2);}
+  .t-lln{background:var(--green);}
+  .t-trans{background:var(--pink);}
+  .t-ineq{background:var(--purple);}
+  .t-exam{background:#f87171;}
+
+  main{flex:1;min-width:0;padding:24px 22px 80px;}
+  section.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:22px 24px;margin-bottom:26px;scroll-margin-top:14px;}
+  section.block > h2{margin-top:0;font-size:1.25rem;border-bottom:2px solid var(--accent);
+    padding-bottom:8px;display:inline-block;}
+
+  .ex{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+    margin-bottom:18px;overflow:hidden;scroll-margin-top:14px;}
+  .ex-head{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;
+    background:#1e2733;transition:.15s;}
+  .ex-head:hover{background:#243140;}
+  .ex-num{font-weight:700;color:var(--accent);font-size:.9rem;background:#13202c;
+    border:1px solid var(--border);border-radius:8px;padding:3px 9px;white-space:nowrap;}
+  .ex-title{flex:1;font-size:.92rem;}
+  .badge{font-size:.64rem;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid;}
+  .b-base{color:var(--accent);border-color:var(--accent);}
+  .b-conv{color:var(--teal);border-color:var(--teal);}
+  .b-clt{color:var(--accent2);border-color:var(--accent2);}
+  .b-lln{color:var(--green);border-color:var(--green);}
+  .b-trans{color:var(--pink);border-color:var(--pink);}
+  .b-ineq{color:var(--purple);border-color:var(--purple);}
+  .b-exam{color:#f87171;border-color:#f87171;}
+
+  .ex-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ex.open .ex-body{max-height:none;padding:6px 20px 20px;}
+
+  .q{background:#141c25;border-left:4px solid var(--accent);padding:12px 16px;
+    border-radius:0 8px 8px 0;margin:14px 0;}
+  .q .label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.5px;}
+
+  .toggle-sol{background:var(--accent);color:#06121f;border:none;padding:8px 18px;
+    border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin:6px 0 4px;transition:.15s;}
+  .toggle-sol:hover{background:#6bb3ff;}
+  .sol{display:none;}
+  .sol.show{display:block;}
+
+  .think{background:#1d2417;border-left:4px solid var(--green);padding:10px 16px;
+    border-radius:0 8px 8px 0;margin:12px 0;font-size:.86rem;}
+  .think .label{color:var(--green);font-weight:700;font-size:.72rem;letter-spacing:.5px;}
+
+  .ans{background:#161e28;border:1px dashed var(--border);padding:8px 16px;border-radius:8px;margin:12px 0;}
+  .subq{font-weight:700;color:var(--accent2);margin-top:14px;}
+
+  .dupnote{background:#2a1f16;border:1px solid var(--accent2);border-radius:8px;
+    padding:8px 14px;margin:10px 0;font-size:.84rem;color:var(--accent2);}
+
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-size:.84rem;}
+  .fcard b{color:var(--accent2);}
+
+  .strat li,.warn li,.checklist li{margin-bottom:10px;}
+  .strat b{color:var(--accent2);}
+  .warn b{color:var(--red);}
+  .checklist li::marker{color:var(--green);}
+
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+  .vcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;}
+  .vcard .de{color:var(--accent);font-weight:700;font-size:.9rem;}
+  .vcard .zh{color:var(--muted);font-size:.8rem;}
+
+  .keybox{background:#16201a;border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+  .keybox h4{margin:0 0 8px;color:var(--green);font-size:.95rem;}
+
+  /* 金字塔 */
+  .pyramid{margin:16px 0;}
+  .pyr-row{display:flex;align-items:center;gap:12px;margin:8px 0;}
+  .pyr-bar{border-radius:8px;padding:10px 16px;font-size:.86rem;font-weight:600;text-align:center;color:#06121f;}
+  .pyr-note{font-size:.78rem;color:var(--muted);flex:1;}
+  .arrow-down{text-align:center;color:var(--accent2);font-size:1.3rem;margin:-4px 0;}
+
+  .toolbox{background:#1a1d26;border:1px solid var(--purple);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.86rem;}
+  .toolbox h4{margin:0 0 8px;color:var(--purple);font-size:.95rem;}
+  .toolbox .tool{margin:8px 0;padding:8px 12px;background:#15171f;border-radius:7px;border-left:3px solid var(--purple);}
+  .toolbox .tool b{color:var(--pink);}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.84rem;}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;}
+  th{background:#1e2733;color:var(--accent2);}
+  code{background:#0d1620;padding:2px 6px;border-radius:5px;color:var(--teal);font-size:.85rem;}
+
+  .controls{position:sticky;top:0;z-index:50;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);padding:10px 0;margin:-24px -22px 22px;display:flex;gap:10px;
+    padding-left:22px;flex-wrap:wrap;}
+  .ctrl-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;}
+  .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .menu-toggle{display:none;}
+  @media(max-width:860px){
+    nav.side{position:fixed;left:-275px;z-index:200;background:var(--bg);
+      transition:left .3s;width:265px;box-shadow:4px 0 20px rgba(0,0,0,.5);}
+    nav.side.open{left:0;}
+    .menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:201;
+      background:var(--accent);color:#06121f;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;}
+    .fgrid{grid-template-columns:1fr;}
+    main{padding:24px 14px 80px;}
+    .controls{margin:-24px -14px 22px;padding-left:14px;}
+    .pyr-row{flex-direction:column;align-items:stretch;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('nav.side').classList.toggle('open')">☰ 目录</button>
+
+<header class="top">
+  <h1>收敛 · 近似 · LLN 与 CLT</h1>
+  <p>Konvergenz · Approximation · Gesetz der großen Zahlen · Zentraler Grenzwertsatz</p>
+  <div class="stats">
+    <div class="stat"><b>20</b><span>练习题</span></div>
+    <div class="stat"><b>8</b><span>考试真题</span></div>
+    <div class="stat"><b>28</b><span>合计题目</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="side">
+  <h3>核心板块</h3>
+  <a href="#formulas">📐 公式速查</a>
+  <a href="#strategy">🧭 不会时怎么下手</a>
+  <a href="#pyramid">🔺 四种收敛金字塔</a>
+  <a href="#cltbox">📊 CLT 标准化模板</a>
+  <a href="#toolbox">🧰 收敛工具箱</a>
+  <a href="#vocab">🇩🇪 德语词汇</a>
+
+  <h3>练习题（颜色=题型）</h3>
+  <a href="#a1"><span class="navtag t-base"></span>1 · 测度性质 / c=1/e</a>
+  <a href="#a2"><span class="navtag t-base"></span>2 · 条件概率不等式</a>
+  <a href="#a3"><span class="navtag t-base"></span>3 · 测度+反例</a>
+  <a href="#a4"><span class="navtag t-clt"></span>4 · 识别标准分布</a>
+  <a href="#a5"><span class="navtag t-lln"></span>5 · WLLN + 连续映射</a>
+  <a href="#a6"><span class="navtag t-conv"></span>6 · 四种收敛对比</a>
+  <a href="#a7"><span class="navtag t-clt"></span>7 · 单变量近似正态</a>
+  <a href="#a8"><span class="navtag t-ineq"></span>8 · Chebyshev 求 n</a>
+  <a href="#a9"><span class="navtag t-clt"></span>9 · 公务员指数和</a>
+  <a href="#a10"><span class="navtag t-trans"></span>10 · Beta/Weibull 变换</a>
+  <a href="#a11"><span class="navtag t-base"></span>11 · 测度性质（重复）</a>
+  <a href="#a12"><span class="navtag t-base"></span>12 · 独立/不交</a>
+  <a href="#a13"><span class="navtag t-conv"></span>13 · Dirac 收敛等价</a>
+  <a href="#a14"><span class="navtag t-lln"></span>14 · g(Xᵢ) 的 WLLN</a>
+  <a href="#a15"><span class="navtag t-conv"></span>15 · 连续映射定理</a>
+  <a href="#a16"><span class="navtag t-conv"></span>16 · P收敛≠E收敛</a>
+  <a href="#a17"><span class="navtag t-lln"></span>17 · 核密度估计量</a>
+  <a href="#a18"><span class="navtag t-conv"></span>18 · D收敛≠P收敛</a>
+  <a href="#a19"><span class="navtag t-conv"></span>19 · D→常数 ⟹ P</a>
+  <a href="#a20"><span class="navtag t-conv"></span>20 · Slutsky 应用</a>
+
+  <h3>考试真题</h3>
+  <a href="#e1"><span class="navtag t-exam"></span>真题1 · 2012 骰子 6000</a>
+  <a href="#e2"><span class="navtag t-exam"></span>真题2 · 2015 计算时间检验</a>
+  <a href="#e4"><span class="navtag t-exam"></span>真题4 · 公交 225 天指数</a>
+  <a href="#e7"><span class="navtag t-exam"></span>真题7 · 几何分布+Delta</a>
+  <a href="#edup"><span class="navtag t-exam"></span>真题3/5/6/8 · 重复题</a>
+
+  <h3>总结</h3>
+  <a href="#mistakes">⚠️ 常见错误</a>
+  <a href="#mustknow">✅ 必会题型清单</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleAll(true)">展开全部</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">收起全部</button>
+    <button class="ctrl-btn" onclick="showAllSol(true)">显示全部答案</button>
+    <button class="ctrl-btn" onclick="showAllSol(false)">隐藏全部答案</button>
+  </div>
+
+  <!-- ===== 公式速查 ===== -->
+  <section class="block" id="formulas">
+    <h2>📐 公式速查（考试可用版）</h2>
+    <div class="fgrid">
+      <div class="fcard"><b>概率收敛</b><br>$X_n\xrightarrow{P}X\Leftrightarrow P(|X_n-X|>\varepsilon)\to0$</div>
+      <div class="fcard"><b>分布收敛</b><br>$X_n\xrightarrow{D}X\Leftrightarrow F_{X_n}(x)\to F_X(x)$（连续点）</div>
+      <div class="fcard"><b>均方收敛</b><br>$E[(X_n-X)^2]\to0$</div>
+      <div class="fcard"><b>几乎必然收敛</b><br>$P(\lim X_n=X)=1$</div>
+      <div class="fcard"><b>强弱关系</b><br>几乎必然 $\Rightarrow$ 均方 $\Rightarrow$ 概率 $\Rightarrow$ 分布</div>
+      <div class="fcard"><b>连续映射</b><br>$X_n\to X\Rightarrow g(X_n)\to g(X)$（$g$ 连续）</div>
+      <div class="fcard"><b>Slutsky</b><br>$X_n\xrightarrow{D}X,Y_n\xrightarrow{P}c$ → $X_n+Y_n\xrightarrow{D}X+c$，$X_nY_n\xrightarrow{D}cX$</div>
+      <div class="fcard"><b>弱大数定律</b><br>$\bar X_n\xrightarrow{P}\mu$</div>
+      <div class="fcard"><b>强大数定律</b><br>$\bar X_n\xrightarrow{f.s.}E(X_1)$</div>
+      <div class="fcard"><b>CLT（和）</b><br>$\frac{\sum X_i-n\mu}{\sqrt n\,\sigma}\xrightarrow{D}N(0,1)$</div>
+      <div class="fcard"><b>CLT（均值）</b><br>$\frac{\bar X_n-\mu}{\sigma/\sqrt n}\xrightarrow{D}N(0,1)$</div>
+      <div class="fcard"><b>Delta 方法</b><br>$\sqrt n(g(\bar X)-g(\mu))\xrightarrow{D}N(0,[g'(\mu)]^2\sigma^2)$</div>
+      <div class="fcard"><b>二项正态近似</b><br>$B(n,p)\approx N(np,np(1-p))$</div>
+      <div class="fcard"><b>二项 Poisson 近似</b><br>$B(n,p)\approx Po(np)$（$p$ 小）</div>
+    </div>
+  </section>
+
+  <!-- ===== 解题入门 ===== -->
+  <section class="block" id="strategy">
+    <h2>🧭 不会时怎么下手</h2>
+    <ul class="strat">
+      <li><b>问概率收敛</b>：目标永远是证 $P(|X_n-X|>\varepsilon)\to0$，必须对任意 $\varepsilon>0$。</li>
+      <li><b>问分布收敛</b>：看分布函数极限，只在极限分布的<u>连续点</u>检查。</li>
+      <li><b>有样本均值</b>：先想大数定律，结论通常是收敛到期望 $E(X_1)$。</li>
+      <li><b>有和/均值的近似分布</b>：先算单个 $\mu,\sigma^2$，再用 CLT 标准化。</li>
+      <li><b>有函数 $g(\bar X_n)$</b>：先找 $\bar X_n$ 极限，再用连续映射或 Delta 方法。</li>
+      <li><b>出现 Slutsky</b>：拆成"分布收敛的一块"+"概率收敛到常数的一块"。</li>
+      <li><b>问二项近似</b>：$p$ 很小用 Poisson；$np,n(1-p)$ 都不小用正态。</li>
+      <li><b>反例题</b>：记牢两个经典——$X_n=n$ w.p. $1/n$（P收敛但 E 不收敛）；对称翻转（D收敛但不P收敛）。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 收敛金字塔 ===== -->
+  <section class="block" id="pyramid">
+    <h2>🔺 四种收敛金字塔（本章命脉）</h2>
+    <p style="font-size:.86rem;color:var(--muted);">箭头方向 = 蕴含方向；越往上越强。反向一般不成立，除非有特例。</p>
+    <div class="pyramid">
+      <div class="pyr-row">
+        <div class="pyr-bar" style="background:var(--green);width:35%;">几乎必然 f.s.</div>
+        <div class="pyr-note">最强。$P(\lim X_n=X)=1$。例：练习 6 的 $X_n=n\mathbf 1_{(0,1/n)}$。</div>
+      </div>
+      <div class="arrow-down">⬇</div>
+      <div class="pyr-row">
+        <div class="pyr-bar" style="background:var(--teal);width:45%;">均方 $L^2$</div>
+        <div class="pyr-note">$E[(X_n-X)^2]\to0$。注意：f.s. 与 $L^2$ 互不蕴含，但都 ⟹ 概率收敛。</div>
+      </div>
+      <div class="arrow-down">⬇</div>
+      <div class="pyr-row">
+        <div class="pyr-bar" style="background:var(--accent);width:60%;">概率收敛 P</div>
+        <div class="pyr-note">$P(|X_n-X|>\varepsilon)\to0$。WLLN 给的就是这个。</div>
+      </div>
+      <div class="arrow-down">⬇</div>
+      <div class="pyr-row">
+        <div class="pyr-bar" style="background:var(--accent2);width:80%;">分布收敛 D</div>
+        <div class="pyr-note">最弱。CLT 给的就是这个。例：练习 18 D收敛但不P收敛。</div>
+      </div>
+    </div>
+    <div class="keybox" style="border-color:var(--accent2);">
+      <h4 style="color:var(--accent2);">两个"反向成立"特例（高频考点）</h4>
+      ① <b>D收敛到常数 $c$ ⟹ P收敛</b>（练习 19）：极限是常数时两者等价。<br>
+      ② <b>Slutsky 把 $1/\sqrt n\to0$ 当常数列</b>（练习 20）：$\frac1{\sqrt n}\cdot\sqrt n(X_n-\mu)\xrightarrow{D}0$，常数极限再升级为 P收敛。<br>
+      <span style="color:var(--red);">⚠️ 警惕：P收敛 ⇏ E收敛（练习 16）；D收敛 ⇏ P收敛（练习 18）。</span>
+    </div>
+  </section>
+
+  <!-- ===== CLT 模板 ===== -->
+  <section class="block" id="cltbox">
+    <h2>📊 CLT 标准化模板（套公式即可）</h2>
+    <div class="keybox">
+      <h4>三步走</h4>
+      <b>Step 1</b>　算单个变量的 $\mu=E(X_i)$ 和 $\sigma^2=\operatorname{Var}(X_i)$。<br>
+      <b>Step 2</b>　写和/均值的近似分布：
+      $$S_n=\sum X_i\approx N(n\mu,\;n\sigma^2),\qquad \bar X_n\approx N\!\left(\mu,\tfrac{\sigma^2}{n}\right).$$
+      <b>Step 3</b>　标准化查 $\Phi$：$z=\dfrac{\text{阈值}-n\mu}{\sqrt n\,\sigma}$，再用 $\Phi(-x)=1-\Phi(x)$。
+    </div>
+    <table>
+      <tr><th>分布</th><th>$\mu$</th><th>$\sigma^2$</th><th>$n$ 个和 $\approx$</th></tr>
+      <tr><td>$\operatorname{Bin}(1,p)$ 单次</td><td>$p$</td><td>$p(1-p)$</td><td>$N(np,np(1-p))$</td></tr>
+      <tr><td>$\operatorname{Exp}(\lambda)$</td><td>$1/\lambda$</td><td>$1/\lambda^2$</td><td>$N(n/\lambda,n/\lambda^2)$</td></tr>
+      <tr><td>$\operatorname{Geom}(p)$</td><td>$1/p$</td><td>$(1-p)/p^2$</td><td>$N(n/p,n(1-p)/p^2)$</td></tr>
+      <tr><td>$\operatorname{Poi}(\lambda)$</td><td>$\lambda$</td><td>$\lambda$</td><td>$N(n\lambda,n\lambda)$</td></tr>
+    </table>
+    <p style="font-size:.84rem;color:var(--muted);">提醒：离散变量（如二项计数）严格应做<b>连续性修正</b> $\pm0.5$，但很多课程/真题不要求，按授课习惯。CLT 标准化分母是 $\sqrt n\,\sigma$，别漏 $\sqrt n$。</p>
+  </section>
+
+  <!-- ===== 工具箱 ===== -->
+  <section class="block" id="toolbox">
+    <h2>🧰 收敛工具箱：三大定理怎么选</h2>
+    <div class="toolbox">
+      <h4>遇到不同结构，用不同工具</h4>
+      <div class="tool"><b>大数定律 (WLLN)</b>：看到 $\frac1n\sum X_i$ 或 $\frac1n\sum g(X_i)$，iid + 期望有限 → 依概率收敛到 $E(X_1)$ 或 $E(g(X_1))$。把 $g(X_i)$ 当新 iid 序列（练习 14、17）。</div>
+      <div class="tool"><b>连续映射定理</b>：$X_n\to X$ 且 $g$ 连续 → $g(X_n)\to g(X)$，对所有收敛模式都成立。用于 $\bar X_n+\bar Y_n$、$\bar X_n\bar Y_n$（练习 5、15）。</div>
+      <div class="tool"><b>Slutsky 定理</b>：把表达式拆成"$\xrightarrow{D}X$ 的一块"和"$\xrightarrow{P}c$ 常数的一块"。和→$X+c$，积→$cX$（练习 20）。</div>
+      <div class="tool"><b>Delta 方法</b>：已知 $\sqrt n(\bar X-\mu)\xrightarrow{D}N(0,\sigma^2)$，求 $g(\bar X)$ 的近似分布 → $\sqrt n(g(\bar X)-g(\mu))\xrightarrow{D}N(0,[g'(\mu)]^2\sigma^2)$（真题 7c）。</div>
+    </div>
+  </section>
+
+  <!-- ===== 德语词汇 ===== -->
+  <section class="block" id="vocab">
+    <h2>🇩🇪 德语关键词强化</h2>
+    <div class="vocab">
+      <div class="vcard"><span class="de">die Konvergenz</span><br><span class="zh">收敛</span></div>
+      <div class="vcard"><span class="de">Konvergenz in Wahrscheinlichkeit</span><br><span class="zh">依概率收敛 $\xrightarrow{P}$</span></div>
+      <div class="vcard"><span class="de">Konvergenz in Verteilung</span><br><span class="zh">依分布收敛 $\xrightarrow{D}$</span></div>
+      <div class="vcard"><span class="de">fast sichere Konvergenz</span><br><span class="zh">几乎必然收敛</span></div>
+      <div class="vcard"><span class="de">Konvergenz im Mittel (im $p$-ten Moment)</span><br><span class="zh">（$p$ 阶）矩收敛 / 均方收敛</span></div>
+      <div class="vcard"><span class="de">das schwache Gesetz der großen Zahlen</span><br><span class="zh">弱大数定律 (WLLN)</span></div>
+      <div class="vcard"><span class="de">das starke Gesetz der großen Zahlen</span><br><span class="zh">强大数定律 (SLLN)</span></div>
+      <div class="vcard"><span class="de">der zentrale Grenzwertsatz (ZGWS)</span><br><span class="zh">中心极限定理 (CLT)</span></div>
+      <div class="vcard"><span class="de">das Continuous-Mapping-Theorem</span><br><span class="zh">连续映射定理</span></div>
+      <div class="vcard"><span class="de">der Satz von Slutsky</span><br><span class="zh">Slutsky 定理</span></div>
+      <div class="vcard"><span class="de">die Delta-Methode</span><br><span class="zh">Delta 方法</span></div>
+      <div class="vcard"><span class="de">die Approximation</span><br><span class="zh">近似</span></div>
+      <div class="vcard"><span class="de">approximativ / näherungsweise</span><br><span class="zh">近似地</span></div>
+      <div class="vcard"><span class="de">die Stetigkeitskorrektur</span><br><span class="zh">连续性修正 $\pm0.5$</span></div>
+      <div class="vcard"><span class="de">iid (unabhängig identisch verteilt)</span><br><span class="zh">独立同分布</span></div>
+      <div class="vcard"><span class="de">die Verteilungsfunktion</span><br><span class="zh">分布函数 $F$</span></div>
+      <div class="vcard"><span class="de">die Stetigkeitsstelle</span><br><span class="zh">连续点</span></div>
+      <div class="vcard"><span class="de">disjunkt</span><br><span class="zh">不交</span></div>
+      <div class="vcard"><span class="de">die Monotonie</span><br><span class="zh">单调性</span></div>
+      <div class="vcard"><span class="de">stochastisch unabhängig</span><br><span class="zh">随机独立</span></div>
+      <div class="vcard"><span class="de">die bedingte Wahrscheinlichkeit</span><br><span class="zh">条件概率</span></div>
+      <div class="vcard"><span class="de">das Wahrscheinlichkeitsmaß</span><br><span class="zh">概率测度</span></div>
+      <div class="vcard"><span class="de">der Messraum</span><br><span class="zh">可测空间</span></div>
+      <div class="vcard"><span class="de">die Dirac-Verteilung $\delta_x$</span><br><span class="zh">Dirac 分布</span></div>
+      <div class="vcard"><span class="de">die Geometrische Verteilung</span><br><span class="zh">几何分布</span></div>
+      <div class="vcard"><span class="de">die hypergeometrische Verteilung</span><br><span class="zh">超几何分布</span></div>
+      <div class="vcard"><span class="de">die negative Binomialverteilung (NB)</span><br><span class="zh">负二项分布</span></div>
+      <div class="vcard"><span class="de">die Weibull-Verteilung</span><br><span class="zh">Weibull 分布</span></div>
+      <div class="vcard"><span class="de">die Beta-Verteilung</span><br><span class="zh">Beta 分布</span></div>
+      <div class="vcard"><span class="de">der Dichteschätzer / der Kern</span><br><span class="zh">密度估计量 / 核</span></div>
+      <div class="vcard"><span class="de">die Bandbreite</span><br><span class="zh">带宽 $h$</span></div>
+      <div class="vcard"><span class="de">der Bias-Varianz-Tradeoff</span><br><span class="zh">偏差-方差权衡</span></div>
+      <div class="vcard"><span class="de">die relative Häufigkeit</span><br><span class="zh">相对频率</span></div>
+      <div class="vcard"><span class="de">abweichen</span><br><span class="zh">偏离</span></div>
+      <div class="vcard"><span class="de">die untere/obere Schranke</span><br><span class="zh">下界 / 上界</span></div>
+      <div class="vcard"><span class="de">das Quantil</span><br><span class="zh">分位数</span></div>
+    </div>
+  </section>
+
+  <!-- ===== 练习题 ===== -->
+  <section class="block">
+    <h2>📝 习题与讲解</h2>
+    <p style="color:var(--muted);font-size:.85rem;">注：本章前几题（1/2/3/11/12）实为基础概率/测度题，章节归类但内容偏建模。颜色：
+      <span style="color:var(--accent)">●基础概率</span>
+      <span style="color:var(--teal)">●收敛证明</span>
+      <span style="color:var(--accent2)">●CLT/近似</span>
+      <span style="color:var(--green)">●大数定律</span>
+      <span style="color:var(--pink)">●变换</span>
+      <span style="color:var(--purple)">●不等式</span></p>
+
+    <!-- A1 -->
+    <div class="ex" id="a1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">1</span>
+        <span class="ex-title">概率测度性质：不交判定 / 单调性 / 归一化求 c</span><span class="badge b-base">基础概率</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) $P(A)=\tfrac13,P(\bar B)=\tfrac14$，$A,B$ 能否不交？(b) $P(B)=0\Rightarrow P(A\cap B)=0$？(c) $\Omega=\mathbb N_0$，$P(\{x\})=\tfrac{c}{x!}$，求 $c$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$P(B)=\tfrac34$。若不交则 $P(A\cup B)=\tfrac13+\tfrac34=\tfrac{13}{12}>1$，矛盾 → <b>不能不交</b>。
+            <div class="subq">(b)</div>$A\cap B\subseteq B$，单调性 $0\le P(A\cap B)\le P(B)=0$ → <b>成立</b>。
+            <div class="subq">(c)</div>$\sum_{x\ge0}\tfrac{c}{x!}=ce=1\Rightarrow c=\tfrac1e$（用 $\sum 1/x!=e$）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="ex" id="a2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">2</span>
+        <span class="ex-title">条件概率：对称性与 Bonferroni 型下界</span><span class="badge b-base">基础概率</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 证 $P(A\mid B)\ge P(A)\Rightarrow P(B\mid A)\ge P(B)$；(b) 证 $P(A\mid B)\ge\frac{P(A)+P(B)-1}{P(B)}$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$P(A\mid B)\ge P(A)\Rightarrow P(A\cap B)\ge P(A)P(B)$，除以 $P(A)>0$ 得 $P(B\mid A)\ge P(B)$。成立。
+            <div class="subq">(b)</div>由 $P(A\cup B)\le1$ 得 $P(A\cap B)\ge P(A)+P(B)-1$，除以 $P(B)$ 即证。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="ex" id="a3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">3</span>
+        <span class="ex-title">测度性质 + 找反例</span><span class="badge b-base">基础概率</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 同题1(a)；(b) $P(A)=P(\bar B)\Rightarrow\bar A=B$？(c) $P(B)=0\Rightarrow P(A\cap B)=0$？(d) 求 $c$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>不能不交（同题1）。
+            <div class="subq">(b)</div><b>错</b>。反例 $\Omega=\{1,2\}$ Laplace，$A=B=\{1\}$：$P(A)=\tfrac12=P(\bar B)$ 但 $\bar A=\{2\}\ne B$。
+            <div class="subq">(c)</div>成立（单调性）。
+            <div class="subq">(d)</div>$c=1/e$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="ex" id="a4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">4</span>
+        <span class="ex-title">识别标准分布并算概率</span><span class="badge b-clt">CLT/近似</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 抽奖中奖编号；(b) 5题抽2题准备数；(c) 首次被检查天数；(d) 10题答对数。识别分布并算概率。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>识别四个经典离散分布：均匀、超几何、几何、二项。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$X_1\sim U\{1..k\}$。如 $k=100$：$P(X_1<66)=\tfrac{65}{100}=0.65$。
+            <div class="subq">(b)</div>$X_2\sim\operatorname{Hyp}(5,4,2)$，$P(X_2=2)=\frac{\binom42\binom10}{\binom52}=\tfrac35$。
+            <div class="subq">(c)</div>$X_3\sim\operatorname{Geom}(a)$，$P(X_3\le2)=1-(1-a)^2=2a-a^2$。
+            <div class="subq">(d)</div>$X_4\sim\operatorname{Bin}(10,0.9)$，$P(X_4\ge9)=\binom{10}{9}0.9^9\cdot0.1+0.9^{10}\approx0.7361$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5 -->
+    <div class="ex" id="a5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">5</span>
+        <span class="ex-title">WLLN + 连续映射求极限 a, b</span><span class="badge b-lln">大数定律</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X_i\sim U\{1..5\},Y_i\sim\operatorname{NB}(4,\tfrac12)$。求 $a,b$ 使 $\bar X_n+\bar Y_n\xrightarrow{P}a$，$\bar X_n\bar Y_n\xrightarrow{P}b$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>WLLN 给各自极限期望，连续映射处理和与积。</div>
+          <div class="ans">
+            $E(X_i)=3$；NB（失败数参数化）$E(Y_i)=\frac{r(1-p)}{p}=\frac{4\cdot0.5}{0.5}=4$。
+            WLLN：$\bar X_n\xrightarrow{P}3,\bar Y_n\xrightarrow{P}4$。
+            连续映射：$a=3+4=7$，$b=3\cdot4=12$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A6 -->
+    <div class="ex" id="a6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">6</span>
+        <span class="ex-title">四种收敛全检验（经典反例）</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $[0,1]$ 上 $X_n(\omega)=n\mathbf 1_{(0,1/n)}(\omega)$。检验是否 f.s./P/D/一阶矩收敛到 0。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>"高瘦尖峰"反例：几乎处处为 0 但积分恒为 1。</div>
+          <div class="ans">
+            <b>f.s. ✓</b>：每个固定 $\omega$ 最终 $X_n(\omega)=0$。
+            <b>P ✓</b>：$P(|X_n|>\varepsilon)=\tfrac1n\to0$。
+            <b>D ✓</b>：由 P 收敛推出。
+            <b>一阶矩 ✗</b>：$E|X_n|=n\cdot\tfrac1n=1\not\to0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A7 -->
+    <div class="ex" id="a7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">7</span>
+        <span class="ex-title">单变量何时近似正态（原理题）</span><span class="badge b-clt">CLT/近似</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          举出使单个 $X$ 近似正态的充分性质，类比 Poisson 近似。基于什么原理？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            原理：当 $X$ 可视为许多小的、近似独立的随机贡献之和时近似正态。充分条件：
+            参数大（$\operatorname{Bin}$ 的 $n$、$\operatorname{Poi}$ 的 $\lambda$、$\operatorname{Ga}$ 的 $\alpha$）；无单一成分主导；方差有限非退化。
+            例：$\operatorname{Bin}(n,p)\approx N(np,np(1-p))$；$\operatorname{Poi}(\lambda)\approx N(\lambda,\lambda)$；$\operatorname{Ga}(\alpha,\beta)\approx N(\tfrac\alpha\beta,\tfrac{\alpha}{\beta^2})$（大 $\alpha$，因可看作多个指数变量之和）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A8 -->
+    <div class="ex" id="a8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">8</span>
+        <span class="ex-title">Chebyshev 反推所需投掷次数 n</span><span class="badge b-ineq">不等式</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          公平硬币投多少次，使正面频率以 $\ge0.95$ 概率偏离 $0.5$ 不超过 $0.01$ / $0.001$？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\operatorname{Var}(\bar X_n)=\frac{1/4}{n}$，Chebyshev 令尾概率 $\le0.05$。</div>
+          <div class="ans">
+            $\frac{1}{4n\varepsilon^2}\le0.05\Rightarrow n\ge\frac{5}{\varepsilon^2}$。
+            $\varepsilon=0.01$：$n\ge50\,000$；$\varepsilon=0.001$：$n\ge5\,000\,000$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A9 -->
+    <div class="ex" id="a9">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">9</span>
+        <span class="ex-title">公务员：225 天指数和的 CLT 近似</span><span class="badge b-clt">CLT/近似</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          每天额外工时 $\sim\operatorname{Exp}$，$E=5$ 分，225 天独立。(a) 总时近似分布；(b) $P(>16\text{h})$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>指数 $\sigma^2=\mu^2=25$，和 $\approx N(225\cdot5,225\cdot25)$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$S_{225}\approx N(1125,5625)$（分钟），$\sigma=75$。
+            <div class="subq">(b)</div>$16$h$=960$min，$z=\frac{960-1125}{75}=-2.2$，$P(S>960)=\Phi(2.2)\approx0.9861$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A10 -->
+    <div class="ex" id="a10">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">10</span>
+        <span class="ex-title">变量变换：Beta、Weibull→Exp（+CLT 附加）</span><span class="badge b-trans">变换</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) $X\sim\operatorname{Beta}(a,b)$，$Y=(X+2)^{-1}$ 密度；(b) Weibull 的 $Y=X^b$ 密度；(附) $\operatorname{Bin}(80,0.14)$ 的 $P(X>11)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>变换三步：反函数、$|dx/dy|$、写支持集。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$x=\tfrac1y-2$，$y\in(\tfrac13,\tfrac12)$，$|dx/dy|=\tfrac1{y^2}$：
+            $f_Y(y)=\frac1{B(a,b)}(\tfrac1y-2)^{a-1}(3-\tfrac1y)^{b-1}\tfrac1{y^2}\mathbf 1_{(1/3,1/2)}(y)$。
+            <div class="subq">(b)</div>$x=y^{1/b},|dx/dy|=\tfrac1b y^{1/b-1}$：$f_Y(y)=ae^{-ay}\mathbf 1_{\{y\ge0\}}$，即 $Y\sim\operatorname{Exp}(a)$。
+            <div class="subq">(附)</div>$\mu=11.2,\sigma^2=9.632$，$z=\frac{11-11.2}{\sqrt{9.632}}=-0.0644$，$P(X>11)\approx\Phi(0.0644)\approx0.5257$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A11 -->
+    <div class="ex" id="a11">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">11</span>
+        <span class="ex-title">测度性质（与题3几乎相同）</span><span class="badge b-base">基础概率</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 不交判定；(b) $P(A)=P(\bar B)\Rightarrow\bar A=B$？(c) $P(B)=0$；(d) 求 $c$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="dupnote">⚠ 本题与练习 3 实质相同，结论一致。</div>
+          <div class="ans">
+            (a) 不能不交（$\tfrac{13}{12}>1$）；(b) 错（$A=B=\{1\}$ 反例）；(c) 成立（单调）；(d) $c=e^{-1}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A12 -->
+    <div class="ex" id="a12">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">12</span>
+        <span class="ex-title">独立 vs 不交：辨析与构造</span><span class="badge b-base">基础概率</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 不交 $\Rightarrow A,\bar B$ 独立？(b) $P(A)=0.5,P(A\cup B)=0.7$，独立/不交时求 $P(B)$；(c) 掷骰找与"偶数"独立的 $B$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>不交与独立是不同概念，几乎从不同时成立（除非有零概率事件）。</div>
+          <div class="ans">
+            <div class="subq">(a)</div><b>一般错</b>。反例骰子 $A=\{1\},B=\{2\}$：$P(A\cap\bar B)=\tfrac16\ne\tfrac16\cdot\tfrac56=\tfrac5{36}$。
+            <div class="subq">(b)</div>独立：$0.7=0.5+q-0.5q\Rightarrow q=0.4$；不交：$0.7=0.5+q\Rightarrow q=0.2$。
+            <div class="subq">(c)</div>$A=\{2,4,6\}$，取 $B=\{1,2\}$：$P(A\cap B)=\tfrac16=\tfrac12\cdot\tfrac13$ → 独立 ✓。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A13 -->
+    <div class="ex" id="a13">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">13</span>
+        <span class="ex-title">Dirac 分布：xₙ→x ⟺ Xₙ→X 依概率</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X_n\sim\delta_{x_n},X\sim\delta_x$。证 $x_n\to x\Leftrightarrow X_n\xrightarrow{P}X$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>Dirac 变量几乎必然取定值，$P(|X_n-X|>\varepsilon)$ 只取 0 或 1。</div>
+          <div class="ans">
+            $P(|X_n-X|>\varepsilon)=\mathbf 1_{\{|x_n-x|>\varepsilon\}}$。
+            "⟹"：$x_n\to x$ 则最终 $|x_n-x|\le\varepsilon$，概率 $\to0$。
+            "⟸"：概率 $\to0$ 而它只取 0/1，故终为 0，即 $|x_n-x|\le\varepsilon$，得 $x_n\to x$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A14 -->
+    <div class="ex" id="a14">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">14</span>
+        <span class="ex-title">WLLN 推广到 g(Xᵢ)</span><span class="badge b-lln">大数定律</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          iid $X_i$，$g$ 可测。证 $\frac1n\sum g(X_i)\xrightarrow{P}E[g(X_1)]$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            令 $Y_i=g(X_i)$。$X_i$ iid 且 $g$ 可测 → $Y_i$ iid。
+            若 $E|g(X_1)|<\infty$，WLLN 给 $\frac1n\sum Y_i\xrightarrow{P}E[Y_1]=E[g(X_1)]$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A15 -->
+    <div class="ex" id="a15">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">15</span>
+        <span class="ex-title">连续映射定理（依概率版）</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f$ 连续，$X_n\xrightarrow{P}X$。证 $f(X_n)\xrightarrow{P}f(X)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>子序列论证：每个子列有几乎必然收敛的更细子列，连续性传递。</div>
+          <div class="ans">
+            从 $X_n$ 的任一子列，因 $X_n\xrightarrow{P}X$ 可取更细子列 $X_{n_k}$ 几乎必然 $\to X$。
+            $f$ 连续 → $f(X_{n_k})\to f(X)$ a.s.，从而依概率。
+            由"每个子列都有收敛到同一极限的子列"的判据，得 $f(X_n)\xrightarrow{P}f(X)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A16 -->
+    <div class="ex" id="a16">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">16</span>
+        <span class="ex-title">P 收敛 ≠ 期望收敛（经典反例）</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $P(X_n=n)=\tfrac1n,P(X_n=0)=1-\tfrac1n$。证 (1) $X_n\xrightarrow{P}0$；(2) $E[X_n]=1$；(3) $E[X_n]\not\to E[X]$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>必背反例：质量逃逸到无穷使期望不收敛，但概率收敛到 0。</div>
+          <div class="ans">
+            <div class="subq">(1)</div>$n>\varepsilon$ 时 $P(|X_n|>\varepsilon)=P(X_n=n)=\tfrac1n\to0$。
+            <div class="subq">(2)</div>$E[X_n]=n\cdot\tfrac1n+0=1$。
+            <div class="subq">(3)</div>极限 $X=0$ 故 $E[X]=0$，但 $E[X_n]=1\not\to0$。说明 P收敛不蕴含期望收敛。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A17 -->
+    <div class="ex" id="a17">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">17</span>
+        <span class="ex-title">核密度估计量：WLLN + CLT + 偏差方差</span><span class="badge b-lln">大数定律</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\hat f_n(x)=\frac1n\sum\frac1{2h}I_{\{|X_i-x|\le h\}}$。(1) WLLN；(2) CLT；(3) $E[\hat f_n]$；(4) $\operatorname{Var}$；(5) $h$ 对偏差方差的影响。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>令 $Y_i=\frac1{2h}I_{\{|X_i-x|\le h\}}$ 为 iid，套 WLLN/CLT。</div>
+          <div class="ans">
+            <div class="subq">(1)</div>$Y_i$ iid，WLLN：$\hat f_n(x)\xrightarrow{P}E[Y_1]=E[\hat f_n(x)]$。
+            <div class="subq">(2)</div>CLT：$\sqrt n(\hat f_n(x)-E[\hat f_n(x)])\xrightarrow{D}N(0,\operatorname{Var}(Y_1))$。
+            <div class="subq">(3)</div>$E[\hat f_n(x)]=\frac1{2h}P(|X_1-x|\le h)=\frac{F(x+h)-F(x-h)}{2h}$。
+            <div class="subq">(4)</div>记 $p_h=P(|X_1-x|\le h)$，$\operatorname{Var}(Y_1)=\frac{p_h(1-p_h)}{4h^2}$，故 $\operatorname{Var}(\hat f_n)=\frac{p_h(1-p_h)}{4nh^2}$。
+            <div class="subq">(5)</div>小 $h$：$E[\hat f_n]\to f(x)$（偏差↓）但方差含因子 $\frac1{nh}$（方差↑）。典型偏差-方差权衡。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A18 -->
+    <div class="ex" id="a18">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">18</span>
+        <span class="ex-title">D 收敛 ≠ P 收敛（经典反例）</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{0,1\}$ 等概，$X(1)=0,X(0)=1$；$X_n(0)=0,X_n(1)=1$。证 (1) 同分布；(2) $P(|X_n-X|>\tfrac12)=1$；(3) $X_n\xrightarrow{D}X$ 但 $\not\xrightarrow{P}X$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>必背反例：标签互换使分布相同，但逐点差恒为 1。</div>
+          <div class="ans">
+            <div class="subq">(1)</div>两者都以 $\tfrac12$ 取 0、$\tfrac12$ 取 1，分布函数相同。
+            <div class="subq">(2)</div>每个 $\omega$ 处 $|X_n-X|=1$，故概率 $=1$。
+            <div class="subq">(3)</div>同分布 → 自动 $\xrightarrow{D}$；但 $P(|X_n-X|>\tfrac12)=1\not\to0$ → 不 P收敛。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A19 -->
+    <div class="ex" id="a19">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">19</span>
+        <span class="ex-title">D 收敛到常数 ⟹ P 收敛</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X_n\xrightarrow{D}c$（常数）。证 $X_n\xrightarrow{P}c$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>极限是常数，其分布函数是阶跃；$c\pm\varepsilon$ 是连续点。</div>
+          <div class="ans">
+            $P(|X_n-c|>\varepsilon)=P(X_n<c-\varepsilon)+P(X_n>c+\varepsilon)$。
+            在连续点 $c-\varepsilon,c+\varepsilon$：$P(X_n\le c-\varepsilon)\to0$，$P(X_n\le c+\varepsilon)\to1$。
+            两尾都 $\to0$，故 $X_n\xrightarrow{P}c$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A20 -->
+    <div class="ex" id="a20">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">20</span>
+        <span class="ex-title">Slutsky：√n 速率推 P 收敛到 0</span><span class="badge b-conv">收敛</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\sqrt n(X_n-E[X_n])\xrightarrow{D}X$。证 $X_n-E[X_n]\xrightarrow{P}0$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>把 $X_n-E[X_n]$ 写成 $\frac1{\sqrt n}\cdot\sqrt n(\dots)$，Slutsky 乘 $\frac1{\sqrt n}\to0$。</div>
+          <div class="ans">
+            $X_n-E[X_n]=\frac1{\sqrt n}\cdot\sqrt n(X_n-E[X_n])$。
+            $\sqrt n(\dots)\xrightarrow{D}X$ 且 $\frac1{\sqrt n}\to0$（视为常数列）。
+            Slutsky（积）：乘积 $\xrightarrow{D}0\cdot X=0$。常数极限 → 由练习 19 升级为 $\xrightarrow{P}0$。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 真题 ===== -->
+  <section class="block">
+    <h2>🎯 考试真题</h2>
+    <div class="dupnote">📌 本章真题高度重复：6000 骰子题在 2012、Altklausur2LV、GOP-1/2/3 多套卷反复出现（真题 1/3/5/6）；指数公交题在 GOP-1 与 ss2022 重复（真题 4/8）。下面完整给出代表题，重复题统一归入末尾。</div>
+
+    <!-- E1 -->
+    <div class="ex" id="e1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题1</span>
+        <span class="ex-title">2012 · 骰子掷 6000 次（CLT + Chebyshev）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          公平骰子掷 6000 次，求 6 出现 900~1100 次的概率。(a) CLT 近似；(b) Chebyshev 下界。提示 $\Phi(3.46)\approx0.9997$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$X_i\sim\operatorname{Bin}(1,\tfrac16)$，和 $\approx N(1000,\tfrac{2500}{3})$。注意阈值 $\pm100$ 对应 $z=\pm3.46$。</div>
+          <div class="ans">
+            <div class="subq">(a) CLT</div>$E(X_i)=\tfrac16,\operatorname{Var}=\tfrac5{36}$，$n=6000$。
+            $\sqrt n\sigma=\sqrt{6000}\sqrt{5/36}=\sqrt{6000\cdot5/36}=\sqrt{833.3}\approx28.87$，且 $\frac{100}{28.87}\approx3.46$。
+            $$P(900<S<1100)=\Phi(3.46)-\Phi(-3.46)=2\Phi(3.46)-1=2(0.9997)-1=0.9994.$$
+            <div class="subq">(b) Chebyshev</div>$Y\sim\operatorname{Bin}(6000,\tfrac16)$，$E(Y)=1000,\operatorname{Var}(Y)=\tfrac{2500}{3}$。
+            $$P(|Y-1000|<100)\ge1-\frac{2500/3}{100^2}=1-\frac{2500}{30000}=\frac{11}{12}\approx0.9167.$$
+            对比：CLT 给精确近似 0.9994，Chebyshev 下界 0.917 保守得多。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2 -->
+    <div class="ex" id="e2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题2</span>
+        <span class="ex-title">2015 · 计算时间（正态近似检验 + 区间概率）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X_1..X_{100}$ iid，$E=\mu,\operatorname{Var}=100$。(a) 观察总时 1900，$\alpha=0.1$ 检验 $H_0:\mu=20$；(b) $\mu=20$ 时求总时 $\in[1800,2200]$ 概率。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>和 $S\approx N(100\mu,100\cdot100)=N(2000,10000)$，$\sigma_S=100$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$H_0$ 下 $E(S)=2000,\sigma_S=100$。$z=\frac{1900-2000}{100}=-1$。双边 $\alpha=0.1$ 临界 $1.645$，$|-1|<1.645$ → <b>不拒绝 $H_0$</b>。
+            <div class="subq">(b)</div>$z_{1800}=\frac{1800-2000}{100}=-2$，$z_{2200}=+2$。
+            $P=\Phi(2)-\Phi(-2)=2(0.9772)-1=0.9544$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E4 -->
+    <div class="ex" id="e4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题4</span>
+        <span class="ex-title">公交 225 天指数晚点（CLT 和）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X_i\sim\operatorname{Exp}$，$E(X_i)=1$，$n=225$，$X=\sum X_i$。(a) 证近似正态及参数；(b) $P(X>4\text{h})$。提示 $\Phi(1)\approx0.8413$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\lambda=1,\sigma^2=1$，和 $\approx N(225,225)$，$\sigma_X=15$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>iid 有限方差，CLT：$X\approx N(n\mu,n\sigma^2)=N(225,225)$。
+            <div class="subq">(b)</div>$4$h$=240$min，$z=\frac{240-225}{15}=1$。$P(X>240)=1-\Phi(1)\approx1-0.8413=0.1587\approx0.16$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E7 -->
+    <div class="ex" id="e7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题7</span>
+        <span class="ex-title">几何分布平均（CLT + 反推 p + Delta 方法）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $X_i\sim\operatorname{Geom}(p)$（首次反面所需次数），$n=200$，$\bar X=\frac1{200}\sum X_i$。(a) $\bar X$ 近似分布；(b) 求 $p$ 使 $P(|\bar X-E(X_i)|\le0.1645)\ge0.9$；(c) $\bar X^2$ 近似分布。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\mu=\tfrac1p,\sigma^2=\tfrac{1-p}{p^2}$；(b) 化成二次不等式；(c) Delta 方法 $g(x)=x^2$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$\bar X\approx N\!\left(\tfrac1p,\tfrac{1-p}{200p^2}\right)$。
+            <div class="subq">(b)</div>需 $2\Phi(\tfrac{x\sqrt n}{\sigma})-1\ge0.9\Rightarrow\tfrac{x\sqrt n}{\sigma}\ge1.645$。
+            因 $x=0.1645=\tfrac{1.645}{10},n=200$，得 $\frac{x^2n}{1.645^2}=\frac{200}{100}=2\ge\sigma^2=\tfrac{1-p}{p^2}$。
+            即 $2p^2+p-1\ge0\Rightarrow(2p-1)(p+1)\ge0$，因 $p\in(0,1)$ 得 $\boxed{p\ge\tfrac12}$。
+            <div class="subq">(c)</div>Delta 方法 $g(x)=x^2,g'(\mu)=\tfrac2p$：
+            $\sqrt n(\bar X^2-\tfrac1{p^2})\xrightarrow{D}N(0,(\tfrac2p)^2\tfrac{1-p}{p^2})=N(0,\tfrac{4(1-p)}{p^4})$。
+            故 $\boxed{\bar X^2\approx N\!\left(\tfrac1{p^2},\tfrac{1-p}{50p^4}\right)}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E dup -->
+    <div class="ex" id="edup">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题3/5/6/8</span>
+        <span class="ex-title">重复真题汇总（骰子 6000 / 公交指数）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>
+          这些真题与上面已解题目实质相同，仅出处不同。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示对应关系</button>
+        <div class="sol">
+          <div class="ans">
+            <b>真题 3（Altklausur2LV）</b>、<b>真题 5（GOP-2）</b>、<b>真题 6（GOP-3）</b>：均为"骰子掷 6000 次，6 出现 900~1100 次"，答案完全同<a href="#e1">真题 1</a>：CLT 给 0.9994，Chebyshev 给 $\tfrac{11}{12}\approx0.917$。
+            <br><br>
+            <b>真题 8（ss2022）</b>：与<a href="#e4">真题 4</a>相同的指数公交题，$X\approx N(225,225)$，$P(X>240)=1-\Phi(1)\approx0.16$。
+            <br><br>
+            <span style="color:var(--accent2)">备考提示：这道 6000 骰子题几乎是"必考母题"，务必把 $z=\pm3.46$ 与 $\tfrac{11}{12}$ 两个结果记熟，考场上直接套。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 常见错误 ===== -->
+  <section class="block" id="mistakes">
+    <h2>⚠️ 常见错误提醒</h2>
+    <ul class="warn">
+      <li><b>把分布收敛当概率收敛</b>：D 收敛通常更弱。$X_n\xrightarrow{D}X$ 不一定推 $X_n\xrightarrow{P}X$（除非极限是常数）。</li>
+      <li><b>证概率收敛没写 $\varepsilon$</b>：必须对任意 $\varepsilon>0$ 证 $P(|X_n-X|>\varepsilon)\to0$。</li>
+      <li><b>CLT 标准化少了 $\sqrt n$</b>：和用 $\frac{\sum X_i-n\mu}{\sqrt n\sigma}$，均值用 $\frac{\bar X-\mu}{\sigma/\sqrt n}$。</li>
+      <li><b>大数定律忘记极限是期望</b>：$\bar X_n\xrightarrow{P}E(X_1)$，不是收敛到某个 $\bar X$。</li>
+      <li><b>Slutsky 拆不出常数项</b>：要找一块 $\xrightarrow{P}c$。如 $\frac1{\sqrt n}\to0$ 当常数列用。</li>
+      <li><b>P收敛误以为蕴含期望收敛</b>：练习 16 反例 $E[X_n]=1\not\to0$。</li>
+      <li><b>分布参数化混淆</b>：几何分布 $E=\tfrac1p$ 还是 $\tfrac{1-p}p$ 取决于定义（"次数"vs"失败数"），考前确认课程约定。</li>
+      <li><b>区间端点查表方向错</b>：善用 $\Phi(-x)=1-\Phi(x)$，对称区间直接 $2\Phi(x)-1$。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 必会题型 ===== -->
+  <section class="block" id="mustknow">
+    <h2>✅ 本章必会题型清单</h2>
+    <ul class="checklist">
+      <li>会区分概率收敛、分布收敛、均方收敛、几乎必然收敛，并记住金字塔蕴含关系。</li>
+      <li>会用定义（$P(|X_n-X|>\varepsilon)\to0$）证明简单概率收敛。</li>
+      <li>会构造/识别两个经典反例：P收敛≠E收敛、D收敛≠P收敛。</li>
+      <li>会用连续映射定理处理 $g(X_n)$，用 Slutsky 拆分常数项。</li>
+      <li>会用大数定律处理样本均值及 $g(X_i)$ 形式。</li>
+      <li>会用 CLT 三步标准化和与均值，查标准正态表。</li>
+      <li>会用 Delta 方法求 $g(\bar X)$ 的近似分布。</li>
+      <li>会用 CLT 反推参数（如真题 7 求 $p$ 范围）。</li>
+      <li>会判断二项分布用正态近似（$np,n(1-p)$ 不小）还是 Poisson 近似（$p$ 小）。</li>
+      <li>会对比 CLT 精确近似与 Chebyshev 保守下界的差异（6000 骰子母题）。</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<script>
+function toggleEx(head){head.parentElement.classList.toggle('open');}
+function toggleSol(btn){
+  const sol=btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent=sol.classList.contains('show')?'隐藏解答':'显示解答';
+}
+function toggleAll(open){
+  document.querySelectorAll('.ex').forEach(ex=>ex.classList.toggle('open',open));
+}
+function showAllSol(show){
+  document.querySelectorAll('.sol').forEach(sol=>{
+    sol.classList.toggle('show',show);
+    const btn=sol.previousElementSibling;
+    if(btn&&btn.classList.contains('toggle-sol'))
+      btn.textContent=show?'隐藏解答':'显示解答';
+  });
+  if(show) toggleAll(true);
+}
+document.querySelectorAll('nav.side a').forEach(a=>{
+  a.addEventListener('click',()=>document.querySelector('nav.side').classList.remove('open'));
+});
+</script>
+</body>
+</html>

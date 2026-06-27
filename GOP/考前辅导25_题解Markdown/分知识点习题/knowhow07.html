@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多维随机变量 · 条件分布 · 卷积 · 方差分解</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a212b; --panel2:#222c38;
+    --accent:#4ea1ff; --accent2:#ffb454; --green:#5fd07d;
+    --red:#ff6b6b; --purple:#c084fc; --pink:#f472b6; --teal:#2dd4bf;
+    --text:#e3e8ef; --muted:#94a3b8; --border:#2c3744;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.75;}
+  a{color:var(--accent);text-decoration:none;}
+
+  header.top{background:linear-gradient(135deg,#16202c,#0f1419);
+    border-bottom:1px solid var(--border);padding:28px 20px 22px;text-align:center;}
+  header.top h1{margin:0 0 6px;font-size:1.45rem;letter-spacing:.5px;}
+  header.top p{margin:0;color:var(--muted);font-size:.88rem;}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 16px;min-width:90px;}
+  .stat b{display:block;font-size:1.3rem;color:var(--accent2);}
+  .stat span{font-size:.72rem;color:var(--muted);}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  nav.side{width:260px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;
+    height:100vh;overflow-y:auto;border-right:1px solid var(--border);padding:18px 10px 40px;font-size:.81rem;}
+  nav.side h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 8px 6px;}
+  nav.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--text);transition:.15s;border-left:3px solid transparent;}
+  nav.side a:hover{background:var(--panel);border-left-color:var(--accent);}
+  .navtag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+  .t-joint{background:var(--accent);}
+  .t-cond{background:var(--teal);}
+  .t-conv{background:var(--accent2);}
+  .t-cov{background:var(--green);}
+  .t-trans{background:var(--pink);}
+  .t-var{background:var(--purple);}
+  .t-exam{background:#f87171;}
+
+  main{flex:1;min-width:0;padding:24px 22px 80px;}
+  section.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:22px 24px;margin-bottom:26px;scroll-margin-top:14px;}
+  section.block > h2{margin-top:0;font-size:1.22rem;border-bottom:2px solid var(--accent);
+    padding-bottom:8px;display:inline-block;}
+
+  .ex{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+    margin-bottom:18px;overflow:hidden;scroll-margin-top:14px;}
+  .ex-head{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;
+    background:#1e2733;transition:.15s;}
+  .ex-head:hover{background:#243140;}
+  .ex-num{font-weight:700;color:var(--accent);font-size:.86rem;background:#13202c;
+    border:1px solid var(--border);border-radius:8px;padding:3px 9px;white-space:nowrap;}
+  .ex-title{flex:1;font-size:.9rem;}
+  .badge{font-size:.62rem;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid;}
+  .b-joint{color:var(--accent);border-color:var(--accent);}
+  .b-cond{color:var(--teal);border-color:var(--teal);}
+  .b-conv{color:var(--accent2);border-color:var(--accent2);}
+  .b-cov{color:var(--green);border-color:var(--green);}
+  .b-trans{color:var(--pink);border-color:var(--pink);}
+  .b-var{color:var(--purple);border-color:var(--purple);}
+  .b-exam{color:#f87171;border-color:#f87171;}
+
+  .ex-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ex.open .ex-body{max-height:none;padding:6px 20px 20px;}
+
+  .q{background:#141c25;border-left:4px solid var(--accent);padding:12px 16px;
+    border-radius:0 8px 8px 0;margin:14px 0;}
+  .q .label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.5px;}
+
+  .toggle-sol{background:var(--accent);color:#06121f;border:none;padding:8px 18px;
+    border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin:6px 0 4px;transition:.15s;}
+  .toggle-sol:hover{background:#6bb3ff;}
+  .sol{display:none;}
+  .sol.show{display:block;}
+
+  .think{background:#1d2417;border-left:4px solid var(--green);padding:10px 16px;
+    border-radius:0 8px 8px 0;margin:12px 0;font-size:.85rem;}
+  .think .label{color:var(--green);font-weight:700;font-size:.72rem;letter-spacing:.5px;}
+
+  .ans{background:#161e28;border:1px dashed var(--border);padding:8px 16px;border-radius:8px;margin:12px 0;}
+  .subq{font-weight:700;color:var(--accent2);margin-top:14px;}
+
+  .dupnote{background:#2a1f16;border:1px solid var(--accent2);border-radius:8px;
+    padding:8px 14px;margin:10px 0;font-size:.83rem;color:var(--accent2);}
+
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-size:.83rem;}
+  .fcard b{color:var(--accent2);}
+
+  .strat li,.warn li,.checklist li{margin-bottom:10px;}
+  .strat b{color:var(--accent2);}
+  .warn b{color:var(--red);}
+  .checklist li::marker{color:var(--green);}
+
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+  .vcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;}
+  .vcard .de{color:var(--accent);font-weight:700;font-size:.88rem;}
+  .vcard .zh{color:var(--muted);font-size:.78rem;}
+
+  .keybox{background:#16201a;border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+  .keybox h4{margin:0 0 8px;color:var(--green);font-size:.95rem;}
+
+  .covcheck{background:#1a1d26;border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+  .covcheck h4{margin:0 0 10px;color:var(--green);font-size:.98rem;}
+  .checkrow{display:flex;align-items:flex-start;gap:10px;margin:10px 0;padding:8px 12px;background:#15171f;border-radius:8px;border-left:3px solid var(--green);}
+  .checkrow .num{background:var(--green);color:#06121f;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.8rem;}
+
+  .toolbox{background:#1a1d26;border:1px solid var(--purple);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.85rem;}
+  .toolbox h4{margin:0 0 8px;color:var(--purple);font-size:.95rem;}
+  .toolbox .tool{margin:8px 0;padding:8px 12px;background:#15171f;border-radius:7px;border-left:3px solid var(--purple);}
+  .toolbox .tool b{color:var(--pink);}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.83rem;}
+  th,td{border:1px solid var(--border);padding:6px 9px;text-align:center;}
+  th{background:#1e2733;color:var(--accent2);}
+  code{background:#0d1620;padding:2px 6px;border-radius:5px;color:var(--teal);font-size:.85rem;}
+
+  .controls{position:sticky;top:0;z-index:50;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);padding:10px 0;margin:-24px -22px 22px;display:flex;gap:10px;
+    padding-left:22px;flex-wrap:wrap;}
+  .ctrl-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;}
+  .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .menu-toggle{display:none;}
+  @media(max-width:860px){
+    nav.side{position:fixed;left:-280px;z-index:200;background:var(--bg);
+      transition:left .3s;width:270px;box-shadow:4px 0 20px rgba(0,0,0,.5);}
+    nav.side.open{left:0;}
+    .menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:201;
+      background:var(--accent);color:#06121f;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;}
+    .fgrid{grid-template-columns:1fr;}
+    main{padding:24px 14px 80px;}
+    .controls{margin:-24px -14px 22px;padding-left:14px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('nav.side').classList.toggle('open')">☰ 目录</button>
+
+<header class="top">
+  <h1>多维随机变量 · 条件分布 · 卷积 · 方差分解</h1>
+  <p>Mehrdimensionale ZV · Bedingte Verteilungen · Faltung · Varianzzerlegung</p>
+  <div class="stats">
+    <div class="stat"><b>20</b><span>练习题</span></div>
+    <div class="stat"><b>16</b><span>考试真题</span></div>
+    <div class="stat"><b>36</b><span>合计题目</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="side">
+  <h3>核心板块</h3>
+  <a href="#formulas">📐 公式速查</a>
+  <a href="#strategy">🧭 不会时怎么下手</a>
+  <a href="#covcheck">✅ 协方差矩阵三检验</a>
+  <a href="#convbox">🔄 卷积支持集决策</a>
+  <a href="#condbox">🔗 条件分布与共轭</a>
+  <a href="#toolbox">🧰 方差/协方差分解</a>
+  <a href="#vocab">🇩🇪 德语词汇</a>
+
+  <h3>练习题（颜色=题型）</h3>
+  <a href="#a1"><span class="navtag t-cov"></span>1 · 正态不相关⟹独立</a>
+  <a href="#a2"><span class="navtag t-joint"></span>2 · 联合密度综合</a>
+  <a href="#a3"><span class="navtag t-cond"></span>3 · 1/x 密度条件分布</a>
+  <a href="#a4"><span class="navtag t-cond"></span>4 · Beta-几何共轭</a>
+  <a href="#a5"><span class="navtag t-cond"></span>5 · 离散列联表</a>
+  <a href="#a6"><span class="navtag t-conv"></span>6 · 指数联合独立</a>
+  <a href="#a7"><span class="navtag t-cov"></span>7 · W=X+Y, T=X−Y</a>
+  <a href="#a8"><span class="navtag t-conv"></span>8 · 两均匀卷积(三角)</a>
+  <a href="#a9"><span class="navtag t-conv"></span>9 · 指数卷积→Gamma</a>
+  <a href="#a10"><span class="navtag t-conv"></span>10 · Poisson 卷积</a>
+  <a href="#a11"><span class="navtag t-var"></span>11 · 混合分布总方差</a>
+  <a href="#a12"><span class="navtag t-conv"></span>12 · Poisson和 / min几何</a>
+  <a href="#a13"><span class="navtag t-cov"></span>13 · 相关系数≤1 (CS)</a>
+  <a href="#a14"><span class="navtag t-cov"></span>14 · 相关系数≤1 (重复)</a>
+  <a href="#a15"><span class="navtag t-cov"></span>15 · 和的方差=双重和</a>
+  <a href="#a16"><span class="navtag t-joint"></span>16 · 0.8(x+y+xy)</a>
+  <a href="#a17"><span class="navtag t-trans"></span>17 · X²+Y²→指数</a>
+  <a href="#a18"><span class="navtag t-var"></span>18 · 条件期望性质</a>
+  <a href="#a19"><span class="navtag t-var"></span>19 · 协方差分解定理</a>
+  <a href="#a20"><span class="navtag t-var"></span>20 · 线性模型 R²=ρ²</a>
+
+  <h3>考试真题</h3>
+  <a href="#e1"><span class="navtag t-exam"></span>真题1 · 2012 经验密度</a>
+  <a href="#e2"><span class="navtag t-exam"></span>真题2 · 2014 列联表补全</a>
+  <a href="#e6"><span class="navtag t-exam"></span>真题6 · 二元正态综合</a>
+  <a href="#e8"><span class="navtag t-exam"></span>真题8 · 三元正态 A,B</a>
+  <a href="#edup1"><span class="navtag t-exam"></span>重复·列联表(3/9/12)</a>
+  <a href="#edup2"><span class="navtag t-exam"></span>重复·Beta-Geom(4/10/13)</a>
+  <a href="#edup3"><span class="navtag t-exam"></span>重复·协方差矩阵(5/11/14)</a>
+  <a href="#edup4"><span class="navtag t-exam"></span>重复·指数密度(7/15)</a>
+  <a href="#edup5"><span class="navtag t-exam"></span>重复·三元正态(16)</a>
+
+  <h3>总结</h3>
+  <a href="#mistakes">⚠️ 常见错误</a>
+  <a href="#mustknow">✅ 必会题型清单</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleAll(true)">展开全部</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">收起全部</button>
+    <button class="ctrl-btn" onclick="showAllSol(true)">显示全部答案</button>
+    <button class="ctrl-btn" onclick="showAllSol(false)">隐藏全部答案</button>
+  </div>
+
+  <!-- ===== 公式速查 ===== -->
+  <section class="block" id="formulas">
+    <h2>📐 公式速查（考试可用版）</h2>
+    <div class="fgrid">
+      <div class="fcard"><b>联合分布函数</b><br>$F_{X,Y}(x,y)=P(X\le x,Y\le y)$</div>
+      <div class="fcard"><b>边际密度</b><br>$f_X(x)=\int f_{X,Y}(x,y)\,dy$</div>
+      <div class="fcard"><b>边际概率</b><br>$P_X(x)=\sum_y P(X=x,Y=y)$</div>
+      <div class="fcard"><b>条件密度</b><br>$f_{X|Y}(x|y)=\frac{f_{X,Y}(x,y)}{f_Y(y)}$</div>
+      <div class="fcard"><b>条件期望</b><br>$E(X|Y=y)=\int x f_{X|Y}(x|y)\,dx$</div>
+      <div class="fcard"><b>全期望</b><br>$E(E(X|Y))=E(X)$</div>
+      <div class="fcard"><b>总方差</b><br>$\operatorname{Var}(X)=E[\operatorname{Var}(X|Y)]+\operatorname{Var}(E[X|Y])$</div>
+      <div class="fcard"><b>卷积</b><br>$f_{X+Y}(z)=\int f_X(x)f_Y(z-x)\,dx$</div>
+      <div class="fcard"><b>二维变换</b><br>$f_Y(y)=f_X(h(y))\,|\det Dh(y)|$</div>
+      <div class="fcard"><b>协方差矩阵</b><br>$\Sigma=E[(X-EX)(X-EX)^T]$</div>
+      <div class="fcard"><b>线性变换</b><br>$\operatorname{Cov}(AX)=A\,\operatorname{Cov}(X)\,A^T$</div>
+      <div class="fcard"><b>多元正态</b><br>$f(x)=\frac{1}{\sqrt{(2\pi)^d\det\Sigma}}\exp[-\frac12(x-\mu)^T\Sigma^{-1}(x-\mu)]$</div>
+      <div class="fcard"><b>和方差（双重和）</b><br>$\operatorname{Var}(\sum X_i)=\sum_{i,j}\operatorname{Cov}(X_i,X_j)$</div>
+      <div class="fcard"><b>相关系数</b><br>$\rho=\frac{\operatorname{Cov}(X,Y)}{\sqrt{\operatorname{Var}X\,\operatorname{Var}Y}}\in[-1,1]$</div>
+    </div>
+  </section>
+
+  <!-- ===== 解题入门 ===== -->
+  <section class="block" id="strategy">
+    <h2>🧭 不会时怎么下手</h2>
+    <ul class="strat">
+      <li><b>给联合密度</b>：先画/写支持集，再积分；<u>上下限比积分本身更重要</u>。</li>
+      <li><b>问边际分布</b>：对不关心的变量积分（连续）或求和（离散）。</li>
+      <li><b>问条件密度</b>：先求分母边际 $f_Y(y)$，再用联合除以边际。</li>
+      <li><b>问卷积</b>：写 $z=x+y$，让 $x$ 同时满足两个支持集条件，分段来自范围长度变化。</li>
+      <li><b>问二维变换</b>：先写反变换，再算 Jacobian，最后写新支持集。</li>
+      <li><b>问协方差矩阵</b>：先算每个方差和协方差，再排成矩阵。</li>
+      <li><b>问矩阵是否合法</b>：检查方阵、对称、对角非负、半正定（$\det\ge0$）。</li>
+      <li><b>多元正态</b>：协方差 $0$ 就直接独立（仅正态成立）；线性组合仍是正态。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 协方差矩阵三检验 ===== -->
+  <section class="block" id="covcheck">
+    <h2>✅ 协方差矩阵合法性三检验（超高频）</h2>
+    <p style="font-size:.85rem;color:var(--muted);">真题 5/11/14/6/8/16 反复考。按顺序检查，任一不满足即否定，能秒杀大部分题。</p>
+    <div class="covcheck">
+      <h4>判定流程</h4>
+      <div class="checkrow"><span class="num">1</span><div><b>方阵 (quadratisch)</b>：行数=列数。如 $\Sigma_4$ 是 $3\times4$ → 直接否定。</div></div>
+      <div class="checkrow"><span class="num">2</span><div><b>对称 (symmetrisch)</b>：$\Sigma_{ij}=\Sigma_{ji}$。如 $\Sigma_6$ 中 $0.5\ne1.5$ → 否定。</div></div>
+      <div class="checkrow"><span class="num">3</span><div><b>对角非负</b>：方差不能为负。如 $\Sigma_2$ 对角有 $-1$ → 否定。</div></div>
+      <div class="checkrow"><span class="num">4</span><div><b>半正定 (pos. semidefinit)</b>：所有主子式 $\ge0$。$2\times2$ 看 $\det\ge0$。如 $\begin{pmatrix}1&2\\2&1\end{pmatrix}$，$\det=1-4=-3<0$ → 否定。$\det=0$ 合法（退化）。</div></div>
+    </div>
+    <div class="keybox" style="border-color:var(--accent2);">
+      <h4 style="color:var(--accent2);">求未知元素的套路（真题 8/16）</h4>
+      已知 $\Sigma$ 含未知 $A,B$：<br>
+      ① 由<b>对称性</b>定 $A$（令 $\Sigma_{21}=\Sigma_{12}$）。<br>
+      ② 由<b>半正定</b>（通常 $\det\Sigma\ge0$）求 $B$ 的下界。例：$\det\ge0\Rightarrow\tfrac34B\ge2\Rightarrow B\ge\tfrac83$。<br>
+      <span style="color:var(--muted);">注：仅用 $|\rho_{13}|\le1$ 得到的界 $B\ge2$ 更弱，题目要"尽可能高的下界"时用 $\det$。</span>
+    </div>
+  </section>
+
+  <!-- ===== 卷积决策 ===== -->
+  <section class="block" id="convbox">
+    <h2>🔄 卷积支持集决策（错误高发区）</h2>
+    <div class="keybox">
+      <h4>核心：$f_{X+Y}(z)=\int f_X(x)f_Y(z-x)\,dx$</h4>
+      积分范围 = 同时满足 <b>$x\in\text{supp}(X)$</b> 且 <b>$z-x\in\text{supp}(Y)$</b> 的 $x$ 集合。分段来自这个范围长度的变化。
+    </div>
+    <table>
+      <tr><th>情形</th><th>$X,Y$ 支持集</th><th>结果</th></tr>
+      <tr><td>两均匀 $U(0,1)$</td><td>$0\le x\le1,\ 0\le z-x\le1$</td><td>三角分布：$z$（$0\le z\le1$），$2-z$（$1<z\le2$）</td></tr>
+      <tr><td>两指数 $\operatorname{Exp}(\lambda)$</td><td>$0\le x\le z$</td><td>$\operatorname{Ga}(2,\lambda)$：$f_Z(z)=\lambda^2 z e^{-\lambda z}$</td></tr>
+      <tr><td>两 Poisson</td><td>$0\le k\le n$（离散）</td><td>$\operatorname{Poi}(\lambda_X+\lambda_Y)$（二项式定理）</td></tr>
+    </table>
+    <p style="font-size:.84rem;color:var(--muted);">技巧：指数+指数得 Erlang/Gamma；同分布族卷积常常仍在同族内（Poisson、正态、Gamma 都有此"再生性"）。</p>
+  </section>
+
+  <!-- ===== 条件分布与共轭 ===== -->
+  <section class="block" id="condbox">
+    <h2>🔗 条件分布与 Beta-几何共轭（真题母题）</h2>
+    <div class="keybox">
+      <h4>Beta-Geom 共轭（真题 4/10/13 反复考）</h4>
+      $X\sim\operatorname{Beta}(a,b)$，$Y\mid X=x\sim\operatorname{Geom}(x)$（"首次成功所需次数"参数化）。<br><br>
+      <b>① $E(Y)$</b>：全期望 $E(Y)=E(\tfrac1X)$。用 Beta 矩公式 $E(\tfrac1X)=\frac{a+b-1}{a-1}$（需 $a>1$）。<br>
+      <b>② 后验密度</b>：Bayes 比例式 $f_{X|Y=y}(x)\propto x(1-x)^{y-1}\cdot x^{a-1}(1-x)^{b-1}=x^a(1-x)^{b+y-2}$<br>
+      $\Rightarrow X\mid Y=y\sim\operatorname{Beta}(a+1,\,b+y-1)$。<br>
+      <b>③ $E(X\mid Y=y)$</b>：用 Beta 均值 $\frac{\alpha}{\alpha+\beta}=\frac{a+1}{a+b+y}$。
+    </div>
+    <div class="toolbox">
+      <h4>关键技巧：识别 Beta 核</h4>
+      <div class="tool">看到 $x^{\alpha-1}(1-x)^{\beta-1}$ 形式（在 $(0,1)$ 上），就是 $\operatorname{Beta}(\alpha,\beta)$ 核，归一化常数自动是 $\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}$。<b>不必积分</b>，直接读参数。</div>
+      <div class="tool">求 $E(1/X)$ 时把 $\frac1x\cdot x^{a-1}=x^{a-2}$ 凑成 $\operatorname{Beta}(a-1,b)$ 核，用 $\Gamma$ 递推 $\Gamma(a)=(a-1)\Gamma(a-1)$ 化简。</div>
+    </div>
+  </section>
+
+  <!-- ===== 方差分解 ===== -->
+  <section class="block" id="toolbox">
+    <h2>🧰 方差 / 协方差分解工具箱</h2>
+    <div class="toolbox">
+      <h4>三个分解公式</h4>
+      <div class="tool"><b>全期望</b>：$E(X)=E(E(X\mid Y))$。混合分布求期望先按条件拆（练习 11a）。</div>
+      <div class="tool"><b>总方差</b>：$\operatorname{Var}(X)=\underbrace{E[\operatorname{Var}(X\mid Y)]}_{\text{组内平均方差}}+\underbrace{\operatorname{Var}(E[X\mid Y])}_{\text{组间均值方差}}$。两块都可解释（练习 11c）。</div>
+      <div class="tool"><b>协方差分解</b>：$\operatorname{Cov}(Y_1,Y_2)=E[\operatorname{Cov}(Y_1,Y_2\mid X)]+\operatorname{Cov}(E[Y_1\mid X],E[Y_2\mid X])$（练习 19，令 $Y_1=Y_2$ 即得总方差）。</div>
+      <div class="tool"><b>线性模型 $R^2=\rho^2$</b>：当 $Y=\beta X+\varepsilon$，$\varepsilon\perp X$ 时，$R^2=\frac{\operatorname{Var}(E[Y\mid X])}{\operatorname{Var}(Y)}=\frac{\beta^2\operatorname{Var}X}{\beta^2\operatorname{Var}X+\operatorname{Var}\varepsilon}=\rho(X,Y)^2$（练习 20）。</div>
+    </div>
+    <div class="keybox" style="border-color:var(--teal);">
+      <h4 style="color:var(--teal);">条件期望"提出可测因子"（练习 18）</h4>
+      $X$ 关于 $\sigma(X)$ 可测，故 $E(XY\mid X)=X\cdot E(Y\mid X)$。若 $Y\perp X$ 则 $E(Y\mid X)=E(Y)$，得 $E(XY\mid X)=X\,E(Y)$。
+    </div>
+  </section>
+
+  <!-- ===== 德语词汇 ===== -->
+  <section class="block" id="vocab">
+    <h2>🇩🇪 德语关键词强化</h2>
+    <div class="vocab">
+      <div class="vcard"><span class="de">die gemeinsame Dichte</span><br><span class="zh">联合密度</span></div>
+      <div class="vcard"><span class="de">die Randdichte / Randverteilung</span><br><span class="zh">边际密度 / 边际分布</span></div>
+      <div class="vcard"><span class="de">die bedingte Dichte</span><br><span class="zh">条件密度</span></div>
+      <div class="vcard"><span class="de">die bedingte Verteilung</span><br><span class="zh">条件分布</span></div>
+      <div class="vcard"><span class="de">der bedingte Erwartungswert</span><br><span class="zh">条件期望</span></div>
+      <div class="vcard"><span class="de">der Satz vom iterierten Erwartungswert</span><br><span class="zh">全期望公式</span></div>
+      <div class="vcard"><span class="de">der Satz der totalen Varianz</span><br><span class="zh">总方差公式</span></div>
+      <div class="vcard"><span class="de">der Kovarianzzerlegungssatz</span><br><span class="zh">协方差分解定理</span></div>
+      <div class="vcard"><span class="de">die Faltung</span><br><span class="zh">卷积</span></div>
+      <div class="vcard"><span class="de">der Träger</span><br><span class="zh">支撑集 / 支持集</span></div>
+      <div class="vcard"><span class="de">die Kovarianz</span><br><span class="zh">协方差</span></div>
+      <div class="vcard"><span class="de">die Korrelation</span><br><span class="zh">相关系数</span></div>
+      <div class="vcard"><span class="de">die Kovarianzmatrix</span><br><span class="zh">协方差矩阵</span></div>
+      <div class="vcard"><span class="de">positiv semidefinit</span><br><span class="zh">半正定</span></div>
+      <div class="vcard"><span class="de">symmetrisch / quadratisch</span><br><span class="zh">对称 / 方阵</span></div>
+      <div class="vcard"><span class="de">die Determinante</span><br><span class="zh">行列式</span></div>
+      <div class="vcard"><span class="de">der Hauptminor</span><br><span class="zh">主子式</span></div>
+      <div class="vcard"><span class="de">stochastisch unabhängig</span><br><span class="zh">随机独立</span></div>
+      <div class="vcard"><span class="de">unkorreliert</span><br><span class="zh">不相关</span></div>
+      <div class="vcard"><span class="de">die multivariate Normalverteilung</span><br><span class="zh">多元正态分布</span></div>
+      <div class="vcard"><span class="de">der Zufallsvektor</span><br><span class="zh">随机向量</span></div>
+      <div class="vcard"><span class="de">der Transformationssatz</span><br><span class="zh">变换定理</span></div>
+      <div class="vcard"><span class="de">die Jacobi-Determinante</span><br><span class="zh">Jacobi 行列式</span></div>
+      <div class="vcard"><span class="de">die Bilinearität</span><br><span class="zh">双线性性</span></div>
+      <div class="vcard"><span class="de">der Verschiebungssatz</span><br><span class="zh">位移定理 ($E(X^2)-E(X)^2$)</span></div>
+      <div class="vcard"><span class="de">die Cauchy-Schwarz-Ungleichung</span><br><span class="zh">柯西-施瓦茨不等式</span></div>
+      <div class="vcard"><span class="de">der Determinationskoeffizient $R^2$</span><br><span class="zh">决定系数</span></div>
+      <div class="vcard"><span class="de">die Kontingenztabelle</span><br><span class="zh">列联表</span></div>
+      <div class="vcard"><span class="de">die empirische Dichte</span><br><span class="zh">经验密度</span></div>
+      <div class="vcard"><span class="de">die Beta-Verteilung</span><br><span class="zh">Beta 分布</span></div>
+      <div class="vcard"><span class="de">die Erlang-Verteilung</span><br><span class="zh">Erlang 分布</span></div>
+      <div class="vcard"><span class="de">die Polarkoordinaten</span><br><span class="zh">极坐标</span></div>
+      <div class="vcard"><span class="de">der lineare Zusammenhang</span><br><span class="zh">线性关系</span></div>
+      <div class="vcard"><span class="de">die Jensen-Ungleichung</span><br><span class="zh">Jensen 不等式</span></div>
+      <div class="vcard"><span class="de">faktorisieren / zerfallen</span><br><span class="zh">因式分解 / 分解</span></div>
+    </div>
+  </section>
+
+  <!-- ===== 练习题 ===== -->
+  <section class="block">
+    <h2>📝 习题与讲解</h2>
+    <p style="color:var(--muted);font-size:.85rem;">颜色：
+      <span style="color:var(--accent)">●联合/边际</span>
+      <span style="color:var(--teal)">●条件分布</span>
+      <span style="color:var(--accent2)">●卷积</span>
+      <span style="color:var(--green)">●协方差/相关</span>
+      <span style="color:var(--pink)">●变换</span>
+      <span style="color:var(--purple)">●方差分解</span></p>
+
+    <!-- A1 -->
+    <div class="ex" id="a1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">1</span>
+        <span class="ex-title">联合正态：不相关 ⟹ 独立</span><span class="badge b-cov">协方差</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>证明：两个联合正态随机变量若不相关则独立。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>关键："联合正态"前提下协方差矩阵对角 ⟹ 密度可分解。注意一般分布不成立。</div>
+          <div class="ans">
+            $(X,Y)$ 多元正态，$\Sigma=\begin{pmatrix}\sigma_X^2&\operatorname{Cov}\\\operatorname{Cov}&\sigma_Y^2\end{pmatrix}$。
+            不相关 ⟹ $\operatorname{Cov}=0$ ⟹ $\Sigma$ 对角。对角 $\Sigma$ 使多元正态密度分解为边际密度之积 $f_{X,Y}=f_Xf_Y$，故独立。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="ex" id="a2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">2</span>
+        <span class="ex-title">联合密度 $\frac{2x+cy}{3}$：归一化/边际/独立/期望/概率</span><span class="badge b-joint">联合</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$f=\frac{2x+cy}{3}$ on $[0,1]^2$。(a) 证 $c=4$；(b) 边际；(c) 独立？(d) $E(X+Y)$；(e) $P(X\le Y)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\frac13(1+\tfrac c2)=1\Rightarrow c=4$。
+            <div class="subq">(b)</div>$f_X(x)=\int_0^1\frac{2x+4y}{3}dy=\frac{2x+2}{3}$；$f_Y(y)=\frac{1+4y}{3}$（$[0,1]$）。
+            <div class="subq">(c)</div>$\frac{2x+4y}{3}\ne f_X f_Y$ → <b>不独立</b>。
+            <div class="subq">(d)</div>$E(X)=\frac59,E(Y)=\frac{11}{18}$，和 $=\frac76$。
+            <div class="subq">(e)</div>$\int_0^1\int_0^y\frac{2x+4y}{3}dx\,dy=\int_0^1\frac{5y^2}{3}dy=\frac59$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="ex" id="a3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">3</span>
+        <span class="ex-title">$f=1/x$ on $0\le y\le x\le1$：边际/条件分布</span><span class="badge b-cond">条件</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>(a) 支撑集；(b) 证 $X\sim U(0,1)$；(c) $Y$ 边际；(d) $Y\mid X=x\sim U(0,x)$；(e) $X\mid Y=y$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>三角形支撑集，注意积分上下限：求 $f_X$ 时 $y$ 从 0 到 $x$；求 $f_Y$ 时 $x$ 从 $y$ 到 1。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$\{0\le y\le x\le1\}$。
+            <div class="subq">(b)</div>$f_X(x)=\int_0^x\frac1x dy=1\Rightarrow X\sim U(0,1)$。
+            <div class="subq">(c)</div>$f_Y(y)=\int_y^1\frac1x dx=-\log y$（$0<y\le1$）。
+            <div class="subq">(d)</div>$f_{Y|X=x}(y)=\frac{1/x}{1}=\frac1x$（$0\le y\le x$）→ $U(0,x)$。
+            <div class="subq">(e)</div>$f_{X|Y=y}(x)=\frac{1/x}{-\log y}=\frac{1}{x(-\log y)}$（$y\le x\le1$）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="ex" id="a4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">4</span>
+        <span class="ex-title">Beta-几何共轭：E(Y) 与后验密度</span><span class="badge b-cond">条件</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X\sim\operatorname{Beta}(a,b)$，$Y\mid X=x\sim\operatorname{Geom}(x)$。求 $E(Y)$ 与 $X\mid Y$ 密度。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="dupnote">📌 母题！与真题 4/10/13 完全相同。详见上方「🔗 条件分布与共轭」板块。</div>
+          <div class="ans">
+            $E(Y\mid X=x)=\tfrac1x\Rightarrow E(Y)=E(\tfrac1X)=\frac{a+b-1}{a-1}$（$a>1$）。
+            后验 $\propto x(1-x)^{y-1}x^{a-1}(1-x)^{b-1}=x^a(1-x)^{b+y-2}$ → $X\mid Y=y\sim\operatorname{Beta}(a+1,b+y-1)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5 -->
+    <div class="ex" id="a5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">5</span>
+        <span class="ex-title">离散列联表：边际/期望/协方差/相关/条件</span><span class="badge b-cond">条件</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X\in\{0,1,2\},Y\in\{-1,0,2\}$ 的联合表。求各种量。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="dupnote">📌 与真题 3/9/12 完全相同的列联表。</div>
+          <div class="ans">
+            边际 $X$：$0.5,0.3,0.2$；$Y$：$0.4,0.4,0.2$。
+            $E(X)=0.7,\operatorname{Var}(X)=0.61$；$E(Y)=0,\operatorname{Var}(Y)=1.2$。
+            $E(XY)=0.6\Rightarrow\operatorname{Cov}=0.6$，$\rho=\frac{0.6}{\sqrt{0.61\cdot1.2}}\approx0.701$（正线性关系）。
+            $Y\mid X=0$：$P(-1)=0.6,P(0)=0.4,P(2)=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A6 -->
+    <div class="ex" id="a6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">6</span>
+        <span class="ex-title">指数联合 $ce^{-2(x+y)}$：归一化/边际/独立/$\rho$</span><span class="badge b-conv">卷积</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$f=ce^{-2(x+y)}\mathbf 1_{x,y\ge0}$。求 $c$、边际、条件、判断独立与 $\rho$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $1=c\cdot\tfrac12\cdot\tfrac12\Rightarrow c=4$。$f_X(x)=2e^{-2x}$。
+            $f_{Y|X=x}(y)=\frac{4e^{-2(x+y)}}{2e^{-2x}}=2e^{-2y}$ 不依赖 $x$ → <b>独立</b>，故 $\rho=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A7 -->
+    <div class="ex" id="a7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">7</span>
+        <span class="ex-title">W=X+Y, T=X−Y 的方差与相关</span><span class="badge b-cov">协方差</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$E=0,\operatorname{Var}=25$。(a) 独立时各量；(b) $\rho(X,Y)=-\tfrac14$ 时；(c) 为何 $\operatorname{Var}(W)<\operatorname{Var}(T)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\operatorname{Cov}(W,T)=\operatorname{Var}X-\operatorname{Var}Y$，方差相等时恒为 0。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$\operatorname{Var}W=\operatorname{Var}T=50$，$\operatorname{Cov}(W,T)=0$，$\rho=0$。
+            <div class="subq">(b)</div>$\operatorname{Cov}(X,Y)=-\tfrac14\cdot25=-\tfrac{25}{4}$。$\operatorname{Var}W=50-\tfrac{25}{2}=\tfrac{75}{2}$，$\operatorname{Var}T=50+\tfrac{25}{2}=\tfrac{125}{2}$，$\operatorname{Cov}(W,T)=0,\rho=0$。
+            <div class="subq">(c)</div>负相关时 $X,Y$ 反向移动，和 $W$ 中相互抵消（方差小），差 $T$ 中相互增强（方差大）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A8 -->
+    <div class="ex" id="a8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">8</span>
+        <span class="ex-title">两均匀卷积 → 三角分布</span><span class="badge b-conv">卷积</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X,Y\sim U(0,1)$ 独立，求 $Z=X+Y$ 分布。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>积分范围 = $\{0\le x\le1,0\le z-x\le1\}$，长度随 $z$ 变化产生分段。</div>
+          <div class="ans">
+            $0\le z\le1$：范围长 $z$ → $f_Z=z$；$1<z\le2$：范围长 $2-z$ → $f_Z=2-z$。三角分布。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A9 -->
+    <div class="ex" id="a9">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">9</span>
+        <span class="ex-title">两指数卷积 → Gamma(2,λ)</span><span class="badge b-conv">卷积</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X,Y\sim\operatorname{Exp}(\lambda)$ 独立，求 $Z=X+Y$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $f_Z(z)=\int_0^z\lambda e^{-\lambda x}\lambda e^{-\lambda(z-x)}dx=\lambda^2 e^{-\lambda z}\int_0^z dx=\lambda^2 z e^{-\lambda z}$（$z\ge0$）→ $\operatorname{Ga}(2,\lambda)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A10 -->
+    <div class="ex" id="a10">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">10</span>
+        <span class="ex-title">两 Poisson 卷积 → Poisson(λ_X+λ_Y)</span><span class="badge b-conv">卷积</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X\sim\operatorname{Poi}(\lambda_X),Y\sim\operatorname{Poi}(\lambda_Y)$ 独立，求 $Z=X+Y$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>离散卷积 + 二项式定理 $\sum\binom nk\lambda_X^k\lambda_Y^{n-k}=(\lambda_X+\lambda_Y)^n$。</div>
+          <div class="ans">
+            $P(Z=n)=\sum_{k=0}^n e^{-\lambda_X}\frac{\lambda_X^k}{k!}e^{-\lambda_Y}\frac{\lambda_Y^{n-k}}{(n-k)!}=e^{-(\lambda_X+\lambda_Y)}\frac{(\lambda_X+\lambda_Y)^n}{n!}$ → $\operatorname{Poi}(\lambda_X+\lambda_Y)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A11 -->
+    <div class="ex" id="a11">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">11</span>
+        <span class="ex-title">混合正态：全期望 + 总方差两法</span><span class="badge b-var">方差分解</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$Z\sim\operatorname{Ber}(0.5)$，$X\mid Z=0\sim N(2,1)$，$X\mid Z=1\sim N(5,4)$。求 $E(X)$、$\operatorname{Var}(X)$（两法）。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>条件正态混合，验证两种方法得同一答案 $\frac{19}{4}$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$E(X)=\tfrac12(2+5)=\tfrac72$。
+            <div class="subq">(b)</div>$E(X^2\mid Z=0)=1+4=5,\ E(X^2\mid Z=1)=4+25=29$，$E(X^2)=17$，$\operatorname{Var}(X)=17-\tfrac{49}{4}=\tfrac{19}{4}$。
+            <div class="subq">(c) 总方差</div>$E[\operatorname{Var}(X\mid Z)]=\tfrac12(1+4)=\tfrac52$；$\operatorname{Var}(E[X\mid Z])=\frac{(2-3.5)^2+(5-3.5)^2}{2}=\tfrac94$。和 $=\tfrac{19}{4}$ ✓。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A12 -->
+    <div class="ex" id="a12">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">12</span>
+        <span class="ex-title">Poisson 和 / 两几何取 min</span><span class="badge b-conv">卷积</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>(a) 同参 Poisson 和；(b) 证 $\min(A,B)\sim\operatorname{Geom}(2p-p^2)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>(b) 用生存函数 $P(M>m)=P(A>m)P(B>m)$ 最简。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$Z\sim\operatorname{Poi}(2\lambda)$。
+            <div class="subq">(b)</div>$P(A>m)=(1-p)^m$，独立 → $P(M>m)=(1-p)^{2m}=((1-p)^2)^m$，对应参数 $1-(1-p)^2=2p-p^2$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A13 -->
+    <div class="ex" id="a13">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">13</span>
+        <span class="ex-title">相关系数 ≤ 1（Cauchy-Schwarz）</span><span class="badge b-cov">协方差</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>证明 $\rho(X,Y)\le1$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            令 $\tilde X=X-EX,\tilde Y=Y-EY$。$\operatorname{Cov}=E[\tilde X\tilde Y]$。Cauchy-Schwarz：$|E[\tilde X\tilde Y]|\le\sqrt{E\tilde X^2}\sqrt{E\tilde Y^2}=\sqrt{\operatorname{Var}X\operatorname{Var}Y}$，故 $|\rho|\le1$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A14 -->
+    <div class="ex" id="a14">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">14</span>
+        <span class="ex-title">相关系数 ≤ 1（与题13重复）</span><span class="badge b-cov">协方差</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>同题 13。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="dupnote">⚠ 与练习 13 完全相同，证明一致（Cauchy-Schwarz）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A15 -->
+    <div class="ex" id="a15">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">15</span>
+        <span class="ex-title">和的方差 = 协方差双重和</span><span class="badge b-cov">协方差</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>(1) 证 $\operatorname{Var}(\sum X_i)=\sum_{i,j}\operatorname{Cov}(X_i,X_j)$；(2) 独立时退化为 $\sum\operatorname{Var}(X_i)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(1)</div>由协方差双线性：$\operatorname{Var}(\sum X_i)=\operatorname{Cov}(\sum_i X_i,\sum_j X_j)=\sum_{i,j}\operatorname{Cov}(X_i,X_j)$。
+            <div class="subq">(2)</div>独立时 $i\ne j$ 项 $\operatorname{Cov}=0$，只剩对角 $\sum_i\operatorname{Var}(X_i)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A16 -->
+    <div class="ex" id="a16">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">16</span>
+        <span class="ex-title">$0.8(x+y+xy)$：不可分解/边际/协方差</span><span class="badge b-joint">联合</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$f=0.8(x+y+xy)$ on $[0,1]^2$。(a) 为何不独立；(b) 边际；(c) 协方差。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$x+y+xy$ 无法写成"纯 $x$ 函数 × 纯 $y$ 函数" → 不独立。
+            <div class="subq">(b)</div>$f_X(x)=0.4+1.2x$（对称 $f_Y$ 同）。
+            <div class="subq">(c)</div>$E(X)=E(Y)=0.6$，$E(XY)=0.8\cdot\tfrac49=\tfrac{16}{45}$，$\operatorname{Cov}=\tfrac{16}{45}-\tfrac{9}{25}=-\tfrac1{225}$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A17 -->
+    <div class="ex" id="a17">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">17</span>
+        <span class="ex-title">$X^2+Y^2$（标准正态）→ 指数分布</span><span class="badge b-trans">变换</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X,Y\sim N(0,1)$ 独立，证 $Z=X^2+Y^2\sim\operatorname{Exp}(\tfrac12)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>极坐标技巧：$R$ 的密度 $re^{-r^2/2}$（Rayleigh），再令 $Z=R^2$。</div>
+          <div class="ans">
+            联合密度 $\frac1{2\pi}e^{-(x^2+y^2)/2}$。极坐标 $Z=r^2$，$f_R(r)=re^{-r^2/2}$。
+            令 $r=\sqrt z,|dr/dz|=\frac1{2\sqrt z}$：$f_Z(z)=\sqrt z e^{-z/2}\cdot\frac1{2\sqrt z}=\frac12 e^{-z/2}$（$z\ge0$）→ $\operatorname{Exp}(\tfrac12)$。（即 $\chi^2_2$。）
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A18 -->
+    <div class="ex" id="a18">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">18</span>
+        <span class="ex-title">条件期望性质：提出可测因子</span><span class="badge b-var">方差分解</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X\perp Y$，证 $E(XY\mid X)=XE(Y)$ 与 $E(X+Y\mid X)=X+E(Y)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $Y\perp X\Rightarrow E(Y\mid X)=E(Y)$。$X$ 关于 $\sigma(X)$ 可测可提出：$E(XY\mid X)=XE(Y\mid X)=XE(Y)$。
+            线性性：$E(X+Y\mid X)=E(X\mid X)+E(Y\mid X)=X+E(Y)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A19 -->
+    <div class="ex" id="a19">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">19</span>
+        <span class="ex-title">协方差分解定理（含总方差推论）</span><span class="badge b-var">方差分解</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>证 $\operatorname{Cov}(Y_1,Y_2)=E[\operatorname{Cov}(Y_1,Y_2\mid X)]+\operatorname{Cov}(E[Y_1\mid X],E[Y_2\mid X])$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>两项展开后 $E(E[Y_1\mid X]E[Y_2\mid X])$ 相消，用全期望 $E(E[\cdot\mid X])=E[\cdot]$。</div>
+          <div class="ans">
+            第二项 $=E(E[Y_1\mid X]E[Y_2\mid X])-E(Y_1)E(Y_2)$；
+            第一项 $=E(Y_1Y_2)-E(E[Y_1\mid X]E[Y_2\mid X])$。
+            相加交叉项消去，得 $E(Y_1Y_2)-E(Y_1)E(Y_2)=\operatorname{Cov}(Y_1,Y_2)$。
+            <div class="subq">推论</div>令 $Y_1=Y_2=Y$ 得总方差 $\operatorname{Var}(Y)=E[\operatorname{Var}(Y\mid X)]+\operatorname{Var}(E[Y\mid X])$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A20 -->
+    <div class="ex" id="a20">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">20</span>
+        <span class="ex-title">线性模型决定系数 R²=ρ²</span><span class="badge b-var">方差分解</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$Y=\beta X+\varepsilon$，$\varepsilon\perp X,E\varepsilon=0$。证 $\rho(Y,X)^2=R^2$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $E(Y\mid X)=\beta X$，$\operatorname{Var}(E[Y\mid X])=\beta^2\operatorname{Var}X$。由总方差 $R^2=\frac{\beta^2\operatorname{Var}X}{\operatorname{Var}Y}$，$\operatorname{Var}Y=\beta^2\operatorname{Var}X+\operatorname{Var}\varepsilon$。
+            又 $\operatorname{Cov}(X,Y)=\beta\operatorname{Var}X$，故 $\rho^2=\frac{\beta^2\operatorname{Var}X^2}{\operatorname{Var}X\operatorname{Var}Y}=\frac{\beta^2\operatorname{Var}X}{\operatorname{Var}Y}=R^2$。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 真题 ===== -->
+  <section class="block">
+    <h2>🎯 考试真题</h2>
+    <div class="dupnote">📌 本章真题重复极高：列联表题（真题 3/9/12）、Beta-Geom 题（真题 4/10/13）、协方差矩阵+U 向量题（真题 5/11/14）、指数联合密度题（真题 7/15）、三元正态题（真题 8/16）各重复多次。下面完整展示有代表性的新题，重复题合并到末尾。</div>
+
+    <!-- E1 -->
+    <div class="ex" id="e1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题1</span>
+        <span class="ex-title">2012 · 经验密度（列联表 200 数据）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>200 条数据，$X\in\{0,1,2\},Y\in\{0,1,2,3\}$。(a) 联合经验密度；(b) $f_Y$；(c) $f_{X\mid Y=1}$；(d) 独立？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>经验密度 = 频数/总数。条件密度 = 联合行/边际。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>每格除以 200（如 $X{=}0,Y{=}0$：$15/200=0.075$）。
+            <div class="subq">(b)</div>$f_Y$：$0.25,0.4,0.135,0.215$（$y=0,1,2,3$）。
+            <div class="subq">(c)</div>$f_{X|Y=1}$：$\frac{0.095}{0.4}=0.2375,\ \frac{0.115}{0.4}=0.2875,\ \frac{0.19}{0.4}=0.475$。
+            <div class="subq">(d)</div>$f_{X,Y}(0,0)=0.075\ne0.37\cdot0.25=0.0925$ → 不独立。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2 -->
+    <div class="ex" id="e2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题2</span>
+        <span class="ex-title">2014 · 列联表补全 + 协方差 + 分布函数</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>补全表格，算 $\operatorname{Cov}$，求 $F_X$，判断独立。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>用行/列和反推缺失格子，再常规计算。</div>
+          <div class="ans">
+            补全：$f_Y(1)=0.5$；$f_{X,Y}(-1,1)=0.20$；$f_{X,Y}(0,1)=0.10,f_{X,Y}(0,2)=0.20$。
+            $X$ 边际：$0.35,0.30,0.35$ → $E(X)=0$。$E(Y)=1.5$，$E(XY)=0$ → $\operatorname{Cov}=0$。
+            $F_X$：$0(x<-1),0.35(-1\le x<0),0.65(0\le x<1),1(x\ge1)$。
+            不独立：$f_{X,Y}(-1,1)=0.20\ne0.35\cdot0.5=0.175$。注意：$\operatorname{Cov}=0$ 但不独立！
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E6 -->
+    <div class="ex" id="e6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题6</span>
+        <span class="ex-title">二元正态综合（独立/概率/下界/矩阵）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X\sim N_2((0,2),\operatorname{diag}(4,1))$。(a) 边际；(b) 独立？(c) $P(X_1>1,X_2\le1)$；(d) $E(|X_1|+|X_2|)$ 下界；(e) 矩阵合法性。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>对角 $\Sigma$ → 独立 → 联合概率分解为边际乘积。下界用 Jensen $E|X|\ge|EX|$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$X_1\sim N(0,4),X_2\sim N(2,1)$。
+            <div class="subq">(b)</div>$\operatorname{Cov}=0$ 且正态 → 独立。
+            <div class="subq">(c)</div>$P(X_1>1)=1-\Phi(0.5)=0.3085$；$P(X_2\le1)=\Phi(-1)=0.1587$。积 $\approx0.049$。
+            <div class="subq">(d)</div>Jensen：$E|X_i|\ge|EX_i|$，下界 $=0+2=2$。
+            <div class="subq">(e)</div>$\begin{pmatrix}1&3\\3&1\end{pmatrix}$：$\det=-8<0$ → 非法；第二个对角有 $-1$ → 非法。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E8 -->
+    <div class="ex" id="e8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题8</span>
+        <span class="ex-title">三元正态：求 A、B 下界、Y 分布、独立期望</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$X\sim N_3$，$\Sigma$ 含未知 $A,B$。(a) 求 $A$ 及 $B$ 下界；(b) $Y=\sum X_i$ 分布；(c) $E(e^{X_3}(X_2-1))$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>对称定 $A$，$\det\ge0$ 求 $B$，线性组合仍正态，独立性使乘积期望分解。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>对称 → $A=0.5$。$\det\Sigma\ge0\Rightarrow\tfrac34 B\ge2\Rightarrow B\ge\tfrac83$（比 $\rho$ 法的 $B\ge2$ 更强）。
+            <div class="subq">(b)</div>$E(Y)=8$，$\operatorname{Var}(Y)=2+0.5+B+2(0.5-2+0)=B-0.5$。$Y\sim N(8,B-0.5)$。
+            <div class="subq">(c)</div>$\operatorname{Cov}(X_2,X_3)=0$ 且正态 → 独立。$E(X_2-1)=0$（$EX_2=1$），故乘积期望 $=E(e^{X_3})\cdot0=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP1 -->
+    <div class="ex" id="edup1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·列联表</span>
+        <span class="ex-title">真题 3 / 9 / 12（X∈{0,1,2},Y∈{-1,0,2}）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>三套卷完全相同的列联表题，也等同练习 5。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="ans">
+            边际 $X$：$0.5,0.3,0.2$；$Y$：$0.4,0.4,0.2$。
+            $E(X)=0.7,\operatorname{Var}(X)=0.61$；$E(Y)=0,\operatorname{Var}(Y)=1.2$。
+            $E(XY)=0.6,\operatorname{Cov}=0.6,\rho\approx0.701$（正线性关系）。
+            $Y\mid X=0$：$0.6,0.4,0$。
+            <br><span style="color:var(--accent2)">备考：这是本章最高频列联表母题，四个数字 $0.7/0.61/0.6/0.701$ 记熟。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP2 -->
+    <div class="ex" id="edup2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·Beta-Geom</span>
+        <span class="ex-title">真题 4 / 10 / 13（Beta-几何共轭）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>三套卷相同，等同练习 4。(a) $E(Y)$；(b) $X\mid Y$ 密度；(c) $E(X\mid Y)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="ans">
+            (a) $E(Y)=E(\tfrac1X)=\frac{a+b-1}{a-1}$（$a>1$）。
+            (b) $X\mid Y=y\sim\operatorname{Beta}(a+1,b+y-1)$。
+            (c) $E(X\mid Y=y)=\frac{a+1}{a+b+y}$。
+            <br><span style="color:var(--accent2)">完整推导见上方「条件分布与共轭」板块。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP3 -->
+    <div class="ex" id="edup3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·协方差矩阵</span>
+        <span class="ex-title">真题 5 / 11 / 14（U=(Y−X,Y) + 六个矩阵）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>$X\sim N(0,1),Y\sim\operatorname{Poi}(2)$ 独立。(a) $U=(Y-X,Y)^T$ 期望与协方差矩阵；(b) 判断 6 个矩阵。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\operatorname{Var}Y=\lambda=2$（Poisson）。$\operatorname{Cov}(Y-X,Y)=\operatorname{Var}Y=2$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$E(U)=(2,2)^T$。$\operatorname{Var}(Y-X)=2+1=3$，$\operatorname{Cov}(Y-X,Y)=2$，$\operatorname{Var}Y=2$。
+            $\operatorname{Cov}(U)=\begin{pmatrix}3&2\\2&2\end{pmatrix}$。
+            <div class="subq">(b)</div>
+            $\Sigma_1$ ✓（对角正）；$\Sigma_2$ ✗（对角 $-1$）；$\Sigma_3$ ✗（$\det=-3$）；
+            $\Sigma_4$ ✗（$3\times4$ 非方阵）；$\Sigma_5$ ✓（主子式 $1,1,0\ge0$）；$\Sigma_6$ ✗（$0.5\ne1.5$ 不对称）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP4 -->
+    <div class="ex" id="edup4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·指数密度</span>
+        <span class="ex-title">真题 7 / 15（$\lambda e^{-\sqrt\lambda(x_1+x_2)}$）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>两套卷相同。(a) 独立；(b) 边际；(c) $Y=X_1+X_2$ 密度。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>巧妙写 $\lambda=\sqrt\lambda\cdot\sqrt\lambda$ 拆成两个 $\operatorname{Exp}(\sqrt\lambda)$。</div>
+          <div class="ans">
+            (a) $f=\sqrt\lambda e^{-\sqrt\lambda x_1}\cdot\sqrt\lambda e^{-\sqrt\lambda x_2}$ 可分解 → 独立。
+            (b) $X_i\sim\operatorname{Exp}(\sqrt\lambda)$。
+            (c) 卷积 $f_Y(y)=\int_0^y\lambda e^{-\sqrt\lambda y}dx=\lambda y e^{-\sqrt\lambda y}$（$y>0$），即 Erlang/Ga$(2,\sqrt\lambda)$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP5 -->
+    <div class="ex" id="edup5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·三元正态</span>
+        <span class="ex-title">真题 16（ss2022，含勘误说明）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>与真题 8 几乎相同，$\mu=(4,2,3)$。(a) $A,B$；(b) $Y$ 分布；(c) $E(e^{X_3}(X_2-\tfrac12))$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="ans">
+            (a) $A=\tfrac12$，$B\ge\tfrac83$。
+            (b) $E(Y)=9$，$\operatorname{Var}(Y)=B-\tfrac12$ → $Y\sim N(9,B-\tfrac12)$。
+            (c) $X_2\perp X_3$ → 乘积期望 $=E(e^{X_3})E(X_2-\tfrac12)$。
+            <div class="dupnote" style="margin-top:8px;">⚠ 题目疑似笔误：$\mu_2=2$ 时 $E(X_2-\tfrac12)=\tfrac32\ne0$。若标准答案给 0，则题目本意应是 $X_2-2$（或 $\mu_2=\tfrac12$）。考场遇到先按可分解处理，再注明该项等于 $E(X_2)-\tfrac12$。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 常见错误 ===== -->
+  <section class="block" id="mistakes">
+    <h2>⚠️ 常见错误提醒</h2>
+    <ul class="warn">
+      <li><b>边际密度积分上下限写错</b>：上下限由联合支持集决定。如 $0<x<y<1$ 求 $f_Y(y)$ 时 $x$ 从 0 到 $y$。</li>
+      <li><b>条件密度忘记除以边际</b>：$f_{X|Y}=f_{X,Y}/f_Y$，不是联合密度本身。</li>
+      <li><b>卷积不看支持集</b>：积分范围要同时满足 $x$ 与 $z-x$ 合法，分段由此产生。</li>
+      <li><b>Jacobian 用正变换</b>：公式需要<u>反变换</u>导数的绝对值。先写 $x=h(y)$ 再算 $|\det Dh|$。</li>
+      <li><b>协方差矩阵忘记对称</b>：合法须方阵+对称+对角非负+半正定。$\begin{pmatrix}1&2\\3&1\end{pmatrix}$ 不对称，非法。</li>
+      <li><b>把"不相关"当"独立"</b>：仅<u>联合正态</u>下才等价。真题 2 中 $\operatorname{Cov}=0$ 但不独立！</li>
+      <li><b>Poisson 方差记错</b>：$\operatorname{Var}=\lambda=E$，真题 5 中 $\operatorname{Var}(Y)=2$ 不是别的值。</li>
+      <li><b>Beta 矩需要参数限制</b>：$E(1/X)=\frac{a+b-1}{a-1}$ 仅当 $a>1$ 有限。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 必会题型 ===== -->
+  <section class="block" id="mustknow">
+    <h2>✅ 本章必会题型清单</h2>
+    <ul class="checklist">
+      <li>会由联合密度求边际密度（正确写积分上下限）。</li>
+      <li>会求条件密度和条件期望（先求分母边际）。</li>
+      <li>会用 Bayes 比例式识别 Beta 核做共轭更新。</li>
+      <li>会使用全期望和总方差公式，并验证两法一致。</li>
+      <li>会证明并应用协方差分解定理。</li>
+      <li>会用卷积求和变量密度（均匀→三角，指数→Gamma，Poisson 再生）。</li>
+      <li>会做二维变量变换并计算 Jacobian（含极坐标技巧）。</li>
+      <li>会用四步检验判断协方差矩阵是否合法，并求未知元素。</li>
+      <li>会处理多元正态的边际、独立（Cov=0⟹独立）和线性变换（仍正态）。</li>
+      <li>会用 Cauchy-Schwarz 证明 $|\rho|\le1$。</li>
+      <li>会用 Jensen 不等式给期望下界 $E|X|\ge|EX|$。</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<script>
+function toggleEx(head){head.parentElement.classList.toggle('open');}
+function toggleSol(btn){
+  const sol=btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent=sol.classList.contains('show')?'隐藏解答':'显示解答';
+}
+function toggleAll(open){
+  document.querySelectorAll('.ex').forEach(ex=>ex.classList.toggle('open',open));
+}
+function showAllSol(show){
+  document.querySelectorAll('.sol').forEach(sol=>{
+    sol.classList.toggle('show',show);
+    const btn=sol.previousElementSibling;
+    if(btn&&btn.classList.contains('toggle-sol'))
+      btn.textContent=show?'隐藏解答':'显示解答';
+  });
+  if(show) toggleAll(true);
+}
+document.querySelectorAll('nav.side a').forEach(a=>{
+  a.addEventListener('click',()=>document.querySelector('nav.side').classList.remove('open'));
+});
+</script>
+</body>
+</html>

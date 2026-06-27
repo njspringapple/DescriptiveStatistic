@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测度 · 可测性与积分 复习卡</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a212b; --panel2:#222c38;
+    --accent:#4ea1ff; --accent2:#ffb454; --green:#5fd07d;
+    --red:#ff6b6b; --purple:#c084fc; --pink:#f472b6; --teal:#2dd4bf;
+    --text:#e3e8ef; --muted:#94a3b8; --border:#2c3744;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.75;}
+  a{color:var(--accent);text-decoration:none;}
+
+  header.top{background:linear-gradient(135deg,#16202c,#0f1419);
+    border-bottom:1px solid var(--border);padding:28px 20px 22px;text-align:center;}
+  header.top h1{margin:0 0 6px;font-size:1.5rem;letter-spacing:.5px;}
+  header.top p{margin:0;color:var(--muted);font-size:.9rem;}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 16px;min-width:90px;}
+  .stat b{display:block;font-size:1.3rem;color:var(--accent2);}
+  .stat span{font-size:.72rem;color:var(--muted);}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  nav.side{width:250px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;
+    height:100vh;overflow-y:auto;border-right:1px solid var(--border);padding:18px 10px 40px;font-size:.82rem;}
+  nav.side h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 8px 6px;}
+  nav.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--text);transition:.15s;border-left:3px solid transparent;}
+  nav.side a:hover{background:var(--panel);border-left-color:var(--accent);}
+  .navtag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+  .t-mea{background:var(--green);}
+  .t-msb{background:var(--accent);}
+  .t-int{background:var(--accent2);}
+  .t-dir{background:var(--pink);}
+  .t-exam{background:var(--purple);}
+
+  main{flex:1;min-width:0;padding:24px 22px 80px;}
+  section.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:22px 24px;margin-bottom:26px;scroll-margin-top:14px;}
+  section.block > h2{margin-top:0;font-size:1.25rem;border-bottom:2px solid var(--accent);
+    padding-bottom:8px;display:inline-block;}
+
+  .ex{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+    margin-bottom:18px;overflow:hidden;scroll-margin-top:14px;}
+  .ex-head{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;
+    background:#1e2733;transition:.15s;}
+  .ex-head:hover{background:#243140;}
+  .ex-num{font-weight:700;color:var(--accent);font-size:.9rem;background:#13202c;
+    border:1px solid var(--border);border-radius:8px;padding:3px 9px;white-space:nowrap;}
+  .ex-title{flex:1;font-size:.92rem;}
+  .badge{font-size:.64rem;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid;}
+  .b-mea{color:var(--green);border-color:var(--green);}
+  .b-msb{color:var(--accent);border-color:var(--accent);}
+  .b-int{color:var(--accent2);border-color:var(--accent2);}
+  .b-dir{color:var(--pink);border-color:var(--pink);}
+  .b-exam{color:var(--purple);border-color:var(--purple);}
+
+  .ex-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ex.open .ex-body{max-height:none;padding:6px 20px 20px;}
+
+  .q{background:#141c25;border-left:4px solid var(--accent);padding:12px 16px;
+    border-radius:0 8px 8px 0;margin:14px 0;}
+  .q .label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.5px;}
+  .trans{color:var(--muted);font-size:.84rem;font-style:italic;}
+
+  .toggle-sol{background:var(--accent);color:#06121f;border:none;padding:8px 18px;
+    border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin:6px 0 4px;transition:.15s;}
+  .toggle-sol:hover{background:#6bb3ff;}
+  .sol{display:none;}
+  .sol.show{display:block;}
+
+  .think{background:#1d2417;border-left:4px solid var(--green);padding:10px 16px;
+    border-radius:0 8px 8px 0;margin:12px 0;font-size:.86rem;}
+  .think .label{color:var(--green);font-weight:700;font-size:.72rem;letter-spacing:.5px;}
+
+  .ans{background:#161e28;border:1px dashed var(--border);padding:8px 16px;border-radius:8px;margin:12px 0;}
+  .subq{font-weight:700;color:var(--accent2);margin-top:14px;}
+
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-size:.84rem;}
+  .fcard b{color:var(--accent2);}
+
+  .strat li,.warn li,.checklist li{margin-bottom:10px;}
+  .strat b,.warn b{color:var(--accent2);}
+  .warn b{color:var(--red);}
+  .checklist li::marker{color:var(--green);}
+
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+  .vcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;}
+  .vcard .de{color:var(--accent);font-weight:700;font-size:.9rem;}
+  .vcard .zh{color:var(--muted);font-size:.8rem;}
+
+  .keybox{background:#16201a;border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+  .keybox h4{margin:0 0 8px;color:var(--green);font-size:.95rem;}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.84rem;}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;}
+  th{background:#1e2733;color:var(--accent2);}
+
+  .controls{position:sticky;top:0;z-index:50;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);padding:10px 0;margin:-24px -22px 22px;display:flex;gap:10px;
+    padding-left:22px;flex-wrap:wrap;}
+  .ctrl-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;}
+  .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .menu-toggle{display:none;}
+  @media(max-width:860px){
+    nav.side{position:fixed;left:-270px;z-index:200;background:var(--bg);
+      transition:left .3s;width:260px;box-shadow:4px 0 20px rgba(0,0,0,.5);}
+    nav.side.open{left:0;}
+    .menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:201;
+      background:var(--accent);color:#06121f;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;}
+    .fgrid{grid-template-columns:1fr;}
+    main{padding:24px 14px 80px;}
+    .controls{margin:-24px -14px 22px;padding-left:14px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('nav.side').classList.toggle('open')">☰ 目录</button>
+
+<header class="top">
+  <h1>测度 · 可测性与积分</h1>
+  <p>Maß · Messbarkeit · Integration</p>
+  <div class="stats">
+    <div class="stat"><b>15</b><span>练习题</span></div>
+    <div class="stat"><b>6</b><span>考试真题</span></div>
+    <div class="stat"><b>21</b><span>合计题目</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="side">
+  <h3>核心板块</h3>
+  <a href="#formulas">📐 公式速查</a>
+  <a href="#strategy">🧭 不会时怎么下手</a>
+  <a href="#core">🔑 三个核心套路</a>
+  <a href="#vocab">🇩🇪 德语词汇强化</a>
+
+  <h3>练习题（颜色=题型）</h3>
+  <a href="#a1"><span class="navtag t-mea"></span>1 · 唯一性定理反例</a>
+  <a href="#a2"><span class="navtag t-int"></span>2 · 4点空间积分</a>
+  <a href="#a3"><span class="navtag t-mea"></span>3 · ℕ上三个映射判测度</a>
+  <a href="#a4"><span class="navtag t-int"></span>4 · Lebesgue vs 计数</a>
+  <a href="#a5"><span class="navtag t-int"></span>5 · 两测度积分对比</a>
+  <a href="#a6"><span class="navtag t-int"></span>6 · 阶梯函数积分</a>
+  <a href="#a7"><span class="navtag t-mea"></span>7 · 判测度+有限性</a>
+  <a href="#a8"><span class="navtag t-mea"></span>8 · Lebesgue 区间/可数集</a>
+  <a href="#a9"><span class="navtag t-msb"></span>9 · 原像σ代数/可测性</a>
+  <a href="#a10"><span class="navtag t-int"></span>10 · 3点空间可积性</a>
+  <a href="#a11"><span class="navtag t-dir"></span>11 · Lebesgue-Stieltjes</a>
+  <a href="#a12"><span class="navtag t-int"></span>12 · 极限与积分交换</a>
+  <a href="#a13"><span class="navtag t-int"></span>13 · Riemann vs Lebesgue</a>
+  <a href="#a14"><span class="navtag t-int"></span>14 · 计数测度积分</a>
+  <a href="#a15"><span class="navtag t-dir"></span>15 · Dirac 无密度</a>
+
+  <h3>考试真题</h3>
+  <a href="#e1"><span class="navtag t-exam"></span>真题1 · 2LV σ代数/测度/积分</a>
+  <a href="#e2"><span class="navtag t-exam"></span>真题2 · 3LV 计数测度</a>
+  <a href="#e3"><span class="navtag t-exam"></span>真题3 · GOP1 σ代数并/密度</a>
+  <a href="#e4"><span class="navtag t-exam"></span>真题4 · GOP2 ω²积分</a>
+  <a href="#e5"><span class="navtag t-exam"></span>真题5 · GOP3（同真题4）</a>
+  <a href="#e6"><span class="navtag t-exam"></span>真题6 · ss2022 综合</a>
+
+  <h3>总结</h3>
+  <a href="#mistakes">⚠️ 常见错误</a>
+  <a href="#mustknow">✅ 必会题型清单</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleAll(true)">展开全部</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">收起全部</button>
+    <button class="ctrl-btn" onclick="showAllSol(true)">显示全部答案</button>
+    <button class="ctrl-btn" onclick="showAllSol(false)">隐藏全部答案</button>
+  </div>
+
+  <!-- ===== 公式速查 ===== -->
+  <section class="block" id="formulas">
+    <h2>📐 公式速查（考试可用版）</h2>
+    <div class="fgrid">
+      <div class="fcard"><b>测度定义</b><br>$\mu(\emptyset)=0$，$\mu(A)\ge0$，不交时 $\mu(\bigcup_n A_n)=\sum_n\mu(A_n)$（σ-可加）</div>
+      <div class="fcard"><b>概率测度</b><br>$\mathbb P(\Omega)=1$</div>
+      <div class="fcard"><b>单调性</b><br>$A\subseteq B\Rightarrow\mu(A)\le\mu(B)$</div>
+      <div class="fcard"><b>计数测度</b><br>$\mu_z(A)=|A|$</div>
+      <div class="fcard"><b>Lebesgue 测度</b><br>$\lambda((a,b))=b-a$，$\lambda(\{x\})=0$</div>
+      <div class="fcard"><b>Dirac 测度</b><br>$\delta_x(A)=I_A(x)$（点在内为1，否则0）</div>
+      <div class="fcard"><b>原像</b><br>$f^{-1}(B)=\{\omega:f(\omega)\in B\}$</div>
+      <div class="fcard"><b>可测映射</b><br>对所有 $B\in\mathcal F_2$，$f^{-1}(B)\in\mathcal F_1$</div>
+      <div class="fcard"><b>像测度 Bildmaß</b><br>$\mu_f(B)=\mu(f^{-1}(B))$</div>
+      <div class="fcard"><b>随机变量分布</b><br>$\mathbb P_X(B)=\mathbb P(X^{-1}(B))$</div>
+      <div class="fcard"><b>指示函数积分</b><br>$\int I_A\,d\mu=\mu(A)$</div>
+      <div class="fcard"><b>简单函数积分</b><br>$f=\sum_i a_i I_{A_i}\Rightarrow\int f\,d\mu=\sum_i a_i\mu(A_i)$</div>
+      <div class="fcard"><b>离散积分</b><br>$\int f\,d\mu=\sum_\omega f(\omega)\mu(\{\omega\})$</div>
+      <div class="fcard"><b>LS 测度区间</b><br>$\lambda_G((a,b])=G(b)-G(a)$</div>
+      <div class="fcard"><b>LS 点质量</b><br>$\lambda_F(\{x\})=F(x)-F(x-)$（跳跃高）</div>
+      <div class="fcard"><b>子集积分</b><br>$\int_A f\,d\mu=\sum_{\omega\in A}f(\omega)\mu(\{\omega\})$</div>
+    </div>
+  </section>
+
+  <!-- ===== 解题入门 ===== -->
+  <section class="block" id="strategy">
+    <h2>🧭 不会时怎么下手</h2>
+    <ul class="strat">
+      <li><b>问测度是否合法</b>：按三条检查 —— 空集为 0、非负、σ-可加（不交并的测度=测度之和）。</li>
+      <li><b>问可测性</b>：永远看原像，不看像！把目标集 $B$ 拉回去算 $f^{-1}(B)$，看是否在 $\mathcal F_1$ 里。</li>
+      <li><b>问 Bildmaß</b>：先写 $\mu_f(B)=\mu(f^{-1}(B))$，再算原像，最后算原像的测度。</li>
+      <li><b>给 Dirac 测度</b>：只问集合里有没有支撑点。包含=1，不包含=0。</li>
+      <li><b>给 Lebesgue 测度</b>：区间算长度 $b-a$，单点测度为 0，可数集测度为 0。</li>
+      <li><b>给计数测度</b>：有限集合数元素个数 $|A|$。</li>
+      <li><b>问积分</b>：有限/离散空间里，把积分改写成"函数值 × 单点测度"的求和。</li>
+      <li><b>问是否密度</b>：检查 $\int_\Omega f\,d\mu=1$。不等于 1 就不是概率密度。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 核心套路 ===== -->
+  <section class="block" id="core">
+    <h2>🔑 三个核心套路（贯穿全章）</h2>
+
+    <div class="keybox">
+      <h4>套路一：由生成元找"原子 (Atome)"</h4>
+      给定 $\sigma(\{U,V\})$，先算四块交集 $U\cap V,\ U\cap V^c,\ U^c\cap V,\ U^c\cap V^c$，这些非空块就是原子。
+      σ-代数 = 所有原子的并集组成的集合系统。$n$ 个原子 $\Rightarrow 2^n$ 个元素。
+    </div>
+
+    <div class="keybox">
+      <h4>套路二：可测性看原像（最易错！）</h4>
+      $f$ 可测 $\Leftrightarrow$ 对所有 $B\in\mathcal F_2$ 有 $f^{-1}(B)\in\mathcal F_1$。
+      实操：只需对 $\mathcal F_2$ 的原子（或生成元）检查原像是否落在 $\mathcal F_1$ 里。
+      <b style="color:var(--red)">注意：像 $f(\mathcal F_1)$ 一般不是 σ-代数</b>（连 $\Omega_2$ 都可能不含）。
+    </div>
+
+    <div class="keybox">
+      <h4>套路三：有限空间积分 = 加权求和</h4>
+      $\int_A f\,d\mu=\sum_{\omega\in A}f(\omega)\,\mu(\{\omega\})$。
+      若 $\mu=\mu_Z$（计数）则各点权 1；若 $\mu(A)=\sum_{\omega\in A}I_U(\omega)=|A\cap U|$，则只有落在 $U$ 的点贡献权 1。
+      <b style="color:var(--red)">关键：先看每个单点的测度是多少，再乘函数值。</b>
+    </div>
+  </section>
+
+  <!-- ===== 德语词汇 ===== -->
+  <section class="block" id="vocab">
+    <h2>🇩🇪 德语关键词强化</h2>
+    <p style="color:var(--muted);font-size:.85rem;">本章是抽象测度论，术语必须秒懂。</p>
+    <div class="vocab">
+      <div class="vcard"><span class="de">das Maß</span><br><span class="zh">测度</span></div>
+      <div class="vcard"><span class="de">der Maßraum</span><br><span class="zh">测度空间</span></div>
+      <div class="vcard"><span class="de">der Messraum</span><br><span class="zh">可测空间</span></div>
+      <div class="vcard"><span class="de">die σ-Algebra</span><br><span class="zh">σ-代数</span></div>
+      <div class="vcard"><span class="de">das Erzeugendensystem</span><br><span class="zh">生成元系统</span></div>
+      <div class="vcard"><span class="de">das Atom</span><br><span class="zh">原子（不可再分块）</span></div>
+      <div class="vcard"><span class="de">schnittstabil</span><br><span class="zh">交稳定（∩-稳定）</span></div>
+      <div class="vcard"><span class="de">σ-additiv</span><br><span class="zh">σ-可加</span></div>
+      <div class="vcard"><span class="de">σ-Subadditivität</span><br><span class="zh">σ-次可加性</span></div>
+      <div class="vcard"><span class="de">die Messbarkeit</span><br><span class="zh">可测性</span></div>
+      <div class="vcard"><span class="de">messbar</span><br><span class="zh">可测的</span></div>
+      <div class="vcard"><span class="de">das Urbild</span><br><span class="zh">原像 $f^{-1}(B)$</span></div>
+      <div class="vcard"><span class="de">das Bild</span><br><span class="zh">像 $f(A)$</span></div>
+      <div class="vcard"><span class="de">das Bildmaß</span><br><span class="zh">像测度</span></div>
+      <div class="vcard"><span class="de">die Faser</span><br><span class="zh">纤维（原像分支）</span></div>
+      <div class="vcard"><span class="de">das Zählmaß</span><br><span class="zh">计数测度</span></div>
+      <div class="vcard"><span class="de">das Lebesgue-Maß</span><br><span class="zh">Lebesgue 测度</span></div>
+      <div class="vcard"><span class="de">das Dirac-Maß</span><br><span class="zh">Dirac 测度</span></div>
+      <div class="vcard"><span class="de">das Lebesgue-Stieltjes-Maß</span><br><span class="zh">LS 测度</span></div>
+      <div class="vcard"><span class="de">die Treppenfunktion</span><br><span class="zh">阶梯函数</span></div>
+      <div class="vcard"><span class="de">die einfache Funktion</span><br><span class="zh">简单函数</span></div>
+      <div class="vcard"><span class="de">die Indikatorfunktion</span><br><span class="zh">指示函数 $I_A$</span></div>
+      <div class="vcard"><span class="de">integrierbar</span><br><span class="zh">可积的</span></div>
+      <div class="vcard"><span class="de">die Nullmenge</span><br><span class="zh">零测集</span></div>
+      <div class="vcard"><span class="de">fast überall (f.ü.)</span><br><span class="zh">几乎处处</span></div>
+      <div class="vcard"><span class="de">endlich / σ-endlich</span><br><span class="zh">有限 / σ-有限</span></div>
+      <div class="vcard"><span class="de">abzählbar</span><br><span class="zh">可数</span></div>
+      <div class="vcard"><span class="de">die Dichte</span><br><span class="zh">密度（关于支配测度）</span></div>
+      <div class="vcard"><span class="de">das dominierende Maß</span><br><span class="zh">支配测度</span></div>
+      <div class="vcard"><span class="de">der Maßeindeutigkeitssatz</span><br><span class="zh">测度唯一性定理</span></div>
+      <div class="vcard"><span class="de">die Borel-σ-Algebra $\mathcal B$</span><br><span class="zh">Borel σ-代数</span></div>
+      <div class="vcard"><span class="de">abgeschlossen unter ...</span><br><span class="zh">对……封闭</span></div>
+      <div class="vcard"><span class="de">die Potenzmenge $\mathcal P$</span><br><span class="zh">幂集</span></div>
+      <div class="vcard"><span class="de">paarweise disjunkt</span><br><span class="zh">两两不交</span></div>
+      <div class="vcard"><span class="de">das Komplement</span><br><span class="zh">补集</span></div>
+    </div>
+  </section>
+
+  <!-- ===== 练习题 ===== -->
+  <section class="block">
+    <h2>📝 习题与讲解</h2>
+    <p style="color:var(--muted);font-size:.85rem;">点击标题展开/收起；做完再点"显示解答"自测。颜色：
+      <span style="color:var(--green)">●测度判断</span>
+      <span style="color:var(--accent)">●可测性</span>
+      <span style="color:var(--accent2)">●积分</span>
+      <span style="color:var(--pink)">●Dirac/LS测度</span></p>
+
+    <!-- A1 -->
+    <div class="ex" id="a1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">1</span>
+        <span class="ex-title">测度唯一性定理的反例</span><span class="badge b-mea">测度</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          构造例子使唯一性定理的性质 i)、ii) 成立但 $\mu_1\ne\mu_2$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>结构条件（交稳定+生成）不够，还需两测度在生成元上一致。去掉"一致"即得反例。</div>
+          <div class="ans">
+            取 $\Omega=\{0,1\},\ \mathcal F=\mathcal P(\Omega),\ \mathcal E=\{\{0\}\}$。
+            $\mathcal E$ 交稳定且 $\sigma(\mathcal E)=\mathcal P(\Omega)$。
+            令 $\mu_1(A)=|A|,\ \mu_2(A)=2|A|$，二者都是测度但 $\mu_1\ne\mu_2$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="ex" id="a2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">2</span>
+        <span class="ex-title">4 点概率空间上的积分</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{\omega_1..\omega_4\}$，$\mathcal F=\sigma(\{\omega_1,\omega_3\},\{\omega_4\})$，$\mu(\{\omega_1,\omega_3\})=\mu(\{\omega_4\})=\tfrac14$。
+          $f=(1,4,1,2)$，求 $\int f\,d\mu$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            原子：$A=\{\omega_1,\omega_3\},B=\{\omega_4\},C=\{\omega_2\}$。
+            概率测度 $\Rightarrow\mu(C)=1-\tfrac14-\tfrac14=\tfrac12$。
+            $f$ 在各原子上常值：
+            $$\int f\,d\mu=1\cdot\tfrac14+2\cdot\tfrac14+4\cdot\tfrac12=\tfrac{11}{4}.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="ex" id="a3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">3</span>
+        <span class="ex-title">ℕ 上三个映射是否为测度</span><span class="badge b-mea">测度</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\mathbb N$。判断 $\mu_1(A)=\sum_{i\in A}t(1-t)^{i-1}$、$\mu_2$（有限取0/否则1）、$\mu_3(A)=\sum_{i\in A}1$ 是否为测度并查有限性。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">$\mu_1$ ✅有限</div>几何分布，$\mu_1(\mathbb N)=\sum t(1-t)^{i-1}=1$。
+            <div class="subq">$\mu_2$ ❌</div各单点 $\{i\}$ 有限故测度0，但 $\bigcup\{i\}=\mathbb N$ 无限故 $\mu_2=1\ne\sum 0$，σ-可加被破坏。
+            <div class="subq">$\mu_3$ ✅但无限</div>计数测度，$\mu_3(\mathbb N)=\infty$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="ex" id="a4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">4</span>
+        <span class="ex-title">Lebesgue vs 计数测度积分</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f(\omega)=\omega I_{\{1..N\}}(\omega)$。对 $\lambda$ 和 $\mu_Z$ 求 $\int_{[0,n]}f$（$n\le N$）。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$f$ 只在整点非零。Lebesgue 下单点测度 0；计数下单点测度 1。</div>
+          <div class="ans">
+            $\int_{[0,n]}f\,d\lambda=0$（有限个点）。<br>
+            $\int_{[0,n]}f\,d\mu_Z=\sum_{i=1}^n i=\tfrac{n(n+1)}2$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5 -->
+    <div class="ex" id="a5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">5</span>
+        <span class="ex-title">两测度积分对比（含 g=x²）</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f=\omega I_{\mathbb N},\ g=\omega^2 I_{[0,1]}$。求各测度下 $\int_{[0,n]}f$ 和 $\int g$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $\int_{[0,n]}f\,d\lambda=0$；$\int_{[0,n]}f\,d\mu_Z=\tfrac{n(n+1)}2$。<br>
+            $\int g\,d\lambda=\int_0^1 x^2dx=\tfrac13$。<br>
+            $\int g\,d\mu_Z$：$[0,1]$ 中整点只有 $0,1$，$=0^2+1^2=1$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A6 -->
+    <div class="ex" id="a6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">6</span>
+        <span class="ex-title">阶梯函数写法与积分</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f(\omega)=\omega$ 于 $\{y_1..y_k\}$ 否则0。(a) 写成阶梯函数；(b) $\int_{[a,b]}f\,d\mu$（$a=y_3,y_{k-1}<b<y_k$）；(c) $\int_{[a,b]}f\,d\lambda$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$f=\sum_{i=1}^k y_i I_{\{y_i\}}$。
+            <div class="subq">(b)</div>区间 $[y_3,b]$ 含 $y_3..y_{k-1}$：$\int_{[a,b]}f\,d\mu=\sum_{i=3}^{k-1}y_i\,\mu(\{y_i\})$。
+            <div class="subq">(c)</div>单点 Lebesgue 测度 0：$\int_{[a,b]}f\,d\lambda=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A7 -->
+    <div class="ex" id="a7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">7</span>
+        <span class="ex-title">判测度 + 有限性（含 1/i）</span><span class="badge b-mea">测度</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) $\sum_{i\in A}t(1-t)^{i-1}$；(b) 有限0/无限1；(c) $\sum_{i\in A}\tfrac1i$。判测度并查有限性。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a) ✅有限</div>加权计数测度，权 $\ge0$，σ-可加由求和分解得；$\mu(\mathbb N)=1$。
+            <div class="subq">(b) ❌</div>$A_i=\{i\}$ 都有限测度0，但并集 $\mathbb N$ 无限测度1，σ-可加被破坏。
+            <div class="subq">(c) ✅但无限</div>加权计数测度（权 $1/i$）；$\mu(\mathbb N)=\sum\tfrac1i=\infty$（调和级数发散）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A8 -->
+    <div class="ex" id="a8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">8</span>
+        <span class="ex-title">Lebesgue：区间端点与可数集</span><span class="badge b-mea">测度</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) 证 $\lambda((a,b))=\lambda([a,b))=\lambda((a,b])=\lambda([a,b])$；(b) 可数集 $A$ 的 $\lambda(A)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>四个区间只差端点，而 $\lambda(\{a\})=\lambda(\{b\})=0$，故全等于 $b-a$。
+            <div class="subq">(b)</div>$A=\bigcup\{a_i\}$，σ-次可加 $\Rightarrow\lambda(A)\le\sum\lambda(\{a_i\})=0$，又非负故 $\lambda(A)=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A9 -->
+    <div class="ex" id="a9">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">9</span>
+        <span class="ex-title">原像 σ 代数 / 可测性 / 像非 σ 代数</span><span class="badge b-msb">可测</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{1..6\}$，$\mathcal F=\sigma(\{1,2\},\{3,4\})$（原子 $\{1,2\},\{3,4\},\{5,6\}$），$f(x)=\max(1,x-1)$。
+          (a) 写 $f^{-1}(\mathcal F_2)$ 与 $\{B:f^{-1}(B)\in\mathcal F_1\}$；(b) $f$ 可测吗；(c) 证 $f(\mathcal F_1)$ 非 σ-代数。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$f$ 值：$f(1)=f(2)=1,f(3)=2,f(4)=3,f(5)=4,f(6)=5$。纤维决定一切。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$f^{-1}(\mathcal F_2)$ 是把 $\mathcal F_2$ 元素拉回的集合系统（原像保持补与并，故为 σ-代数）。
+            第二个系统 $=\sigma(\{1\},\{2,3\},\{4,5\},\{6\})$：因纤维 $f^{-1}(1)=\{1,2\}$ 等，2、3 须同选、4、5 须同选。
+            <div class="subq">(b) 不可测</div>$\{1,2\}\in\mathcal F_2$ 但 $f^{-1}(\{1,2\})=\{1,2,3\}\notin\mathcal F_1$（非原子并）。
+            <div class="subq">(c)</div>$f(\Omega)=\{1,2,3,4,5\}\ne\Omega_2$，连全集都不含，故 $f(\mathcal F_1)$ 不是 σ-代数。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A10 -->
+    <div class="ex" id="a10">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">10</span>
+        <span class="ex-title">3 点空间的可积性与积分</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{\omega_1,\omega_2,\omega_3\}$，$\mathcal F=\sigma(\{\omega_1,\omega_2\})$，$\mu(\{\omega_1,\omega_2\})=0.7$。
+          $f=(2,2,5)$。(a) 写 $\mathcal F$；(b) 证可积并求 $\int f\,d\mu$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\mathcal F=\{\emptyset,\{\omega_1,\omega_2\},\{\omega_3\},\Omega\}$。
+            <div class="subq">(b)</div>$f$ 在原子上常值（$=2$ 与 $=5$）故可测；有限+有界故可积。
+            $\mu(\{\omega_3\})=0.3$，$\int f\,d\mu=2\cdot0.7+5\cdot0.3=2.9$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A11 -->
+    <div class="ex" id="a11">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">11</span>
+        <span class="ex-title">Lebesgue-Stieltjes 测度</span><span class="badge b-dir">LS测度</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (a) $G$ 斜坡函数，求 $\lambda_G((1,2]),\lambda_G((-2,2])$；(b) 分段 $F$ 求 $\lambda_F((-\infty,a])$ 及点质量 $\lambda_F(\{0\})$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\lambda_G((a,b])=G(b)-G(a)$；点质量=跳跃高 $F(x)-F(x-)$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$\lambda_G((1,2])=G(2)-G(1)=\tfrac24-\tfrac14=\tfrac14$；$\lambda_G((-2,2])=\tfrac24-0=\tfrac12$。
+            <div class="subq">(b)</div>$\lim_{x\to-\infty}F=-2$，故 $\lambda_F((-\infty,a])=F(a)+2$：
+            $$\begin{cases}0,&a<-2\\a+2,&-2\le a<0\\a+3,&0\le a<1\\4,&a\ge1\end{cases}$$
+            <div class="subq">点质量</div>$x=0$ 跳跃：$F(0)=1,F(0-)=0\Rightarrow\lambda_F(\{0\})=1$。其余处 $F$ 连续（含 $x=-2,1$）故 $\lambda_F(\{x\})=0$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A12 -->
+    <div class="ex" id="a12">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">12</span>
+        <span class="ex-title">极限与积分能否交换</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f_n=x^2 I_{[-n,n]}+n^2 I_{|x|>n}$。比较 $\lim\int f_n\,d\lambda$ 与 $\int\lim f_n\,d\lambda$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            逐点极限 $f_n(x)\to x^2$，故 $\int\lim f_n\,d\lambda=\int_{\mathbb R}x^2\,d\lambda=\infty$。<br>
+            每个 $\int f_n\,d\lambda$：尾部 $n^2$ 在无限测度集上积分 $=\infty$，故 $\int f_n=\infty$，$\lim\int f_n=\infty$。<br>
+            两者相等，都 $=\infty$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A13 -->
+    <div class="ex" id="a13">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">13</span>
+        <span class="ex-title">Riemann 不可积但 Lebesgue 可积</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f=x$（有理）、$1-x$（无理）于 $[0,1]$，否则0。证非 Riemann 但 Lebesgue 可积并求 $\int f\,d\lambda$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>$\mathbb Q\cap[0,1]$ 是零测集，f.ü. 等于 $1-x$。</div>
+          <div class="ans">
+            $\mathbb Q,\mathbb R\setminus\mathbb Q$ 都稠密，$x\ne\tfrac12$ 处沿两种序列极限不同（$x\ne1-x$），故除 $\tfrac12$ 外处处不连续，不连续点测度 $=1$ → 非 Riemann 可积。<br>
+            有界可测故 Lebesgue 可积；$\mathbb Q\cap[0,1]$ 零测，f.ü. $f=1-x$：
+            $$\int f\,d\lambda=\int_0^1(1-x)\,dx=\tfrac12.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A14 -->
+    <div class="ex" id="a14">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">14</span>
+        <span class="ex-title">计数测度积分（同题型4）</span><span class="badge b-int">积分</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $f=\omega I_{\{1..N\}}$。求 $\int_{[0,n]}f\,d\lambda$ 与 $\int_{[0,n]}f\,d\mu_Z$（$n\le N$）。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $f=\sum_{i=1}^n i I_{\{i\}}$。Lebesgue：$\lambda(\{i\})=0\Rightarrow\int=0$。
+            计数：$\mu_Z(\{i\})=1\Rightarrow\int=\sum_{i=1}^n i=\tfrac{n(n+1)}2$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A15 -->
+    <div class="ex" id="a15">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">15</span>
+        <span class="ex-title">Dirac 测度无 Lebesgue 密度</span><span class="badge b-dir">Dirac</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          (1) 证 $\delta_x$ 关于 $\lambda$ 无密度；(2) 常值映射 $f(\omega)=x$ 的像测度 $\mathbb P_f=\delta_x$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>反证：若有密度 $f$，则在零测集 $\{x\}$ 上积分必为 0，与 $\delta_x(\{x\})=1$ 矛盾。</div>
+          <div class="ans">
+            <div class="subq">(1)</div>设 $\delta_x(A)=\int_A f\,d\lambda$。取 $A=\{x\}$：$\lambda(\{x\})=0\Rightarrow\int_{\{x\}}f\,d\lambda=0$，但 $\delta_x(\{x\})=1$，矛盾。故无密度。
+            <div class="subq">(2)</div>$f^{-1}(A)=\Omega$（若 $x\in A$）或 $\emptyset$（若 $x\notin A$），故 $\mathbb P_f(A)=\mathbb P(f^{-1}(A))=I_A(x)=\delta_x(A)$。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 真题 ===== -->
+  <section class="block">
+    <h2>🎯 考试真题</h2>
+    <p style="color:var(--muted);font-size:.85rem;">真题 1、4、5 高度同构（生成 σ 代数 + 证测度 + 积分=10），务必练成肌肉记忆。</p>
+
+    <!-- E1 -->
+    <div class="ex" id="e1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题1</span>
+        <span class="ex-title">2LV · σ代数/测度/积分</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{1..6\}$，$U=\{1,3,5\},V=\{1,2,3\}$，$\mu(A)=\sum_{\omega\in A}I_U(\omega)$，$f=\omega^2$。
+          (a) $\mathcal F=\sigma(U,V)$；(b) 证 $\mu$ 是测度；(c) $\int_V f\,d\mu$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>原子 $U\cap V=\{1,3\},U\cap V^c=\{5\},U^c\cap V=\{2\},U^c\cap V^c=\{4,6\}$。σ-代数=四原子的所有并，共 $2^4=16$ 元素。
+            <div class="subq">(b)</div>$\mu(A)=|A\cap U|$：$\mu(\emptyset)=0$，非负，不交并 $\Rightarrow|(\cup A_i)\cap U|=\sum|A_i\cap U|$ 即 σ-可加。
+            <div class="subq">(c)</div>$\int_V f\,d\mu=\mu(\{1\})+4\mu(\{2\})+9\mu(\{3\})=1+0+9=10$（仅 $U$ 中点贡献）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2 -->
+    <div class="ex" id="e2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题2</span>
+        <span class="ex-title">3LV · 计数测度积分/零测集</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{1..6\}$，$U=\{1,2,3,4\},V=\{3,4,5,6\}$，$f=\omega$，$\mu_Z$ 计数测度。
+          (a) $\sigma(\mathcal E)$；(b) $\int_U f\,d\mu_Z$；(c) $\mu_Z$ 的零测集。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>原子 $\{1,2\},\{3,4\},\{5,6\}$（$U^c\cap V^c=\emptyset$）。σ-代数含 $2^3=8$ 元素。
+            <div class="subq">(b)</div>$\int_U f\,d\mu_Z=1+2+3+4=10$。
+            <div class="subq">(c)</div>$\mu_Z(A)=|A|=0\Leftrightarrow A=\emptyset$，唯一零测集是 $\emptyset$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E3 -->
+    <div class="ex" id="e3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题3</span>
+        <span class="ex-title">GOP1 · σ代数并 / 是否密度</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{1,2,3,4\}$，$A=\{1\},B=\{1,3\}$，$\mu(C)=\sum_{\omega\in C}\omega$，$f=1/\omega$。
+          (a) $\mathcal F_1$；(b) 找 $\mathcal F_2$ 使 $\mathcal F_1\cup\mathcal F_2$ 非 σ-代数；(c) 证 $\mu$ 测度；(d) $\int_B f\,d\mu$；(e) 是否密度。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>原子 $\{1\},\{3\},\{2,4\}$，$\mathcal F_1=\{\emptyset,\Omega,\{1\},\{3\},\{1,3\},\{2,4\},\{1,2,4\},\{2,3,4\}\}$。
+            <div class="subq">(b)</div>取 $\mathcal F_2=\{\emptyset,\Omega,\{1,2\},\{3,4\}\}$。$\{1,3\}\cup\{3,4\}=\{1,3,4\}\notin\mathcal F_1\cup\mathcal F_2$，故并集不封闭。
+            <div class="subq">(c)</div>$\mu(\emptyset)=0$、非负（$\omega>0$）、不交并求和可分解 → σ-可加。
+            <div class="subq">(d)</div>$\int_B f\,d\mu=f(1)\mu(\{1\})+f(3)\mu(\{3\})=1\cdot1+\tfrac13\cdot3=2$。
+            <div class="subq">(e) 不是</div>$\int_\Omega f\,d\mu=\sum_{\omega=1}^4\tfrac1\omega\cdot\omega=4\ne1$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E4 -->
+    <div class="ex" id="e4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题4</span>
+        <span class="ex-title">GOP2 · ω² 积分（同真题1）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          与真题1完全相同：$U=\{1,3,5\},V=\{1,2,3\}$，$\mu(A)=\sum I_U$，$f=\omega^2$。求 $\sigma(U,V)$、证测度、$\int_V f\,d\mu$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            原子 $\{1,3\},\{5\},\{2\},\{4,6\}$，共 16 元素。$\mu(A)=|A\cap U|$ 为测度。
+            $$\int_V f\,d\mu=1^2 I_U(1)+2^2 I_U(2)+3^2 I_U(3)=1+0+9=10.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E5 -->
+    <div class="ex" id="e5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题5</span>
+        <span class="ex-title">GOP3 · 与真题4逐字相同</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          与真题1、4 逐字相同的 $U,V,\mu,f=\omega^2$ 题。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            原子 $\{1,3\},\{5\},\{2\},\{4,6\}$（16 元素）；$\mu(A)=|A\cap U|$ 满足三条测度公理；
+            $\int_V f\,d\mu=1+9=10$。
+            <br><span style="color:var(--muted);font-size:.82rem;">这道题在三套 GOP 卷里反复出现，闭眼也要会写。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E6 -->
+    <div class="ex" id="e6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题6</span>
+        <span class="ex-title">ss2022 · 综合（同真题3）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>
+          $\Omega=\{1,2,3,4\}$，$A=\{1\},B=\{1,3\}$，$\mu(C)=\sum\omega$，$f=1/\omega$。(a)–(e) 同真题3。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$\mathcal F_1=\{\emptyset,\Omega,\{1\},\{3\},\{1,3\},\{2,4\},\{1,2,4\},\{2,3,4\}\}$。
+            <div class="subq">(b)</div>$\mathcal F_2=\{\emptyset,\Omega,\{1,2\},\{3,4\}\}$：$\{1,3\}\cup\{3,4\}=\{1,3,4\}\notin$ 并集。
+            <div class="subq">(c)</div>三条公理验证（空集0、非负、σ-可加）。
+            <div class="subq">(d)</div>$\int_B f\,d\mu=1\cdot1+\tfrac13\cdot3=2$。
+            <div class="subq">(e)</div>$\int_\Omega f\,d\mu=4\ne1$，故非密度。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 常见错误 ===== -->
+  <section class="block" id="mistakes">
+    <h2>⚠️ 常见错误提醒</h2>
+    <ul class="warn">
+      <li><b>可测性看错方向</b>：看原像不看像。查 $f^{-1}(B)\in\mathcal F$，不是 $f(B)$。</li>
+      <li><b>Dirac 当成长度</b>：只看支撑点在不在集合里。$\delta_2([0,1])=0$，$\delta_2([1,3])=1$。</li>
+      <li><b>Lebesgue 把单点算成 1</b>：$\lambda(\{2\})=0$，但计数 $\mu_Z(\{2\})=1$。</li>
+      <li><b>像测度忘取原像</b>：先拉回原空间再算。$\mu_f(\{3\})=\mu(f^{-1}(\{3\}))$。</li>
+      <li><b>有限空间积分写成普通积分</b>：是求和！$\int_A f\,d\mu=\sum_{\omega\in A}f(\omega)\mu(\{\omega\})$。</li>
+      <li><b>带权计数测度算错权</b>：$\mu(A)=\sum_{\omega\in A}I_U(\omega)$ 意味着只有 $U$ 内点权 1，其余权 0。</li>
+      <li><b>误判 $f(\mathcal F_1)$ 是 σ-代数</b>：像一般不含 $\Omega_2$、不封闭，多半不是。</li>
+      <li><b>是否密度只看非负</b>：还要 $\int_\Omega f\,d\mu=1$。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 必会题型 ===== -->
+  <section class="block" id="mustknow">
+    <h2>✅ 本章必会题型清单</h2>
+    <ul class="checklist">
+      <li>会用三条公理验证一个映射是不是测度。</li>
+      <li>会区分计数测度、Lebesgue 测度、Dirac 测度的取值方式。</li>
+      <li>会由生成元 $\{U,V\}$ 算原子并写出完整 σ-代数。</li>
+      <li>会通过原像判断映射可测性，并理解像一般不是 σ-代数。</li>
+      <li>会计算像测度 / Bildmaß。</li>
+      <li>会把有限/离散空间的积分写成加权求和并算出。</li>
+      <li>会算 Lebesgue-Stieltjes 测度（区间差与跳跃点质量）。</li>
+      <li>会判断函数是否为关于某测度的密度（积分是否为 1）。</li>
+      <li>会区分 Riemann 与 Lebesgue 可积，理解零测集与 f.ü.。</li>
+      <li>会判断测度是否有限 / σ-有限。</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<script>
+function toggleEx(head){head.parentElement.classList.toggle('open');}
+function toggleSol(btn){
+  const sol=btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent=sol.classList.contains('show')?'隐藏解答':'显示解答';
+}
+function toggleAll(open){
+  document.querySelectorAll('.ex').forEach(ex=>ex.classList.toggle('open',open));
+}
+function showAllSol(show){
+  document.querySelectorAll('.sol').forEach(sol=>{
+    sol.classList.toggle('show',show);
+    const btn=sol.previousElementSibling;
+    if(btn&&btn.classList.contains('toggle-sol'))
+      btn.textContent=show?'隐藏解答':'显示解答';
+  });
+  if(show) toggleAll(true);
+}
+document.querySelectorAll('nav.side a').forEach(a=>{
+  a.addEventListener('click',()=>document.querySelector('nav.side').classList.remove('open'));
+});
+</script>
+</body>
+</html>

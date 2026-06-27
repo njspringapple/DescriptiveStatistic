@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>条件概率 · Bayes · 列联表 · 诊断指标</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a212b; --panel2:#222c38;
+    --accent:#4ea1ff; --accent2:#ffb454; --green:#5fd07d;
+    --red:#ff6b6b; --purple:#c084fc; --pink:#f472b6; --teal:#2dd4bf;
+    --text:#e3e8ef; --muted:#94a3b8; --border:#2c3744;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.75;}
+  a{color:var(--accent);text-decoration:none;}
+
+  header.top{background:linear-gradient(135deg,#16202c,#0f1419);
+    border-bottom:1px solid var(--border);padding:28px 20px 22px;text-align:center;}
+  header.top h1{margin:0 0 6px;font-size:1.45rem;letter-spacing:.5px;}
+  header.top p{margin:0;color:var(--muted);font-size:.88rem;}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 16px;min-width:90px;}
+  .stat b{display:block;font-size:1.3rem;color:var(--accent2);}
+  .stat span{font-size:.72rem;color:var(--muted);}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  nav.side{width:260px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;
+    height:100vh;overflow-y:auto;border-right:1px solid var(--border);padding:18px 10px 40px;font-size:.81rem;}
+  nav.side h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 8px 6px;}
+  nav.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--text);transition:.15s;border-left:3px solid transparent;}
+  nav.side a:hover{background:var(--panel);border-left-color:var(--accent);}
+  .navtag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+  .t-bayes{background:var(--accent);}
+  .t-diag{background:var(--teal);}
+  .t-cont{background:var(--green);}
+  .t-or{background:var(--accent2);}
+  .t-mix{background:var(--purple);}
+  .t-exam{background:#f87171;}
+
+  main{flex:1;min-width:0;padding:24px 22px 80px;}
+  section.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:22px 24px;margin-bottom:26px;scroll-margin-top:14px;}
+  section.block > h2{margin-top:0;font-size:1.22rem;border-bottom:2px solid var(--accent);
+    padding-bottom:8px;display:inline-block;}
+
+  .ex{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+    margin-bottom:18px;overflow:hidden;scroll-margin-top:14px;}
+  .ex-head{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;
+    background:#1e2733;transition:.15s;}
+  .ex-head:hover{background:#243140;}
+  .ex-num{font-weight:700;color:var(--accent);font-size:.86rem;background:#13202c;
+    border:1px solid var(--border);border-radius:8px;padding:3px 9px;white-space:nowrap;}
+  .ex-title{flex:1;font-size:.9rem;}
+  .badge{font-size:.62rem;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid;}
+  .b-bayes{color:var(--accent);border-color:var(--accent);}
+  .b-diag{color:var(--teal);border-color:var(--teal);}
+  .b-cont{color:var(--green);border-color:var(--green);}
+  .b-or{color:var(--accent2);border-color:var(--accent2);}
+  .b-mix{color:var(--purple);border-color:var(--purple);}
+  .b-exam{color:#f87171;border-color:#f87171;}
+
+  .ex-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .ex.open .ex-body{max-height:none;padding:6px 20px 20px;}
+
+  .q{background:#141c25;border-left:4px solid var(--accent);padding:12px 16px;
+    border-radius:0 8px 8px 0;margin:14px 0;}
+  .q .label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.5px;}
+
+  .toggle-sol{background:var(--accent);color:#06121f;border:none;padding:8px 18px;
+    border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin:6px 0 4px;transition:.15s;}
+  .toggle-sol:hover{background:#6bb3ff;}
+  .sol{display:none;}
+  .sol.show{display:block;}
+
+  .think{background:#1d2417;border-left:4px solid var(--green);padding:10px 16px;
+    border-radius:0 8px 8px 0;margin:12px 0;font-size:.85rem;}
+  .think .label{color:var(--green);font-weight:700;font-size:.72rem;letter-spacing:.5px;}
+
+  .ans{background:#161e28;border:1px dashed var(--border);padding:8px 16px;border-radius:8px;margin:12px 0;}
+  .subq{font-weight:700;color:var(--accent2);margin-top:14px;}
+
+  .dupnote{background:#2a1f16;border:1px solid var(--accent2);border-radius:8px;
+    padding:8px 14px;margin:10px 0;font-size:.83rem;color:var(--accent2);}
+
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-size:.83rem;}
+  .fcard b{color:var(--accent2);}
+
+  .strat li,.warn li,.checklist li{margin-bottom:10px;}
+  .strat b{color:var(--accent2);}
+  .warn b{color:var(--red);}
+  .checklist li::marker{color:var(--green);}
+
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+  .vcard{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;}
+  .vcard .de{color:var(--accent);font-weight:700;font-size:.88rem;}
+  .vcard .zh{color:var(--muted);font-size:.78rem;}
+
+  .keybox{background:#16201a;border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+  .keybox h4{margin:0 0 8px;color:var(--green);font-size:.95rem;}
+
+  .confusion{background:#1a1d26;border:1px solid var(--teal);border-radius:10px;padding:16px 18px;margin:14px 0;}
+  .confusion h4{margin:0 0 12px;color:var(--teal);font-size:.98rem;}
+  .cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:.8rem;text-align:center;max-width:440px;margin:0 auto 12px;}
+  .cm .hd{background:#1e2733;color:var(--accent2);padding:8px;border-radius:6px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .cm .tp{background:#16321f;border:1px solid var(--green);padding:10px;border-radius:6px;}
+  .cm .tn{background:#16321f;border:1px solid var(--green);padding:10px;border-radius:6px;}
+  .cm .fp{background:#3a1f1f;border:1px solid var(--red);padding:10px;border-radius:6px;}
+  .cm .fn{background:#3a1f1f;border:1px solid var(--red);padding:10px;border-radius:6px;}
+  .cm b{display:block;}
+
+  .step{background:#1a1d26;border:1px solid var(--accent);border-radius:10px;padding:14px 18px;margin:14px 0;}
+  .step h4{margin:0 0 10px;color:var(--accent);font-size:.98rem;}
+  .steprow{display:flex;align-items:flex-start;gap:10px;margin:10px 0;padding:8px 12px;background:#15171f;border-radius:8px;border-left:3px solid var(--accent);}
+  .steprow .num{background:var(--accent);color:#06121f;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.8rem;}
+
+  .toolbox{background:#1a1d26;border:1px solid var(--purple);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.85rem;}
+  .toolbox h4{margin:0 0 8px;color:var(--purple);font-size:.95rem;}
+  .toolbox .tool{margin:8px 0;padding:8px 12px;background:#15171f;border-radius:7px;border-left:3px solid var(--purple);}
+  .toolbox .tool b{color:var(--pink);}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.83rem;}
+  th,td{border:1px solid var(--border);padding:6px 9px;text-align:center;}
+  th{background:#1e2733;color:var(--accent2);}
+  code{background:#0d1620;padding:2px 6px;border-radius:5px;color:var(--teal);font-size:.85rem;}
+
+  .controls{position:sticky;top:0;z-index:50;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);padding:10px 0;margin:-24px -22px 22px;display:flex;gap:10px;
+    padding-left:22px;flex-wrap:wrap;}
+  .ctrl-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;}
+  .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .roc{display:block;margin:10px auto;max-width:380px;}
+
+  .menu-toggle{display:none;}
+  @media(max-width:860px){
+    nav.side{position:fixed;left:-280px;z-index:200;background:var(--bg);
+      transition:left .3s;width:270px;box-shadow:4px 0 20px rgba(0,0,0,.5);}
+    nav.side.open{left:0;}
+    .menu-toggle{display:block;position:fixed;top:12px;left:12px;z-index:201;
+      background:var(--accent);color:#06121f;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;}
+    .fgrid{grid-template-columns:1fr;}
+    main{padding:24px 14px 80px;}
+    .controls{margin:-24px -14px 22px;padding-left:14px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('nav.side').classList.toggle('open')">☰ 目录</button>
+
+<header class="top">
+  <h1>条件概率 · Bayes · 列联表 · 诊断指标</h1>
+  <p>Bedingte Wahrscheinlichkeit · Bayes · Kontingenztafeln · Diagnostische Tests</p>
+  <div class="stats">
+    <div class="stat"><b>7</b><span>练习题</span></div>
+    <div class="stat"><b>14</b><span>考试真题</span></div>
+    <div class="stat"><b>21</b><span>合计题目</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="side">
+  <h3>核心板块</h3>
+  <a href="#formulas">📐 公式速查</a>
+  <a href="#strategy">🧭 不会时怎么下手</a>
+  <a href="#confusion">🎯 诊断指标四象限</a>
+  <a href="#bayesbox">🔁 Bayes 三步法</a>
+  <a href="#rocbox">📈 ROC 与阈值决策</a>
+  <a href="#orbox">⚖️ Odds Ratio 与 Simpson</a>
+  <a href="#mixbox">🧰 综合大题速答</a>
+  <a href="#vocab">🇩🇪 德语词汇</a>
+
+  <h3>练习题（颜色=题型）</h3>
+  <a href="#a1"><span class="navtag t-cont"></span>1 · 止咳糖浆 OR/χ²</a>
+  <a href="#a2"><span class="navtag t-bayes"></span>2 · 肾病/HIV/色盲 Bayes</a>
+  <a href="#a3"><span class="navtag t-bayes"></span>3 · 假币检测器</a>
+  <a href="#a4"><span class="navtag t-bayes"></span>4 · 螺丝机器来源</a>
+  <a href="#a5"><span class="navtag t-diag"></span>5 · 疾病检测 PPV</a>
+  <a href="#a6"><span class="navtag t-bayes"></span>6 · 血型 R+ 全概率</a>
+  <a href="#a7"><span class="navtag t-mix"></span>7 · 容斥公式证明</a>
+
+  <h3>考试真题</h3>
+  <a href="#e1"><span class="navtag t-exam"></span>真题1 · 2014 安全带</a>
+  <a href="#e2"><span class="navtag t-exam"></span>真题2 · 2014 发色 χ²</a>
+  <a href="#e3"><span class="navtag t-exam"></span>真题3 · 2015 HIV-Test</a>
+  <a href="#e4"><span class="navtag t-exam"></span>真题4 · Fnufnu 诊断</a>
+  <a href="#e6"><span class="navtag t-exam"></span>真题6 · 离婚 Simpson</a>
+  <a href="#e7"><span class="navtag t-exam"></span>真题7 · 吸烟 + 几何混合</a>
+  <a href="#e8"><span class="navtag t-exam"></span>真题8 · Loysent 系统</a>
+  <a href="#e14"><span class="navtag t-exam"></span>真题14 · 筹码堆抽样</a>
+  <a href="#edup1"><span class="navtag t-exam"></span>重复·Fnufnu(4/9/11)</a>
+  <a href="#edup2"><span class="navtag t-exam"></span>重复·综合大题(5/10/12)</a>
+  <a href="#edup3"><span class="navtag t-exam"></span>重复·Loysent(8/13)</a>
+
+  <h3>总结</h3>
+  <a href="#mistakes">⚠️ 常见错误</a>
+  <a href="#mustknow">✅ 必会题型清单</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="toggleAll(true)">展开全部</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">收起全部</button>
+    <button class="ctrl-btn" onclick="showAllSol(true)">显示全部答案</button>
+    <button class="ctrl-btn" onclick="showAllSol(false)">隐藏全部答案</button>
+  </div>
+
+  <!-- ===== 公式速查 ===== -->
+  <section class="block" id="formulas">
+    <h2>📐 公式速查（考试可用版）</h2>
+    <div class="fgrid">
+      <div class="fcard"><b>条件概率</b><br>$P(A|B)=\frac{P(A\cap B)}{P(B)}$</div>
+      <div class="fcard"><b>乘法公式</b><br>$P(A\cap B)=P(A|B)P(B)$</div>
+      <div class="fcard"><b>全概率</b><br>$P(A)=\sum_i P(A|B_i)P(B_i)$</div>
+      <div class="fcard"><b>Bayes</b><br>$P(A|B)=\frac{P(B|A)P(A)}{P(B)}$</div>
+      <div class="fcard"><b>Bayes 二分类</b><br>$P(A|B)=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|A^c)P(A^c)}$</div>
+      <div class="fcard"><b>敏感度 / TPR</b><br>$\frac{TP}{TP+FN}=P(T{+}|K)$</div>
+      <div class="fcard"><b>特异度 / TNR</b><br>$\frac{TN}{TN+FP}=P(T{-}|K^c)$</div>
+      <div class="fcard"><b>FPR</b><br>$\frac{FP}{FP+TN}=1-TNR$</div>
+      <div class="fcard"><b>PPV（阳性预测值）</b><br>$\frac{TP}{TP+FP}=P(K|T{+})$</div>
+      <div class="fcard"><b>NPV（阴性预测值）</b><br>$\frac{TN}{TN+FN}=P(K^c|T{-})$</div>
+      <div class="fcard"><b>Odds</b><br>$O(A)=\frac{P(A)}{1-P(A)}$</div>
+      <div class="fcard"><b>Odds Ratio</b><br>$OR=\frac{ad}{bc}$</div>
+      <div class="fcard"><b>期望频数</b><br>$E_{ij}=\frac{\text{行和}_i\cdot\text{列和}_j}{n}$</div>
+      <div class="fcard"><b>Chi-Quadrat</b><br>$\chi^2=\sum\frac{(O_{ij}-E_{ij})^2}{E_{ij}}$</div>
+    </div>
+  </section>
+
+  <!-- ===== 解题入门 ===== -->
+  <section class="block" id="strategy">
+    <h2>🧭 不会时怎么下手</h2>
+    <ul class="strat">
+      <li><b>问条件概率</b>：先命名事件，再确认竖线后面的是"已知条件"。</li>
+      <li><b>问原因概率</b>（如阳性后患病）：用 Bayes，<u>不要直接拿敏感度当答案</u>。</li>
+      <li><b>有多个来源/组别</b>：先用全概率公式算分母。</li>
+      <li><b>有检测指标</b>：把 $K,T{+}$ 写清楚，区分 $P(T{+}|K)$（敏感度）和 $P(K|T{+})$（PPV）。</li>
+      <li><b>给列联表</b>：先补全行列总数，再算条件比例（不是原始人数）。</li>
+      <li><b>问关联强度</b>：$2\times2$ 表用 Odds Ratio；多格表用 $\chi^2$。</li>
+      <li><b>分层后关系反转</b>：警惕 Simpson 悖论，比较边际 OR 与条件 OR。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 诊断指标四象限 ===== -->
+  <section class="block" id="confusion">
+    <h2>🎯 诊断指标四象限（核心地图）</h2>
+    <div class="confusion">
+      <h4>混淆矩阵（$K$=真患病，$T{+}$=检测阳性）</h4>
+      <div class="cm">
+        <div class="hd"></div><div class="hd">真实 $K$</div><div class="hd">真实 $K^c$</div>
+        <div class="hd">检 $T{+}$</div><div class="tp"><b>TP</b>真阳</div><div class="fp"><b>FP</b>假阳（误报）</div>
+        <div class="hd">检 $T{-}$</div><div class="fn"><b>FN</b>假阴（漏检）</div><div class="tn"><b>TN</b>真阴</div>
+      </div>
+      <p style="font-size:.83rem;color:var(--muted);margin:0;">
+        <b style="color:var(--green)">列方向（按真实状态归一）</b>：敏感度 $=\frac{TP}{TP+FN}$（左列），特异度 $=\frac{TN}{TN+FP}$（右列）。这两个<u>不依赖患病率</u>，是检测的固有属性。<br>
+        <b style="color:var(--accent)">行方向（按检测结果归一）</b>：PPV $=\frac{TP}{TP+FP}$（上行），NPV $=\frac{TN}{TN+FN}$（下行）。这两个<u>依赖患病率</u>，必须用 Bayes 算。
+      </p>
+    </div>
+    <div class="keybox">
+      <h4>记忆口诀</h4>
+      <b>敏感度/特异度</b>"由病看检"（条件在疾病上，固定不变）；<br>
+      <b>PPV/NPV</b>"由检看病"（条件在结果上，随患病率变化）。<br>
+      <b>核心陷阱</b>：低患病率时即使敏感度 95%，PPV 也可能很低（练习 3 假币题 PPV 仅 1.13%，练习 5 仅 24%）。这是 Bayes 题最爱考的反直觉点。
+    </div>
+  </section>
+
+  <!-- ===== Bayes 三步法 ===== -->
+  <section class="block" id="bayesbox">
+    <h2>🔁 Bayes 三步法（最高频母题）</h2>
+    <p style="font-size:.85rem;color:var(--muted);">本章 Bayes 题（饮酒/高血压、吸烟、机器、检测）结构完全一致。固定三步走，几乎无脑套。</p>
+    <div class="step">
+      <h4>标准流程</h4>
+      <div class="steprow"><span class="num">1</span><div><b>命名两个事件</b>：原因 $B$（患病/来自B机/肾病…）与结果 $A$（饮酒/缺陷/阳性…）。把题目百分比写成 $P(B),P(A|B),P(A|\bar B)$。</div></div>
+      <div class="steprow"><span class="num">2</span><div><b>全概率算分母</b>：$P(A)=P(A|B)P(B)+P(A|\bar B)P(\bar B)$。这是最容易漏掉反面路径的地方。</div></div>
+      <div class="steprow"><span class="num">3</span><div><b>Bayes 求后验</b>：$P(B|A)=\frac{P(A|B)P(B)}{P(A)}$。注意问的方向——"已知结果求原因"才用 Bayes。</div></div>
+    </div>
+    <div class="keybox" style="border-color:var(--accent2);">
+      <h4 style="color:var(--accent2);">高频数字（直接记）</h4>
+      <b>饮酒/高血压</b>（$P(B){=}0.05,P(A|B){=}0.75,P(A|\bar B){=}0.5$）：$P(B|A)=\frac{0.0375}{0.5125}\approx7.32\%$。<br>
+      <b>吸烟/疾病</b>（$0.02,0.8,0.3$）：$\frac{0.016}{0.31}\approx5.2\%$。<br>
+      <b>螺丝机器B</b>（$0.6/0.02,0.4/0.05$）：$\frac{0.02}{0.032}=62.5\%$。<br>
+      <b>疾病检测PPV</b>（$0.01,0.95,0.03$）：$\frac{0.0095}{0.0392}\approx24.2\%$。
+    </div>
+  </section>
+
+  <!-- ===== ROC ===== -->
+  <section class="block" id="rocbox">
+    <h2>📈 ROC 曲线与阈值决策</h2>
+    <svg class="roc" viewBox="0 0 220 220">
+      <rect x="30" y="10" width="180" height="180" fill="#15171f" stroke="#2c3744"/>
+      <line x1="30" y1="190" x2="210" y2="10" stroke="#475569" stroke-dasharray="4 3"/>
+      <path d="M30,190 Q40,60 90,40 T210,10" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+      <circle cx="60" cy="95" r="3" fill="#ffb454"/><text x="64" y="93" fill="#ffb454" font-size="9">低阈值</text>
+      <circle cx="150" cy="25" r="3" fill="#ffb454"/><text x="120" y="22" fill="#ffb454" font-size="9">高阈值</text>
+      <text x="120" y="208" fill="#94a3b8" font-size="10" text-anchor="middle">FPR (1−特异度)</text>
+      <text x="14" y="100" fill="#94a3b8" font-size="10" text-anchor="middle" transform="rotate(-90 14 100)">TPR (敏感度)</text>
+    </svg>
+    <div class="toolbox">
+      <h4>读图与选阈值</h4>
+      <div class="tool"><b>越靠左上越好</b>：在相同 FPR 下 TPR 越高，曲线越优。比较两个测试就看谁更"贴左上角"。</div>
+      <div class="tool"><b>漏检致命 → 调高 TPR</b>（孕妇 Fnufnu、污染产品可低成本清洗）：选<u>低阈值</u>，宁可多误报也别漏。这是本章 ROC 题的标准答案方向。</div>
+      <div class="tool"><b>误报代价高 → 调高特异度</b>：选高阈值。</div>
+      <div class="tool"><b>判断自家测试好坏</b>：算出自己的点 $(FPR,TPR)$，看它在曲线下方还是上方。Bauterlach 测试 $(0.082,0.921)$ 在更贵测试曲线下方 → 更差。</div>
+    </div>
+  </section>
+
+  <!-- ===== Odds Ratio ===== -->
+  <section class="block" id="orbox">
+    <h2>⚖️ Odds Ratio 与 Simpson 悖论</h2>
+    <div class="keybox">
+      <h4>$2\times2$ 表的 Odds Ratio</h4>
+      表 $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ 的 $OR=\frac{ad}{bc}$。
+      $OR=1$ 无关联；$OR>1$ 正关联；$OR<1$ 负关联。比较两个 $OR$ 强度时，把 $<1$ 的取倒数再比（如 $OR_2=0.729\to1/0.729=1.372$）。
+    </div>
+    <div class="toolbox">
+      <h4>Simpson 悖论（真题 6 离婚研究）</h4>
+      <div class="tool"><b>现象</b>：边际 $OR\approx0.60$（公平家务降低离婚几率），但按收入分层后 $OR_{\text{男挣多}}\approx0.24$、$OR_{\text{男挣少}}=1$（无关）。整体趋势与分层趋势不一致。</div>
+      <div class="tool"><b>专业术语</b>：<b>Simpson-Paradoxon</b>（辛普森悖论）/ 混杂变量导致的边际与条件关联差异。考试要点名这个词。</div>
+      <div class="tool"><b>$\mathbb R_0^+$ 关联指标</b>（真题 8c 要求）：用 Odds Ratio（值域 $[0,\infty)$）。Loysent 系统 $OR\approx301$ 关联极强，但 PPV 仍 $\approx0.0004$——<u>强关联 ≠ 实用</u>。</div>
+    </div>
+    <div class="keybox" style="border-color:var(--accent2);">
+      <h4 style="color:var(--accent2);">列联表 χ² 与关联系数</h4>
+      期望频数 $E_{ij}=\frac{\text{行和}\cdot\text{列和}}{n}$，$\chi^2=\sum\frac{(O-E)^2}{E}$。
+      自由度 $k=(r-1)(c-1)$；单变量拟合优度 $k=$ 类别数$-1$（真题 2 发色：$k=3-1=2$，$\chi^2=10$ 拒绝均匀假设）。
+      列联系数 $K=\sqrt{\frac{\chi^2}{n+\chi^2}}$，校正 $K^*=K/\sqrt{(\min(r,c)-1)/\min(r,c)}$ 归一到 $[0,1]$。
+    </div>
+  </section>
+
+  <!-- ===== 综合大题 ===== -->
+  <section class="block" id="mixbox">
+    <h2>🧰 综合大题速答（真题 5/10/12 母题）</h2>
+    <p style="font-size:.85rem;color:var(--muted);">这道 21 分大题在三套卷一字不差，8 个小问覆盖全学期知识点。记住每问的标准答案。</p>
+    <div class="toolbox">
+      <div class="tool"><b>(a) 4 骰子至少一个6是否公平</b>：$P(A)=1-(5/6)^4\approx0.5177\ne0.5$ → <u>不公平</u>，A 略占优。</div>
+      <div class="tool"><b>(b) Bayes 饮酒/高血压</b>：$\approx7.32\%$。</div>
+      <div class="tool"><b>(c) 0.25-分位数为3</b>：仅 (i) $F_X(3)=0.25$ 对。(ii)(iii) 把自变量和函数值搞反/用了越界的分位参数 3。</div>
+      <div class="tool"><b>(d) 离散 $F_Y(3.3)=0.5$ 且有跳跃</b>：(i)中位数=3 ✓；(ii) $P(Y<3)\le0.5$ ✓；(iii)期望=3 ✗（无法确定）。</div>
+      <div class="tool"><b>(e) $Z=3U-12,U\sim N(4,5)$</b>：$E=0,\operatorname{Var}=9\cdot5=45$ → $N(0,45)$。</div>
+      <div class="tool"><b>(f) 投瓶到第 m 个被接受</b>：负二项 $\operatorname{NB}(m,p)$；假设独立同概率、二元结果。</div>
+      <div class="tool"><b>(g) 马赛克图</b>：看挂科比例高低、通过人数面积大小；独立第三变量 → 每块再 50:50 等比切分。</div>
+      <div class="tool"><b>(h) n 个 Poi($\lambda$) 之和</b>：精确 $\operatorname{Poi}(n\lambda)$；大 $n$ 近似 $N(n\lambda,n\lambda)$（CLT）。</div>
+    </div>
+  </section>
+
+  <!-- ===== 德语词汇 ===== -->
+  <section class="block" id="vocab">
+    <h2>🇩🇪 德语关键词强化</h2>
+    <div class="vocab">
+      <div class="vcard"><span class="de">die bedingte Wahrscheinlichkeit</span><br><span class="zh">条件概率</span></div>
+      <div class="vcard"><span class="de">der Satz von Bayes</span><br><span class="zh">Bayes 公式</span></div>
+      <div class="vcard"><span class="de">die totale Wahrscheinlichkeit</span><br><span class="zh">全概率公式</span></div>
+      <div class="vcard"><span class="de">die Prävalenz</span><br><span class="zh">患病率 / 先验概率</span></div>
+      <div class="vcard"><span class="de">die a-priori Wahrscheinlichkeit</span><br><span class="zh">先验概率</span></div>
+      <div class="vcard"><span class="de">die Sensitivität / TPR</span><br><span class="zh">敏感度 / 真阳率</span></div>
+      <div class="vcard"><span class="de">die Spezifität / TNR</span><br><span class="zh">特异度 / 真阴率</span></div>
+      <div class="vcard"><span class="de">die False-Positive-Rate</span><br><span class="zh">假阳率 FPR</span></div>
+      <div class="vcard"><span class="de">der positive Vorhersagewert (PPV)</span><br><span class="zh">阳性预测值</span></div>
+      <div class="vcard"><span class="de">der negative Vorhersagewert (NPV)</span><br><span class="zh">阴性预测值</span></div>
+      <div class="vcard"><span class="de">der diagnostische Test</span><br><span class="zh">诊断测试</span></div>
+      <div class="vcard"><span class="de">der Schwellenwert</span><br><span class="zh">阈值</span></div>
+      <div class="vcard"><span class="de">die ROC-Kurve</span><br><span class="zh">ROC 曲线</span></div>
+      <div class="vcard"><span class="de">der Fehlalarm</span><br><span class="zh">误报 / 假阳</span></div>
+      <div class="vcard"><span class="de">die Kontingenztafel</span><br><span class="zh">列联表</span></div>
+      <div class="vcard"><span class="de">die Odds / die Chance</span><br><span class="zh">优势 / 机会比</span></div>
+      <div class="vcard"><span class="de">die Odds Ratio</span><br><span class="zh">优势比</span></div>
+      <div class="vcard"><span class="de">der Kontingenzkoeffizient</span><br><span class="zh">列联系数</span></div>
+      <div class="vcard"><span class="de">die erwartete Häufigkeit</span><br><span class="zh">期望频数</span></div>
+      <div class="vcard"><span class="de">das Pearsonsche $\chi^2$-Maß</span><br><span class="zh">Pearson 卡方统计量</span></div>
+      <div class="vcard"><span class="de">die Freiheitsgrade</span><br><span class="zh">自由度</span></div>
+      <div class="vcard"><span class="de">das Simpson-Paradoxon</span><br><span class="zh">辛普森悖论</span></div>
+      <div class="vcard"><span class="de">der Mosaikplot</span><br><span class="zh">马赛克图</span></div>
+      <div class="vcard"><span class="de">die Durchfallrate</span><br><span class="zh">挂科率 / 失败率</span></div>
+      <div class="vcard"><span class="de">stochastisch unabhängig</span><br><span class="zh">随机独立</span></div>
+      <div class="vcard"><span class="de">die Siebformel</span><br><span class="zh">容斥公式</span></div>
+      <div class="vcard"><span class="de">die vollständige Induktion</span><br><span class="zh">数学归纳法</span></div>
+      <div class="vcard"><span class="de">die Laplace-Wahrscheinlichkeit</span><br><span class="zh">古典概型概率</span></div>
+      <div class="vcard"><span class="de">die negative Binomialverteilung</span><br><span class="zh">负二项分布</span></div>
+      <div class="vcard"><span class="de">ohne Zurücklegen</span><br><span class="zh">不放回抽样</span></div>
+      <div class="vcard"><span class="de">das Quantil</span><br><span class="zh">分位数</span></div>
+      <div class="vcard"><span class="de">der Median</span><br><span class="zh">中位数</span></div>
+      <div class="vcard"><span class="de">die Wartezeit</span><br><span class="zh">等待时间</span></div>
+      <div class="vcard"><span class="de">fair (Spiel)</span><br><span class="zh">公平（游戏）</span></div>
+    </div>
+  </section>
+
+  <!-- ===== 练习题 ===== -->
+  <section class="block">
+    <h2>📝 习题与讲解</h2>
+    <p style="color:var(--muted);font-size:.85rem;">颜色：
+      <span style="color:var(--accent)">●Bayes/条件概率</span>
+      <span style="color:var(--teal)">●诊断指标</span>
+      <span style="color:var(--green)">●列联表</span>
+      <span style="color:var(--accent2)">●Odds Ratio/χ²</span>
+      <span style="color:var(--purple)">●综合/组合</span></p>
+
+    <!-- A1 -->
+    <div class="ex" id="a1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">1</span>
+        <span class="ex-title">止咳糖浆 A/B：条件比例、χ²、列联系数、Odds Ratio</span><span class="badge b-cont">列联表</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>两项研究比较糖浆 A、B 的改善效果。求条件改善率、χ²、列联系数及两研究的 OR。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>比较两组不能只看人数，要用条件相对频率。OR 有方向，比强度时把 $<1$ 的取倒数。</div>
+          <div class="ans">
+            <b>条件改善率</b>：$h(\text{ja}|A)=\frac{25}{32}\approx0.781$，$h(\text{ja}|B)=\frac{38}{59}\approx0.644$ → 偏好 A。
+            <b>研究1</b>：$\chi^2\approx1.833$，$K\approx0.141$，校正 $K^*\approx0.199$（弱关联）。$OR_1=\frac{25\cdot21}{7\cdot38}\approx1.974$。
+            <b>研究2</b>：$OR_2=\frac{56\cdot47}{42\cdot86}\approx0.729$，倒数 $1.372$。
+            因 $1.974>1.372$，研究 1 的处理差异更大。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="ex" id="a2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">2</span>
+        <span class="ex-title">肾病/饮酒、HIV 住院、色盲性别：多个 Bayes</span><span class="badge b-bayes">Bayes</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>(i) 饮酒者患肾病比例；(ii) 住院者中 HIV+ 比例；(iii) 色盲者中各性别比例。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(i)</div>$P(N|A)=\frac{0.75\cdot0.05}{0.75\cdot0.05+0.5\cdot0.95}\approx7.32\%$。
+            <div class="subq">(ii)</div>$P(H{+}|S)=\frac{0.8\cdot(23/68)}{0.8\cdot(23/68)+0.4\cdot(45/68)}\approx0.505$。约 36 住院者中 ~18 HIV+。
+            <div class="subq">(iii)</div>$P(F)=0.43\cdot0.06+0.55\cdot0.006+0.02\cdot0.03=0.0297$。$P(M|F)=\frac{0.0258}{0.0297}\approx0.869$，$P(D|F)\approx0.020$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="ex" id="a3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">3</span>
+        <span class="ex-title">假币检测器：低基率下的 PPV 陷阱</span><span class="badge b-bayes">Bayes</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$P(F)=0.0012,P(A|F)=0.95,P(A|\bar F)=0.10$。闪灯后真为假币的概率？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>典型低基率陷阱：尽管敏感度 95%，但假币太稀少，闪灯绝大多数是误报。</div>
+          <div class="ans">
+            $P(F|A)=\frac{0.95\cdot0.0012}{0.95\cdot0.0012+0.10\cdot0.9988}\approx0.0113$。
+            仅约 <b>1.13%</b>！原因是假币基率极低。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="ex" id="a4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">4</span>
+        <span class="ex-title">缺陷螺丝来自机器 B 的概率</span><span class="badge b-bayes">Bayes</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>A 产 60%（2% 缺陷），B 产 40%（5% 缺陷）。缺陷螺丝来自 B 的概率？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $P(B|F)=\frac{0.4\cdot0.05}{0.6\cdot0.02+0.4\cdot0.05}=\frac{0.02}{0.032}=0.625$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5 -->
+    <div class="ex" id="a5">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">5</span>
+        <span class="ex-title">疾病检测 PPV（患病率 1%）</span><span class="badge b-diag">诊断</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>患病率 1%，敏感度 95%，FPR 3%。阳性后真患病概率（PPV）？</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>问的是 $P(K|T{+})$（PPV），不是敏感度 $P(T{+}|K)$。必须用 Bayes 纳入患病率。</div>
+          <div class="ans">
+            $P(K|T)=\frac{0.95\cdot0.01}{0.95\cdot0.01+0.03\cdot0.99}=\frac{0.0095}{0.0392}\approx24.2\%$。
+            敏感度高达 95%，但 PPV 仅 24%——患病率低是主因。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A6 -->
+    <div class="ex" id="a6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">6</span>
+        <span class="ex-title">血型与 Rh+：全概率 + Bayes</span><span class="badge b-bayes">Bayes</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>血型 $A,B,AB,0$ 概率 $0.42,0.10,0.04,0.44$，各自 R+ 条件概率给定。求 $P(R{+})$ 与 $P(AB|R{+})$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            $P(R{+})=0.42\cdot0.85+0.10\cdot0.8+0.04\cdot0.75+0.44\cdot0.85=0.841$。
+            $P(AB|R{+})=\frac{0.75\cdot0.04}{0.841}\approx0.0357$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A7 -->
+    <div class="ex" id="a7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">7</span>
+        <span class="ex-title">容斥公式证明 + 1~100 整除概率</span><span class="badge b-mix">综合</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>(a) 归纳法证容斥公式；(b) $\{1,\dots,100\}$ 中被 2、3、5 之一整除的概率。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>(a) 用 $n=2$ 加法公式做归纳基，对 $n+1$ 拆成前 n 个并集与 $A_{n+1}$ 的两集合并。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>归纳：$\bigcup_1^{n+1}=(\bigcup_1^n)\cup A_{n+1}$，用两集公式并对 $\bigcup_1^n$ 及 $\bigcup_1^n(A_i\cap A_{n+1})$ 套归纳假设，得交替符号求和。
+            <div class="subq">(b)</div>$|A_2|=50,|A_3|=33,|A_5|=20$；两两交 $16,10,6$；三交 $3$。
+            $|A_2\cup A_3\cup A_5|=50+33+20-16-10-6+3=74$，概率 $=0.74$。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 真题 ===== -->
+  <section class="block">
+    <h2>🎯 考试真题</h2>
+    <div class="dupnote">📌 重复极高：Fnufnu 诊断题（真题 4/9/11）、Loysent 系统题（真题 8/13）、21 分综合大题（真题 5/10/12）各重复多次。下面展示代表性新题，重复题合并到末尾。</div>
+
+    <!-- E1 -->
+    <div class="ex" id="e1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题1</span>
+        <span class="ex-title">2014 · 安全带与头部损伤</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$P(\bar A)=0.15,P(K|A)=0.08,P(\bar K|\bar A)=0.62$。(a) $P(\bar A\cap\bar K)$；(b) 独立？(c) $P(\bar A|K)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>注意题给的是 $P(\bar K|\bar A)=0.62$，所以 $P(K|\bar A)=0.38$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$P(\bar A\cap\bar K)=0.15\cdot0.62=0.093$（未系且无伤）。
+            <div class="subq">(b)</div>$P(\bar K)=0.92\cdot0.85+0.62\cdot0.15=0.875$，$P(\bar A)P(\bar K)=0.13125\ne0.093$ → 不独立。
+            <div class="subq">(c)</div>$P(K)=0.08\cdot0.85+0.38\cdot0.15=0.125$，$P(\bar A|K)=\frac{0.38\cdot0.15}{0.125}=0.456$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2 -->
+    <div class="ex" id="e2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题2</span>
+        <span class="ex-title">2014 · 发色拟合优度 χ² 检验</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>60 人发色 30/20/10，检验均匀分布。(a) 期望频数；(b) χ²；(c) 自由度；(d) α=0.1 检验。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>拟合优度自由度 = 类别数 − 1（非 $(r-1)(c-1)$）。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$E_i=60/3=20$。
+            <div class="subq">(b)</div>$\chi^2=\frac{(30-20)^2}{20}+0+\frac{(10-20)^2}{20}=5+0+5=10$。
+            <div class="subq">(c)</div>$k=3-1=2$。
+            <div class="subq">(d)</div>$\chi^2_{2;0.9}\approx4.61$，$10>4.61$ → 拒绝均匀分布假设。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E3 -->
+    <div class="ex" id="e3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题3</span>
+        <span class="ex-title">2015 · HIV-Test 完美敏感度</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>$P(I)=10/10^5,P(P|I)=1,P(P|I^c)=0.00005$。(a) 先验；(b) 独立？(c) 阳性后患病概率。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="ans">
+            <div class="subq">(a)</div>$P(I)=0.0001$。
+            <div class="subq">(b)</div>$P(P|I)=1\ne P(P)$ → 不独立。
+            <div class="subq">(c)</div>$P(P)=1\cdot0.0001+0.00005\cdot0.9999\approx0.00015$，$P(I|P)=\frac{0.0001}{0.00015}\approx66.7\%$。即使 100% 敏感度，低基率下 PPV 仍只 ⅔。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E4 -->
+    <div class="ex" id="e4">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题4</span>
+        <span class="ex-title">Fnufnu 诊断（三状态表）+ ROC + 孕妇阈值</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>Naiv/Genesen/Krank 表。(a) 敏感度/特异度；(b) $P(P)$；(c) NPV；(d) ROC 比较与孕妇阈值。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="dupnote">📌 母题！真题 4/9/11 完全相同。注意"急性"= Krank，"非急性"= Naiv∪Genesen。</div>
+          <div class="think"><span class="label">思路</span><br>特异度分母是所有非急性（Naiv+Genesen=49），分子是其中阴性（20+25=45）。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>敏感度 $=\frac{35}{38}\approx0.921$；特异度 $=\frac{45}{49}\approx0.918$。
+            <div class="subq">(b)</div>FPR $=\frac{4}{49}$。$P(P)=\frac{35}{38}\cdot0.05+\frac{4}{49}\cdot0.95\approx0.124$。
+            <div class="subq">(c)</div>NPV $=\frac{(45/49)\cdot0.95}{(45/49)\cdot0.95+(3/38)\cdot0.05}\approx0.996$。
+            <div class="subq">(d)</div>(i) 更贵测试在相同 FPR 下 TPR 更高 → 本测试更差。(ii) 孕妇漏检致命 → 选<u>低阈值</u>最大化 TPR（约 5–15）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E6 -->
+    <div class="ex" id="e6">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题6</span>
+        <span class="ex-title">离婚研究：OR 分层与 Simpson 悖论</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>1000 对夫妻，家务分配 vs 离婚。(a) 补全列联表；(b) 边际 OR；(c) 按收入分层 OR 与现象命名。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>边际 OR 与分层 OR 趋势不一致 → Simpson 悖论。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>边际表：公平 80/420，不公平 120/380。
+            <div class="subq">(b)</div>$OR=\frac{80\cdot380}{120\cdot420}=\frac{30400}{50400}\approx0.60$（公平家务离婚几率更低）。
+            <div class="subq">(c)</div>男挣多：$\frac{20\cdot320}{80\cdot330}\approx0.24$；男挣少：$\frac{60\cdot60}{40\cdot90}=1$（无关）。关系随收入组改变 → <b>Simpson-Paradoxon</b>。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E7 -->
+    <div class="ex" id="e7">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题7</span>
+        <span class="ex-title">吸烟 Bayes + 几何-均匀混合期望</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>(a) 吸烟者患病比例（保留 3 位）；(b) $X|Y\sim\operatorname{Geom}(Y),Y\sim U(1,2)$，求 $E(X)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>(b) 全期望：$E(X)=E(1/Y)=\int_1^2\frac1y dy$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$P(B|A)=\frac{0.8\cdot0.02}{0.8\cdot0.02+0.3\cdot0.98}=\frac{0.016}{0.31}\approx0.052$（5.2%）。
+            <div class="subq">(b)</div>$E(X|Y=y)=1/y$，$E(X)=\int_1^2\frac1y dy=\log2$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E8 -->
+    <div class="ex" id="e8">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题8</span>
+        <span class="ex-title">Loysent 质控系统：月频数 / PPV / OR / ROC / 几何</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>每月 5M 单位，基率 10/M。试运行 13/15 真阳、22/1100 假阳。(a) 月期望频数表；(b) 值得用吗（PPV）；(c) $\mathbb R_0^+$ 关联指标；(d) ROC；(e) 间隔分布。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>每月真污染 = 5×10 = 50。注意 PPV 极低但 OR 极高——强关联不等于实用。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>敏感度 $13/15$，FPR $0.02$。TP$\approx43$，FN$\approx7$，FP$=99999$，TN$=4899951$。
+            <div class="subq">(b)</div>PPV $=\frac{43}{100042}\approx0.00043$。几乎全是误报 → 不适合全产线自动监控。
+            <div class="subq">(c)</div>$OR=\frac{43\cdot4899951}{7\cdot99999}\approx301$（极强关联，但实用性仍存疑）。
+            <div class="subq">(d)</div>(i) 本系统远差于图中两系统。(ii) 漏检致命且清洗便宜 → 最大化 TPR，选 Ponapticum，阈值约 19–23。
+            <div class="subq">(e)</div>两次报警间未报警数 → 几何分布；假设独立 Bernoulli、报警概率恒定。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E14 -->
+    <div class="ex" id="e14">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">真题14</span>
+        <span class="ex-title">ss2024 · N+1 筹码堆抽样（全概率综合）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">AUFGABE</div>堆 $s_j$ 含 $j$ 红 $N-j$ 蓝。随机选堆后不放回抽 2 个。(a) $P(R_1|S_j)$；(b) 证 $P(R_1)=\frac12$；(c) $P(R_1\cap R_2|S_j)$；(d) $P(R_1\cap R_2)$。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示解答</button>
+        <div class="sol">
+          <div class="think"><span class="label">思路</span><br>全概率求和 + 给定的两个求和公式。漂亮结果：$P(R_1)=\frac12$，$P(R_1\cap R_2)=\frac13$。</div>
+          <div class="ans">
+            <div class="subq">(a)</div>$P(R_1|S_j)=\frac{j}{N}$（选中 $s_j$ 时首抽红的概率）。
+            <div class="subq">(b)</div>$P(R_1)=\sum_j\frac{j}{N}\cdot\frac{1}{N+1}=\frac{1}{N(N+1)}\cdot\frac{N(N+1)}{2}=\frac12$。
+            <div class="subq">(c)</div>$P(R_1\cap R_2|S_j)=\frac{j(j-1)}{N(N-1)}$（$j\ge2$，否则 0）。
+            <div class="subq">(d)</div>$P(R_1\cap R_2)=\frac{1}{N(N-1)(N+1)}(\frac{N(N+1)(2N+1)}{6}-\frac{N(N+1)}{2})=\frac{1}{N-1}\cdot\frac{2(N-1)}{6}=\frac13$。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP1 -->
+    <div class="ex" id="edup1">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·Fnufnu</span>
+        <span class="ex-title">真题 9 / 11（与真题 4 完全相同）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>GOP-Klausur 2/3 的 Fnufnu 诊断题，数字与真题 4 一字不差。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="ans">
+            敏感度 $\frac{35}{38}\approx0.921$，特异度 $\frac{45}{49}\approx0.918$。
+            $P(P)\approx0.124$，NPV $\approx0.996$。
+            ROC：更贵测试更好；孕妇选低阈值（5–15）最大化 TPR。
+            <br><span style="color:var(--accent2)">备考：这是本章最高频诊断母题，敏感度/特异度两个分数记熟即可秒答。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP2 -->
+    <div class="ex" id="edup2">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·综合大题</span>
+        <span class="ex-title">真题 5 / 10 / 12（21 分八小问）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>三套卷一字不差的 8 小问综合题。完整速答见上方「🧰 综合大题速答」板块。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案要点</button>
+        <div class="sol">
+          <div class="ans">
+            (a) 骰子不公平 $P(A)\approx0.518$；(b) 饮酒 Bayes $7.32\%$；(c) 仅 (i) 对；(d) (i)(ii) 成立、(iii) 不成立；(e) $N(0,45)$；(f) $\operatorname{NB}(m,p)$；(g) 男挂科率高、女通过更多（按图）、独立第三变量等比切分；(h) 精确 $\operatorname{Poi}(n\lambda)$、近似 $N(n\lambda,n\lambda)$。
+            <div class="dupnote" style="margin-top:8px;">⚠ 注意 (g)(ii) 在不同版本答案里"通过的男/女更多"取决于具体马赛克图；真题 5 答"男更多"、真题 10/12 答"女更多"。考场以所给图为准，按面积大小判断。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUP3 -->
+    <div class="ex" id="edup3">
+      <div class="ex-head" onclick="toggleEx(this)"><span class="ex-num">重复·Loysent</span>
+        <span class="ex-title">真题 13（ss2022，与真题 8 相同）</span><span class="badge b-exam">真题</span></div>
+      <div class="ex-body">
+        <div class="q"><div class="label">说明</div>质控系统题，数字与真题 8 一致。</div>
+        <button class="toggle-sol" onclick="toggleSol(this)">显示答案</button>
+        <div class="sol">
+          <div class="ans">
+            月期望：TP$\approx43$、FN$\approx7$、FP$=99999$、TN$=4899951$。
+            PPV $\approx0.00043$（不值得全产线用）；$OR\approx301$（强关联）。
+            ROC：本系统远差；漏检致命且清洗便宜 → Ponapticum，阈值 19–23。
+            间隔数 → 几何分布（独立、恒定报警概率）。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 常见错误 ===== -->
+  <section class="block" id="mistakes">
+    <h2>⚠️ 常见错误提醒</h2>
+    <ul class="warn">
+      <li><b>把 $P(T{+}|K)$ 当成 $P(K|T{+})$</b>：敏感度不是阳性预测值。后者必须用 Bayes 纳入患病率。</li>
+      <li><b>Bayes 分母漏掉反面路径</b>：$P(T{+})=P(T{+}|K)P(K)+P(T{+}|K^c)P(K^c)$，两条路都要算。</li>
+      <li><b>列联表只比人数不比比例</b>：组大小不同必须比条件比例。A 组 30/100 vs B 组 20/40，不能只说 30>20。</li>
+      <li><b>Odds 和概率混淆</b>：Odds $=\frac{p}{1-p}$，不是 $p$。$p=0.2$ 时 Odds $=0.25$。</li>
+      <li><b>χ² 期望频数算错</b>：$E_{ij}=\frac{\text{行和}\cdot\text{列和}}{n}$，不是简单平均。</li>
+      <li><b>自由度用错公式</b>：列联表 $(r-1)(c-1)$，但单变量拟合优度是 类别数−1（发色题 $k=2$）。</li>
+      <li><b>忽视题给的是补事件</b>：真题 1 给 $P(\bar K|\bar A)=0.62$，要先转 $P(K|\bar A)=0.38$。</li>
+      <li><b>强关联当成实用</b>：Loysent 的 $OR\approx301$ 但 PPV 仅 0.0004，因基率太低。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 必会题型 ===== -->
+  <section class="block" id="mustknow">
+    <h2>✅ 本章必会题型清单</h2>
+    <ul class="checklist">
+      <li>会命名事件并正确写出条件概率（分清竖线方向）。</li>
+      <li>会用全概率公式算 Bayes 分母（覆盖所有路径）。</li>
+      <li>会用 Bayes 三步法求后验概率（先验→分母→后验）。</li>
+      <li>会区分敏感度、特异度、PPV、NPV、FPR、FNR 的归一方向。</li>
+      <li>会理解低基率下 PPV 偏低的反直觉现象。</li>
+      <li>会补全列联表并计算条件比例。</li>
+      <li>会计算 Odds、Odds Ratio，并比较强度（取倒数）。</li>
+      <li>会识别 Simpson 悖论并命名。</li>
+      <li>会计算 χ² 期望频数、统计量与自由度，做拟合优度检验。</li>
+      <li>会读 ROC 曲线、根据漏检/误报代价选阈值。</li>
+      <li>会用容斥公式做古典概型计数。</li>
+      <li>会用全期望处理几何-连续混合分布（如 $E(1/Y)$）。</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<script>
+function toggleEx(head){head.parentElement.classList.toggle('open');}
+function toggleSol(btn){
+  const sol=btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent=sol.classList.contains('show')?'隐藏解答':'显示解答';
+}
+function toggleAll(open){
+  document.querySelectorAll('.ex').forEach(ex=>ex.classList.toggle('open',open));
+}
+function showAllSol(show){
+  document.querySelectorAll('.sol').forEach(sol=>{
+    sol.classList.toggle('show',show);
+    const btn=sol.previousElementSibling;
+    if(btn&&btn.classList.contains('toggle-sol'))
+      btn.textContent=show?'隐藏解答':'显示解答';
+  });
+  if(show) toggleAll(true);
+}
+document.querySelectorAll('nav.side a').forEach(a=>{
+  a.addEventListener('click',()=>document.querySelector('nav.side').classList.remove('open'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wortschatz 03 · Möbel | 德语主题词汇卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F3EE; --ink:#1B1A18; --ink2:#54504A; --ink3:#8C867D;
+  --line:rgba(27,26,24,.10); --gold:#B08D57; --card:#FFFFFF;
+  --der:#2C5C86; --die:#A8375A; --das:#3E7A55;
+  --serif:'Cormorant Garamond',Georgia,'Songti SC',serif;
+  --sans:'Inter','Helvetica Neue',Arial,'PingFang SC',sans-serif;
+  --cn:'Noto Serif SC','Songti SC',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--sans); color:var(--ink); background:
+    radial-gradient(1200px 600px at 12% -10%, #fffefa 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, #eeeae1 0%, transparent 55%),
+    var(--bg);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- HEADER ---------- */
+header{max-width:1280px;margin:0 auto;padding:54px 32px 26px}
+.eyebrow{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap;margin-top:14px}
+h1{font-family:var(--serif);font-size:clamp(42px,6.6vw,80px);line-height:.94;margin:0;font-weight:600;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--gold)}
+.sub{font-family:var(--cn);color:var(--ink2);font-size:17px;margin-top:12px;letter-spacing:.06em}
+.sub span{color:var(--ink3);font-family:var(--sans);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-left:10px}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--ink2);letter-spacing:.08em}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px}
+.rule{height:1px;background:linear-gradient(90deg,var(--gold),rgba(176,141,87,.18) 45%,transparent);margin:26px 0 0}
+
+/* ---------- TOOLBAR ---------- */
+.bar{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);
+  background:rgba(245,243,238,.84);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search{flex:1 1 190px;min-width:155px;position:relative}
+.search input{width:100%;padding:10px 14px 10px 34px;border:1px solid var(--line);border-radius:999px;
+  background:#fff;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none;transition:.25s}
+.search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(176,141,87,.13)}
+.search svg{position:absolute;left:12px;top:11px;opacity:.4}
+.group{display:flex;gap:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
+.chip{border:0;background:transparent;font:inherit;font-size:12.5px;letter-spacing:.04em;color:var(--ink2);
+  padding:6px 12px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap}
+.chip:hover{color:var(--ink)}
+.chip.on{background:var(--ink);color:#fff}
+.chip.on[data-art="der"]{background:var(--der)} .chip.on[data-art="die"]{background:var(--die)} .chip.on[data-art="das"]{background:var(--das)}
+.chip.on[data-cat]{background:var(--gold)}
+.chip.tog.off{background:#F1EDE5;color:var(--ink3);text-decoration:line-through}
+.count{font-size:12px;color:var(--ink3);letter-spacing:.1em;margin-left:auto}
+
+/* ---------- GRID ---------- */
+main{max-width:1280px;margin:0 auto;padding:30px 32px 60px}
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(252px,1fr))}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(27,26,24,.04),0 20px 40px -30px rgba(27,26,24,.35);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s;cursor:pointer;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-5px);border-color:rgba(176,141,87,.5);
+  box-shadow:0 2px 4px rgba(27,26,24,.05),0 30px 50px -28px rgba(27,26,24,.4)}
+.card::after{content:"";position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+.thumb{position:relative;padding:20px 20px 6px;display:flex;align-items:center;justify-content:center}
+.thumb .disc{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 32% 28%,#fff,var(--tint) 120%);box-shadow:inset 0 0 0 1px rgba(27,26,24,.05)}
+.thumb svg.art{width:108px;height:108px;filter:drop-shadow(0 8px 12px rgba(27,26,24,.13))}
+.num{position:absolute;top:16px;left:18px;font-family:var(--serif);font-size:15px;color:var(--ink3);letter-spacing:.06em}
+.cat{position:absolute;top:37px;left:18px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);opacity:.85}
+.art-pill{position:absolute;top:15px;right:16px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;color:#fff;font-weight:500}
+.body{padding:6px 22px 22px}
+.wrow{display:flex;align-items:baseline;gap:8px}
+.de{font-family:var(--serif);font-size:29px;line-height:1.14;margin:0;font-weight:600;letter-spacing:-.005em}
+.de.long{font-size:23px}
+.de .a{font-weight:500;opacity:.85;margin-right:.22em}
+.say{margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
+  background:#fff;color:var(--ink2);cursor:pointer;display:grid;place-items:center;transition:.2s}
+.say:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.meta{margin:7px 0 0;font-size:11.5px;color:var(--ink3);letter-spacing:.05em}
+.meta b{font-weight:500;color:var(--ink2)}
+.hr{height:1px;background:var(--line);margin:13px 0 11px}
+.en{margin:0;font-size:13.5px;color:var(--ink2);letter-spacing:.02em;font-style:italic}
+.zh{margin:4px 0 0;font-family:var(--cn);font-size:16.5px;color:var(--ink);letter-spacing:.04em;line-height:1.5}
+.ex{margin:12px 0 0;padding:10px 12px;border-radius:11px;background:#FAF8F3;border:1px solid rgba(27,26,24,.05)}
+.ex .exde{display:block;font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.4}
+.ex .exzh{display:block;font-family:var(--cn);font-size:12.5px;color:var(--ink3);margin-top:4px}
+
+.mask{filter:blur(7px);opacity:.7;transition:filter .3s,opacity .3s;user-select:none}
+.card.open .mask{filter:none;opacity:1}
+.grid.hd-ex .ex{display:none}
+.card.speaking{border-color:var(--gold);box-shadow:0 0 0 3px rgba(176,141,87,.25)}
+
+/* ---------- FOOTER ---------- */
+footer{max-width:1280px;margin:0 auto;padding:0 32px 70px}
+.tips{border-top:1px solid var(--line);padding-top:22px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tip h4{font-family:var(--serif);font-size:18px;margin:0 0 6px;font-weight:600}
+.tip p{margin:0;font-family:var(--cn);font-size:13px;color:var(--ink2);line-height:1.75}
+.tip .k{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px}
+.panel{margin-top:34px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 30px;
+  box-shadow:0 20px 40px -34px rgba(27,26,24,.4)}
+.panel h3{font-family:var(--serif);font-size:24px;margin:0 0 4px;font-weight:600}
+.panel .k{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px}
+.panel ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(275px,1fr))}
+.panel li{border-left:2px solid rgba(176,141,87,.45);padding-left:13px}
+.panel b{display:block;font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:.01em}
+.panel i{font-family:var(--cn);font-style:normal;font-size:12.5px;color:var(--ink3)}
+.verbs{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));margin-top:18px}
+.vb{background:#FAF8F3;border:1px solid rgba(27,26,24,.06);border-radius:14px;padding:15px 17px}
+.vb h5{font-family:var(--serif);font-size:19px;margin:0 0 5px;font-weight:600}
+.vb p{margin:0;font-family:var(--cn);font-size:12.5px;color:var(--ink2);line-height:1.7}
+.vb em{font-family:var(--serif);font-style:normal;color:var(--ink);font-size:14px}
+
+@media(max-width:620px){header{padding:34px 20px 18px}.bar-in,main,footer{padding-left:20px;padding-right:20px}.count{width:100%;margin:2px 0 0}}
+@media print{
+  body{background:#fff}.bar,footer,.say{display:none}
+  header{padding:0 0 12px}h1{font-size:44px}
+  .grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+  .card::after{display:none}.mask{filter:none;opacity:1}
+}
+</style>
+<link rel="stylesheet" href="word-scene.css"><link rel="stylesheet" href="ai-teacher.css">
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Thema 03 · Wohnen &amp; Einrichtung · A1–A2</div>
+  <div class="title-row">
+    <div>
+      <h1>M<em>ö</em>bel</h1>
+      <div class="sub">家具 · 家居陈设 <span>Furniture · 28 Wörter</span></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--der)"></i>der（阳性）</span>
+      <span><i style="background:var(--die)"></i>die（阴性）</span>
+      <span><i style="background:var(--das)"></i>das（中性）</span>
+    </div>
+  </div>
+  <div class="rule"></div>
+</header>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" placeholder="搜索 德语 / 中文 / English …">
+    </div>
+    <div class="group" id="cats">
+      <button class="chip on" data-cat="all">Alle</button>
+      <button class="chip" data-cat="Wohnen">Wohnzimmer 客厅</button>
+      <button class="chip" data-cat="Schlafen">Schlafzimmer 卧室</button>
+      <button class="chip" data-cat="Essen">Küche 餐厨</button>
+      <button class="chip" data-cat="Arbeiten">Büro 书房收纳</button>
+    </div>
+    <div class="group" id="arts">
+      <button class="chip on" data-art="all">der/die/das</button>
+      <button class="chip" data-art="der">der</button>
+      <button class="chip" data-art="die">die</button>
+      <button class="chip" data-art="das">das</button>
+    </div>
+    <div class="group" id="togs">
+      <button class="chip tog" data-t="de">德语</button>
+      <button class="chip tog" data-t="zh">中文</button>
+      <button class="chip tog" data-t="en">English</button>
+      <button class="chip tog" data-t="ex">例句</button>
+    </div>
+    <div class="group">
+      <button class="chip" id="play">▶ 朗读全部</button>
+      <button class="chip" id="shuffle">🔀 打乱</button>
+      <button class="chip" id="print">🖨 打印</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+</div>
+
+<main><div class="grid" id="grid"></div></main>
+
+<footer>
+  <div class="tips">
+    <div class="tip"><span class="k">Im Unterricht 01</span><h4>Wo steht was?</h4><p>关闭「中文」，教师指图问 <i>Wo steht der Sessel?</i> 学生答 <i>Er steht im Wohnzimmer neben dem Sofa.</i>（介词 + 第三格）</p></div>
+    <div class="tip"><span class="k">Im Unterricht 02</span><h4>Meine Traumwohnung</h4><p>每人抽 5 张卡，说出自己理想住所的布置：<i>In meinem Zimmer gibt es ein großes Bett und einen Schreibtisch am Fenster.</i></p></div>
+    <div class="tip"><span class="k">Im Unterricht 03</span><h4>Im Möbelhaus</h4><p>两人一组做 IKEA 情景对话：<i>Was kostet dieser Tisch? — Er kostet 149 Euro. Ich nehme ihn.</i> 练第四格与 dieser/dieses。</p></div>
+    <div class="tip"><span class="k">Hausaufgabe</span><h4>Zimmer beschreiben</h4><p>拍一张自己房间的照片，用 8 个本页单词写 8 句话，必须含 <i>stehen / liegen / hängen</i> 各两次。</p></div>
+  </div>
+
+  <div class="panel">
+    <span class="k">Grammatik · Wechselpräpositionen + Dativ（位置）</span>
+    <h3>家具在哪里？—— 三个「摆放」动词</h3>
+    <div class="verbs">
+      <div class="vb"><h5>stehen</h5><p>立着的家具（有腿、直立）<br><em>Der Stuhl steht am Tisch.</em><br>椅子立在桌边。</p></div>
+      <div class="vb"><h5>liegen</h5><p>平放的东西（地毯、床垫）<br><em>Der Teppich liegt auf dem Boden.</em><br>地毯铺在地板上。</p></div>
+      <div class="vb"><h5>hängen</h5><p>挂着的东西（镜子、灯、窗帘）<br><em>Der Spiegel hängt an der Wand.</em><br>镜子挂在墙上。</p></div>
+    </div>
+    <ul>
+      <li><b>in dem = im Wohnzimmer</b><i>在客厅里</i></li>
+      <li><b>an der Wand · auf dem Tisch</b><i>在墙上 · 在桌上</i></li>
+      <li><b>unter dem Bett · über dem Sofa</b><i>在床下 · 在沙发上方</i></li>
+      <li><b>neben dem Schrank · zwischen den Betten</b><i>在柜子旁 · 在两床之间</i></li>
+      <li><b>vor dem Fenster · hinter der Tür</b><i>在窗前 · 在门后</i></li>
+      <li><b>Ich stelle die Lampe in die Ecke.</b><i>移动方向 → 第四格（stellen / legen / hängen）</i></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+/* ============ 数据：28 件家具（内置 SVG 插画） ============ */
+const D=[
+/* ---------- WOHNZIMMER ---------- */
+{c:"Wohnen",a:"das",w:"Sofa",pl:"die Sofas",ipa:"[ˈzoːfa]",en:"sofa / couch",zh:"沙发（也说 die Couch）",tint:"#DCE4EF",
+ exde:"Abends sitzen wir auf dem Sofa und sehen fern.",exzh:"晚上我们坐在沙发上看电视。",svg:`
+<rect x="20" y="30" width="60" height="26" rx="9" fill="#7E97B9"/>
+<rect x="12" y="44" width="76" height="24" rx="8" fill="#94AACA"/>
+<rect x="26" y="46" width="22" height="15" rx="6" fill="#AABDD8"/>
+<rect x="52" y="46" width="22" height="15" rx="6" fill="#AABDD8"/>
+<rect x="7" y="40" width="14" height="30" rx="7" fill="#5F7695"/>
+<rect x="79" y="40" width="14" height="30" rx="7" fill="#5F7695"/>
+<rect x="16" y="68" width="7" height="11" rx="3.5" fill="#7A5230"/>
+<rect x="77" y="68" width="7" height="11" rx="3.5" fill="#7A5230"/>`},
+
+{c:"Wohnen",a:"der",w:"Sessel",pl:"die Sessel",ipa:"[ˈzɛsl̩]",en:"armchair",zh:"扶手椅 / 单人沙发",tint:"#F0DCD8",
+ exde:"Opa liest immer in seinem Sessel.",exzh:"爷爷总在他的扶手椅上看书。",svg:`
+<rect x="32" y="24" width="36" height="32" rx="11" fill="#A85E5A"/>
+<rect x="26" y="44" width="48" height="23" rx="8" fill="#C0736D"/>
+<rect x="36" y="46" width="28" height="15" rx="6" fill="#D28C85"/>
+<rect x="21" y="40" width="13" height="28" rx="6.5" fill="#8C4A46"/>
+<rect x="66" y="40" width="13" height="28" rx="6.5" fill="#8C4A46"/>
+<rect x="27" y="67" width="6" height="11" rx="3" fill="#7A5230"/>
+<rect x="67" y="67" width="6" height="11" rx="3" fill="#7A5230"/>`},
+
+{c:"Wohnen",a:"der",w:"Couchtisch",pl:"die Couchtische",ipa:"[ˈkaʊtʃtɪʃ]",en:"coffee table",zh:"茶几",tint:"#EEE0C8",
+ exde:"Die Zeitschriften liegen auf dem Couchtisch.",exzh:"杂志放在茶几上。",svg:`
+<rect x="12" y="40" width="76" height="8" rx="4" fill="#C89257"/>
+<rect x="12" y="40" width="76" height="3" rx="1.5" fill="#DCAF77"/>
+<rect x="20" y="48" width="7" height="32" rx="3" fill="#A2703A"/>
+<rect x="73" y="48" width="7" height="32" rx="3" fill="#A2703A"/>
+<rect x="24" y="62" width="52" height="6" rx="3" fill="#B78347"/>
+<rect x="34" y="30" width="20" height="6" rx="2" fill="#8FA9C6"/>
+<rect x="37" y="25" width="17" height="5" rx="2" fill="#C0736D"/>`},
+
+{c:"Wohnen",a:"der",w:"Schaukelstuhl",pl:"die Schaukelstühle",ipa:"[ˈʃaʊkl̩ʃtuːl]",en:"rocking chair",zh:"摇椅",tint:"#EDE2CB",
+ exde:"Im Schaukelstuhl schläft das Baby schnell ein.",exzh:"在摇椅里宝宝很快就睡着了。",svg:`
+<g fill="none" stroke="#8A5A2B" stroke-width="5.5" stroke-linecap="round">
+<path d="M62 22c9 17 7 36 0 46"/>
+<path d="M44 26c7 15 6 30 0 40"/>
+<path d="M34 52v22"/><path d="M34 52h28"/>
+<path d="M62 68 35 74"/>
+<path d="M25 80c15 8 36 8 50-3"/></g>
+<g fill="none" stroke="#B0793C" stroke-width="3.6" stroke-linecap="round">
+<path d="M46 34h15"/><path d="M45 44h16"/></g>
+<rect x="30" y="46" width="32" height="7" rx="3.5" fill="#C0736D"/>`},
+
+{c:"Wohnen",a:"die",w:"Stehlampe",pl:"die Stehlampen",ipa:"[ˈʃteːlampə]",en:"floor lamp",zh:"落地灯",tint:"#F7ECCF",
+ exde:"Mach bitte die Stehlampe an!",exzh:"请把落地灯打开！",svg:`
+<circle cx="50" cy="34" r="24" fill="#FBEDC6" opacity=".55"/>
+<path d="M36 16h28l9 26H27z" fill="#EFD79F"/>
+<path d="M36 16h28l3 9H33z" fill="#F7E7BE"/>
+<rect x="27" y="41" width="46" height="4" rx="2" fill="#D9BC7F"/>
+<rect x="47" y="45" width="6" height="34" rx="3" fill="#8D8D8D"/>
+<ellipse cx="50" cy="82" rx="19" ry="6" fill="#6E6E6E"/>
+<ellipse cx="50" cy="80" rx="19" ry="5" fill="#8A8A8A"/>`},
+
+{c:"Wohnen",a:"der",w:"Teppich",pl:"die Teppiche",ipa:"[ˈtɛpɪç]",en:"carpet / rug",zh:"地毯",tint:"#F1D9CF",
+ exde:"Der Teppich liegt vor dem Sofa.",exzh:"地毯铺在沙发前面。",svg:`
+<path d="M10 70 30 38h60L70 78z" fill="#B4483F"/>
+<path d="M21 66 36 44h44L67 71z" fill="none" stroke="#F0D9A8" stroke-width="3"/>
+<path d="M40 58l10-8 10 8-10 8z" fill="#F0D9A8"/>
+<path d="M32 57l4-5M64 60l4-5M45 68l4-4" stroke="#F0D9A8" stroke-width="2.4" stroke-linecap="round"/>
+<g stroke="#8E3830" stroke-width="2.4" stroke-linecap="round">
+<path d="M30 38v-5M40 38v-5M50 38v-5M60 38v-5M70 38v-5M80 38v-5"/>
+<path d="M14 74v5M24 76v5M34 78v5M44 79v5M54 79v5M64 79v5"/></g>`},
+
+{c:"Wohnen",a:"die",w:"Vitrine",pl:"die Vitrinen",ipa:"[viˈtʁiːnə]",en:"display cabinet",zh:"玻璃展示柜",tint:"#DDE7EA",
+ exde:"In der Vitrine steht das gute Geschirr.",exzh:"展示柜里放着好餐具。",svg:`
+<rect x="24" y="12" width="52" height="70" rx="4" fill="#8A5A2B"/>
+<rect x="29" y="17" width="42" height="60" rx="2" fill="#CFE3EA"/>
+<path d="M33 21h9L33 44z" fill="#FFFFFF" opacity=".5"/>
+<g fill="#8A5A2B"><rect x="29" y="36" width="42" height="4"/><rect x="29" y="56" width="42" height="4"/></g>
+<rect x="49" y="17" width="3" height="60" fill="#8A5A2B" opacity=".8"/>
+<circle cx="38" cy="30" r="4.5" fill="#E4B6C4"/><rect x="56" y="25" width="9" height="11" rx="1.6" fill="#C7D9A8"/>
+<rect x="34" y="46" width="12" height="10" rx="1.6" fill="#8FA9C6"/><circle cx="60" cy="50" r="5" fill="#EFD79F"/>
+<rect x="26" y="82" width="7" height="7" rx="2" fill="#6E4620"/><rect x="67" y="82" width="7" height="7" rx="2" fill="#6E4620"/>`},
+
+{c:"Wohnen",a:"der",w:"Vorhang",pl:"die Vorhänge",ipa:"[ˈfoːɐ̯haŋ]",en:"curtain",zh:"窗帘（也说 die Gardine）",tint:"#DEE6F0",
+ exde:"Zieh bitte die Vorhänge zu!",exzh:"请把窗帘拉上！",svg:`
+<rect x="34" y="24" width="32" height="54" fill="#DCE9F2"/>
+<g stroke="#B9C9D6" stroke-width="2"><path d="M50 24v54M34 50h32"/></g>
+<path d="M22 24c-5 20 1 38-1 54h18c-4-18 2-36-2-54z" fill="#7E96B8"/>
+<path d="M78 24c5 20-1 38 1 54H61c4-18-2-36 2-54z" fill="#7E96B8"/>
+<g stroke="#65809F" stroke-width="2" opacity=".7"><path d="M27 26c-3 18 1 34 0 50M33 26c-2 18 2 34 1 50M73 26c3 18-1 34 0 50M67 26c2 18-2 34-1 50"/></g>
+<rect x="10" y="18" width="80" height="5" rx="2.5" fill="#8A5A2B"/>
+<circle cx="14" cy="20" r="4.5" fill="#B0793C"/><circle cx="86" cy="20" r="4.5" fill="#B0793C"/>`},
+
+/* ---------- SCHLAFZIMMER ---------- */
+{c:"Schlafen",a:"das",w:"Bett",pl:"die Betten",ipa:"[bɛt]",en:"bed",zh:"床",tint:"#E4E9F0",
+ exde:"Ich gehe um elf Uhr ins Bett.",exzh:"我十一点上床睡觉。",svg:`
+<rect x="10" y="24" width="11" height="54" rx="4" fill="#8A5A2B"/>
+<rect x="79" y="48" width="9" height="30" rx="4" fill="#8A5A2B"/>
+<rect x="17" y="50" width="66" height="16" rx="5" fill="#F4EBDA"/>
+<path d="M44 50h39v16H44z" fill="#8FA9C6" rx="4"/>
+<rect x="44" y="50" width="39" height="16" rx="4" fill="#8FA9C6"/>
+<path d="M44 54h39" stroke="#A8BDD4" stroke-width="3"/>
+<rect x="24" y="41" width="21" height="12" rx="6" fill="#FFFFFF"/>
+<rect x="17" y="64" width="66" height="5" rx="2.5" fill="#C89257"/>
+<rect x="22" y="69" width="6" height="11" rx="3" fill="#6E4620"/>
+<rect x="72" y="69" width="6" height="11" rx="3" fill="#6E4620"/>`},
+
+{c:"Schlafen",a:"die",w:"Matratze",pl:"die Matratzen",ipa:"[maˈtʁatsə]",en:"mattress",zh:"床垫",tint:"#F2EDDF",
+ exde:"Die Matratze ist zu weich für meinen Rücken.",exzh:"这个床垫对我的背来说太软了。",svg:`
+<rect x="12" y="36" width="76" height="32" rx="11" fill="#F6EFE0"/>
+<rect x="12" y="60" width="76" height="8" rx="4" fill="#E6DAC0"/>
+<g stroke="#DCCFB2" stroke-width="2"><path d="M12 48h76M30 36v24M50 36v24M70 36v24"/></g>
+<g fill="#C9B893"><circle cx="30" cy="48" r="2.2"/><circle cx="50" cy="48" r="2.2"/><circle cx="70" cy="48" r="2.2"/><circle cx="40" cy="41" r="1.8"/><circle cx="60" cy="41" r="1.8"/><circle cx="40" cy="56" r="1.8"/><circle cx="60" cy="56" r="1.8"/></g>`},
+
+{c:"Schlafen",a:"der",w:"Kleiderschrank",pl:"die Kleiderschränke",ipa:"[ˈklaɪdɐʃʁaŋk]",en:"wardrobe",zh:"衣柜",tint:"#EDDFC6",
+ exde:"Häng die Jacke in den Kleiderschrank!",exzh:"把外套挂进衣柜里！",svg:`
+<rect x="19" y="10" width="62" height="7" rx="3" fill="#8A5A2B"/>
+<rect x="23" y="17" width="54" height="66" rx="3" fill="#B0793C"/>
+<rect x="27" y="21" width="22" height="58" rx="2" fill="#C89257"/>
+<rect x="51" y="21" width="22" height="58" rx="2" fill="#C89257"/>
+<g stroke="#A2703A" stroke-width="1.6" opacity=".7"><path d="M33 21v58M43 21v58M57 21v58M67 21v58"/></g>
+<rect x="45" y="44" width="3" height="12" rx="1.5" fill="#5E4423"/>
+<rect x="52" y="44" width="3" height="12" rx="1.5" fill="#5E4423"/>
+<rect x="26" y="83" width="8" height="7" rx="2" fill="#6E4620"/><rect x="66" y="83" width="8" height="7" rx="2" fill="#6E4620"/>`},
+
+{c:"Schlafen",a:"der",w:"Nachttisch",pl:"die Nachttische",ipa:"[ˈnaxttɪʃ]",en:"nightstand",zh:"床头柜",tint:"#F5E9CD",
+ exde:"Das Handy liegt auf dem Nachttisch.",exzh:"手机放在床头柜上。",svg:`
+<path d="M41 14h18l6 15H35z" fill="#EFD79F"/>
+<circle cx="50" cy="26" r="15" fill="#FBEDC6" opacity=".5"/>
+<rect x="48" y="29" width="4" height="12" fill="#9A9A9A"/>
+<ellipse cx="50" cy="42" rx="10" ry="3" fill="#7C7C7C"/>
+<rect x="26" y="44" width="48" height="8" rx="3" fill="#C89257"/>
+<rect x="29" y="52" width="42" height="27" rx="3" fill="#B0793C"/>
+<rect x="33" y="56" width="34" height="9" rx="2" fill="#D9A96A"/>
+<rect x="33" y="67" width="34" height="9" rx="2" fill="#D9A96A"/>
+<g fill="#5E4423"><rect x="44" y="59.5" width="12" height="2.6" rx="1.3"/><rect x="44" y="70.5" width="12" height="2.6" rx="1.3"/></g>
+<rect x="32" y="79" width="6" height="8" rx="2" fill="#6E4620"/><rect x="62" y="79" width="6" height="8" rx="2" fill="#6E4620"/>`},
+
+{c:"Schlafen",a:"die",w:"Kommode",pl:"die Kommoden",ipa:"[kɔˈmoːdə]",en:"chest of drawers",zh:"矮柜 / 五斗柜",tint:"#EEDFC3",
+ exde:"Die Socken sind in der Kommode.",exzh:"袜子在矮柜里。",svg:`
+<rect x="16" y="30" width="68" height="8" rx="3" fill="#C89257"/>
+<rect x="19" y="38" width="62" height="40" rx="3" fill="#B0793C"/>
+<rect x="24" y="42" width="52" height="10" rx="2" fill="#D9A96A"/>
+<rect x="24" y="54" width="52" height="10" rx="2" fill="#D9A96A"/>
+<rect x="24" y="66" width="52" height="10" rx="2" fill="#D9A96A"/>
+<g fill="#5E4423"><rect x="42" y="45.6" width="16" height="2.8" rx="1.4"/><rect x="42" y="57.6" width="16" height="2.8" rx="1.4"/><rect x="42" y="69.6" width="16" height="2.8" rx="1.4"/></g>
+<g stroke="#6E4620" stroke-width="4.5" stroke-linecap="round"><path d="M25 78l-3 9"/><path d="M75 78l3 9"/></g>
+<circle cx="50" cy="24" r="5" fill="#B4483F"/><path d="M50 19c2-4 5-5 8-5" stroke="#4E7A32" stroke-width="2" fill="none" stroke-linecap="round"/>`},
+
+{c:"Schlafen",a:"der",w:"Spiegel",pl:"die Spiegel",ipa:"[ˈʃpiːɡl̩]",en:"mirror",zh:"镜子",tint:"#DEE9EC",
+ exde:"Der Spiegel hängt neben der Tür.",exzh:"镜子挂在门旁边。",svg:`
+<ellipse cx="50" cy="42" rx="25" ry="31" fill="#8A5A2B"/>
+<ellipse cx="50" cy="42" rx="20" ry="26" fill="#D7E7EE"/>
+<path d="M37 26 51 20 39 58z" fill="#FFFFFF" opacity=".55"/>
+<path d="M58 32 64 30 52 60z" fill="#FFFFFF" opacity=".3"/>
+<path d="M43 72h14l7 16H36z" fill="#8A5A2B"/>
+<rect x="30" y="86" width="40" height="5" rx="2.5" fill="#6E4620"/>`},
+
+{c:"Schlafen",a:"die",w:"Truhe",pl:"die Truhen",ipa:"[ˈtʁuːə]",en:"chest / trunk",zh:"箱柜 / 收纳箱",tint:"#EFDFC2",
+ exde:"In der Truhe liegen alte Fotos.",exzh:"箱柜里放着旧照片。",svg:`
+<path d="M18 46c0-12 9-18 32-18s32 6 32 18z" fill="#B0793C"/>
+<rect x="18" y="46" width="64" height="30" rx="3" fill="#C89257"/>
+<rect x="14" y="43" width="72" height="7" rx="3.5" fill="#8A5A2B"/>
+<rect x="44" y="28" width="9" height="48" fill="#8A5A2B" opacity=".85"/>
+<g stroke="#A2703A" stroke-width="2" opacity=".7"><path d="M18 58h64M18 68h64"/></g>
+<rect x="44" y="52" width="10" height="11" rx="2" fill="#D9B45E"/>
+<circle cx="49" cy="58" r="2" fill="#6E4620"/>
+<rect x="22" y="76" width="8" height="7" rx="2" fill="#6E4620"/><rect x="70" y="76" width="8" height="7" rx="2" fill="#6E4620"/>`},
+
+/* ---------- KÜCHE & ESSZIMMER ---------- */
+{c:"Essen",a:"der",w:"Tisch",pl:"die Tische",ipa:"[tɪʃ]",en:"table",zh:"桌子 / 餐桌",tint:"#EFE1C7",
+ exde:"Wir sitzen alle am Tisch und essen.",exzh:"我们都坐在桌旁吃饭。",svg:`
+<rect x="10" y="38" width="80" height="9" rx="4" fill="#C89257"/>
+<rect x="10" y="38" width="80" height="3.5" rx="1.7" fill="#DCAF77"/>
+<rect x="30" y="47" width="6" height="28" rx="2" fill="#8A5A2B" opacity=".75"/>
+<rect x="64" y="47" width="6" height="28" rx="2" fill="#8A5A2B" opacity=".75"/>
+<rect x="17" y="47" width="8" height="35" rx="3" fill="#A2703A"/>
+<rect x="75" y="47" width="8" height="35" rx="3" fill="#A2703A"/>
+<circle cx="50" cy="32" r="7" fill="#F4EBDA"/><ellipse cx="50" cy="32" rx="3" ry="2.6" fill="#DCCFB2"/>`},
+
+{c:"Essen",a:"der",w:"Stuhl",pl:"die Stühle",ipa:"[ʃtuːl]",en:"chair",zh:"椅子",tint:"#F1E4CA",
+ exde:"Nimm bitte den Stuhl da drüben.",exzh:"请拿那边那把椅子。",svg:`
+<rect x="34" y="16" width="32" height="30" rx="4" fill="#B0793C"/>
+<rect x="38" y="20" width="24" height="22" rx="2" fill="#C89257"/>
+<g stroke="#A2703A" stroke-width="2" opacity=".75"><path d="M46 20v22M54 20v22"/></g>
+<rect x="26" y="46" width="48" height="9" rx="4" fill="#D9A96A"/>
+<rect x="30" y="55" width="7" height="28" rx="3" fill="#A2703A"/>
+<rect x="63" y="55" width="7" height="28" rx="3" fill="#A2703A"/>
+<rect x="38" y="55" width="6" height="22" rx="3" fill="#8A5A2B" opacity=".7"/>
+<rect x="56" y="55" width="6" height="22" rx="3" fill="#8A5A2B" opacity=".7"/>
+<rect x="32" y="68" width="36" height="4" rx="2" fill="#B0793C"/>`},
+
+{c:"Essen",a:"die",w:"Bank",pl:"die Bänke",ipa:"[baŋk]",en:"bench",zh:"长凳（注意：die Bank/Banken = 银行）",tint:"#EDE0C4",
+ exde:"Auf der Bank haben vier Personen Platz.",exzh:"这条长凳能坐四个人。",svg:`
+<rect x="16" y="28" width="68" height="6" rx="3" fill="#B0793C"/>
+<rect x="16" y="38" width="68" height="6" rx="3" fill="#B0793C"/>
+<rect x="10" y="48" width="80" height="9" rx="4" fill="#C89257"/>
+<rect x="18" y="24" width="7" height="33" rx="3" fill="#8A5A2B"/>
+<rect x="75" y="24" width="7" height="33" rx="3" fill="#8A5A2B"/>
+<rect x="20" y="57" width="7" height="24" rx="3" fill="#A2703A"/>
+<rect x="73" y="57" width="7" height="24" rx="3" fill="#A2703A"/>
+<rect x="24" y="68" width="52" height="4" rx="2" fill="#8A5A2B" opacity=".8"/>`},
+
+{c:"Essen",a:"der",w:"Barhocker",pl:"die Barhocker",ipa:"[ˈbaːɐ̯hɔkɐ]",en:"bar stool",zh:"吧台高脚凳",tint:"#E5E7EA",
+ exde:"An der Küchentheke stehen zwei Barhocker.",exzh:"厨房吧台边放着两张高脚凳。",svg:`
+<ellipse cx="50" cy="32" rx="21" ry="8" fill="#8A5A2B"/>
+<path d="M29 32c0 5 9 8 21 8s21-3 21-8v5c0 5-9 8-21 8s-21-3-21-8z" fill="#6E4620"/>
+<rect x="46" y="40" width="8" height="38" rx="4" fill="#A6ADB4"/>
+<rect x="32" y="58" width="36" height="5" rx="2.5" fill="#9AA0A6"/>
+<ellipse cx="50" cy="82" rx="20" ry="6" fill="#7C838A"/>
+<ellipse cx="50" cy="80" rx="20" ry="5" fill="#A6ADB4"/>`},
+
+{c:"Essen",a:"die",w:"Anrichte",pl:"die Anrichten",ipa:"[ˈanʁɪçtə]",en:"sideboard",zh:"餐边柜",tint:"#EFDFC0",
+ exde:"Die Gläser stehen in der Anrichte.",exzh:"玻璃杯放在餐边柜里。",svg:`
+<rect x="12" y="34" width="76" height="8" rx="3" fill="#C89257"/>
+<rect x="16" y="42" width="68" height="28" rx="3" fill="#B0793C"/>
+<rect x="20" y="46" width="19" height="20" rx="2" fill="#C89257"/>
+<rect x="41" y="46" width="18" height="20" rx="2" fill="#C89257"/>
+<rect x="61" y="46" width="19" height="20" rx="2" fill="#C89257"/>
+<g fill="#5E4423"><rect x="34" y="54" width="3" height="9" rx="1.5"/><rect x="43" y="54" width="3" height="9" rx="1.5"/><rect x="54" y="54" width="3" height="9" rx="1.5"/><rect x="63" y="54" width="3" height="9" rx="1.5"/></g>
+<g stroke="#6E4620" stroke-width="5" stroke-linecap="round"><path d="M23 70l-5 14"/><path d="M77 70l5 14"/><path d="M38 70l-2 12"/><path d="M62 70l2 12"/></g>
+<rect x="38" y="24" width="24" height="10" rx="2" fill="#8FA9C6"/><circle cx="30" cy="29" r="5" fill="#C0736D"/>`},
+
+{c:"Essen",a:"der",w:"Hocker",pl:"die Hocker",ipa:"[ˈhɔkɐ]",en:"stool",zh:"（无靠背）小凳子",tint:"#F2E6CE",
+ exde:"Setz dich doch auf den Hocker!",exzh:"你坐这个小凳子吧！",svg:`
+<rect x="24" y="42" width="52" height="9" rx="4.5" fill="#C89257"/>
+<rect x="24" y="42" width="52" height="3.5" rx="1.7" fill="#DCAF77"/>
+<g stroke="#A2703A" stroke-width="6" stroke-linecap="round">
+<path d="M32 51 24 80"/><path d="M68 51l8 29"/><path d="M40 51l-4 26"/><path d="M60 51l4 26"/></g>
+<g stroke="#8A5A2B" stroke-width="3.6" stroke-linecap="round"><path d="M28 66h44"/></g>`},
+
+/* ---------- BÜRO & AUFBEWAHRUNG ---------- */
+{c:"Arbeiten",a:"der",w:"Schreibtisch",pl:"die Schreibtische",ipa:"[ˈʃʁaɪptɪʃ]",en:"desk",zh:"写字台 / 书桌",tint:"#EDE0C6",
+ exde:"Ich arbeite am Schreibtisch am Fenster.",exzh:"我在窗边的书桌前工作。",svg:`
+<rect x="28" y="22" width="26" height="17" rx="2" fill="#7E8A93"/>
+<rect x="31" y="25" width="20" height="11" rx="1" fill="#C4D3DB"/>
+<rect x="38" y="39" width="6" height="4" fill="#5F6A72"/>
+<rect x="58" y="34" width="16" height="5" rx="1.5" fill="#B4483F"/>
+<rect x="10" y="43" width="80" height="8" rx="3" fill="#C89257"/>
+<rect x="10" y="43" width="80" height="3" rx="1.5" fill="#DCAF77"/>
+<rect x="58" y="51" width="30" height="30" rx="3" fill="#B0793C"/>
+<rect x="62" y="55" width="22" height="10" rx="2" fill="#D9A96A"/>
+<rect x="62" y="67" width="22" height="10" rx="2" fill="#D9A96A"/>
+<g fill="#5E4423"><rect x="68" y="58.6" width="10" height="2.6" rx="1.3"/><rect x="68" y="70.6" width="10" height="2.6" rx="1.3"/></g>
+<rect x="14" y="51" width="7" height="30" rx="3" fill="#A2703A"/>`},
+
+{c:"Arbeiten",a:"der",w:"Bürostuhl",pl:"die Bürostühle",ipa:"[byˈʁoːʃtuːl]",en:"office chair",zh:"办公转椅",tint:"#E3E6EA",
+ exde:"Der Bürostuhl ist höhenverstellbar.",exzh:"这把办公椅可以调节高度。",svg:`
+<rect x="35" y="14" width="30" height="30" rx="9" fill="#4A5561"/>
+<rect x="39" y="18" width="22" height="22" rx="6" fill="#5F6C79"/>
+<rect x="28" y="44" width="44" height="11" rx="5.5" fill="#5C6874"/>
+<rect x="32" y="46" width="36" height="6" rx="3" fill="#75828F"/>
+<rect x="22" y="42" width="9" height="4.5" rx="2.2" fill="#3E4854"/>
+<rect x="69" y="42" width="9" height="4.5" rx="2.2" fill="#3E4854"/>
+<rect x="47" y="55" width="6" height="16" fill="#9AA0A6"/>
+<g stroke="#8A9199" stroke-width="5" stroke-linecap="round"><path d="M50 72 30 82"/><path d="M50 72l20 10"/><path d="M50 72v13"/></g>
+<g fill="#4A5561"><circle cx="28" cy="84" r="4"/><circle cx="72" cy="84" r="4"/><circle cx="50" cy="87" r="4"/></g>`},
+
+{c:"Arbeiten",a:"das",w:"Regal",pl:"die Regale",ipa:"[ʁeˈɡaːl]",en:"shelf / shelving unit",zh:"架子 / 置物架",tint:"#EEE1C8",
+ exde:"Stell die Kisten ins Regal.",exzh:"把箱子放进架子里。",svg:`
+<rect x="20" y="16" width="60" height="70" rx="3" fill="#8A5A2B"/>
+<rect x="25" y="21" width="50" height="60" fill="#F2E4CB"/>
+<g fill="#8A5A2B"><rect x="25" y="38" width="50" height="5"/><rect x="25" y="57" width="50" height="5"/></g>
+<rect x="28" y="25" width="15" height="13" rx="2" fill="#8FA9C6"/>
+<rect x="46" y="28" width="12" height="10" rx="2" fill="#C0736D"/>
+<circle cx="68" cy="32" r="5" fill="#C7D9A8"/>
+<rect x="29" y="46" width="10" height="11" rx="1.5" fill="#D9A96A"/>
+<rect x="42" y="44" width="18" height="13" rx="2" fill="#7E96B8"/>
+<rect x="30" y="65" width="20" height="16" rx="2" fill="#B4483F"/>
+<rect x="55" y="68" width="16" height="13" rx="2" fill="#EFD79F"/>`},
+
+{c:"Arbeiten",a:"das",w:"Bücherregal",pl:"die Bücherregale",ipa:"[ˈbyːçɐʁeɡaːl]",en:"bookshelf",zh:"书架",tint:"#EDE3CE",
+ exde:"Mein Bücherregal ist schon wieder voll.",exzh:"我的书架又满了。",svg:`
+<rect x="18" y="14" width="64" height="72" rx="3" fill="#8A5A2B"/>
+<rect x="23" y="19" width="54" height="62" fill="#F4E8D0"/>
+<g fill="#8A5A2B"><rect x="23" y="38" width="54" height="5"/><rect x="23" y="59" width="54" height="5"/></g>
+<g><rect x="26" y="22" width="6" height="16" rx="1" fill="#B4483F"/><rect x="33" y="24" width="5" height="14" rx="1" fill="#4F7A9B"/><rect x="39" y="21" width="7" height="17" rx="1" fill="#D9A34E"/><rect x="47" y="25" width="5" height="13" rx="1" fill="#5C8A5A"/><rect x="53" y="23" width="6" height="15" rx="1" fill="#8A5A8C"/><path d="M62 32h13v6H62z" fill="#C0736D"/><path d="M62 38h13" stroke="#8A5A2B" stroke-width="1"/></g>
+<g><rect x="26" y="45" width="7" height="14" rx="1" fill="#4F7A9B"/><rect x="34" y="43" width="5" height="16" rx="1" fill="#D9A34E"/><rect x="40" y="46" width="6" height="13" rx="1" fill="#B4483F"/><path d="M49 52h14v7H49z" fill="#5C8A5A"/><rect x="65" y="44" width="6" height="15" rx="1" fill="#8A5A8C"/></g>
+<g><rect x="26" y="66" width="6" height="15" rx="1" fill="#D9A34E"/><rect x="33" y="64" width="7" height="17" rx="1" fill="#5C8A5A"/><rect x="41" y="67" width="5" height="14" rx="1" fill="#4F7A9B"/><rect x="47" y="65" width="6" height="16" rx="1" fill="#C0736D"/><rect x="54" y="68" width="7" height="13" rx="1" fill="#B4483F"/><rect x="62" y="66" width="6" height="15" rx="1" fill="#8A5A8C"/></g>`},
+
+{c:"Arbeiten",a:"die",w:"Garderobe",pl:"die Garderoben",ipa:"[ɡaʁdəˈʁoːbə]",en:"coat rack / hall stand",zh:"衣帽架 / 门厅衣柜",tint:"#E9E2D4",
+ exde:"Häng deinen Mantel an die Garderobe.",exzh:"把你的大衣挂到衣帽架上。",svg:`
+<rect x="46" y="18" width="8" height="58" rx="4" fill="#8A5A2B"/>
+<g fill="none" stroke="#8A5A2B" stroke-width="4.5" stroke-linecap="round">
+<path d="M54 28c9 1 11 4 11 8"/><path d="M46 28c-9 1-11 4-11 8"/>
+<path d="M54 40c7 1 8 3 8 6"/><path d="M46 40c-7 1-8 3-8 6"/></g>
+<circle cx="50" cy="16" r="5" fill="#B0793C"/>
+<path d="M65 40c7 4 9 16 7 26H53c-2-12 2-22 12-26z" fill="#7E96B8"/>
+<path d="M65 40c-2 6-2 16 0 26" stroke="#65809F" stroke-width="2" fill="none"/>
+<ellipse cx="34" cy="42" rx="11" ry="3.5" fill="#8B5E3C"/>
+<path d="M28 42c0-6 2-9 6-9s6 3 6 9z" fill="#A2703A"/>
+<g stroke="#6E4620" stroke-width="5" stroke-linecap="round"><path d="M50 76 34 86"/><path d="M50 76l16 10"/><path d="M50 76v10"/></g>`},
+
+{c:"Arbeiten",a:"die",w:"Schublade",pl:"die Schubladen",ipa:"[ˈʃuːplaːdə]",en:"drawer",zh:"抽屉",tint:"#F0E1C4",
+ exde:"Die Schere ist in der obersten Schublade.",exzh:"剪刀在最上面那个抽屉里。",svg:`
+<rect x="22" y="26" width="58" height="52" rx="3" fill="#B0793C"/>
+<rect x="27" y="30" width="48" height="12" rx="2" fill="#D9A96A"/>
+<rect x="44" y="34.5" width="14" height="2.8" rx="1.4" fill="#5E4423"/>
+<rect x="27" y="64" width="48" height="11" rx="2" fill="#D9A96A"/>
+<rect x="44" y="68" width="14" height="2.8" rx="1.4" fill="#5E4423"/>
+<path d="M16 50h68l-8-6H24z" fill="#7A5230"/>
+<path d="M16 50h68v18c0 2-2 4-4 4H20c-2 0-4-2-4-4z" fill="#DFB077"/>
+<rect x="40" y="58" width="20" height="3.4" rx="1.7" fill="#5E4423"/>
+<g fill="#8A5A2B" opacity=".45"><rect x="24" y="45" width="20" height="3" rx="1.5"/><rect x="52" y="45" width="16" height="3" rx="1.5"/></g>`},
+
+{c:"Arbeiten",a:"die",w:"Deckenlampe",pl:"die Deckenlampen",ipa:"[ˈdɛkn̩lampə]",en:"ceiling lamp",zh:"吸顶灯 / 吊灯",tint:"#F6EDD3",
+ exde:"Die Deckenlampe hängt über dem Esstisch.",exzh:"吊灯挂在餐桌上方。",svg:`
+<rect x="20" y="12" width="60" height="5" rx="2.5" fill="#C9C2B4"/>
+<rect x="47" y="17" width="6" height="16" fill="#8D8D8D"/>
+<path d="M26 56c0-17 11-26 24-26s24 9 24 26z" fill="#44505C"/>
+<path d="M32 50c1-11 8-17 18-17" stroke="#66737F" stroke-width="4" fill="none" stroke-linecap="round"/>
+<ellipse cx="50" cy="56" rx="24" ry="7" fill="#5C6874"/>
+<circle cx="50" cy="60" r="7" fill="#F6DE9B"/>
+<circle cx="50" cy="60" r="14" fill="#F8E6B4" opacity=".45"/>
+<g stroke="#EBCF89" stroke-width="3.4" stroke-linecap="round" opacity=".75"><path d="M32 72l-6 9"/><path d="M50 74v10"/><path d="M68 72l6 9"/></g>`}
+];
+
+/* ============ 渲染 ============ */
+const grid=document.getElementById('grid');
+const col={der:'var(--der)',die:'var(--die)',das:'var(--das)'};
+const catLabel={Wohnen:'Wohnzimmer',Schlafen:'Schlafzimmer',Essen:'Küche & Essen',Arbeiten:'Büro & Ordnung'};
+grid.innerHTML=D.map((v,i)=>`
+<article class="card" data-i="${i}" data-art="${v.a}" data-cat="${v.c}" data-key="${(v.w+' '+v.en+' '+v.zh+' '+v.a).toLowerCase()}" data-say="${v.a} ${v.w}">
+  <div class="thumb" style="--tint:${v.tint}">
+    <span class="num">${String(i+1).padStart(2,'0')}</span>
+    <span class="cat">${catLabel[v.c]}</span>
+    <span class="art-pill" style="background:${col[v.a]}">${v.a}</span>
+    <div class="disc"><svg class="art" viewBox="0 0 100 100">${v.svg}</svg></div>
+  </div>
+  <div class="body">
+    <div class="wrow">
+      <h3 class="de f-de${v.w.length>12?' long':''}"><span class="a" style="color:${col[v.a]}">${v.a}</span>${v.w}</h3>
+      <button class="say" title="发音">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M19 6.5a8 8 0 0 1 0 11"/></svg>
+      </button>
+    </div>
+    <p class="meta f-de"><b>Pl.</b> ${v.pl} &nbsp;·&nbsp; ${v.ipa}</p>
+    <div class="hr"></div>
+    <p class="en f-en">${v.en}</p>
+    <p class="zh f-zh">${v.zh}</p>
+    <p class="ex"><span class="exde f-de">${v.exde}</span><span class="exzh f-zh">${v.exzh}</span></p>
+  </div>
+</article>`).join('');
+
+const cards=[...grid.children];
+const cnt=document.getElementById('count');
+let art='all', cat='all', q='';
+function apply(){
+  let n=0;
+  cards.forEach(c=>{
+    const ok=(art==='all'||c.dataset.art===art)&&(cat==='all'||c.dataset.cat===cat)&&c.dataset.key.includes(q);
+    c.style.display=ok?'':'none'; if(ok)n++;
+  });
+  cnt.textContent=`显示 ${n} / ${D.length} 个词`;
+}
+apply();
+
+document.getElementById('q').oninput=e=>{q=e.target.value.trim().toLowerCase();apply();};
+document.querySelectorAll('#arts .chip').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#arts .chip').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); art=b.dataset.art; apply();
+});
+document.querySelectorAll('#cats .chip').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#cats .chip').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); cat=b.dataset.cat; apply();
+});
+
+/* 显隐切换（课堂测验） */
+const mapCls={de:'.f-de',zh:'.f-zh',en:'.f-en'};
+document.querySelectorAll('#togs .chip').forEach(b=>b.onclick=()=>{
+  b.classList.toggle('off'); const t=b.dataset.t, off=b.classList.contains('off');
+  if(t==='ex'){grid.classList.toggle('hd-ex',off);return;}
+  grid.querySelectorAll(mapCls[t]).forEach(el=>el.classList.toggle('mask',off));
+});
+
+/* 发音 */
+let voice=null;
+function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>v.lang.startsWith('de'))||null;}
+speechSynthesis.onvoiceschanged=pickVoice; pickVoice();
+function say(txt,card){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='de-DE'; u.rate=.82; if(voice)u.voice=voice;
+  if(card){card.classList.add('speaking');u.onend=()=>card.classList.remove('speaking');}
+  speechSynthesis.speak(u);
+}
+grid.addEventListener('click',e=>{
+  const c=e.target.closest('.card'); if(!c)return;
+  if(e.target.closest('.say')){say(c.dataset.say,c);return;}
+  c.classList.toggle('open'); const i=Number(c.dataset.i); if(!window.WordScene||!WordScene.open({page:{file:'Moebel.html',de:'Möbel',zh:'家具',g:'wohnen',icons:['🛋️']},word:D[i],index:i}))say(c.dataset.say,c);
+});
+
+/* 朗读全部 */
+let playing=false;
+document.getElementById('play').onclick=function(){
+  const vis=cards.filter(c=>c.style.display!=='none');
+  if(playing){speechSynthesis.cancel();playing=false;this.textContent='▶ 朗读全部';return;}
+  playing=true;this.textContent='■ 停止';let i=0;const btn=this;
+  const next=()=>{
+    if(!playing||i>=vis.length){playing=false;btn.textContent='▶ 朗读全部';return;}
+    const c=vis[i++]; c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('open','speaking');
+    const u=new SpeechSynthesisUtterance(c.dataset.say);
+    u.lang='de-DE';u.rate=.8;if(voice)u.voice=voice;
+    u.onend=()=>{c.classList.remove('speaking');setTimeout(next,700)};
+    speechSynthesis.speak(u);
+  };next();
+};
+
+document.getElementById('shuffle').onclick=()=>{
+  [...grid.children].sort(()=>Math.random()-.5).forEach(c=>grid.appendChild(c));
+};
+document.getElementById('print').onclick=()=>window.print();
+</script>
+<script src="word-scenes-custom.js"></script><script src="word-scenes-moebel-a.js"></script><script src="word-scenes-moebel-b.js"></script><script src="word-scenes-moebel-c.js"></script><script src="ai-teacher.js"></script><script src="word-scene.js"></script>
+</body>
+</html>

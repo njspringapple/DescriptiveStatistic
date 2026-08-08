@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>道路停车欠费追缴系统</title>
+<style>
+* { box-sizing: border-box; }
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+}
+body { display: flex; align-items: center; justify-content: center; }
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 69% 48%, rgba(0, 198, 255, .20), transparent 32%),
+    radial-gradient(circle at 84% 20%, rgba(112, 73, 255, .15), transparent 25%),
+    radial-gradient(circle at 10% 70%, rgba(255, 73, 97, .08), transparent 25%),
+    linear-gradient(135deg, #061224 0%, #08192f 51%, #050e1d 100%);
+}
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, transparent 1%, #000 17%, #000 89%, transparent);
+}
+#stage::after {
+  content: "";
+  position: absolute;
+  width: 780px;
+  height: 780px;
+  left: 675px;
+  top: 70px;
+  border-radius: 50%;
+  border: 1px solid rgba(70, 180, 255, .09);
+  box-shadow: 0 0 140px rgba(0, 175, 255, .06), inset 0 0 120px rgba(0, 175, 255, .04);
+}
+.content { position: relative; z-index: 2; width: 100%; height: 100%; }
+.header {
+  position: absolute;
+  left: 48px; right: 48px; top: 23px; height: 76px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.title-wrap { display: flex; align-items: center; gap: 16px; }
+.logo {
+  width: 51px; height: 51px; display: grid; place-items: center;
+  border-radius: 15px; color: #fff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow: 0 8px 28px rgba(0, 177, 255, .3), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.logo svg { width: 31px; height: 31px; }
+h1 { margin: 0; font-size: 31px; line-height: 1.15; letter-spacing: 1px; }
+.subtitle { margin-top: 6px; color: #65a9d0; font-size: 11px; letter-spacing: 3.5px; }
+.header-message { text-align: right; }
+.header-message strong { display: block; margin-bottom: 7px; color: #d8f7ff; font-size: 15px; letter-spacing: 1px; }
+.header-message span { color: #6195b5; font-size: 11px; }
+.header-message b { color: #4ae4ef; font-weight: 600; }
+.card {
+  position: absolute;
+  border: 1px solid rgba(66, 169, 237, .24);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(16, 50, 85, .91), rgba(7, 25, 48, .91));
+  box-shadow: 0 16px 40px rgba(0, 4, 16, .27), inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+.card::before {
+  content: ""; position: absolute; left: 18px; right: 18px; top: 0; height: 1px; opacity: .6;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+.section-head { height: 37px; display: flex; align-items: center; gap: 10px; }
+.section-number { color: #426d8b; font-size: 12px; font-weight: 700; }
+.section-line { width: 23px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #ff6372, #ff9d62); }
+.section-head h2 { margin: 0; color: #d7e9f3; font-size: 17px; }
+.section-head span:last-child { margin-left: auto; color: #718da0; font-size: 10px; }
+.left-area { position: absolute; left: 46px; top: 118px; width: 410px; height: 694px; }
+.pain-card {
+  position: relative; width: 100%; height: 167px; margin-top: 13px; padding: 15px 17px;
+  border-color: rgba(255, 101, 117, .22);
+  background: linear-gradient(145deg, rgba(72, 36, 56, .57), rgba(10, 28, 50, .92));
+}
+.pain-card::before { background: linear-gradient(90deg, transparent, rgba(255, 108, 119, .9), transparent); }
+.pain-title { display: flex; align-items: center; gap: 10px; color: #f4e8ea; font-size: 14px; font-weight: 700; }
+.pain-index {
+  width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; color: #ff9ba5; font-size: 11px;
+  background: rgba(255, 94, 112, .11); border: 1px solid rgba(255, 105, 121, .2);
+}
+.pain-tag { margin-left: auto; padding: 3px 8px; border-radius: 9px; color: #ff8f9d; font-size: 9px; background: rgba(255, 92, 111, .09); }
+.pain-desc { margin-top: 12px; color: #a8b9c5; font-size: 11px; line-height: 1.7; }
+.pain-desc b { color: #f1c5ca; font-weight: 600; }
+.pain-mini {
+  margin-top: 12px; height: 42px; border-radius: 10px; background: rgba(5, 23, 43, .52);
+  border: 1px solid rgba(124, 142, 170, .10); display: flex; align-items: center; justify-content: space-around;
+}
+.pain-mini span { color: #788fa0; font-size: 9px; }
+.pain-mini i { width: 28px; height: 1px; background: rgba(255, 142, 152, .55); position: relative; }
+.pain-mini i::after { content: ""; position: absolute; right: -2px; top: -3px; width: 7px; height: 7px; border-top: 1px solid rgba(255,142,152,.9); border-right: 1px solid rgba(255,142,152,.9); transform: rotate(45deg); }
+.left-summary {
+  position: relative; height: 114px; margin-top: 13px; padding: 14px 17px; border-radius: 13px;
+  border: 1px solid rgba(255, 105, 119, .18);
+  background: linear-gradient(90deg, rgba(104, 39, 59, .28), rgba(12, 31, 53, .75));
+}
+.summary-title { color: #ff9aa5; font-size: 11px; font-weight: 700; }
+.summary-values { margin-top: 13px; display: grid; grid-template-columns: repeat(4, 1fr); }
+.summary-value { text-align: center; color: #758d9e; font-size: 9px; border-right: 1px solid rgba(255,255,255,.06); }
+.summary-value:last-child { border-right: 0; }
+.summary-value strong { display: block; margin-bottom: 4px; color: #d7b7bc; font-size: 11px; }
+.evolution { position: absolute; left: 468px; top: 385px; width: 73px; height: 95px; z-index: 6; display: flex; flex-direction: column; align-items: center; }
+.evolution span { margin-bottom: 10px; color: #65b6d7; font-size: 9px; letter-spacing: 1px; writing-mode: vertical-lr; }
+.evolution-arrow { position: absolute; top: 32px; width: 66px; height: 34px; }
+.evolution-arrow::before { content: ""; position: absolute; left: 0; top: 14px; width: 48px; height: 5px; border-radius: 5px; background: linear-gradient(90deg, #23658b, #49e2f0); box-shadow: 0 0 15px rgba(46, 218, 240, .3); }
+.evolution-arrow::after { content: ""; position: absolute; right: 0; top: 4px; border-left: 20px solid #49e2f0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; filter: drop-shadow(0 0 7px rgba(48, 220, 239, .38)); }
+.right-area { position: absolute; left: 535px; top: 115px; width: 1019px; height: 716px; }
+.innovation-head { height: 39px; display: flex; align-items: center; gap: 10px; }
+.innovation-head .section-line { background: linear-gradient(90deg, #28bdff, #45ebd3); }
+.innovation-head h2 { margin: 0; font-size: 18px; color: #e1f7ff; }
+.head-tag { margin-left: 5px; padding: 5px 10px; border-radius: 12px; color: #52e7d2; font-size: 9px; border: 1px solid rgba(54, 226, 197, .19); background: rgba(28, 194, 166, .08); }
+.head-desc { margin-left: auto; color: #7199ae; font-size: 10px; }
+.strategy-band { position: absolute; left: 216px; top: 48px; width: 588px; height: 83px; }
+.band-title { height: 19px; color: #788fae; font-size: 9px; text-align: center; letter-spacing: 1px; }
+.band-list { display: flex; justify-content: center; gap: 11px; }
+.band-card { width: 132px; height: 49px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; border-radius: 11px; border: 1px solid rgba(139, 119, 255, .24); background: linear-gradient(145deg, rgba(58, 49, 117, .52), rgba(13, 33, 61, .84)); box-shadow: 0 8px 22px rgba(0, 3, 15, .2), inset 0 1px 0 rgba(255,255,255,.04); }
+.band-logo { width: 30px; height: 30px; flex: 0 0 30px; display: grid; place-items: center; border-radius: 9px; color: #d8d2ff; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, rgba(114, 101, 255, .32), rgba(62, 177, 255, .18)); border: 1px solid rgba(160, 146, 255, .22); }
+.band-name { color: #e4e1ff; font-size: 11px; font-weight: 700; }
+.band-desc { margin-top: 3px; color: #7f82a7; font-size: 8px; }
+.flow-lines { position: absolute; inset: 0; width: 1019px; height: 716px; z-index: 0; pointer-events: none; }
+.line { fill: none; stroke: #56e6f2; stroke-width: 1.7; opacity: .78; }
+.line-purple { stroke: #9e87ff; stroke-dasharray: 6 6; }
+.line-green { stroke: #40e0c1; stroke-dasharray: 7 6; }
+.line-flow { stroke-dasharray: 7 7; animation: lineFlow 9s linear infinite; }
+@keyframes lineFlow { to { stroke-dashoffset: -150; } }
+.node-cyan { fill: #5ceaff; filter: drop-shadow(0 0 6px #20d8ff); }
+.node-purple { fill: #ba9fff; filter: drop-shadow(0 0 6px #9276ff); }
+.node-green { fill: #54efd0; filter: drop-shadow(0 0 6px #33dfba); }
+.input-stack { position: absolute; left: 0; top: 160px; z-index: 3; width: 143px; }
+.stack-title { margin-bottom: 10px; padding-left: 5px; color: #6d9bb4; font-size: 9px; letter-spacing: 1px; }
+.input-node { width: 140px; height: 54px; margin-bottom: 9px; padding: 8px 10px; display: flex; align-items: center; gap: 9px; border: 1px solid rgba(65, 177, 233, .19); border-radius: 10px; background: linear-gradient(145deg, rgba(16, 54, 84, .81), rgba(7, 28, 51, .88)); box-shadow: 0 8px 20px rgba(0, 4, 15, .18); }
+.input-icon { width: 33px; height: 33px; flex: 0 0 33px; display: grid; place-items: center; border-radius: 9px; color: #54ddff; background: rgba(23, 147, 192, .13); border: 1px solid rgba(64, 206, 239, .16); font-size: 17px; }
+.input-name { color: #cde9f5; font-size: 10px; font-weight: 700; }
+.input-desc { margin-top: 3px; color: #63899f; font-size: 8px; }
+.command-wrap { position: absolute; left: 165px; top: 155px; z-index: 4; width: 660px; height: 424px; }
+.command-glow { position: absolute; left: 54px; right: 54px; bottom: 4px; height: 70px; border-radius: 50%; background: rgba(0, 205, 255, .18); filter: blur(30px); }
+.command-top { position: absolute; left: 27px; top: 0; width: 606px; height: 63px; clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%); border: 1px solid rgba(92, 228, 255, .3); background: linear-gradient(180deg, rgba(31, 103, 142, .94), rgba(10, 55, 87, .96)); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 -8px 30px rgba(0, 178, 255, .05); }
+.top-brand { position: absolute; left: 34px; top: 17px; display: flex; align-items: center; gap: 11px; }
+.top-brand-logo { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: linear-gradient(135deg, #188eff, #39e0db); box-shadow: 0 0 16px rgba(35, 213, 235, .3); font-weight: 800; }
+.top-brand-name { color: #e7fbff; font-size: 15px; font-weight: 700; letter-spacing: .5px; }
+.top-brand-desc { margin-top: 3px; color: #73b8cf; font-size: 8px; letter-spacing: 1.3px; }
+.live-badge { position: absolute; right: 34px; top: 22px; display: flex; align-items: center; gap: 7px; color: #58eed2; font-size: 9px; }
+.live-badge i { width: 7px; height: 7px; border-radius: 50%; background: #46efcc; box-shadow: 0 0 10px #46efcc; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .45; box-shadow: 0 0 3px #46efcc; } }
+.command-body { position: absolute; left: 0; top: 56px; width: 660px; height: 347px; overflow: hidden; border: 1px solid rgba(70, 217, 241, .4); border-radius: 9px 9px 22px 22px; background: radial-gradient(circle at 50% 45%, rgba(0, 196, 229, .12), transparent 50%), linear-gradient(150deg, rgba(15, 65, 96, .98), rgba(5, 24, 46, .99)); box-shadow: 0 27px 65px rgba(0, 5, 18, .55), 0 0 46px rgba(0, 185, 223, .10), inset 0 1px 0 rgba(255,255,255,.08); }
+.command-body::before { content: ""; position: absolute; inset: 0; opacity: .08; background-image: linear-gradient(rgba(73, 199, 239, .4) 1px, transparent 1px), linear-gradient(90deg, rgba(73, 199, 239, .4) 1px, transparent 1px); background-size: 26px 26px; }
+.command-header { position: relative; z-index: 2; height: 66px; padding: 14px 19px 10px; display: flex; align-items: center; }
+.command-title-area { display: flex; align-items: center; gap: 12px; }
+.command-ai-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; color: #fff; background: linear-gradient(135deg, #148cff, #2bded4); box-shadow: 0 0 22px rgba(30, 205, 229, .31), inset 0 1px 0 rgba(255,255,255,.24); font-size: 22px; }
+.command-name { color: #effcff; font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+.command-slogan { margin-top: 4px; color: #63abc1; font-size: 9px; letter-spacing: 1px; }
+.recovery-badge { margin-left: auto; padding: 8px 13px; display: flex; align-items: center; gap: 7px; border-radius: 16px; color: #72f0d2; font-size: 10px; font-weight: 700; background: rgba(35, 205, 168, .09); border: 1px solid rgba(54, 228, 193, .20); }
+.recovery-badge i { width: 6px; height: 6px; border-radius: 50%; background: #46e8c5; box-shadow: 0 0 9px #46e8c5; }
+.module-grid { position: relative; z-index: 2; padding: 4px 18px 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.module { position: relative; height: 95px; padding: 12px 10px 9px; border: 1px solid rgba(62, 183, 222, .17); border-radius: 11px; background: linear-gradient(145deg, rgba(15, 62, 92, .76), rgba(6, 32, 57, .79)); }
+.module.highlight { border-color: rgba(159, 127, 255, .35); background: linear-gradient(145deg, rgba(68, 51, 125, .57), rgba(8, 39, 65, .78)); box-shadow: inset 0 0 20px rgba(130, 89, 255, .04); }
+.module-label { position: absolute; right: 8px; top: 8px; padding: 2px 5px; border-radius: 6px; color: #bca6ff; font-size: 7px; background: rgba(137, 96, 239, .12); }
+.module-head { display: flex; align-items: center; gap: 8px; }
+.module-icon { width: 29px; height: 29px; flex: 0 0 29px; display: grid; place-items: center; border-radius: 8px; color: #55def4; background: rgba(25, 150, 191, .13); border: 1px solid rgba(62, 204, 232, .14); font-size: 15px; }
+.highlight .module-icon { color: #c8b6ff; background: rgba(124, 86, 218, .17); border-color: rgba(165, 134, 244, .18); }
+.module-name { color: #d9f1f8; font-size: 11px; font-weight: 700; }
+.highlight .module-name { color: #eee8ff; }
+.module-desc { margin-top: 9px; color: #668fa4; font-size: 8.5px; line-height: 1.5; }
+.module-desc b { color: #55e3d2; font-weight: 600; }
+.command-footer { position: relative; z-index: 2; height: 46px; margin: 3px 18px 0; padding: 0 14px; display: flex; align-items: center; border: 1px solid rgba(61, 176, 211, .14); border-radius: 10px; background: rgba(3, 20, 38, .56); }
+.kpi-pill { height: 24px; padding: 0 10px; margin-right: 8px; display: flex; align-items: center; gap: 4px; border-radius: 12px; color: #7dd8e5; background: rgba(31, 139, 177, .12); border: 1px solid rgba(72, 212, 233, .14); font-size: 8px; }
+.kpi-pill b { color: #43d9bd; font-size: 11px; }
+.footer-spec { margin-left: auto; color: #52798e; font-size: 8px; letter-spacing: .5px; }
+.output-stack { position: absolute; right: 0; top: 177px; z-index: 3; width: 166px; }
+.output-node { position: relative; width: 166px; min-height: 99px; margin-bottom: 18px; padding: 13px 13px 11px; border: 1px solid rgba(58, 214, 225, .24); border-radius: 12px; background: linear-gradient(145deg, rgba(12, 69, 91, .82), rgba(7, 29, 51, .9)); box-shadow: 0 12px 28px rgba(0, 5, 18, .23); }
+.output-node.green { border-color: rgba(52, 217, 180, .24); background: linear-gradient(145deg, rgba(10, 71, 72, .68), rgba(7, 28, 49, .9)); }
+.output-node.purple { border-color: rgba(151, 123, 255, .28); background: linear-gradient(145deg, rgba(62, 46, 112, .62), rgba(7, 28, 49, .9)); }
+.output-title { display: flex; align-items: center; gap: 8px; color: #d7f2f8; font-size: 11px; font-weight: 700; }
+.output-icon { width: 28px; height: 28px; display: grid; place-items: center; flex: 0 0 28px; border-radius: 8px; color: #4ce2f1; background: rgba(25, 160, 190, .14); font-size: 15px; }
+.green .output-icon { color: #4ce8c8; background: rgba(34, 184, 148, .13); }
+.purple .output-icon { color: #bca6ff; background: rgba(137, 96, 239, .12); }
+.output-desc { margin-top: 9px; color: #658fa3; font-size: 8.5px; line-height: 1.55; }
+.output-desc b { color: #7dd8e5; font-weight: 600; }
+.green .output-desc b { color: #70dfc3; }
+.purple .output-desc b { color: #bca6ff; }
+.tiny-badge { position: absolute; right: 10px; bottom: 9px; color: #4fdcca; font-size: 7.5px; }
+.value-zone { position: absolute; left: 0; right: 0; bottom: 0; height: 119px; }
+.value-title { height: 24px; display: flex; align-items: center; gap: 8px; color: #8eb5c8; font-size: 10px; letter-spacing: 1px; }
+.value-title::before { content: ""; width: 20px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #2dbfff, #43e7ce); }
+.value-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; }
+.value-card { position: relative; height: 83px; padding: 12px 10px 9px 44px; overflow: hidden; border: 1px solid rgba(54, 192, 222, .18); border-radius: 11px; background: linear-gradient(145deg, rgba(11, 56, 82, .72), rgba(6, 26, 47, .8)); }
+.value-card::after { content: ""; position: absolute; width: 60px; height: 60px; right: -25px; bottom: -29px; border-radius: 50%; background: rgba(40, 215, 224, .05); }
+.value-number { position: absolute; left: 10px; top: 14px; color: rgba(76, 223, 238, .22); font-size: 26px; font-weight: 800; }
+.value-name { color: #d3eff6; font-size: 10.5px; font-weight: 700; }
+.value-desc { margin-top: 7px; color: #688fa3; font-size: 8px; line-height: 1.45; }
+.value-desc b { color: #55dbc9; font-weight: 600; }
+.legend { position: absolute; left: 49px; bottom: 21px; display: flex; align-items: center; gap: 19px; color: #557c94; font-size: 9px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-line { width: 22px; height: 2px; border-radius: 2px; background: #4eddf0; }
+.legend-line.ai { height: 0; background: none; border-top: 2px dashed #9b85ff; }
+.legend-line.media { height: 0; background: none; border-top: 2px dashed #44dec0; }
+.footer { position: absolute; right: 49px; bottom: 19px; display: flex; align-items: center; gap: 8px; color: #50758c; font-size: 9px; letter-spacing: 1px; }
+.footer i { width: 6px; height: 6px; border-radius: 50%; background: #3ee3c3; box-shadow: 0 0 8px #3ee3c3; }
+@media print { html, body { width: 1600px; height: 900px; } #stage { transform: none !important; } }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="content">
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 17V7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Z" stroke="currentColor" stroke-width="1.8"/><path d="M8 13h5a2 2 0 0 0 0-4H9v8M15 16l2 2 3-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h1>道路停车欠费追缴系统：把“欠费黑洞”变成“回款流水线”</h1>
+          <div class="subtitle">DEBT RECOVERY COMMAND CENTER · TASK ENGINE · UNIONPAY SPLIT SETTLEMENT</div>
+        </div>
+      </div>
+      <div class="header-message">
+        <strong>让每一笔历史欠费都有 <b>线索、动作、结果、分账</b></strong>
+        <span>对象生成 · 策略匹配 · 多渠道触达 · 现场拦截 · 自动分账 · 持续优化</span>
+      </div>
+    </header>
+
+    <section class="left-area">
+      <div class="section-head">
+        <span class="section-number">01</span><i class="section-line"></i><h2>传统追缴为什么“催不动”？</h2><span>RECOVERY PAIN POINTS</span>
+      </div>
+      <div class="card pain-card">
+        <div class="pain-title"><span class="pain-index">A</span>对象散：欠费沉在多张表<span class="pain-tag">难定位</span></div>
+        <div class="pain-desc">道路、封闭车场、非封闭车场、不同商户账号割裂，<b>谁该催、先催谁、催多少</b>靠人工判断。</div>
+        <div class="pain-mini"><span>订单</span><i></i><span>车牌</span><i></i><span>车场</span><i></i><span>金额</span></div>
+      </div>
+      <div class="card pain-card">
+        <div class="pain-title"><span class="pain-index">B</span>触达弱：短信电话各自为战<span class="pain-tag">难闭环</span></div>
+        <div class="pain-desc">短信、人工电话、AI电话、小程序提醒没有统一任务，<b>失败重发、二次跟进、绩效考核</b>无法量化。</div>
+        <div class="pain-mini"><span>短信</span><i></i><span>电话</span><i></i><span>小程序</span><i></i><span>人工</span></div>
+      </div>
+      <div class="card pain-card">
+        <div class="pain-title"><span class="pain-index">C</span>支付难：跨场补缴无法顺滑分账<span class="pain-tag">难入账</span></div>
+        <div class="pain-desc">封闭与非封闭欠费合并补缴后，资金要拆到不同商户，财务对账重、周期长，<b>追缴越多越怕乱账</b>。</div>
+        <div class="pain-mini"><span>车主</span><i></i><span>合并支付</span><i></i><span>银联</span><i></i><span>商户</span></div>
+      </div>
+      <div class="left-summary">
+        <div class="summary-title">欠费治理的四个关键断点</div>
+        <div class="summary-values">
+          <div class="summary-value"><strong>找不到</strong>车主线索弱</div>
+          <div class="summary-value"><strong>催不动</strong>策略无分层</div>
+          <div class="summary-value"><strong>收不回</strong>场景不联动</div>
+          <div class="summary-value"><strong>算不清</strong>分账对账难</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="evolution"><span>追缴作战化</span><i class="evolution-arrow"></i></div>
+
+    <section class="right-area">
+      <div class="innovation-head">
+        <span class="section-number">02</span><i class="section-line"></i><h2>创新方案：欠费追缴作战中枢</h2><span class="head-tag">对象 × 策略 × 渠道 × 支付 × 评估</span><span class="head-desc">从“人工催收”升级为“智能回款闭环”</span>
+      </div>
+
+      <div class="strategy-band">
+        <div class="band-title">差异化催缴策略库 · 按金额、周期、车场性质与行为画像自动匹配</div>
+        <div class="band-list">
+          <div class="band-card"><div class="band-logo">7</div><div><div class="band-name">温馨提醒</div><div class="band-desc">7天内 · 低金额</div></div></div>
+          <div class="band-card"><div class="band-logo">30</div><div><div class="band-name">催告通知</div><div class="band-desc">30天内 · 多次欠费</div></div></div>
+          <div class="band-card"><div class="band-logo">90</div><div><div class="band-name">正式催缴</div><div class="band-desc">90天以上 · 大额</div></div></div>
+          <div class="band-card"><div class="band-logo">黑</div><div><div class="band-name">重点管控</div><div class="band-desc">恶意欠费 · 跨场拦截</div></div></div>
+        </div>
+      </div>
+
+      <svg class="flow-lines" viewBox="0 0 1019 716">
+        <defs>
+          <marker id="arrowCyan" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#55dff2"/></marker>
+          <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a48cff"/></marker>
+          <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#4be3c5"/></marker>
+        </defs>
+        <path class="line line-purple line-flow" d="M510 130 V155" marker-end="url(#arrowPurple)"/>
+        <circle class="node-purple" cx="510" cy="142" r="3.5"/>
+        <path class="line" d="M140 216 H165"/><path class="line" d="M140 279 H165"/><path class="line" d="M140 342 H165"/><path class="line" d="M140 405 H165"/><path class="line" d="M140 468 H165"/>
+        <circle class="node-cyan" cx="153" cy="216" r="3"/><circle class="node-cyan" cx="153" cy="279" r="3"/><circle class="node-cyan" cx="153" cy="342" r="3"/><circle class="node-cyan" cx="153" cy="405" r="3"/><circle class="node-cyan" cx="153" cy="468" r="3"/>
+        <path class="line line-flow" d="M825 252 H853" marker-end="url(#arrowCyan)"/><circle class="node-cyan" cx="840" cy="252" r="3.5"/>
+        <path class="line line-green line-flow" d="M825 365 H853" marker-end="url(#arrowGreen)"/><circle class="node-green" cx="840" cy="365" r="3"/>
+        <path class="line line-purple line-flow" d="M853 475 C832 475 846 516 825 516" marker-end="url(#arrowPurple)"/>
+      </svg>
+
+      <div class="input-stack">
+        <div class="stack-title">欠费对象生成</div>
+        <div class="input-node"><div class="input-icon">¥</div><div><div class="input-name">金额分档</div><div class="input-desc">50 / 500 / 1000+</div></div></div>
+        <div class="input-node"><div class="input-icon">时</div><div><div class="input-name">时长分档</div><div class="input-desc">7 / 30 / 90 天</div></div></div>
+        <div class="input-node"><div class="input-icon">场</div><div><div class="input-name">车场类别</div><div class="input-desc">封闭 / 非封闭</div></div></div>
+        <div class="input-node"><div class="input-icon">牌</div><div><div class="input-name">车牌画像</div><div class="input-desc">次数 / 高频 / 黑名单</div></div></div>
+        <div class="input-node"><div class="input-icon">街</div><div><div class="input-name">街道片区</div><div class="input-desc">网格化任务下发</div></div></div>
+      </div>
+
+      <div class="command-wrap">
+        <div class="command-glow"></div>
+        <div class="command-top">
+          <div class="top-brand"><div class="top-brand-logo">救</div><div><div class="top-brand-name">DEBT RECOVERY COMMAND</div><div class="top-brand-desc">ARREARS TASK ORCHESTRATION CENTER</div></div></div>
+          <div class="live-badge"><i></i> TASK ENGINE ONLINE</div>
+        </div>
+        <div class="command-body">
+          <div class="command-header">
+            <div class="command-title-area"><div class="command-ai-icon">⚡</div><div><div class="command-name">欠费追缴作战中枢</div><div class="command-slogan">把“催缴对象 + 策略 + 渠道 + 支付 + 现场线索”打包为可管理任务</div></div></div>
+            <div class="recovery-badge"><i></i> 回款闭环可视化</div>
+          </div>
+          <div class="module-grid">
+            <div class="module highlight"><span class="module-label">AI CORE</span><div class="module-head"><div class="module-icon">智</div><div class="module-name">AI 画像与时机</div></div><div class="module-desc">分析出行规律与停放概率<br><b>推荐最佳催缴时间点</b></div></div>
+            <div class="module"><div class="module-head"><div class="module-icon">筛</div><div class="module-name">对象筛选器</div></div><div class="module-desc">停车场 / 街道 / 车牌<br>金额 / 时长 / 车场性质</div></div>
+            <div class="module"><div class="module-head"><div class="module-icon">策</div><div class="module-name">策略匹配器</div></div><div class="module-desc">温馨提醒 → 催告通知<br>正式催缴 → 黑名单管控</div></div>
+            <div class="module"><div class="module-head"><div class="module-icon">任</div><div class="module-name">任务编排</div></div><div class="module-desc">批量生成、统一调度<br>人工工单与绩效联动</div></div>
+            <div class="module"><div class="module-head"><div class="module-icon">拦</div><div class="module-name">跨场联动拦截</div></div><div class="module-desc">封闭场入口 / 出口弹窗<br>语音扫码提示，缴清放行</div></div>
+            <div class="module"><div class="module-head"><div class="module-icon">账</div><div class="module-name">支付与自动分账</div></div><div class="module-desc">合并补缴一键支付<br><b>银联自动拆分至商户</b></div></div>
+          </div>
+          <div class="command-footer">
+            <div class="kpi-pill"><b>92%</b> 任务完成率</div>
+            <div class="kpi-pill"><b>68%</b> 触达成功率</div>
+            <div class="kpi-pill"><b>￥</b> 回款实时入账</div>
+            <div class="footer-spec">QUERY · STRATEGY · CHANNEL · PAYMENT · SPLIT · OPTIMIZE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="output-stack">
+        <div class="output-node"><div class="output-title"><span class="output-icon">触</span>多渠道自动执行</div><div class="output-desc"><b>短信 / AI电话 / 小程序 / 人工</b><br>模板分级、避开休息时段、失败重发、接听时长统计</div><span class="tiny-badge">触达可追踪</span></div>
+        <div class="output-node green"><div class="output-title"><span class="output-icon">员</span>收费员现场追缴</div><div class="output-desc"><b>PDA 推送欠费线索</b><br>路侧创单即提示历史欠费，支持二维码当场补缴</div><span class="tiny-badge">线索到人</span></div>
+        <div class="output-node purple"><div class="output-title"><span class="output-icon">管</span>管理者实时评估</div><div class="output-desc"><b>进度、回款、失败原因</b><br>按任务、渠道、片区、人员持续优化策略配置</div><span class="tiny-badge">越催越准</span></div>
+      </div>
+
+      <div class="value-zone">
+        <div class="value-title">五大产品亮点：让客户看到“欠费治理救星”</div>
+        <div class="value-grid">
+          <div class="value-card"><div class="value-number">01</div><div class="value-name">从名单到任务</div><div class="value-desc">欠费对象自动分层<br><b>催谁、怎么催一键生成</b></div></div>
+          <div class="value-card"><div class="value-number">02</div><div class="value-name">从线上到现场</div><div class="value-desc">短信电话不够时<br><b>PDA 与道口协同追缴</b></div></div>
+          <div class="value-card"><div class="value-number">03</div><div class="value-name">从单场到跨场</div><div class="value-desc">封闭 / 非封闭联动<br><b>入口出口精准拦截</b></div></div>
+          <div class="value-card"><div class="value-number">04</div><div class="value-name">从收款到分账</div><div class="value-desc">合并补缴后<br><b>银联按商户自动分账</b></div></div>
+          <div class="value-card"><div class="value-number">05</div><div class="value-name">从经验到优化</div><div class="value-desc">实时评估催缴效果<br><b>策略持续迭代提升回款</b></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="legend">
+      <div class="legend-item"><i class="legend-line"></i>对象数据 / 任务连接</div>
+      <div class="legend-item"><i class="legend-line ai"></i>AI画像与策略推荐</div>
+      <div class="legend-item"><i class="legend-line media"></i>现场追缴 / 支付分账闭环</div>
+    </div>
+    <footer class="footer"><i></i> RECOVER MORE · CHASE SMARTER · SETTLE CLEANER · OPERATE VISIBLY</footer>
+  </div>
+</div>
+<script>
+function resizeStage() {
+  const stage = document.getElementById('stage');
+  const baseWidth = 1600;
+  const baseHeight = 900;
+  const scale = Math.min(window.innerWidth / baseWidth, window.innerHeight / baseHeight);
+  stage.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', resizeStage);
+resizeStage();
+</script>
+</body>
+</html>

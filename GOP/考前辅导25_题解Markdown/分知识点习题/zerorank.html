@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>粉笔板书 · 秩-零化度定理（变换思维 · 图形化）</title>
+<style>
+:root{--chalk:#eef3ea;--y:#ffe08a;--p:#ffa6c9;--c:#8fd9ff;--g:#8ef2a0;--r:#ff7a90}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:#2b2118;overflow:hidden;padding:10px;display:flex;flex-direction:column;align-items:center;gap:8px;
+ font-family:"LXGW WenKai","霞鹜文楷","KaiTi","STKaiti","楷体","PingFang SC","Microsoft YaHei",sans-serif}
+.frame{width:min(1200px,100%);flex:1;min-height:0;border:16px solid #6d4a2a;border-radius:10px;background:#5b3d21;
+ box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 4px #543619;position:relative}
+.board{position:absolute;inset:0;overflow:hidden;background:
+ radial-gradient(120% 90% at 20% 10%,rgba(255,255,255,.06),transparent 60%),
+ radial-gradient(80% 70% at 85% 80%,rgba(255,255,255,.05),transparent 60%),#1e4335}
+.board::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.14;filter:blur(6px);background:
+ radial-gradient(60% 22% at 30% 28%,#fff,transparent 70%),radial-gradient(50% 18% at 72% 60%,#fff,transparent 70%)}
+.head{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;justify-content:space-between;
+ padding:9px 20px 5px;color:rgba(238,243,234,.7);font-size:13px;letter-spacing:1px;border-bottom:1px dashed rgba(255,255,255,.15)}
+.content{position:absolute;inset:40px 22px 22px 28px;overflow:auto;z-index:2;color:var(--chalk);
+ font-size:clamp(14px,1.85vw,19px);line-height:1.8;transition:opacity .3s,filter .3s}
+.content.fade{opacity:0;filter:blur(4px)}
+.content::-webkit-scrollbar{width:8px;height:8px}.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:8px}
+.atom{opacity:0;display:inline-block}
+.atom.shown{animation:ci .18s ease-out forwards}
+@keyframes ci{from{opacity:0;filter:blur(3px);transform:translateY(2px)}to{opacity:1;filter:none;transform:none}}
+.line,.box,.ctitle,.matlabel,.cell{text-shadow:0 0 1px rgba(255,255,255,.5),0 0 7px rgba(255,255,255,.15)}
+.line{margin:3px 0;white-space:pre-wrap}
+.ctitle{display:inline-block;font-size:1.3em;color:var(--y);margin:0 0 10px;letter-spacing:2px;
+ border-bottom:2px dashed rgba(255,224,138,.5);padding-bottom:4px}
+.hl{color:var(--y)}.note{color:var(--c);font-size:.85em}
+.box{display:inline-block;margin:9px 0;padding:5px 15px;color:var(--g);border:2px dashed rgba(142,242,160,.6);border-radius:14px}
+.matwrap{display:flex;align-items:center;gap:8px;margin:6px 0}
+.matrix{display:flex}.brk{width:10px;border-top:3px solid var(--chalk);border-bottom:3px solid var(--chalk)}
+.brk.l{border-left:3px solid var(--chalk);border-radius:8px 0 0 8px}.brk.r{border-right:3px solid var(--chalk);border-radius:0 8px 8px 0}
+.mgrid{display:grid;gap:1px 14px;padding:4px 8px}.cell{min-width:1.6em;text-align:right}
+/* viz */
+.viz{display:block;width:max-content;max-width:100%;margin:12px 0;padding:9px 11px;border:1px solid rgba(255,255,255,.18);
+ border-radius:12px;background:rgba(0,0,0,.15)}
+.vh{color:var(--y);font-size:.78em;margin-bottom:6px}
+.vrow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.vctl{display:flex;gap:7px;align-items:center;margin-top:7px;flex-wrap:wrap}
+.vctl button{font-size:12px;padding:4px 10px}
+.ro{font-size:.76em;color:var(--c);font-family:ui-monospace,Consolas,monospace;margin-top:5px;min-height:1.2em}
+.ro b{color:var(--p)}
+canvas{display:block;border-radius:8px;touch-action:none}
+.cap{font-size:.72em;color:rgba(238,243,234,.65);text-align:center;margin-top:3px}
+/* dimbar */
+.drow{display:flex;gap:8px}
+.dblk{width:56px;height:42px;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:8px;
+ border:2px solid rgba(255,255,255,.45);background:rgba(255,255,255,.06);transition:.55s}
+.dblk.alive{border-color:var(--g);color:var(--g);background:rgba(142,242,160,.15);transform:translateY(-8px)}
+.dblk.dead{border-color:var(--r);color:var(--r);background:rgba(255,122,144,.15);transform:translateY(12px) scale(.85)}
+.dbr{display:flex;gap:8px;margin-top:16px}
+.dbrl{border-top:2px dashed var(--g);color:var(--g)}.dbrr{border-top:2px dashed var(--r);color:var(--r)}
+.dbrl,.dbrr{font-size:12px;text-align:center;padding-top:5px;transform:scaleX(0);transform-origin:left;transition:transform .6s .3s}
+.dimwrap.go .dbrl,.dimwrap.go .dbrr{transform:scaleX(1)}
+.deq{margin-top:12px;color:var(--y);font-size:.95em;opacity:0;transition:opacity .5s 1s}
+.dimwrap.go .deq{opacity:1}
+/* chalk & eraser */
+.chalk{position:absolute;width:11px;height:28px;border-radius:3px;z-index:6;pointer-events:none;opacity:0;
+ background:linear-gradient(#fff,#dfe6dc);box-shadow:0 2px 6px rgba(0,0,0,.4);transform:translate(-9999px,-9999px) rotate(28deg);transition:transform .08s linear}
+.chalk.on{opacity:1}
+.dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;z-index:5;pointer-events:none;animation:fl .8s ease-in forwards}
+@keyframes fl{to{transform:translate(4px,40px);opacity:0}}
+.er{position:absolute;top:0;left:-160px;width:120px;height:100%;z-index:7;pointer-events:none;opacity:0;
+ background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.13),rgba(255,255,255,.02))}
+.er.sw{animation:sw .55s linear}
+@keyframes sw{0%{opacity:1;left:-160px}100%{opacity:1;left:100%}}
+.tray{position:absolute;left:0;right:0;bottom:0;height:13px;background:linear-gradient(#7a5530,#4d3319);z-index:4}
+/* bar */
+.bar{width:min(1200px,100%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+button{font-family:inherit;font-size:14px;padding:6px 13px;border-radius:20px;cursor:pointer;color:#f6efe2;background:#3d2b1a;border:1px solid #7a5530}
+button:hover{background:#57391f}
+button.act{background:#1e4335;border-color:#8fd6b6;color:#d9ffe9}
+.toc{width:min(1200px,100%);display:flex;gap:6px;overflow-x:auto;padding-bottom:3px}
+.toc button{font-size:12px;padding:4px 9px;border-radius:13px;opacity:.7;white-space:nowrap}
+.toc button.cur{opacity:1;background:#1e4335;border-color:#8fd9ff;color:#e7f7ff}
+.lbl{color:#d9c9ae;font-size:13px}input[type=range]{width:100px;accent-color:#8fd6b6}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board" id="board">
+  <div class="head"><span>线性代数 · 秩 - 零化度定理（变换视角）</span><span id="hr"></span></div>
+  <div class="content" id="content"></div>
+  <div class="chalk" id="chalk"></div><div class="er" id="er"></div><div class="tray"></div>
+</div></div>
+<div class="bar">
+  <button id="bF">⏮ 从头</button><button id="bP">◀ 上一页</button>
+  <button id="bA">▶ 自动讲课</button><button id="bN">下一页 ▶</button><button id="bR">↻ 重写本页</button>
+  <span class="lbl">语速</span><input id="sp" type="range" min="0.6" max="2.6" step="0.1" value="1.4">
+  <button id="bS">🔇 粉笔声</button>
+</div>
+<div class="toc" id="toc"></div>
+
+<script>
+/* =============== 画布小工具 =============== */
+const CH='#eef3ea',DIMC='rgba(238,243,234,.30)',RED='#ff7a90',GRN='#8ef2a0',YEL='#ffe08a',CYA='#8fd9ff',PNK='#ffa6c9';
+const F='13px "LXGW WenKai","KaiTi","楷体",sans-serif';
+function mkc(w,h){const c=document.createElement('canvas'),d=window.devicePixelRatio||1;
+ c.width=w*d;c.height=h*d;c.style.width=w+'px';c.style.height=h+'px';
+ const g=c.getContext('2d');g.scale(d,d);g.font=F;g.textBaseline='middle';return{c,g};}
+function ln(g,a,b,x,y,col,lw){g.strokeStyle=col;g.lineWidth=lw||1;g.beginPath();g.moveTo(a,b);g.lineTo(x,y);g.stroke();}
+function dt(g,x,y,r,col){g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,7);g.fill();}
+function ar(g,x1,y1,x2,y2,col,lw){g.strokeStyle=col;g.fillStyle=col;g.lineWidth=lw||2.4;
+ g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+ const a=Math.atan2(y2-y1,x2-x1),L=9;g.beginPath();g.moveTo(x2,y2);
+ g.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42));g.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42));g.closePath();g.fill();}
+function tx(g,s,x,y,col,al){g.fillStyle=col;g.textAlign=al||'left';g.fillText(s,x,y);}
+function grid(g,cx,cy,s,W,H){g.strokeStyle='rgba(238,243,234,.12)';g.lineWidth=1;
+ for(let i=-30;i<=30;i++){const X=cx+i*s,Y=cy+i*s;
+  if(X>0&&X<W){g.beginPath();g.moveTo(X,0);g.lineTo(X,H);g.stroke();}
+  if(Y>0&&Y<H){g.beginPath();g.moveTo(0,Y);g.lineTo(W,Y);g.stroke();}}
+ ln(g,0,cy,W,cy,'rgba(238,243,234,.42)',1.3);ln(g,cx,0,cx,H,'rgba(238,243,234,.42)',1.3);}
+function bt(t){const b=document.createElement('button');b.textContent=t;return b;}
+function dv(c,h){const d=document.createElement('div');if(c)d.className=c;if(h)d.innerHTML=h;return d;}
+
+/* =============== 可视化组件 =============== */
+const VIZ={};
+
+/* ① 平面morph：整个平面被 A 拉扯 / 压扁 */
+VIZ.lt2d=function(o){
+ const A=o.A,W=o.w||520,H=o.h||330,s=o.s||30,cx=W/2,cy=H/2;
+ const el=dv('viz');el.appendChild(dv('vh',o.title||''));
+ const{c,g}=mkc(W,H);el.appendChild(c);
+ const ctl=dv('vctl'),bp=bt('▶ 施加变换 A'),br=bt('⟲ 复原'),ro=dv('ro');
+ ctl.append(bp,br);el.append(ctl,ro);
+ const det=A[0][0]*A[1][1]-A[0][1]*A[1][0];
+ let kv=null;
+ if(Math.abs(det)<1e-9){let v=[-A[0][1],A[0][0]];if(Math.hypot(v[0],v[1])<1e-9)v=[-A[1][1],A[1][0]];
+   const n=Math.hypot(v[0],v[1]);if(n>1e-9)kv=[v[0]/n,v[1]/n];}
+ let t=0,raf=null,st=null,run=false;
+ const M=()=>[[1+(A[0][0]-1)*t,A[0][1]*t],[A[1][0]*t,1+(A[1][1]-1)*t]];
+ const P=(x,y)=>{const m=M();return[cx+(m[0][0]*x+m[0][1]*y)*s,cy-(m[1][0]*x+m[1][1]*y)*s];};
+ function draw(){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const R=12;
+  for(let i=-R;i<=R;i++){
+   const c1=(i===0)?'rgba(238,243,234,.75)':'rgba(143,217,255,.42)';
+   let p=P(-R,i),q=P(R,i);ln(g,p[0],p[1],q[0],q[1],c1,i===0?2:1.1);
+   const c2=(i===0)?'rgba(238,243,234,.75)':'rgba(255,166,201,.38)';
+   p=P(i,-R);q=P(i,R);ln(g,p[0],p[1],q[0],q[1],c2,i===0?2:1.1);
+  }
+  // 单位方块（面积）
+  const a=P(0,0),b=P(1,0),d2=P(1,1),e=P(0,1);
+  g.fillStyle='rgba(142,242,160,.20)';g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.lineTo(d2[0],d2[1]);g.lineTo(e[0],e[1]);g.closePath();g.fill();
+  if(kv){ // 核方向
+   const p=P(-5*kv[0],-5*kv[1]),q=P(5*kv[0],5*kv[1]);
+   g.setLineDash([7,5]);ln(g,p[0],p[1],q[0],q[1],RED,3);g.setLineDash([]);
+   for(let k=-4;k<=4;k++){if(!k)continue;const z=P(k*kv[0],k*kv[1]);dt(g,z[0],z[1],3.4,RED);}
+   if(t<.15)tx(g,'红线 = 将被压成 0 的方向',10,18,RED);
+  }
+  ar(g,cx,cy,b[0],b[1],YEL,3);ar(g,cx,cy,e[0],e[1],CYA,3);
+  tx(g,'A î',b[0]+6,b[1]-8,YEL);tx(g,'A ĵ',e[0]+6,e[1]-8,CYA);
+  dt(g,cx,cy,4,'#fff');
+  const m=M(),dd=m[0][0]*m[1][1]-m[0][1]*m[1][0];
+  ro.innerHTML='t = '+t.toFixed(2)+' ｜ 面积倍率 |det| = <b>'+Math.abs(dd).toFixed(2)+'</b>'+
+   (Math.abs(dd)<.02?' ← 面积归零：<b>平面被压成一条线</b>':'');
+ }
+ function loop(ts){if(!st)st=ts;t=Math.min(1,(ts-st)/1900);draw();
+  if(t<1)raf=requestAnimationFrame(loop);else run=false;}
+ bp.onclick=()=>{if(run)return;run=true;st=null;t=0;raf=requestAnimationFrame(loop);};
+ br.onclick=()=>{cancelAnimationFrame(raf);run=false;t=0;draw();};
+ draw();
+ return{el,start(){setTimeout(()=>bp.onclick(),350);},stop(){cancelAnimationFrame(raf);}};
+};
+
+/* ② 双平面：左拖 x，右看 Ax —— 核空间的直观定义 */
+VIZ.twoplane=function(o){
+ const A=o.A,W=300,H=262,s=o.s||27,so=o.so||16,cx=W/2,cy=H/2;
+ const el=dv('viz');el.appendChild(dv('vh',o.title||''));
+ const rw=dv('vrow');
+ const L=mkc(W,H),Rt=mkc(W,H);
+ const lw=dv(),rwp=dv();
+ lw.append(L.c,dv('cap','定义域 ℝ²（输入 x）'));rwp.append(Rt.c,dv('cap','目标空间 ℝ²（输出 Ax）'));
+ rw.append(lw,rwp);el.appendChild(rw);
+ const ro=dv('ro'),ctl=dv('vctl');
+ const det=A[0][0]*A[1][1]-A[0][1]*A[1][0],rank=Math.abs(det)<1e-9?((Math.abs(A[0][0])+Math.abs(A[0][1])+Math.abs(A[1][0])+Math.abs(A[1][1]))<1e-9?0:1):2;
+ let kv=null;if(rank===1){let v=[-A[0][1],A[0][0]];if(Math.hypot(v[0],v[1])<1e-9)v=[-A[1][1],A[1][0]];
+  const n=Math.hypot(v[0],v[1]);kv=[v[0]/n,v[1]/n];}
+ let col=[A[0][0],A[1][0]];if(Math.hypot(col[0],col[1])<1e-9)col=[A[0][1],A[1][1]];
+ const cn=Math.hypot(col[0],col[1]);if(cn>1e-9)col=[col[0]/cn,col[1]/cn];
+ let x=o.x0?o.x0.slice():[2,1],mode=o.mode||'free',raf=null,ph=0;
+ const Ax=()=>[A[0][0]*x[0]+A[0][1]*x[1],A[1][0]*x[0]+A[1][1]*x[1]];
+ function draw(){
+  const g=L.g;g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  if(kv){const p=[cx-6*kv[0]*s,cy+6*kv[1]*s],q=[cx+6*kv[0]*s,cy-6*kv[1]*s];
+   g.setLineDash([7,5]);ln(g,p[0],p[1],q[0],q[1],RED,3);g.setLineDash([]);
+   tx(g,'N(A) 核空间',8,16,RED);}
+  else{dt(g,cx,cy,6,RED);g.strokeStyle=RED;g.lineWidth=2;g.beginPath();g.arc(cx,cy,11,0,7);g.stroke();
+   tx(g,'N(A) = {0} 只有这一个点',8,16,RED);}
+  ar(g,cx,cy,cx+x[0]*s,cy-x[1]*s,PNK,3);dt(g,cx+x[0]*s,cy-x[1]*s,6,PNK);
+  tx(g,'x',cx+x[0]*s+8,cy-x[1]*s-9,PNK);
+  const g2=Rt.g,y=Ax();g2.clearRect(0,0,W,H);grid(g2,cx,cy,so,W,H);
+  if(rank===1){const p=[cx-14*col[0]*so,cy+14*col[1]*so],q=[cx+14*col[0]*so,cy-14*col[1]*so];
+   ln(g2,p[0],p[1],q[0],q[1],GRN,2.5);tx(g2,'R(A) 像空间（1 维）',8,16,GRN);}
+  else tx(g2,'R(A) = 整个 ℝ²（2 维）',8,16,GRN);
+  const zero=Math.hypot(y[0],y[1])<1e-6;
+  if(zero){dt(g2,cx,cy,8,RED);g2.strokeStyle=RED;g2.lineWidth=2;g2.beginPath();g2.arc(cx,cy,14,0,7);g2.stroke();
+   tx(g2,'Ax = 0',cx+18,cy-14,RED);}
+  else{ar(g2,cx,cy,cx+y[0]*so,cy-y[1]*so,YEL,3);dt(g2,cx+y[0]*so,cy-y[1]*so,6,YEL);
+   tx(g2,'Ax',cx+y[0]*so+8,cy-y[1]*so-9,YEL);}
+  const big=Math.hypot(x[0],x[1])>.25;
+  ro.innerHTML='x = ('+x[0].toFixed(2)+', '+x[1].toFixed(2)+')  ⟶  Ax = ('+y[0].toFixed(2)+', '+y[1].toFixed(2)+')'+
+   (zero&&big?'　<b>非零的 x 被坍缩成 0 ！它在核里</b>':(!big?'　（x 本身就是零向量）':''));
+ }
+ function loop(){ph+=.016;
+  if(mode==='kernel'&&kv){const k=3*Math.sin(ph);x=[kv[0]*k,kv[1]*k];}
+  else if(mode==='circle'){x=[2.6*Math.cos(ph),2.6*Math.sin(ph)];}
+  draw();raf=requestAnimationFrame(loop);}
+ function pos(e){const r=L.c.getBoundingClientRect();
+  return[((e.clientX-r.left)*(W/r.width)-cx)/s,(cy-(e.clientY-r.top)*(H/r.height))/s];}
+ let drag=false;
+ L.c.addEventListener('pointerdown',e=>{drag=true;mode='free';L.c.setPointerCapture(e.pointerId);x=pos(e);draw();});
+ L.c.addEventListener('pointermove',e=>{if(drag){x=pos(e);draw();}});
+ L.c.addEventListener('pointerup',()=>drag=false);
+ if(kv){const b1=bt('▶ 沿核方向巡游');b1.onclick=()=>{mode='kernel';};ctl.appendChild(b1);}
+ const b2=bt('▶ 绕圈巡游');b2.onclick=()=>{mode='circle';};
+ const b3=bt('✋ 手动拖动');b3.onclick=()=>{mode='free';};
+ ctl.append(b2,b3);el.append(ctl,ro);
+ draw();
+ return{el,start(){if(!raf){mode=o.mode||'free';raf=requestAnimationFrame(loop);}},
+        stop(){cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* ③ 零空间的四种"长相"：{0} 不是 ∅ */
+VIZ.zeroset=function(){
+ const W=740,H=215,el=dv('viz');el.appendChild(dv('vh','核空间可能长什么样？'));
+ const{c,g}=mkc(W,H);el.appendChild(c);
+ const cells=[['满秩 r = n','N(A) = {0}','0 维 ｜ 1 个元素'],
+              ['n − r = 1','一条过原点的直线','1 维 ｜ 无穷多元素'],
+              ['n − r = 2','一张过原点的平面','2 维 ｜ 无穷多元素'],
+              ['✗ 错误认知','N(A) = ∅ 空集','不可能！0 永远在里面']];
+ for(let i=0;i<4;i++){
+  const cx=92+185*i,cy=100;
+  if(i)ln(g,cx-92,20,cx-92,H-20,'rgba(255,255,255,.15)',1);
+  ln(g,cx-62,cy,cx+62,cy,'rgba(238,243,234,.3)',1);ln(g,cx,cy-46,cx,cy+46,'rgba(238,243,234,.3)',1);
+  if(i===0){dt(g,cx,cy,6,RED);g.strokeStyle=RED;g.lineWidth=2;g.beginPath();g.arc(cx,cy,13,0,7);g.stroke();}
+  if(i===1){const a=.55;ln(g,cx-58*Math.cos(a),cy+58*Math.sin(a),cx+58*Math.cos(a),cy-58*Math.sin(a),RED,3);
+   for(let k=-2;k<=2;k++)dt(g,cx+k*24*Math.cos(a),cy-k*24*Math.sin(a),3.5,RED);}
+  if(i===2){g.fillStyle='rgba(255,122,144,.28)';g.strokeStyle=RED;g.lineWidth=2;
+   g.beginPath();g.moveTo(cx-58,cy+16);g.lineTo(cx-14,cy-26);g.lineTo(cx+58,cy-14);g.lineTo(cx+14,cy+28);g.closePath();g.fill();g.stroke();
+   ar(g,cx,cy,cx-30,cy-14,YEL,2);ar(g,cx,cy,cx+34,cy+6,CYA,2);
+   tx(g,'ξ₁',cx-46,cy-22,YEL);tx(g,'ξ₂',cx+38,cy+16,CYA);dt(g,cx,cy,4,'#fff');}
+  if(i===3){g.setLineDash([5,4]);g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=2;
+   g.beginPath();g.arc(cx,cy,34,0,7);g.stroke();g.setLineDash([]);
+   g.strokeStyle=RED;g.lineWidth=4;g.beginPath();g.moveTo(cx-38,cy-38);g.lineTo(cx+38,cy+38);
+   g.moveTo(cx+38,cy-38);g.lineTo(cx-38,cy+38);g.stroke();}
+  tx(g,cells[i][0],cx,26,i===3?RED:YEL,'center');
+  tx(g,cells[i][1],cx,166,CH,'center');
+  tx(g,cells[i][2],cx,188,i===3?RED:'rgba(238,243,234,.65)','center');
+ }
+ return{el,start(){},stop(){}};
+};
+
+/* ④ 维度分账：n = r + (n-r) */
+VIZ.dimbar=function(o){
+ const n=o.n||5,r=o.r||3,k=n-r,el=dv('viz');
+ el.appendChild(dv('vh','输入端的 n 个自由度，去了哪里？'));
+ const wrap=dv('dimwrap'),row=dv('drow'),bs=[];
+ for(let i=0;i<n;i++){const b=dv('dblk');b.textContent='d'+(i+1);row.appendChild(b);bs.push(b);}
+ const br=dv('dbr'),l=dv('dbrl'),rr=dv('dbrr');
+ l.style.width=(r*56+(r-1)*8)+'px';rr.style.width=(k*56+(k-1)*8)+'px';
+ l.textContent='存活 → 像空间 R(A)：rank = '+r+' 维';
+ rr.textContent='阵亡 → 核空间 N(A)：'+k+' 维';
+ br.append(l,rr);
+ const eq=dv('deq');eq.textContent='dim N(A) + rank A = '+k+' + '+r+' = '+n+' = n';
+ wrap.append(row,br,eq);el.appendChild(wrap);
+ const ctl=dv('vctl'),b=bt('▶ 播放分账');ctl.appendChild(b);el.appendChild(ctl);
+ let tms=[];
+ function play(){tms.forEach(clearTimeout);tms=[];wrap.classList.remove('go');
+  bs.forEach(x=>x.className='dblk');
+  bs.forEach((x,i)=>tms.push(setTimeout(()=>x.classList.add(i<r?'alive':'dead'),200+i*180)));
+  tms.push(setTimeout(()=>wrap.classList.add('go'),200+n*180));}
+ b.onclick=play;
+ return{el,start(){tms.push(setTimeout(play,300));},stop(){tms.forEach(clearTimeout);tms=[];}};
+};
+
+/* ⑤ 3D：ℝ³ 被压成平面，核是一条直线 */
+VIZ.space3d=function(){
+ const A=[[1,0,1],[0,1,1],[1,1,2]],W=540,H=350,s=40,cx=W/2,cy=H/2+8;
+ const el=dv('viz');el.appendChild(dv('vh','ℝ³ ──A──▶ 2 维平面 ｜ 红线整条被送到原点'));
+ const{c,g}=mkc(W,H);el.appendChild(c);
+ const ctl=dv('vctl'),bp=bt('▶ 施加变换'),br=bt('⟲ 复原'),bt2=bt('⟳ 暂停旋转'),ro=dv('ro');
+ ctl.append(bp,br,bt2);el.append(ctl,ro);
+ const R=2,segs=[];
+ for(let i=-R;i<=R;i++)for(let j=-R;j<=R;j++){
+  segs.push([[-R,i,j],[R,i,j]]);segs.push([[i,-R,j],[i,R,j]]);segs.push([[i,j,-R],[i,j,R]]);}
+ const kv=[-1,-1,1];
+ let t=0,yaw=.7,rot=true,raf=null,last=null,anim=false,st=null;
+ const M=v=>{const m=(i,j)=>((i===j)?1:0)*(1-t)+A[i][j]*t;
+  return[0,1,2].map(i=>m(i,0)*v[0]+m(i,1)*v[1]+m(i,2)*v[2]);};
+ function pj(v){const cyw=Math.cos(yaw),sy=Math.sin(yaw);
+  const X=v[0]*cyw+v[2]*sy,Z=-v[0]*sy+v[2]*cyw,Y=v[1];
+  const p=.42,cp=Math.cos(p),sp=Math.sin(p);
+  const Y2=Y*cp-Z*sp,Z2=Y*sp+Z*cp;return[cx+X*s,cy-Y2*s,Z2];}
+ function draw(){
+  g.clearRect(0,0,W,H);
+  const out=segs.map(sg=>[pj(M(sg[0])),pj(M(sg[1]))]);
+  out.sort((a,b)=>(a[0][2]+a[1][2])-(b[0][2]+b[1][2]));
+  out.forEach(p=>{const dp=(p[0][2]+p[1][2])/2,al=.16+.20*(1/(1+Math.exp(-dp)));
+   ln(g,p[0][0],p[0][1],p[1][0],p[1][1],'rgba(143,217,255,'+al.toFixed(2)+')',1);});
+  const a=pj(M([-3*kv[0],-3*kv[1],-3*kv[2]])),b=pj(M([3*kv[0],3*kv[1],3*kv[2]]));
+  ln(g,a[0],a[1],b[0],b[1],RED,3.5);
+  for(let q=-3;q<=3;q++){const z=pj(M([q*kv[0],q*kv[1],q*kv[2]]));dt(g,z[0],z[1],4,RED);}
+  [[[1,0,0],YEL,'Aê₁'],[[0,1,0],GRN,'Aê₂'],[[0,0,1],PNK,'Aê₃']].forEach(u=>{
+   const o=pj([0,0,0]),p=pj(M(u[0]));ar(g,o[0],o[1],p[0],p[1],u[1],2.5);tx(g,u[2],p[0]+5,p[1]-8,u[1]);});
+  const o=pj([0,0,0]);dt(g,o[0],o[1],4.5,'#fff');
+  const m=(i,j)=>((i===j)?1:0)*(1-t)+A[i][j]*t;
+  const D=m(0,0)*(m(1,1)*m(2,2)-m(1,2)*m(2,1))-m(0,1)*(m(1,0)*m(2,2)-m(1,2)*m(2,0))+m(0,2)*(m(1,0)*m(2,1)-m(1,1)*m(2,0));
+  ro.innerHTML='t = '+t.toFixed(2)+' ｜ 体积倍率 |det| = <b>'+Math.abs(D).toFixed(2)+'</b>'+
+   (t>.97?' ← 体积归零：立体被压成 <b>2 维平面</b>，核 = 1 维直线':'');
+ }
+ function loop(ts){if(last==null)last=ts;const dtm=(ts-last)/1000;last=ts;
+  if(rot)yaw+=dtm*.32;
+  if(anim){if(st==null)st=ts;t=Math.min(1,(ts-st)/2400);if(t>=1)anim=false;}
+  draw();raf=requestAnimationFrame(loop);}
+ bp.onclick=()=>{t=0;st=null;anim=true;};
+ br.onclick=()=>{anim=false;t=0;};
+ bt2.onclick=()=>{rot=!rot;bt2.textContent=rot?'⟳ 暂停旋转':'⟳ 继续旋转';};
+ draw();
+ return{el,start(){if(!raf){last=null;raf=requestAnimationFrame(loop);}setTimeout(()=>{t=0;st=null;anim=true;},500);},
+        stop(){cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* ⑥ n=5,r=3 示意：核是 2 维平面 */
+VIZ.bigmap=function(){
+ const W=720,H=300,el=dv('viz');el.appendChild(dv('vh','n = 5 , r = 3 ：核空间是 ℝ⁵ 里一张 2 维平面'));
+ const{c,g}=mkc(W,H);el.appendChild(c);
+ const LC=[175,150],RC=[560,150];
+ const kd=[],gd=[];
+ for(let i=0;i<6;i++){const a=i/6*6.28;kd.push([LC[0]+Math.cos(a)*(55+15*Math.random()),LC[1]+Math.sin(a)*(17+6*Math.random())+8]);}
+ for(let i=0;i<4;i++)gd.push([LC[0]-70+Math.random()*140,LC[1]-95+Math.random()*45]);
+ let ph=0,raf=null;
+ function ell(x,y,rx,ry,st,fi){g.strokeStyle=st;g.lineWidth=2;if(fi){g.fillStyle=fi;}
+  g.beginPath();g.ellipse(x,y,rx,ry,0,0,7);if(fi)g.fill();g.stroke();}
+ function draw(){
+  g.clearRect(0,0,W,H);
+  ell(LC[0],LC[1],140,125,'rgba(238,243,234,.45)');tx(g,'ℝ⁵  输入空间',LC[0],22,CH,'center');
+  ell(RC[0],RC[1],118,125,'rgba(238,243,234,.45)');tx(g,'ℝᵐ  输出空间',RC[0],22,CH,'center');
+  g.save();g.translate(LC[0],LC[1]+8);g.rotate(-.13);
+  g.fillStyle='rgba(255,122,144,.25)';g.strokeStyle=RED;g.lineWidth=2;
+  g.beginPath();g.ellipse(0,0,92,26,0,0,7);g.fill();g.stroke();g.restore();
+  tx(g,'N(A)：2 维平面 = span{ξ₁,ξ₂}',LC[0],LC[1]+58,RED,'center');
+  ar(g,LC[0],LC[1]+8,LC[0]-62,LC[1]-6,YEL,2.4);ar(g,LC[0],LC[1]+8,LC[0]+58,LC[1]+22,CYA,2.4);
+  tx(g,'ξ₁',LC[0]-78,LC[1]-14,YEL);tx(g,'ξ₂',LC[0]+62,LC[1]+30,CYA);
+  g.fillStyle='rgba(142,242,160,.20)';g.strokeStyle=GRN;g.lineWidth=2;
+  g.beginPath();g.ellipse(RC[0],RC[1],72,54,0,0,7);g.fill();g.stroke();
+  tx(g,'R(A)：3 维像空间',RC[0],RC[1]+78,GRN,'center');
+  dt(g,RC[0],RC[1],6,RED);tx(g,'0',RC[0]+10,RC[1]-12,RED);
+  ar(g,LC[0]+150,60,RC[0]-130,60,CH,2.4);tx(g,'A',(LC[0]+RC[0])/2,46,YEL,'center');
+  const p=(ph%1);
+  kd.forEach((s0,i)=>{const q=(p+i/kd.length)%1;
+   const x=s0[0]+(RC[0]-s0[0])*q,y=s0[1]+(RC[1]-s0[1])*q-Math.sin(q*3.14)*38;
+   dt(g,s0[0],s0[1],3.4,RED);dt(g,x,y,4,RED);});
+  gd.forEach((s0,i)=>{const q=(p+i/gd.length)%1,tgt=[RC[0]-40+i*26,RC[1]-26+((i%2)?24:-4)];
+   const x=s0[0]+(tgt[0]-s0[0])*q,y=s0[1]+(tgt[1]-s0[1])*q-Math.sin(q*3.14)*30;
+   dt(g,s0[0],s0[1],3.4,GRN);dt(g,x,y,4,GRN);});
+  tx(g,'核里的点（红）全部被送到同一个 0；核外的点（绿）散布在像空间里',W/2,H-12,'rgba(238,243,234,.7)','center');
+ }
+ function loop(){ph+=.005;draw();raf=requestAnimationFrame(loop);}
+ draw();
+ return{el,start(){if(!raf)raf=requestAnimationFrame(loop);},stop(){cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* ⑦ 解集 = 特解 + 核（平移） */
+VIZ.coset=function(){
+ const W=520,H=310,s=34,cx=W/2-40,cy=H/2+20;
+ const el=dv('viz');el.appendChild(dv('vh','Ax = b 的解集 = 把核空间平移到 x₀'));
+ const{c,g}=mkc(W,H);el.appendChild(c);const ro=dv('ro');el.appendChild(ro);
+ const v=[.894,.447],x0=[-.8,2.2];let ph=0,raf=null;
+ function draw(){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  g.setLineDash([7,5]);
+  ln(g,cx-7*v[0]*s,cy+7*v[1]*s,cx+7*v[0]*s,cy-7*v[1]*s,RED,3);
+  const bx=cx+x0[0]*s,by=cy-x0[1]*s;
+  ln(g,bx-7*v[0]*s,by+7*v[1]*s,bx+7*v[0]*s,by-7*v[1]*s,YEL,3);g.setLineDash([]);
+  tx(g,'N(A)：Ax = 0 的解（过原点）',10,H-40,RED);
+  tx(g,'x₀ + N(A)：Ax = b 的全部解（平移后）',10,20,YEL);
+  const k=2.6*Math.sin(ph);
+  const px=bx+k*v[0]*s,py=by-k*v[1]*s;
+  ar(g,cx,cy,bx,by,YEL,2.6);tx(g,'x₀',bx-24,by-10,YEL);
+  ar(g,bx,by,px,py,RED,2.6);tx(g,'ξ ∈ N(A)',px+8,py-10,RED);
+  dt(g,px,py,6,GRN);tx(g,'x = x₀+ξ',px+8,py+14,GRN);
+  dt(g,cx+k*v[0]*s,cy-k*v[1]*s,5,RED);dt(g,cx,cy,4.5,'#fff');
+  ro.innerHTML='A(x₀+ξ) = Ax₀ + Aξ = b + 0 = b　⇒　核越"胖"，解的自由参数越多';
+ }
+ function loop(){ph+=.017;draw();raf=requestAnimationFrame(loop);}
+ draw();
+ return{el,start(){if(!raf)raf=requestAnimationFrame(loop);},stop(){cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* =============== 板书内容 =============== */
+const L=(t,c)=>({y:'t',t,c}),NT=t=>({y:'t',t,c:'note'}),TI=t=>({y:'t',t,c:'ctitle'}),
+      BX=t=>({y:'b',t}),MT=(r,l)=>({y:'m',r,l}),V=(k,o={})=>({y:'v',k,o}),GP=()=>({y:'g'});
+
+const slides=[
+{n:'换眼光',it:[TI('零 · 换一种眼光看 Ax'),
+ L('解方程思维： Ax = b 是"求未知数"的题目 —— 盯着数字算。'),
+ L('变换思维：   A 是一台 [[机器]]，把输入向量 x 搬到输出向量 Ax。'),
+ BX('A : ℝⁿ ⟶ ℝᵐ ,   x ↦ Ax'),
+ L('本节全程用第二种眼光：不问"解是多少"，只问 [[这台机器把空间怎么了]]。'),
+ NT('线性 = 变换后：直线仍是直线、原点仍在原点、平行等距网格仍平行等距')]},
+
+{n:'不降维',it:[TI('一 · 先看一台"不损失维度"的机器'),
+ MT([['1','1'],['-0.6','1']],'A ='),
+ V('lt2d',{A:[[1,1],[-0.6,1]],title:'满秩 2×2：平面被拉扯，但仍是一张平面'}),
+ L('网格被旋转、剪切、拉伸，但 [[没有任何方向被抹平]]。'),
+ L('单位方块的面积倍率 = |det A| ≠ 0 ⇒ 2 维进、2 维出。')]},
+
+{n:'满秩不塌',it:[TI('二 · 满秩：谁也压不成 0'),
+ V('twoplane',{A:[[2,1],[1,1]],title:'左边拖动 x（可鼠标拖）→ 右边实时显示 Ax',mode:'circle',so:20}),
+ L('把 x 拖遍整个左平面：只要 x ≠ 0 ，Ax 就 ≠ 0 。'),
+ BX('A 没有能力把"非零的 x"坍缩成 0'),
+ NT('这是变换本身的"能力"问题，与右端项 b 是谁毫无关系')]},
+
+{n:'降维打击',it:[TI('三 · 降维打击：秩亏的机器'),
+ MT([['1','2'],['2','4']],'A ='),
+ L('第二行 = 2 × 第一行 ⇒ det A = 0 ，rank A = [[1]]'),
+ V('lt2d',{A:[[1,2],[2,4]],title:'秩 1 矩阵：整张平面被压扁成一条直线'}),
+ L('面积倍率归零 —— 有 [[一整个方向]] 的信息被抹掉了。')]},
+
+{n:'谁变成0',it:[TI('四 · 到底"谁"被压成了 0 ？'),
+ V('twoplane',{A:[[1,2],[2,4]],title:'点"沿核方向巡游"：x 在红线上跑，Ax 钉死在原点',mode:'kernel',so:12}),
+ L('红线上的每一个向量（[[无穷多个非零向量]]）都被送到同一点：0 。'),
+ BX('N(A) = { x ∈ ℝⁿ : A x = 0 }   ← 核空间 / 零空间'),
+ NT('它不是"解出来的一组数"，而是变换的"坍缩方向"的集合')]},
+
+{n:'是子空间',it:[TI('五 · 核空间是一个"子空间"'),
+ L('若 A x₁ = 0 且 A x₂ = 0 ，则'),
+ L('   A( k₁x₁ + k₂x₂ ) = k₁·A x₁ + k₂·A x₂ = 0 + 0 = 0'),
+ BX('对加法与数乘封闭 ⇒ N(A) 是 ℝⁿ 的子空间'),
+ L('而任何子空间必过原点，因为恒有 [[A·0 = 0]] 。'),
+ NT('所以核只可能是：一个点 {0} ／ 过原点的直线 ／ 过原点的平面 ／ …')]},
+
+{n:'{0}≠∅',it:[TI('六 · 重要补充：零空间永远不是空集'),
+ L('常见误区：满秩时说"核空间是空的" —— [[不严谨]]！'),
+ L('正确说法：满秩时 N(A) = [[{0}]] ，它有 [[一个]] 元素（零向量），[[维数为 0]] 。'),
+ V('zeroset'),
+ BX('∅（空集，0 个元素）  ≠  {0}（1 个元素的集合）'),
+ NT('恒等式 A·0 = 0 保证零向量必在核中，所以核永远非空')]},
+
+{n:'秩=幸存',it:[TI('七 · 秩 = 幸存下来的维度'),
+ L('像空间（列空间）  R(A) = { A x : x ∈ ℝⁿ } = A 的列向量张成的空间'),
+ L('rank A = dim R(A) = 输出端真正"撑起来"的维数。'),
+ V('twoplane',{A:[[1,2],[2,4]],title:'让 x 在左边绕一个圆：右边的 Ax 只能在一条直线上来回',mode:'circle',so:11}),
+ BX('压扁后剩下的那条线 = 像空间 R(A)（1 维）')]},
+
+{n:'定理',it:[TI('八 · 秩 - 零化度定理'),
+ BX('dim N(A) + rank A = n     （ n = 输入空间维数 = A 的列数 ）'),
+ L('输入端的 n 个自由度，经过机器 A 只有两条路可走：'),
+ L('  ① [[活下来]] —— 汇成 r 维像空间 R(A)'),
+ L('  ② [[被杀死]] —— 掉进 n − r 维核空间 N(A)'),
+ V('dimbar',{n:5,r:3}),
+ NT('注意 n 是列数（输入维数），与行数 m 无关；m 只决定"住在多大的房子里"')]},
+
+{n:'3D演示',it:[TI('九 · 立体演示： ℝ³ 被压成一张平面'),
+ MT([['1','0','1'],['0','1','1'],['1','1','2']],'A ='),
+ L('第三行 = 第一行 + 第二行 ⇒ rank A = 2'),
+ V('space3d'),
+ L('整个立体网格被压进一张平面（像空间 2 维）；'),
+ L('红色直线上的所有点，无论多远，全部被送到原点。'),
+ BX('dim N(A) + rank A = 1 + 2 = 3 = n ✔')]},
+
+{n:'列满秩',it:[TI('十 · 列满秩 ⇔ 单射（一对一）'),
+ L('设 A x₁ = A x₂ ，则 A( x₁ − x₂ ) = 0 ，即 x₁ − x₂ ∈ N(A)'),
+ L('若 rank A = n（列满秩），由定理 dim N(A) = n − n = [[0]]'),
+ L('故 N(A) = {0} ⇒ x₁ − x₂ = 0 ⇒ x₁ = x₂'),
+ BX('列满秩 ⇒ 不同的输入绝不会被撞成同一个输出'),
+ L('反过来：一旦 rank < n ，核里存在非零 ξ ，'),
+ L('那么 x 与 x + ξ 就会被压到同一处 —— [[信息不可逆地丢失]]。'),
+ NT('方阵情形：满秩 ⟺ |A| ≠ 0 ⟺ 可逆 ⟺ 变换能"倒放回去"')]},
+
+{n:'n=5,r=3',it:[TI('十一 · 例： n = 5 , r = 3'),
+ L('dim N(A) = n − r = 5 − 3 = [[2]]'),
+ L('核空间是 ℝ⁵ 中一张过原点的 [[2 维平面]]，由两个"基本类型"向量撑起：'),
+ BX('N(A) = { k₁ξ₁ + k₂ξ₂ : k₁,k₂ ∈ ℝ }   —— 无穷多个点'),
+ V('bigmap'),
+ NT('ξ₁, ξ₂ 就是 Ax=0 的基础解系：线性无关，且个数恰为 n − r')]},
+
+{n:'解集平移',it:[TI('十二 · 回到解方程：解集 = 特解 + 核'),
+ L('设 A x₀ = b ，且 A ξ = 0 ，则 A( x₀ + ξ ) = b + 0 = b'),
+ BX('解集 = x₀ + N(A) ：把整个核空间平移到 x₀'),
+ V('coset'),
+ L('dim N(A) = 0 ⇒ 解唯一 ；  dim N(A) = k ⇒ 通解含 k 个自由参数。')]},
+
+{n:'总结',it:[TI('十三 · 一句话终极总结'),
+ BX('零空间 = 所有能被 A 坍缩成 0 的向量组成的集合'),
+ L('• 它 [[永远非空]] ，至少装着零向量'),
+ L('• 满秩（列满秩）时 N(A) = {0} ：1 个元素，0 维 —— 不是空集！'),
+ L('• n = 5, r = 3 时 N(A) 是 2 维平面：无穷多点，由 ξ₁,ξ₂ 撑起'),
+ GP(),
+ L('知识网络：'),
+ L('rank A = r ⟶ dim N(A) = n − r ⟶ 基础解系含 n − r 个向量'),
+ L('列满秩 ⟺ 单射 ⟺ Ax=0 只有零解 ⟺ A 的列向量线性无关'),
+ L('行满秩 ⟺ 满射 ⟺ Ax=b 对任意 b 都有解'),
+ L('方阵： 满秩 ⟺ |A| ≠ 0 ⟺ 可逆 ⟺ 变换不降维、可倒放')]}
+];
+
+/* =============== 书写引擎 =============== */
+const $=i=>document.getElementById(i),content=$('content'),board=$('board'),chalk=$('chalk'),eraser=$('er');
+let pool=[];
+function E(t,c){const d=document.createElement(t);if(c)d.className=c;return d;}
+function chars(p,s,at){
+ String(s).split(/(\[\[.*?\]\])/g).forEach(seg=>{if(!seg)return;
+  let h=false,z=seg;if(seg.startsWith('[[')&&seg.endsWith(']]')){h=true;z=seg.slice(2,-2);}
+  for(const ch of z){const sp=E('span','atom c'+(h?' hl':''));sp.textContent=(ch===' ')?'\u00A0':ch;
+   if(ch===' ')sp.dataset.f=1;p.appendChild(sp);at.push(sp);}});}
+function build(it){
+ const at=[];
+ if(it.y==='g'){const d=E('div');d.style.height='10px';return{el:d,at:[]};}
+ if(it.y==='t'){const d=E('div','line '+(it.c||''));chars(d,it.t,at);return{el:d,at};}
+ if(it.y==='b'){const d=E('div','box');chars(d,it.t,at);return{el:d,at};}
+ if(it.y==='m'){const w=E('div','matwrap');
+  if(it.l){const lb=E('div','matlabel');chars(lb,it.l,at);w.appendChild(lb);}
+  const mx=E('div','matrix'),l=E('div','brk l atom'),r=E('div','brk r atom'),gr=E('div','mgrid');
+  gr.style.gridTemplateColumns='repeat('+it.r[0].length+',auto)';
+  const cs=[];it.r.forEach(row=>row.forEach(v=>{const c=E('div','cell atom');c.textContent=v;gr.appendChild(c);cs.push(c);}));
+  mx.append(l,gr,r);w.appendChild(mx);at.push(l,r,...cs);return{el:w,at};}
+ if(it.y==='v'){const inst=VIZ[it.k](it.o);inst.el.classList.add('atom');inst.el._v=inst;pool.push(inst);return{el:inst.el,at:[inst.el]};}
+ return{el:E('div'),at:[]};
+}
+let idx=0,tok=0,anim=false,play=false,snd=false,spd=1.4,ac=null;
+const nap=m=>new Promise(r=>setTimeout(r,m));
+function tick(){if(!snd)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+ const n=.03,b=ac.createBuffer(1,ac.sampleRate*n,ac.sampleRate),d=b.getChannelData(0);
+ for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3)*.22;
+ const s=ac.createBufferSource();s.buffer=b;const f=ac.createBiquadFilter();f.type='bandpass';
+ f.frequency.value=2600+Math.random()*900;const g=ac.createGain();g.gain.value=.3;
+ s.connect(f);f.connect(g);g.connect(ac.destination);s.start();}catch(e){}}
+function moveChalk(a){const r=a.getBoundingClientRect(),b=board.getBoundingClientRect();
+ if(!r.width&&!r.height)return;const x=r.right-b.left,y=r.bottom-b.top;
+ chalk.style.transform='translate('+x+'px,'+(y-24)+'px) rotate(28deg)';
+ if(Math.random()<.15){const d=E('div','dust');d.style.left=x+'px';d.style.top=y+'px';board.appendChild(d);setTimeout(()=>d.remove(),850);}}
+function killPool(){pool.forEach(p=>p.stop&&p.stop());pool=[];}
+async function erase(){eraser.classList.remove('sw');void eraser.offsetWidth;eraser.classList.add('sw');
+ content.classList.add('fade');await nap(500);killPool();content.innerHTML='';content.classList.remove('fade');eraser.classList.remove('sw');}
+function statik(i){killPool();content.innerHTML='';
+ slides[i].it.forEach(it=>{const r=build(it);content.appendChild(r.el);
+  r.at.forEach(a=>{a.classList.add('shown');a.style.animation='none';a.style.opacity=1;if(a._v)a._v.start();});});}
+async function show(i,ers){const my=++tok;idx=(i+slides.length)%slides.length;ui();
+ if(ers!==false)await erase();else{killPool();content.innerHTML='';}
+ if(my!==tok)return;
+ const gs=[];slides[idx].it.forEach(it=>{const r=build(it);content.appendChild(r.el);gs.push(r);});
+ anim=true;chalk.classList.add('on');
+ for(const g of gs){if(my!==tok)return;g.el.scrollIntoView({block:'nearest',behavior:'smooth'});
+  for(const a of g.at){if(my!==tok)return;a.classList.add('shown');moveChalk(a);
+   if(a._v){a._v.start();await nap(1600/spd);continue;}
+   if(!a.dataset.f&&Math.random()<.33)tick();
+   await nap((a.dataset.f?9:(a.classList.contains('c')?32:52))/spd);}
+  await nap(230/spd);}
+ anim=false;chalk.classList.remove('on');
+ if(play&&my===tok){await nap(2600/spd);if(my!==tok)return;
+  if(idx<slides.length-1)show(idx+1);else setP(false);}}
+function skip(){tok++;anim=false;chalk.classList.remove('on');statik(idx);}
+function nx(){if(anim){skip();if(play)setTimeout(()=>show(idx+1),800);return;}
+ if(idx<slides.length-1)show(idx+1);else setP(false);}
+function pv(){setP(false);if(idx>0)show(idx-1);}
+function setP(v){play=v;$('bA').textContent=v?'⏸ 暂停':'▶ 自动讲课';$('bA').classList.toggle('act',v);if(v&&!anim)show(idx);}
+const toc=$('toc');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'.'+s.n;b.onclick=()=>{setP(false);show(i);};toc.appendChild(b);});
+function ui(){$('hr').textContent='第 '+(idx+1)+' / '+slides.length+' 页';
+ [...toc.children].forEach((b,i)=>b.classList.toggle('cur',i===idx));
+ toc.children[idx].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}
+$('bN').onclick=nx;$('bP').onclick=pv;$('bF').onclick=()=>{setP(false);show(0);};
+$('bR').onclick=()=>show(idx);$('bA').onclick=()=>setP(!play);
+$('bS').onclick=e=>{snd=!snd;e.target.textContent=(snd?'🔊':'🔇')+' 粉笔声';e.target.classList.toggle('act',snd);};
+$('sp').oninput=e=>spd=parseFloat(e.target.value);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nx();}if(e.key==='ArrowLeft')pv();});
+show(0,false);
+</script>
+</body>
+</html>

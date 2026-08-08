@@ -860,204 +860,49 @@ flowchart TD
 ### Seite 49 - 分布（Verteilung）
 
 ![Seite 049](assets/page-049.png)
-
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、期望（Erwartungswert）、方差（Varianz）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- 期望（Erwartungswert）
-- 方差（Varianz）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Offensichtlich: Weibull(λ, k = 1) ∼ Exp(λ)`
-- `Definition 19.5`
-- `Γ : R+ → R+`
-- `Γ(z) = tz−1 e−t dt`
-- `Für n ∈ N gilt: Γ(n) = (n − 1)!.`
-
 ### Seite 50 - 分布（Verteilung）
 
 ![Seite 050](assets/page-050.png)
-
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-
-本页需要抓住的德语线索：
-
-- `h(t) = λk(λt)k−1`
-- `Abbildung 44: Hazardrate der Weibull-Verteilung bei λ = 1 und k = 1 (schwarz),`
-- `k = 0.5 (blau), k = 2 (orange)`
 
 ### Seite 51 - 分布（Verteilung）
 
 ![Seite 051](assets/page-051.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 随机变量（Zufallsvariable）、分布（Verteilung）、密度（Dichte）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 随机变量（Zufallsvariable）
-- 分布（Verteilung）
-- 密度（Dichte）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Definition 19.6`
-- `Sei X : Ω → R Zufallsvariable mit stetiger Dichte`
-- `f (x ) = x a−1 exp(−bx ) · I (x )`
-- `f (x ) = x a−1 exp(−x /θ) · I (x )`
-
 ### Seite 52 - 分布（Verteilung）
 
 ![Seite 052](assets/page-052.png)
-
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 集合（Menge）、分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 集合（Menge）
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `X ∼ Ga(a, b) =⇒`
-- `E(X ) =`
-- `Var(X ) =`
-- `Schiefe: Skew(X ) = √`
-- `Kurtosis: K (X ) = 3 + 6`
 
 ### Seite 53 - 分布（Verteilung）
 
 ![Seite 053](assets/page-053.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Gamma-Verteilung III`
-- `0.0 0.5 1.0 1.5 2.0 2.5 3.0`
-- `0.2`
 
 ### Seite 54 - 分布（Verteilung）
 
 ![Seite 054](assets/page-054.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Gamma-Verteilung IV`
-- `0.0 0.5 1.0 1.5 2.0 2.5 3.0`
-- `0.2`
 
 ### Seite 55 - 分布（Verteilung）
 
 ![Seite 055](assets/page-055.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、密度（Dichte）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- 密度（Dichte）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Satz 19.7`
-- `Ga(1, b) = Exp(b)`
-- `Setze a = 1 in Dichte der Gamma-Verteilung.`
-- `Satz 19.8`
 
 ### Seite 56 - 分布（Verteilung）
 
 ![Seite 056](assets/page-056.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Momenterzeugende Funktion M(s) = b`
-- `Charakteristische Funktion φ (t) = b`
-
 ### Seite 57 - 分布（Verteilung）
 
 ![Seite 057](assets/page-057.png)
-
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `M (s) = (ax )b−1 exp(−ax ) exp(tx ) dx`
-- `= x b−1 exp((−a + s) x ) dx`
-- `= ab x b−1 exp(−(a − s) x ) dx`
-- `= x b−1 exp(−(a − s) x ) dx (Kreative 1)`
-- `=`
 
 ### Seite 58 - 分布（Verteilung）
 
 ![Seite 058](assets/page-058.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `E(X ) = X | = b · ab · (a − s)−b−1|`
-- `∂s s=0 s=0`
-- `= =`
-- `E(X 2) = ∂2M X (s) (cid:12) (cid:12) (cid:12) = b (b + 1) ab (a − s)−b−2(cid:12) (cid:12)`
-- `∂2s (cid:12) s=0`
-
 ### Seite 59 - 分布（Verteilung）
 
 ![Seite 059](assets/page-059.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-
-本页需要抓住的德语线索：
-
-- `X ∼ χ2(k), mit Parameter k ∈ N “Anzahl der Freiheitsgrade”`
-- `f X (x ) = Γ (cid:0) 1 k (cid:1) 1 2 2 x k 2 −1 exp − 1 2 x · I (0,∞) (x )`
-- `Ga (cid:0) k , 1 (cid:1) = χ2(k)`
-- `E(X ) 2 = 2 k`
-- `Var(X ) = 2 · k`
 
 ### Seite 60 - Poisson 分布（Poisson）
 
@@ -1129,111 +974,27 @@ flowchart TD
 
 ![Seite 064](assets/page-064.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 随机变量（Zufallsvariable）、分布（Verteilung）、密度（Dichte）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 随机变量（Zufallsvariable）
-- 分布（Verteilung）
-- 密度（Dichte）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `Definition 19.9`
-- `Sei X : Ω → R Zufallsvariable mit stetiger Dichte`
-- `f (x ) = (1/x )a+1 exp (−b/x ) · I (x )`
-- `Satz 19.10`
-- `Y = ∼ IG(a, b)`
-
 ### Seite 65 - 分布（Verteilung）
 
 ![Seite 065](assets/page-065.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Gamma 分布（Gamma）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
 
-关键词：
-
-- 分布（Verteilung）
-- Gamma 分布（Gamma）
-
-本页需要抓住的德语线索：
-
-- `f (x ) = x a−1 exp(−bx ) · I (x )`
-- `y = g(x ) = =⇒ h(y ) = g−1(y ) =`
-- `h(y ) = −`
-- `f Y (y ) = f X (h(y )) (cid:12) (cid:12) dy h(y )(cid:12) (cid:12)`
-- `= (1/y )a−1 exp(−b/y ) · I (y ) ·`
 
 ### Seite 66 - 分布（Verteilung）
 
 ![Seite 066](assets/page-066.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 随机变量（Zufallsvariable）、分布（Verteilung）、密度（Dichte）、Cauchy 分布（Cauchy）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 随机变量（Zufallsvariable）
-- 分布（Verteilung）
-- 密度（Dichte）
-- Cauchy 分布（Cauchy）
-
-本页需要抓住的德语线索：
-
-- `Definition 19.11`
-- `Sei X : Ω → R Zufallsvariable mit stetiger Dichte`
-- `f (x ) =`
-
 ### Seite 67 - 分布（Verteilung）
 
 ![Seite 067](assets/page-067.png)
-
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Cauchy 分布（Cauchy）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Cauchy 分布（Cauchy）
-
-本页需要抓住的德语线索：
-
-- `Cauchy ist eine symmetrische Verteilung. Erinnern wir uns an Satz 8.12.`
-- `E(X ) = x dx = dx`
-- `= log(1 + x 2)`
 
 ### Seite 68 - 分布（Verteilung）
 
 ![Seite 068](assets/page-068.png)
 
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Cauchy 分布（Cauchy）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Cauchy 分布（Cauchy）
-
-本页需要抓住的德语线索：
-
-- `Cauchy-Verteilung III`
-- `Cauchy ist die Verteilung, die für viele Sätze die Ausnahme ist, z.B. Gesetz der`
-- `großen Zahlen:`
-
 ### Seite 69 - 分布（Verteilung）
 
 ![Seite 069](assets/page-069.png)
-
-本页放在“模块一：连续分布按随机机制和形状记忆”中，核心是理解 分布（Verteilung）、Cauchy 分布（Cauchy）。直觉上先抓住标题里的对象：分布（Verteilung）。然后看它是定义、例子、定理还是证明；定义页要记条件，例子页要看随机机制，证明页要看用了哪些闭包性或极限定理。
-
-关键词：
-
-- 分布（Verteilung）
-- Cauchy 分布（Cauchy）
-
-本页需要抓住的德语线索：
-
-- `Cauchy-Verteilung IV`
-- `−4 −2 0 2 4`
-- `4.0`
 
 ### Seite 70 - 分布（Verteilung）
 

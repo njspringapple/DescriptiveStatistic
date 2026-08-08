@@ -1,0 +1,7068 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+>
+<title>惠泊商户通｜停车优惠券管理</title>
+
+<style>
+:root {
+  --primary: #1769e8;
+  --primary-dark: #0d55c5;
+  --primary-soft: #eaf3ff;
+  --cyan: #11a8bd;
+  --green: #15966f;
+  --green-soft: #e8f8f2;
+  --orange: #e88224;
+  --orange-soft: #fff3e5;
+  --red: #d84e4e;
+  --red-soft: #fff0f0;
+  --purple: #7257ce;
+  --purple-soft: #f1edff;
+
+  --text: #1c2d3d;
+  --text-2: #526579;
+  --text-3: #81909d;
+  --line: #e4eaf0;
+  --line-dark: #d6e0e8;
+  --page: #f2f5f8;
+  --card: #ffffff;
+  --shadow: 0 8px 24px rgba(35, 61, 83, .08);
+
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(circle at 25% 12%, rgba(31, 132, 255, .13), transparent 27%),
+    radial-gradient(circle at 84% 70%, rgba(28, 199, 165, .10), transparent 25%),
+    linear-gradient(145deg, #071426, #0a1e35 55%, #06101f);
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+  color: var(--text);
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  outline: none;
+}
+
+/* ========================================
+   PDA设备容器
+======================================== */
+
+.device-shell {
+  position: relative;
+  width: 430px;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--page);
+}
+
+@media (min-width: 700px) {
+  body {
+    align-items: center;
+    padding: 22px;
+  }
+
+  .device-shell {
+    min-height: 860px;
+    height: min(900px, calc(100vh - 44px));
+    border: 9px solid #122638;
+    border-radius: 31px;
+    box-shadow:
+      0 35px 90px rgba(0, 0, 0, .48),
+      0 0 0 1px rgba(100, 214, 245, .18),
+      inset 0 1px 0 rgba(255, 255, 255, .12);
+  }
+
+  .device-shell::before {
+    content: "";
+    position: absolute;
+    z-index: 1000;
+    left: 50%;
+    top: 5px;
+    width: 72px;
+    height: 5px;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    background: #263d4e;
+  }
+}
+
+.app {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--page);
+}
+
+/* ========================================
+   顶部状态栏和导航
+======================================== */
+
+.status-bar {
+  position: absolute;
+  z-index: 50;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 25px;
+  padding: 6px 15px 0;
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+  background: #1768d6;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.app-header {
+  position: absolute;
+  z-index: 45;
+  left: 0;
+  right: 0;
+  top: 25px;
+  height: 59px;
+  padding: 0 14px;
+  display: grid;
+  grid-template-columns: 42px 1fr 76px;
+  align-items: center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 0%, rgba(105, 229, 255, .25), transparent 36%),
+    linear-gradient(135deg, #1769e8, #118da9);
+  box-shadow: 0 4px 16px rgba(20, 100, 185, .19);
+}
+
+.header-back,
+.header-action {
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: transparent;
+}
+
+.header-back {
+  width: 38px;
+  border-radius: 12px;
+  font-size: 26px;
+}
+
+.header-back.hidden {
+  visibility: hidden;
+}
+
+.header-title {
+  min-width: 0;
+  text-align: center;
+}
+
+.header-title strong {
+  display: block;
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-title span {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  color: rgba(255, 255, 255, .72);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header-action {
+  position: relative;
+  width: 36px;
+  border-radius: 10px;
+  font-size: 19px;
+}
+
+.message-dot {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #1683c4;
+  border-radius: 9px;
+  color: #fff;
+  background: #f04f59;
+  font-size: 7px;
+  font-style: normal;
+}
+
+/* ========================================
+   页面和底部导航
+======================================== */
+
+.page-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 84px;
+  bottom: 68px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.page-container::-webkit-scrollbar {
+  display: none;
+}
+
+.page {
+  min-height: 100%;
+  padding: 12px 12px 24px;
+}
+
+.bottom-nav {
+  position: absolute;
+  z-index: 45;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(68px + var(--safe-bottom));
+  padding: 7px 5px var(--safe-bottom);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid #e0e7ed;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 -5px 18px rgba(34, 58, 78, .05);
+  backdrop-filter: blur(14px);
+}
+
+.nav-button {
+  position: relative;
+  min-width: 0;
+  padding: 3px 0;
+  color: #85929d;
+  background: transparent;
+  text-align: center;
+}
+
+.nav-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 17px;
+}
+
+.nav-button span {
+  display: block;
+  margin-top: 2px;
+  font-size: 9px;
+}
+
+.nav-button.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.nav-button.active .nav-icon {
+  background: var(--primary-soft);
+}
+
+/* ========================================
+   通用组件
+======================================== */
+
+.card {
+  margin-bottom: 10px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--card);
+  box-shadow: 0 5px 17px rgba(34, 64, 88, .045);
+}
+
+.card.compact {
+  padding: 11px;
+}
+
+.section-header {
+  margin: 15px 2px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #304558;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.section-title::before {
+  content: "";
+  width: 4px;
+  height: 14px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--primary), var(--cyan));
+}
+
+.section-more {
+  padding: 5px;
+  color: var(--primary);
+  background: transparent;
+  font-size: 10px;
+}
+
+.muted {
+  color: var(--text-3);
+}
+
+.link-button {
+  padding: 4px;
+  color: var(--primary);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.primary-btn,
+.secondary-btn,
+.danger-btn,
+.warning-btn,
+.ghost-btn {
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.primary-btn {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), #149eb3);
+  box-shadow: 0 7px 16px rgba(23, 105, 232, .20);
+}
+
+.secondary-btn {
+  color: var(--primary);
+  border: 1px solid #cfe0f3;
+  background: #edf5ff;
+}
+
+.warning-btn {
+  color: #a25d18;
+  border: 1px solid #f0d1ae;
+  background: var(--orange-soft);
+}
+
+.danger-btn {
+  color: var(--red);
+  border: 1px solid #f0caca;
+  background: var(--red-soft);
+}
+
+.ghost-btn {
+  color: var(--text-2);
+  border: 1px solid var(--line-dark);
+  background: #fff;
+}
+
+.small-btn {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+
+.full-btn {
+  width: 100%;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.button-row.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.badge {
+  display: inline-flex;
+  min-height: 22px;
+  padding: 0 8px;
+  align-items: center;
+  border-radius: 11px;
+  color: #1769b6;
+  background: #e7f2ff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.badge.green {
+  color: #12785a;
+  background: var(--green-soft);
+}
+
+.badge.orange {
+  color: #a9601d;
+  background: var(--orange-soft);
+}
+
+.badge.red {
+  color: #b83f3f;
+  background: var(--red-soft);
+}
+
+.badge.purple {
+  color: #664dbb;
+  background: var(--purple-soft);
+}
+
+.badge.gray {
+  color: #677684;
+  background: #edf1f4;
+}
+
+.amount-positive {
+  color: var(--green) !important;
+}
+
+.amount-negative {
+  color: var(--red) !important;
+}
+
+.amount-warning {
+  color: var(--orange) !important;
+}
+
+.empty-state {
+  padding: 42px 18px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.empty-icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 13px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  color: #6fa9d6;
+  background: #e9f3fb;
+  font-size: 28px;
+}
+
+.empty-state strong {
+  display: block;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.empty-state span {
+  display: block;
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   表单
+======================================== */
+
+.form-group {
+  margin-bottom: 13px;
+}
+
+.form-label {
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+  color: #536678;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.form-label em {
+  color: var(--red);
+  font-style: normal;
+}
+
+.form-control {
+  width: 100%;
+  height: 43px;
+  padding: 0 12px;
+  border: 1px solid #dce4eb;
+  border-radius: 11px;
+  color: var(--text);
+  background: #fff;
+  font-size: 13px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+textarea.form-control {
+  height: 78px;
+  padding-top: 10px;
+  resize: none;
+}
+
+.form-control:focus {
+  border-color: #64a6ed;
+  box-shadow: 0 0 0 3px rgba(51, 133, 224, .10);
+}
+
+.form-control.invalid {
+  border-color: #e36b6b;
+  background: #fffafa;
+}
+
+.form-tip {
+  margin-top: 6px;
+  color: var(--text-3);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.form-error {
+  margin-top: 5px;
+  color: var(--red);
+  font-size: 9px;
+}
+
+.input-action {
+  position: relative;
+}
+
+.input-action .form-control {
+  padding-right: 92px;
+}
+
+.input-inner-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  height: 33px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.radio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.radio-card {
+  position: relative;
+  min-height: 63px;
+  padding: 10px;
+  border: 1px solid #dfe6ec;
+  border-radius: 11px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.radio-card.active {
+  border-color: var(--primary);
+  background: #edf5ff;
+  box-shadow: 0 0 0 2px rgba(23, 105, 232, .07);
+}
+
+.radio-card.disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+.radio-card strong {
+  display: block;
+  color: #354b5d;
+  font-size: 11px;
+}
+
+.radio-card span {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-3);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.radio-card.active strong {
+  color: var(--primary);
+}
+
+.radio-check {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  width: 16px;
+  height: 16px;
+  display: none;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--primary);
+  font-size: 9px;
+}
+
+.radio-card.active .radio-check {
+  display: grid;
+}
+
+/* ========================================
+   首页
+======================================== */
+
+.merchant-banner {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: 17px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .22), transparent 35%),
+    linear-gradient(135deg, #1769e8, #138eac);
+  box-shadow: 0 11px 25px rgba(19, 107, 195, .24);
+}
+
+.merchant-banner::after {
+  content: "P";
+  position: absolute;
+  right: 14px;
+  bottom: -42px;
+  color: rgba(255, 255, 255, .08);
+  font-size: 130px;
+  font-weight: 900;
+}
+
+.merchant-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.merchant-name {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.merchant-store {
+  margin-top: 5px;
+  color: rgba(255, 255, 255, .74);
+  font-size: 10px;
+}
+
+.mode-badge {
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, .23);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .13);
+  font-size: 9px;
+}
+
+.balance-label {
+  position: relative;
+  z-index: 2;
+  margin-top: 17px;
+  color: rgba(255, 255, 255, .72);
+  font-size: 10px;
+}
+
+.balance-value {
+  position: relative;
+  z-index: 2;
+  margin-top: 4px;
+  font-size: 29px;
+  font-weight: 800;
+}
+
+.balance-detail {
+  position: relative;
+  z-index: 2;
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.balance-item {
+  padding: 8px 7px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.balance-item span {
+  display: block;
+  color: rgba(255, 255, 255, .68);
+  font-size: 8px;
+}
+
+.balance-item strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+
+.quick-button {
+  min-width: 0;
+  padding: 10px 4px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  color: var(--text-2);
+  background: #fff;
+  box-shadow: 0 5px 14px rgba(37, 64, 86, .04);
+}
+
+.quick-icon {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 19px;
+}
+
+.quick-button:nth-child(2) .quick-icon {
+  color: var(--purple);
+  background: var(--purple-soft);
+}
+
+.quick-button:nth-child(3) .quick-icon {
+  color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.quick-button:nth-child(4) .quick-icon {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.quick-button span {
+  display: block;
+  margin-top: 7px;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plate-quick-card {
+  padding: 13px;
+  border: 1px solid #d7e5f1;
+  border-radius: 14px;
+  background: #f6fbff;
+}
+
+.plate-input-row {
+  display: grid;
+  grid-template-columns: 1fr 78px;
+  gap: 8px;
+}
+
+.plate-input {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #cee0ee;
+  border-radius: 11px;
+  color: #244159;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.plate-search-btn {
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), #139eb1);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.recent-plates {
+  margin-top: 9px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.plate-chip {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border: 1px solid #dbe5ec;
+  border-radius: 9px;
+  color: #526a7b;
+  background: #fff;
+  font-size: 9px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.metric-card {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #fff;
+}
+
+.metric-card span {
+  color: var(--text-3);
+  font-size: 9px;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 5px;
+  color: #294155;
+  font-size: 19px;
+}
+
+.metric-card em {
+  display: block;
+  margin-top: 4px;
+  color: var(--green);
+  font-size: 8px;
+  font-style: normal;
+}
+
+.task-list {
+  display: grid;
+  gap: 8px;
+}
+
+.task-item {
+  padding: 11px;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.task-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.task-item strong {
+  display: block;
+  color: #354b5e;
+  font-size: 11px;
+}
+
+.task-item span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+/* ========================================
+   车牌查询和发券
+======================================== */
+
+.plate-search-panel {
+  padding: 14px;
+  border: 1px solid #d7e4ef;
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 95% 0%, rgba(70, 169, 255, .10), transparent 35%),
+    #fff;
+}
+
+.search-tools {
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.tool-btn {
+  height: 37px;
+  border: 1px solid #dbe5ed;
+  border-radius: 9px;
+  color: #5b7182;
+  background: #f8fafc;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.order-status-card {
+  position: relative;
+  overflow: hidden;
+  border-color: #cae1f1;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(30, 145, 224, .09), transparent 31%),
+    #fff;
+}
+
+.order-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.order-plate {
+  color: #1d3e58;
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.order-lot {
+  margin-top: 5px;
+  color: var(--text-3);
+  font-size: 9px;
+}
+
+.order-data {
+  margin-top: 11px;
+  padding-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  border-top: 1px solid #edf1f4;
+}
+
+.order-data-item span {
+  display: block;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.order-data-item strong {
+  display: block;
+  margin-top: 4px;
+  color: #354c5e;
+  font-size: 11px;
+}
+
+.fee-summary {
+  margin-top: 10px;
+  padding: 11px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 11px;
+  background: #f4f7fa;
+}
+
+.fee-item {
+  text-align: center;
+  border-right: 1px solid #dfe6eb;
+}
+
+.fee-item:last-child {
+  border-right: 0;
+}
+
+.fee-item span {
+  display: block;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.fee-item strong {
+  display: block;
+  margin-top: 5px;
+  color: #354c5e;
+  font-size: 13px;
+}
+
+.fee-item.payable strong {
+  color: var(--orange);
+}
+
+.existing-discount {
+  margin-top: 9px;
+  padding: 9px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 9px;
+  color: #466b84;
+  background: #edf7ff;
+  font-size: 9px;
+}
+
+.coupon-choice-list {
+  display: grid;
+  gap: 8px;
+}
+
+.coupon-choice {
+  position: relative;
+  padding: 12px 42px 12px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.coupon-choice.active {
+  border-color: var(--primary);
+  background: #f3f8ff;
+}
+
+.coupon-choice.disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+.coupon-choice strong {
+  display: block;
+  color: #344b5e;
+  font-size: 12px;
+}
+
+.coupon-choice p {
+  margin: 5px 0 0;
+  color: var(--text-3);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.coupon-choice-meta {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.choice-check {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 1px solid #d7e0e7;
+  border-radius: 50%;
+  color: transparent;
+  background: #fff;
+  font-size: 11px;
+}
+
+.coupon-choice.active .choice-check {
+  color: #fff;
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.confirm-summary {
+  overflow: hidden;
+  border: 1px solid #d6e4ef;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.confirm-row {
+  min-height: 39px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #edf1f4;
+  color: var(--text-3);
+  font-size: 10px;
+}
+
+.confirm-row:last-child {
+  border-bottom: 0;
+}
+
+.confirm-row strong {
+  color: #344a5c;
+  font-size: 10px;
+  text-align: right;
+}
+
+.confirm-row.total {
+  background: #f7fafc;
+}
+
+.confirm-row.total strong {
+  color: var(--orange);
+  font-size: 14px;
+}
+
+.risk-notice {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #f0dbbe;
+  border-radius: 10px;
+  color: #8c612e;
+  background: #fff8ee;
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+/* ========================================
+   券库存和记录
+======================================== */
+
+.segmented {
+  margin-bottom: 10px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 11px;
+  background: #e8edf2;
+}
+
+.segmented.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.segmented.four {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.segment-btn {
+  min-height: 34px;
+  padding: 0 5px;
+  border-radius: 8px;
+  color: #687987;
+  background: transparent;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.segment-btn.active {
+  color: var(--primary);
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(35, 58, 78, .08);
+}
+
+.inventory-list,
+.record-list,
+.employee-list,
+.bill-list {
+  display: grid;
+  gap: 9px;
+}
+
+.inventory-item {
+  position: relative;
+  overflow: hidden;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.inventory-item::after {
+  content: "券";
+  position: absolute;
+  right: -5px;
+  bottom: -31px;
+  color: rgba(31, 119, 202, .055);
+  font-size: 87px;
+  font-weight: 900;
+}
+
+.inventory-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.inventory-head strong {
+  display: block;
+  color: #344b5d;
+  font-size: 13px;
+}
+
+.inventory-head span {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-3);
+  font-size: 9px;
+}
+
+.inventory-count {
+  text-align: right;
+}
+
+.inventory-count b {
+  display: block;
+  color: var(--primary);
+  font-size: 21px;
+}
+
+.inventory-count small {
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.inventory-meta {
+  position: relative;
+  z-index: 2;
+  margin-top: 11px;
+  padding-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #edf1f4;
+}
+
+.inventory-meta div {
+  text-align: center;
+}
+
+.inventory-meta span {
+  display: block;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.inventory-meta strong {
+  display: block;
+  margin-top: 4px;
+  color: #536779;
+  font-size: 10px;
+}
+
+.inventory-actions {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.record-item,
+.bill-item,
+.employee-item {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #fff;
+}
+
+.record-head,
+.bill-head,
+.employee-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.record-head strong,
+.bill-head strong,
+.employee-head strong {
+  display: block;
+  color: #344a5c;
+  font-size: 12px;
+}
+
+.record-head span,
+.bill-head span,
+.employee-head span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.record-body,
+.bill-body {
+  margin-top: 9px;
+  padding-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  border-top: 1px solid #edf1f4;
+}
+
+.record-body div span,
+.bill-body div span {
+  display: block;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.record-body div strong,
+.bill-body div strong {
+  display: block;
+  margin-top: 3px;
+  color: #536677;
+  font-size: 9px;
+}
+
+.record-actions,
+.bill-actions,
+.employee-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+/* ========================================
+   财务
+======================================== */
+
+.finance-overview {
+  padding: 15px;
+  border-radius: 16px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .20), transparent 35%),
+    linear-gradient(135deg, #6150c3, #347aca);
+  box-shadow: 0 10px 23px rgba(73, 89, 183, .20);
+}
+
+.finance-overview span {
+  color: rgba(255, 255, 255, .73);
+  font-size: 9px;
+}
+
+.finance-overview h2 {
+  margin: 5px 0 13px;
+  font-size: 28px;
+}
+
+.finance-detail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.finance-detail div {
+  padding: 8px 6px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.finance-detail strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.finance-menu {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.finance-menu button {
+  padding: 10px 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: #586b7c;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.finance-menu i {
+  width: 35px;
+  height: 35px;
+  margin: 0 auto 6px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: var(--purple);
+  background: var(--purple-soft);
+  font-size: 17px;
+  font-style: normal;
+}
+
+.flow-item {
+  min-height: 55px;
+  padding: 9px 0;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid #edf1f4;
+}
+
+.flow-item:last-child {
+  border-bottom: 0;
+}
+
+.flow-icon {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.flow-main strong {
+  display: block;
+  color: #405568;
+  font-size: 10px;
+}
+
+.flow-main span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.flow-amount {
+  text-align: right;
+}
+
+.flow-amount strong {
+  font-size: 11px;
+}
+
+.flow-amount span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 7px;
+}
+
+/* ========================================
+   统计
+======================================== */
+
+.date-filter {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+}
+
+.date-chip {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid #dce4ea;
+  border-radius: 9px;
+  color: #6c7c89;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.date-chip.active {
+  color: #fff;
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.chart-card {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.bar-chart {
+  height: 145px;
+  margin-top: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid #dfe6eb;
+}
+
+.bar-column {
+  flex: 1;
+  text-align: center;
+}
+
+.bar {
+  position: relative;
+  width: 24px;
+  min-height: 4px;
+  margin: 0 auto;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, #3ba6f0, var(--primary));
+}
+
+.bar::before {
+  content: attr(data-value);
+  position: absolute;
+  left: 50%;
+  top: -17px;
+  transform: translateX(-50%);
+  color: #557084;
+  font-size: 7px;
+}
+
+.bar-label {
+  display: block;
+  margin-top: 7px;
+  color: var(--text-3);
+  font-size: 7px;
+}
+
+.ranking-row {
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: 27px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #edf1f4;
+}
+
+.ranking-row:last-child {
+  border-bottom: 0;
+}
+
+.rank-number {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #627485;
+  background: #edf1f4;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.ranking-row:nth-child(1) .rank-number {
+  color: #9a5b13;
+  background: #ffedc9;
+}
+
+.ranking-row:nth-child(2) .rank-number {
+  color: #657480;
+  background: #e5eaee;
+}
+
+.ranking-row:nth-child(3) .rank-number {
+  color: #975b36;
+  background: #f3dfd2;
+}
+
+.rank-info strong {
+  display: block;
+  color: #405568;
+  font-size: 10px;
+}
+
+.rank-info span {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.rank-value {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ========================================
+   我的和员工管理
+======================================== */
+
+.profile-card {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 54px 1fr auto;
+  align-items: center;
+  gap: 11px;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #1769e8, #159cac);
+}
+
+.profile-avatar {
+  width: 53px;
+  height: 53px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, .26);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, .14);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.profile-info strong {
+  display: block;
+  font-size: 15px;
+}
+
+.profile-info span {
+  display: block;
+  margin-top: 5px;
+  color: rgba(255, 255, 255, .72);
+  font-size: 9px;
+}
+
+.profile-role {
+  padding: 5px 7px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .14);
+  font-size: 8px;
+}
+
+.menu-list {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.menu-item {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 13px;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid #edf1f4;
+  color: #455a6b;
+  background: #fff;
+  text-align: left;
+}
+
+.menu-item:last-child {
+  border-bottom: 0;
+}
+
+.menu-icon {
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 15px;
+}
+
+.menu-item strong {
+  display: block;
+  font-size: 11px;
+}
+
+.menu-item span {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-3);
+  font-size: 8px;
+}
+
+.menu-arrow {
+  color: #a8b1b9;
+  font-size: 17px;
+}
+
+.employee-main {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 9px;
+}
+
+.employee-avatar {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.employee-limit {
+  margin-top: 9px;
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 9px;
+  color: #71808d;
+  background: #f5f7f9;
+  font-size: 8px;
+}
+
+/* ========================================
+   弹窗、抽屉、Toast
+======================================== */
+
+.overlay {
+  position: absolute;
+  z-index: 200;
+  inset: 0;
+  display: none;
+  align-items: flex-end;
+  background: rgba(7, 17, 28, .54);
+  backdrop-filter: blur(2px);
+}
+
+.overlay.show {
+  display: flex;
+}
+
+.modal {
+  width: 100%;
+  max-height: 88%;
+  overflow-y: auto;
+  border-radius: 22px 22px 0 0;
+  background: var(--page);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, .20);
+  animation: modalIn .22s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    transform: translateY(45px);
+    opacity: .4;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  min-height: 57px;
+  padding: 0 14px;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, .96);
+  backdrop-filter: blur(12px);
+}
+
+.modal-header strong {
+  text-align: center;
+  font-size: 15px;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  color: #657685;
+  background: #f0f3f6;
+  font-size: 20px;
+}
+
+.modal-body {
+  padding: 13px 13px calc(22px + var(--safe-bottom));
+}
+
+.confirm-dialog {
+  width: calc(100% - 38px);
+  margin: auto;
+  overflow: hidden;
+  border-radius: 17px;
+  background: #fff;
+  animation: confirmIn .18s ease-out;
+}
+
+@keyframes confirmIn {
+  from {
+    transform: scale(.92);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confirm-content {
+  padding: 21px 18px 16px;
+  text-align: center;
+}
+
+.confirm-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: var(--orange);
+  background: var(--orange-soft);
+  font-size: 24px;
+}
+
+.confirm-content strong {
+  display: block;
+  font-size: 15px;
+}
+
+.confirm-content p {
+  margin: 9px 0 0;
+  color: var(--text-3);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.confirm-actions {
+  padding: 10px 13px 13px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.toast-container {
+  position: absolute;
+  z-index: 500;
+  left: 16px;
+  right: 16px;
+  top: 94px;
+  pointer-events: none;
+}
+
+.toast {
+  margin-bottom: 8px;
+  padding: 11px 13px;
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  gap: 8px;
+  border-radius: 11px;
+  color: #fff;
+  background: rgba(24, 46, 64, .94);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .20);
+  font-size: 11px;
+  line-height: 1.45;
+  animation: toastIn .22s ease-out;
+}
+
+.toast.success {
+  background: rgba(18, 126, 94, .96);
+}
+
+.toast.error {
+  background: rgba(189, 63, 63, .96);
+}
+
+.toast.warning {
+  background: rgba(183, 104, 30, .96);
+}
+
+@keyframes toastIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   加载、成功页
+======================================== */
+
+.loading-mask {
+  position: absolute;
+  z-index: 600;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: rgba(242, 245, 248, .72);
+  backdrop-filter: blur(2px);
+}
+
+.loading-mask.show {
+  display: grid;
+}
+
+.loading-box {
+  width: 104px;
+  padding: 16px;
+  border-radius: 14px;
+  color: #506474;
+  background: #fff;
+  box-shadow: var(--shadow);
+  font-size: 10px;
+  text-align: center;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 10px;
+  border: 3px solid #deebf5;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin .75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.success-page {
+  padding: 38px 18px;
+  text-align: center;
+}
+
+.success-icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 25px;
+  color: #fff;
+  background: linear-gradient(135deg, #18a777, #33c9a0);
+  box-shadow: 0 12px 28px rgba(24, 167, 119, .22);
+  font-size: 38px;
+}
+
+.success-page h2 {
+  margin: 0;
+  color: #263f52;
+  font-size: 20px;
+}
+
+.success-page > p {
+  margin: 9px 0 17px;
+  color: var(--text-3);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.result-card {
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #fff;
+  text-align: left;
+}
+
+/* ========================================
+   开关
+======================================== */
+
+.switch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  flex: 0 0 42px;
+  border-radius: 13px;
+  background: #ccd5dc;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .18);
+  transition: transform .2s;
+}
+
+.switch.on {
+  background: var(--green);
+}
+
+.switch.on::after {
+  transform: translateX(18px);
+}
+
+/* ========================================
+   打印
+======================================== */
+
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+
+  .device-shell {
+    width: 430px;
+    height: 900px;
+    min-height: 900px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="device-shell">
+  <div class="app" id="app">
+
+    <div class="status-bar">
+      <span id="statusTime">20:18</span>
+      <span>商户专网 · 5G ▮▮▮　86%</span>
+    </div>
+
+    <header class="app-header">
+      <button class="header-back hidden" id="headerBack">‹</button>
+
+      <div class="header-title">
+        <strong id="pageTitle">惠泊商户通</strong>
+        <span id="pageSubtitle">星悦餐厅 · 惠泊中心店</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="header-action" data-action="open-search" title="全局查询">
+          ⌕
+        </button>
+
+        <button class="header-action" data-action="open-messages" title="消息中心">
+          ♢
+          <i class="message-dot" id="messageCount">3</i>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-container" id="pageContainer"></main>
+
+    <nav class="bottom-nav">
+      <button class="nav-button active" data-route="home">
+        <i class="nav-icon">⌂</i>
+        <span>工作台</span>
+      </button>
+
+      <button class="nav-button" data-route="issue">
+        <i class="nav-icon">券</i>
+        <span>发券</span>
+      </button>
+
+      <button class="nav-button" data-route="coupons">
+        <i class="nav-icon">▣</i>
+        <span>券管理</span>
+      </button>
+
+      <button class="nav-button" data-route="finance">
+        <i class="nav-icon">¥</i>
+        <span>财务</span>
+      </button>
+
+      <button class="nav-button" data-route="profile">
+        <i class="nav-icon">我</i>
+        <span>我的</span>
+      </button>
+    </nav>
+
+    <div class="overlay" id="modalOverlay">
+      <section class="modal" id="modal">
+        <div class="modal-header">
+          <span></span>
+          <strong id="modalTitle">操作</strong>
+          <button class="modal-close" data-action="close-modal">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </section>
+    </div>
+
+    <div class="overlay" id="confirmOverlay" style="align-items:center">
+      <section class="confirm-dialog">
+        <div class="confirm-content">
+          <div class="confirm-icon" id="confirmIcon">!</div>
+          <strong id="confirmTitle">请确认</strong>
+          <p id="confirmMessage"></p>
+        </div>
+
+        <div class="confirm-actions">
+          <button class="ghost-btn" data-action="cancel-confirm">取消</button>
+          <button class="primary-btn" id="confirmSubmit">确认</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="loading-mask" id="loadingMask">
+      <div class="loading-box">
+        <div class="spinner"></div>
+        <span id="loadingText">正在处理...</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   数据层
+========================================================= */
+
+const STORAGE_KEY = "huibo_merchant_pda_v3";
+
+const seedState = {
+  merchant: {
+    id: "M001",
+    name: "星悦餐饮管理有限公司",
+    storeId: "S001",
+    storeName: "星悦餐厅 · 惠泊中心店",
+    settlementMode: "mixed",
+    status: "normal",
+    balance: 8620,
+    giftBalance: 300,
+    frozenAmount: 120,
+    creditLimit: 20000,
+    creditUsed: 6420,
+    currentPayable: 6420,
+    invoiceableAmount: 12580,
+    lowBalanceThreshold: 1000
+  },
+
+  currentUser: {
+    id: "E001",
+    name: "王店长",
+    mobile: "138****6688",
+    role: "admin",
+    roleName: "商户管理员",
+    storeName: "星悦餐厅 · 惠泊中心店",
+    dailyLimitAmount: 5000,
+    dailyLimitCount: 300,
+    todayIssuedAmount: 128,
+    todayIssuedCount: 36,
+    permissions: [
+      "plate_query",
+      "issue",
+      "purchase",
+      "recharge",
+      "refund",
+      "statistics",
+      "employees",
+      "settlement",
+      "invoice"
+    ]
+  },
+
+  inventory: [
+    {
+      id: "T001",
+      name: "2小时停车优惠券",
+      type: "duration",
+      value: 120,
+      valueText: "免费停车2小时",
+      merchantPrice: 6,
+      faceText: "2小时",
+      stock: 286,
+      frozen: 3,
+      refundable: true,
+      minPurchase: 10,
+      maxPurchase: 1000,
+      validDays: 90,
+      scope: "惠泊中心停车场",
+      stackable: false
+    },
+    {
+      id: "T002",
+      name: "停车费10元抵扣券",
+      type: "amount",
+      value: 10,
+      valueText: "抵扣停车费10元",
+      merchantPrice: 8.5,
+      faceText: "¥10",
+      stock: 120,
+      frozen: 2,
+      refundable: true,
+      minPurchase: 10,
+      maxPurchase: 500,
+      validDays: 60,
+      scope: "惠泊中心停车场",
+      stackable: true
+    },
+    {
+      id: "T003",
+      name: "1小时停车优惠券",
+      type: "duration",
+      value: 60,
+      valueText: "免费停车1小时",
+      merchantPrice: 3.5,
+      faceText: "1小时",
+      stock: 8,
+      frozen: 0,
+      refundable: true,
+      minPurchase: 20,
+      maxPurchase: 2000,
+      validDays: 90,
+      scope: "惠泊中心停车场",
+      stackable: false
+    },
+    {
+      id: "T004",
+      name: "本次停车全免券",
+      type: "free",
+      value: 999,
+      valueText: "本次停车费全免",
+      merchantPrice: 20,
+      faceText: "全免",
+      stock: 12,
+      frozen: 0,
+      refundable: false,
+      minPurchase: 5,
+      maxPurchase: 100,
+      validDays: 30,
+      scope: "惠泊中心停车场",
+      stackable: false,
+      approvalRequired: true
+    }
+  ],
+
+  parkingOrders: [
+    {
+      id: "P202607190001",
+      plateNo: "粤B·A12345",
+      parkingLot: "惠泊中心地下停车场",
+      entrance: "B1北入口",
+      entryTime: "2026-07-19 12:16:32",
+      durationMinutes: 482,
+      currentFee: 38,
+      discountAmount: 0,
+      payableAmount: 38,
+      status: "parking",
+      paid: false,
+      existingCoupons: [],
+      vehicleType: "小型汽车",
+      blacklisted: false
+    },
+    {
+      id: "P202607190002",
+      plateNo: "粤B·K88231",
+      parkingLot: "惠泊中心地下停车场",
+      entrance: "B2东入口",
+      entryTime: "2026-07-19 15:08:21",
+      durationMinutes: 310,
+      currentFee: 26,
+      discountAmount: 10,
+      payableAmount: 16,
+      status: "parking",
+      paid: false,
+      existingCoupons: ["停车费10元抵扣券"],
+      vehicleType: "新能源汽车",
+      blacklisted: false
+    },
+    {
+      id: "P202607190003",
+      plateNo: "粤B·D88666",
+      parkingLot: "惠泊中心地下停车场",
+      entrance: "B1南入口",
+      entryTime: "2026-07-19 18:03:14",
+      durationMinutes: 135,
+      currentFee: 12,
+      discountAmount: 0,
+      payableAmount: 12,
+      status: "paid",
+      paid: true,
+      existingCoupons: [],
+      vehicleType: "新能源汽车",
+      blacklisted: false
+    },
+    {
+      id: "P202607190004",
+      plateNo: "粤A·8K36Q",
+      parkingLot: "惠泊中心地下停车场",
+      entrance: "B1北入口",
+      entryTime: "2026-07-19 19:02:09",
+      durationMinutes: 76,
+      currentFee: 8,
+      discountAmount: 0,
+      payableAmount: 8,
+      status: "parking",
+      paid: false,
+      existingCoupons: [],
+      vehicleType: "小型汽车",
+      blacklisted: false
+    }
+  ],
+
+  issuedCoupons: [
+    {
+      id: "C202607190036",
+      templateId: "T001",
+      templateName: "2小时停车优惠券",
+      plateNo: "粤B·A66889",
+      parkingOrderId: "P-HISTORY-001",
+      status: "issued",
+      statusName: "待核销",
+      issueTime: "2026-07-19 19:25:18",
+      issuerId: "E001",
+      issuerName: "王店长",
+      cost: 6,
+      discountValue: "2小时",
+      fundingMode: "inventory",
+      remark: "消费满200元赠送",
+      canRefund: true,
+      settlementLocked: false
+    },
+    {
+      id: "C202607190035",
+      templateId: "T002",
+      templateName: "停车费10元抵扣券",
+      plateNo: "粤B·K88231",
+      parkingOrderId: "P202607190002",
+      status: "used",
+      statusName: "已核销",
+      issueTime: "2026-07-19 18:46:02",
+      usedTime: "2026-07-19 19:55:13",
+      issuerId: "E002",
+      issuerName: "李晓",
+      cost: 8.5,
+      discountValue: "¥10",
+      fundingMode: "inventory",
+      remark: "餐饮顾客停车优惠",
+      canRefund: false,
+      settlementLocked: false
+    },
+    {
+      id: "C202607190034",
+      templateId: "T001",
+      templateName: "2小时停车优惠券",
+      plateNo: "粤B·P20318",
+      parkingOrderId: "P-HISTORY-003",
+      status: "refunded",
+      statusName: "已撤回",
+      issueTime: "2026-07-19 17:20:18",
+      refundTime: "2026-07-19 17:32:04",
+      issuerId: "E001",
+      issuerName: "王店长",
+      cost: 6,
+      discountValue: "2小时",
+      fundingMode: "inventory",
+      remark: "车主取消消费",
+      canRefund: false,
+      settlementLocked: false
+    }
+  ],
+
+  flows: [
+    {
+      id: "F202607190088",
+      type: "issue",
+      name: "发券扣减",
+      amount: -6,
+      balanceAfter: 8620,
+      time: "2026-07-19 19:25:18",
+      relatedId: "C202607190036",
+      operator: "王店长"
+    },
+    {
+      id: "F202607190087",
+      type: "recharge",
+      name: "微信在线充值",
+      amount: 2000,
+      balanceAfter: 8626,
+      time: "2026-07-19 16:08:36",
+      relatedId: "R202607190012",
+      operator: "王店长"
+    },
+    {
+      id: "F202607190086",
+      type: "purchase",
+      name: "购买2小时停车券",
+      amount: -600,
+      balanceAfter: 6626,
+      time: "2026-07-19 15:42:11",
+      relatedId: "B202607190010",
+      operator: "王店长"
+    }
+  ],
+
+  bills: [
+    {
+      id: "BILL202606001",
+      period: "2026-06",
+      issuedCount: 896,
+      usedCount: 742,
+      discountAmount: 6850,
+      payableAmount: 6120,
+      adjustmentAmount: -120,
+      finalAmount: 6000,
+      status: "pending_confirm",
+      statusName: "待确认",
+      generatedTime: "2026-07-03 10:00:00",
+      dueDate: "2026-07-25",
+      invoiceStatus: "not_applied"
+    },
+    {
+      id: "BILL202605001",
+      period: "2026-05",
+      issuedCount: 786,
+      usedCount: 668,
+      discountAmount: 5980,
+      payableAmount: 5420,
+      adjustmentAmount: 0,
+      finalAmount: 5420,
+      status: "settled",
+      statusName: "已结清",
+      generatedTime: "2026-06-03 10:00:00",
+      dueDate: "2026-06-25",
+      invoiceStatus: "issued"
+    }
+  ],
+
+  invoices: [
+    {
+      id: "INV202606180021",
+      sourceType: "recharge",
+      sourceName: "账户充值",
+      amount: 5000,
+      title: "星悦餐饮管理有限公司",
+      taxNo: "91440300MA5F8X8X8X",
+      type: "电子普通发票",
+      email: "finance@xingyue.example",
+      status: "issued",
+      statusName: "已开具",
+      applyTime: "2026-06-18 15:20:00"
+    }
+  ],
+
+  employees: [
+    {
+      id: "E001",
+      name: "王店长",
+      mobile: "138****6688",
+      employeeNo: "XY001",
+      role: "admin",
+      roleName: "商户管理员",
+      storeName: "星悦餐厅 · 惠泊中心店",
+      status: "enabled",
+      dailyLimitAmount: 5000,
+      dailyLimitCount: 300,
+      todayCount: 36,
+      todayAmount: 128,
+      lastLogin: "2026-07-19 20:08"
+    },
+    {
+      id: "E002",
+      name: "李晓",
+      mobile: "136****2866",
+      employeeNo: "XY018",
+      role: "employee",
+      roleName: "收银员",
+      storeName: "星悦餐厅 · 惠泊中心店",
+      status: "enabled",
+      dailyLimitAmount: 500,
+      dailyLimitCount: 50,
+      todayCount: 18,
+      todayAmount: 76,
+      lastLogin: "2026-07-19 19:52"
+    },
+    {
+      id: "E003",
+      name: "陈悦",
+      mobile: "139****5201",
+      employeeNo: "XY021",
+      role: "manager",
+      roleName: "值班店长",
+      storeName: "星悦餐厅 · 惠泊中心店",
+      status: "enabled",
+      dailyLimitAmount: 2000,
+      dailyLimitCount: 150,
+      todayCount: 22,
+      todayAmount: 96,
+      lastLogin: "2026-07-19 18:46"
+    },
+    {
+      id: "E004",
+      name: "赵明",
+      mobile: "135****9028",
+      employeeNo: "XY012",
+      role: "employee",
+      roleName: "收银员",
+      storeName: "星悦餐厅 · 惠泊中心店",
+      status: "disabled",
+      dailyLimitAmount: 500,
+      dailyLimitCount: 50,
+      todayCount: 0,
+      todayAmount: 0,
+      lastLogin: "2026-07-11 16:20"
+    }
+  ],
+
+  messages: [
+    {
+      id: "MSG001",
+      type: "warning",
+      title: "1小时停车券库存不足",
+      content: "当前库存仅剩8张，低于预警值10张，请及时购买。",
+      time: "2026-07-19 19:58",
+      read: false,
+      action: "coupons"
+    },
+    {
+      id: "MSG002",
+      type: "bill",
+      title: "6月后付费账单待确认",
+      content: "账单金额¥6,000.00，请在2026年7月25日前确认。",
+      time: "2026-07-19 09:30",
+      read: false,
+      action: "settlement"
+    },
+    {
+      id: "MSG003",
+      type: "risk",
+      title: "员工发券额度接近上限",
+      content: "员工李晓今日已使用发券额度的85%，请关注。",
+      time: "2026-07-19 18:12",
+      read: false,
+      action: "employees"
+    }
+  ],
+
+  auditLogs: [
+    {
+      id: "LOG001",
+      action: "登录系统",
+      detail: "设备 PDA-XY-008，认证成功",
+      operator: "王店长",
+      time: "2026-07-19 20:08:12"
+    },
+    {
+      id: "LOG002",
+      action: "发放优惠券",
+      detail: "向粤B·A66889发放2小时停车优惠券",
+      operator: "王店长",
+      time: "2026-07-19 19:25:18"
+    }
+  ],
+
+  recentPlates: ["粤B·A12345", "粤B·K88231", "粤A·8K36Q"],
+
+  statistics: {
+    today: {
+      issued: 76,
+      used: 61,
+      refunded: 3,
+      expired: 1,
+      discountAmount: 538,
+      merchantCost: 426,
+      rechargeAmount: 2000,
+      settlementAmount: 488
+    },
+    week: {
+      issued: 438,
+      used: 362,
+      refunded: 16,
+      expired: 9,
+      discountAmount: 3280,
+      merchantCost: 2648,
+      rechargeAmount: 8000,
+      settlementAmount: 2860
+    },
+    month: {
+      issued: 1268,
+      used: 986,
+      refunded: 42,
+      expired: 31,
+      discountAmount: 8960,
+      merchantCost: 7180,
+      rechargeAmount: 20000,
+      settlementAmount: 6420
+    }
+  }
+};
+
+let state = loadState();
+let currentRoute = "home";
+let routeHistory = [];
+let pageParams = {};
+let confirmHandler = null;
+let issueDraft = {
+  step: "search",
+  plateNo: "",
+  orderId: null,
+  templateId: null,
+  fundingMode: null,
+  remark: "",
+  consumptionNo: "",
+  notifyOwner: true
+};
+let currentCouponTab = "inventory";
+let currentRecordStatus = "all";
+let currentStatRange = "today";
+
+function deepClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : deepClone(seedState);
+  } catch (error) {
+    return deepClone(seedState);
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  updateMessageCount();
+}
+
+function resetState() {
+  state = deepClone(seedState);
+  saveState();
+}
+
+/* =========================================================
+   工具
+========================================================= */
+
+function money(value) {
+  return "¥" + Number(value || 0).toLocaleString("zh-CN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function formatInteger(value) {
+  return Number(value || 0).toLocaleString("zh-CN");
+}
+
+function nowString() {
+  return new Date().toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).replace(/\//g, "-");
+}
+
+function generateId(prefix) {
+  return prefix + Date.now().toString().slice(-10);
+}
+
+function getInventory(id) {
+  return state.inventory.find(item => item.id === id);
+}
+
+function getOrder(id) {
+  return state.parkingOrders.find(item => item.id === id);
+}
+
+function getBill(id) {
+  return state.bills.find(item => item.id === id);
+}
+
+function getEmployee(id) {
+  return state.employees.find(item => item.id === id);
+}
+
+function hasPermission(permission) {
+  return state.currentUser.permissions.includes(permission);
+}
+
+function unreadCount() {
+  return state.messages.filter(item => !item.read).length;
+}
+
+function updateMessageCount() {
+  const count = unreadCount();
+  const element = document.getElementById("messageCount");
+  element.textContent = count;
+  element.style.display = count ? "grid" : "none";
+}
+
+function durationText(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  if (!hours) return `${mins}分钟`;
+  return `${hours}小时${mins ? mins + "分钟" : ""}`;
+}
+
+function settlementModeName(mode) {
+  return {
+    prepaid: "预付费",
+    postpaid: "后付费",
+    mixed: "混合结算"
+  }[mode] || mode;
+}
+
+function couponStatusBadge(status) {
+  const map = {
+    issued: '<span class="badge orange">待核销</span>',
+    used: '<span class="badge green">已核销</span>',
+    refunded: '<span class="badge gray">已撤回</span>',
+    expired: '<span class="badge red">已过期</span>'
+  };
+
+  return map[status] || `<span class="badge gray">${status}</span>`;
+}
+
+function billStatusBadge(status) {
+  const map = {
+    pending_confirm: '<span class="badge orange">待确认</span>',
+    confirmed: '<span class="badge purple">已确认</span>',
+    disputed: '<span class="badge red">有异议</span>',
+    pending_payment: '<span class="badge orange">待付款</span>',
+    settled: '<span class="badge green">已结清</span>'
+  };
+
+  return map[status] || `<span class="badge gray">${status}</span>`;
+}
+
+function toast(message, type = "") {
+  const container = document.getElementById("toastContainer");
+  const element = document.createElement("div");
+  element.className = `toast ${type}`;
+  element.innerHTML = `
+    <span>${type === "success" ? "✓" : type === "error" ? "×" : type === "warning" ? "!" : "i"}</span>
+    <span>${message}</span>
+  `;
+
+  container.appendChild(element);
+
+  setTimeout(() => {
+    element.style.opacity = "0";
+    element.style.transform = "translateY(-8px)";
+  }, 2600);
+
+  setTimeout(() => element.remove(), 3000);
+}
+
+function showLoading(text = "正在处理...") {
+  document.getElementById("loadingText").textContent = text;
+  document.getElementById("loadingMask").classList.add("show");
+}
+
+function hideLoading() {
+  document.getElementById("loadingMask").classList.remove("show");
+}
+
+function simulateRequest(callback, text = "正在处理...") {
+  showLoading(text);
+
+  setTimeout(() => {
+    try {
+      callback();
+    } finally {
+      hideLoading();
+    }
+  }, 650);
+}
+
+function openModal(title, html) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").innerHTML = html;
+  document.getElementById("modalOverlay").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("show");
+}
+
+function confirmAction({
+  title = "请确认",
+  message,
+  icon = "!",
+  confirmText = "确认",
+  danger = false,
+  onConfirm
+}) {
+  document.getElementById("confirmTitle").textContent = title;
+  document.getElementById("confirmMessage").innerHTML = message;
+  document.getElementById("confirmIcon").textContent = icon;
+
+  const button = document.getElementById("confirmSubmit");
+  button.textContent = confirmText;
+  button.className = danger ? "danger-btn" : "primary-btn";
+
+  confirmHandler = onConfirm;
+  document.getElementById("confirmOverlay").classList.add("show");
+}
+
+function closeConfirm() {
+  document.getElementById("confirmOverlay").classList.remove("show");
+  confirmHandler = null;
+}
+
+function addAudit(action, detail) {
+  state.auditLogs.unshift({
+    id: generateId("LOG"),
+    action,
+    detail,
+    operator: state.currentUser.name,
+    time: nowString()
+  });
+}
+
+function updateClock() {
+  document.getElementById("statusTime").textContent =
+    new Date().toLocaleTimeString("zh-CN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+}
+
+/* =========================================================
+   路由
+========================================================= */
+
+const routeMeta = {
+  home: ["惠泊商户通", "星悦餐厅 · 惠泊中心店"],
+  issue: ["发放停车优惠", "查询车辆并绑定当前停车订单"],
+  coupons: ["优惠券管理", "库存、购买、发放和退券"],
+  finance: ["账户与财务", "余额、结算、流水和开票"],
+  profile: ["我的工作台", "账号、员工、权限和安全"],
+  records: ["发券记录", "查询发放、核销与退券明细"],
+  statistics: ["经营统计", "发券、核销、成本与员工分析"],
+  settlement: ["后付费结算", "账单确认、异议和付款"],
+  invoices: ["开票中心", "可开票金额和发票记录"],
+  employees: ["员工账号管理", "角色、权限和发券额度"],
+  flows: ["账户流水", "充值、购券、扣款与退款"],
+  audit: ["操作日志", "关键业务操作审计"]
+};
+
+function navigate(route, params = {}, pushHistory = true) {
+  if (pushHistory && currentRoute !== route) {
+    routeHistory.push({
+      route: currentRoute,
+      params: pageParams
+    });
+  }
+
+  currentRoute = route;
+  pageParams = params;
+
+  const [title, subtitle] = routeMeta[route] || routeMeta.home;
+  document.getElementById("pageTitle").textContent = title;
+  document.getElementById("pageSubtitle").textContent = subtitle;
+
+  document.getElementById("headerBack").classList.toggle(
+    "hidden",
+    ["home", "issue", "coupons", "finance", "profile"].includes(route)
+  );
+
+  document.querySelectorAll(".nav-button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.route === route ||
+      (
+        button.dataset.route === "coupons" &&
+        ["records"].includes(route)
+      ) ||
+      (
+        button.dataset.route === "finance" &&
+        ["settlement", "invoices", "flows", "statistics"].includes(route)
+      ) ||
+      (
+        button.dataset.route === "profile" &&
+        ["employees", "audit"].includes(route)
+      )
+    );
+  });
+
+  renderRoute();
+  document.getElementById("pageContainer").scrollTop = 0;
+}
+
+function goBack() {
+  const previous = routeHistory.pop();
+
+  if (previous) {
+    currentRoute = previous.route;
+    pageParams = previous.params || {};
+    navigate(currentRoute, pageParams, false);
+  } else {
+    navigate("home", {}, false);
+  }
+}
+
+function renderRoute() {
+  const renderer = {
+    home: renderHome,
+    issue: renderIssue,
+    coupons: renderCoupons,
+    finance: renderFinance,
+    profile: renderProfile,
+    records: renderRecords,
+    statistics: renderStatistics,
+    settlement: renderSettlement,
+    invoices: renderInvoices,
+    employees: renderEmployees,
+    flows: renderFlows,
+    audit: renderAudit
+  }[currentRoute] || renderHome;
+
+  document.getElementById("pageContainer").innerHTML = renderer();
+}
+
+/* =========================================================
+   首页
+========================================================= */
+
+function renderHome() {
+  const m = state.merchant;
+  const s = state.statistics.today;
+  const pendingBill = state.bills.find(item => item.status === "pending_confirm");
+  const lowInventory = state.inventory.filter(item => item.stock <= 10);
+
+  return `
+    <section class="page">
+
+      <div class="merchant-banner">
+        <div class="merchant-head">
+          <div>
+            <div class="merchant-name">${m.name}</div>
+            <div class="merchant-store">${m.storeName}</div>
+          </div>
+
+          <div class="mode-badge">
+            ${settlementModeName(m.settlementMode)}
+          </div>
+        </div>
+
+        <div class="balance-label">商户账户可用余额</div>
+        <div class="balance-value">${money(m.balance)}</div>
+
+        <div class="balance-detail">
+          <div class="balance-item">
+            <span>赠送余额</span>
+            <strong>${money(m.giftBalance)}</strong>
+          </div>
+
+          <div class="balance-item">
+            <span>后付费额度</span>
+            <strong>${money(m.creditLimit - m.creditUsed)}</strong>
+          </div>
+
+          <div class="balance-item">
+            <span>待结算金额</span>
+            <strong>${money(m.currentPayable)}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">快捷操作</div>
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick-button" data-route="issue">
+          <i class="quick-icon">券</i>
+          <span>快速发券</span>
+        </button>
+
+        <button class="quick-button" data-action="open-purchase">
+          <i class="quick-icon">购</i>
+          <span>购买券包</span>
+        </button>
+
+        <button class="quick-button" data-action="open-recharge">
+          <i class="quick-icon">¥</i>
+          <span>账户充值</span>
+        </button>
+
+        <button class="quick-button" data-route="statistics">
+          <i class="quick-icon">▥</i>
+          <span>经营统计</span>
+        </button>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">输入车牌快速发券</div>
+      </div>
+
+      <div class="plate-quick-card">
+        <div class="plate-input-row">
+          <input
+            class="plate-input"
+            id="homePlateInput"
+            maxlength="8"
+            placeholder="请输入车牌号"
+            value=""
+          >
+
+          <button class="plate-search-btn" data-action="home-search-plate">
+            查询
+          </button>
+        </div>
+
+        <div class="recent-plates">
+          ${state.recentPlates.map(plate => `
+            <button
+              class="plate-chip"
+              data-action="quick-plate"
+              data-plate="${plate}"
+            >
+              ${plate}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">今日经营数据</div>
+        <button class="section-more" data-route="statistics">查看分析 ›</button>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span>今日发券</span>
+          <strong>${formatInteger(s.issued)} 张</strong>
+          <em>核销率 ${Math.round(s.used / s.issued * 100)}%</em>
+        </div>
+
+        <div class="metric-card">
+          <span>今日核销</span>
+          <strong>${formatInteger(s.used)} 张</strong>
+          <em>优惠 ${money(s.discountAmount)}</em>
+        </div>
+
+        <div class="metric-card">
+          <span>商户成本</span>
+          <strong>${money(s.merchantCost)}</strong>
+          <em>含预付与后付费</em>
+        </div>
+
+        <div class="metric-card">
+          <span>退券数量</span>
+          <strong>${formatInteger(s.refunded)} 张</strong>
+          <em>过期 ${s.expired} 张</em>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">待处理事项</div>
+      </div>
+
+      <div class="task-list">
+        ${pendingBill ? `
+          <div class="task-item">
+            <div class="task-icon">账</div>
+            <div>
+              <strong>${pendingBill.period}账单待确认</strong>
+              <span>应结算 ${money(pendingBill.finalAmount)}，截止 ${pendingBill.dueDate}</span>
+            </div>
+            <button class="link-button" data-route="settlement">处理</button>
+          </div>
+        ` : ""}
+
+        ${lowInventory.map(item => `
+          <div class="task-item">
+            <div class="task-icon">券</div>
+            <div>
+              <strong>${item.name}库存不足</strong>
+              <span>当前仅剩 ${item.stock} 张，建议立即补充库存</span>
+            </div>
+            <button
+              class="link-button"
+              data-action="purchase-template"
+              data-id="${item.id}"
+            >
+              购买
+            </button>
+          </div>
+        `).join("")}
+
+        <div class="task-item">
+          <div class="task-icon">票</div>
+          <div>
+            <strong>可开票金额 ${money(m.invoiceableAmount)}</strong>
+            <span>支持充值、购券和后付费结算账单开票</span>
+          </div>
+          <button class="link-button" data-route="invoices">开票</button>
+        </div>
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================================================
+   发券流程
+========================================================= */
+
+function renderIssue() {
+  if (issueDraft.step === "search") return renderIssueSearch();
+  if (issueDraft.step === "select") return renderIssueSelect();
+  if (issueDraft.step === "confirm") return renderIssueConfirm();
+  if (issueDraft.step === "success") return renderIssueSuccess();
+
+  issueDraft.step = "search";
+  return renderIssueSearch();
+}
+
+function renderIssueSearch() {
+  return `
+    <section class="page">
+      <div class="plate-search-panel">
+        <div class="section-title" style="margin-bottom:10px">
+          查询车辆当前停车订单
+        </div>
+
+        <div class="input-action">
+          <input
+            class="form-control"
+            id="issuePlateInput"
+            maxlength="8"
+            placeholder="例如：粤B·A12345"
+            value="${issueDraft.plateNo || ""}"
+          >
+
+          <button class="input-inner-btn" data-action="search-parking-order">
+            查询车辆
+          </button>
+        </div>
+
+        <div class="search-tools">
+          <button class="tool-btn" data-action="simulate-camera-scan">
+            📷 摄像头识别车牌
+          </button>
+
+          <button class="tool-btn" data-action="select-history-plate">
+            ⟳ 选择历史车牌
+          </button>
+        </div>
+
+        <div class="form-tip">
+          支持普通及新能源车牌。发券前将校验车辆状态、停车费用、叠加规则和员工额度。
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">最近查询</div>
+      </div>
+
+      <div class="card compact">
+        ${state.recentPlates.map(plate => `
+          <button
+            class="menu-item"
+            style="padding:0;min-height:46px"
+            data-action="search-history-plate"
+            data-plate="${plate}"
+          >
+            <span class="menu-icon">P</span>
+            <span>
+              <strong>${plate}</strong>
+              <span>点击查询当前停车订单</span>
+            </span>
+            <span class="menu-arrow">›</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <div class="card">
+        <div class="card-heading">
+          <strong>发券业务规则</strong>
+          <span class="badge blue">实时校验</span>
+        </div>
+
+        <div class="info-row">
+          <span>有效停车订单</span>
+          <strong>仅停车中车辆可直接发券</strong>
+        </div>
+
+        <div class="info-row">
+          <span>优惠叠加</span>
+          <strong>按停车场与券模板配置</strong>
+        </div>
+
+        <div class="info-row">
+          <span>费用扣减</span>
+          <strong>库存 → 余额 → 授信额度</strong>
+        </div>
+
+        <div class="info-row">
+          <span>重复提交</span>
+          <strong class="status-green">幂等保护已开启</strong>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function findOrderByPlate(plate) {
+  const normalized = plate.trim().toUpperCase().replace(/\s/g, "");
+
+  return state.parkingOrders.find(item =>
+    item.plateNo.toUpperCase().replace(/\s/g, "") === normalized
+  );
+}
+
+function searchParkingOrder(plate) {
+  if (!plate || plate.trim().length < 6) {
+    toast("请输入完整车牌号", "warning");
+    return;
+  }
+
+  simulateRequest(() => {
+    const order = findOrderByPlate(plate);
+
+    if (!order) {
+      openModal("未查询到停车订单", `
+        <div class="empty-state">
+          <div class="empty-icon">P</div>
+          <strong>没有找到当前有效停车订单</strong>
+          <span>
+            请核对车牌号，或确认车辆是否已入场。<br>
+            如识别错误，可重新拍照或手动输入。
+          </span>
+        </div>
+
+        <button class="primary-btn full-btn" data-action="close-modal">
+          返回修改车牌
+        </button>
+      `);
+      return;
+    }
+
+    issueDraft.plateNo = order.plateNo;
+    issueDraft.orderId = order.id;
+
+    if (!state.recentPlates.includes(order.plateNo)) {
+      state.recentPlates.unshift(order.plateNo);
+      state.recentPlates = state.recentPlates.slice(0, 5);
+    }
+
+    saveState();
+
+    if (order.status === "paid" || order.paid) {
+      openModal("车辆已完成缴费", `
+        <div class="card">
+          <div class="order-head">
+            <div>
+              <div class="order-plate">${order.plateNo}</div>
+              <div class="order-lot">${order.parkingLot}</div>
+            </div>
+            <span class="badge green">已缴费</span>
+          </div>
+
+          <div class="risk-notice">
+            当前订单已经完成缴费。根据停车场规则，已缴费订单不可直接补发优惠券。
+            如确需处理，请联系停车场管理员进入异常补券审批流程。
+          </div>
+        </div>
+
+        <button class="ghost-btn full-btn" data-action="close-modal">
+          我知道了
+        </button>
+      `);
+      return;
+    }
+
+    if (order.status !== "parking") {
+      toast("当前订单状态不允许发券", "error");
+      return;
+    }
+
+    issueDraft.step = "select";
+    renderRoute();
+  }, "正在查询停车订单...");
+}
+
+function renderIssueSelect() {
+  const order = getOrder(issueDraft.orderId);
+
+  if (!order) {
+    issueDraft.step = "search";
+    return renderIssueSearch();
+  }
+
+  return `
+    <section class="page">
+
+      <div class="card order-status-card">
+        <div class="order-head">
+          <div>
+            <div class="order-plate">${order.plateNo}</div>
+            <div class="order-lot">${order.parkingLot} · ${order.entrance}</div>
+          </div>
+
+          <span class="badge green">停车中</span>
+        </div>
+
+        <div class="order-data">
+          <div class="order-data-item">
+            <span>入场时间</span>
+            <strong>${order.entryTime}</strong>
+          </div>
+
+          <div class="order-data-item">
+            <span>停车时长</span>
+            <strong>${durationText(order.durationMinutes)}</strong>
+          </div>
+
+          <div class="order-data-item">
+            <span>车辆类型</span>
+            <strong>${order.vehicleType}</strong>
+          </div>
+
+          <div class="order-data-item">
+            <span>停车订单</span>
+            <strong>${order.id}</strong>
+          </div>
+        </div>
+
+        <div class="fee-summary">
+          <div class="fee-item">
+            <span>当前停车费</span>
+            <strong>${money(order.currentFee)}</strong>
+          </div>
+
+          <div class="fee-item">
+            <span>已优惠</span>
+            <strong>${money(order.discountAmount)}</strong>
+          </div>
+
+          <div class="fee-item payable">
+            <span>当前待支付</span>
+            <strong>${money(order.payableAmount)}</strong>
+          </div>
+        </div>
+
+        ${order.existingCoupons.length ? `
+          <div class="existing-discount">
+            <span>已绑定优惠</span>
+            <strong>${order.existingCoupons.join("、")}</strong>
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">选择优惠券</div>
+        <button class="section-more" data-action="change-issue-plate">
+          更换车辆
+        </button>
+      </div>
+
+      <div class="coupon-choice-list">
+        ${state.inventory.map(item => {
+          const disabled =
+            item.stock <= 0 ||
+            (order.existingCoupons.length && !item.stackable);
+
+          return `
+            <div
+              class="coupon-choice
+                ${issueDraft.templateId === item.id ? "active" : ""}
+                ${disabled ? "disabled" : ""}"
+              data-action="${disabled ? "" : "select-issue-coupon"}"
+              data-id="${item.id}"
+            >
+              <strong>${item.name}</strong>
+              <p>
+                ${item.valueText} · 适用 ${item.scope}<br>
+                ${item.stackable ? "支持与已有优惠叠加" : "不可与其他商户券叠加"}
+              </p>
+
+              <div class="coupon-choice-meta">
+                <span class="badge ${item.stock <= 10 ? "red" : "blue"}">
+                  库存 ${item.stock} 张
+                </span>
+
+                <span class="badge orange">
+                  商户成本 ${money(item.merchantPrice)}
+                </span>
+
+                ${item.approvalRequired ? `
+                  <span class="badge purple">需审批</span>
+                ` : ""}
+              </div>
+
+              <i class="choice-check">✓</i>
+            </div>
+          `;
+        }).join("")}
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">扣费方式</div>
+      </div>
+
+      <div class="radio-grid">
+        ${renderFundingOption(
+          "inventory",
+          "券库存",
+          `购买库存可用，发放后库存减1`,
+          issueDraft.fundingMode === "inventory",
+          getInventory(issueDraft.templateId)?.stock <= 0
+        )}
+
+        ${renderFundingOption(
+          "balance",
+          "账户余额",
+          `可用 ${money(state.merchant.balance)}`,
+          issueDraft.fundingMode === "balance",
+          state.merchant.balance <= 0
+        )}
+
+        ${renderFundingOption(
+          "credit",
+          "后付费额度",
+          `剩余 ${money(state.merchant.creditLimit - state.merchant.creditUsed)}`,
+          issueDraft.fundingMode === "credit",
+          state.merchant.creditLimit - state.merchant.creditUsed <= 0
+        )}
+
+        ${renderFundingOption(
+          "gift",
+          "平台赠送额度",
+          `可用 ${money(state.merchant.giftBalance)}`,
+          issueDraft.fundingMode === "gift",
+          state.merchant.giftBalance <= 0
+        )}
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">业务凭证</div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">
+            <span>消费单号</span>
+            <span>选填</span>
+          </label>
+
+          <input
+            class="form-control"
+            id="issueConsumptionNo"
+            placeholder="例如：POS202607190086"
+            value="${issueDraft.consumptionNo || ""}"
+          >
+        </div>
+
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">
+            <span>发券备注</span>
+            <em>必填</em>
+          </label>
+
+          <textarea
+            class="form-control"
+            id="issueRemark"
+            maxlength="100"
+            placeholder="例如：消费满200元赠送停车优惠"
+          >${issueDraft.remark || ""}</textarea>
+        </div>
+      </div>
+
+      <button
+        class="primary-btn full-btn"
+        data-action="go-issue-confirm"
+      >
+        下一步：确认发放
+      </button>
+    </section>
+  `;
+}
+
+function renderFundingOption(mode, title, desc, active, disabled) {
+  return `
+    <div
+      class="radio-card ${active ? "active" : ""} ${disabled ? "disabled" : ""}"
+      data-action="${disabled ? "" : "select-funding-mode"}"
+      data-mode="${mode}"
+    >
+      <strong>${title}</strong>
+      <span>${desc}</span>
+      <i class="radio-check">✓</i>
+    </div>
+  `;
+}
+
+function validateIssueDraft() {
+  const item = getInventory(issueDraft.templateId);
+  const order = getOrder(issueDraft.orderId);
+  const remark = document.getElementById("issueRemark")?.value.trim() || "";
+  const consumptionNo =
+    document.getElementById("issueConsumptionNo")?.value.trim() || "";
+
+  issueDraft.remark = remark;
+  issueDraft.consumptionNo = consumptionNo;
+
+  if (!order) return "停车订单不存在，请重新查询";
+  if (!item) return "请选择要发放的优惠券";
+  if (!issueDraft.fundingMode) return "请选择扣费方式";
+  if (!remark) return "请填写发券备注";
+  if (order.status !== "parking" || order.paid) return "车辆当前状态不允许发券";
+
+  if (order.existingCoupons.length && !item.stackable) {
+    return "该停车订单已有优惠，当前券不支持叠加";
+  }
+
+  if (
+    state.currentUser.todayIssuedCount + 1 >
+    state.currentUser.dailyLimitCount
+  ) {
+    return "已达到员工今日发券数量上限";
+  }
+
+  if (
+    state.currentUser.todayIssuedAmount + item.merchantPrice >
+    state.currentUser.dailyLimitAmount
+  ) {
+    return "本次发券将超过员工今日金额额度";
+  }
+
+  if (issueDraft.fundingMode === "inventory" && item.stock < 1) {
+    return "当前优惠券库存不足";
+  }
+
+  if (
+    issueDraft.fundingMode === "balance" &&
+    state.merchant.balance < item.merchantPrice
+  ) {
+    return "账户余额不足，请先充值";
+  }
+
+  if (
+    issueDraft.fundingMode === "gift" &&
+    state.merchant.giftBalance < item.merchantPrice
+  ) {
+    return "平台赠送额度不足";
+  }
+
+  if (
+    issueDraft.fundingMode === "credit" &&
+    state.merchant.creditLimit - state.merchant.creditUsed <
+    item.merchantPrice
+  ) {
+    return "后付费授信额度不足";
+  }
+
+  return null;
+}
+
+function renderIssueConfirm() {
+  const order = getOrder(issueDraft.orderId);
+  const item = getInventory(issueDraft.templateId);
+
+  if (!order || !item) {
+    issueDraft.step = "search";
+    return renderIssueSearch();
+  }
+
+  const fundingNames = {
+    inventory: "优惠券库存",
+    balance: "账户余额",
+    credit: "后付费额度",
+    gift: "平台赠送额度"
+  };
+
+  return `
+    <section class="page">
+
+      <div class="card">
+        <div class="card-heading">
+          <strong>发券确认</strong>
+          <span class="badge orange">请核对车牌</span>
+        </div>
+
+        <div class="confirm-summary" style="margin-top:11px">
+          <div class="confirm-row">
+            <span>车牌号码</span>
+            <strong>${order.plateNo}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>停车场</span>
+            <strong>${order.parkingLot}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>当前停车费</span>
+            <strong>${money(order.payableAmount)}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>发放优惠券</span>
+            <strong>${item.name}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>优惠权益</span>
+            <strong>${item.valueText}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>扣费方式</span>
+            <strong>${fundingNames[issueDraft.fundingMode]}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>发放员工</span>
+            <strong>${state.currentUser.name}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>消费单号</span>
+            <strong>${issueDraft.consumptionNo || "未填写"}</strong>
+          </div>
+
+          <div class="confirm-row">
+            <span>发券备注</span>
+            <strong>${issueDraft.remark}</strong>
+          </div>
+
+          <div class="confirm-row total">
+            <span>本次商户成本</span>
+            <strong>${money(item.merchantPrice)}</strong>
+          </div>
+        </div>
+      </div>
+
+      ${item.approvalRequired ? `
+        <div class="risk-notice">
+          当前为高权益全免券。根据商户风控规则，发放后将进入管理员审批，
+          审批通过后才会同步到停车订单。
+        </div>
+      ` : `
+        <div class="alert-bar green">
+          <i></i>
+          发券成功后将立即绑定当前停车订单，并同步停车收费系统。
+        </div>
+      `}
+
+      <div class="button-row">
+        <button class="ghost-btn" data-action="back-issue-select">
+          返回修改
+        </button>
+
+        <button class="primary-btn" data-action="submit-issue">
+          确认发放
+        </button>
+      </div>
+
+    </section>
+  `;
+}
+
+function submitIssue() {
+  const error = validateIssueDraft();
+
+  if (error) {
+    toast(error, "error");
+    return;
+  }
+
+  const order = getOrder(issueDraft.orderId);
+  const item = getInventory(issueDraft.templateId);
+
+  const duplicate = state.issuedCoupons.find(coupon =>
+    coupon.parkingOrderId === order.id &&
+    coupon.templateId === item.id &&
+    coupon.status === "issued"
+  );
+
+  if (duplicate) {
+    toast("该订单已发放相同优惠券，请勿重复提交", "warning");
+    return;
+  }
+
+  confirmAction({
+    title: "确认向该车辆发券？",
+    message: `
+      车牌 <b>${order.plateNo}</b><br>
+      优惠券：${item.name}<br>
+      商户成本：<b>${money(item.merchantPrice)}</b>
+    `,
+    icon: "券",
+    confirmText: "确认发放",
+    onConfirm: () => {
+      closeConfirm();
+
+      simulateRequest(() => {
+        const couponId = generateId("C");
+
+        if (issueDraft.fundingMode === "inventory") {
+          item.stock -= 1;
+        }
+
+        if (issueDraft.fundingMode === "balance") {
+          state.merchant.balance -= item.merchantPrice;
+        }
+
+        if (issueDraft.fundingMode === "gift") {
+          state.merchant.giftBalance -= item.merchantPrice;
+        }
+
+        if (issueDraft.fundingMode === "credit") {
+          state.merchant.creditUsed += item.merchantPrice;
+          state.merchant.currentPayable += item.merchantPrice;
+        }
+
+        let discountAmount = 0;
+
+        if (item.type === "amount") {
+          discountAmount = Math.min(item.value, order.payableAmount);
+        } else if (item.type === "free") {
+          discountAmount = order.payableAmount;
+        } else if (item.type === "duration") {
+          const hourlyRate = order.currentFee /
+            Math.max(order.durationMinutes / 60, 1);
+
+          discountAmount = Math.min(
+            order.payableAmount,
+            Math.round(hourlyRate * (item.value / 60) * 100) / 100
+          );
+        }
+
+        order.discountAmount += discountAmount;
+        order.payableAmount = Math.max(
+          0,
+          order.currentFee - order.discountAmount
+        );
+        order.existingCoupons.push(item.name);
+
+        state.issuedCoupons.unshift({
+          id: couponId,
+          templateId: item.id,
+          templateName: item.name,
+          plateNo: order.plateNo,
+          parkingOrderId: order.id,
+          status: item.approvalRequired ? "pending_approval" : "issued",
+          statusName: item.approvalRequired ? "待审批" : "待核销",
+          issueTime: nowString(),
+          issuerId: state.currentUser.id,
+          issuerName: state.currentUser.name,
+          cost: item.merchantPrice,
+          discountValue: item.faceText,
+          discountAmount,
+          fundingMode: issueDraft.fundingMode,
+          remark: issueDraft.remark,
+          consumptionNo: issueDraft.consumptionNo,
+          canRefund: true,
+          settlementLocked: false
+        });
+
+        state.currentUser.todayIssuedAmount += item.merchantPrice;
+        state.currentUser.todayIssuedCount += 1;
+        state.statistics.today.issued += 1;
+        state.statistics.today.merchantCost += item.merchantPrice;
+
+        state.flows.unshift({
+          id: generateId("F"),
+          type: "issue",
+          name: `${item.name}发放`,
+          amount:
+            issueDraft.fundingMode === "inventory" ||
+            issueDraft.fundingMode === "credit"
+              ? 0
+              : -item.merchantPrice,
+          balanceAfter: state.merchant.balance,
+          time: nowString(),
+          relatedId: couponId,
+          operator: state.currentUser.name
+        });
+
+        addAudit(
+          "发放优惠券",
+          `向${order.plateNo}发放${item.name}，扣费方式${issueDraft.fundingMode}`
+        );
+
+        pageParams.lastIssuedCouponId = couponId;
+        issueDraft.step = "success";
+        saveState();
+        renderRoute();
+      }, "正在校验并同步停车系统...");
+    }
+  });
+}
+
+function renderIssueSuccess() {
+  const coupon = state.issuedCoupons.find(
+    item => item.id === pageParams.lastIssuedCouponId
+  ) || state.issuedCoupons[0];
+
+  if (!coupon) {
+    issueDraft.step = "search";
+    return renderIssueSearch();
+  }
+
+  const order = getOrder(coupon.parkingOrderId);
+
+  return `
+    <section class="page success-page">
+
+      <div class="success-icon">✓</div>
+      <h2>优惠券发放成功</h2>
+      <p>
+        优惠已绑定当前停车订单，并同步至停车收费系统。
+      </p>
+
+      <div class="result-card">
+        <div class="confirm-row">
+          <span>发券流水号</span>
+          <strong>${coupon.id}</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>车牌号码</span>
+          <strong>${coupon.plateNo}</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>优惠券</span>
+          <strong>${coupon.templateName}</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>当前待支付</span>
+          <strong class="amount-warning">${money(order?.payableAmount)}</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>发放时间</span>
+          <strong>${coupon.issueTime}</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>同步状态</span>
+          <strong class="amount-positive">停车系统同步成功</strong>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="ghost-btn" data-route="records">
+          查看发券记录
+        </button>
+
+        <button class="primary-btn" data-action="new-issue">
+          继续发券
+        </button>
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================================================
+   券管理
+========================================================= */
+
+function renderCoupons() {
+  return `
+    <section class="page">
+
+      <div class="segmented">
+        <button
+          class="segment-btn ${currentCouponTab === "inventory" ? "active" : ""}"
+          data-action="coupon-tab"
+          data-tab="inventory"
+        >
+          券库存
+        </button>
+
+        <button
+          class="segment-btn ${currentCouponTab === "records" ? "active" : ""}"
+          data-action="coupon-tab"
+          data-tab="records"
+        >
+          发券记录
+        </button>
+
+        <button
+          class="segment-btn ${currentCouponTab === "used" ? "active" : ""}"
+          data-action="coupon-tab"
+          data-tab="used"
+        >
+          核销记录
+        </button>
+      </div>
+
+      ${
+        currentCouponTab === "inventory"
+          ? renderInventoryContent()
+          : currentCouponTab === "records"
+            ? renderCouponRecordsPreview("issued")
+            : renderCouponRecordsPreview("used")
+      }
+
+    </section>
+  `;
+}
+
+function renderInventoryContent() {
+  return `
+    <div class="button-row" style="margin-bottom:10px">
+      <button class="primary-btn" data-action="open-purchase">
+        购买优惠券
+      </button>
+
+      <button class="secondary-btn" data-action="open-inventory-refund">
+        库存退券
+      </button>
+    </div>
+
+    <div class="inventory-list">
+      ${state.inventory.map(item => `
+        <article class="inventory-item">
+          <div class="inventory-head">
+            <div>
+              <strong>${item.name}</strong>
+              <span>
+                ${item.valueText} · 有效期 ${item.validDays} 天
+              </span>
+            </div>
+
+            <div class="inventory-count">
+              <b class="${item.stock <= 10 ? "amount-negative" : ""}">
+                ${item.stock}
+              </b>
+              <small>可用库存</small>
+            </div>
+          </div>
+
+          <div class="inventory-meta">
+            <div>
+              <span>冻结</span>
+              <strong>${item.frozen}张</strong>
+            </div>
+
+            <div>
+              <span>购买价</span>
+              <strong>${money(item.merchantPrice)}</strong>
+            </div>
+
+            <div>
+              <span>是否可退</span>
+              <strong>${item.refundable ? "支持" : "不支持"}</strong>
+            </div>
+          </div>
+
+          <div class="inventory-actions">
+            <button
+              class="secondary-btn small-btn"
+              data-action="purchase-template"
+              data-id="${item.id}"
+            >
+              购买补充
+            </button>
+
+            <button
+              class="ghost-btn small-btn"
+              data-action="refund-inventory-template"
+              data-id="${item.id}"
+              ${!item.refundable || item.stock <= 0 ? "disabled" : ""}
+            >
+              申请退券
+            </button>
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderCouponRecordsPreview(status) {
+  const list = state.issuedCoupons
+    .filter(item => status === "used" ? item.status === "used" : true)
+    .slice(0, 8);
+
+  return `
+    <div class="record-list">
+      ${list.length ? list.map(renderRecordItem).join("") : renderEmpty(
+        "暂无相关记录",
+        "新的业务记录将在操作完成后显示"
+      )}
+    </div>
+
+    <button
+      class="secondary-btn full-btn"
+      style="margin-top:10px"
+      data-route="records"
+    >
+      查看完整记录与筛选
+    </button>
+  `;
+}
+
+function renderRecordItem(item) {
+  return `
+    <article class="record-item">
+      <div class="record-head">
+        <div>
+          <strong>${item.plateNo} · ${item.templateName}</strong>
+          <span>${item.id} · ${item.issueTime}</span>
+        </div>
+
+        ${couponStatusBadge(item.status)}
+      </div>
+
+      <div class="record-body">
+        <div>
+          <span>发放员工</span>
+          <strong>${item.issuerName}</strong>
+        </div>
+
+        <div>
+          <span>商户成本</span>
+          <strong>${money(item.cost)}</strong>
+        </div>
+
+        <div>
+          <span>优惠权益</span>
+          <strong>${item.discountValue}</strong>
+        </div>
+
+        <div>
+          <span>扣费方式</span>
+          <strong>${fundingName(item.fundingMode)}</strong>
+        </div>
+      </div>
+
+      ${item.status === "issued" && item.canRefund ? `
+        <div class="record-actions">
+          <button
+            class="warning-btn small-btn"
+            data-action="refund-issued-coupon"
+            data-id="${item.id}"
+          >
+            撤回未核销券
+          </button>
+        </div>
+      ` : ""}
+    </article>
+  `;
+}
+
+function fundingName(mode) {
+  return {
+    inventory: "券库存",
+    balance: "账户余额",
+    credit: "后付费额度",
+    gift: "赠送额度"
+  }[mode] || mode;
+}
+
+/* =========================================================
+   购买、库存退券
+========================================================= */
+
+function openPurchaseModal(templateId = "") {
+  if (!hasPermission("purchase")) {
+    toast("当前账号没有购买优惠券权限", "error");
+    return;
+  }
+
+  const first = getInventory(templateId) || state.inventory[0];
+
+  openModal("购买优惠券", `
+    <div class="form-group">
+      <label class="form-label">
+        <span>优惠券商品</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="purchaseTemplate">
+        ${state.inventory.map(item => `
+          <option value="${item.id}" ${item.id === first.id ? "selected" : ""}>
+            ${item.name}｜${money(item.merchantPrice)}/张
+          </option>
+        `).join("")}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>购买数量</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        type="number"
+        min="${first.minPurchase}"
+        max="${first.maxPurchase}"
+        step="1"
+        class="form-control"
+        id="purchaseQuantity"
+        value="${first.minPurchase}"
+      >
+
+      <div class="form-tip" id="purchaseRule">
+        ${first.minPurchase}张起购，单次最多${first.maxPurchase}张。
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>支付方式</span>
+        <em>必选</em>
+      </label>
+
+      <div class="radio-grid" id="purchasePayModes">
+        <div
+          class="radio-card active"
+          data-action="select-modal-radio"
+          data-group="purchasePay"
+          data-value="balance"
+        >
+          <strong>账户余额</strong>
+          <span>可用 ${money(state.merchant.balance)}</span>
+          <i class="radio-check">✓</i>
+        </div>
+
+        <div
+          class="radio-card"
+          data-action="select-modal-radio"
+          data-group="purchasePay"
+          data-value="wechat"
+        >
+          <strong>微信支付</strong>
+          <span>生成商户支付二维码</span>
+          <i class="radio-check">✓</i>
+        </div>
+
+        <div
+          class="radio-card"
+          data-action="select-modal-radio"
+          data-group="purchasePay"
+          data-value="corporate"
+        >
+          <strong>对公转账</strong>
+          <span>上传凭证后财务审核</span>
+          <i class="radio-check">✓</i>
+        </div>
+
+        <div
+          class="radio-card"
+          data-action="select-modal-radio"
+          data-group="purchasePay"
+          data-value="credit"
+        >
+          <strong>账期采购</strong>
+          <span>占用后付费授信额度</span>
+          <i class="radio-check">✓</i>
+        </div>
+      </div>
+    </div>
+
+    <div class="card compact" id="purchaseSummary"></div>
+
+    <button class="primary-btn full-btn" data-action="submit-purchase">
+      提交购买
+    </button>
+  `);
+
+  updatePurchaseSummary();
+}
+
+function updatePurchaseSummary() {
+  const templateElement = document.getElementById("purchaseTemplate");
+  const quantityElement = document.getElementById("purchaseQuantity");
+  const summary = document.getElementById("purchaseSummary");
+
+  if (!templateElement || !quantityElement || !summary) return;
+
+  const item = getInventory(templateElement.value);
+  const quantity = Math.max(0, Number(quantityElement.value || 0));
+  const total = item.merchantPrice * quantity;
+
+  document.getElementById("purchaseRule").textContent =
+    `${item.minPurchase}张起购，单次最多${item.maxPurchase}张，购买后有效期${item.validDays}天。`;
+
+  summary.innerHTML = `
+    <div class="confirm-row">
+      <span>券商品</span>
+      <strong>${item.name}</strong>
+    </div>
+
+    <div class="confirm-row">
+      <span>购买单价</span>
+      <strong>${money(item.merchantPrice)}</strong>
+    </div>
+
+    <div class="confirm-row">
+      <span>购买数量</span>
+      <strong>${quantity}张</strong>
+    </div>
+
+    <div class="confirm-row total">
+      <span>订单金额</span>
+      <strong>${money(total)}</strong>
+    </div>
+  `;
+}
+
+function selectedModalRadio(group) {
+  return document.querySelector(
+    `.radio-card.active[data-group="${group}"]`
+  )?.dataset.value;
+}
+
+function submitPurchase() {
+  const item = getInventory(
+    document.getElementById("purchaseTemplate")?.value
+  );
+  const quantity = Number(
+    document.getElementById("purchaseQuantity")?.value
+  );
+  const payMode = selectedModalRadio("purchasePay");
+
+  if (!item || !Number.isInteger(quantity)) {
+    toast("请填写正确的购买数量", "error");
+    return;
+  }
+
+  if (quantity < item.minPurchase || quantity > item.maxPurchase) {
+    toast(
+      `购买数量需在${item.minPurchase}至${item.maxPurchase}张之间`,
+      "error"
+    );
+    return;
+  }
+
+  const total = item.merchantPrice * quantity;
+
+  if (payMode === "balance" && state.merchant.balance < total) {
+    toast("账户余额不足，请充值或选择其他支付方式", "error");
+    return;
+  }
+
+  if (
+    payMode === "credit" &&
+    state.merchant.creditLimit - state.merchant.creditUsed < total
+  ) {
+    toast("后付费授信额度不足", "error");
+    return;
+  }
+
+  if (payMode === "corporate") {
+    openCorporateTransferPurchase(item, quantity, total);
+    return;
+  }
+
+  confirmAction({
+    title: "确认购买优惠券？",
+    message: `
+      ${item.name} × ${quantity}张<br>
+      应付金额：<b>${money(total)}</b>
+    `,
+    icon: "购",
+    confirmText: payMode === "wechat" ? "生成支付码" : "确认购买",
+    onConfirm: () => {
+      closeConfirm();
+
+      if (payMode === "wechat") {
+        showPaymentQr({
+          title: "购买优惠券",
+          amount: total,
+          onPaid: () => completePurchase(item, quantity, total, "wechat")
+        });
+      } else {
+        completePurchase(item, quantity, total, payMode);
+      }
+    }
+  });
+}
+
+function completePurchase(item, quantity, total, payMode) {
+  simulateRequest(() => {
+    if (payMode === "balance") {
+      state.merchant.balance -= total;
+    }
+
+    if (payMode === "credit") {
+      state.merchant.creditUsed += total;
+      state.merchant.currentPayable += total;
+    }
+
+    item.stock += quantity;
+
+    state.flows.unshift({
+      id: generateId("F"),
+      type: "purchase",
+      name: `购买${item.name} ${quantity}张`,
+      amount: payMode === "balance" ? -total : 0,
+      balanceAfter: state.merchant.balance,
+      time: nowString(),
+      relatedId: generateId("BUY"),
+      operator: state.currentUser.name
+    });
+
+    addAudit(
+      "购买优惠券",
+      `${item.name}${quantity}张，金额${money(total)}，支付方式${payMode}`
+    );
+
+    saveState();
+    closeModal();
+    toast(`购买成功，${item.name}库存增加${quantity}张`, "success");
+    renderRoute();
+  }, "正在创建购券订单...");
+}
+
+function showPaymentQr({ title, amount, onPaid }) {
+  openModal("扫码支付", `
+    <div style="text-align:center;padding:9px 0 18px">
+      <div style="
+        width:190px;
+        height:190px;
+        margin:0 auto 14px;
+        padding:13px;
+        border:1px solid #dce4ea;
+        border-radius:14px;
+        background:#fff;
+      ">
+        <div class="qr-pattern" style="height:100%">
+          <i class="qr-corner q1"></i>
+          <i class="qr-corner q2"></i>
+          <i class="qr-corner q3"></i>
+          <div class="qr-center" style="width:38px;height:38px;font-size:8px">
+            惠泊
+          </div>
+        </div>
+      </div>
+
+      <strong style="font-size:15px">${title}</strong>
+      <div style="margin-top:8px;color:#e16d2d;font-size:25px;font-weight:800">
+        ${money(amount)}
+      </div>
+      <p class="muted" style="font-size:10px;line-height:1.6">
+        请使用商户微信扫码支付。支付结果将自动同步，<br>
+        请勿关闭当前页面。
+      </p>
+    </div>
+
+    <button class="primary-btn full-btn" id="mockPaidButton">
+      模拟支付成功
+    </button>
+  `);
+
+  document.getElementById("mockPaidButton").onclick = () => {
+    onPaid();
+  };
+}
+
+function openCorporateTransferPurchase(item, quantity, total) {
+  openModal("提交对公转账凭证", `
+    <div class="alert-bar orange">
+      <i></i>
+      对公转账需平台财务审核，审核通过后券库存才会增加。
+    </div>
+
+    <div class="card compact">
+      <div class="confirm-row">
+        <span>收款单位</span>
+        <strong>惠泊云科技有限公司</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>开户银行</span>
+        <strong>招商银行深圳科技园支行</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>银行账号</span>
+        <strong>7559 1234 5678 001</strong>
+      </div>
+
+      <div class="confirm-row total">
+        <span>应转账金额</span>
+        <strong>${money(total)}</strong>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>银行流水号</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        class="form-control"
+        id="corporateSerial"
+        placeholder="请输入银行转账流水号"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>付款凭证</span>
+        <em>必传</em>
+      </label>
+
+      <button
+        class="secondary-btn full-btn"
+        data-action="mock-upload-voucher"
+        id="voucherUploadBtn"
+      >
+        ＋ 上传银行回单
+      </button>
+    </div>
+
+    <button
+      class="primary-btn full-btn"
+      data-action="submit-corporate-purchase"
+      data-template="${item.id}"
+      data-quantity="${quantity}"
+      data-total="${total}"
+    >
+      提交财务审核
+    </button>
+  `);
+}
+
+function openInventoryRefund(templateId = "") {
+  const refundable = state.inventory.filter(
+    item => item.refundable && item.stock > 0
+  );
+
+  if (!refundable.length) {
+    toast("当前没有可申请退回的库存券", "warning");
+    return;
+  }
+
+  const first = getInventory(templateId) || refundable[0];
+
+  openModal("库存退券申请", `
+    <div class="alert-bar orange">
+      <i></i>
+      仅可退回已购买、未发放、未冻结且符合退券规则的库存券。
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>优惠券类型</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="refundInventoryTemplate">
+        ${refundable.map(item => `
+          <option value="${item.id}" ${item.id === first.id ? "selected" : ""}>
+            ${item.name}｜可用${item.stock}张
+          </option>
+        `).join("")}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>退券数量</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        type="number"
+        min="1"
+        max="${first.stock}"
+        class="form-control"
+        id="refundInventoryQuantity"
+        value="1"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>退款方式</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="refundInventoryMethod">
+        <option value="balance">退回商户账户余额</option>
+        <option value="original">原支付渠道退款</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>退券原因</span>
+        <em>必填</em>
+      </label>
+
+      <textarea
+        class="form-control"
+        id="refundInventoryReason"
+        placeholder="请说明退券原因"
+      ></textarea>
+    </div>
+
+    <button class="primary-btn full-btn" data-action="submit-inventory-refund">
+      提交退券申请
+    </button>
+  `);
+}
+
+/* =========================================================
+   发券记录
+========================================================= */
+
+function renderRecords() {
+  const filtered = state.issuedCoupons.filter(item =>
+    currentRecordStatus === "all"
+      ? true
+      : item.status === currentRecordStatus
+  );
+
+  return `
+    <section class="page">
+
+      <div class="segmented four">
+        ${[
+          ["all", "全部"],
+          ["issued", "待核销"],
+          ["used", "已核销"],
+          ["refunded", "已撤回"]
+        ].map(([value, label]) => `
+          <button
+            class="segment-btn ${currentRecordStatus === value ? "active" : ""}"
+            data-action="record-status"
+            data-status="${value}"
+          >
+            ${label}
+          </button>
+        `).join("")}
+      </div>
+
+      <div class="card compact">
+        <div class="plate-input-row">
+          <input
+            class="form-control"
+            id="recordSearchInput"
+            placeholder="车牌 / 券号 / 员工姓名"
+          >
+
+          <button class="primary-btn" data-action="search-records">
+            查询
+          </button>
+        </div>
+      </div>
+
+      <div class="record-list" id="recordList">
+        ${filtered.length
+          ? filtered.map(renderRecordItem).join("")
+          : renderEmpty("暂无记录", "当前筛选条件下没有业务数据")}
+      </div>
+
+    </section>
+  `;
+}
+
+function refundIssuedCoupon(id) {
+  const coupon = state.issuedCoupons.find(item => item.id === id);
+
+  if (!coupon) return;
+
+  if (
+    coupon.status !== "issued" ||
+    !coupon.canRefund ||
+    coupon.settlementLocked
+  ) {
+    toast("当前优惠券不符合撤回条件", "error");
+    return;
+  }
+
+  openModal("撤回未核销优惠券", `
+    <div class="card compact">
+      <div class="confirm-row">
+        <span>车牌号码</span>
+        <strong>${coupon.plateNo}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>优惠券</span>
+        <strong>${coupon.templateName}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>发放时间</span>
+        <strong>${coupon.issueTime}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>原扣费方式</span>
+        <strong>${fundingName(coupon.fundingMode)}</strong>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>撤回原因</span>
+        <em>必填</em>
+      </label>
+
+      <select class="form-control" id="refundIssuedReason">
+        <option value="">请选择撤回原因</option>
+        <option>车主取消消费</option>
+        <option>车牌录入错误</option>
+        <option>优惠券类型选择错误</option>
+        <option>重复发券</option>
+        <option>其他业务原因</option>
+      </select>
+    </div>
+
+    <div class="risk-notice">
+      撤回成功后，优惠券将从停车订单解绑。
+      库存发放将退回库存；余额发放将退回账户；后付费发放将释放授信额度。
+    </div>
+
+    <button
+      class="danger-btn full-btn"
+      data-action="confirm-refund-issued"
+      data-id="${coupon.id}"
+    >
+      确认撤回优惠券
+    </button>
+  `);
+}
+
+function completeIssuedRefund(id) {
+  const coupon = state.issuedCoupons.find(item => item.id === id);
+  const reason = document.getElementById("refundIssuedReason")?.value;
+
+  if (!reason) {
+    toast("请选择撤回原因", "warning");
+    return;
+  }
+
+  if (!coupon || coupon.status !== "issued") {
+    toast("优惠券状态已变化，请刷新后重试", "error");
+    return;
+  }
+
+  const template = getInventory(coupon.templateId);
+  const order = getOrder(coupon.parkingOrderId);
+
+  simulateRequest(() => {
+    coupon.status = "refunded";
+    coupon.statusName = "已撤回";
+    coupon.refundTime = nowString();
+    coupon.refundReason = reason;
+    coupon.canRefund = false;
+
+    if (coupon.fundingMode === "inventory") {
+      template.stock += 1;
+    }
+
+    if (coupon.fundingMode === "balance") {
+      state.merchant.balance += coupon.cost;
+    }
+
+    if (coupon.fundingMode === "gift") {
+      state.merchant.giftBalance += coupon.cost;
+    }
+
+    if (coupon.fundingMode === "credit") {
+      state.merchant.creditUsed = Math.max(
+        0,
+        state.merchant.creditUsed - coupon.cost
+      );
+      state.merchant.currentPayable = Math.max(
+        0,
+        state.merchant.currentPayable - coupon.cost
+      );
+    }
+
+    if (order) {
+      order.existingCoupons = order.existingCoupons.filter(
+        name => name !== coupon.templateName
+      );
+
+      order.discountAmount = Math.max(
+        0,
+        order.discountAmount - Number(coupon.discountAmount || 0)
+      );
+
+      order.payableAmount = Math.max(
+        0,
+        order.currentFee - order.discountAmount
+      );
+    }
+
+    state.statistics.today.refunded += 1;
+
+    state.flows.unshift({
+      id: generateId("F"),
+      type: "refund",
+      name: `${coupon.templateName}撤回`,
+      amount:
+        ["balance", "gift"].includes(coupon.fundingMode)
+          ? coupon.cost
+          : 0,
+      balanceAfter: state.merchant.balance,
+      time: nowString(),
+      relatedId: coupon.id,
+      operator: state.currentUser.name
+    });
+
+    addAudit(
+      "撤回优惠券",
+      `${coupon.id}，车牌${coupon.plateNo}，原因：${reason}`
+    );
+
+    saveState();
+    closeModal();
+    toast("优惠券已撤回，资金或库存已恢复", "success");
+    renderRoute();
+  }, "正在撤回并同步停车订单...");
+}
+
+/* =========================================================
+   财务
+========================================================= */
+
+function renderFinance() {
+  const m = state.merchant;
+
+  return `
+    <section class="page">
+
+      <div class="finance-overview">
+        <span>商户账户可用余额</span>
+        <h2>${money(m.balance)}</h2>
+
+        <div class="finance-detail">
+          <div>
+            <span>冻结金额</span>
+            <strong>${money(m.frozenAmount)}</strong>
+          </div>
+
+          <div>
+            <span>剩余授信</span>
+            <strong>${money(m.creditLimit - m.creditUsed)}</strong>
+          </div>
+
+          <div>
+            <span>可开票</span>
+            <strong>${money(m.invoiceableAmount)}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">财务服务</div>
+      </div>
+
+      <div class="finance-menu">
+        <button data-action="open-recharge">
+          <i>充</i>
+          账户充值
+        </button>
+
+        <button data-route="settlement">
+          <i>账</i>
+          结算账单
+        </button>
+
+        <button data-route="invoices">
+          <i>票</i>
+          开票中心
+        </button>
+
+        <button data-route="flows">
+          <i>流</i>
+          账户流水
+        </button>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">当前账期</div>
+        <button class="section-more" data-route="settlement">
+          查看账单 ›
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-heading">
+          <strong>2026年7月 · 后付费实时账期</strong>
+          <span class="badge purple">进行中</span>
+        </div>
+
+        <div class="info-row">
+          <span>本期已核销优惠</span>
+          <strong>${formatInteger(state.statistics.month.used)}张</strong>
+        </div>
+
+        <div class="info-row">
+          <span>核销优惠金额</span>
+          <strong>${money(state.statistics.month.discountAmount)}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>预计商户应付</span>
+          <strong class="amount-warning">${money(m.currentPayable)}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>账期结束</span>
+          <strong>2026-07-31 23:59:59</strong>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">最近账户流水</div>
+        <button class="section-more" data-route="flows">
+          全部流水 ›
+        </button>
+      </div>
+
+      <div class="card compact">
+        ${state.flows.slice(0, 5).map(renderFlowItem).join("")}
+      </div>
+
+    </section>
+  `;
+}
+
+function renderFlowItem(item) {
+  const iconMap = {
+    recharge: "充",
+    purchase: "购",
+    issue: "券",
+    refund: "退",
+    adjustment: "调"
+  };
+
+  return `
+    <div class="flow-item">
+      <div class="flow-icon">${iconMap[item.type] || "流"}</div>
+
+      <div class="flow-main">
+        <strong>${item.name}</strong>
+        <span>${item.time} · ${item.operator}</span>
+      </div>
+
+      <div class="flow-amount">
+        <strong class="${item.amount > 0 ? "amount-positive" : item.amount < 0 ? "amount-negative" : ""}">
+          ${item.amount > 0 ? "+" : ""}${money(item.amount)}
+        </strong>
+        <span>余额 ${money(item.balanceAfter)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function openRechargeModal() {
+  if (!hasPermission("recharge")) {
+    toast("当前账号没有账户充值权限", "error");
+    return;
+  }
+
+  openModal("账户充值", `
+    <div class="card compact">
+      <div class="confirm-row">
+        <span>当前可用余额</span>
+        <strong>${money(state.merchant.balance)}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>赠送余额</span>
+        <strong>${money(state.merchant.giftBalance)}</strong>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>充值金额</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        type="number"
+        min="100"
+        max="100000"
+        step="100"
+        class="form-control"
+        id="rechargeAmount"
+        value="1000"
+      >
+
+      <div class="form-tip">单笔充值金额为100至100,000元。</div>
+    </div>
+
+    <div class="button-row three" style="margin-bottom:13px">
+      <button class="secondary-btn small-btn" data-action="set-recharge-amount" data-value="1000">
+        ¥1,000
+      </button>
+
+      <button class="secondary-btn small-btn" data-action="set-recharge-amount" data-value="3000">
+        ¥3,000
+      </button>
+
+      <button class="secondary-btn small-btn" data-action="set-recharge-amount" data-value="5000">
+        ¥5,000
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>充值方式</span>
+        <em>必选</em>
+      </label>
+
+      <div class="radio-grid">
+        <div
+          class="radio-card active"
+          data-action="select-modal-radio"
+          data-group="rechargePay"
+          data-value="wechat"
+        >
+          <strong>微信支付</strong>
+          <span>扫码支付，实时到账</span>
+          <i class="radio-check">✓</i>
+        </div>
+
+        <div
+          class="radio-card"
+          data-action="select-modal-radio"
+          data-group="rechargePay"
+          data-value="alipay"
+        >
+          <strong>支付宝</strong>
+          <span>扫码支付，实时到账</span>
+          <i class="radio-check">✓</i>
+        </div>
+
+        <div
+          class="radio-card"
+          data-action="select-modal-radio"
+          data-group="rechargePay"
+          data-value="corporate"
+        >
+          <strong>对公转账</strong>
+          <span>上传回单，审核入账</span>
+          <i class="radio-check">✓</i>
+        </div>
+
+        <div
+          class="radio-card"
+          data-action="select-modal-radio"
+          data-group="rechargePay"
+          data-value="bank"
+        >
+          <strong>银行卡</strong>
+          <span>企业银行卡在线支付</span>
+          <i class="radio-check">✓</i>
+        </div>
+      </div>
+    </div>
+
+    <button class="primary-btn full-btn" data-action="submit-recharge">
+      确认充值
+    </button>
+  `);
+}
+
+function submitRecharge() {
+  const amount = Number(document.getElementById("rechargeAmount")?.value);
+  const payMode = selectedModalRadio("rechargePay");
+
+  if (!amount || amount < 100 || amount > 100000) {
+    toast("充值金额需在100至100,000元之间", "error");
+    return;
+  }
+
+  if (payMode === "corporate") {
+    openModal("对公转账充值", `
+      <div class="card compact">
+        <div class="confirm-row">
+          <span>充值金额</span>
+          <strong class="amount-warning">${money(amount)}</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>收款单位</span>
+          <strong>惠泊云科技有限公司</strong>
+        </div>
+
+        <div class="confirm-row">
+          <span>银行账号</span>
+          <strong>7559 1234 5678 001</strong>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <span>银行流水号</span>
+          <em>必填</em>
+        </label>
+        <input class="form-control" id="rechargeCorporateSerial">
+      </div>
+
+      <button class="secondary-btn full-btn" data-action="mock-upload-voucher">
+        ＋ 上传银行回单
+      </button>
+
+      <button
+        class="primary-btn full-btn"
+        style="margin-top:10px"
+        data-action="submit-corporate-recharge"
+        data-amount="${amount}"
+      >
+        提交审核
+      </button>
+    `);
+    return;
+  }
+
+  showPaymentQr({
+    title: "商户账户充值",
+    amount,
+    onPaid: () => completeRecharge(amount, payMode)
+  });
+}
+
+function completeRecharge(amount, payMode) {
+  simulateRequest(() => {
+    state.merchant.balance += amount;
+    state.merchant.invoiceableAmount += amount;
+    state.statistics.today.rechargeAmount += amount;
+
+    state.flows.unshift({
+      id: generateId("F"),
+      type: "recharge",
+      name: `${payMode === "alipay" ? "支付宝" : payMode === "bank" ? "银行卡" : "微信"}在线充值`,
+      amount,
+      balanceAfter: state.merchant.balance,
+      time: nowString(),
+      relatedId: generateId("R"),
+      operator: state.currentUser.name
+    });
+
+    addAudit("账户充值", `充值${money(amount)}，支付方式${payMode}`);
+
+    saveState();
+    closeModal();
+    toast(`充值成功，账户余额增加${money(amount)}`, "success");
+    renderRoute();
+  }, "正在确认支付结果...");
+}
+
+function renderFlows() {
+  return `
+    <section class="page">
+
+      <div class="card compact">
+        <div class="plate-input-row">
+          <select class="form-control" id="flowTypeFilter">
+            <option value="all">全部流水类型</option>
+            <option value="recharge">充值</option>
+            <option value="purchase">购券</option>
+            <option value="issue">发券扣款</option>
+            <option value="refund">退款</option>
+          </select>
+
+          <button class="primary-btn" data-action="filter-flows">
+            筛选
+          </button>
+        </div>
+      </div>
+
+      <div class="card compact" id="flowList">
+        ${state.flows.map(renderFlowItem).join("")}
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================================================
+   结算
+========================================================= */
+
+function renderSettlement() {
+  return `
+    <section class="page">
+
+      <div class="card">
+        <div class="card-heading">
+          <strong>当前账期概览</strong>
+          <span class="badge purple">后付费</span>
+        </div>
+
+        <div class="fee-summary">
+          <div class="fee-item">
+            <span>授信额度</span>
+            <strong>${money(state.merchant.creditLimit)}</strong>
+          </div>
+
+          <div class="fee-item">
+            <span>已占用</span>
+            <strong>${money(state.merchant.creditUsed)}</strong>
+          </div>
+
+          <div class="fee-item payable">
+            <span>剩余额度</span>
+            <strong>${money(
+              state.merchant.creditLimit - state.merchant.creditUsed
+            )}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">结算账单</div>
+      </div>
+
+      <div class="bill-list">
+        ${state.bills.map(bill => `
+          <article class="bill-item">
+            <div class="bill-head">
+              <div>
+                <strong>${bill.period}停车优惠结算账单</strong>
+                <span>${bill.id} · ${bill.generatedTime}</span>
+              </div>
+
+              ${billStatusBadge(bill.status)}
+            </div>
+
+            <div class="bill-body">
+              <div>
+                <span>发券 / 核销</span>
+                <strong>${bill.issuedCount} / ${bill.usedCount}张</strong>
+              </div>
+
+              <div>
+                <span>核销优惠金额</span>
+                <strong>${money(bill.discountAmount)}</strong>
+              </div>
+
+              <div>
+                <span>调整金额</span>
+                <strong>${money(bill.adjustmentAmount)}</strong>
+              </div>
+
+              <div>
+                <span>最终应付</span>
+                <strong class="amount-warning">${money(bill.finalAmount)}</strong>
+              </div>
+            </div>
+
+            <div class="bill-actions">
+              <button
+                class="ghost-btn small-btn"
+                data-action="view-bill"
+                data-id="${bill.id}"
+              >
+                查看明细
+              </button>
+
+              ${bill.status === "pending_confirm" ? `
+                <button
+                  class="warning-btn small-btn"
+                  data-action="dispute-bill"
+                  data-id="${bill.id}"
+                >
+                  提交异议
+                </button>
+
+                <button
+                  class="primary-btn small-btn"
+                  data-action="confirm-bill"
+                  data-id="${bill.id}"
+                >
+                  确认账单
+                </button>
+              ` : ""}
+
+              ${bill.status === "confirmed" || bill.status === "pending_payment" ? `
+                <button
+                  class="primary-btn small-btn"
+                  data-action="pay-bill"
+                  data-id="${bill.id}"
+                >
+                  立即付款
+                </button>
+              ` : ""}
+            </div>
+          </article>
+        `).join("")}
+      </div>
+
+    </section>
+  `;
+}
+
+function viewBill(id) {
+  const bill = getBill(id);
+  if (!bill) return;
+
+  openModal("账单详情", `
+    <div class="card compact">
+      <div class="confirm-row">
+        <span>账单编号</span>
+        <strong>${bill.id}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>结算账期</span>
+        <strong>${bill.period}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>发券数量</span>
+        <strong>${bill.issuedCount}张</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>核销数量</span>
+        <strong>${bill.usedCount}张</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>核销优惠金额</span>
+        <strong>${money(bill.discountAmount)}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>协议应付金额</span>
+        <strong>${money(bill.payableAmount)}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>财务调整</span>
+        <strong>${money(bill.adjustmentAmount)}</strong>
+      </div>
+
+      <div class="confirm-row total">
+        <span>最终应结算</span>
+        <strong>${money(bill.finalAmount)}</strong>
+      </div>
+    </div>
+
+    <button class="secondary-btn full-btn" data-action="request-bill-export">
+      申请发送核销明细至邮箱
+    </button>
+  `);
+}
+
+function confirmBill(id) {
+  const bill = getBill(id);
+  if (!bill) return;
+
+  confirmAction({
+    title: "确认账单金额无误？",
+    message: `
+      账期：${bill.period}<br>
+      最终应结算：<b>${money(bill.finalAmount)}</b><br><br>
+      确认后账单明细将锁定，如有问题请先提交异议。
+    `,
+    icon: "账",
+    confirmText: "确认账单",
+    onConfirm: () => {
+      closeConfirm();
+
+      simulateRequest(() => {
+        bill.status = "confirmed";
+        bill.statusName = "已确认";
+        bill.confirmTime = nowString();
+
+        addAudit("确认结算账单", `${bill.id}，金额${money(bill.finalAmount)}`);
+        saveState();
+        toast("账单确认成功，请按约定完成付款", "success");
+        renderRoute();
+      }, "正在锁定账单明细...");
+    }
+  });
+}
+
+function disputeBill(id) {
+  const bill = getBill(id);
+  if (!bill) return;
+
+  openModal("提交账单异议", `
+    <div class="card compact">
+      <div class="confirm-row">
+        <span>账单编号</span>
+        <strong>${bill.id}</strong>
+      </div>
+
+      <div class="confirm-row">
+        <span>账单金额</span>
+        <strong>${money(bill.finalAmount)}</strong>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>异议类型</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="billDisputeType">
+        <option value="">请选择异议类型</option>
+        <option>核销明细不一致</option>
+        <option>优惠金额计算错误</option>
+        <option>存在重复计费</option>
+        <option>退券未冲减账单</option>
+        <option>其他财务问题</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>问题说明</span>
+        <em>必填</em>
+      </label>
+
+      <textarea
+        class="form-control"
+        id="billDisputeDescription"
+        placeholder="请描述有异议的券号、车牌、金额或明细"
+      ></textarea>
+    </div>
+
+    <button
+      class="primary-btn full-btn"
+      data-action="submit-bill-dispute"
+      data-id="${bill.id}"
+    >
+      提交平台财务复核
+    </button>
+  `);
+}
+
+function payBill(id) {
+  const bill = getBill(id);
+  if (!bill) return;
+
+  if (state.merchant.balance >= bill.finalAmount) {
+    confirmAction({
+      title: "使用账户余额支付账单？",
+      message: `
+        账单金额：<b>${money(bill.finalAmount)}</b><br>
+        当前余额：${money(state.merchant.balance)}
+      `,
+      icon: "¥",
+      confirmText: "确认支付",
+      onConfirm: () => {
+        closeConfirm();
+
+        simulateRequest(() => {
+          state.merchant.balance -= bill.finalAmount;
+          state.merchant.creditUsed = Math.max(
+            0,
+            state.merchant.creditUsed - bill.finalAmount
+          );
+          state.merchant.currentPayable = Math.max(
+            0,
+            state.merchant.currentPayable - bill.finalAmount
+          );
+
+          bill.status = "settled";
+          bill.statusName = "已结清";
+          bill.paymentTime = nowString();
+
+          state.flows.unshift({
+            id: generateId("F"),
+            type: "settlement",
+            name: `${bill.period}结算账单付款`,
+            amount: -bill.finalAmount,
+            balanceAfter: state.merchant.balance,
+            time: nowString(),
+            relatedId: bill.id,
+            operator: state.currentUser.name
+          });
+
+          addAudit("支付结算账单", `${bill.id}，支付${money(bill.finalAmount)}`);
+          saveState();
+          toast("账单支付成功", "success");
+          renderRoute();
+        }, "正在支付结算账单...");
+      }
+    });
+  } else {
+    showPaymentQr({
+      title: `${bill.period}结算账单`,
+      amount: bill.finalAmount,
+      onPaid: () => {
+        bill.status = "settled";
+        bill.statusName = "已结清";
+        bill.paymentTime = nowString();
+        addAudit("支付结算账单", `${bill.id}，外部支付${money(bill.finalAmount)}`);
+        saveState();
+        closeModal();
+        toast("账单支付成功", "success");
+        renderRoute();
+      }
+    });
+  }
+}
+
+/* =========================================================
+   开票
+========================================================= */
+
+function renderInvoices() {
+  return `
+    <section class="page">
+
+      <div class="card">
+        <div class="card-heading">
+          <strong>可开票金额</strong>
+          <span class="badge green">资料已认证</span>
+        </div>
+
+        <div style="
+          margin:12px 0;
+          color:#e4742b;
+          font-size:28px;
+          font-weight:800;
+        ">
+          ${money(state.merchant.invoiceableAmount)}
+        </div>
+
+        <div class="info-row">
+          <span>默认发票抬头</span>
+          <strong>${state.merchant.name}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>默认接收邮箱</span>
+          <strong>finance@xingyue.example</strong>
+        </div>
+
+        <button
+          class="primary-btn full-btn"
+          style="margin-top:11px"
+          data-action="open-invoice-apply"
+        >
+          申请开票
+        </button>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">开票记录</div>
+      </div>
+
+      <div class="record-list">
+        ${state.invoices.length ? state.invoices.map(item => `
+          <article class="record-item">
+            <div class="record-head">
+              <div>
+                <strong>${item.type} · ${money(item.amount)}</strong>
+                <span>${item.id} · ${item.applyTime}</span>
+              </div>
+
+              <span class="badge ${item.status === "issued" ? "green" : "orange"}">
+                ${item.statusName}
+              </span>
+            </div>
+
+            <div class="record-body">
+              <div>
+                <span>发票抬头</span>
+                <strong>${item.title}</strong>
+              </div>
+
+              <div>
+                <span>来源</span>
+                <strong>${item.sourceName}</strong>
+              </div>
+
+              <div>
+                <span>税号</span>
+                <strong>${item.taxNo}</strong>
+              </div>
+
+              <div>
+                <span>接收邮箱</span>
+                <strong>${item.email}</strong>
+              </div>
+            </div>
+
+            ${item.status === "issued" ? `
+              <div class="record-actions">
+                <button class="secondary-btn small-btn" data-action="download-invoice">
+                  查看电子发票
+                </button>
+              </div>
+            ` : ""}
+          </article>
+        `).join("") : renderEmpty("暂无开票记录", "完成充值、购券或结算后可申请开票")}
+      </div>
+
+    </section>
+  `;
+}
+
+function openInvoiceApply() {
+  if (!hasPermission("invoice")) {
+    toast("当前账号没有开票权限", "error");
+    return;
+  }
+
+  openModal("申请开票", `
+    <div class="alert-bar">
+      <i></i>
+      已开票金额不可重复申请。发生退款时，可能需要冲红或扣减可开票额度。
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>开票来源</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="invoiceSource">
+        <option value="recharge">账户充值 / 购券可开票金额</option>
+        <option value="settlement">已确认后付费结算账单</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>申请金额</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        type="number"
+        min="1"
+        max="${state.merchant.invoiceableAmount}"
+        class="form-control"
+        id="invoiceAmount"
+        value="${Math.min(5000, state.merchant.invoiceableAmount)}"
+      >
+
+      <div class="form-tip">
+        当前可开票金额 ${money(state.merchant.invoiceableAmount)}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>发票类型</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="invoiceType">
+        <option>电子普通发票</option>
+        <option>增值税普通发票</option>
+        <option>增值税专用发票</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>发票抬头</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        class="form-control"
+        id="invoiceTitle"
+        value="${state.merchant.name}"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>纳税人识别号</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        class="form-control"
+        id="invoiceTaxNo"
+        value="91440300MA5F8X8X8X"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>电子发票接收邮箱</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        type="email"
+        class="form-control"
+        id="invoiceEmail"
+        value="finance@xingyue.example"
+      >
+    </div>
+
+    <button class="primary-btn full-btn" data-action="submit-invoice">
+      提交开票申请
+    </button>
+  `);
+}
+
+function submitInvoice() {
+  const amount = Number(document.getElementById("invoiceAmount")?.value);
+  const source = document.getElementById("invoiceSource")?.value;
+  const type = document.getElementById("invoiceType")?.value;
+  const title = document.getElementById("invoiceTitle")?.value.trim();
+  const taxNo = document.getElementById("invoiceTaxNo")?.value.trim();
+  const email = document.getElementById("invoiceEmail")?.value.trim();
+
+  if (!amount || amount <= 0) {
+    toast("请输入正确的开票金额", "error");
+    return;
+  }
+
+  if (amount > state.merchant.invoiceableAmount) {
+    toast("申请金额超过当前可开票金额", "error");
+    return;
+  }
+
+  if (!title || !taxNo || !email.includes("@")) {
+    toast("请完善发票抬头、税号和接收邮箱", "error");
+    return;
+  }
+
+  simulateRequest(() => {
+    state.merchant.invoiceableAmount -= amount;
+
+    state.invoices.unshift({
+      id: generateId("INV"),
+      sourceType: source,
+      sourceName: source === "settlement" ? "后付费结算" : "账户充值与购券",
+      amount,
+      title,
+      taxNo,
+      type,
+      email,
+      status: "reviewing",
+      statusName: "审核中",
+      applyTime: nowString()
+    });
+
+    addAudit("申请开票", `${type}，金额${money(amount)}，抬头${title}`);
+    saveState();
+    closeModal();
+    toast("开票申请已提交，预计1至3个工作日完成", "success");
+    renderRoute();
+  }, "正在提交发票系统...");
+}
+
+/* =========================================================
+   统计
+========================================================= */
+
+function renderStatistics() {
+  const data = state.statistics[currentStatRange];
+  const chartValues =
+    currentStatRange === "today"
+      ? [6, 8, 12, 10, 14, 11, 15]
+      : currentStatRange === "week"
+        ? [42, 58, 51, 72, 68, 79, 68]
+        : [32, 48, 57, 61, 76, 68, 81];
+
+  const max = Math.max(...chartValues);
+
+  return `
+    <section class="page">
+
+      <div class="date-filter">
+        ${[
+          ["today", "今日"],
+          ["week", "本周"],
+          ["month", "本月"]
+        ].map(([value, label]) => `
+          <button
+            class="date-chip ${currentStatRange === value ? "active" : ""}"
+            data-action="stat-range"
+            data-range="${value}"
+          >
+            ${label}
+          </button>
+        `).join("")}
+
+        <button class="date-chip" data-action="custom-stat-date">
+          自定义
+        </button>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">核心指标</div>
+        <button class="section-more" data-action="request-stat-export">
+          发送报表至邮箱
+        </button>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span>发券数量</span>
+          <strong>${formatInteger(data.issued)}张</strong>
+          <em>核销 ${data.used}张</em>
+        </div>
+
+        <div class="metric-card">
+          <span>核销率</span>
+          <strong>${Math.round(data.used / data.issued * 100)}%</strong>
+          <em>未使用 ${data.issued - data.used - data.refunded}张</em>
+        </div>
+
+        <div class="metric-card">
+          <span>优惠总金额</span>
+          <strong>${money(data.discountAmount)}</strong>
+          <em>车主实际抵扣</em>
+        </div>
+
+        <div class="metric-card">
+          <span>商户成本</span>
+          <strong>${money(data.merchantCost)}</strong>
+          <em>含预付与后付费</em>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">发券趋势</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-heading">
+          <strong>
+            ${currentStatRange === "today" ? "今日分时发券量" : currentStatRange === "week" ? "本周每日发券量" : "本月趋势"}
+          </strong>
+          <span>单位：张</span>
+        </div>
+
+        <div class="bar-chart">
+          ${chartValues.map((value, index) => `
+            <div class="bar-column">
+              <div
+                class="bar"
+                style="height:${Math.max(8, value / max * 112)}px"
+                data-value="${value}"
+              ></div>
+              <span class="bar-label">
+                ${currentStatRange === "today"
+                  ? ["10", "12", "14", "16", "18", "20", "22"][index]
+                  : ["一", "二", "三", "四", "五", "六", "日"][index]}
+              </span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">员工发券排行</div>
+      </div>
+
+      <div class="card compact">
+        ${state.employees
+          .filter(item => item.status === "enabled")
+          .sort((a, b) => b.todayCount - a.todayCount)
+          .map((item, index) => `
+            <div class="ranking-row">
+              <div class="rank-number">${index + 1}</div>
+
+              <div class="rank-info">
+                <strong>${item.name} · ${item.roleName}</strong>
+                <span>优惠成本 ${money(item.todayAmount)}</span>
+              </div>
+
+              <div class="rank-value">${item.todayCount}张</div>
+            </div>
+          `).join("")}
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">券类型分析</div>
+      </div>
+
+      <div class="card compact">
+        ${state.inventory.map((item, index) => {
+          const issued = [36, 21, 14, 5][index] || 0;
+          const used = Math.max(0, issued - [7, 3, 2, 1][index]);
+
+          return `
+            <div class="ranking-row">
+              <div class="rank-number">${index + 1}</div>
+
+              <div class="rank-info">
+                <strong>${item.name}</strong>
+                <span>核销 ${used}张 · 库存 ${item.stock}张</span>
+              </div>
+
+              <div class="rank-value">${issued}张</div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================================================
+   我的、员工、日志
+========================================================= */
+
+function renderProfile() {
+  return `
+    <section class="page">
+
+      <div class="profile-card">
+        <div class="profile-avatar">${state.currentUser.name.slice(0, 1)}</div>
+
+        <div class="profile-info">
+          <strong>${state.currentUser.name}</strong>
+          <span>${state.currentUser.mobile} · ${state.currentUser.storeName}</span>
+        </div>
+
+        <div class="profile-role">${state.currentUser.roleName}</div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">商户管理</div>
+      </div>
+
+      <div class="menu-list">
+        <button class="menu-item" data-route="employees">
+          <span class="menu-icon">员</span>
+          <span>
+            <strong>员工账号管理</strong>
+            <span>角色、权限、额度和账号停用</span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button class="menu-item" data-route="statistics">
+          <span class="menu-icon">统</span>
+          <span>
+            <strong>经营统计</strong>
+            <span>发券、核销、成本与员工排行</span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button class="menu-item" data-route="audit">
+          <span class="menu-icon">志</span>
+          <span>
+            <strong>操作日志</strong>
+            <span>关键业务操作永久留痕</span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">账号与设备</div>
+      </div>
+
+      <div class="menu-list">
+        <button class="menu-item" data-action="merchant-info">
+          <span class="menu-icon">商</span>
+          <span>
+            <strong>商户与门店信息</strong>
+            <span>${state.merchant.name}</span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button class="menu-item" data-action="device-info">
+          <span class="menu-icon">机</span>
+          <span>
+            <strong>当前设备</strong>
+            <span>PDA-XY-008 · 已授权绑定</span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button class="menu-item" data-action="security-settings">
+          <span class="menu-icon">安</span>
+          <span>
+            <strong>账号与安全</strong>
+            <span>修改密码、二次验证和自动退出</span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+
+      <button
+        class="danger-btn full-btn"
+        style="margin-top:14px"
+        data-action="logout"
+      >
+        退出当前账号
+      </button>
+
+      <button
+        class="ghost-btn full-btn"
+        style="margin-top:9px"
+        data-action="reset-app"
+      >
+        重置本地业务数据
+      </button>
+
+      <div class="form-tip" style="text-align:center;margin-top:10px">
+        惠泊商户通 V3.0.0 · 设备编号 PDA-XY-008
+      </div>
+
+    </section>
+  `;
+}
+
+function renderEmployees() {
+  if (!hasPermission("employees")) {
+    return `
+      <section class="page">
+        ${renderEmpty("无员工管理权限", "请联系商户管理员为当前账号开通权限")}
+      </section>
+    `;
+  }
+
+  return `
+    <section class="page">
+
+      <button
+        class="primary-btn full-btn"
+        style="margin-bottom:11px"
+        data-action="add-employee"
+      >
+        ＋ 新增员工账号
+      </button>
+
+      <div class="employee-list">
+        ${state.employees.map(item => `
+          <article class="employee-item">
+            <div class="employee-head">
+              <div class="employee-main">
+                <div class="employee-avatar">${item.name.slice(0, 1)}</div>
+
+                <div>
+                  <strong>${item.name} · ${item.employeeNo}</strong>
+                  <span>
+                    ${item.mobile} · ${item.roleName}<br>
+                    最近登录 ${item.lastLogin}
+                  </span>
+                </div>
+              </div>
+
+              <span class="badge ${item.status === "enabled" ? "green" : "gray"}">
+                ${item.status === "enabled" ? "启用" : "已停用"}
+              </span>
+            </div>
+
+            <div class="employee-limit">
+              <span>
+                今日 ${item.todayCount}/${item.dailyLimitCount}张
+              </span>
+              <span>
+                金额 ${money(item.todayAmount)}/${money(item.dailyLimitAmount)}
+              </span>
+            </div>
+
+            <div class="employee-actions">
+              <button
+                class="ghost-btn small-btn"
+                data-action="edit-employee"
+                data-id="${item.id}"
+              >
+                编辑权限
+              </button>
+
+              ${item.id !== state.currentUser.id ? `
+                <button
+                  class="${item.status === "enabled" ? "danger-btn" : "secondary-btn"} small-btn"
+                  data-action="toggle-employee"
+                  data-id="${item.id}"
+                >
+                  ${item.status === "enabled" ? "停用账号" : "恢复账号"}
+                </button>
+              ` : ""}
+            </div>
+          </article>
+        `).join("")}
+      </div>
+
+    </section>
+  `;
+}
+
+function openEmployeeForm(employeeId = "") {
+  const employee = getEmployee(employeeId);
+
+  openModal(employee ? "编辑员工账号" : "新增员工账号", `
+    <div class="form-group">
+      <label class="form-label">
+        <span>员工姓名</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        class="form-control"
+        id="employeeName"
+        value="${employee?.name || ""}"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>手机号</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        type="tel"
+        class="form-control"
+        id="employeeMobile"
+        value="${employee?.mobile || ""}"
+        placeholder="请输入11位手机号"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>员工工号</span>
+        <em>必填</em>
+      </label>
+
+      <input
+        class="form-control"
+        id="employeeNo"
+        value="${employee?.employeeNo || ""}"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        <span>角色</span>
+        <em>必选</em>
+      </label>
+
+      <select class="form-control" id="employeeRole">
+        <option value="employee" ${employee?.role === "employee" ? "selected" : ""}>
+          收银员
+        </option>
+        <option value="manager" ${employee?.role === "manager" ? "selected" : ""}>
+          值班店长
+        </option>
+        <option value="admin" ${employee?.role === "admin" ? "selected" : ""}>
+          商户管理员
+        </option>
+      </select>
+    </div>
+
+    <div class="button-row">
+      <div class="form-group">
+        <label class="form-label">
+          <span>每日发券上限</span>
+        </label>
+
+        <input
+          type="number"
+          class="form-control"
+          id="employeeCountLimit"
+          value="${employee?.dailyLimitCount || 50}"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <span>每日金额上限</span>
+        </label>
+
+        <input
+          type="number"
+          class="form-control"
+          id="employeeAmountLimit"
+          value="${employee?.dailyLimitAmount || 500}"
+        >
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">业务权限</div>
+    </div>
+
+    <div class="card compact">
+      ${[
+        ["plate_query", "车牌与停车订单查询", true],
+        ["issue", "发放普通优惠券", true],
+        ["refund", "撤回未核销优惠券", employee?.role !== "employee"],
+        ["purchase", "购买优惠券", employee?.role === "admin"],
+        ["recharge", "账户充值", employee?.role === "admin"],
+        ["statistics", "查看全店统计", employee?.role !== "employee"],
+        ["settlement", "账单确认与结算", employee?.role === "admin"],
+        ["invoice", "开票申请", employee?.role === "admin"]
+      ].map(([value, label, checked]) => `
+        <div class="info-row">
+          <span>${label}</span>
+          <div
+            class="switch ${checked ? "on" : ""}"
+            data-action="toggle-permission-switch"
+            data-permission="${value}"
+          ></div>
+        </div>
+      `).join("")}
+    </div>
+
+    <button
+      class="primary-btn full-btn"
+      data-action="save-employee"
+      data-id="${employee?.id || ""}"
+    >
+      保存员工账号
+    </button>
+  `);
+}
+
+function saveEmployee(employeeId) {
+  const name = document.getElementById("employeeName")?.value.trim();
+  const mobile = document.getElementById("employeeMobile")?.value.trim();
+  const employeeNo = document.getElementById("employeeNo")?.value.trim();
+  const role = document.getElementById("employeeRole")?.value;
+  const dailyLimitCount = Number(
+    document.getElementById("employeeCountLimit")?.value
+  );
+  const dailyLimitAmount = Number(
+    document.getElementById("employeeAmountLimit")?.value
+  );
+
+  if (!name || !mobile || !employeeNo) {
+    toast("请完整填写员工姓名、手机号和工号", "error");
+    return;
+  }
+
+  if (!dailyLimitCount || !dailyLimitAmount) {
+    toast("请填写有效的发券额度", "error");
+    return;
+  }
+
+  const permissions = Array.from(
+    document.querySelectorAll(".switch.on[data-permission]")
+  ).map(item => item.dataset.permission);
+
+  const roleNames = {
+    employee: "收银员",
+    manager: "值班店长",
+    admin: "商户管理员"
+  };
+
+  let employee = getEmployee(employeeId);
+
+  if (employee) {
+    Object.assign(employee, {
+      name,
+      mobile,
+      employeeNo,
+      role,
+      roleName: roleNames[role],
+      dailyLimitCount,
+      dailyLimitAmount,
+      permissions
+    });
+
+    addAudit("编辑员工账号", `${name}，角色${roleNames[role]}`);
+  } else {
+    employee = {
+      id: generateId("E"),
+      name,
+      mobile,
+      employeeNo,
+      role,
+      roleName: roleNames[role],
+      storeName: state.merchant.storeName,
+      status: "enabled",
+      dailyLimitAmount,
+      dailyLimitCount,
+      todayCount: 0,
+      todayAmount: 0,
+      lastLogin: "尚未登录",
+      permissions
+    };
+
+    state.employees.push(employee);
+    addAudit("新增员工账号", `${name}，角色${roleNames[role]}`);
+  }
+
+  saveState();
+  closeModal();
+  toast(employeeId ? "员工信息已更新" : "员工账号创建成功", "success");
+  renderRoute();
+}
+
+function toggleEmployee(id) {
+  const employee = getEmployee(id);
+  if (!employee) return;
+
+  const enable = employee.status !== "enabled";
+
+  confirmAction({
+    title: enable ? "恢复员工账号？" : "停用员工账号？",
+    message: enable
+      ? `恢复后，${employee.name}可重新登录商户PDA。`
+      : `停用后，${employee.name}将立即退出登录，已绑定设备会话同时失效。`,
+    icon: "员",
+    confirmText: enable ? "确认恢复" : "确认停用",
+    danger: !enable,
+    onConfirm: () => {
+      closeConfirm();
+      employee.status = enable ? "enabled" : "disabled";
+      addAudit(
+        enable ? "恢复员工账号" : "停用员工账号",
+        `${employee.name}（${employee.employeeNo}）`
+      );
+      saveState();
+      toast(enable ? "员工账号已恢复" : "员工账号已停用", "success");
+      renderRoute();
+    }
+  });
+}
+
+function renderAudit() {
+  return `
+    <section class="page">
+      <div class="card compact">
+        ${state.auditLogs.map(item => `
+          <div class="flow-item">
+            <div class="flow-icon">志</div>
+
+            <div class="flow-main">
+              <strong>${item.action}</strong>
+              <span>${item.detail}</span>
+              <span>${item.time} · ${item.operator}</span>
+            </div>
+
+            <div class="badge green">已留痕</div>
+          </div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+/* =========================================================
+   消息、搜索和辅助弹窗
+========================================================= */
+
+function openMessages() {
+  state.messages.forEach(item => item.read = true);
+  saveState();
+
+  openModal("消息中心", `
+    <div class="record-list">
+      ${state.messages.map(item => `
+        <article class="record-item">
+          <div class="record-head">
+            <div>
+              <strong>${item.title}</strong>
+              <span>${item.time}</span>
+            </div>
+
+            <span class="badge ${
+              item.type === "warning"
+                ? "orange"
+                : item.type === "risk"
+                  ? "red"
+                  : "purple"
+            }">
+              ${item.type === "warning" ? "库存" : item.type === "risk" ? "风控" : "账单"}
+            </span>
+          </div>
+
+          <p style="
+            margin:9px 0 0;
+            color:#71818e;
+            font-size:10px;
+            line-height:1.6;
+          ">
+            ${item.content}
+          </p>
+
+          <div class="record-actions">
+            <button
+              class="secondary-btn small-btn"
+              data-action="message-go"
+              data-route="${item.action}"
+            >
+              立即处理
+            </button>
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `);
+}
+
+function openGlobalSearch() {
+  openModal("全局业务查询", `
+    <div class="form-group">
+      <label class="form-label">
+        <span>查询关键词</span>
+      </label>
+
+      <input
+        class="form-control"
+        id="globalSearchInput"
+        placeholder="车牌、券号、订单号、账单号或员工姓名"
+      >
+    </div>
+
+    <button class="primary-btn full-btn" data-action="submit-global-search">
+      查询业务数据
+    </button>
+
+    <div id="globalSearchResult" style="margin-top:12px"></div>
+  `);
+}
+
+function submitGlobalSearch() {
+  const keyword = document.getElementById("globalSearchInput")?.value.trim();
+
+  if (!keyword) {
+    toast("请输入查询关键词", "warning");
+    return;
+  }
+
+  const coupons = state.issuedCoupons.filter(item =>
+    JSON.stringify(item).includes(keyword)
+  );
+  const orders = state.parkingOrders.filter(item =>
+    JSON.stringify(item).includes(keyword)
+  );
+  const employees = state.employees.filter(item =>
+    JSON.stringify(item).includes(keyword)
+  );
+  const bills = state.bills.filter(item =>
+    JSON.stringify(item).includes(keyword)
+  );
+
+  const result = document.getElementById("globalSearchResult");
+
+  result.innerHTML = `
+    ${orders.map(order => `
+      <div class="card compact">
+        <div class="card-heading">
+          <strong>停车订单 · ${order.plateNo}</strong>
+          <span class="badge green">${order.status}</span>
+        </div>
+        <p class="muted" style="font-size:9px">
+          ${order.id} · ${order.parkingLot} · ${money(order.payableAmount)}
+        </p>
+      </div>
+    `).join("")}
+
+    ${coupons.map(item => `
+      <div class="card compact">
+        <div class="card-heading">
+          <strong>优惠券 · ${item.templateName}</strong>
+          ${couponStatusBadge(item.status)}
+        </div>
+        <p class="muted" style="font-size:9px">
+          ${item.id} · ${item.plateNo} · ${item.issueTime}
+        </p>
+      </div>
+    `).join("")}
+
+    ${employees.map(item => `
+      <div class="card compact">
+        <div class="card-heading">
+          <strong>员工 · ${item.name}</strong>
+          <span class="badge ${item.status === "enabled" ? "green" : "gray"}">
+            ${item.roleName}
+          </span>
+        </div>
+        <p class="muted" style="font-size:9px">
+          ${item.employeeNo} · ${item.mobile}
+        </p>
+      </div>
+    `).join("")}
+
+    ${bills.map(item => `
+      <div class="card compact">
+        <div class="card-heading">
+          <strong>结算账单 · ${item.period}</strong>
+          ${billStatusBadge(item.status)}
+        </div>
+        <p class="muted" style="font-size:9px">
+          ${item.id} · ${money(item.finalAmount)}
+        </p>
+      </div>
+    `).join("")}
+
+    ${
+      !orders.length && !coupons.length && !employees.length && !bills.length
+        ? renderEmpty("未找到相关业务数据", "请核对关键词后重新查询")
+        : ""
+    }
+  `;
+}
+
+function renderEmpty(title, description) {
+  return `
+    <div class="empty-state">
+      <div class="empty-icon">◇</div>
+      <strong>${title}</strong>
+      <span>${description}</span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   事件代理
+========================================================= */
+
+document.addEventListener("click", event => {
+  const routeButton = event.target.closest("[data-route]");
+
+  if (routeButton && !routeButton.dataset.action) {
+    closeModal();
+    navigate(routeButton.dataset.route);
+    return;
+  }
+
+  const actionTarget = event.target.closest("[data-action]");
+  if (!actionTarget) return;
+
+  const action = actionTarget.dataset.action;
+
+  const handlers = {
+    "close-modal": closeModal,
+    "cancel-confirm": closeConfirm,
+    "open-messages": openMessages,
+    "open-search": openGlobalSearch,
+    "open-purchase": () => openPurchaseModal(),
+    "open-recharge": openRechargeModal,
+    "open-inventory-refund": () => openInventoryRefund(),
+    "add-employee": () => openEmployeeForm(),
+    "new-issue": () => {
+      issueDraft = {
+        step: "search",
+        plateNo: "",
+        orderId: null,
+        templateId: null,
+        fundingMode: null,
+        remark: "",
+        consumptionNo: "",
+        notifyOwner: true
+      };
+      pageParams = {};
+      renderRoute();
+    },
+    "change-issue-plate": () => {
+      issueDraft.step = "search";
+      issueDraft.orderId = null;
+      issueDraft.templateId = null;
+      issueDraft.fundingMode = null;
+      renderRoute();
+    },
+    "back-issue-select": () => {
+      issueDraft.step = "select";
+      renderRoute();
+    },
+    "submit-issue": submitIssue,
+    "submit-purchase": submitPurchase,
+    "submit-recharge": submitRecharge,
+    "submit-invoice": submitInvoice,
+    "submit-global-search": submitGlobalSearch,
+    "download-invoice": () => toast("电子发票已加入下载任务", "success"),
+    "request-bill-export": () => toast("核销明细将在5分钟内发送到财务邮箱", "success"),
+    "request-stat-export": () => toast("经营报表导出任务已创建", "success"),
+    "custom-stat-date": () => toast("请选择开始日期和结束日期", "warning"),
+    "mock-upload-voucher": () => {
+      actionTarget.textContent = "✓ 银行回单已上传";
+      actionTarget.className = "secondary-btn full-btn";
+      actionTarget.dataset.uploaded = "true";
+      toast("凭证上传成功", "success");
+    },
+    "merchant-info": () => openModal("商户与门店信息", `
+      <div class="card compact">
+        <div class="confirm-row"><span>商户名称</span><strong>${state.merchant.name}</strong></div>
+        <div class="confirm-row"><span>商户编号</span><strong>${state.merchant.id}</strong></div>
+        <div class="confirm-row"><span>门店名称</span><strong>${state.merchant.storeName}</strong></div>
+        <div class="confirm-row"><span>结算模式</span><strong>${settlementModeName(state.merchant.settlementMode)}</strong></div>
+        <div class="confirm-row"><span>商户状态</span><strong class="amount-positive">正常合作</strong></div>
+      </div>
+    `),
+    "device-info": () => openModal("授权设备信息", `
+      <div class="card compact">
+        <div class="confirm-row"><span>设备编号</span><strong>PDA-XY-008</strong></div>
+        <div class="confirm-row"><span>设备型号</span><strong>Android PDA X8</strong></div>
+        <div class="confirm-row"><span>系统版本</span><strong>Android 14</strong></div>
+        <div class="confirm-row"><span>绑定时间</span><strong>2026-06-08 10:30</strong></div>
+        <div class="confirm-row"><span>安全状态</span><strong class="amount-positive">设备可信</strong></div>
+      </div>
+      <button class="danger-btn full-btn" data-action="unbind-device">解除设备绑定</button>
+    `),
+    "security-settings": () => openModal("账号与安全", `
+      <div class="menu-list">
+        <button class="menu-item" data-action="change-password">
+          <span class="menu-icon">密</span>
+          <span><strong>修改登录密码</strong><span>建议每90天更换一次</span></span>
+          <span class="menu-arrow">›</span>
+        </button>
+        <button class="menu-item">
+          <span class="menu-icon">验</span>
+          <span><strong>高风险操作二次验证</strong><span>充值、退券、结算和员工停用</span></span>
+          <span class="switch on"></span>
+        </button>
+        <button class="menu-item">
+          <span class="menu-icon">退</span>
+          <span><strong>无操作自动退出</strong><span>当前设置：30分钟</span></span>
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+    `),
+    "logout": () => confirmAction({
+      title: "退出当前账号？",
+      message: "退出后需要重新输入账号密码或手机验证码登录。",
+      icon: "退",
+      confirmText: "确认退出",
+      danger: true,
+      onConfirm: () => {
+        closeConfirm();
+        toast("已安全退出当前账号", "success");
+      }
+    }),
+    "reset-app": () => confirmAction({
+      title: "重置本地业务数据？",
+      message: "将恢复初始商户、库存、账单和员工数据。此操作仅影响当前浏览器。",
+      icon: "!",
+      confirmText: "确认重置",
+      danger: true,
+      onConfirm: () => {
+        closeConfirm();
+        resetState();
+        issueDraft.step = "search";
+        navigate("home", {}, false);
+        toast("业务数据已恢复初始状态", "success");
+      }
+    })
+  };
+
+  if (handlers[action]) {
+    handlers[action]();
+    return;
+  }
+
+  switch (action) {
+    case "home-search-plate": {
+      const plate = document.getElementById("homePlateInput")?.value;
+      issueDraft = {
+        ...issueDraft,
+        step: "search",
+        plateNo: plate || ""
+      };
+      navigate("issue");
+      setTimeout(() => searchParkingOrder(plate), 20);
+      break;
+    }
+
+    case "quick-plate":
+    case "search-history-plate": {
+      const plate = actionTarget.dataset.plate;
+      issueDraft.plateNo = plate;
+
+      if (currentRoute !== "issue") {
+        navigate("issue");
+      }
+
+      searchParkingOrder(plate);
+      break;
+    }
+
+    case "search-parking-order": {
+      const plate = document.getElementById("issuePlateInput")?.value;
+      searchParkingOrder(plate);
+      break;
+    }
+
+    case "simulate-camera-scan":
+      simulateRequest(() => {
+        const plate = "粤B·A12345";
+        issueDraft.plateNo = plate;
+        toast(`识别成功：${plate}`, "success");
+        searchParkingOrder(plate);
+      }, "正在识别车牌...");
+      break;
+
+    case "select-history-plate":
+      openModal("选择历史车牌", `
+        <div class="menu-list">
+          ${state.recentPlates.map(plate => `
+            <button
+              class="menu-item"
+              data-action="modal-history-plate"
+              data-plate="${plate}"
+            >
+              <span class="menu-icon">P</span>
+              <span><strong>${plate}</strong><span>查询当前停车订单</span></span>
+              <span class="menu-arrow">›</span>
+            </button>
+          `).join("")}
+        </div>
+      `);
+      break;
+
+    case "modal-history-plate":
+      closeModal();
+      searchParkingOrder(actionTarget.dataset.plate);
+      break;
+
+    case "select-issue-coupon":
+      issueDraft.templateId = actionTarget.dataset.id;
+
+      if (!issueDraft.fundingMode) {
+        const item = getInventory(issueDraft.templateId);
+        issueDraft.fundingMode =
+          item.stock > 0
+            ? "inventory"
+            : state.merchant.balance >= item.merchantPrice
+              ? "balance"
+              : "credit";
+      }
+
+      renderRoute();
+      break;
+
+    case "select-funding-mode":
+      issueDraft.fundingMode = actionTarget.dataset.mode;
+      renderRoute();
+      break;
+
+    case "go-issue-confirm": {
+      const error = validateIssueDraft();
+
+      if (error) {
+        toast(error, "error");
+        break;
+      }
+
+      issueDraft.step = "confirm";
+      renderRoute();
+      break;
+    }
+
+    case "coupon-tab":
+      currentCouponTab = actionTarget.dataset.tab;
+      renderRoute();
+      break;
+
+    case "purchase-template":
+      openPurchaseModal(actionTarget.dataset.id);
+      break;
+
+    case "refund-inventory-template":
+      openInventoryRefund(actionTarget.dataset.id);
+      break;
+
+    case "select-modal-radio": {
+      const group = actionTarget.dataset.group;
+
+      document.querySelectorAll(`.radio-card[data-group="${group}"]`)
+        .forEach(item => item.classList.remove("active"));
+
+      actionTarget.classList.add("active");
+      break;
+    }
+
+    case "set-recharge-amount":
+      document.getElementById("rechargeAmount").value =
+        actionTarget.dataset.value;
+      break;
+
+    case "record-status":
+      currentRecordStatus = actionTarget.dataset.status;
+      renderRoute();
+      break;
+
+    case "refund-issued-coupon":
+      refundIssuedCoupon(actionTarget.dataset.id);
+      break;
+
+    case "confirm-refund-issued":
+      completeIssuedRefund(actionTarget.dataset.id);
+      break;
+
+    case "search-records": {
+      const keyword =
+        document.getElementById("recordSearchInput")?.value.trim() || "";
+
+      const list = state.issuedCoupons.filter(item =>
+        (currentRecordStatus === "all" || item.status === currentRecordStatus) &&
+        JSON.stringify(item).includes(keyword)
+      );
+
+      document.getElementById("recordList").innerHTML =
+        list.length
+          ? list.map(renderRecordItem).join("")
+          : renderEmpty("未找到匹配记录", "请修改查询条件后重试");
+      break;
+    }
+
+    case "filter-flows": {
+      const type = document.getElementById("flowTypeFilter")?.value;
+      const list = state.flows.filter(item =>
+        type === "all" || item.type === type
+      );
+
+      document.getElementById("flowList").innerHTML =
+        list.length
+          ? list.map(renderFlowItem).join("")
+          : renderEmpty("暂无流水", "当前筛选条件下没有账户流水");
+      break;
+    }
+
+    case "view-bill":
+      viewBill(actionTarget.dataset.id);
+      break;
+
+    case "confirm-bill":
+      confirmBill(actionTarget.dataset.id);
+      break;
+
+    case "dispute-bill":
+      disputeBill(actionTarget.dataset.id);
+      break;
+
+    case "submit-bill-dispute": {
+      const bill = getBill(actionTarget.dataset.id);
+      const type = document.getElementById("billDisputeType")?.value;
+      const description =
+        document.getElementById("billDisputeDescription")?.value.trim();
+
+      if (!type || !description) {
+        toast("请选择异议类型并填写问题说明", "error");
+        break;
+      }
+
+      simulateRequest(() => {
+        bill.status = "disputed";
+        bill.statusName = "有异议";
+        bill.disputeType = type;
+        bill.disputeDescription = description;
+        bill.disputeTime = nowString();
+
+        addAudit("提交账单异议", `${bill.id}，${type}`);
+        saveState();
+        closeModal();
+        toast("账单异议已提交，平台财务将进行复核", "success");
+        renderRoute();
+      }, "正在提交账单异议...");
+      break;
+    }
+
+    case "pay-bill":
+      payBill(actionTarget.dataset.id);
+      break;
+
+    case "stat-range":
+      currentStatRange = actionTarget.dataset.range;
+      renderRoute();
+      break;
+
+    case "edit-employee":
+      openEmployeeForm(actionTarget.dataset.id);
+      break;
+
+    case "toggle-employee":
+      toggleEmployee(actionTarget.dataset.id);
+      break;
+
+    case "toggle-permission-switch":
+      actionTarget.classList.toggle("on");
+      break;
+
+    case "save-employee":
+      saveEmployee(actionTarget.dataset.id);
+      break;
+
+    case "message-go":
+      closeModal();
+      navigate(actionTarget.dataset.route);
+      break;
+
+    case "submit-inventory-refund": {
+      const item = getInventory(
+        document.getElementById("refundInventoryTemplate")?.value
+      );
+      const quantity = Number(
+        document.getElementById("refundInventoryQuantity")?.value
+      );
+      const method =
+        document.getElementById("refundInventoryMethod")?.value;
+      const reason =
+        document.getElementById("refundInventoryReason")?.value.trim();
+
+      if (!item || !quantity || quantity < 1 || quantity > item.stock) {
+        toast("请输入有效的退券数量", "error");
+        break;
+      }
+
+      if (!reason) {
+        toast("请填写退券原因", "error");
+        break;
+      }
+
+      if (quantity >= 100) {
+        toast("大额退券已进入平台审核流程", "warning");
+      }
+
+      simulateRequest(() => {
+        const refundAmount = item.merchantPrice * quantity;
+        item.stock -= quantity;
+
+        if (method === "balance") {
+          state.merchant.balance += refundAmount;
+        }
+
+        state.flows.unshift({
+          id: generateId("F"),
+          type: "refund",
+          name: `库存退券：${item.name} ${quantity}张`,
+          amount: method === "balance" ? refundAmount : 0,
+          balanceAfter: state.merchant.balance,
+          time: nowString(),
+          relatedId: generateId("REF"),
+          operator: state.currentUser.name
+        });
+
+        addAudit(
+          "库存退券",
+          `${item.name}${quantity}张，退款${money(refundAmount)}，原因${reason}`
+        );
+
+        saveState();
+        closeModal();
+        toast("退券申请处理成功，库存及资金已更新", "success");
+        renderRoute();
+      }, "正在校验退券规则...");
+      break;
+    }
+
+    case "submit-corporate-purchase": {
+      const serial =
+        document.getElementById("corporateSerial")?.value.trim();
+
+      if (!serial) {
+        toast("请输入银行转账流水号", "error");
+        break;
+      }
+
+      simulateRequest(() => {
+        addAudit(
+          "提交对公购券申请",
+          `流水号${serial}，金额${money(actionTarget.dataset.total)}`
+        );
+        saveState();
+        closeModal();
+        toast("购券申请已提交财务审核", "success");
+      }, "正在提交财务审核...");
+      break;
+    }
+
+    case "submit-corporate-recharge": {
+      const serial =
+        document.getElementById("rechargeCorporateSerial")?.value.trim();
+
+      if (!serial) {
+        toast("请输入银行转账流水号", "error");
+        break;
+      }
+
+      simulateRequest(() => {
+        addAudit(
+          "提交对公充值申请",
+          `流水号${serial}，金额${money(actionTarget.dataset.amount)}`
+        );
+        saveState();
+        closeModal();
+        toast("充值申请已提交，审核通过后自动入账", "success");
+      }, "正在提交对公充值申请...");
+      break;
+    }
+
+    case "unbind-device":
+      confirmAction({
+        title: "解除当前设备绑定？",
+        message: "解绑后当前账号将立即退出，本设备需管理员重新授权后才能登录。",
+        icon: "机",
+        confirmText: "确认解绑",
+        danger: true,
+        onConfirm: () => {
+          closeConfirm();
+          closeModal();
+          toast("设备解绑申请已提交", "success");
+        }
+      });
+      break;
+
+    case "change-password":
+      openModal("修改登录密码", `
+        <div class="form-group">
+          <label class="form-label"><span>原密码</span><em>必填</em></label>
+          <input type="password" class="form-control" id="oldPassword">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span>新密码</span><em>必填</em></label>
+          <input type="password" class="form-control" id="newPassword">
+          <div class="form-tip">至少8位，需包含字母、数字和特殊字符。</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span>确认新密码</span><em>必填</em></label>
+          <input type="password" class="form-control" id="confirmPassword">
+        </div>
+        <button class="primary-btn full-btn" data-action="submit-password">确认修改</button>
+      `);
+      break;
+
+    case "submit-password": {
+      const oldPassword =
+        document.getElementById("oldPassword")?.value;
+      const newPassword =
+        document.getElementById("newPassword")?.value;
+      const confirmPassword =
+        document.getElementById("confirmPassword")?.value;
+
+      if (!oldPassword || newPassword?.length < 8) {
+        toast("请填写原密码，新密码至少8位", "error");
+        break;
+      }
+
+      if (newPassword !== confirmPassword) {
+        toast("两次输入的新密码不一致", "error");
+        break;
+      }
+
+      closeModal();
+      addAudit("修改登录密码", "账号密码修改成功");
+      saveState();
+      toast("密码修改成功，请妥善保管", "success");
+      break;
+    }
+  }
+});
+
+document.getElementById("confirmSubmit").addEventListener("click", () => {
+  if (typeof confirmHandler === "function") {
+    const handler = confirmHandler;
+    confirmHandler = null;
+    handler();
+  }
+});
+
+document.getElementById("headerBack").addEventListener("click", goBack);
+
+document.addEventListener("change", event => {
+  if (
+    event.target.id === "purchaseTemplate" ||
+    event.target.id === "purchaseQuantity"
+  ) {
+    updatePurchaseSummary();
+  }
+
+  if (event.target.id === "refundInventoryTemplate") {
+    const item = getInventory(event.target.value);
+    const quantity = document.getElementById("refundInventoryQuantity");
+
+    if (quantity && item) {
+      quantity.max = item.stock;
+      quantity.value = 1;
+    }
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    if (event.target.id === "issuePlateInput") {
+      searchParkingOrder(event.target.value);
+    }
+
+    if (event.target.id === "homePlateInput") {
+      issueDraft.plateNo = event.target.value;
+      navigate("issue");
+      setTimeout(() => searchParkingOrder(event.target.value), 20);
+    }
+
+    if (event.target.id === "globalSearchInput") {
+      submitGlobalSearch();
+    }
+  }
+});
+
+/* =========================================================
+   初始化
+========================================================= */
+
+updateClock();
+setInterval(updateClock, 30000);
+updateMessageCount();
+navigate("home", {}, false);
+</script>
+
+</body>
+</html>

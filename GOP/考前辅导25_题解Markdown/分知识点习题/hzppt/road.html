@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>道路停车数字化运营管理平台</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 190, 255, .17), transparent 34%),
+    radial-gradient(circle at 88% 22%, rgba(112, 76, 255, .13), transparent 25%),
+    radial-gradient(circle at 10% 76%, rgba(0, 220, 188, .08), transparent 27%),
+    linear-gradient(135deg, #040c19 0%, #07172b 48%, #061327 73%, #040c19 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .32) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 15%,
+    #000 91%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 400px;
+  top: 80px;
+  width: 820px;
+  height: 820px;
+  border: 1px solid rgba(64, 191, 255, .06);
+  border-radius: 50%;
+  box-shadow:
+    0 0 130px rgba(0, 184, 255, .05),
+    inset 0 0 130px rgba(0, 184, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================
+   背景科技线
+========================================= */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.1;
+  opacity: .18;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #48ddea;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .13;
+  animation: bgFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5ce8f4;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes bgFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* =========================================
+   标题
+========================================= */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 216, 240, .13);
+  border-radius: 18px;
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3.2px;
+}
+
+.header-message {
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #dff8ff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.header-message strong b {
+  color: #54e7d0;
+}
+
+.header-message span {
+  color: #6694af;
+  font-size: 10.5px;
+}
+
+/* =========================================
+   顶部理念标签
+========================================= */
+
+.concepts {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 105px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 11px;
+}
+
+.concept {
+  height: 34px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(61, 181, 226, .20);
+  border-radius: 17px;
+  color: #8ebdd0;
+  font-size: 9.5px;
+  white-space: nowrap;
+  background: rgba(11, 48, 77, .56);
+}
+
+.concept i {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: #4bdfe9;
+  box-shadow: 0 0 7px #4bdfe9;
+}
+
+.concept strong {
+  color: #d2eef6;
+  font-weight: 700;
+}
+
+/* =========================================
+   通用结构
+========================================= */
+
+.card {
+  border: 1px solid rgba(66, 169, 237, .22);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .91)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.section-title {
+  height: 39px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 22px;
+  height: 2px;
+  flex: 0 0 22px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #27baff, #45e8d3);
+}
+
+.section-title h2 {
+  margin: 0;
+  color: #dff6ff;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.section-en {
+  margin-left: auto;
+  color: #617f94;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   主体布局
+========================================= */
+
+.main-area {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 157px;
+  height: 546px;
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr) 330px;
+  gap: 17px;
+}
+
+.sensing-zone,
+.center-zone,
+.ai-zone {
+  position: relative;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* =========================================
+   左侧：紧凑型多源感知
+========================================= */
+
+.sensing-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46px;
+  bottom: 0;
+  padding: 12px;
+  overflow: hidden;
+  border-color: rgba(51, 195, 229, .29);
+  background:
+    radial-gradient(circle at 50% 5%, rgba(0, 193, 225, .10), transparent 31%),
+    linear-gradient(
+      145deg,
+      rgba(11, 61, 91, .90),
+      rgba(6, 27, 50, .94)
+    );
+}
+
+.sensing-card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #53dceb, transparent);
+}
+
+.sensing-head {
+  position: relative;
+  z-index: 2;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.sensing-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #daf3f9;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sensing-icon {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #29d7dc);
+}
+
+.sensing-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.online {
+  margin-left: auto;
+  padding: 4px 7px;
+  border-radius: 9px;
+  color: #58e3c8;
+  font-size: 7px;
+  white-space: nowrap;
+  background: rgba(32, 183, 151, .09);
+}
+
+/* 三类设备接入 */
+
+.device-list {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.device-item {
+  height: 54px;
+  padding: 7px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(57, 178, 219, .15);
+  border-radius: 9px;
+  background: rgba(6, 33, 57, .63);
+}
+
+.device-icon {
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #54dff1;
+  background: rgba(23, 145, 185, .14);
+}
+
+.device-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.device-name {
+  color: #c7e4ed;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.device-desc {
+  margin-top: 4px;
+  color: #5d8397;
+  font-size: 6.8px;
+  line-height: 1.35;
+}
+
+/* 泊位资源 */
+
+.asset-status {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  padding: 9px;
+  border: 1px solid rgba(50, 211, 179, .15);
+  border-radius: 9px;
+  background: rgba(19, 96, 82, .18);
+}
+
+.asset-title {
+  display: flex;
+  align-items: center;
+  color: #79d8c4;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.asset-title span {
+  margin-left: auto;
+  color: #527e74;
+  font-size: 6.5px;
+  font-weight: 400;
+}
+
+.space-grid {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+}
+
+.space {
+  height: 15px;
+  border: 1px solid rgba(48, 194, 166, .19);
+  border-radius: 3px;
+  background: rgba(25, 124, 105, .22);
+}
+
+.space.used {
+  border-color: rgba(144, 119, 225, .23);
+  background: rgba(83, 63, 143, .32);
+}
+
+.space.error {
+  border-color: rgba(255, 115, 118, .25);
+  background: rgba(147, 58, 70, .28);
+}
+
+.space.off {
+  border-color: rgba(109, 125, 143, .18);
+  background: rgba(57, 70, 84, .28);
+}
+
+.space-legend {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  color: #537a73;
+  font-size: 6px;
+}
+
+/* 设备健康 */
+
+.health-panel {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  padding: 9px;
+  border: 1px solid rgba(58, 174, 216, .14);
+  border-radius: 9px;
+  background: rgba(4, 29, 52, .58);
+}
+
+.health-title {
+  display: flex;
+  align-items: center;
+  color: #8eb5c6;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.health-title span {
+  margin-left: auto;
+  color: #557b8f;
+  font-size: 6.5px;
+  font-weight: 400;
+}
+
+.health-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.health-item {
+  height: 39px;
+  padding: 6px 7px;
+  border: 1px solid rgba(59, 176, 213, .12);
+  border-radius: 7px;
+  background: rgba(11, 45, 70, .55);
+}
+
+.health-item strong {
+  display: block;
+  color: #c0e4ec;
+  font-size: 8px;
+}
+
+.health-item span {
+  display: block;
+  margin-top: 4px;
+  color: #5c8799;
+  font-size: 6.5px;
+  line-height: 1.25;
+}
+
+.health-item b {
+  color: #51dfc6;
+  font-weight: 600;
+}
+
+/* =========================================
+   中间：九大运营中心
+========================================= */
+
+.platform-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46px;
+  bottom: 0;
+  padding: 13px 15px 15px;
+  overflow: hidden;
+  border-color: rgba(48, 215, 232, .40);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 195, 230, .14), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(10, 64, 96, .96),
+      rgba(5, 26, 50, .97)
+    );
+  box-shadow:
+    0 23px 60px rgba(0, 5, 20, .43),
+    0 0 45px rgba(0, 190, 230, .07),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.platform-card::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #58e5ee, transparent);
+}
+
+.platform-head {
+  position: relative;
+  z-index: 2;
+  height: 49px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.platform-logo {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #2cddd7);
+  box-shadow: 0 0 19px rgba(35, 211, 231, .22);
+}
+
+.platform-logo svg {
+  width: 21px;
+  height: 21px;
+}
+
+.platform-name {
+  margin-left: 10px;
+}
+
+.platform-name strong {
+  display: block;
+  color: #e9fbff;
+  font-size: 14px;
+}
+
+.platform-name span {
+  display: block;
+  margin-top: 4px;
+  color: #5f9db4;
+  font-size: 7.5px;
+  letter-spacing: 1px;
+}
+
+.platform-badge {
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(52, 218, 183, .18);
+  border-radius: 13px;
+  color: #62e5ca;
+  font-size: 8px;
+  white-space: nowrap;
+  background: rgba(31, 175, 145, .08);
+}
+
+.module-grid {
+  position: relative;
+  z-index: 2;
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.module {
+  position: relative;
+  height: 116px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(59, 179, 219, .17);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14, 59, 89, .77),
+      rgba(6, 31, 56, .82)
+    );
+}
+
+.module::after {
+  content: "";
+  position: absolute;
+  right: -29px;
+  bottom: -38px;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: rgba(44, 198, 226, .04);
+}
+
+.module.purple {
+  border-color: rgba(147, 119, 237, .23);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(55, 46, 109, .50),
+      rgba(7, 32, 57, .85)
+    );
+}
+
+.module.green {
+  border-color: rgba(47, 210, 177, .21);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14, 78, 78, .48),
+      rgba(7, 32, 55, .84)
+    );
+}
+
+.module-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.module-icon {
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #55dff1;
+  background: rgba(24, 145, 185, .14);
+}
+
+.module.purple .module-icon {
+  color: #c5b4ff;
+  background: rgba(125, 88, 215, .15);
+}
+
+.module.green .module-icon {
+  color: #59e1c4;
+  background: rgba(31, 175, 140, .14);
+}
+
+.module-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.module-title {
+  color: #d6eef5;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.module-number {
+  margin-left: auto;
+  color: rgba(91, 212, 233, .26);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.module.purple .module-number {
+  color: rgba(174, 149, 255, .28);
+}
+
+.module.green .module-number {
+  color: rgba(77, 222, 189, .27);
+}
+
+.module-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  color: #668fa3;
+  font-size: 7.8px;
+  line-height: 1.55;
+}
+
+.module-desc b {
+  color: #9fcbd8;
+  font-weight: 600;
+}
+
+.module.purple .module-desc b {
+  color: #b8ace4;
+}
+
+.module.green .module-desc b {
+  color: #86d5c3;
+}
+
+/* =========================================
+   右侧：紧凑型运营实时洞察
+========================================= */
+
+.ai-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46px;
+  bottom: 0;
+  padding: 12px;
+  overflow: hidden;
+  border-color: rgba(137, 115, 255, .28);
+  background:
+    radial-gradient(circle at 50% 4%, rgba(104, 76, 229, .13), transparent 32%),
+    linear-gradient(
+      145deg,
+      rgba(35, 42, 91, .84),
+      rgba(7, 27, 51, .94)
+    );
+}
+
+.ai-card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #9e89ff, transparent);
+}
+
+.ai-head {
+  position: relative;
+  z-index: 2;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.ai-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ebe7ff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ai-icon {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #d0c2ff;
+  background: rgba(126, 91, 219, .16);
+  border: 1px solid rgba(166, 138, 246, .16);
+}
+
+.ai-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ai-badge {
+  margin-left: auto;
+  padding: 4px 7px;
+  border-radius: 9px;
+  color: #60e1c9;
+  font-size: 6.8px;
+  white-space: nowrap;
+  background: rgba(34, 187, 155, .09);
+}
+
+/* 一行四项实时指标 */
+
+.realtime-grid {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.realtime {
+  height: 58px;
+  padding: 8px 4px;
+  text-align: center;
+  overflow: hidden;
+  border: 1px solid rgba(135, 117, 224, .14);
+  border-radius: 8px;
+  background: rgba(13, 32, 63, .64);
+}
+
+.realtime-label {
+  color: #767d9d;
+  font-size: 6.5px;
+  white-space: nowrap;
+}
+
+.realtime-value {
+  margin-top: 6px;
+  color: #e9e5ff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.realtime-value span {
+  display: block;
+  margin-top: 4px;
+  color: #55dfc7;
+  font-size: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 城市态势图 */
+
+.road-map {
+  position: relative;
+  z-index: 2;
+  height: 91px;
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(127, 112, 213, .14);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 32, 62, .75),
+      rgba(8, 27, 51, .80)
+    );
+}
+
+.road-map-title {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  z-index: 3;
+  color: #aaa6ca;
+  font-size: 7.5px;
+  font-weight: 700;
+}
+
+.road-map-title span {
+  margin-left: 6px;
+  color: #606483;
+  font-size: 6px;
+  font-weight: 400;
+}
+
+.road-map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.road-line {
+  fill: none;
+  stroke: #397ea4;
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: .38;
+}
+
+.road-line.hot {
+  stroke: #c06583;
+  opacity: .68;
+}
+
+.road-line.normal {
+  stroke: #38b7c9;
+  opacity: .62;
+}
+
+.road-line.free {
+  stroke: #43c9aa;
+  opacity: .60;
+}
+
+.map-point {
+  fill: #5ce8f4;
+  filter: drop-shadow(0 0 5px #27d9ef);
+}
+
+.map-point.warning {
+  fill: #ff7f8f;
+  filter: drop-shadow(0 0 5px #ff6478);
+}
+
+.map-person {
+  fill: #b298ff;
+  filter: drop-shadow(0 0 5px #9476ff);
+}
+
+/* AI建议 */
+
+.ai-advice {
+  position: relative;
+  z-index: 2;
+  margin-top: 8px;
+  padding: 9px 10px;
+  border: 1px solid rgba(49, 216, 180, .17);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 78, 78, .36),
+      rgba(7, 30, 51, .67)
+    );
+}
+
+.advice-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #72e1cb;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.advice-title i {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: #48e3c5;
+  box-shadow: 0 0 8px #48e3c5;
+}
+
+.advice-list {
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.advice-list li {
+  position: relative;
+  min-height: 22px;
+  padding-left: 12px;
+  color: #729b98;
+  font-size: 7px;
+  line-height: 1.4;
+}
+
+.advice-list li::before {
+  content: "›";
+  position: absolute;
+  left: 1px;
+  color: #52d9bf;
+  font-weight: 700;
+}
+
+.advice-list b {
+  color: #bce9df;
+  font-weight: 600;
+}
+
+/* AI工具一行排列 */
+
+.ai-tools {
+  position: relative;
+  z-index: 2;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.ai-tool {
+  height: 44px;
+  padding: 7px 3px;
+  text-align: center;
+  overflow: hidden;
+  border: 1px solid rgba(128, 111, 217, .13);
+  border-radius: 8px;
+  background: rgba(13, 31, 59, .57);
+}
+
+.ai-tool strong {
+  display: block;
+  color: #c9c4e3;
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.ai-tool span {
+  display: block;
+  margin-top: 5px;
+  color: #646b89;
+  font-size: 5.8px;
+  line-height: 1.3;
+}
+
+/* =========================================
+   主体连接线
+========================================= */
+
+.main-lines {
+  position: absolute;
+  left: 48px;
+  top: 157px;
+  z-index: 0;
+  width: 1504px;
+  height: 546px;
+  pointer-events: none;
+}
+
+.link-line {
+  fill: none;
+  stroke: #48d8eb;
+  stroke-width: 1.4;
+  stroke-dasharray: 6 7;
+  opacity: .53;
+  animation: linkFlow 10s linear infinite;
+}
+
+.link-line-purple {
+  stroke: #9c87ff;
+}
+
+.link-node {
+  fill: #59e8f3;
+  filter: drop-shadow(0 0 6px #26d8ee);
+}
+
+.link-node-purple {
+  fill: #b39bff;
+  filter: drop-shadow(0 0 6px #9175ff);
+}
+
+@keyframes linkFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+/* =========================================
+   底部三大价值
+========================================= */
+
+.value-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 48px;
+  height: 141px;
+}
+
+.value-title {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8ab2c6;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+}
+
+.value-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  flex: 0 0 20px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #29bdff, #45e6ce);
+}
+
+.value-title span {
+  margin-left: auto;
+  color: #58788d;
+  font-size: 8px;
+}
+
+.value-grid {
+  height: 109px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.value-card {
+  position: relative;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: 55px 145px 1fr;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(58, 178, 217, .18);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 49, 78, .80),
+      rgba(6, 26, 48, .84)
+    );
+}
+
+.value-card.purple {
+  border-color: rgba(146, 120, 237, .21);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(51, 43, 101, .48),
+      rgba(7, 28, 52, .86)
+    );
+}
+
+.value-card.green {
+  border-color: rgba(49, 210, 177, .21);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13, 69, 70, .46),
+      rgba(7, 28, 51, .85)
+    );
+}
+
+.value-card::after {
+  content: "";
+  position: absolute;
+  right: -45px;
+  bottom: -55px;
+  width: 135px;
+  height: 135px;
+  border-radius: 50%;
+  background: rgba(49, 202, 228, .035);
+}
+
+.value-icon {
+  width: 47px;
+  height: 47px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(64, 202, 230, .15);
+  border-radius: 14px;
+  color: #55e0f0;
+  background: rgba(23, 143, 184, .14);
+}
+
+.value-card.purple .value-icon {
+  color: #c3b2ff;
+  background: rgba(123, 87, 210, .15);
+  border-color: rgba(163, 135, 244, .17);
+}
+
+.value-card.green .value-icon {
+  color: #58dfc2;
+  background: rgba(31, 173, 138, .14);
+  border-color: rgba(58, 210, 177, .16);
+}
+
+.value-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.value-main {
+  padding-left: 10px;
+}
+
+.value-main strong {
+  display: block;
+  color: #e0f4fa;
+  font-size: 14px;
+}
+
+.value-main span {
+  display: block;
+  margin-top: 7px;
+  color: #6791a4;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.value-points {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 12px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(75, 166, 203, .13);
+}
+
+.value-point {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8db5c4;
+  font-size: 7.8px;
+  white-space: nowrap;
+}
+
+.value-point i {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: #4bddea;
+  box-shadow: 0 0 6px #4bddea;
+}
+
+.value-card.purple .value-point i {
+  background: #aa91ff;
+  box-shadow: 0 0 6px #aa91ff;
+}
+
+.value-card.green .value-point i {
+  background: #4ce0c0;
+  box-shadow: 0 0 6px #4ce0c0;
+}
+
+/* =========================================
+   页脚
+========================================= */
+
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #486f87;
+  font-size: 8px;
+  letter-spacing: 1.1px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景装饰 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="backgroundGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 728 C222 660 317 760 495 683 C682 601 723 422 908 358 C1096 293 1303 418 1600 232"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 773 C247 712 386 799 568 724 C747 650 789 485 969 420 C1170 350 1371 421 1600 329"
+      />
+
+      <circle class="bg-dot" cx="495" cy="683" r="3"/>
+      <circle class="bg-dot" cx="908" cy="358" r="3"/>
+      <circle class="bg-dot" cx="1303" cy="418" r="3"/>
+    </svg>
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M8 21l2-18M16 21L14 3M5 17h14"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M11.5 7h1M11 11h2M10.5 15h3"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>道路停车数字化运营管理平台</h1>
+          <div class="subtitle">
+            URBAN ON-STREET PARKING OPERATION PLATFORM
+          </div>
+        </div>
+      </div>
+
+      <div class="header-message">
+        <strong>从“人工收费”走向城市级<b>精益运营</b></strong>
+        <span>全域感知 · 统一计费 · 智能调度 · 收入提升 · AI 决策</span>
+      </div>
+    </header>
+
+    <!-- 核心理念 -->
+    <section class="concepts">
+      <div class="concept">
+        <i></i>
+        <strong>一位一档</strong>
+        泊位资产数字化
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一员一画像</strong>
+        收费人员精细管理
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一车一策略</strong>
+        欠费车辆分层追缴
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一路一策</strong>
+        路段差异化治理
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一城一张图</strong>
+        全域运营指挥
+      </div>
+    </section>
+
+    <!-- 主体连接线 -->
+    <svg class="main-lines" viewBox="0 0 1504 546">
+      <path class="link-line" d="M248 220 H265"/>
+      <path class="link-line" d="M248 340 H265"/>
+
+      <circle class="link-node" cx="256" cy="220" r="3"/>
+      <circle class="link-node" cx="256" cy="340" r="3"/>
+
+      <path class="link-line link-line-purple" d="M1157 220 H1174"/>
+      <path class="link-line link-line-purple" d="M1157 340 H1174"/>
+
+      <circle class="link-node-purple" cx="1165" cy="220" r="3"/>
+      <circle class="link-node-purple" cx="1165" cy="340" r="3"/>
+    </svg>
+
+    <!-- 主体区域 -->
+    <main class="main-area">
+
+      <!-- ==================================================
+           左侧：全域感知
+      =================================================== -->
+
+      <section class="sensing-zone">
+        <div class="section-title">
+          <span class="section-number">01</span>
+          <i class="section-line"></i>
+          <h2>全域感知与泊位资源</h2>
+        </div>
+
+        <div class="card sensing-card">
+
+          <div class="sensing-head">
+            <div class="sensing-title">
+              <div class="sensing-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M7 8a7 7 0 0 1 10 0M9.5 10.5a3.5 3.5 0 0 1 5 0"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+                  <path
+                    d="M5 18h14"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              多源泊位感知
+            </div>
+
+            <span class="online">统一接入</span>
+          </div>
+
+          <!-- 三类设备接入 -->
+          <div class="device-list">
+
+            <div class="device-item">
+              <div class="device-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <ellipse
+                    cx="12"
+                    cy="14"
+                    rx="7"
+                    ry="4"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M7 10c1-3 9-3 10 0M9 7c1-2 5-2 6 0"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <div class="device-name">物联感知设备</div>
+                <div class="device-desc">
+                  地磁传感器 · 视频桩 · 泊位检测
+                </div>
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="3"
+                    y="6"
+                    width="15"
+                    height="11"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <circle
+                    cx="10.5"
+                    cy="11.5"
+                    r="3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M18 9l3-2v9l-3-2V9z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <div class="device-name">视频识别设备</div>
+                <div class="device-desc">
+                  高位视频 · 巡检车 · 图片视频取证
+                </div>
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="6"
+                    y="2.5"
+                    width="12"
+                    height="19"
+                    rx="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M9 6h6M9 11h6M10 18h4"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <div class="device-name">移动与平台接入</div>
+                <div class="device-desc">
+                  收费 PDA · 人工补录 · 第三方平台
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 泊位状态 -->
+          <div class="asset-status">
+            <div class="asset-title">
+              泊位数字资产
+              <span>实时监测</span>
+            </div>
+
+            <div class="space-grid">
+              <i class="space used"></i>
+              <i class="space"></i>
+              <i class="space"></i>
+              <i class="space used"></i>
+              <i class="space error"></i>
+              <i class="space"></i>
+              <i class="space used"></i>
+              <i class="space"></i>
+
+              <i class="space"></i>
+              <i class="space used"></i>
+              <i class="space off"></i>
+              <i class="space"></i>
+              <i class="space"></i>
+              <i class="space used"></i>
+              <i class="space"></i>
+              <i class="space used"></i>
+            </div>
+
+            <div class="space-legend">
+              <span>空闲</span>
+              <span>占用</span>
+              <span>异常</span>
+              <span>停用</span>
+            </div>
+          </div>
+
+          <!-- 设备运维 -->
+          <div class="health-panel">
+            <div class="health-title">
+              感知设备运维
+              <span>自动监测</span>
+            </div>
+
+            <div class="health-grid">
+              <div class="health-item">
+                <strong>设备在线</strong>
+                <span><b>实时</b>监测与故障告警</span>
+              </div>
+
+              <div class="health-item">
+                <strong>数据质量</strong>
+                <span><b>自动</b>识别误报与异常</span>
+              </div>
+
+              <div class="health-item">
+                <strong>识别准确率</strong>
+                <span>按设备、路段进行分析</span>
+              </div>
+
+              <div class="health-item">
+                <strong>资产生命周期</strong>
+                <span>巡检、维修、停用、替换</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================
+           中间：九大运营中心
+      =================================================== -->
+
+      <section class="center-zone">
+        <div class="section-title">
+          <span class="section-number">02</span>
+          <i class="section-line"></i>
+          <h2>九大数字化运营中心</h2>
+          <span class="section-en">OPERATION CENTERS</span>
+        </div>
+
+        <div class="card platform-card">
+
+          <div class="platform-head">
+            <div class="platform-logo">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M8 21l2-18M16 21L14 3M5 17h14"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M11.5 7h1M11 11h2M10.5 15h3"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div class="platform-name">
+              <strong>城市道路停车运营中枢</strong>
+              <span>SPACE · ORDER · PEOPLE · RISK · SERVICE · AI</span>
+            </div>
+
+            <span class="platform-badge">业务闭环 · 数据驱动</span>
+          </div>
+
+          <div class="module-grid">
+
+            <!-- 01 感知接入 -->
+            <div class="module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="4"
+                      y="4"
+                      width="16"
+                      height="16"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 17V7h4a3 3 0 0 1 0 6H8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">感知接入中心</div>
+                <span class="module-number">01</span>
+              </div>
+
+              <div class="module-desc">
+                多源设备统一接入，实时监控泊位状态、设备在线率与数据质量。<br>
+                <b>异常泊位自动发现</b>
+              </div>
+            </div>
+
+            <!-- 02 订单计费 -->
+            <div class="module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 9.5h4a2 2 0 0 1 0 4H9M12 7.5v9"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">订单计费中心</div>
+                <span class="module-number">02</span>
+              </div>
+
+              <div class="module-desc">
+                分区域、分时段、分车型计费，覆盖创单、支付、退款和对账。<br>
+                <b>规则模拟与动态定价</b>
+              </div>
+            </div>
+
+            <!-- 03 人员管理 -->
+            <div class="module purple">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                      cx="9"
+                      cy="8"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M4 19c.5-4 2.3-6 5-6s4.5 2 5 6M16 7h5M16 11h4M16 15h5"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">人员管理中心</div>
+                <span class="module-number">03</span>
+              </div>
+
+              <div class="module-desc">
+                AI 排班、蓝牙考勤、轨迹围栏、行为风控与收费员绩效画像。<br>
+                <b>优化人效与用工成本</b>
+              </div>
+            </div>
+
+            <!-- 04 远程指挥 -->
+            <div class="module green">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 19V9l8-5 8 5v10H4z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 19v-6h8v6M8 9h8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">远程指挥中心</div>
+                <span class="module-number">04</span>
+              </div>
+
+              <div class="module-desc">
+                全市态势一张图、远程值班、异常复核与工单派发闭环。<br>
+                <b>少人化集中值守</b>
+              </div>
+            </div>
+
+            <!-- 05 欠费追缴 -->
+            <div class="module green">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 6h16v12H4V6z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 10h8M8 14h5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M17 14l2 2 3-4"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">欠费追缴中心</div>
+                <span class="module-number">05</span>
+              </div>
+
+              <div class="module-desc">
+                欠费分层、车辆画像、任务分派和短信、AI 电话等多渠道追缴。<br>
+                <b>提升欠费回收率</b>
+              </div>
+            </div>
+
+            <!-- 06 运营分析 -->
+            <div class="module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M5 7l5-4 6 5 5-4"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">运营分析中心</div>
+                <span class="module-number">06</span>
+              </div>
+
+              <div class="module-desc">
+                利用率、周转率、收费率、客单价和路段经营效益多维分析。<br>
+                <b>发现收入流失原因</b>
+              </div>
+            </div>
+
+            <!-- 07 稽核风控 -->
+            <div class="module purple">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 12l2 2 4-5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">稽核风控中心</div>
+                <span class="module-number">07</span>
+              </div>
+
+              <div class="module-desc">
+                异常短单、手工改单、免费订单、退款减免及疑似舞弊识别。<br>
+                <b>保护停车应收收入</b>
+              </div>
+            </div>
+
+            <!-- 08 车主服务 -->
+            <div class="module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="6"
+                      y="2.5"
+                      width="12"
+                      height="19"
+                      rx="2.5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 6h6M9 11h6M10 18h4"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">车主服务中心</div>
+                <span class="module-number">08</span>
+              </div>
+
+              <div class="module-desc">
+                缴费补缴、电子发票、车位导航、投诉申诉与优惠会员运营。<br>
+                <b>提升服务体验与触达</b>
+              </div>
+            </div>
+
+            <!-- 09 AI决策 -->
+            <div class="module green">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 3l2.2 4.5L19 9l-3.5 3.4.8 4.8L12 15l-4.3 2.2.8-4.8L5 9l4.8-1.5L12 3z"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                    <path
+                      d="M18 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div class="module-title">AI 决策中心</div>
+                <span class="module-number">09</span>
+              </div>
+
+              <div class="module-desc">
+                需求预测、排班调价、低效泊位治理与设备投入产出优化。<br>
+                <b>自动生成运营报告</b>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           右侧：AI运营洞察
+      =================================================== -->
+
+      <section class="ai-zone">
+        <div class="section-title">
+          <span class="section-number">03</span>
+          <i class="section-line"></i>
+          <h2>AI 运营指挥驾驶舱</h2>
+        </div>
+
+        <div class="card ai-card">
+
+          <div class="ai-head">
+            <div class="ai-title">
+              <div class="ai-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="5"
+                    width="16"
+                    height="14"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+                  <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+                  <path
+                    d="M9 16h6M12 2v3M2 10h2M20 10h2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              城市运营实时洞察
+            </div>
+
+            <span class="ai-badge">AI 辅助决策</span>
+          </div>
+
+          <!-- 四类指标 -->
+          <div class="realtime-grid">
+            <div class="realtime">
+              <div class="realtime-label">泊位运营</div>
+              <div class="realtime-value">
+                实时
+                <span>占用／周转</span>
+              </div>
+            </div>
+
+            <div class="realtime">
+              <div class="realtime-label">收费运营</div>
+              <div class="realtime-value">
+                全程
+                <span>应收／实收</span>
+              </div>
+            </div>
+
+            <div class="realtime">
+              <div class="realtime-label">人员运营</div>
+              <div class="realtime-value">
+                精准
+                <span>在岗／人效</span>
+              </div>
+            </div>
+
+            <div class="realtime">
+              <div class="realtime-label">风险运营</div>
+              <div class="realtime-value">
+                主动
+                <span>逃费／异常</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 城市停车态势图 -->
+          <div class="road-map">
+            <div class="road-map-title">
+              城市停车态势
+              <span>片区 · 路段 · 收费员</span>
+            </div>
+
+            <svg viewBox="0 0 300 91">
+              <path
+                class="road-line normal"
+                d="M15 61 C70 43 95 55 142 36 C195 14 225 27 285 13"
+              />
+              <path
+                class="road-line hot"
+                d="M18 78 C77 63 111 71 158 55 C206 38 244 50 286 36"
+              />
+              <path
+                class="road-line free"
+                d="M35 20 C71 30 105 23 135 38 C169 56 207 72 268 73"
+              />
+              <path
+                class="road-line"
+                d="M78 10 C93 31 111 47 138 69"
+              />
+              <path
+                class="road-line normal"
+                d="M205 10 C198 31 196 52 213 82"
+              />
+
+              <circle class="map-point" cx="73" cy="48" r="4"/>
+              <circle class="map-point warning" cx="158" cy="55" r="4"/>
+              <circle class="map-person" cx="213" cy="48" r="4"/>
+              <circle class="map-point" cx="268" cy="73" r="4"/>
+            </svg>
+          </div>
+
+          <!-- AI运营建议 -->
+          <div class="ai-advice">
+            <div class="advice-title">
+              <i></i>
+              今日 AI 运营建议
+            </div>
+
+            <ul class="advice-list">
+              <li>
+                商圈高峰饱和，建议
+                <b>增派人员并引导周边场库</b>
+              </li>
+
+              <li>
+                路段 B 欠费偏高，推送
+                <b>重点追缴车辆清单</b>
+              </li>
+
+              <li>
+                路段 C 投入产出偏低，建议
+                <b>执行“一路一策”治理</b>
+              </li>
+            </ul>
+          </div>
+
+          <!-- AI能力 -->
+          <div class="ai-tools">
+            <div class="ai-tool">
+              <strong>需求预测</strong>
+              <span>高峰与饱和预警</span>
+            </div>
+
+            <div class="ai-tool">
+              <strong>智能调价</strong>
+              <span>模拟与效果复盘</span>
+            </div>
+
+            <div class="ai-tool">
+              <strong>追缴预测</strong>
+              <span>逃费风险识别</span>
+            </div>
+
+            <div class="ai-tool">
+              <strong>自动报告</strong>
+              <span>周报与月报生成</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==================================================
+         底部客户价值
+    =================================================== -->
+
+    <section class="value-zone">
+      <div class="value-title">
+        为道路停车运营带来的三类核心价值
+        <span>让每一个泊位、每一名收费员、每一笔订单都可度量、可优化</span>
+      </div>
+
+      <div class="value-grid">
+
+        <!-- 提升收入 -->
+        <article class="value-card">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+              <path
+                d="M5 7l5-4 6 5 5-4"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>提升收入</strong>
+            <span>减少逃费流失，提升泊位周转、收费率和补缴转化</span>
+          </div>
+
+          <div class="value-points">
+            <div class="value-point"><i></i>欠费分层追缴</div>
+            <div class="value-point"><i></i>动态差异化定价</div>
+            <div class="value-point"><i></i>高风险车辆预警</div>
+            <div class="value-point"><i></i>商户及场景联动</div>
+          </div>
+        </article>
+
+        <!-- 降低成本 -->
+        <article class="value-card purple">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 18h16M6 18V9h5v9M13 18V5h5v13"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M5 7l5-4 5 3 5-4"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>降低成本</strong>
+            <span>优化人工排班、设备投入和低效路段运维资源</span>
+          </div>
+
+          <div class="value-points">
+            <div class="value-point"><i></i>AI 智能排班</div>
+            <div class="value-point"><i></i>远程集中值守</div>
+            <div class="value-point"><i></i>设备 ROI 分析</div>
+            <div class="value-point"><i></i>低效泊位治理</div>
+          </div>
+        </article>
+
+        <!-- 强化管理 -->
+        <article class="value-card green">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M9 12l2 2 4-5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>强化管理</strong>
+            <span>建立人员、订单、收入、设备和风险的运营闭环</span>
+          </div>
+
+          <div class="value-points">
+            <div class="value-point"><i></i>收费员 360° 画像</div>
+            <div class="value-point"><i></i>异常行为风控</div>
+            <div class="value-point"><i></i>全过程工单闭环</div>
+            <div class="value-point"><i></i>一路一策治理</div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        从泊位感知到运营决策，构建城市道路停车数字化经营闭环
+      </div>
+
+      <div class="footer-right">
+        SMART SENSING · PRECISE BILLING · AI SCHEDULING · REVENUE GROWTH
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

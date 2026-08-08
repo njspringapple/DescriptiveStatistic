@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSMA/CD 退避时间可视化教学</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .seg-pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.55;} }
+  .fade-in { animation: fadein .5s ease; }
+  @keyframes fadein { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+  .tab-btn.active { background:#4f46e5; color:#fff; }
+  input[type=range]{ accent-color:#4f46e5; }
+</style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+<div class="max-w-4xl mx-auto p-3 sm:p-6">
+
+  <header class="text-center mb-5">
+    <h1 class="text-2xl sm:text-3xl font-bold text-indigo-700">CSMA/CD 退避时间可视化</h1>
+    <p class="text-slate-500 mt-1 text-sm sm:text-base">看懂每一段时间到底是什么时间</p>
+  </header>
+
+  <!-- Tabs -->
+  <div class="flex flex-wrap gap-2 justify-center mb-4">
+    <button class="tab-btn active px-3 py-2 rounded-lg text-sm font-medium bg-white shadow" data-tab="concept">① 三个参数</button>
+    <button class="tab-btn px-3 py-2 rounded-lg text-sm font-medium bg-white shadow" data-tab="anim">② 冲突动画</button>
+    <button class="tab-btn px-3 py-2 rounded-lg text-sm font-medium bg-white shadow" data-tab="timeline">③ 时间轴分解</button>
+    <button class="tab-btn px-3 py-2 rounded-lg text-sm font-medium bg-white shadow" data-tab="backoff">④ 退避随机数模拟</button>
+  </div>
+
+  <!-- ========== TAB 1: CONCEPT ========== -->
+  <section id="concept" class="tab-content">
+    <div class="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
+      <h2 class="text-lg font-bold text-indigo-600">先搞懂 “bit time（比特时间）”</h2>
+      <p class="text-sm leading-relaxed">
+        <b>bit time = 发送 1 个比特所需的时间</b>。它不是固定的秒数，而是取决于链路速率 R：
+        发送越快，1 bit 占用的时间越短。
+      </p>
+      <div class="bg-slate-50 rounded-lg p-3 text-center font-mono text-sm">
+        1 bit time = 1 / R 秒
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-center text-xs sm:text-sm">
+        <div class="bg-indigo-50 rounded-lg p-2"><div class="font-bold">10 Mbps</div><div class="text-indigo-600">0.1 μs / bit</div></div>
+        <div class="bg-indigo-50 rounded-lg p-2"><div class="font-bold">100 Mbps</div><div class="text-indigo-600">0.01 μs / bit</div></div>
+        <div class="bg-indigo-50 rounded-lg p-2"><div class="font-bold">1 Gbps</div><div class="text-indigo-600">0.001 μs / bit</div></div>
+      </div>
+
+      <h2 class="text-lg font-bold text-indigo-600 pt-2">碰撞后的三个关键时间参数</h2>
+      <div class="space-y-3">
+        <div class="border-l-4 border-red-400 bg-red-50 rounded-r-lg p-3">
+          <div class="font-bold text-red-600">d<sub>jam</sub> = 32 bit &nbsp;— 干扰信号</div>
+          <p class="text-sm mt-1">检测到碰撞后，网卡<b>故意再发一小段噪声</b>，让整个冲突域里所有主机都确认“撞了”。作用：<b>广播碰撞消息</b>。</p>
+        </div>
+        <div class="border-l-4 border-amber-400 bg-amber-50 rounded-r-lg p-3">
+          <div class="font-bold text-amber-600">d<sub>slot</sub> = 512 bit &nbsp;— 退避时隙</div>
+          <p class="text-sm mt-1">退避算法的<b>基本时间单位</b>。碰撞后随机选一个整数 r，等待 r × d<sub>slot</sub>。作用：<b>把大家的重发时间错开</b>。</p>
+        </div>
+        <div class="border-l-4 border-emerald-400 bg-emerald-50 rounded-r-lg p-3">
+          <div class="font-bold text-emerald-600">d<sub>frei</sub> = 96 bit &nbsp;— 帧间间隔（发送前空闲）</div>
+          <p class="text-sm mt-1">真正发送前，信道必须<b>连续保持空闲这么久</b>才允许开始发。作用：<b>给网络一个恢复缓冲</b>（Interframe Gap）。</p>
+        </div>
+      </div>
+
+      <div class="bg-indigo-600 text-white rounded-lg p-3 text-sm text-center leading-relaxed">
+        一句话记忆：<br>
+        <b>碰撞后 → 先发 jam 噪声 → 随机等若干个 slot → 确认信道空闲 d<sub>frei</sub> → 再发送</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TAB 2: ANIMATION ========== -->
+  <section id="anim" class="tab-content hidden">
+    <div class="bg-white rounded-xl shadow p-4 sm:p-6">
+      <h2 class="text-lg font-bold text-indigo-600 mb-2">总线上的碰撞 & 信号传播</h2>
+      <p class="text-sm text-slate-600 mb-3">A、B 在 t₀ 同时发送。绿色/蓝色波是各自的信号，相遇处发生碰撞。观察碰撞信号“传回”发送端需要 <b>2L/v</b> 时间。</p>
+
+      <canvas id="busCanvas" class="w-full rounded-lg bg-slate-900" height="220"></canvas>
+
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <button id="playAnim" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">▶ 播放</button>
+        <div class="text-sm">当前阶段：<span id="phaseText" class="font-bold text-indigo-600">待机</span></div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-2 text-xs sm:text-sm">
+        <div class="flex items-center gap-2"><span class="w-4 h-3 rounded bg-emerald-400 inline-block"></span>A 发出的信号</div>
+        <div class="flex items-center gap-2"><span class="w-4 h-3 rounded bg-sky-400 inline-block"></span>B 发出的信号</div>
+        <div class="flex items-center gap-2"><span class="w-4 h-3 rounded bg-red-500 inline-block"></span>碰撞点 / 碰撞信号</div>
+        <div class="flex items-center gap-2"><span class="w-4 h-3 rounded bg-amber-400 inline-block"></span>Jam 干扰信号</div>
+      </div>
+
+      <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm">
+        <b>直觉：</b>为什么以太网需要“最小帧长”？因为发送方必须<b>在自己还在发送时</b>就检测到碰撞。信号来回一趟要 2L/v，所以帧不能太短，发送时间至少要覆盖 2L/v。
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TAB 3: TIMELINE ========== -->
+  <section id="timeline" class="tab-content hidden">
+    <div class="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
+      <h2 class="text-lg font-bold text-indigo-600">重发时刻公式分解</h2>
+      <div class="bg-slate-900 text-slate-100 rounded-lg p-3 font-mono text-xs sm:text-sm text-center leading-relaxed overflow-x-auto">
+        t₃ = t₀ + <span class="text-purple-300">2L/v</span> + <span class="text-amber-300">d<sub>jam</sub>/R</span> + <span class="text-sky-300">r·d<sub>slot</sub>/R</span> + <span class="text-emerald-300">d<sub>frei</sub>/R</span>
+      </div>
+
+      <!-- controls -->
+      <div class="grid sm:grid-cols-2 gap-4 text-sm">
+        <div>
+          <label class="font-medium">速率 R</label>
+          <select id="rateSel" class="w-full mt-1 border rounded-lg p-2">
+            <option value="10">10 Mbps</option>
+            <option value="100" selected>100 Mbps</option>
+            <option value="1000">1 Gbps</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-medium">距离 L：<span id="Lval" class="text-indigo-600 font-bold">100</span> m</label>
+          <input id="Lslider" type="range" min="10" max="2500" value="100" step="10" class="w-full mt-2">
+        </div>
+        <div>
+          <label class="font-medium">随机数 r：<span id="rval" class="text-indigo-600 font-bold">0</span></label>
+          <input id="rslider" type="range" min="0" max="10" value="0" step="1" class="w-full mt-2">
+        </div>
+        <div class="text-xs text-slate-500 flex items-end">传播速度 v = 2×10⁸ m/s（固定）</div>
+      </div>
+
+      <!-- proportional bars -->
+      <div id="barArea" class="space-y-2"></div>
+
+      <!-- calculation breakdown -->
+      <div id="calcArea" class="bg-slate-50 rounded-lg p-3 text-sm space-y-1 font-mono"></div>
+
+      <div class="bg-indigo-600 text-white rounded-lg p-3 text-center">
+        <div class="text-xs opacity-80">从 t₀ 起，最早可重发时刻 t₃ =</div>
+        <div id="totalTime" class="text-2xl font-bold">—</div>
+      </div>
+
+      <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
+        <b>特别注意：</b>退避时间到了 <b>不是强行发送</b>。若发现信道仍忙，就继续监听等待，直到空闲，<b>不重新抽随机数</b>。此时实际等待 = r·d<sub>slot</sub> + <b>T<sub>busy</sub></b>（继续等待信道空闲的时间）。
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TAB 4: BACKOFF SIM ========== -->
+  <section id="backoff" class="tab-content hidden">
+    <div class="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
+      <h2 class="text-lg font-bold text-indigo-600">二进制指数退避：会不会一直撞？</h2>
+      <p class="text-sm text-slate-600">你的疑问很好：两台机器同时发、退避又选到一样，是不是又撞？<b>会的，但概率随每次碰撞指数级下降。</b>点下方模拟一次完整过程。</p>
+
+      <div class="bg-slate-900 text-slate-100 rounded-lg p-3 font-mono text-xs sm:text-sm text-center">
+        第 i 次碰撞：r ∈ {0, 1, …, 2<sup>min(i,10)</sup> − 1}
+      </div>
+
+      <button id="simBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">🎲 模拟 A 和 B 竞争</button>
+
+      <div id="simArea" class="space-y-2"></div>
+      <div id="simResult" class="text-sm"></div>
+    </div>
+  </section>
+
+  <footer class="text-center text-xs text-slate-400 mt-6">
+    CSMA/CD 交互教学 · 数值默认 d<sub>jam</sub>=32, d<sub>slot</sub>=512, d<sub>frei</sub>=96 bit
+  </footer>
+</div>
+
+<script>
+// ---------- Tabs ----------
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabs = document.querySelectorAll('.tab-content');
+tabBtns.forEach(b=>b.addEventListener('click',()=>{
+  tabBtns.forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  tabs.forEach(t=>t.classList.add('hidden'));
+  document.getElementById(b.dataset.tab).classList.remove('hidden');
+  if(b.dataset.tab==='anim'){ resizeCanvas(); }
+  if(b.dataset.tab==='timeline'){ updateTimeline(); }
+}));
+
+// ================= TAB 2 : Bus animation =================
+const canvas = document.getElementById('busCanvas');
+const ctx = canvas.getContext('2d');
+let animT = 0, animPlaying = false;
+const phaseText = document.getElementById('phaseText');
+
+function resizeCanvas(){
+  canvas.width = canvas.clientWidth;
+}
+window.addEventListener('resize', resizeCanvas);
+
+function drawBus(){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const busY = H/2;
+  const padX = 50;
+  const aX = padX, bX = W-padX;
+
+  // bus line
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(aX, busY); ctx.lineTo(bX, busY); ctx.stroke();
+
+  // animation timeline (in arbitrary units): 
+  // 0-1: signals travel toward each other, meet at center at t=1
+  // collision spreads back, reaches ends at t=2
+  // jam phase 2-2.6
+  const meetT = 1;      // signals meet
+  const backT = 2;      // collision reaches both ends
+
+  const half = (bX-aX)/2;
+
+  // Signal waves from A (green) and B (blue)
+  if(animT>0 && animT<=meetT){
+    const frac = animT; // 0..1
+    // A signal front
+    let axFront = aX + frac*half;
+    ctx.strokeStyle='#34d399'; ctx.lineWidth=6;
+    ctx.beginPath(); ctx.moveTo(aX, busY); ctx.lineTo(axFront, busY); ctx.stroke();
+    // B signal front
+    let bxFront = bX - frac*half;
+    ctx.strokeStyle='#38bdf8';
+    ctx.beginPath(); ctx.moveTo(bX, busY); ctx.lineTo(bxFront, busY); ctx.stroke();
+    phaseText.textContent = '信号相向传播中…（各自单程 L/v）';
+  }
+
+  // collision + spread back
+  if(animT>meetT){
+    const frac = Math.min((animT-meetT),1); // 0..1 spread back
+    const cx = (aX+bX)/2;
+    let left = cx - frac*half;
+    let right = cx + frac*half;
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth=7;
+    ctx.beginPath(); ctx.moveTo(left, busY); ctx.lineTo(right, busY); ctx.stroke();
+    // collision star
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.arc(cx, busY, 10+4*Math.sin(animT*10),0,7); ctx.fill();
+    if(animT<backT) phaseText.textContent='碰撞！干扰信号向两端传回（再走 L/v，共 2L/v）';
+  }
+
+  // jam phase
+  if(animT>backT){
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=6;
+    ctx.setLineDash([8,6]);
+    ctx.beginPath(); ctx.moveTo(aX, busY); ctx.lineTo(bX, busY); ctx.stroke();
+    ctx.setLineDash([]);
+    phaseText.textContent='发送 Jam 干扰信号（d_jam）→ 进入随机退避';
+  }
+
+  // Computers
+  function comp(x,label,color){
+    ctx.fillStyle=color;
+    ctx.fillRect(x-22, busY-55, 44, 30);
+    ctx.fillStyle='#fff'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(label, x, busY-34);
+    ctx.strokeStyle=color; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x, busY-25); ctx.lineTo(x, busY); ctx.stroke();
+  }
+  comp(aX,'A','#059669');
+  comp(bX,'B','#0284c7');
+
+  // labels
+  ctx.fillStyle='#94a3b8'; ctx.font='12px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('距离 L', aX, busY+30);
+}
+
+function loop(){
+  if(animPlaying){
+    animT += 0.018;
+    if(animT>3){ animPlaying=false; document.getElementById('playAnim').textContent='▶ 重播'; phaseText.textContent='结束：等待信道空闲 d_frei 后重发'; }
+  }
+  drawBus();
+  requestAnimationFrame(loop);
+}
+document.getElementById('playAnim').addEventListener('click',()=>{
+  animT=0; animPlaying=true; document.getElementById('playAnim').textContent='⏸ 播放中';
+});
+resizeCanvas(); loop();
+
+// ================= TAB 3 : Timeline =================
+const rateSel=document.getElementById('rateSel');
+const Lslider=document.getElementById('Lslider');
+const rslider=document.getElementById('rslider');
+const D_JAM=32, D_SLOT=512, D_FREI=96, V=2e8;
+
+function fmt(us){ 
+  if(us>=1) return us.toFixed(2)+' μs';
+  return (us*1000).toFixed(1)+' ns';
+}
+
+function updateTimeline(){
+  const R = parseFloat(rateSel.value)*1e6; // bit/s
+  const L = parseFloat(Lslider.value);
+  const r = parseInt(rslider.value);
+  document.getElementById('Lval').textContent=L;
+  document.getElementById('rval').textContent=r;
+
+  const bitTime = 1/R*1e6; // μs per bit
+  const t_prop = 2*L/V*1e6;        // μs
+  const t_jam  = D_JAM*bitTime;    // μs
+  const t_back = r*D_SLOT*bitTime; // μs
+  const t_frei = D_FREI*bitTime;   // μs
+  const total = t_prop+t_jam+t_back+t_frei;
+
+  const parts=[
+    {name:'2L/v （往返传播时延）', val:t_prop, color:'bg-purple-400', tcolor:'text-purple-600', desc:'信号来回一趟'},
+    {name:'d_jam/R （Jam 干扰）', val:t_jam, color:'bg-amber-400', tcolor:'text-amber-600', desc:'32 bit'},
+    {name:'r·d_slot/R （退避）', val:t_back, color:'bg-sky-400', tcolor:'text-sky-600', desc:r+'×512 bit'},
+    {name:'d_frei/R （发送前空闲）', val:t_frei, color:'bg-emerald-400', tcolor:'text-emerald-600', desc:'96 bit'},
+  ];
+  const maxV=Math.max(total,0.001);
+
+  document.getElementById('barArea').innerHTML = parts.map(p=>{
+    const w=Math.max(p.val/maxV*100, p.val>0?3:0);
+    return `<div class="fade-in">
+      <div class="flex justify-between text-xs mb-1">
+        <span class="font-medium ${p.tcolor}">${p.name} <span class="text-slate-400">(${p.desc})</span></span>
+        <span class="font-mono ${p.tcolor}">${fmt(p.val)}</span>
+      </div>
+      <div class="w-full bg-slate-100 rounded-full h-5 overflow-hidden">
+        <div class="${p.color} h-5 rounded-full transition-all" style="width:${w}%"></div>
+      </div></div>`;
+  }).join('');
+
+  document.getElementById('calcArea').innerHTML = `
+    <div>1 bit time = 1/${(R/1e6)}M = <b>${fmt(bitTime)}</b></div>
+    <div class="text-purple-600">2L/v = 2×${L}/(2×10⁸) = <b>${fmt(t_prop)}</b></div>
+    <div class="text-amber-600">d_jam/R = 32 × ${fmt(bitTime)} = <b>${fmt(t_jam)}</b></div>
+    <div class="text-sky-600">r·d_slot/R = ${r}×512 × ${fmt(bitTime)} = <b>${fmt(t_back)}</b></div>
+    <div class="text-emerald-600">d_frei/R = 96 × ${fmt(bitTime)} = <b>${fmt(t_frei)}</b></div>`;
+
+  document.getElementById('totalTime').textContent = fmt(total);
+}
+[rateSel,Lslider,rslider].forEach(el=>el.addEventListener('input',updateTimeline));
+updateTimeline();
+
+// ================= TAB 4 : Backoff simulation =================
+document.getElementById('simBtn').addEventListener('click', runSim);
+
+function runSim(){
+  const area=document.getElementById('simArea');
+  const result=document.getElementById('simResult');
+  area.innerHTML=''; result.innerHTML='';
+  let i=0, done=false;
+  const maxTry=16;
+
+  function step(){
+    i++;
+    const k=Math.min(i,10);
+    const range=Math.pow(2,k);
+    const rA=Math.floor(Math.random()*range);
+    const rB=Math.floor(Math.random()*range);
+    const collide = (rA===rB);
+
+    const prob = (1/range*100).toFixed(range>100?3:1);
+
+    const row=document.createElement('div');
+    row.className='fade-in border rounded-lg p-3 '+(collide?'bg-red-50 border-red-200':'bg-emerald-50 border-emerald-200');
+    row.innerHTML=`
+      <div class="flex justify-between items-center text-sm">
+        <span class="font-bold">第 ${i} 次碰撞</span>
+        <span class="text-xs text-slate-500">r ∈ {0…${range-1}}，撞概率 ${prob}%</span>
+      </div>
+      <div class="flex gap-4 mt-2 text-sm">
+        <span>A 抽到 <b class="text-emerald-700">r=${rA}</b></span>
+        <span>B 抽到 <b class="text-sky-700">r=${rB}</b></span>
+      </div>
+      <div class="mt-1 text-sm font-medium ${collide?'text-red-600':'text-emerald-600'}">
+        ${collide? '⚠ 退避值相同 → 仍会同时重发 → 再次碰撞！' 
+                 : (rA<rB? '✓ A 的退避更短，A 先发；B 退避到时发现信道忙 → 继续等 A 发完再发。' 
+                        : '✓ B 的退避更短，B 先发；A 退避到时发现信道忙 → 继续等 B 发完再发。')}
+      </div>`;
+    area.appendChild(row);
+
+    if(!collide){
+      done=true;
+      result.innerHTML=`<div class="fade-in bg-indigo-600 text-white rounded-lg p-3 mt-2 text-center">
+        🎉 第 ${i} 次退避成功错开！范围越大越容易分出先后，所以不会一直撞下去。</div>`;
+      return;
+    }
+    if(i>=maxTry){
+      result.innerHTML=`<div class="bg-slate-700 text-white rounded-lg p-3 mt-2 text-center">已达 16 次上限：网卡放弃发送并上报失败（现实中几乎不会发生）。</div>`;
+      return;
+    }
+    setTimeout(step, 650);
+  }
+  step();
+}
+</script>
+</body>
+</html>

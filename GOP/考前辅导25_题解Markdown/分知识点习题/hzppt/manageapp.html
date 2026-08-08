@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>运营管理小程序 · 智慧停车移动运营中枢</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #020712;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #stage {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      overflow: hidden;
+      transform-origin: center center;
+      color: #f5fbff;
+      background:
+        radial-gradient(circle at 48% 42%, rgba(33, 161, 255, .17), transparent 35%),
+        radial-gradient(circle at 86% 23%, rgba(148, 94, 255, .13), transparent 25%),
+        radial-gradient(circle at 15% 79%, rgba(255, 169, 58, .07), transparent 30%),
+        linear-gradient(135deg, #020713 0%, #071426 48%, #061122 72%, #030913 100%);
+    }
+
+    #stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .11;
+      background-image:
+        linear-gradient(rgba(74, 158, 255, .28) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74, 158, 255, .28) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, transparent 0, #000 13%, #000 92%, transparent);
+    }
+
+    #stage::after {
+      content: "";
+      position: absolute;
+      left: 391px;
+      top: 44px;
+      width: 816px;
+      height: 816px;
+      border: 1px solid rgba(90, 192, 255, .055);
+      border-radius: 50%;
+      box-shadow:
+        0 0 150px rgba(0, 161, 255, .045),
+        inset 0 0 140px rgba(0, 161, 255, .025);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+    }
+
+    .background-svg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 1600px;
+      height: 900px;
+      pointer-events: none;
+    }
+
+    .bg-line {
+      fill: none;
+      stroke: url(#bgGradient);
+      stroke-width: 1.1;
+      opacity: .17;
+    }
+
+    .bg-dash {
+      fill: none;
+      stroke: #44d0ff;
+      stroke-width: 1;
+      stroke-dasharray: 7 10;
+      opacity: .13;
+      animation: bgFlow 14s linear infinite;
+    }
+
+    .bg-dot {
+      fill: #62dcff;
+      filter: drop-shadow(0 0 6px #29c7ff);
+    }
+
+    @keyframes bgFlow {
+      to {
+        stroke-dashoffset: -190;
+      }
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 48px;
+      right: 48px;
+      top: 20px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      flex: 0 0 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #138dff, #795cff 55%, #ff9e42);
+      box-shadow:
+        0 9px 30px rgba(50, 130, 255, .32),
+        inset 0 1px 0 rgba(255, 255, 255, .25);
+    }
+
+    .logo::after {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border: 1px solid rgba(91, 171, 255, .17);
+      border-radius: 19px;
+    }
+
+    .logo svg {
+      width: 31px;
+      height: 31px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 31px;
+      line-height: 1.15;
+      letter-spacing: .8px;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: #6c97b7;
+      font-size: 11.5px;
+      letter-spacing: 2.6px;
+    }
+
+    .header-message {
+      text-align: right;
+    }
+
+    .header-message strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #e7f6ff;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+
+    .header-message strong b {
+      color: #ffb657;
+    }
+
+    .header-message span {
+      color: #789bb2;
+      font-size: 12px;
+    }
+
+    /* Role bar */
+    .role-bar {
+      position: absolute;
+      left: 100px;
+      right: 100px;
+      top: 106px;
+      height: 68px;
+      display: grid;
+      grid-template-columns: 1fr 210px 1fr;
+      align-items: center;
+      overflow: hidden;
+      border: 1px solid rgba(78, 165, 231, .24);
+      border-radius: 34px;
+      background:
+        linear-gradient(90deg,
+          rgba(42, 47, 104, .60),
+          rgba(7, 48, 82, .82) 48%,
+          rgba(103, 58, 29, .48));
+      box-shadow:
+        0 14px 34px rgba(0, 4, 16, .22),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    .role-group {
+      height: 100%;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    .role-group.left {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .role-group.right {
+      justify-content: flex-start;
+    }
+
+    .role-icon {
+      width: 43px;
+      height: 43px;
+      flex: 0 0 43px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(151, 125, 246, .23);
+      border-radius: 13px;
+      color: #c9b9ff;
+      background: rgba(116, 85, 221, .15);
+    }
+
+    .role-group.right .role-icon {
+      color: #ffc06b;
+      border-color: rgba(255, 183, 80, .20);
+      background: rgba(211, 127, 30, .13);
+    }
+
+    .role-icon svg {
+      width: 25px;
+      height: 25px;
+    }
+
+    .role-group.left .role-icon {
+      order: 2;
+      margin-left: 14px;
+    }
+
+    .role-group.right .role-icon {
+      margin-right: 14px;
+    }
+
+    .role-text strong {
+      display: block;
+      color: #e9e3ff;
+      font-size: 15px;
+    }
+
+    .role-group.right .role-text strong {
+      color: #ffe4bd;
+    }
+
+    .role-text span {
+      display: block;
+      margin-top: 6px;
+      color: #9690b4;
+      font-size: 11px;
+    }
+
+    .role-group.right .role-text span {
+      color: #ba9a70;
+    }
+
+    .role-center {
+      text-align: center;
+    }
+
+    .role-center strong {
+      display: block;
+      color: #edf9ff;
+      font-size: 15px;
+    }
+
+    .role-center span {
+      display: block;
+      margin-top: 5px;
+      color: #7297ad;
+      font-size: 10px;
+    }
+
+    /* Main */
+    .main-area {
+      position: absolute;
+      left: 48px;
+      right: 48px;
+      top: 194px;
+      height: 486px;
+      display: grid;
+      grid-template-columns: 420px 596px 444px;
+      gap: 22px;
+    }
+
+    .panel {
+      position: relative;
+      min-width: 0;
+      height: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(66, 165, 235, .23);
+      border-radius: 17px;
+      background:
+        linear-gradient(145deg, rgba(13, 47, 82, .94), rgba(5, 22, 43, .96));
+      box-shadow:
+        0 18px 44px rgba(0, 4, 16, .32),
+        inset 0 1px 0 rgba(255, 255, 255, .05);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #5cc8ff, transparent);
+    }
+
+    .roles-panel {
+      border-color: rgba(143, 119, 239, .27);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(117, 76, 210, .11), transparent 32%),
+        linear-gradient(145deg, rgba(33, 38, 87, .84), rgba(5, 23, 45, .96));
+    }
+
+    .roles-panel::before {
+      background: linear-gradient(90deg, transparent, #9d82ff, transparent);
+    }
+
+    .app-panel {
+      border-color: rgba(54, 190, 235, .42);
+      background:
+        radial-gradient(circle at 50% 43%, rgba(0, 158, 232, .14), transparent 43%),
+        linear-gradient(145deg, rgba(7, 58, 94, .98), rgba(4, 23, 47, .99));
+      box-shadow:
+        0 24px 64px rgba(0, 4, 18, .44),
+        0 0 48px rgba(0, 171, 243, .07),
+        inset 0 1px 0 rgba(255, 255, 255, .07);
+    }
+
+    .ops-panel {
+      border-color: rgba(242, 162, 59, .27);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(224, 135, 31, .10), transparent 31%),
+        linear-gradient(145deg, rgba(72, 47, 27, .64), rgba(6, 25, 47, .96));
+    }
+
+    .ops-panel::before {
+      background: linear-gradient(90deg, transparent, #ffb24d, transparent);
+    }
+
+    .section-head {
+      height: 50px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-index {
+      color: #668ca0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section-line {
+      width: 24px;
+      height: 2px;
+      flex: 0 0 24px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #318fff, #4ae0ff);
+    }
+
+    .roles-panel .section-line {
+      background: linear-gradient(90deg, #8268ef, #b5a3ff);
+    }
+
+    .ops-panel .section-line {
+      background: linear-gradient(90deg, #ff9d32, #ffd27d);
+    }
+
+    .section-head h2 {
+      margin: 0;
+      color: #e2f4fb;
+      font-size: 17px;
+      white-space: nowrap;
+    }
+
+    .section-en {
+      margin-left: auto;
+      color: #66869a;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .panel-summary {
+      height: 52px;
+      margin: 0 14px;
+      padding: 8px 11px;
+      overflow: hidden;
+      border-radius: 10px;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .roles-panel .panel-summary {
+      border: 1px solid rgba(144, 117, 241, .17);
+      color: #bbb0d8;
+      background: rgba(63, 45, 116, .23);
+    }
+
+    .app-panel .panel-summary {
+      border: 1px solid rgba(54, 200, 236, .19);
+      color: #b2d6e2;
+      background: rgba(4, 44, 73, .67);
+    }
+
+    .ops-panel .panel-summary {
+      border: 1px solid rgba(242, 160, 56, .17);
+      color: #d5b68d;
+      background: rgba(96, 58, 22, .22);
+    }
+
+    .panel-summary strong {
+      color: #eef8ff;
+      font-size: 12px;
+    }
+
+    .roles-panel .panel-summary strong {
+      color: #e0d8fa;
+    }
+
+    .ops-panel .panel-summary strong {
+      color: #ffe4be;
+    }
+
+    /* Left roles */
+    .persona-grid {
+      margin: 10px 14px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .persona-card {
+      height: 86px;
+      padding: 9px;
+      overflow: hidden;
+      border: 1px solid rgba(142, 116, 236, .15);
+      border-radius: 10px;
+      background: rgba(48, 38, 89, .39);
+    }
+
+    .persona-card.orange {
+      border-color: rgba(236, 153, 49, .15);
+      background: rgba(91, 56, 25, .34);
+    }
+
+    .persona-card.cyan {
+      border-color: rgba(54, 184, 224, .15);
+      background: rgba(7, 48, 74, .52);
+    }
+
+    .persona-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .persona-title i {
+      width: 27px;
+      height: 27px;
+      flex: 0 0 27px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #c6b8ff;
+      background: rgba(120, 88, 216, .17);
+    }
+
+    .persona-card.orange .persona-title i {
+      color: #ffc16c;
+      background: rgba(196, 113, 28, .16);
+    }
+
+    .persona-card.cyan .persona-title i {
+      color: #66d6ff;
+      background: rgba(28, 151, 190, .16);
+    }
+
+    .persona-title svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .persona-title strong {
+      display: block;
+      overflow: hidden;
+      color: #ded7f5;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .persona-card.orange .persona-title strong {
+      color: #ffe0b5;
+    }
+
+    .persona-card.cyan .persona-title strong {
+      color: #d7f1fa;
+    }
+
+    .persona-card p {
+      margin: 8px 0 0;
+      color: #958cac;
+      font-size: 9.9px;
+      line-height: 1.42;
+    }
+
+    .persona-card.orange p {
+      color: #b4946f;
+    }
+
+    .persona-card.cyan p {
+      color: #79a1b2;
+    }
+
+    .mission-board {
+      margin: 10px 14px 0;
+      padding: 11px;
+      height: 182px;
+      overflow: hidden;
+      border: 1px solid rgba(142, 116, 236, .15);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(128, 94, 235, .11), transparent 45%),
+        rgba(22, 25, 54, .62);
+    }
+
+    .mission-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      color: #dcd5f7;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mission-head span {
+      color: #8d84aa;
+      font-size: 9px;
+      font-weight: 400;
+    }
+
+    .mission-row {
+      height: 27px;
+      display: grid;
+      grid-template-columns: 70px 1fr 54px;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid rgba(148, 130, 206, .09);
+    }
+
+    .mission-row:first-of-type {
+      border-top: 0;
+    }
+
+    .mission-row strong {
+      color: #cfc6ed;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .mission-row span {
+      overflow: hidden;
+      color: #8f88a7;
+      font-size: 8.8px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mission-row em {
+      padding: 3px 0;
+      border-radius: 5px;
+      color: #121b29;
+      background: #94ddff;
+      font-size: 8px;
+      font-style: normal;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .mission-row.warn em {
+      background: #ffc36d;
+    }
+
+    .mission-row.purple em {
+      background: #beaaff;
+    }
+
+    /* Center app phone */
+    .phone-stage {
+      position: relative;
+      height: 374px;
+      margin: 10px 16px 0;
+      overflow: hidden;
+      border: 1px solid rgba(54, 184, 224, .17);
+      border-radius: 13px;
+      background:
+        radial-gradient(circle at 50% 56%, rgba(0, 164, 225, .10), transparent 46%),
+        rgba(4, 27, 51, .70);
+    }
+
+    .phone-halo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 360px;
+      height: 360px;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(80, 202, 255, .08);
+      border-radius: 50%;
+      box-shadow: inset 0 0 70px rgba(57, 194, 255, .035);
+    }
+
+    .mini-phone {
+      position: absolute;
+      left: 177px;
+      top: 12px;
+      width: 210px;
+      height: 350px;
+      padding: 12px 12px 14px;
+      overflow: hidden;
+      border: 1px solid rgba(118, 207, 255, .34);
+      border-radius: 28px;
+      background: linear-gradient(180deg, #0c253e, #071627);
+      box-shadow:
+        0 22px 46px rgba(0, 4, 16, .50),
+        inset 0 1px 0 rgba(255, 255, 255, .10);
+    }
+
+    .mini-phone::before {
+      content: "";
+      position: absolute;
+      left: 84px;
+      top: 7px;
+      width: 74px;
+      height: 5px;
+      border-radius: 5px;
+      background: rgba(202, 232, 255, .30);
+    }
+
+    .phone-ui {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 19px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(61, 189, 255, .18), transparent 38%),
+        linear-gradient(180deg, #0d3354, #081a2d 64%, #071521);
+    }
+
+    .app-top {
+      height: 52px;
+      padding: 12px 12px 0;
+      color: #e8f7ff;
+    }
+
+    .app-top strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .app-top span {
+      display: block;
+      margin-top: 4px;
+      color: #85b5c9;
+      font-size: 8.5px;
+    }
+
+    .app-alert {
+      height: 30px;
+      margin: 0 10px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 177, 74, .20);
+      border-radius: 9px;
+      color: #ffd28d;
+      background: rgba(116, 67, 17, .30);
+      font-size: 8.8px;
+    }
+
+    .app-alert i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffb34d;
+      box-shadow: 0 0 8px rgba(255, 179, 77, .75);
+    }
+
+    .app-grid {
+      margin: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .app-func {
+      height: 45px;
+      padding: 5px 4px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 1px solid rgba(82, 191, 236, .15);
+      border-radius: 9px;
+      background: rgba(7, 45, 72, .62);
+    }
+
+    .app-func i {
+      width: 22px;
+      height: 19px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      color: #6dd6ff;
+      background: rgba(28, 151, 190, .16);
+    }
+
+    .app-func svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .app-func span {
+      color: #c4dfeb;
+      font-size: 8.2px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .app-list {
+      margin: 0 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .app-ticket {
+      height: 34px;
+      padding: 0 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(85, 198, 239, .15);
+      border-radius: 9px;
+      background: rgba(3, 30, 51, .74);
+    }
+
+    .app-ticket strong {
+      display: block;
+      overflow: hidden;
+      color: #dff5ff;
+      font-size: 9.8px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .app-ticket span {
+      display: block;
+      margin-top: 2px;
+      overflow: hidden;
+      color: #79a4b7;
+      font-size: 7.6px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .app-ticket em {
+      padding: 4px 6px;
+      border-radius: 6px;
+      color: #06121e;
+      background: #74d7ff;
+      font-size: 7.8px;
+      font-style: normal;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .app-ticket.warn em {
+      background: #ffc36d;
+    }
+
+    .side-module {
+      position: absolute;
+      width: 139px;
+      padding: 9px;
+      border: 1px solid rgba(76, 190, 236, .15);
+      border-radius: 10px;
+      background: rgba(8, 45, 72, .58);
+      box-shadow: 0 12px 26px rgba(0, 4, 16, .20);
+    }
+
+    .side-module strong {
+      display: block;
+      color: #d8f0f8;
+      font-size: 10.5px;
+    }
+
+    .side-module span {
+      display: block;
+      margin-top: 5px;
+      color: #75a0b3;
+      font-size: 8.4px;
+      line-height: 1.32;
+    }
+
+    .side-module.left-a {
+      left: 14px;
+      top: 56px;
+    }
+
+    .side-module.left-b {
+      left: 14px;
+      top: 179px;
+      border-color: rgba(151, 125, 246, .16);
+      background: rgba(47, 40, 92, .42);
+    }
+
+    .side-module.right-a {
+      right: 14px;
+      top: 56px;
+      border-color: rgba(255, 177, 74, .16);
+      background: rgba(90, 56, 24, .38);
+    }
+
+    .side-module.right-b {
+      right: 14px;
+      top: 179px;
+    }
+
+    .phone-lines {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .phone-line {
+      fill: none;
+      stroke: #4fd2ff;
+      stroke-width: 1.4;
+      stroke-dasharray: 5 6;
+      opacity: .55;
+      animation: lineFlow 8s linear infinite;
+    }
+
+    .phone-line.purple {
+      stroke: #a48bff;
+    }
+
+    .phone-line.orange {
+      stroke: #ffac45;
+    }
+
+    @keyframes lineFlow {
+      to {
+        stroke-dashoffset: -120;
+      }
+    }
+
+    /* Right operations */
+    .ops-grid {
+      margin: 10px 14px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .ops-card {
+      height: 66px;
+      padding: 8px 9px;
+      overflow: hidden;
+      border: 1px solid rgba(236, 153, 49, .15);
+      border-radius: 9px;
+      background: rgba(91, 56, 25, .34);
+    }
+
+    .ops-card.cyan {
+      border-color: rgba(54, 184, 224, .15);
+      background: rgba(7, 48, 74, .52);
+    }
+
+    .ops-card.purple {
+      border-color: rgba(140, 112, 235, .16);
+      background: rgba(48, 42, 97, .38);
+    }
+
+    .ops-card strong {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      overflow: hidden;
+      color: #ffe0b5;
+      font-size: 11.5px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ops-card.cyan strong {
+      color: #d7f1fa;
+    }
+
+    .ops-card.purple strong {
+      color: #ded7f5;
+    }
+
+    .ops-card strong i {
+      width: 6px;
+      height: 6px;
+      flex: 0 0 6px;
+      border-radius: 50%;
+      background: #ffb04b;
+      box-shadow: 0 0 7px rgba(255, 176, 75, .56);
+    }
+
+    .ops-card.cyan strong i {
+      background: #58d3ff;
+      box-shadow: 0 0 7px rgba(71, 187, 228, .55);
+    }
+
+    .ops-card.purple strong i {
+      background: #9d81ff;
+      box-shadow: 0 0 7px rgba(157, 129, 255, .58);
+    }
+
+    .ops-card span {
+      display: block;
+      margin-top: 6px;
+      color: #b4946f;
+      font-size: 9.4px;
+      line-height: 1.38;
+    }
+
+    .ops-card.cyan span {
+      color: #79a1b2;
+    }
+
+    .ops-card.purple span {
+      color: #928dab;
+    }
+
+    .ai-panel {
+      margin: 10px 14px 0;
+      height: 140px;
+      padding: 11px;
+      overflow: hidden;
+      border: 1px solid rgba(92, 188, 232, .20);
+      border-radius: 13px;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(87, 207, 255, .15), transparent 30%),
+        linear-gradient(145deg, rgba(8, 49, 75, .75), rgba(22, 27, 63, .64));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    .ai-head {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .ai-avatar {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: #072031;
+      background: linear-gradient(135deg, #74d7ff, #beaaff);
+      box-shadow: 0 8px 18px rgba(55, 184, 255, .20);
+    }
+
+    .ai-avatar svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ai-head strong {
+      display: block;
+      color: #e8f8ff;
+      font-size: 13px;
+    }
+
+    .ai-head span {
+      display: block;
+      margin-top: 4px;
+      color: #89aebe;
+      font-size: 8.8px;
+    }
+
+    .ai-head em {
+      padding: 4px 7px;
+      border-radius: 6px;
+      color: #081626;
+      background: #ffc36d;
+      font-size: 8px;
+      font-style: normal;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ai-prompts {
+      margin-top: 9px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+    }
+
+    .ai-prompt {
+      height: 28px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(104, 201, 242, .14);
+      border-radius: 8px;
+      color: #acd6e7;
+      background: rgba(4, 32, 54, .52);
+      font-size: 8.7px;
+      white-space: nowrap;
+    }
+
+    .ai-prompt i {
+      width: 5px;
+      height: 5px;
+      flex: 0 0 5px;
+      border-radius: 50%;
+      background: #70d7ff;
+    }
+
+    /* Connections */
+    .stage-lines {
+      position: absolute;
+      left: 48px;
+      top: 194px;
+      z-index: 1;
+      width: 1504px;
+      height: 486px;
+      pointer-events: none;
+    }
+
+    .stage-arrow {
+      fill: none;
+      stroke: #8b7bff;
+      stroke-width: 1.6;
+      stroke-dasharray: 7 7;
+      opacity: .64;
+      animation: stageFlow 9s linear infinite;
+    }
+
+    .stage-arrow.orange {
+      stroke: #ffad45;
+    }
+
+    .stage-node {
+      fill: #8b7bff;
+      filter: drop-shadow(0 0 6px #6759f5);
+    }
+
+    .stage-node.orange {
+      fill: #ffaf49;
+      filter: drop-shadow(0 0 6px #e98d21);
+    }
+
+    @keyframes stageFlow {
+      to {
+        stroke-dashoffset: -140;
+      }
+    }
+
+    /* Bottom value */
+    .value-zone {
+      position: absolute;
+      left: 48px;
+      right: 48px;
+      bottom: 48px;
+      height: 151px;
+    }
+
+    .value-title {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #8ab1c5;
+      font-size: 11px;
+      letter-spacing: .4px;
+    }
+
+    .value-title::before {
+      content: "";
+      width: 20px;
+      height: 2px;
+      flex: 0 0 20px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #3ba8ff, #ffb14a);
+    }
+
+    .value-title span {
+      margin-left: auto;
+      color: #627f92;
+      font-size: 10px;
+    }
+
+    .value-grid {
+      height: 119px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .value-card {
+      position: relative;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      align-items: center;
+      overflow: hidden;
+      border: 1px solid rgba(60, 177, 226, .18);
+      border-radius: 13px;
+      background:
+        linear-gradient(145deg, rgba(10, 48, 78, .80), rgba(5, 24, 46, .86));
+    }
+
+    .value-card.purple {
+      border-color: rgba(142, 116, 236, .21);
+      background: linear-gradient(145deg, rgba(51, 43, 100, .49), rgba(6, 26, 49, .87));
+    }
+
+    .value-card.orange {
+      border-color: rgba(232, 157, 60, .21);
+      background: linear-gradient(145deg, rgba(88, 57, 28, .44), rgba(7, 27, 49, .87));
+    }
+
+    .value-card.cyan {
+      border-color: rgba(61, 187, 230, .21);
+      background: linear-gradient(145deg, rgba(10, 66, 89, .48), rgba(6, 27, 50, .87));
+    }
+
+    .value-card::after {
+      content: none;
+    }
+
+    .value-icon {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #60cfff;
+      background: rgba(23, 143, 184, .14);
+    }
+
+    .value-card.purple .value-icon {
+      color: #c2b3ff;
+      background: rgba(121, 87, 210, .15);
+    }
+
+    .value-card.orange .value-icon {
+      color: #ffc16c;
+      background: rgba(191, 123, 46, .14);
+    }
+
+    .value-card.cyan .value-icon {
+      color: #61d4f6;
+      background: rgba(28, 155, 192, .14);
+    }
+
+    .value-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .value-content {
+      position: relative;
+      z-index: 2;
+      padding-left: 10px;
+    }
+
+    .value-content strong {
+      display: block;
+      color: #e0f3fa;
+      font-size: 13px;
+    }
+
+    .value-content span {
+      display: block;
+      margin-top: 6px;
+      color: #82a6b7;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .value-highlight {
+      margin-top: 6px;
+      color: #62ceff;
+      font-size: 9.2px;
+      font-weight: 700;
+    }
+
+    .value-card.purple .value-highlight {
+      color: #b8a9e4;
+    }
+
+    .value-card.orange .value-highlight {
+      color: #e2af6d;
+    }
+
+    .footer {
+      position: absolute;
+      left: 49px;
+      right: 49px;
+      bottom: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #557b91;
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-left i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #57cfff;
+      box-shadow: 0 0 8px #57cfff;
+    }
+
+    .footer-right {
+      color: #45687d;
+    }
+
+    @media print {
+      html,
+      body {
+        width: 1600px;
+        height: 900px;
+      }
+
+      #stage {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="content">
+      <svg class="background-svg" viewBox="0 0 1600 900">
+        <defs>
+          <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#188fff" />
+            <stop offset="52%" stop-color="#53cfff" />
+            <stop offset="100%" stop-color="#8a67ff" />
+          </linearGradient>
+        </defs>
+        <path class="bg-line" d="M0 730 C220 662 320 758 498 681 C684 600 727 423 910 358 C1098 292 1303 419 1600 232" />
+        <path class="bg-dash" d="M0 775 C247 713 386 799 570 724 C750 650 790 485 970 420 C1170 350 1370 421 1600 329" />
+        <circle class="bg-dot" cx="498" cy="681" r="3" />
+        <circle class="bg-dot" cx="910" cy="358" r="3" />
+        <circle class="bg-dot" cx="1303" cy="419" r="3" />
+      </svg>
+
+      <header class="header">
+        <div class="title-wrap">
+          <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="5" y="3" width="14" height="18" rx="3" stroke="currentColor" stroke-width="1.8" />
+              <path d="M8 7h8M8 11h4M8 15h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              <circle cx="16" cy="11" r="1.3" fill="currentColor" />
+            </svg>
+          </div>
+          <div>
+            <h1>运营管理小程序 · 智慧停车移动运营中枢</h1>
+            <div class="subtitle">OPERATOR MINI PROGRAM · MOBILE COMMAND CENTER · AI ASSISTED OPERATIONS</div>
+          </div>
+        </div>
+        <div class="header-message">
+          <strong>把停车场、道路泊位、商户权益和运维工单装进一个 <b>移动驾驶舱</b></strong>
+          <span>查账 · 控闸 · 稽查 · 发券 · 应急收费 · 工单处置 · AI 分析 · Excel 导出</span>
+        </div>
+      </header>
+
+      <section class="role-bar">
+        <div class="role-group left">
+          <div class="role-text">
+            <strong>停车场管理人员 / 稽查人员</strong>
+            <span>现场收费、车道控制、道路稽查、设备巡检和工单处置</span>
+          </div>
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 19V8l8-4 8 4v11" stroke="currentColor" stroke-width="1.8" />
+              <path d="M8 19v-6h8v6M8 9h8" stroke="currentColor" stroke-width="1.8" />
+            </svg>
+          </div>
+        </div>
+        <div class="role-center">
+          <strong>一个小程序 · 多角色工作台</strong>
+          <span>按岗位开通权限与流程</span>
+        </div>
+        <div class="role-group right">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 20V7h12v13M4 20h16M8 11h8M8 15h8" stroke="currentColor" stroke-width="1.8" />
+              <path d="M9 7V4h6v3" stroke="currentColor" stroke-width="1.8" />
+            </svg>
+          </div>
+          <div class="role-text">
+            <strong>商户 / 财务 / 运营负责人</strong>
+            <span>购买优惠券、账户储值、发退券、营收分析和清分对账</span>
+          </div>
+        </div>
+      </section>
+
+      <svg class="stage-lines" viewBox="0 0 1504 486">
+        <path class="stage-arrow" d="M420 243 H442" />
+        <circle class="stage-node" cx="431" cy="243" r="3.2" />
+        <path class="stage-arrow orange" d="M1038 243 H1060" />
+        <circle class="stage-node orange" cx="1049" cy="243" r="3.2" />
+      </svg>
+
+      <main class="main-area">
+        <section class="panel roles-panel">
+          <div class="section-head">
+            <span class="section-index">01</span>
+            <i class="section-line"></i>
+            <h2>适用角色：不同岗位不同首页</h2>
+            <span class="section-en">ROLES</span>
+          </div>
+
+          <div class="panel-summary">
+            <strong>不是一个“工具合集”，而是按岗位重组任务流。</strong><br />
+            商户、场管、稽查、客服、财务看到不同入口、数据和审批权限。
+          </div>
+
+          <div class="persona-grid">
+            <article class="persona-card cyan">
+              <div class="persona-title">
+                <i>
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 20V8h6v12M13 20V4h6v16M3 20h18" stroke="currentColor" stroke-width="1.8" />
+                  </svg>
+                </i>
+                <strong>场站管理人员</strong>
+              </div>
+              <p>看车道视频、远程开关闸、应急收费、设备复位、处理我的工单。</p>
+            </article>
+
+            <article class="persona-card orange">
+              <div class="persona-title">
+                <i>
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 7h14v12H5zM8 7V4h8v3" stroke="currentColor" stroke-width="1.8" />
+                  </svg>
+                </i>
+                <strong>商业商户</strong>
+              </div>
+              <p>在线买券、账户储值、给顾客发券、退券和查看核销效果。</p>
+            </article>
+
+            <article class="persona-card">
+              <div class="persona-title">
+                <i>
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3l7 4v5c0 4.5-2.7 7.3-7 9-4.3-1.7-7-4.5-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" />
+                  </svg>
+                </i>
+                <strong>道路稽查人员</strong>
+              </div>
+              <p>路侧泊位巡查、欠费核查、违停拍照、补缴提醒和异常上报。</p>
+            </article>
+
+            <article class="persona-card cyan">
+              <div class="persona-title">
+                <i>
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 5h16v14H4zM4 9h16M9 5v14" stroke="currentColor" stroke-width="1.8" />
+                  </svg>
+                </i>
+                <strong>运营 / 财务</strong>
+              </div>
+              <p>套餐订单查询、营收统计、清分报表、发票状态和异常退款审核。</p>
+            </article>
+          </div>
+
+          <div class="mission-board">
+            <div class="mission-head">
+              今日移动任务台
+              <span>自动按角色筛选</span>
+            </div>
+            <div class="mission-row warn">
+              <strong>应急收费</strong>
+              <span>A1 出口离线，启用人工补收流程</span>
+              <em>待处理</em>
+            </div>
+            <div class="mission-row">
+              <strong>道闸控制</strong>
+              <span>B2 车道视频确认后远程抬杆</span>
+              <em>可执行</em>
+            </div>
+            <div class="mission-row purple">
+              <strong>商户发券</strong>
+              <span>餐饮街 500 张 2 小时券待审核</span>
+              <em>审核中</em>
+            </div>
+            <div class="mission-row">
+              <strong>设备巡检</strong>
+              <span>3 台相机离线，建议批量复位</span>
+              <em>AI建议</em>
+            </div>
+            <div class="mission-row warn">
+              <strong>营收异常</strong>
+              <span>东区昨日现金补缴高于均值 38%</span>
+              <em>需复核</em>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel app-panel">
+          <div class="section-head">
+            <span class="section-index">02</span>
+            <i class="section-line"></i>
+            <h2>移动运营中枢：查、控、办、审、导出</h2>
+            <span class="section-en">APP</span>
+          </div>
+
+          <div class="panel-summary">
+            <strong>小程序不只是“查看数据”，而是把现场动作直接闭环到经营结果。</strong><br />
+            每一次抬杆、发券、收费、复位和工单处理都留痕、可审计、可追责。
+          </div>
+
+          <div class="phone-stage">
+            <div class="phone-halo"></div>
+
+            <svg class="phone-lines" viewBox="0 0 596 374">
+              <path class="phone-line" d="M153 91 C179 91 179 105 177 121" />
+              <path class="phone-line purple" d="M153 213 C179 213 179 205 177 190" />
+              <path class="phone-line orange" d="M419 91 C443 91 443 104 443 121" />
+              <path class="phone-line" d="M419 213 C443 213 443 206 443 190" />
+            </svg>
+
+            <div class="side-module left-a">
+              <strong>停车场现场管控</strong>
+              <span>车道视频、远程开闸、关闸、锁车、补录车牌、应急收费。</span>
+            </div>
+
+            <div class="side-module left-b">
+              <strong>套餐与订单查询</strong>
+              <span>包月、临停、充电、优惠券、退款订单全链路检索。</span>
+            </div>
+
+            <div class="side-module right-a">
+              <strong>商户权益运营</strong>
+              <span>在线购买优惠券、账户储值、批量发券、退券和核销统计。</span>
+            </div>
+
+            <div class="side-module right-b">
+              <strong>运维工单闭环</strong>
+              <span>创建、派发、处置、复核；相机、道闸、地锁远程复位。</span>
+            </div>
+
+            <div class="mini-phone">
+              <div class="phone-ui">
+                <div class="app-top">
+                  <strong>运营管理小程序</strong>
+                  <span>今日营收 ¥126,840 · 在线设备 98.7%</span>
+                </div>
+
+                <div class="app-alert">
+                  <i></i>
+                  A1 出口离线，已生成应急收费任务
+                </div>
+
+                <div class="app-grid">
+                  <div class="app-func">
+                    <i>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 5h14v14H5zM8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                    </i>
+                    <span>订单查询</span>
+                  </div>
+                  <div class="app-func">
+                    <i>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 11h16M6 7h12v10H6z" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                    </i>
+                    <span>远程车道</span>
+                  </div>
+                  <div class="app-func">
+                    <i>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 19V10M10 19V5M16 19v-7M22 19H2" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                    </i>
+                    <span>营收分析</span>
+                  </div>
+                  <div class="app-func">
+                    <i>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 7h14v10H5zM8 7V5h8v2" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                    </i>
+                    <span>商户券</span>
+                  </div>
+                  <div class="app-func">
+                    <i>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                    </i>
+                    <span>我的工单</span>
+                  </div>
+                  <div class="app-func">
+                    <i>
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3l7 4v5c0 4.5-2.7 7.3-7 9-4.3-1.7-7-4.5-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                    </i>
+                    <span>道路稽查</span>
+                  </div>
+                </div>
+
+                <div class="app-list">
+                  <div class="app-ticket warn">
+                    <div>
+                      <strong>车道 B2：视频已连通</strong>
+                      <span>黑 A12345 临停异常 · 可远程抬杆</span>
+                    </div>
+                    <em>控闸</em>
+                  </div>
+                  <div class="app-ticket">
+                    <div>
+                      <strong>商户券包：餐饮街 2 小时券</strong>
+                      <span>余额充足 · 本次可发 500 张</span>
+                    </div>
+                    <em>发券</em>
+                  </div>
+                  <div class="app-ticket">
+                    <div>
+                      <strong>AI：昨日收入波动已分析</strong>
+                      <span>可生成 Excel 与异常说明</span>
+                    </div>
+                    <em>导出</em>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel ops-panel">
+          <div class="section-head">
+            <span class="section-index">03</span>
+            <i class="section-line"></i>
+            <h2>核心能力：从现场控制到经营分析</h2>
+            <span class="section-en">CAPABILITY</span>
+          </div>
+
+          <div class="panel-summary">
+            <strong>把“临时处理”升级为“标准流程 + 数据留痕 + AI 复盘”。</strong><br />
+            现场人员少跑、商户少等、财务少对账，管理层随时看结果。
+          </div>
+
+          <div class="ops-grid">
+            <article class="ops-card cyan">
+              <strong><i></i>套餐 / 订单查询</strong>
+              <span>按车牌、手机号、车位、套餐、支付状态检索，支持退款与续期核验。</span>
+            </article>
+            <article class="ops-card">
+              <strong><i></i>应急收费管理</strong>
+              <span>断网、断电、出口故障时启用人工收费单，恢复后自动补账。</span>
+            </article>
+            <article class="ops-card purple">
+              <strong><i></i>远程视频与开关闸</strong>
+              <span>实时查看车道视频，确认车辆后远程抬杆、落杆、锁定异常车道。</span>
+            </article>
+            <article class="ops-card cyan">
+              <strong><i></i>道路停车稽查</strong>
+              <span>路侧巡检、欠费补缴提醒、违停证据采集、泊位异常上报。</span>
+            </article>
+            <article class="ops-card">
+              <strong><i></i>商户券与储值</strong>
+              <span>买券、充值、发券、退券、核销统计，支持商户额度与审批流。</span>
+            </article>
+            <article class="ops-card purple">
+              <strong><i></i>设备状态与复位</strong>
+              <span>相机、道闸、地锁、缴费机在线监测，一键复位并生成操作日志。</span>
+            </article>
+          </div>
+
+          <div class="ai-panel">
+            <div class="ai-head">
+              <div class="ai-avatar">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="5" y="6" width="14" height="12" rx="4" stroke="currentColor" stroke-width="1.8" />
+                  <circle cx="9.5" cy="12" r="1.3" fill="currentColor" />
+                  <circle cx="14.5" cy="12" r="1.3" fill="currentColor" />
+                  <path d="M12 3v3M9 18l-2 3M15 18l2 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </div>
+              <div>
+                <strong>AI 运营助手</strong>
+                <span>自然语言查数、看异常、写说明、导出 Excel</span>
+              </div>
+              <em>智能体</em>
+            </div>
+            <div class="ai-prompts">
+              <div class="ai-prompt"><i></i>帮我分析昨天营收下降原因</div>
+              <div class="ai-prompt"><i></i>导出本周商户券核销 Excel</div>
+              <div class="ai-prompt"><i></i>找出最常故障的 10 台设备</div>
+              <div class="ai-prompt"><i></i>生成异常开闸复核报告</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <section class="value-zone">
+        <div class="value-title">
+          运营管理小程序的价值：把一线处置、商户经营、设备运维和财务分析压缩到掌上闭环
+          <span>从“人找系统”升级为“任务、数据和 AI 主动找人”</span>
+        </div>
+        <div class="value-grid">
+          <article class="value-card cyan">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 11h16M6 7h12v10H6z" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 15h8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </div>
+            <div class="value-content">
+              <strong>现场问题移动化处置</strong>
+              <span>车道、设备、收费异常不用回办公室处理。</span>
+              <div class="value-highlight">现场闭环，过程留痕</div>
+            </div>
+          </article>
+
+          <article class="value-card orange">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" />
+                <path d="M9 9.5h4a2 2 0 0 1 0 4H9M12 7.5v9" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </div>
+            <div class="value-content">
+              <strong>商户权益在线经营</strong>
+              <span>商户自助买券、储值、发券，降低人工沟通成本。</span>
+              <div class="value-highlight">优惠投放可量化</div>
+            </div>
+          </article>
+
+          <article class="value-card purple">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 19V10M10 19V5M16 19v-7M22 19H2" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </div>
+            <div class="value-content">
+              <strong>经营结果即时分析</strong>
+              <span>套餐、临停、充电、券核销、欠费和退款统一看板。</span>
+              <div class="value-highlight">老板随时看关键指标</div>
+            </div>
+          </article>
+
+          <article class="value-card">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="5" y="6" width="14" height="12" rx="4" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8.5 12h.01M15.5 12h.01M12 3v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="value-content">
+              <strong>AI 让运营从查数到决策</strong>
+              <span>自动解释异常、生成报告、导出表格和建议动作。</span>
+              <div class="value-highlight">少做重复活，多做判断</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-left">
+          <i></i>
+          移动端覆盖管理人员、稽查人员、商户、客服和财务，让复杂停车运营像处理一条工作流一样简单
+        </div>
+        <div class="footer-right">MOBILE OPS · LANE CONTROL · MERCHANT COUPONS · WORK ORDERS · AI EXCEL EXPORT</div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    function resizeStage() {
+      const stage = document.getElementById("stage");
+      const baseWidth = 1600;
+      const baseHeight = 900;
+      const scale = Math.min(window.innerWidth / baseWidth, window.innerHeight / baseHeight);
+      stage.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener("resize", resizeStage);
+    resizeStage();
+  </script>
+</body>
+</html>

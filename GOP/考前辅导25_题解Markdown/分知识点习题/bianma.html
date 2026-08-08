@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>曼彻斯特编码动态教学</title>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --success: #16a34a;
+      --success-light: #dcfce7;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --warning: #d97706;
+      --warning-light: #fef3c7;
+      --purple: #7c3aed;
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #d9e1ec;
+      --wave: #172033;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        Arial,
+        sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, #dbeafe 0, transparent 25%),
+        linear-gradient(180deg, #f8fbff, var(--bg));
+      line-height: 1.7;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hero {
+      color: white;
+      padding: 60px 20px 75px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.96), rgba(124, 58, 237, 0.93));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      border: 40px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .hero::before {
+      left: -100px;
+      top: -100px;
+    }
+
+    .hero::after {
+      right: -90px;
+      bottom: -150px;
+    }
+
+    .hero h1 {
+      position: relative;
+      margin: 0;
+      font-size: clamp(30px, 6vw, 54px);
+      letter-spacing: 1px;
+    }
+
+    .hero p {
+      position: relative;
+      max-width: 760px;
+      margin: 18px auto 0;
+      font-size: 18px;
+      opacity: 0.92;
+    }
+
+    .hero-tags {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .hero-tag {
+      padding: 7px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.13);
+      backdrop-filter: blur(8px);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 15px;
+      overflow-x: auto;
+      background: rgba(255, 255, 255, 0.93);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    nav a {
+      flex: 0 0 auto;
+      color: #334155;
+      text-decoration: none;
+      padding: 8px 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    main {
+      width: min(1150px, calc(100% - 28px));
+      margin: -35px auto 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      margin-bottom: 24px;
+      padding: 28px;
+      border: 1px solid rgba(217, 225, 236, 0.85);
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: 0 14px 35px rgba(30, 41, 59, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 27px;
+    }
+
+    .card-subtitle {
+      margin-top: 0;
+      color: var(--muted);
+    }
+
+    .section-number {
+      display: inline-flex;
+      width: 38px;
+      height: 38px;
+      margin-right: 10px;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      vertical-align: middle;
+      font-size: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .knowledge-box {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .knowledge-box h3 {
+      margin: 0 0 10px;
+    }
+
+    .rule-zero,
+    .rule-one {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px;
+      border-radius: 14px;
+      margin-top: 12px;
+    }
+
+    .rule-zero {
+      background: var(--success-light);
+      border: 1px solid #86efac;
+    }
+
+    .rule-one {
+      background: var(--danger-light);
+      border: 1px solid #fca5a5;
+    }
+
+    .bit-badge {
+      flex: 0 0 auto;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 15px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .bit-badge.zero {
+      background: var(--success);
+    }
+
+    .bit-badge.one {
+      background: var(--danger);
+    }
+
+    .mini-wave {
+      width: 120px;
+      height: 55px;
+    }
+
+    .important {
+      padding: 16px 18px;
+      margin: 18px 0;
+      border-left: 5px solid var(--warning);
+      border-radius: 10px;
+      background: var(--warning-light);
+    }
+
+    .formula {
+      margin: 14px 0;
+      padding: 20px;
+      text-align: center;
+      border-radius: 16px;
+      color: #1e3a8a;
+      background: linear-gradient(135deg, #eff6ff, #eef2ff);
+      border: 1px solid #bfdbfe;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(21px, 4vw, 30px);
+    }
+
+    .formula small {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+    }
+
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 14px;
+      margin: 20px 0;
+      padding: 18px;
+      border-radius: 15px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+
+    .field {
+      flex: 1;
+      min-width: 210px;
+    }
+
+    .field.small {
+      flex: 0 1 180px;
+      min-width: 150px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #334155;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px 13px;
+      color: var(--text);
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn {
+      min-height: 45px;
+      padding: 10px 17px;
+      border: none;
+      border-radius: 11px;
+      color: white;
+      font-weight: bold;
+      background: var(--primary);
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .btn.secondary {
+      background: #475569;
+    }
+
+    .btn.success {
+      background: var(--success);
+    }
+
+    .btn.purple {
+      background: var(--purple);
+    }
+
+    .btn.warning {
+      background: var(--warning);
+    }
+
+    .wave-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: inset 0 0 30px rgba(15, 23, 42, 0.025);
+    }
+
+    .wave-container svg {
+      display: block;
+      min-width: 780px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-line {
+      width: 25px;
+      height: 4px;
+      border-radius: 3px;
+      background: var(--wave);
+    }
+
+    .legend-line.blue {
+      background: var(--primary);
+    }
+
+    .legend-line.red {
+      background: var(--danger);
+    }
+
+    .explain-panel {
+      min-height: 100px;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+
+    .current-bit {
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .question {
+      margin: 20px 0;
+      padding: 20px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+
+    .question h3 {
+      margin-top: 0;
+    }
+
+    .answer-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .answer-row input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      color: #166534;
+      background: var(--success-light);
+      border: 1px solid #86efac;
+    }
+
+    .feedback.wrong {
+      color: #991b1b;
+      background: var(--danger-light);
+      border: 1px solid #fca5a5;
+    }
+
+    .solution {
+      display: none;
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 14px;
+      background: #f1f5f9;
+      border: 1px dashed #94a3b8;
+    }
+
+    .solution.show {
+      display: block;
+    }
+
+    .steps {
+      counter-reset: lesson-step;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .steps li {
+      counter-increment: lesson-step;
+      position: relative;
+      padding: 5px 0 18px 50px;
+    }
+
+    .steps li::before {
+      content: counter(lesson-step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 50%;
+      font-weight: bold;
+      background: var(--primary);
+    }
+
+    .steps li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 37px;
+      width: 2px;
+      height: calc(100% - 37px);
+      background: #bfdbfe;
+    }
+
+    .calculation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .calculation-table th,
+    .calculation-table td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    .calculation-table th {
+      background: #eff6ff;
+    }
+
+    .score-board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .score-item {
+      min-width: 140px;
+      flex: 1;
+      padding: 17px;
+      text-align: center;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+
+    .score-item strong {
+      display: block;
+      color: var(--primary);
+      font-size: 28px;
+    }
+
+    .hidden-answer {
+      filter: blur(7px);
+      user-select: none;
+      transition: 0.25s;
+    }
+
+    .hidden-answer.revealed {
+      filter: none;
+      user-select: auto;
+    }
+
+    footer {
+      padding: 28px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .pulse {
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        opacity: 0.35;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 16px;
+      }
+
+      main {
+        width: min(100% - 18px, 1150px);
+      }
+
+      .hero {
+        padding: 45px 16px 65px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="hero">
+    <h1>曼彻斯特编码动态课堂</h1>
+    <p>
+      从波形识别比特，理解传输速率与波特率，
+      最后独立完成题目中的三个问题。
+    </p>
+
+    <div class="hero-tags">
+      <span class="hero-tag">Manchester Encoding</span>
+      <span class="hero-tag">传输速率</span>
+      <span class="hero-tag">Baud Rate</span>
+      <span class="hero-tag">互动练习</span>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#knowledge">基础知识</a>
+    <a href="#demonstration">动态演示</a>
+    <a href="#original-question">原题练习</a>
+    <a href="#rate">速率计算</a>
+    <a href="#practice">随机练习</a>
+    <a href="#summary">知识总结</a>
+  </nav>
+
+  <main>
+
+    <!-- 第一部分 -->
+    <section class="card" id="knowledge">
+      <h2>
+        <span class="section-number">1</span>
+        什么是曼彻斯特编码？
+      </h2>
+
+      <p class="card-subtitle">
+        曼彻斯特编码的关键特征：每个比特的中间一定发生一次电平跳变。
+      </p>
+
+      <div class="grid-2">
+        <div class="knowledge-box">
+          <h3>普通二进制信号</h3>
+          <p>
+            普通信号可能长时间保持高电平或低电平。
+            如果连续传输很多个相同的比特，接收方可能难以判断每一位从哪里开始。
+          </p>
+        </div>
+
+        <div class="knowledge-box">
+          <h3>曼彻斯特编码</h3>
+          <p>
+            每一个比特周期都被分成前、后两个半周期，
+            中间的跳变既表示数据，也能够帮助发送方和接收方同步时钟。
+          </p>
+        </div>
+      </div>
+
+      <div class="important">
+        <strong>本题使用的规则：</strong>
+        比特中间由低电平跳到高电平表示 0；
+        由高电平跳到低电平表示 1。
+      </div>
+
+      <div class="rule-zero">
+        <div class="bit-badge zero">0</div>
+
+        <svg class="mini-wave" viewBox="0 0 120 55">
+          <line x1="0" y1="42" x2="60" y2="42"
+                stroke="#16a34a" stroke-width="5" />
+          <line x1="60" y1="42" x2="60" y2="12"
+                stroke="#16a34a" stroke-width="5" />
+          <line x1="60" y1="12" x2="120" y2="12"
+                stroke="#16a34a" stroke-width="5" />
+        </svg>
+
+        <div>
+          <strong>0 = 低 → 高</strong>
+          <div>在比特周期的中间出现上升沿。</div>
+        </div>
+      </div>
+
+      <div class="rule-one">
+        <div class="bit-badge one">1</div>
+
+        <svg class="mini-wave" viewBox="0 0 120 55">
+          <line x1="0" y1="12" x2="60" y2="12"
+                stroke="#dc2626" stroke-width="5" />
+          <line x1="60" y1="12" x2="60" y2="42"
+                stroke="#dc2626" stroke-width="5" />
+          <line x1="60" y1="42" x2="120" y2="42"
+                stroke="#dc2626" stroke-width="5" />
+        </svg>
+
+        <div>
+          <strong>1 = 高 → 低</strong>
+          <div>在比特周期的中间出现下降沿。</div>
+        </div>
+      </div>
+
+      <div class="important">
+        <strong>注意：</strong>
+        曼彻斯特编码存在不同约定。有些教材会把 0 和 1 的跳变方向对调。
+        做题时必须先根据题目、教材或已知波形确认规则。
+        本页面完全按照图片中的规则：
+        <strong>低→高为 0，高→低为 1。</strong>
+      </div>
+    </section>
+
+    <!-- 第二部分 -->
+    <section class="card" id="demonstration">
+      <h2>
+        <span class="section-number">2</span>
+        动态观察编码过程
+      </h2>
+
+      <p class="card-subtitle">
+        输入任意二进制序列，页面会自动绘制时钟与曼彻斯特编码波形。
+      </p>
+
+      <div class="control-panel">
+        <div class="field">
+          <label for="demoBits">输入二进制序列</label>
+          <input
+            id="demoBits"
+            type="text"
+            value="011010011001"
+            maxlength="20"
+            placeholder="例如：011010011001"
+          />
+        </div>
+
+        <button class="btn" onclick="drawDemo()">
+          生成波形
+        </button>
+
+        <button class="btn purple" onclick="startAnimation()">
+          逐位讲解
+        </button>
+
+        <button class="btn secondary" onclick="stopAnimation()">
+          停止动画
+        </button>
+      </div>
+
+      <div class="wave-container">
+        <svg
+          id="demoSvg"
+          width="100%"
+          height="320"
+          role="img"
+          aria-label="曼彻斯特编码波形"
+        ></svg>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-line blue"></span>
+          时钟信号
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-line"></span>
+          曼彻斯特信号
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-line red"></span>
+          当前分析位置
+        </div>
+      </div>
+
+      <div class="explain-panel" id="animationExplanation">
+        点击“逐位讲解”，观察每一个比特中间的跳变方向。
+      </div>
+    </section>
+
+    <!-- 第三部分：原题 -->
+    <section class="card" id="original-question">
+      <h2>
+        <span class="section-number">3</span>
+        完成原题：读取波形
+      </h2>
+
+      <p class="card-subtitle">
+        暂时不要看答案。按照“低→高为 0，高→低为 1”的规则，从左到右分析。
+      </p>
+
+      <div class="wave-container">
+        <svg
+          id="questionSvg"
+          width="100%"
+          height="250"
+          role="img"
+          aria-label="原题曼彻斯特波形"
+        ></svg>
+      </div>
+
+      <div class="question">
+        <h3>问题（a）：波形表示的比特序列是什么？</h3>
+
+        <p>
+          请连续输入所有比特，不需要空格。例如：
+          <code>0101</code>
+        </p>
+
+        <div class="answer-row">
+          <input
+            id="originalBitAnswer"
+            type="text"
+            maxlength="20"
+            placeholder="输入波形对应的比特序列"
+          />
+
+          <button class="btn success" onclick="checkOriginalBits()">
+            检查答案
+          </button>
+
+          <button class="btn secondary" onclick="toggleBitHints()">
+            显示/隐藏分位提示
+          </button>
+        </div>
+
+        <div id="bitHints" style="display:none; margin-top:18px;"></div>
+        <div id="originalBitFeedback" class="feedback"></div>
+      </div>
+
+      <button class="btn warning" onclick="toggleSolution('bitSolution')">
+        查看完整解析
+      </button>
+
+      <div class="solution" id="bitSolution">
+        <h3>读取方法</h3>
+
+        <ol class="steps">
+          <li>先利用竖直虚线将波形划分成 12 个比特周期。</li>
+          <li>只观察每个比特正中间的跳变，不要优先分析边界跳变。</li>
+          <li>中间低→高，记录为 0。</li>
+          <li>中间高→低，记录为 1。</li>
+          <li>从左到右组合全部结果。</li>
+        </ol>
+
+        <p>
+          最终序列为：
+          <strong class="hidden-answer" onclick="this.classList.toggle('revealed')">
+            011010011001
+          </strong>
+        </p>
+
+        <p style="color:var(--muted);">
+          点击模糊的答案可以显示或隐藏。
+        </p>
+      </div>
+    </section>
+
+    <!-- 第四部分：速率 -->
+    <section class="card" id="rate">
+      <h2>
+        <span class="section-number">4</span>
+        传输速率和波特率
+      </h2>
+
+      <div class="grid-2">
+        <div class="knowledge-box">
+          <h3>传输速率 Bit Rate</h3>
+          <p>
+            表示每秒传输了多少个数据比特，单位通常为
+            <strong>bit/s 或 bps</strong>。
+          </p>
+
+          <div class="formula">
+            R<sub>b</sub> = N ÷ T
+            <small>N 是比特数，T 是以秒为单位的时间</small>
+          </div>
+        </div>
+
+        <div class="knowledge-box">
+          <h3>波特率 Baud Rate</h3>
+          <p>
+            在本题的计算模型中，一个数据比特包含两个信号单元，
+            因此曼彻斯特编码的波特率是比特率的 2 倍。
+          </p>
+
+          <div class="formula">
+            R<sub>s</sub> = 2 × R<sub>b</sub>
+            <small>Rₛ 为波特率，单位是 Baud</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="important">
+        时间必须先换算为秒：
+        <strong>1 ms = 0.001 s = 10<sup>-3</sup> s</strong>
+      </div>
+
+      <div class="question">
+        <h3>问题（b-i）：12 bit 在 1 ms 内传完，传输速率是多少？</h3>
+
+        <div class="answer-row">
+          <input
+            id="bitRateAnswer"
+            type="number"
+            min="0"
+            placeholder="输入数值，单位 bit/s"
+          />
+
+          <span>bit/s</span>
+
+          <button class="btn success" onclick="checkBitRate()">
+            检查答案
+          </button>
+        </div>
+
+        <div id="bitRateFeedback" class="feedback"></div>
+      </div>
+
+      <div class="question">
+        <h3>问题（b-ii）：曼彻斯特信号的波特率是多少？</h3>
+
+        <div class="answer-row">
+          <input
+            id="baudAnswer"
+            type="number"
+            min="0"
+            placeholder="输入数值，单位 Baud"
+          />
+
+          <span>Baud</span>
+
+          <button class="btn success" onclick="checkBaudRate()">
+            检查答案
+          </button>
+        </div>
+
+        <div id="baudFeedback" class="feedback"></div>
+      </div>
+
+      <button class="btn warning" onclick="toggleSolution('rateSolution')">
+        查看计算过程
+      </button>
+
+      <div class="solution" id="rateSolution">
+        <table class="calculation-table">
+          <thead>
+            <tr>
+              <th>步骤</th>
+              <th>计算</th>
+              <th>结果</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>时间换算</td>
+              <td>1 ms = 1 ÷ 1000 s</td>
+              <td>0.001 s</td>
+            </tr>
+
+            <tr>
+              <td>计算比特率</td>
+              <td>12 bit ÷ 0.001 s</td>
+              <td>12000 bit/s</td>
+            </tr>
+
+            <tr>
+              <td>计算波特率</td>
+              <td>2 × 12000</td>
+              <td>24000 Baud</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 第五部分：计算器 -->
+    <section class="card">
+      <h2>
+        <span class="section-number">5</span>
+        速率计算器
+      </h2>
+
+      <p class="card-subtitle">
+        改变比特数量和传输时间，观察结果如何变化。
+      </p>
+
+      <div class="control-panel">
+        <div class="field small">
+          <label for="calculatorBits">比特数量 N</label>
+          <input id="calculatorBits" type="number" min="1" value="12" />
+        </div>
+
+        <div class="field small">
+          <label for="calculatorTime">传输时间（ms）</label>
+          <input
+            id="calculatorTime"
+            type="number"
+            min="0.001"
+            step="0.1"
+            value="1"
+          />
+        </div>
+
+        <button class="btn" onclick="calculateRate()">
+          开始计算
+        </button>
+      </div>
+
+      <div id="calculatorResult" class="formula">
+        请输入数据并点击“开始计算”
+      </div>
+    </section>
+
+    <!-- 第六部分：随机练习 -->
+    <section class="card" id="practice">
+      <h2>
+        <span class="section-number">6</span>
+        随机波形挑战
+      </h2>
+
+      <p class="card-subtitle">
+        页面会随机生成一个曼彻斯特编码波形，请判断其中的比特序列。
+      </p>
+
+      <div class="score-board">
+        <div class="score-item">
+          <strong id="correctCount">0</strong>
+          答对
+        </div>
+
+        <div class="score-item">
+          <strong id="wrongCount">0</strong>
+          答错
+        </div>
+
+        <div class="score-item">
+          <strong id="accuracy">0%</strong>
+          正确率
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <div class="field small">
+          <label for="practiceLength">序列长度</label>
+          <input
+            id="practiceLength"
+            type="number"
+            min="3"
+            max="12"
+            value="8"
+          />
+        </div>
+
+        <button class="btn purple" onclick="newPractice()">
+          生成新题目
+        </button>
+      </div>
+
+      <div class="wave-container">
+        <svg
+          id="practiceSvg"
+          width="100%"
+          height="245"
+          role="img"
+          aria-label="随机曼彻斯特编码练习"
+        ></svg>
+      </div>
+
+      <div class="question">
+        <h3>请输入波形对应的比特序列</h3>
+
+        <div class="answer-row">
+          <input
+            id="practiceAnswer"
+            type="text"
+            placeholder="例如：01011010"
+          />
+
+          <button class="btn success" onclick="checkPractice()">
+            提交答案
+          </button>
+
+          <button class="btn secondary" onclick="showPracticeAnswer()">
+            显示答案
+          </button>
+        </div>
+
+        <div id="practiceFeedback" class="feedback"></div>
+      </div>
+    </section>
+
+    <!-- 总结 -->
+    <section class="card" id="summary">
+      <h2>
+        <span class="section-number">7</span>
+        解题口诀与最终答案
+      </h2>
+
+      <div class="grid-2">
+        <div class="knowledge-box">
+          <h3>读取波形口诀</h3>
+          <ol>
+            <li>先按照虚线划分比特周期。</li>
+            <li>观察每一位中间的跳变。</li>
+            <li>低到高记作 0。</li>
+            <li>高到低记作 1。</li>
+            <li>从左到右连接全部比特。</li>
+          </ol>
+        </div>
+
+        <div class="knowledge-box">
+          <h3>速率计算口诀</h3>
+          <ol>
+            <li>毫秒先除以 1000，换算成秒。</li>
+            <li>比特率 = 比特数 ÷ 时间。</li>
+            <li>本题曼彻斯特波特率 = 2 × 比特率。</li>
+            <li>注意区分 bit/s 和 Baud。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="important">
+        <strong>原题最终答案：</strong><br />
+        （a）比特序列：
+        <strong>011010011001</strong><br />
+        （b-i）传输速率：
+        <strong>12000 bit/s</strong><br />
+        （b-ii）波特率：
+        <strong>24000 Baud</strong>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    曼彻斯特编码动态教学页面 · 单文件 HTML 作业
+  </footer>
+
+  <script>
+    // 本题使用的原始比特序列
+    const originalBits = "011010011001";
+
+    let animationTimer = null;
+    let animationIndex = 0;
+
+    let practiceBits = "";
+    let correctCount = 0;
+    let wrongCount = 0;
+    let practiceAnswered = false;
+
+    /**
+     * 清理二进制输入，只保留 0 和 1。
+     */
+    function cleanBits(value) {
+      return String(value).replace(/[^01]/g, "");
+    }
+
+    /**
+     * 创建 SVG 元素。
+     */
+    function createSvgElement(name, attributes = {}) {
+      const element = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        name
+      );
+
+      for (const [key, value] of Object.entries(attributes)) {
+        element.setAttribute(key, value);
+      }
+
+      return element;
+    }
+
+    /**
+     * 向 SVG 添加文字。
+     */
+    function addText(svg, x, y, text, options = {}) {
+      const element = createSvgElement("text", {
+        x,
+        y,
+        fill: options.fill || "#334155",
+        "font-size": options.fontSize || 15,
+        "font-weight": options.fontWeight || "normal",
+        "text-anchor": options.anchor || "middle",
+        "font-family": "Microsoft YaHei, Arial, sans-serif"
+      });
+
+      element.textContent = text;
+      svg.appendChild(element);
+      return element;
+    }
+
+    /**
+     * 绘制曼彻斯特波形。
+     *
+     * 本题规则：
+     * 0 = 低到高
+     * 1 = 高到低
+     */
+    function drawManchester(svgId, bits, options = {}) {
+      const svg = document.getElementById(svgId);
+
+      if (!svg) return;
+
+      bits = cleanBits(bits);
+
+      if (!bits) {
+        svg.innerHTML = "";
+        return;
+      }
+
+      const showBits = options.showBits !== false;
+      const showClock = options.showClock !== false;
+      const showLabels = options.showLabels !== false;
+      const showBitNumbers = options.showBitNumbers === true;
+
+      const bitWidth = 72;
+      const left = 100;
+      const right = 30;
+      const width = left + bits.length * bitWidth + right;
+      const height = showClock ? 300 : 235;
+
+      const clockHigh = 50;
+      const clockLow = 82;
+
+      const bitTextY = showClock ? 135 : 50;
+      const waveHigh = showClock ? 185 : 100;
+      const waveLow = showClock ? 235 : 150;
+      const gridTop = showClock ? 108 : 28;
+      const gridBottom = waveLow + 25;
+
+      svg.innerHTML = "";
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.setAttribute("height", height);
+
+      // 背景
+      svg.appendChild(
+        createSvgElement("rect", {
+          x: 0,
+          y: 0,
+          width,
+          height,
+          fill: "#ffffff"
+        })
+      );
+
+      // 标签
+      if (showLabels) {
+        if (showClock) {
+          addText(svg, 18, 70, "时钟", {
+            anchor: "start",
+            fontWeight: "bold"
+          });
+        }
+
+        if (showBits) {
+          addText(svg, 18, bitTextY, "Bits", {
+            anchor: "start",
+            fontWeight: "bold"
+          });
+        }
+
+        addText(svg, 18, (waveHigh + waveLow) / 2 + 5, "Manchester", {
+          anchor: "start",
+          fontWeight: "bold"
+        });
+      }
+
+      // 每个比特的背景和网格
+      for (let i = 0; i < bits.length; i++) {
+        const x = left + i * bitWidth;
+
+        svg.appendChild(
+          createSvgElement("rect", {
+            x,
+            y: gridTop,
+            width: bitWidth,
+            height: gridBottom - gridTop,
+            fill: i % 2 === 0 ? "#f8fafc" : "#ffffff"
+          })
+        );
+
+        // 比特边界
+        svg.appendChild(
+          createSvgElement("line", {
+            x1: x,
+            y1: gridTop,
+            x2: x,
+            y2: gridBottom,
+            stroke: "#94a3b8",
+            "stroke-width": 1.2,
+            "stroke-dasharray": "5 5"
+          })
+        );
+
+        // 中间位置
+        svg.appendChild(
+          createSvgElement("line", {
+            x1: x + bitWidth / 2,
+            y1: gridTop,
+            x2: x + bitWidth / 2,
+            y2: gridBottom,
+            stroke: "#cbd5e1",
+            "stroke-width": 1,
+            "stroke-dasharray": "3 5"
+          })
+        );
+
+        if (showBits) {
+          addText(
+            svg,
+            x + bitWidth / 2,
+            bitTextY,
+            bits[i],
+            {
+              fontSize: 20,
+              fontWeight: "bold",
+              fill: bits[i] === "0" ? "#16a34a" : "#dc2626"
+            }
+          );
+        }
+
+        if (showBitNumbers) {
+          addText(
+            svg,
+            x + bitWidth / 2,
+            gridBottom + 18,
+            String(i + 1),
+            {
+              fontSize: 12,
+              fill: "#64748b"
+            }
+          );
+        }
+      }
+
+      // 最后一条边界
+      const finalX = left + bits.length * bitWidth;
+
+      svg.appendChild(
+        createSvgElement("line", {
+          x1: finalX,
+          y1: gridTop,
+          x2: finalX,
+          y2: gridBottom,
+          stroke: "#94a3b8",
+          "stroke-width": 1.2,
+          "stroke-dasharray": "5 5"
+        })
+      );
+
+      // 时钟信号
+      if (showClock) {
+        let clockPath = "";
+
+        for (let i = 0; i < bits.length; i++) {
+          const x = left + i * bitWidth;
+          const middle = x + bitWidth / 2;
+          const end = x + bitWidth;
+
+          if (i === 0) {
+            clockPath += `M ${x} ${clockHigh} `;
+          } else {
+            clockPath += `V ${clockHigh} `;
+          }
+
+          clockPath += `H ${middle} `;
+          clockPath += `V ${clockLow} `;
+          clockPath += `H ${end} `;
+        }
+
+        svg.appendChild(
+          createSvgElement("path", {
+            d: clockPath,
+            fill: "none",
+            stroke: "#2563eb",
+            "stroke-width": 3,
+            "stroke-linejoin": "round"
+          })
+        );
+      }
+
+      // 曼彻斯特波形
+      let pathData = "";
+      let previousEndY = null;
+
+      for (let i = 0; i < bits.length; i++) {
+        const bit = bits[i];
+        const x = left + i * bitWidth;
+        const middle = x + bitWidth / 2;
+        const end = x + bitWidth;
+
+        // 0：低到高
+        // 1：高到低
+        const firstY = bit === "0" ? waveLow : waveHigh;
+        const secondY = bit === "0" ? waveHigh : waveLow;
+
+        if (i === 0) {
+          pathData += `M ${x} ${firstY} `;
+        } else if (previousEndY !== firstY) {
+          // 比特边界处可能发生跳变
+          pathData += `V ${firstY} `;
+        }
+
+        pathData += `H ${middle} `;
+        pathData += `V ${secondY} `;
+        pathData += `H ${end} `;
+
+        previousEndY = secondY;
+      }
+
+      svg.appendChild(
+        createSvgElement("path", {
+          d: pathData,
+          fill: "none",
+          stroke: "#172033",
+          "stroke-width": 4,
+          "stroke-linecap": "square",
+          "stroke-linejoin": "miter"
+        })
+      );
+
+      // 高低电平标记
+      addText(svg, left - 12, waveHigh + 5, "高", {
+        anchor: "end",
+        fontSize: 12,
+        fill: "#64748b"
+      });
+
+      addText(svg, left - 12, waveLow + 5, "低", {
+        anchor: "end",
+        fontSize: 12,
+        fill: "#64748b"
+      });
+
+      return {
+        width,
+        bitWidth,
+        left,
+        waveHigh,
+        waveLow,
+        gridTop,
+        gridBottom
+      };
+    }
+
+    /**
+     * 绘制演示波形。
+     */
+    function drawDemo() {
+      const input = document.getElementById("demoBits");
+      const bits = cleanBits(input.value).slice(0, 20);
+
+      input.value = bits;
+
+      if (!bits) {
+        alert("请输入只包含 0 和 1 的二进制序列。");
+        return;
+      }
+
+      stopAnimation();
+
+      drawManchester("demoSvg", bits, {
+        showBits: true,
+        showClock: true,
+        showLabels: true,
+        showBitNumbers: true
+      });
+
+      document.getElementById("animationExplanation").innerHTML =
+        `当前序列共有 <strong>${bits.length}</strong> bit。` +
+        `点击“逐位讲解”可以逐个分析。`;
+    }
+
+    /**
+     * 开始逐位动画。
+     */
+    function startAnimation() {
+      stopAnimation();
+      drawDemo();
+
+      const input = document.getElementById("demoBits");
+      const bits = cleanBits(input.value);
+
+      if (!bits) return;
+
+      const svg = document.getElementById("demoSvg");
+      const bitWidth = 72;
+      const left = 100;
+      const gridTop = 108;
+      const gridBottom = 260;
+
+      animationIndex = 0;
+
+      function showCurrentBit() {
+        // 删除上一次高亮
+        const oldHighlight = svg.querySelector("#animationHighlight");
+        const oldScanner = svg.querySelector("#animationScanner");
+
+        if (oldHighlight) oldHighlight.remove();
+        if (oldScanner) oldScanner.remove();
+
+        if (animationIndex >= bits.length) {
+          document.getElementById("animationExplanation").innerHTML =
+            `<strong style="color:#16a34a;">讲解完成！</strong> ` +
+            `整个序列为 <strong>${bits}</strong>。`;
+
+          stopAnimation(false);
+          return;
+        }
+
+        const bit = bits[animationIndex];
+        const x = left + animationIndex * bitWidth;
+        const middleX = x + bitWidth / 2;
+
+        const highlight = createSvgElement("rect", {
+          id: "animationHighlight",
+          x,
+          y: gridTop,
+          width: bitWidth,
+          height: gridBottom - gridTop,
+          fill: bit === "0"
+            ? "rgba(22,163,74,0.13)"
+            : "rgba(220,38,38,0.13)",
+          stroke: bit === "0" ? "#16a34a" : "#dc2626",
+          "stroke-width": 2,
+          rx: 5
+        });
+
+        const scanner = createSvgElement("line", {
+          id: "animationScanner",
+          x1: middleX,
+          y1: gridTop,
+          x2: middleX,
+          y2: gridBottom,
+          stroke: "#dc2626",
+          "stroke-width": 3,
+          "stroke-dasharray": "7 5",
+          class: "pulse"
+        });
+
+        // 插入到波形前面，避免完全遮挡
+        svg.insertBefore(highlight, svg.children[1]);
+        svg.appendChild(scanner);
+
+        const direction =
+          bit === "0"
+            ? "低电平跳到高电平（上升沿）"
+            : "高电平跳到低电平（下降沿）";
+
+        const color = bit === "0" ? "#16a34a" : "#dc2626";
+
+        document.getElementById("animationExplanation").innerHTML = `
+          <div class="current-bit">
+            第 ${animationIndex + 1} 位：比特
+            <span style="color:${color};">${bit}</span>
+          </div>
+          <div>
+            观察这一位正中间：信号由
+            <strong>${direction}</strong>，
+            因此判断为 <strong>${bit}</strong>。
+          </div>
+        `;
+
+        animationIndex++;
+      }
+
+      showCurrentBit();
+      animationTimer = setInterval(showCurrentBit, 1600);
+    }
+
+    /**
+     * 停止动画。
+     */
+    function stopAnimation(clearMessage = true) {
+      if (animationTimer) {
+        clearInterval(animationTimer);
+        animationTimer = null;
+      }
+
+      const svg = document.getElementById("demoSvg");
+
+      if (svg) {
+        const highlight = svg.querySelector("#animationHighlight");
+        const scanner = svg.querySelector("#animationScanner");
+
+        if (highlight) highlight.remove();
+        if (scanner) scanner.remove();
+      }
+
+      if (clearMessage) {
+        const panel = document.getElementById("animationExplanation");
+
+        if (panel) {
+          panel.innerHTML =
+            "动画已停止。点击“逐位讲解”可以重新开始。";
+        }
+      }
+    }
+
+    /**
+     * 显示反馈。
+     */
+    function showFeedback(elementId, correct, html) {
+      const element = document.getElementById(elementId);
+
+      element.className =
+        "feedback show " + (correct ? "correct" : "wrong");
+
+      element.innerHTML = html;
+    }
+
+    /**
+     * 检查原题比特序列。
+     */
+    function checkOriginalBits() {
+      const input = document.getElementById("originalBitAnswer");
+      const answer = cleanBits(input.value);
+
+      input.value = answer;
+
+      if (!answer) {
+        showFeedback(
+          "originalBitFeedback",
+          false,
+          "请先输入一个二进制序列。"
+        );
+        return;
+      }
+
+      if (answer === originalBits) {
+        showFeedback(
+          "originalBitFeedback",
+          true,
+          "回答正确！波形对应的比特序列是 011010011001。"
+        );
+        return;
+      }
+
+      let firstWrong = -1;
+      const compareLength = Math.min(answer.length, originalBits.length);
+
+      for (let i = 0; i < compareLength; i++) {
+        if (answer[i] !== originalBits[i]) {
+          firstWrong = i;
+          break;
+        }
+      }
+
+      if (answer.length !== originalBits.length && firstWrong === -1) {
+        showFeedback(
+          "originalBitFeedback",
+          false,
+          `长度不正确。题目中共有 ${originalBits.length} 个比特，` +
+          `你输入了 ${answer.length} 个。`
+        );
+      } else {
+        showFeedback(
+          "originalBitFeedback",
+          false,
+          `答案还不正确。请重点检查第 ${firstWrong + 1} 位中间的跳变方向。`
+        );
+      }
+    }
+
+    /**
+     * 显示每一位的读取提示。
+     */
+    function toggleBitHints() {
+      const container = document.getElementById("bitHints");
+
+      if (container.style.display === "block") {
+        container.style.display = "none";
+        return;
+      }
+
+      container.style.display = "block";
+      container.innerHTML = "";
+
+      const wrapper = document.createElement("div");
+      wrapper.style.display = "grid";
+      wrapper.style.gridTemplateColumns =
+        "repeat(auto-fit, minmax(110px, 1fr))";
+      wrapper.style.gap = "10px";
+
+      [...originalBits].forEach((bit, index) => {
+        const item = document.createElement("div");
+
+        item.style.padding = "12px";
+        item.style.borderRadius = "10px";
+        item.style.textAlign = "center";
+        item.style.background =
+          bit === "0" ? "#dcfce7" : "#fee2e2";
+        item.style.border =
+          bit === "0"
+            ? "1px solid #86efac"
+            : "1px solid #fca5a5";
+
+        item.innerHTML = `
+          <strong>第 ${index + 1} 位</strong><br>
+          ${bit === "0" ? "低 → 高" : "高 → 低"}<br>
+          <strong>= ${bit}</strong>
+        `;
+
+        wrapper.appendChild(item);
+      });
+
+      container.appendChild(wrapper);
+    }
+
+    /**
+     * 检查比特率。
+     */
+    function checkBitRate() {
+      const value = Number(
+        document.getElementById("bitRateAnswer").value
+      );
+
+      if (!Number.isFinite(value) || value <= 0) {
+        showFeedback(
+          "bitRateFeedback",
+          false,
+          "请输入一个有效的正数。"
+        );
+        return;
+      }
+
+      if (value === 12000) {
+        showFeedback(
+          "bitRateFeedback",
+          true,
+          "正确！12 ÷ 0.001 = 12000 bit/s，也可以写成 12 kbit/s。"
+        );
+      } else if (value === 12) {
+        showFeedback(
+          "bitRateFeedback",
+          false,
+          "你可能忘记了单位换算。1 ms = 0.001 s，不是 1 s。"
+        );
+      } else {
+        showFeedback(
+          "bitRateFeedback",
+          false,
+          "答案不正确。请使用：比特率 = 12 bit ÷ 0.001 s。"
+        );
+      }
+    }
+
+    /**
+     * 检查波特率。
+     */
+    function checkBaudRate() {
+      const value = Number(
+        document.getElementById("baudAnswer").value
+      );
+
+      if (!Number.isFinite(value) || value <= 0) {
+        showFeedback(
+          "baudFeedback",
+          false,
+          "请输入一个有效的正数。"
+        );
+        return;
+      }
+
+      if (value === 24000) {
+        showFeedback(
+          "baudFeedback",
+          true,
+          "正确！曼彻斯特编码的波特率 = 2 × 12000 = 24000 Baud。"
+        );
+      } else if (value === 12000) {
+        showFeedback(
+          "baudFeedback",
+          false,
+          "12000 是比特率。本题中每个比特包含两个信号单元，" +
+          "还需要乘以 2。"
+        );
+      } else {
+        showFeedback(
+          "baudFeedback",
+          false,
+          "答案不正确。先求出 12000 bit/s，再乘以 2。"
+        );
+      }
+    }
+
+    /**
+     * 显示或隐藏解析。
+     */
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      solution.classList.toggle("show");
+    }
+
+    /**
+     * 速率计算器。
+     */
+    function calculateRate() {
+      const bits = Number(
+        document.getElementById("calculatorBits").value
+      );
+
+      const timeMs = Number(
+        document.getElementById("calculatorTime").value
+      );
+
+      const result = document.getElementById("calculatorResult");
+
+      if (
+        !Number.isFinite(bits) ||
+        !Number.isFinite(timeMs) ||
+        bits <= 0 ||
+        timeMs <= 0
+      ) {
+        result.innerHTML =
+          '<span style="color:#dc2626;">请输入有效的正数。</span>';
+        return;
+      }
+
+      const timeSeconds = timeMs / 1000;
+      const bitRate = bits / timeSeconds;
+      const baudRate = bitRate * 2;
+
+      result.innerHTML = `
+        <div style="font-size:18px; line-height:1.9;">
+          时间：${timeMs} ms = ${formatNumber(timeSeconds)} s<br>
+          比特率：
+          ${formatNumber(bits)} ÷ ${formatNumber(timeSeconds)}
+          = <strong>${formatNumber(bitRate)} bit/s</strong><br>
+          曼彻斯特波特率：
+          2 × ${formatNumber(bitRate)}
+          = <strong>${formatNumber(baudRate)} Baud</strong>
+        </div>
+      `;
+    }
+
+    /**
+     * 数字格式化。
+     */
+    function formatNumber(number) {
+      return Number(number.toFixed(6)).toLocaleString("zh-CN");
+    }
+
+    /**
+     * 生成随机二进制序列。
+     */
+    function generateRandomBits(length) {
+      let result = "";
+
+      for (let i = 0; i < length; i++) {
+        result += Math.random() < 0.5 ? "0" : "1";
+      }
+
+      return result;
+    }
+
+    /**
+     * 生成新练习。
+     */
+    function newPractice() {
+      let length = Number(
+        document.getElementById("practiceLength").value
+      );
+
+      if (!Number.isInteger(length)) length = 8;
+
+      length = Math.max(3, Math.min(12, length));
+      document.getElementById("practiceLength").value = length;
+
+      practiceBits = generateRandomBits(length);
+      practiceAnswered = false;
+
+      document.getElementById("practiceAnswer").value = "";
+
+      const feedback = document.getElementById("practiceFeedback");
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+
+      drawManchester("practiceSvg", practiceBits, {
+        showBits: false,
+        showClock: false,
+        showLabels: true,
+        showBitNumbers: true
+      });
+    }
+
+    /**
+     * 检查随机练习。
+     */
+    function checkPractice() {
+      if (practiceAnswered) {
+        showFeedback(
+          "practiceFeedback",
+          false,
+          "这道题已经提交过了，请点击“生成新题目”继续练习。"
+        );
+        return;
+      }
+
+      const input = document.getElementById("practiceAnswer");
+      const answer = cleanBits(input.value);
+
+      input.value = answer;
+
+      if (!answer) {
+        showFeedback(
+          "practiceFeedback",
+          false,
+          "请先输入你的答案。"
+        );
+        return;
+      }
+
+      practiceAnswered = true;
+
+      if (answer === practiceBits) {
+        correctCount++;
+
+        showFeedback(
+          "practiceFeedback",
+          true,
+          `回答正确！波形对应的序列是 ${practiceBits}。`
+        );
+      } else {
+        wrongCount++;
+
+        showFeedback(
+          "practiceFeedback",
+          false,
+          `回答错误。你输入的是 ${answer}，` +
+          `正确答案是 ${practiceBits}。`
+        );
+      }
+
+      updateScore();
+    }
+
+    /**
+     * 显示随机练习答案。
+     */
+    function showPracticeAnswer() {
+      if (!practiceBits) return;
+
+      showFeedback(
+        "practiceFeedback",
+        false,
+        `正确答案是：${practiceBits}。请观察每一位中间的跳变方向。`
+      );
+    }
+
+    /**
+     * 更新成绩统计。
+     */
+    function updateScore() {
+      const total = correctCount + wrongCount;
+      const accuracy =
+        total === 0
+          ? 0
+          : Math.round((correctCount / total) * 100);
+
+      document.getElementById("correctCount").textContent =
+        correctCount;
+
+      document.getElementById("wrongCount").textContent =
+        wrongCount;
+
+      document.getElementById("accuracy").textContent =
+        accuracy + "%";
+    }
+
+    /**
+     * 支持按 Enter 提交。
+     */
+    function bindEnterKey(inputId, callback) {
+      document
+        .getElementById(inputId)
+        .addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            callback();
+          }
+        });
+    }
+
+    /**
+     * 页面初始化。
+     */
+    window.addEventListener("DOMContentLoaded", function () {
+      drawManchester("demoSvg", originalBits, {
+        showBits: true,
+        showClock: true,
+        showLabels: true,
+        showBitNumbers: true
+      });
+
+      drawManchester("questionSvg", originalBits, {
+        showBits: false,
+        showClock: false,
+        showLabels: true,
+        showBitNumbers: true
+      });
+
+      calculateRate();
+      newPractice();
+
+      bindEnterKey("demoBits", drawDemo);
+      bindEnterKey("originalBitAnswer", checkOriginalBits);
+      bindEnterKey("bitRateAnswer", checkBitRate);
+      bindEnterKey("baudAnswer", checkBaudRate);
+      bindEnterKey("practiceAnswer", checkPractice);
+    });
+  </script>
+
+</body>
+</html>

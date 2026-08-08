@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#020713" />
+    <title>深空地球观测指挥中心</title>
+
+    <!--
+    使用 Import Map 固定 Three.js 与附加模块版本。
+    如需长期部署，建议下载到本地服务器，避免依赖第三方 CDN。
+  -->
+    <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+  }
+}
+</script>
+
+    <style>
+        :root {
+            --cyan: #4cecff;
+            --cyan-soft: rgba(76, 236, 255, 0.28);
+            --cyan-faint: rgba(76, 236, 255, 0.08);
+            --blue: #147eff;
+            --panel: rgba(3, 12, 28, 0.66);
+            --panel-dark: rgba(2, 8, 20, 0.88);
+            --line: rgba(92, 224, 255, 0.2);
+            --text: #d9f8ff;
+            --muted: #6c98ac;
+            --warning: #ffcf62;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #01040b;
+            color: var(--text);
+            font-family:
+                Inter, "SF Pro Display", "Segoe UI", "Microsoft YaHei",
+                system-ui, sans-serif;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 50% 46%, rgba(11, 58, 97, 0.22), transparent 34%),
+                radial-gradient(circle at 75% 15%, rgba(14, 72, 110, 0.16), transparent 25%),
+                linear-gradient(145deg, #000207 0%, #020815 48%, #04152a 100%);
+        }
+
+        /* Three.js 渲染容器 */
+        #scene-container {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+        }
+
+        #scene-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            outline: none;
+        }
+
+        #scene-container canvas:active {
+            cursor: grabbing;
+        }
+
+        /* 多层星云，JS 会根据鼠标位置产生轻微视差 */
+        .nebula {
+            position: fixed;
+            z-index: 1;
+            width: 80vw;
+            height: 80vw;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(55px);
+            mix-blend-mode: screen;
+            will-change: transform;
+        }
+
+        .nebula-a {
+            left: -32vw;
+            top: -30vw;
+            opacity: 0.25;
+            background:
+                radial-gradient(circle at 50% 50%,
+                    rgba(0, 153, 255, 0.24),
+                    rgba(30, 48, 141, 0.10) 34%,
+                    transparent 68%);
+        }
+
+        .nebula-b {
+            right: -34vw;
+            bottom: -38vw;
+            opacity: 0.2;
+            background:
+                radial-gradient(circle at 45% 45%,
+                    rgba(0, 238, 255, 0.18),
+                    rgba(70, 20, 135, 0.12) 38%,
+                    transparent 70%);
+        }
+
+        .nebula-c {
+            width: 55vw;
+            height: 55vw;
+            right: 5vw;
+            top: -22vw;
+            opacity: 0.13;
+            background:
+                radial-gradient(circle,
+                    rgba(54, 125, 255, 0.25),
+                    rgba(0, 195, 255, 0.07) 42%,
+                    transparent 70%);
+        }
+
+        /* 流星层 */
+        #meteor-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .meteor {
+            position: absolute;
+            width: 150px;
+            height: 1px;
+            opacity: 0;
+            transform: rotate(-34deg);
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(120, 231, 255, 0.22),
+                    #fff);
+            filter: drop-shadow(0 0 5px #63ddff);
+            animation: meteor-fly 9s linear infinite;
+        }
+
+        .meteor::after {
+            content: "";
+            position: absolute;
+            right: -2px;
+            top: -2px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 12px 3px #55dfff;
+        }
+
+        .meteor:nth-child(1) {
+            top: 9%;
+            left: 70%;
+            animation-delay: 1s;
+        }
+
+        .meteor:nth-child(2) {
+            top: 29%;
+            left: 92%;
+            animation-delay: 5.5s;
+            animation-duration: 12s;
+        }
+
+        .meteor:nth-child(3) {
+            top: 60%;
+            left: 78%;
+            animation-delay: 9s;
+            animation-duration: 15s;
+        }
+
+        @keyframes meteor-fly {
+            0% {
+                opacity: 0;
+                translate: 0 0;
+            }
+
+            2% {
+                opacity: 0.9;
+            }
+
+            9% {
+                opacity: 0;
+                translate: -55vw 42vh;
+            }
+
+            100% {
+                opacity: 0;
+                translate: -55vw 42vh;
+            }
+        }
+
+        /* 全局 HUD 层 */
+        #hud {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* HUD 扫描线 */
+        #hud::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.09;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(0deg,
+                    rgba(255, 255, 255, 0.025) 0,
+                    rgba(255, 255, 255, 0.025) 1px,
+                    transparent 1px,
+                    transparent 4px);
+        }
+
+        /* 细微噪点 */
+        #hud::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.045;
+            pointer-events: none;
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+        }
+
+        /* 四角科技边框 */
+        .corner {
+            position: absolute;
+            width: 95px;
+            height: 95px;
+            opacity: 0.75;
+        }
+
+        .corner::before,
+        .corner::after {
+            content: "";
+            position: absolute;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+            box-shadow: 0 0 8px rgba(76, 236, 255, 0.25);
+        }
+
+        .corner::before {
+            width: 100%;
+            height: 1px;
+        }
+
+        .corner::after {
+            width: 1px;
+            height: 100%;
+        }
+
+        .corner-tl {
+            left: 22px;
+            top: 22px;
+        }
+
+        .corner-tr {
+            right: 22px;
+            top: 22px;
+            transform: rotate(90deg);
+        }
+
+        .corner-br {
+            right: 22px;
+            bottom: 22px;
+            transform: rotate(180deg);
+        }
+
+        .corner-bl {
+            left: 22px;
+            bottom: 22px;
+            transform: rotate(270deg);
+        }
+
+        /* 中央地球外侧 HUD 圆环 */
+        .earth-reticle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: min(73vh, 73vw);
+            aspect-ratio: 1;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(76, 236, 255, 0.08);
+            border-radius: 50%;
+            opacity: 0.75;
+        }
+
+        .earth-reticle::before,
+        .earth-reticle::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            inset: -18px;
+            border:
+                1px dashed rgba(76, 236, 255, 0.12);
+            animation: rotate-ring 80s linear infinite;
+        }
+
+        .earth-reticle::after {
+            inset: 24px;
+            border-style: solid;
+            border-color:
+                rgba(76, 236, 255, 0.16) transparent rgba(76, 236, 255, 0.05) transparent;
+            animation-duration: 40s;
+            animation-direction: reverse;
+        }
+
+        @keyframes rotate-ring {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .crosshair-h,
+        .crosshair-v {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            opacity: 0.12;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--cyan),
+                    transparent);
+        }
+
+        .crosshair-h {
+            width: min(90vw, 1100px);
+            height: 1px;
+            transform: translate(-50%, -50%);
+        }
+
+        .crosshair-v {
+            width: 1px;
+            height: min(90vh, 850px);
+            transform: translate(-50%, -50%);
+            background: linear-gradient(0deg,
+                    transparent,
+                    var(--cyan),
+                    transparent);
+        }
+
+        /* 通用玻璃面板 */
+        .panel {
+            position: absolute;
+            pointer-events: auto;
+            background:
+                linear-gradient(135deg,
+                    rgba(7, 24, 47, 0.76),
+                    rgba(2, 8, 20, 0.55));
+            border: 1px solid var(--line);
+            box-shadow:
+                inset 0 0 35px rgba(25, 171, 255, 0.035),
+                0 10px 40px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            clip-path: polygon(0 0,
+                    calc(100% - 18px) 0,
+                    100% 18px,
+                    100% 100%,
+                    18px 100%,
+                    0 calc(100% - 18px));
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 34%;
+            height: 2px;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #a9eefa;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .panel-title::after {
+            content: "";
+            width: 55px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+        }
+
+        /* 左上标题 */
+        #mission-header {
+            position: absolute;
+            left: 42px;
+            top: 34px;
+            width: 330px;
+        }
+
+        .eyebrow {
+            color: var(--cyan);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+        }
+
+        #mission-header h1 {
+            margin: 7px 0 4px;
+            color: #effdff;
+            font-size: clamp(19px, 2vw, 29px);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 22px rgba(76, 236, 255, 0.2);
+        }
+
+        .subheading {
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+        }
+
+        /* 时间面板 */
+        #time-panel {
+            right: 42px;
+            top: 34px;
+            width: 260px;
+            padding: 17px 20px;
+            text-align: right;
+        }
+
+        #local-time {
+            color: #effeff;
+            font-family: "Courier New", monospace;
+            font-size: 24px;
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 14px rgba(76, 236, 255, 0.3);
+        }
+
+        #date-display {
+            margin-top: 5px;
+            color: #73a7b8;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+        }
+
+        #timezone-display {
+            margin-top: 7px;
+            color: var(--cyan);
+            font-size: 9px;
+            letter-spacing: 0.12em;
+        }
+
+        /* 左侧数据面板 */
+        #left-panel {
+            left: 42px;
+            top: 165px;
+            width: 255px;
+            padding: 19px 20px;
+        }
+
+        .metric {
+            position: relative;
+            margin: 0 0 17px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(76, 236, 255, 0.08);
+        }
+
+        .metric:last-child {
+            margin-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .metric-label {
+            color: #6590a4;
+            font-size: 9px;
+            letter-spacing: 0.13em;
+        }
+
+        .metric-value {
+            color: #ebfdff;
+            font-family: "Courier New", monospace;
+            font-size: 19px;
+        }
+
+        .metric-unit {
+            margin-left: 3px;
+            color: var(--cyan);
+            font-size: 8px;
+        }
+
+        .bar {
+            height: 2px;
+            margin-top: 9px;
+            overflow: hidden;
+            background: rgba(76, 236, 255, 0.07);
+        }
+
+        .bar span {
+            display: block;
+            width: var(--value);
+            height: 100%;
+            background: linear-gradient(90deg, #0d7fff, var(--cyan));
+            box-shadow: 0 0 7px var(--cyan);
+        }
+
+        /* 右侧系统状态 */
+        #right-panel {
+            right: 42px;
+            top: 180px;
+            width: 245px;
+            padding: 19px 20px;
+        }
+
+        .status-item {
+            display: grid;
+            grid-template-columns: 9px 1fr auto;
+            align-items: center;
+            gap: 9px;
+            min-height: 29px;
+            color: #78a0b0;
+            font-size: 9px;
+            letter-spacing: 0.1em;
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+
+        .status-value {
+            color: #c9f8ff;
+            font-family: "Courier New", monospace;
+        }
+
+        @keyframes status-pulse {
+            50% {
+                opacity: 0.35;
+            }
+        }
+
+        /* 底部控制说明 */
+        #control-hint {
+            position: absolute;
+            left: 50%;
+            bottom: 31px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 18px;
+            color: #668d9e;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            background: rgba(3, 12, 25, 0.45);
+            border: 1px solid rgba(76, 236, 255, 0.1);
+            backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        .hint-key {
+            margin-right: 5px;
+            color: var(--cyan);
+        }
+
+        /* 城市信息卡 */
+        #info-card {
+            position: fixed;
+            z-index: 20;
+            width: 245px;
+            padding: 17px 18px;
+            pointer-events: auto;
+            visibility: hidden;
+            opacity: 0;
+            transform: translate(16px, -50%) scale(0.96);
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease,
+                visibility 0.2s;
+        }
+
+        #info-card.visible {
+            visibility: visible;
+            opacity: 1;
+            transform: translate(16px, -50%) scale(1);
+        }
+
+        #info-card h3 {
+            margin: 4px 0 12px;
+            color: white;
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+
+        .card-code {
+            color: var(--cyan);
+            font-size: 9px;
+            letter-spacing: 0.22em;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .card-cell {
+            padding: 9px;
+            background: rgba(37, 165, 220, 0.05);
+            border: 1px solid rgba(76, 236, 255, 0.08);
+        }
+
+        .card-cell span {
+            display: block;
+            color: #63899a;
+            font-size: 8px;
+        }
+
+        .card-cell strong {
+            display: block;
+            margin-top: 5px;
+            color: #dffcff;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        /* 资源加载界面 */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle, #071a31 0%, #01040a 62%);
+            transition:
+                opacity 0.8s ease,
+                visibility 0.8s;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-ring {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border: 1px solid rgba(76, 236, 255, 0.12);
+            border-radius: 50%;
+        }
+
+        .loader-ring::before,
+        .loader-ring::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .loader-ring::before {
+            inset: 8px;
+            border:
+                1px solid transparent;
+            border-top-color: var(--cyan);
+            border-right-color: rgba(76, 236, 255, 0.35);
+            animation: loader-spin 1.5s linear infinite;
+        }
+
+        .loader-ring::after {
+            inset: 26px;
+            background: var(--cyan);
+            box-shadow: 0 0 22px var(--cyan);
+            opacity: 0.6;
+            animation: loader-pulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes loader-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes loader-pulse {
+            50% {
+                opacity: 0.18;
+                transform: scale(0.75);
+            }
+        }
+
+        #loader-text {
+            margin-top: 25px;
+            color: #8ccfdc;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+        }
+
+        #loader-progress {
+            margin-top: 9px;
+            color: var(--cyan);
+            font-family: "Courier New", monospace;
+            font-size: 11px;
+        }
+
+        @media (max-width: 900px) {
+
+            #left-panel,
+            #right-panel {
+                width: 210px;
+            }
+
+            #mission-header {
+                left: 25px;
+            }
+
+            #time-panel {
+                right: 25px;
+            }
+
+            #left-panel {
+                left: 25px;
+            }
+
+            #right-panel {
+                right: 25px;
+            }
+        }
+
+        @media (max-width: 720px) {
+
+            #left-panel,
+            #right-panel {
+                display: none;
+            }
+
+            #mission-header {
+                left: 20px;
+                top: 23px;
+                width: auto;
+            }
+
+            #mission-header h1 {
+                font-size: 18px;
+            }
+
+            .subheading {
+                display: none;
+            }
+
+            #time-panel {
+                top: 18px;
+                right: 16px;
+                width: 174px;
+                padding: 12px 14px;
+            }
+
+            #local-time {
+                font-size: 17px;
+            }
+
+            #date-display {
+                font-size: 8px;
+            }
+
+            #timezone-display {
+                display: none;
+            }
+
+            #control-hint {
+                bottom: 18px;
+                max-width: calc(100vw - 30px);
+                gap: 10px;
+                font-size: 7px;
+            }
+
+            .earth-reticle {
+                width: 88vw;
+            }
+
+            .corner {
+                width: 55px;
+                height: 55px;
+            }
+
+            .corner-tl,
+            .corner-bl {
+                left: 10px;
+            }
+
+            .corner-tr,
+            .corner-br {
+                right: 10px;
+            }
+
+            .corner-tl,
+            .corner-tr {
+                top: 10px;
+            }
+
+            .corner-bl,
+            .corner-br {
+                bottom: 10px;
+            }
+
+            #info-card {
+                width: 215px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .meteor,
+            .earth-reticle::before,
+            .earth-reticle::after {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- CSS 星云背景 -->
+    <div class="nebula nebula-a" data-depth="7"></div>
+    <div class="nebula nebula-b" data-depth="12"></div>
+    <div class="nebula nebula-c" data-depth="18"></div>
+
+    <!-- Three.js 场景 -->
+    <main id="scene-container" aria-label="可交互三维地球"></main>
+
+    <!-- 流星 -->
+    <div id="meteor-layer">
+        <div class="meteor"></div>
+        <div class="meteor"></div>
+        <div class="meteor"></div>
+    </div>
+
+    <!-- 仪表盘 HUD -->
+    <section id="hud">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-br"></div>
+        <div class="corner corner-bl"></div>
+
+        <div class="earth-reticle"></div>
+        <div class="crosshair-h"></div>
+        <div class="crosshair-v"></div>
+
+        <header id="mission-header">
+            <div class="eyebrow">Orbital Intelligence System</div>
+            <h1>深空地球观测中心</h1>
+            <div class="subheading">EARTH OBSERVATION / COMMAND INTERFACE 07</div>
+        </header>
+
+        <aside id="time-panel" class="panel">
+            <div class="panel-title">Mission Time</div>
+            <div id="local-time">00:00:00</div>
+            <div id="date-display">0000-00-00</div>
+            <div id="timezone-display">UTC</div>
+        </aside>
+
+        <aside id="left-panel" class="panel">
+            <div class="panel-title">Planetary Telemetry</div>
+
+            <div class="metric">
+                <div class="metric-row">
+                    <span class="metric-label">ACTIVE SATELLITES</span>
+                    <span class="metric-value">
+                        <span id="satellite-count">8,942</span>
+                        <span class="metric-unit">UNIT</span>
+                    </span>
+                </div>
+                <div class="bar"><span style="--value: 78%"></span></div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-row">
+                    <span class="metric-label">ATMOSPHERIC O₂</span>
+                    <span class="metric-value">
+                        20.95<span class="metric-unit">%</span>
+                    </span>
+                </div>
+                <div class="bar"><span style="--value: 64%"></span></div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-row">
+                    <span class="metric-label">MEAN TEMPERATURE</span>
+                    <span class="metric-value">
+                        14.82<span class="metric-unit">°C</span>
+                    </span>
+                </div>
+                <div class="bar"><span style="--value: 48%"></span></div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-row">
+                    <span class="metric-label">SOLAR FLUX</span>
+                    <span class="metric-value">
+                        1361<span class="metric-unit">W/M²</span>
+                    </span>
+                </div>
+                <div class="bar"><span style="--value: 86%"></span></div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-row">
+                    <span class="metric-label">MAGNETOSPHERE</span>
+                    <span class="metric-value">
+                        98.7<span class="metric-unit">NOM</span>
+                    </span>
+                </div>
+                <div class="bar"><span style="--value: 92%"></span></div>
+            </div>
+        </aside>
+
+        <aside id="right-panel" class="panel">
+            <div class="panel-title">System Status</div>
+
+            <div class="status-item">
+                <i class="status-dot"></i>
+                <span>DEEP SPACE LINK</span>
+                <span class="status-value">ONLINE</span>
+            </div>
+            <div class="status-item">
+                <i class="status-dot"></i>
+                <span>TELEMETRY</span>
+                <span class="status-value">99.98%</span>
+            </div>
+            <div class="status-item">
+                <i class="status-dot"></i>
+                <span>ORBITAL TRACKING</span>
+                <span class="status-value">LOCKED</span>
+            </div>
+            <div class="status-item">
+                <i class="status-dot"></i>
+                <span>WEATHER NETWORK</span>
+                <span class="status-value">SYNC</span>
+            </div>
+            <div class="status-item">
+                <i class="status-dot"></i>
+                <span>ENCRYPTION</span>
+                <span class="status-value">AES-512</span>
+            </div>
+            <div class="status-item">
+                <i class="status-dot"></i>
+                <span>FRAME RATE</span>
+                <span id="fps" class="status-value">60 FPS</span>
+            </div>
+        </aside>
+
+        <div id="control-hint">
+            <span><b class="hint-key">LMB / TOUCH</b>旋转视角</span>
+            <span><b class="hint-key">WHEEL / PINCH</b>缩放</span>
+            <span><b class="hint-key">CLICK</b>查看坐标节点</span>
+        </div>
+    </section>
+
+    <!-- 城市节点弹窗 -->
+    <article id="info-card" class="panel">
+        <div class="card-code" id="card-code">NODE-00</div>
+        <h3 id="card-title">数据中心</h3>
+        <div class="card-grid">
+            <div class="card-cell">
+                <span>坐标</span>
+                <strong id="card-coordinates">0° / 0°</strong>
+            </div>
+            <div class="card-cell">
+                <span>链路状态</span>
+                <strong id="card-status">ONLINE</strong>
+            </div>
+            <div class="card-cell">
+                <span>延迟</span>
+                <strong id="card-latency">12 MS</strong>
+            </div>
+            <div class="card-cell">
+                <span>吞吐量</span>
+                <strong id="card-traffic">5.8 TB/S</strong>
+            </div>
+        </div>
+    </article>
+
+    <!-- 加载动画 -->
+    <div id="loader">
+        <div class="loader-ring"></div>
+        <div id="loader-text">INITIALIZING PLANETARY SYSTEM</div>
+        <div id="loader-progress">0%</div>
+    </div>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+        // ============================================================
+        // 1. 基础场景
+        // ============================================================
+
+        const container = document.getElementById("scene-container");
+        const loaderElement = document.getElementById("loader");
+        const loaderProgress = document.getElementById("loader-progress");
+
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(
+            42,
+            window.innerWidth / window.innerHeight,
+            0.05,
+            220
+        );
+        camera.position.set(0, 0.25, 6.7);
+
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+            powerPreference: "high-performance"
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.08;
+
+        container.appendChild(renderer.domElement);
+
+        // OrbitControls 内置旋转、触摸、滚轮缩放以及惯性阻尼
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.055;
+        controls.rotateSpeed = 0.48;
+        controls.zoomSpeed = 0.72;
+        controls.enablePan = false;
+        controls.minDistance = 3.5;
+        controls.maxDistance = 11;
+        controls.target.set(0, 0, 0);
+
+        let userInteracting = false;
+
+        controls.addEventListener("start", () => {
+            userInteracting = true;
+        });
+
+        controls.addEventListener("end", () => {
+            userInteracting = false;
+        });
+
+        // ============================================================
+        // 2. 公开地球贴图资源
+        // ============================================================
+
+        /*
+          贴图来自 Three.js examples/textures/planets。
+    
+          正式项目建议：
+          1. 将贴图下载到本地 assets/textures/earth/ 目录；
+          2. 替换为 NASA Visible Earth / Blue Marble 8K 或更高分辨率版本；
+          3. 对纹理转码为 KTX2/Basis，以减少显存和下载体积。
+        */
+
+        const TEXTURE_BASE =
+            "https://raw.githubusercontent.com/mrdoob/three.js/r185/examples/textures/planets/";
+
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.setCrossOrigin("anonymous");
+
+        let loadedTextureCount = 0;
+        const totalTextureCount = 6;
+
+        function updateLoadingProgress() {
+            loadedTextureCount++;
+            const value = Math.round(
+                (loadedTextureCount / totalTextureCount) * 100
+            );
+            loaderProgress.textContent = `${Math.min(value, 100)}%`;
+        }
+
+        // 创建纯色备用纹理，避免单张远程资源失败导致场景完全中断
+        function createFallbackTexture(color = 0x10263a) {
+            const canvas = document.createElement("canvas");
+            canvas.width = 4;
+            canvas.height = 4;
+
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = `#${color.toString(16).padStart(6, "0")}`;
+            ctx.fillRect(0, 0, 4, 4);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        async function loadTextureWithFallback(paths, fallbackColor, isColor) {
+            for (const path of paths) {
+                try {
+                    const texture = await textureLoader.loadAsync(TEXTURE_BASE + path);
+
+                    texture.wrapS = THREE.RepeatWrapping;
+                    texture.wrapT = THREE.ClampToEdgeWrapping;
+                    texture.anisotropy = Math.min(
+                        8,
+                        renderer.capabilities.getMaxAnisotropy()
+                    );
+
+                    texture.colorSpace = isColor
+                        ? THREE.SRGBColorSpace
+                        : THREE.NoColorSpace;
+
+                    updateLoadingProgress();
+                    return texture;
+                } catch (error) {
+                    console.warn(`纹理加载失败，尝试备用资源：${path}`, error);
+                }
+            }
+
+            const fallback = createFallbackTexture(fallbackColor);
+            fallback.colorSpace = isColor
+                ? THREE.SRGBColorSpace
+                : THREE.NoColorSpace;
+
+            updateLoadingProgress();
+            return fallback;
+        }
+
+        const [
+            dayTexture,
+            nightTexture,
+            normalTexture,
+            heightTexture,
+            specularTexture,
+            cloudTexture
+        ] = await Promise.all([
+            loadTextureWithFallback(
+                ["earth_atmos_2048.jpg"],
+                0x164769,
+                true
+            ),
+
+            loadTextureWithFallback(
+                [
+                    "earth_lights_2048.png",
+                    "earth_night_4096.jpg"
+                ],
+                0x02040a,
+                true
+            ),
+
+            loadTextureWithFallback(
+                ["earth_normal_2048.jpg"],
+                0x8080ff,
+                false
+            ),
+
+            loadTextureWithFallback(
+                [
+                    "earth_bump_roughness_clouds_4096.jpg",
+                    "earth_normal_2048.jpg"
+                ],
+                0x777777,
+                false
+            ),
+
+            loadTextureWithFallback(
+                ["earth_specular_2048.jpg"],
+                0x444444,
+                false
+            ),
+
+            loadTextureWithFallback(
+                [
+                    "earth_clouds_2048.png",
+                    "earth_clouds_1024.png"
+                ],
+                0xffffff,
+                true
+            )
+        ]);
+
+        // ============================================================
+        // 3. 地球层级结构与轴倾角
+        // ============================================================
+
+        const tiltGroup = new THREE.Group();
+        tiltGroup.rotation.z = THREE.MathUtils.degToRad(-23.4);
+        scene.add(tiltGroup);
+
+        // earthSpin 负责自转；tiltGroup 负责地轴倾角
+        const earthSpin = new THREE.Group();
+        tiltGroup.add(earthSpin);
+
+        const EARTH_RADIUS = 1.72;
+
+        // 128 × 128 分段，保证球面足够平滑
+        const earthGeometry = new THREE.SphereGeometry(
+            EARTH_RADIUS,
+            128,
+            128
+        );
+
+        // 模拟太阳方向，必须与 DirectionalLight 位置方向保持一致
+        const sunDirection = new THREE.Vector3(5, 2.2, 4).normalize();
+
+        // ============================================================
+        // 4. 地球昼夜、地形、海洋高光 Shader
+        // ============================================================
+
+        const earthMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                uDayMap: { value: dayTexture },
+                uNightMap: { value: nightTexture },
+                uNormalMap: { value: normalTexture },
+                uHeightMap: { value: heightTexture },
+                uSpecularMap: { value: specularTexture },
+
+                uSunDirection: { value: sunDirection },
+                uDisplacement: { value: 0.018 },
+                uNormalStrength: { value: 0.72 },
+                uNightIntensity: { value: 1.85 },
+                uOceanShininess: { value: 72.0 },
+                uAtmosphereTint: {
+                    value: new THREE.Color(0x2aaeff)
+                }
+            },
+
+            vertexShader: `
+        uniform sampler2D uHeightMap;
+        uniform float uDisplacement;
+
+        varying vec2 vUv;
+        varying vec3 vWorldPosition;
+        varying vec3 vWorldNormal;
+
+        void main() {
+          vUv = uv;
+
+          // 高度贴图产生极轻微的几何位移，模拟山脉与丘陵起伏
+          float heightValue = texture2D(uHeightMap, uv).r;
+          float displacement = (heightValue - 0.5) * uDisplacement;
+
+          vec3 displacedPosition = position + normal * displacement;
+
+          vec4 worldPosition = modelMatrix * vec4(displacedPosition, 1.0);
+
+          vWorldPosition = worldPosition.xyz;
+          vWorldNormal = normalize(mat3(modelMatrix) * normal);
+
+          gl_Position =
+            projectionMatrix *
+            viewMatrix *
+            worldPosition;
+        }
+      `,
+
+            fragmentShader: `
+        uniform sampler2D uDayMap;
+        uniform sampler2D uNightMap;
+        uniform sampler2D uNormalMap;
+        uniform sampler2D uSpecularMap;
+
+        uniform vec3 uSunDirection;
+        uniform vec3 uAtmosphereTint;
+
+        uniform float uNormalStrength;
+        uniform float uNightIntensity;
+        uniform float uOceanShininess;
+
+        varying vec2 vUv;
+        varying vec3 vWorldPosition;
+        varying vec3 vWorldNormal;
+
+        // 利用屏幕空间导数构造切线空间，用法线贴图增强地形细节
+        mat3 cotangentFrame(vec3 normal, vec3 position, vec2 uv) {
+          vec3 dp1 = dFdx(position);
+          vec3 dp2 = dFdy(position);
+          vec2 duv1 = dFdx(uv);
+          vec2 duv2 = dFdy(uv);
+
+          vec3 dp2perp = cross(dp2, normal);
+          vec3 dp1perp = cross(normal, dp1);
+
+          vec3 tangent =
+            dp2perp * duv1.x +
+            dp1perp * duv2.x;
+
+          vec3 bitangent =
+            dp2perp * duv1.y +
+            dp1perp * duv2.y;
+
+          float invMax = inversesqrt(
+            max(
+              dot(tangent, tangent),
+              dot(bitangent, bitangent)
+            )
+          );
+
+          return mat3(
+            tangent * invMax,
+            bitangent * invMax,
+            normal
+          );
+        }
+
+        void main() {
+          vec4 daySample = texture2D(uDayMap, vUv);
+          vec3 nightSample = texture2D(uNightMap, vUv).rgb;
+
+          vec3 baseNormal = normalize(vWorldNormal);
+
+          vec3 mappedNormal =
+            texture2D(uNormalMap, vUv).xyz * 2.0 - 1.0;
+
+          mappedNormal.xy *= uNormalStrength;
+
+          mat3 tbn = cotangentFrame(
+            baseNormal,
+            vWorldPosition,
+            vUv
+          );
+
+          vec3 normal = normalize(tbn * mappedNormal);
+          vec3 lightDirection = normalize(uSunDirection);
+          vec3 viewDirection =
+            normalize(cameraPosition - vWorldPosition);
+
+          float normalDotLight =
+            dot(normal, lightDirection);
+
+          // 平滑昼夜分界线
+          float dayFactor =
+            smoothstep(-0.17, 0.22, normalDotLight);
+
+          float diffuse =
+            max(normalDotLight, 0.0);
+
+          // 白昼基础环境光与太阳直射光
+          vec3 daylight =
+            daySample.rgb *
+            (0.12 + diffuse * 1.12);
+
+          // 夜面城市灯光，仅在背阳面明显显示
+          float nightMask =
+            1.0 - smoothstep(-0.1, 0.28, normalDotLight);
+
+          vec3 cityLights =
+            nightSample *
+            nightMask *
+            uNightIntensity;
+
+          // 海洋反射：specular map 亮部主要对应海面
+          float oceanMask =
+            texture2D(uSpecularMap, vUv).r;
+
+          vec3 halfDirection =
+            normalize(lightDirection + viewDirection);
+
+          float specular =
+            pow(
+              max(dot(normal, halfDirection), 0.0),
+              uOceanShininess
+            );
+
+          specular *=
+            oceanMask *
+            max(diffuse, 0.0) *
+            1.25;
+
+          vec3 oceanHighlight =
+            vec3(0.48, 0.78, 1.0) * specular;
+
+          // 地平线附近的轻微蓝色散射
+          float fresnel =
+            pow(
+              1.0 -
+              max(dot(normal, viewDirection), 0.0),
+              4.0
+            );
+
+          vec3 surfaceColor =
+            mix(
+              cityLights + daySample.rgb * 0.018,
+              daylight,
+              dayFactor
+            );
+
+          surfaceColor += oceanHighlight;
+          surfaceColor +=
+            uAtmosphereTint *
+            fresnel *
+            dayFactor *
+            0.08;
+
+          gl_FragColor = vec4(surfaceColor, 1.0);
+
+          #include <tonemapping_fragment>
+          #include <colorspace_fragment>
+        }
+      `
+        });
+
+        // 开启屏幕空间导数，用于法线贴图切线空间计算
+        earthMaterial.extensions = {
+            derivatives: true
+        };
+
+        const earthMesh = new THREE.Mesh(
+            earthGeometry,
+            earthMaterial
+        );
+        earthMesh.rotation.y = THREE.MathUtils.degToRad(-16);
+        earthSpin.add(earthMesh);
+
+        // ============================================================
+        // 5. 独立云层
+        // ============================================================
+
+        const cloudGeometry = new THREE.SphereGeometry(
+            EARTH_RADIUS * 1.006,
+            128,
+            128
+        );
+
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            map: cloudTexture,
+            alphaMap: cloudTexture,
+            color: 0xeaf8ff,
+            transparent: true,
+            opacity: 0.64,
+            depthWrite: false,
+            side: THREE.FrontSide,
+            blending: THREE.NormalBlending
+        });
+
+        const cloudMesh = new THREE.Mesh(
+            cloudGeometry,
+            cloudMaterial
+        );
+        cloudMesh.rotation.y = THREE.MathUtils.degToRad(-16);
+        earthSpin.add(cloudMesh);
+
+        // ============================================================
+        // 6. Fresnel 大气层辉光
+        // ============================================================
+
+        const atmosphereGeometry = new THREE.SphereGeometry(
+            EARTH_RADIUS * 1.055,
+            96,
+            96
+        );
+
+        const atmosphereMaterial = new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+
+            uniforms: {
+                uGlowColor: {
+                    value: new THREE.Color(0x35cfff)
+                },
+                uIntensity: {
+                    value: 0.82
+                }
+            },
+
+            vertexShader: `
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+
+        void main() {
+          vec4 worldPosition =
+            modelMatrix * vec4(position, 1.0);
+
+          vWorldPosition = worldPosition.xyz;
+          vWorldNormal =
+            normalize(mat3(modelMatrix) * normal);
+
+          gl_Position =
+            projectionMatrix *
+            viewMatrix *
+            worldPosition;
+        }
+      `,
+
+            fragmentShader: `
+        uniform vec3 uGlowColor;
+        uniform float uIntensity;
+
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+
+        void main() {
+          vec3 viewDirection =
+            normalize(cameraPosition - vWorldPosition);
+
+          float rim =
+            1.0 -
+            abs(
+              dot(
+                normalize(vWorldNormal),
+                viewDirection
+              )
+            );
+
+          rim = pow(rim, 2.25);
+
+          float alpha =
+            rim * uIntensity;
+
+          gl_FragColor =
+            vec4(uGlowColor * rim * 1.4, alpha);
+        }
+      `
+        });
+
+        const atmosphereMesh = new THREE.Mesh(
+            atmosphereGeometry,
+            atmosphereMaterial
+        );
+        atmosphereMesh.renderOrder = 3;
+        earthSpin.add(atmosphereMesh);
+
+        // 外层柔和光晕
+        function createGlowTexture() {
+            const canvas = document.createElement("canvas");
+            canvas.width = 512;
+            canvas.height = 512;
+
+            const ctx = canvas.getContext("2d");
+            const gradient = ctx.createRadialGradient(
+                256, 256, 120,
+                256, 256, 256
+            );
+
+            gradient.addColorStop(0, "rgba(20,160,255,0)");
+            gradient.addColorStop(0.58, "rgba(20,170,255,0)");
+            gradient.addColorStop(0.73, "rgba(47,203,255,0.10)");
+            gradient.addColorStop(0.88, "rgba(26,138,255,0.045)");
+            gradient.addColorStop(1, "rgba(0,90,255,0)");
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const glowSprite = new THREE.Sprite(
+            new THREE.SpriteMaterial({
+                map: createGlowTexture(),
+                color: 0x58d8ff,
+                transparent: true,
+                opacity: 0.68,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            })
+        );
+
+        glowSprite.scale.set(5.15, 5.15, 1);
+        scene.add(glowSprite);
+
+        // ============================================================
+        // 7. 太阳光与环境光
+        // ============================================================
+
+        const sunLight = new THREE.DirectionalLight(
+            0xffffff,
+            3.1
+        );
+        sunLight.position.copy(
+            sunDirection.clone().multiplyScalar(8)
+        );
+        scene.add(sunLight);
+
+        // 防止云层暗面彻底变黑
+        const ambientLight = new THREE.AmbientLight(
+            0x123456,
+            0.65
+        );
+        scene.add(ambientLight);
+
+        // 太阳方向辅助光源
+        const hemisphereLight = new THREE.HemisphereLight(
+            0x8edfff,
+            0x02040b,
+            0.26
+        );
+        scene.add(hemisphereLight);
+
+        // ============================================================
+        // 8. 随机星空粒子 Shader
+        // ============================================================
+
+        const isMobile = window.innerWidth <= 720;
+        const STAR_COUNT = isMobile ? 2300 : 3200;
+
+        const starPositions = new Float32Array(STAR_COUNT * 3);
+        const starSizes = new Float32Array(STAR_COUNT);
+        const starPhases = new Float32Array(STAR_COUNT);
+        const starSpeeds = new Float32Array(STAR_COUNT);
+
+        for (let i = 0; i < STAR_COUNT; i++) {
+            const radius = THREE.MathUtils.randFloat(30, 105);
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(
+                THREE.MathUtils.randFloatSpread(2)
+            );
+
+            starPositions[i * 3] =
+                radius * Math.sin(phi) * Math.cos(theta);
+
+            starPositions[i * 3 + 1] =
+                radius * Math.cos(phi);
+
+            starPositions[i * 3 + 2] =
+                radius * Math.sin(phi) * Math.sin(theta);
+
+            const rareBrightStar = Math.random() > 0.965;
+
+            starSizes[i] = rareBrightStar
+                ? THREE.MathUtils.randFloat(4.0, 7.5)
+                : THREE.MathUtils.randFloat(1.0, 3.2);
+
+            starPhases[i] = Math.random() * Math.PI * 2;
+            starSpeeds[i] = THREE.MathUtils.randFloat(0.35, 1.7);
+        }
+
+        const starGeometry = new THREE.BufferGeometry();
+        starGeometry.setAttribute(
+            "position",
+            new THREE.BufferAttribute(starPositions, 3)
+        );
+        starGeometry.setAttribute(
+            "aSize",
+            new THREE.BufferAttribute(starSizes, 1)
+        );
+        starGeometry.setAttribute(
+            "aPhase",
+            new THREE.BufferAttribute(starPhases, 1)
+        );
+        starGeometry.setAttribute(
+            "aSpeed",
+            new THREE.BufferAttribute(starSpeeds, 1)
+        );
+
+        const starMaterial = new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+
+            uniforms: {
+                uTime: { value: 0 },
+                uPixelRatio: {
+                    value: Math.min(window.devicePixelRatio, 1.75)
+                }
+            },
+
+            vertexShader: `
+        uniform float uTime;
+        uniform float uPixelRatio;
+
+        attribute float aSize;
+        attribute float aPhase;
+        attribute float aSpeed;
+
+        varying float vBrightness;
+
+        void main() {
+          vec4 mvPosition =
+            modelViewMatrix * vec4(position, 1.0);
+
+          float twinkle =
+            sin(uTime * aSpeed + aPhase) * 0.5 + 0.5;
+
+          vBrightness =
+            0.42 + twinkle * 0.58;
+
+          gl_PointSize =
+            aSize *
+            uPixelRatio *
+            (180.0 / -mvPosition.z);
+
+          gl_PointSize =
+            clamp(gl_PointSize, 0.8, 8.5);
+
+          gl_Position =
+            projectionMatrix * mvPosition;
+        }
+      `,
+
+            fragmentShader: `
+        varying float vBrightness;
+
+        void main() {
+          vec2 point =
+            gl_PointCoord - vec2(0.5);
+
+          float distanceToCenter =
+            length(point);
+
+          float core =
+            smoothstep(
+              0.5,
+              0.03,
+              distanceToCenter
+            );
+
+          float halo =
+            smoothstep(
+              0.52,
+              0.1,
+              distanceToCenter
+            );
+
+          vec3 starColor =
+            mix(
+              vec3(0.46, 0.72, 1.0),
+              vec3(1.0),
+              core
+            );
+
+          float alpha =
+            (core + halo * 0.32) *
+            vBrightness;
+
+          if (alpha < 0.02) discard;
+
+          gl_FragColor =
+            vec4(starColor, alpha);
+        }
+      `
+        });
+
+        const starField = new THREE.Points(
+            starGeometry,
+            starMaterial
+        );
+        scene.add(starField);
+
+        // ============================================================
+        // 9. 三维 HUD 轨道圆环
+        // ============================================================
+
+        const orbitGroup = new THREE.Group();
+        scene.add(orbitGroup);
+
+        function createOrbitRing(
+            radius,
+            tube,
+            rotation,
+            opacity
+        ) {
+            const geometry = new THREE.TorusGeometry(
+                radius,
+                tube,
+                8,
+                180
+            );
+
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x37c9ff,
+                transparent: true,
+                opacity,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+
+            const ring = new THREE.Mesh(geometry, material);
+            ring.rotation.set(
+                rotation[0],
+                rotation[1],
+                rotation[2]
+            );
+
+            orbitGroup.add(ring);
+            return ring;
+        }
+
+        const ringA = createOrbitRing(
+            2.18,
+            0.0035,
+            [Math.PI / 2, 0, 0],
+            0.22
+        );
+
+        const ringB = createOrbitRing(
+            2.42,
+            0.003,
+            [1.14, 0.25, 0.38],
+            0.13
+        );
+
+        const ringC = createOrbitRing(
+            2.68,
+            0.0025,
+            [0.72, -0.3, -0.48],
+            0.08
+        );
+
+        // ============================================================
+        // 10. 城市/数据中心发光节点
+        // ============================================================
+
+        const cityData = [
+            {
+                name: "北京轨道中心",
+                code: "NODE-BJS-01",
+                lat: 39.9042,
+                lon: 116.4074,
+                latency: "8 MS",
+                traffic: "7.2 TB/S"
+            },
+            {
+                name: "新加坡数据枢纽",
+                code: "NODE-SGP-02",
+                lat: 1.3521,
+                lon: 103.8198,
+                latency: "11 MS",
+                traffic: "9.8 TB/S"
+            },
+            {
+                name: "旧金山观测站",
+                code: "NODE-SFO-03",
+                lat: 37.7749,
+                lon: -122.4194,
+                latency: "15 MS",
+                traffic: "6.5 TB/S"
+            },
+            {
+                name: "伦敦通信中心",
+                code: "NODE-LON-04",
+                lat: 51.5072,
+                lon: -0.1276,
+                latency: "13 MS",
+                traffic: "5.9 TB/S"
+            },
+            {
+                name: "圣保罗遥感站",
+                code: "NODE-SAO-05",
+                lat: -23.5505,
+                lon: -46.6333,
+                latency: "21 MS",
+                traffic: "4.3 TB/S"
+            },
+            {
+                name: "悉尼深空链路",
+                code: "NODE-SYD-06",
+                lat: -33.8688,
+                lon: 151.2093,
+                latency: "17 MS",
+                traffic: "5.1 TB/S"
+            },
+            {
+                name: "迪拜中继节点",
+                code: "NODE-DXB-07",
+                lat: 25.2048,
+                lon: 55.2708,
+                latency: "12 MS",
+                traffic: "8.2 TB/S"
+            }
+        ];
+
+        function latLonToVector3(lat, lon, radius) {
+            const phi =
+                THREE.MathUtils.degToRad(90 - lat);
+
+            const theta =
+                THREE.MathUtils.degToRad(lon + 180);
+
+            return new THREE.Vector3(
+                -radius * Math.sin(phi) * Math.cos(theta),
+                radius * Math.cos(phi),
+                radius * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        function createMarkerTexture() {
+            const canvas = document.createElement("canvas");
+            canvas.width = 128;
+            canvas.height = 128;
+
+            const ctx = canvas.getContext("2d");
+
+            const gradient = ctx.createRadialGradient(
+                64, 64, 2,
+                64, 64, 60
+            );
+
+            gradient.addColorStop(0, "rgba(255,255,255,1)");
+            gradient.addColorStop(0.09, "rgba(130,245,255,1)");
+            gradient.addColorStop(0.18, "rgba(20,220,255,0.8)");
+            gradient.addColorStop(0.42, "rgba(0,175,255,0.18)");
+            gradient.addColorStop(1, "rgba(0,120,255,0)");
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 128, 128);
+
+            ctx.strokeStyle = "rgba(120,245,255,0.78)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(64, 64, 34, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = "rgba(120,245,255,0.25)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(64, 64, 51, 0, Math.PI * 2);
+            ctx.stroke();
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const markerTexture = createMarkerTexture();
+        const markerGroup = new THREE.Group();
+        earthSpin.add(markerGroup);
+
+        const clickableMarkers = [];
+        const markerObjects = [];
+
+        cityData.forEach((city, index) => {
+            const position = latLonToVector3(
+                city.lat,
+                city.lon,
+                EARTH_RADIUS * 1.018
+            );
+
+            const root = new THREE.Group();
+            root.position.copy(position);
+
+            const sprite = new THREE.Sprite(
+                new THREE.SpriteMaterial({
+                    map: markerTexture,
+                    color: 0x79efff,
+                    transparent: true,
+                    opacity: 0.95,
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+
+            sprite.scale.set(0.23, 0.23, 1);
+            sprite.userData.city = city;
+            sprite.userData.phase = index * 0.85;
+
+            root.add(sprite);
+
+            // 从地表向外延伸的发光定位线
+            const outward = position
+                .clone()
+                .normalize()
+                .multiplyScalar(0.12);
+
+            const lineGeometry =
+                new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    outward
+                ]);
+
+            const line = new THREE.Line(
+                lineGeometry,
+                new THREE.LineBasicMaterial({
+                    color: 0x50eaff,
+                    transparent: true,
+                    opacity: 0.55,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+
+            root.add(line);
+            markerGroup.add(root);
+
+            clickableMarkers.push(sprite);
+            markerObjects.push(sprite);
+        });
+
+        // ============================================================
+        // 11. 点击节点与信息卡交互
+        // ============================================================
+
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+
+        const infoCard = document.getElementById("info-card");
+        const cardCode = document.getElementById("card-code");
+        const cardTitle = document.getElementById("card-title");
+        const cardCoordinates =
+            document.getElementById("card-coordinates");
+        const cardStatus =
+            document.getElementById("card-status");
+        const cardLatency =
+            document.getElementById("card-latency");
+        const cardTraffic =
+            document.getElementById("card-traffic");
+
+        let selectedMarker = null;
+        let pointerStart = { x: 0, y: 0 };
+
+        renderer.domElement.addEventListener(
+            "pointerdown",
+            (event) => {
+                pointerStart.x = event.clientX;
+                pointerStart.y = event.clientY;
+            }
+        );
+
+        renderer.domElement.addEventListener(
+            "pointerup",
+            (event) => {
+                const movement = Math.hypot(
+                    event.clientX - pointerStart.x,
+                    event.clientY - pointerStart.y
+                );
+
+                // 拖拽时不触发节点点击
+                if (movement > 5) return;
+
+                const rect =
+                    renderer.domElement.getBoundingClientRect();
+
+                pointer.x =
+                    ((event.clientX - rect.left) / rect.width) * 2 - 1;
+
+                pointer.y =
+                    -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                raycaster.setFromCamera(pointer, camera);
+
+                const intersections =
+                    raycaster.intersectObjects(
+                        clickableMarkers,
+                        false
+                    );
+
+                if (intersections.length > 0) {
+                    selectedMarker = intersections[0].object;
+                    showCityCard(selectedMarker.userData.city);
+                } else {
+                    selectedMarker = null;
+                    infoCard.classList.remove("visible");
+                }
+            }
+        );
+
+        function formatCoordinate(value, positive, negative) {
+            const direction = value >= 0 ? positive : negative;
+            return `${Math.abs(value).toFixed(2)}°${direction}`;
+        }
+
+        function showCityCard(city) {
+            cardCode.textContent = city.code;
+            cardTitle.textContent = city.name;
+
+            cardCoordinates.textContent =
+                `${formatCoordinate(city.lat, "N", "S")} / ` +
+                `${formatCoordinate(city.lon, "E", "W")}`;
+
+            cardStatus.textContent = "ONLINE";
+            cardLatency.textContent = city.latency;
+            cardTraffic.textContent = city.traffic;
+
+            infoCard.classList.add("visible");
+        }
+
+        function updateInfoCardPosition() {
+            if (!selectedMarker) return;
+
+            const worldPosition = new THREE.Vector3();
+            selectedMarker.getWorldPosition(worldPosition);
+
+            const cameraToMarker = worldPosition
+                .clone()
+                .sub(camera.position)
+                .normalize();
+
+            const cameraToEarth = new THREE.Vector3()
+                .subVectors(
+                    new THREE.Vector3(0, 0, 0),
+                    camera.position
+                )
+                .normalize();
+
+            // 节点旋转到地球背面时隐藏卡片
+            if (cameraToMarker.dot(cameraToEarth) < 0.65) {
+                infoCard.style.opacity = "0";
+                return;
+            }
+
+            infoCard.style.opacity = "";
+
+            worldPosition.project(camera);
+
+            const x =
+                (worldPosition.x * 0.5 + 0.5) *
+                window.innerWidth;
+
+            const y =
+                (-worldPosition.y * 0.5 + 0.5) *
+                window.innerHeight;
+
+            const safeX = Math.min(
+                x,
+                window.innerWidth - 280
+            );
+
+            const safeY = THREE.MathUtils.clamp(
+                y,
+                110,
+                window.innerHeight - 110
+            );
+
+            infoCard.style.left = `${safeX}px`;
+            infoCard.style.top = `${safeY}px`;
+        }
+
+        // ============================================================
+        // 12. 时间、FPS 与装饰数据
+        // ============================================================
+
+        const localTimeElement =
+            document.getElementById("local-time");
+
+        const dateElement =
+            document.getElementById("date-display");
+
+        const timezoneElement =
+            document.getElementById("timezone-display");
+
+        const satelliteCountElement =
+            document.getElementById("satellite-count");
+
+        const fpsElement =
+            document.getElementById("fps");
+
+        function updateClock() {
+            const now = new Date();
+
+            localTimeElement.textContent =
+                new Intl.DateTimeFormat("zh-CN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                }).format(now);
+
+            dateElement.textContent =
+                new Intl.DateTimeFormat("zh-CN", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    weekday: "short"
+                }).format(now);
+
+            const timezone =
+                Intl.DateTimeFormat()
+                    .resolvedOptions()
+                    .timeZone || "Local Time";
+
+            const offsetMinutes =
+                -now.getTimezoneOffset();
+
+            const sign =
+                offsetMinutes >= 0 ? "+" : "-";
+
+            const hours = String(
+                Math.floor(Math.abs(offsetMinutes) / 60)
+            ).padStart(2, "0");
+
+            const minutes = String(
+                Math.abs(offsetMinutes) % 60
+            ).padStart(2, "0");
+
+            timezoneElement.textContent =
+                `${timezone} / UTC${sign}${hours}:${minutes}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 装饰性卫星数量轻微变化
+        setInterval(() => {
+            const value =
+                8942 + Math.floor(Math.random() * 7 - 3);
+
+            satelliteCountElement.textContent =
+                value.toLocaleString("en-US");
+        }, 4500);
+
+        let fpsFrames = 0;
+        let fpsLastTime = performance.now();
+
+        function updateFPS(now) {
+            fpsFrames++;
+
+            if (now - fpsLastTime >= 1000) {
+                const fps = Math.round(
+                    (fpsFrames * 1000) /
+                    (now - fpsLastTime)
+                );
+
+                fpsElement.textContent = `${fps} FPS`;
+                fpsFrames = 0;
+                fpsLastTime = now;
+            }
+        }
+
+        // ============================================================
+        // 13. 星云视差
+        // ============================================================
+
+        const nebulaElements =
+            document.querySelectorAll(".nebula");
+
+        let targetMouseX = 0;
+        let targetMouseY = 0;
+        let smoothedMouseX = 0;
+        let smoothedMouseY = 0;
+
+        window.addEventListener(
+            "pointermove",
+            (event) => {
+                targetMouseX =
+                    event.clientX / window.innerWidth - 0.5;
+
+                targetMouseY =
+                    event.clientY / window.innerHeight - 0.5;
+            },
+            { passive: true }
+        );
+
+        function updateNebulaParallax() {
+            smoothedMouseX +=
+                (targetMouseX - smoothedMouseX) * 0.035;
+
+            smoothedMouseY +=
+                (targetMouseY - smoothedMouseY) * 0.035;
+
+            nebulaElements.forEach((element) => {
+                const depth =
+                    Number(element.dataset.depth || 10);
+
+                element.style.transform =
+                    `translate3d(` +
+                    `${smoothedMouseX * depth}px, ` +
+                    `${smoothedMouseY * depth}px, 0)`;
+            });
+        }
+
+        // ============================================================
+        // 14. 响应式处理
+        // ============================================================
+
+        function handleResize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(
+                Math.min(window.devicePixelRatio, 1.75)
+            );
+
+            starMaterial.uniforms.uPixelRatio.value =
+                Math.min(window.devicePixelRatio, 1.75);
+        }
+
+        window.addEventListener("resize", handleResize);
+
+        // 页面失焦时暂停高频渲染，降低后台资源占用
+        let pageVisible = true;
+
+        document.addEventListener("visibilitychange", () => {
+            pageVisible = !document.hidden;
+        });
+
+        // ============================================================
+        // 15. 主动画循环
+        // ============================================================
+
+        const clock = new THREE.Clock();
+        let elapsedTime = 0;
+
+        function animate(now = 0) {
+            requestAnimationFrame(animate);
+
+            if (!pageVisible) return;
+
+            const delta = Math.min(clock.getDelta(), 0.05);
+            elapsedTime += delta;
+
+            // 默认地球缓慢绕自身 Y 轴旋转
+            // 用户交互时降低速度，避免拖拽视角与自转互相干扰
+            const rotationSpeed =
+                userInteracting ? 0.018 : 0.055;
+
+            earthSpin.rotation.y +=
+                delta * rotationSpeed;
+
+            // 云层采用不同速度，制造与地表不同步的气象动态
+            cloudMesh.rotation.y +=
+                delta * 0.018;
+
+            // 星空非常缓慢地漂移
+            starField.rotation.y =
+                elapsedTime * 0.0018;
+
+            starField.rotation.x =
+                Math.sin(elapsedTime * 0.025) * 0.006;
+
+            starMaterial.uniforms.uTime.value =
+                elapsedTime;
+
+            // 三维 HUD 轨道环缓慢旋转
+            ringA.rotation.z += delta * 0.025;
+            ringB.rotation.z -= delta * 0.018;
+            ringC.rotation.y += delta * 0.012;
+
+            // 数据中心节点脉冲
+            markerObjects.forEach((marker) => {
+                const pulse =
+                    1 +
+                    Math.sin(
+                        elapsedTime * 2.4 +
+                        marker.userData.phase
+                    ) * 0.16;
+
+                marker.scale.set(
+                    0.23 * pulse,
+                    0.23 * pulse,
+                    1
+                );
+
+                marker.material.opacity =
+                    0.72 +
+                    Math.sin(
+                        elapsedTime * 2.1 +
+                        marker.userData.phase
+                    ) * 0.2;
+            });
+
+            updateNebulaParallax();
+            updateInfoCardPosition();
+            updateFPS(now);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // 初始化视角
+        controls.update();
+
+        // 贴图和场景准备完成后隐藏加载画面
+        setTimeout(() => {
+            loaderProgress.textContent = "100%";
+            loaderElement.classList.add("hidden");
+        }, 550);
+
+        animate();
+    </script>
+</body>
+
+</html>

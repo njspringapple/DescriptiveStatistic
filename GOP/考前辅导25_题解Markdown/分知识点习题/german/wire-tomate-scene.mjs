@@ -1,0 +1,11 @@
+import fs from "node:fs";
+const file="Gemuese.html";
+let source=fs.readFileSync(file,"utf8");
+const branch="  if(c.dataset.i==='0'){openTomatoScene();return;}\n";
+if(!source.includes(branch))throw new Error("legacy tomato click branch not found");
+source=source.replace(branch,"");
+const needle='<script src="word-scenes-gemuese-rest-c.js"></script><script src="word-scene.js"></script>';
+const replacement='<script src="word-scenes-gemuese-rest-c.js"></script><script src="word-scenes-tomate.js"></script><script src="word-scene.js"></script>';
+if(!source.includes(needle))throw new Error("tomato scene script insertion point not found");
+source=source.replace(needle,replacement);
+fs.writeFileSync(file,source,"utf8");

@@ -1,0 +1,4401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+>
+<meta name="theme-color" content="#0878e8">
+<title>停车云客服</title>
+
+<style>
+:root {
+  --primary: #0878e8;
+  --primary-dark: #075fbc;
+  --cyan: #11bcd1;
+  --green: #16a777;
+  --orange: #ff8a3d;
+  --red: #ef5261;
+  --text: #172b3f;
+  --subtext: #6d7f91;
+  --muted: #98a6b4;
+  --line: #e4ebf1;
+  --page: #f3f7fa;
+  --card: #ffffff;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  color: var(--text);
+  background: #dce9f2;
+  font-family:
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
+.app {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--page);
+  box-shadow: 0 0 50px rgba(29, 58, 80, 0.15);
+}
+
+.page {
+  display: none;
+  min-height: 100vh;
+  padding-bottom: calc(92px + var(--safe-bottom));
+  background:
+    radial-gradient(circle at 90% 0, rgba(59, 200, 233, 0.12), transparent 25%),
+    var(--page);
+}
+
+.page.active {
+  display: block;
+  animation: pageIn 0.3s ease;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.topbar {
+  position: sticky;
+  z-index: 30;
+  top: 0;
+  display: flex;
+  height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(99, 232, 255, 0.28), transparent 32%),
+    linear-gradient(135deg, #086dd9, #0899b8);
+  box-shadow: 0 5px 18px rgba(4, 84, 151, 0.16);
+}
+
+.topbar-title {
+  min-width: 0;
+  text-align: center;
+}
+
+.topbar-title strong {
+  display: block;
+  font-size: 16px;
+}
+
+.topbar-title span {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon-button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border-radius: 12px;
+  color: inherit;
+  background: transparent;
+  font-size: 21px;
+}
+
+.icon-button:active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.page-body {
+  padding: 14px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+  border-radius: 19px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(255, 255, 255, 0.25), transparent 32%),
+    linear-gradient(135deg, #0873e6, #10adc1);
+  box-shadow: 0 14px 34px rgba(8, 112, 210, 0.2);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  bottom: -45px;
+  width: 135px;
+  height: 135px;
+  border: 20px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+.hero-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-logo {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 23px;
+  backdrop-filter: blur(8px);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.hero p {
+  margin: 5px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.security-line {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 10px;
+}
+
+.card {
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: var(--card);
+  box-shadow: 0 7px 22px rgba(37, 65, 87, 0.055);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-title-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.card-title-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--primary);
+  background: #eaf4ff;
+  font-size: 15px;
+}
+
+.card-title strong {
+  font-size: 14px;
+}
+
+.card-title small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.status-chip {
+  padding: 5px 8px;
+  border-radius: 20px;
+  color: #0f9167;
+  background: #e9faf4;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.status-chip.warning {
+  color: #c56f16;
+  background: #fff4e7;
+}
+
+.info-list {
+  overflow: hidden;
+  border: 1px solid #dbe8f2;
+  border-radius: 13px;
+  background: #f3f9ff;
+}
+
+.info-row {
+  display: flex;
+  min-height: 41px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 11px;
+  border-bottom: 1px dashed #d6e3ed;
+  font-size: 12px;
+}
+
+.info-row:last-child {
+  border-bottom: 0;
+}
+
+.info-row span {
+  flex: 0 0 auto;
+  color: var(--subtext);
+}
+
+.info-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-button {
+  padding: 5px 0;
+  color: var(--primary);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.section-label {
+  margin: 18px 3px 10px;
+  color: #41576b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.service-item {
+  position: relative;
+  min-height: 116px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  color: var(--text);
+  background: #fff;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.service-item:active {
+  transform: scale(0.98);
+}
+
+.service-item.selected {
+  color: #fff;
+  border-color: transparent;
+  background:
+    radial-gradient(circle at 90% 5%, rgba(255, 255, 255, 0.25), transparent 32%),
+    linear-gradient(135deg, #0874e7, #0ea6bd);
+  box-shadow: 0 10px 25px rgba(7, 116, 218, 0.2);
+}
+
+.service-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--primary);
+  background: #eaf4ff;
+  font-size: 18px;
+}
+
+.service-item.selected .service-icon {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.service-item strong {
+  display: block;
+  margin-top: 11px;
+  font-size: 13px;
+}
+
+.service-item span {
+  display: block;
+  margin-top: 5px;
+  color: #7d8c99;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.service-item.selected span {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.recommend {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  padding: 3px 7px;
+  border-radius: 10px;
+  color: #fff;
+  background: #ff745f;
+  font-size: 9px;
+}
+
+.problem-box {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.problem-box label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+textarea {
+  width: 100%;
+  min-height: 76px;
+  resize: none;
+  border: 1px solid #dce5ec;
+  border-radius: 12px;
+  padding: 11px;
+  color: var(--text);
+  background: #f8fafc;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+textarea:focus,
+input:focus {
+  border-color: #65adee;
+  box-shadow: 0 0 0 3px rgba(8, 120, 232, 0.08);
+}
+
+.quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.quick-tag {
+  padding: 7px 9px;
+  border: 1px solid #dce6ee;
+  border-radius: 20px;
+  color: #607487;
+  background: #fff;
+  font-size: 10px;
+}
+
+.quick-tag.active {
+  color: var(--primary);
+  border-color: #8cc4f4;
+  background: #eef7ff;
+}
+
+.agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 13px 3px 0;
+  color: #718292;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.check {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  place-items: center;
+  border: 1px solid #b9c7d2;
+  border-radius: 6px;
+  color: transparent;
+  background: #fff;
+}
+
+.check.checked {
+  color: #fff;
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.bottom-action {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  gap: 10px;
+  padding: 11px 14px calc(11px + var(--safe-bottom));
+  transform: translateX(-50%);
+  border-top: 1px solid #e2e9ef;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 -8px 25px rgba(32, 57, 76, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.primary-button,
+.secondary-button,
+.danger-button {
+  min-height: 48px;
+  flex: 1;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.primary-button {
+  color: #fff;
+  background: linear-gradient(135deg, #0875e7, #0ca7bd);
+  box-shadow: 0 9px 20px rgba(7, 117, 219, 0.2);
+}
+
+.secondary-button {
+  color: #476075;
+  border: 1px solid #d7e1e9;
+  background: #fff;
+}
+
+.danger-button {
+  color: #fff;
+  background: linear-gradient(135deg, #ee5563, #d84150);
+}
+
+.primary-button:active,
+.secondary-button:active,
+.danger-button:active {
+  transform: translateY(1px);
+}
+
+/* 排队页面 */
+
+.queue-body {
+  padding: 17px 14px;
+}
+
+.queue-card {
+  padding: 21px 16px;
+  border: 1px solid #dce8f1;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(38, 68, 91, 0.07);
+  text-align: center;
+}
+
+.agent-avatar {
+  position: relative;
+  display: grid;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #0873e6, #12b8c9);
+  box-shadow: 0 9px 23px rgba(8, 115, 222, 0.24);
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.agent-avatar::before,
+.agent-avatar::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(8, 119, 223, 0.2);
+  border-radius: 50%;
+  animation: queuePulse 2s infinite;
+}
+
+.agent-avatar::after {
+  inset: -17px;
+  animation-delay: 0.6s;
+}
+
+@keyframes queuePulse {
+  50% {
+    opacity: 0.15;
+    transform: scale(1.08);
+  }
+}
+
+.queue-card h2 {
+  margin: 19px 0 6px;
+  font-size: 17px;
+}
+
+.queue-card > p {
+  margin: 0;
+  color: var(--subtext);
+  font-size: 12px;
+}
+
+.queue-number {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.queue-number strong {
+  color: var(--primary);
+  font-size: 48px;
+  line-height: 1;
+}
+
+.queue-number span {
+  padding-bottom: 7px;
+  color: #718293;
+  font-size: 12px;
+}
+
+.progress {
+  height: 8px;
+  margin: 18px 8px 0;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e6eef4;
+}
+
+.progress-bar {
+  width: 20%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0875e7, #10b8c5);
+  transition: width 0.5s ease;
+}
+
+.queue-estimate {
+  margin-top: 11px;
+  color: #607488;
+  font-size: 12px;
+}
+
+.queue-estimate b {
+  color: var(--primary);
+}
+
+.queue-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  color: #17805f;
+  background: #eaf9f4;
+  font-size: 10px;
+}
+
+.blink-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16ad7d;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.permission-list {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: #fff;
+}
+
+.permission-list h3 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.permission-list > p {
+  margin: 0 0 5px;
+  color: var(--subtext);
+  font-size: 10px;
+}
+
+.permission-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid #edf1f4;
+}
+
+.permission-row:last-child {
+  border-bottom: 0;
+}
+
+.permission-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border-radius: 11px;
+  color: var(--primary);
+  background: #eaf4ff;
+}
+
+.permission-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.permission-info strong {
+  display: block;
+  font-size: 12px;
+}
+
+.permission-info span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.permission-state {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.self-help {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #cfe3f3;
+  border-radius: 17px;
+  background: #eef8ff;
+}
+
+.self-help h3 {
+  margin: 0;
+  color: #265a81;
+  font-size: 13px;
+}
+
+.self-help p {
+  margin: 4px 0 10px;
+  color: #7790a3;
+  font-size: 10px;
+}
+
+.self-help-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-top: 1px dashed #cbdde9;
+  color: #557086;
+  background: transparent;
+  font-size: 11px;
+  text-align: left;
+}
+
+.self-help-button b {
+  color: var(--primary);
+}
+
+.queue-record {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 13px;
+  color: #83919d;
+  font-size: 10px;
+}
+
+.red-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+/* 诊断过渡页 */
+
+.diagnose-page {
+  display: none;
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(12, 177, 214, 0.24), transparent 27%),
+    linear-gradient(150deg, #061a31, #073c68);
+}
+
+.diagnose-page.active {
+  display: flex;
+}
+
+.diagnose-panel {
+  width: 100%;
+  max-width: 390px;
+  color: #fff;
+  text-align: center;
+}
+
+.scan-ring {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 24px;
+  border: 1px solid rgba(96, 225, 255, 0.25);
+  border-radius: 50%;
+}
+
+.scan-ring::before,
+.scan-ring::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.scan-ring::before {
+  inset: 12px;
+  border: 3px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #51e5f3;
+  animation: rotate 1.2s linear infinite;
+}
+
+.scan-ring::after {
+  inset: 33px;
+  background: linear-gradient(135deg, #0b7ce5, #13c4cd);
+  box-shadow: 0 0 30px rgba(28, 213, 232, 0.32);
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.diagnose-panel h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.diagnose-panel > p {
+  margin: 9px 0 22px;
+  color: #9cc7dd;
+  font-size: 12px;
+}
+
+.diagnose-steps {
+  padding: 15px;
+  border: 1px solid rgba(110, 211, 239, 0.18);
+  border-radius: 17px;
+  background: rgba(9, 31, 54, 0.62);
+  text-align: left;
+  backdrop-filter: blur(12px);
+}
+
+.diagnose-step {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 0;
+  color: #7fa4ba;
+  font-size: 12px;
+}
+
+.diagnose-step.done {
+  color: #dffaff;
+}
+
+.diagnose-step i {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  place-items: center;
+  border: 1px solid rgba(114, 203, 230, 0.2);
+  border-radius: 50%;
+  font-style: normal;
+}
+
+.diagnose-step.done i {
+  color: #052638;
+  border-color: #4be0c6;
+  background: #4be0c6;
+}
+
+/* 视频通话 */
+
+#page-call {
+  position: relative;
+  height: 100vh;
+  min-height: 680px;
+  overflow: hidden;
+  padding: 0;
+  color: #fff;
+  background: #030a0f;
+}
+
+.call-remote {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 31%, rgba(50, 106, 128, 0.42), transparent 25%),
+    linear-gradient(180deg, #102632, #02070b 78%);
+}
+
+.call-remote::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  opacity: 0.11;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(255, 255, 255, 0.13) 4px
+    );
+}
+
+.call-top {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding:
+    calc(14px + env(safe-area-inset-top, 0px))
+    15px
+    12px;
+  background: linear-gradient(rgba(0, 0, 0, 0.55), transparent);
+}
+
+.call-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recording {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+}
+
+.call-secure {
+  color: #bcd3dd;
+  font-size: 10px;
+}
+
+.network-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  color: #66e8c7;
+  background: rgba(1, 25, 31, 0.62);
+  font-size: 9px;
+}
+
+.agent-visual {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 15%;
+  width: 250px;
+  height: 360px;
+  transform: translateX(-50%);
+}
+
+.agent-body {
+  position: absolute;
+  left: 28px;
+  top: 142px;
+  width: 195px;
+  height: 230px;
+  border-radius: 85px 85px 18px 18px;
+  background:
+    radial-gradient(circle at 65% 25%, rgba(255, 255, 255, 0.15), transparent 35%),
+    linear-gradient(140deg, #2188cf, #123f69);
+}
+
+.agent-shirt {
+  position: absolute;
+  left: 92px;
+  top: 142px;
+  width: 68px;
+  height: 150px;
+  clip-path: polygon(0 0, 50% 24%, 100% 0, 75% 100%, 25% 100%);
+  background: #e9f0f4;
+}
+
+.agent-neck {
+  position: absolute;
+  left: 103px;
+  top: 119px;
+  width: 43px;
+  height: 45px;
+  background: #bd876a;
+}
+
+.agent-face {
+  position: absolute;
+  left: 79px;
+  top: 30px;
+  width: 92px;
+  height: 118px;
+  border-radius: 47% 47% 43% 43%;
+  background: linear-gradient(140deg, #e4bda2, #b77c61);
+}
+
+.agent-hair {
+  position: absolute;
+  left: 70px;
+  top: 18px;
+  width: 109px;
+  height: 60px;
+  border-radius: 55px 55px 22px 22px;
+  background: #1f2a31;
+}
+
+.agent-eye {
+  position: absolute;
+  top: 79px;
+  width: 7px;
+  height: 4px;
+  border-radius: 50%;
+  background: #4a342d;
+}
+
+.agent-eye.left {
+  left: 101px;
+}
+
+.agent-eye.right {
+  right: 101px;
+}
+
+.agent-mouth {
+  position: absolute;
+  left: 115px;
+  top: 113px;
+  width: 21px;
+  height: 7px;
+  border-bottom: 2px solid #8e5048;
+  border-radius: 50%;
+}
+
+.agent-headset {
+  position: absolute;
+  left: 62px;
+  top: 39px;
+  width: 126px;
+  height: 93px;
+  border: 7px solid #243841;
+  border-bottom: 0;
+  border-radius: 70px 70px 0 0;
+}
+
+.agent-headset::after {
+  content: "";
+  position: absolute;
+  right: -22px;
+  bottom: -5px;
+  width: 42px;
+  height: 6px;
+  border-radius: 8px;
+  background: #243841;
+  transform: rotate(12deg);
+  transform-origin: left;
+}
+
+.agent-badge {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 51%;
+  min-width: 210px;
+  padding: 9px 13px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(101, 205, 236, 0.23);
+  border-radius: 15px;
+  background: rgba(2, 22, 32, 0.65);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.agent-badge strong {
+  display: block;
+  font-size: 13px;
+}
+
+.agent-badge span {
+  display: block;
+  margin-top: 4px;
+  color: #91b3c2;
+  font-size: 9px;
+}
+
+.local-video {
+  position: absolute;
+  z-index: 21;
+  right: 14px;
+  top: 108px;
+  width: 112px;
+  height: 155px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.38);
+  border-radius: 16px;
+  background: #1a343f;
+  box-shadow: 0 10px 27px rgba(0, 0, 0, 0.35);
+}
+
+.local-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.local-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #8fabb6;
+  background:
+    radial-gradient(circle at 50% 40%, #52717e 0 14%, transparent 15%),
+    radial-gradient(ellipse at 50% 94%, #354e59 0 32%, transparent 33%),
+    #203a45;
+  font-size: 9px;
+}
+
+.local-label {
+  position: absolute;
+  z-index: 3;
+  left: 7px;
+  bottom: 6px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.42);
+  font-size: 8px;
+}
+
+.camera-off-label {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: none;
+  place-items: center;
+  color: #c7d9df;
+  background: #132931;
+  font-size: 11px;
+}
+
+.camera-off .camera-off-label {
+  display: grid;
+}
+
+.case-panel {
+  position: absolute;
+  z-index: 19;
+  left: 14px;
+  right: 14px;
+  bottom: calc(132px + var(--safe-bottom));
+  padding: 12px;
+  border: 1px solid rgba(87, 192, 224, 0.23);
+  border-radius: 15px;
+  background: rgba(3, 23, 33, 0.72);
+  backdrop-filter: blur(12px);
+}
+
+.case-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.case-head strong {
+  font-size: 11px;
+}
+
+.case-head span {
+  color: #59e4c6;
+  font-size: 9px;
+}
+
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px 12px;
+  margin-top: 9px;
+  color: #86a6b4;
+  font-size: 9px;
+}
+
+.case-grid b {
+  color: #dceff4;
+  font-weight: 600;
+}
+
+.action-log {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(126, 185, 205, 0.19);
+  color: #8fafbc;
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.action-log b {
+  color: #6fe3cc;
+}
+
+.call-controls {
+  position: absolute;
+  z-index: 22;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 13px 8px calc(15px + var(--safe-bottom));
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.92) 35%);
+}
+
+.call-control {
+  color: #a7bec8;
+  background: transparent;
+  font-size: 9px;
+  text-align: center;
+}
+
+.call-control i {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 6px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(37, 61, 72, 0.78);
+  font-style: normal;
+  font-size: 18px;
+  backdrop-filter: blur(8px);
+}
+
+.call-control.off i {
+  background: #55636a;
+}
+
+.call-control.end i {
+  border-color: transparent;
+  background: var(--red);
+}
+
+/* 文字客服 */
+
+.chat-list {
+  padding: 16px 14px 110px;
+}
+
+.chat-time {
+  margin: 6px 0 13px;
+  color: #98a5b0;
+  font-size: 10px;
+  text-align: center;
+}
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 13px 0;
+}
+
+.message.me {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg, #0875e7, #10b3c4);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.message.me .chat-avatar {
+  background: #90a1ae;
+}
+
+.bubble {
+  max-width: 76%;
+  padding: 10px 12px;
+  border: 1px solid #e0e8ee;
+  border-radius: 4px 14px 14px;
+  background: #fff;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.message.me .bubble {
+  color: #fff;
+  border-color: transparent;
+  border-radius: 14px 4px 14px 14px;
+  background: var(--primary);
+}
+
+.chat-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 8px 44px;
+}
+
+.chat-quick button {
+  padding: 7px 10px;
+  border: 1px solid #9fc9eb;
+  border-radius: 20px;
+  color: var(--primary);
+  background: #f4faff;
+  font-size: 10px;
+}
+
+.chat-input-bar {
+  position: fixed;
+  z-index: 45;
+  left: 50%;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px calc(10px + var(--safe-bottom));
+  transform: translateX(-50%);
+  border-top: 1px solid #e0e7ec;
+  background: #fff;
+}
+
+.chat-input-bar input {
+  min-width: 0;
+  height: 42px;
+  flex: 1;
+  border: 1px solid #dce4ea;
+  border-radius: 12px;
+  padding: 0 12px;
+  background: #f7f9fb;
+  font-size: 12px;
+}
+
+.chat-input-bar button {
+  height: 42px;
+  padding: 0 15px;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 结果页面 */
+
+.result-hero {
+  padding: 31px 19px 23px;
+  text-align: center;
+}
+
+.result-icon {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #13b985, #3dd3ac);
+  box-shadow: 0 12px 28px rgba(24, 175, 128, 0.23);
+  font-size: 35px;
+}
+
+.result-icon.warning {
+  background: linear-gradient(135deg, #ff963f, #ffbd56);
+  box-shadow: 0 12px 28px rgba(242, 145, 56, 0.22);
+}
+
+.result-hero h2 {
+  margin: 16px 0 7px;
+  font-size: 20px;
+}
+
+.result-hero p {
+  margin: 0;
+  color: var(--subtext);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.timeline {
+  margin-top: 5px;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  gap: 11px;
+  padding-bottom: 18px;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 25px;
+  bottom: 0;
+  width: 1px;
+  background: #d9e4eb;
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-dot {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--green);
+  font-size: 11px;
+}
+
+.timeline-text strong {
+  display: block;
+  font-size: 12px;
+}
+
+.timeline-text span {
+  display: block;
+  margin-top: 3px;
+  color: var(--subtext);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.confirm-panel {
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid #cfe8df;
+  border-radius: 16px;
+  background: #effaf6;
+}
+
+.confirm-panel h3 {
+  margin: 0;
+  color: #27765d;
+  font-size: 13px;
+}
+
+.confirm-panel p {
+  margin: 6px 0 0;
+  color: #679183;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.confirm-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.confirm-option {
+  padding: 11px;
+  border: 1px solid #cfdde6;
+  border-radius: 12px;
+  color: #536b7e;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.confirm-option.ok {
+  color: #fff;
+  border-color: transparent;
+  background: var(--green);
+}
+
+/* 评价 */
+
+.rating-card {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.rating-avatar {
+  display: grid;
+  width: 67px;
+  height: 67px;
+  margin: 0 auto;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #0874e7, #10b4c5);
+  box-shadow: 0 8px 22px rgba(8, 116, 219, 0.22);
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.rating-card h2 {
+  margin: 13px 0 4px;
+  font-size: 18px;
+}
+
+.rating-card p {
+  margin: 0;
+  color: var(--subtext);
+  font-size: 11px;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 22px 0 8px;
+}
+
+.star {
+  padding: 0;
+  color: #dbe2e8;
+  background: transparent;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.star.active {
+  color: #ffb536;
+  filter: drop-shadow(0 4px 6px rgba(255, 181, 54, 0.24));
+}
+
+.rating-text {
+  min-height: 23px;
+  color: #e58e1d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rating-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.rating-tag {
+  padding: 8px 12px;
+  border: 1px solid #dce5ec;
+  border-radius: 20px;
+  color: #637688;
+  background: #fff;
+  font-size: 11px;
+}
+
+.rating-tag.active {
+  color: var(--primary);
+  border-color: #82bced;
+  background: #eef7ff;
+}
+
+.rating-textarea {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.rating-textarea span {
+  display: block;
+  margin-bottom: 7px;
+  color: #516579;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.anonymous {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1f4;
+  color: #5f7283;
+  font-size: 11px;
+}
+
+.switch {
+  position: relative;
+  width: 43px;
+  height: 24px;
+  border-radius: 20px;
+  background: #cfd8df;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  transition: 0.2s ease;
+}
+
+.switch.on {
+  background: var(--primary);
+}
+
+.switch.on::after {
+  left: 22px;
+}
+
+/* 完成与回执 */
+
+.done-hero {
+  padding: 32px 18px 18px;
+  text-align: center;
+}
+
+.done-check {
+  display: grid;
+  width: 83px;
+  height: 83px;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.3), transparent 35%),
+    linear-gradient(135deg, #10b47f, #33d1a8);
+  box-shadow: 0 13px 30px rgba(21, 177, 130, 0.22);
+  font-size: 39px;
+}
+
+.done-hero h2 {
+  margin: 17px 0 7px;
+  font-size: 21px;
+}
+
+.done-hero p {
+  margin: 0;
+  color: var(--subtext);
+  font-size: 12px;
+}
+
+.receipt {
+  position: relative;
+  overflow: hidden;
+}
+
+.receipt::before,
+.receipt::after {
+  content: "";
+  position: absolute;
+  top: 127px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--page);
+}
+
+.receipt::before {
+  left: -11px;
+}
+
+.receipt::after {
+  right: -11px;
+}
+
+.receipt-head {
+  padding-bottom: 14px;
+  border-bottom: 1px dashed #cfdbe4;
+  text-align: center;
+}
+
+.receipt-head span {
+  color: var(--subtext);
+  font-size: 10px;
+}
+
+.receipt-head strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 17px;
+  letter-spacing: 1px;
+}
+
+.receipt-list {
+  padding-top: 10px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 7px 0;
+  color: var(--subtext);
+  font-size: 11px;
+}
+
+.receipt-row b {
+  color: var(--text);
+  text-align: right;
+}
+
+.receipt-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.mini-button {
+  min-height: 40px;
+  border: 1px solid #d6e1e9;
+  border-radius: 11px;
+  color: #52697b;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.history-title {
+  margin: 17px 3px 9px;
+  color: #5a6e80;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.history-item {
+  margin-top: 9px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.history-head strong {
+  font-size: 11px;
+}
+
+.history-head span {
+  color: var(--green);
+  font-size: 9px;
+}
+
+.history-item p {
+  margin: 6px 0 0;
+  color: var(--subtext);
+  font-size: 9px;
+}
+
+/* 弹窗 */
+
+.modal-layer {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 14px;
+  background: rgba(4, 16, 26, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.modal-layer.active {
+  display: flex;
+}
+
+.modal {
+  width: 100%;
+  max-width: 492px;
+  padding: 20px;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.24);
+  animation: modalIn 0.24s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+.modal-icon {
+  display: grid;
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 13px;
+  place-items: center;
+  border-radius: 17px;
+  color: var(--primary);
+  background: #eaf4ff;
+  font-size: 25px;
+}
+
+.modal-icon.danger {
+  color: var(--red);
+  background: #fff0f2;
+}
+
+.modal h3 {
+  margin: 0;
+  font-size: 17px;
+  text-align: center;
+}
+
+.modal > p {
+  margin: 9px 0 16px;
+  color: var(--subtext);
+  font-size: 11px;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 9px;
+  margin-top: 17px;
+}
+
+.modal-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.modal-list button {
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid #dce5eb;
+  border-radius: 12px;
+  color: #52697b;
+  background: #fff;
+  font-size: 12px;
+  text-align: left;
+}
+
+.modal-list button.selected {
+  color: var(--primary);
+  border-color: #8cc3ef;
+  background: #eef7ff;
+}
+
+.plate-input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  border: 1px solid #d8e2e9;
+  border-radius: 13px;
+  padding: 0 14px;
+  color: var(--text);
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.toast {
+  position: fixed;
+  z-index: 150;
+  left: 50%;
+  bottom: 110px;
+  max-width: calc(100% - 40px);
+  padding: 11px 15px;
+  transform: translate(-50%, 20px);
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(20, 34, 45, 0.9);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+  transition: 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.photo-preview {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 13px;
+  background: #edf2f5;
+}
+
+.emergency-number {
+  margin: 13px 0;
+  color: var(--red);
+  font-size: 25px;
+  font-weight: 900;
+  text-align: center;
+}
+
+@media (min-width: 521px) {
+  .app {
+    min-height: 900px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- 首页：扫码场景和服务选择 -->
+  <section id="page-home" class="page active">
+    <header class="topbar">
+      <button class="icon-button" type="button" onclick="showExitTip()">‹</button>
+
+      <div class="topbar-title">
+        <strong>停车云客服</strong>
+        <span>第一人民医院停车场</span>
+      </div>
+
+      <button class="icon-button" type="button" onclick="openMoreMenu()">···</button>
+    </header>
+
+    <div class="page-body">
+      <div class="hero">
+        <div class="hero-top">
+          <div class="hero-logo">▦</div>
+
+          <div>
+            <h1>您好，需要什么帮助？</h1>
+            <p>
+              系统已识别您的扫码位置和车辆信息，
+              可直接连接停车场云客服。
+            </p>
+          </div>
+        </div>
+
+        <div class="security-line">
+          <span>✓ 无需下载 App</span>
+          <span>✓ 音视频加密</span>
+          <span>✓ 工单全程留痕</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-left">
+            <div class="card-title-icon">⌖</div>
+
+            <div>
+              <strong>当前停车现场</strong>
+              <small>二维码已绑定车道上下文</small>
+            </div>
+          </div>
+
+          <span class="status-chip">识别成功</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span>当前项目</span>
+            <strong>第一人民医院停车场</strong>
+          </div>
+
+          <div class="info-row">
+            <span>扫码位置</span>
+            <strong>急诊出口 · 2号车道</strong>
+          </div>
+
+          <div class="info-row">
+            <span>识别车辆</span>
+
+            <strong>
+              <span id="homePlate">粤A·8K36Q</span>
+              <button class="link-button" type="button" onclick="openPlateModal()">
+                车牌有误
+              </button>
+            </strong>
+          </div>
+
+          <div class="info-row">
+            <span>停车订单</span>
+            <strong>18.00元 · 已支付</strong>
+          </div>
+
+          <div class="info-row">
+            <span>车道状态</span>
+            <strong style="color:#159269">设备在线</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">请选择本次需要的服务</div>
+
+      <div class="service-grid" id="serviceGrid">
+        <button
+          class="service-item selected"
+          type="button"
+          data-service="支付成功未开闸"
+          onclick="selectService(this)"
+        >
+          <span class="recommend">推荐</span>
+          <i class="service-icon">闸</i>
+          <strong>支付成功未开闸</strong>
+          <span>同步支付状态并协助车辆通行</span>
+        </button>
+
+        <button
+          class="service-item"
+          type="button"
+          data-service="停车费用异常"
+          onclick="selectService(this)"
+        >
+          <i class="service-icon">费</i>
+          <strong>停车费用异常</strong>
+          <span>费用过高、优惠未抵扣或重复收费</span>
+        </button>
+
+        <button
+          class="service-item"
+          type="button"
+          data-service="现场设备报障"
+          onclick="selectService(this)"
+        >
+          <i class="service-icon">障</i>
+          <strong>现场设备报障</strong>
+          <span>道闸、相机、扫码器或缴费机异常</span>
+        </button>
+
+        <button
+          class="service-item"
+          type="button"
+          data-service="发票与订单"
+          onclick="selectService(this)"
+        >
+          <i class="service-icon">票</i>
+          <strong>发票与订单</strong>
+          <span>查询订单、电子发票或支付记录</span>
+        </button>
+
+        <button
+          class="service-item"
+          type="button"
+          data-service="服务投诉"
+          onclick="selectService(this)"
+        >
+          <i class="service-icon">诉</i>
+          <strong>服务投诉</strong>
+          <span>收费、停车秩序或现场服务反馈</span>
+        </button>
+
+        <button
+          class="service-item"
+          type="button"
+          data-service="紧急求助"
+          onclick="openEmergency()"
+        >
+          <i class="service-icon" style="color:#e64e5e;background:#fff0f2">SOS</i>
+          <strong>紧急求助</strong>
+          <span>人员受伤、车辆故障或其他安全事件</span>
+        </button>
+      </div>
+
+      <div class="problem-box">
+        <label for="problemDescription">补充问题描述（选填）</label>
+
+        <textarea
+          id="problemDescription"
+          maxlength="200"
+          placeholder="例如：停车费已经支付，但道闸没有开启……"
+        ></textarea>
+
+        <div class="quick-tags">
+          <button class="quick-tag" type="button" onclick="toggleProblemTag(this)">
+            已支付未开闸
+          </button>
+
+          <button class="quick-tag" type="button" onclick="toggleProblemTag(this)">
+            车牌识别错误
+          </button>
+
+          <button class="quick-tag" type="button" onclick="toggleProblemTag(this)">
+            后方有车辆等待
+          </button>
+
+          <button class="quick-tag" type="button" onclick="toggleProblemTag(this)">
+            需要人工处理
+          </button>
+        </div>
+      </div>
+
+      <div class="agreement" onclick="toggleAgreement()">
+        <span id="agreementCheck" class="check checked">✓</span>
+
+        <span>
+          我已阅读并同意《云客服服务协议》和《隐私保护说明》。
+          为处理本次问题，系统可能采集车牌、订单、位置、图片及音视频信息。
+          接通后将进行录音录像并生成服务工单。
+        </span>
+      </div>
+    </div>
+
+    <div class="bottom-action">
+      <button class="secondary-button" type="button" onclick="startTextService()">
+        文字客服
+      </button>
+
+      <button class="primary-button" type="button" onclick="startVideoService()">
+        连接视频客服
+      </button>
+    </div>
+  </section>
+
+  <!-- 排队页 -->
+  <section id="page-queue" class="page">
+    <header class="topbar">
+      <button class="icon-button" type="button" onclick="confirmCancelQueue()">‹</button>
+
+      <div class="topbar-title">
+        <strong>正在连接视频客服</strong>
+        <span>请保持页面打开</span>
+      </div>
+
+      <button class="icon-button" type="button" onclick="openMoreMenu()">···</button>
+    </header>
+
+    <div class="queue-body">
+      <div class="queue-card">
+        <div class="agent-avatar">客</div>
+
+        <h2 id="queueTitle">云客服正在服务前方车主</h2>
+        <p id="queueSubtitle">已为您保留当前排队位置</p>
+
+        <div class="queue-number">
+          <strong id="queueCount">3</strong>
+          <span>人在您前面</span>
+        </div>
+
+        <div class="progress">
+          <div id="queueProgress" class="progress-bar"></div>
+        </div>
+
+        <div class="queue-estimate">
+          预计等待 <b id="queueSeconds">约 45 秒</b>
+        </div>
+
+        <div class="queue-status">
+          <i class="blink-dot"></i>
+          <span id="queueStatusText">排队连接保持正常</span>
+        </div>
+      </div>
+
+      <div class="permission-list">
+        <h3>视频通话准备</h3>
+        <p>提前完成权限检测，轮到您时可自动接通。</p>
+
+        <div class="permission-row">
+          <div class="permission-icon">麦</div>
+
+          <div class="permission-info">
+            <strong>麦克风权限</strong>
+            <span>用于与客服语音沟通</span>
+          </div>
+
+          <span id="micState" class="permission-state">检测中</span>
+        </div>
+
+        <div class="permission-row">
+          <div class="permission-icon">像</div>
+
+          <div class="permission-info">
+            <strong>摄像头权限</strong>
+            <span>用于客服查看现场情况</span>
+          </div>
+
+          <span id="cameraState" class="permission-state">检测中</span>
+        </div>
+
+        <div class="permission-row">
+          <div class="permission-icon">网</div>
+
+          <div class="permission-info">
+            <strong>音视频网络</strong>
+            <span>WebRTC 加密连接通道</span>
+          </div>
+
+          <span id="networkState" class="permission-state">良好</span>
+        </div>
+      </div>
+
+      <div class="self-help">
+        <h3>等待期间，您也可以自助处理</h3>
+        <p>自助处理成功后，无需继续等待客服。</p>
+
+        <button
+          class="self-help-button"
+          type="button"
+          onclick="selfHelp('sync')"
+        >
+          <span>支付成功但未开闸</span>
+          <b>重新同步支付 ›</b>
+        </button>
+
+        <button
+          class="self-help-button"
+          type="button"
+          onclick="selfHelp('order')"
+        >
+          <span>查看当前停车订单</span>
+          <b>查询订单 ›</b>
+        </button>
+
+        <button
+          class="self-help-button"
+          type="button"
+          onclick="openPhotoPicker()"
+        >
+          <span>现场设备异常</span>
+          <b>拍照报障 ›</b>
+        </button>
+      </div>
+
+      <div class="queue-record">
+        <i class="red-dot"></i>
+        接通后将开始录音录像，并自动生成服务工单
+      </div>
+    </div>
+
+    <div class="bottom-action">
+      <button class="secondary-button" type="button" onclick="confirmCancelQueue()">
+        取消排队
+      </button>
+
+      <button class="primary-button" type="button" onclick="switchQueueToText()">
+        切换文字客服
+      </button>
+    </div>
+  </section>
+
+  <!-- 视频通话页 -->
+  <section id="page-call" class="page">
+    <div class="call-remote">
+      <div class="call-top">
+        <div class="call-top-row">
+          <div class="recording">
+            <i class="red-dot"></i>
+            正在录音录像
+          </div>
+
+          <span class="call-secure">音视频已加密</span>
+        </div>
+
+        <div class="network-chip">
+          ▮▮▮ 网络良好 · <span id="latencyText">82ms</span>
+        </div>
+      </div>
+
+      <div class="agent-visual">
+        <div class="agent-body"></div>
+        <div class="agent-shirt"></div>
+        <div class="agent-neck"></div>
+        <div class="agent-face"></div>
+        <div class="agent-hair"></div>
+        <div class="agent-eye left"></div>
+        <div class="agent-eye right"></div>
+        <div class="agent-mouth"></div>
+        <div class="agent-headset"></div>
+      </div>
+
+      <div class="agent-badge">
+        <strong>陈客服 · 坐席 A016</strong>
+        <span id="agentSpeech">您好，正在为您查询车辆和停车订单</span>
+      </div>
+
+      <div id="localVideoBox" class="local-video">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <div id="localPlaceholder" class="local-placeholder">本地画面模拟</div>
+        <span class="local-label">我的画面</span>
+        <div class="camera-off-label">摄像头已关闭</div>
+      </div>
+
+      <div class="case-panel">
+        <div class="case-head">
+          <strong>本次服务事件</strong>
+          <span id="caseStatus">客服诊断中</span>
+        </div>
+
+        <div class="case-grid">
+          <span>车辆：<b id="callPlate">粤A·8K36Q</b></span>
+          <span>位置：<b>急诊出口2</b></span>
+          <span>停车费：<b>18.00元</b></span>
+          <span>支付：<b style="color:#61e6ca">已成功</b></span>
+        </div>
+
+        <div id="actionLog" class="action-log">
+          <b>11:43:06</b> 客服已接收现场和订单信息
+        </div>
+      </div>
+
+      <div class="call-controls">
+        <button id="muteButton" class="call-control" type="button" onclick="toggleMute()">
+          <i>麦</i>
+          静音
+        </button>
+
+        <button id="cameraButton" class="call-control" type="button" onclick="toggleCamera()">
+          <i>像</i>
+          摄像头
+        </button>
+
+        <button class="call-control" type="button" onclick="flipCamera()">
+          <i>翻</i>
+          翻转
+        </button>
+
+        <button class="call-control" type="button" onclick="openPhotoPicker()">
+          <i>拍</i>
+          上传现场
+        </button>
+
+        <button class="call-control end" type="button" onclick="confirmEndCall()">
+          <i>挂</i>
+          结束
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 文字客服 -->
+  <section id="page-chat" class="page">
+    <header class="topbar">
+      <button class="icon-button" type="button" onclick="confirmEndChat()">‹</button>
+
+      <div class="topbar-title">
+        <strong>文字客服 · 陈客服</strong>
+        <span>坐席 A016 · 在线</span>
+      </div>
+
+      <button class="icon-button" type="button" onclick="startVideoFromChat()">⌁</button>
+    </header>
+
+    <div id="chatList" class="chat-list">
+      <div class="chat-time">今天 <span id="chatTime"></span></div>
+
+      <div class="message">
+        <div class="chat-avatar">陈</div>
+
+        <div class="bubble">
+          您好，我是停车云客服陈客服。系统已经将扫码位置、
+          车辆和停车订单发送给我，请问需要处理什么问题？
+        </div>
+      </div>
+
+      <div class="message">
+        <div class="chat-avatar">陈</div>
+
+        <div class="bubble">
+          当前识别车辆为 <b id="chatPlate">粤A·8K36Q</b>，
+          停车费18元，支付状态为成功。
+        </div>
+      </div>
+
+      <div class="chat-quick">
+        <button type="button" onclick="sendQuickChat('我已支付，但道闸没有开启')">
+          已支付未开闸
+        </button>
+
+        <button type="button" onclick="sendQuickChat('识别的车牌不正确')">
+          车牌不正确
+        </button>
+
+        <button type="button" onclick="sendQuickChat('停车费用存在异常')">
+          费用异常
+        </button>
+      </div>
+    </div>
+
+    <div class="chat-input-bar">
+      <input
+        id="chatInput"
+        type="text"
+        maxlength="100"
+        placeholder="请输入需要咨询的问题"
+        onkeydown="handleChatKey(event)"
+      >
+
+      <button type="button" onclick="sendChat()">发送</button>
+    </div>
+  </section>
+
+  <!-- 处理结果 -->
+  <section id="page-result" class="page">
+    <header class="topbar">
+      <button class="icon-button" type="button" onclick="showExitTip()">‹</button>
+
+      <div class="topbar-title">
+        <strong>服务处理结果</strong>
+        <span>请确认现场问题是否已经解决</span>
+      </div>
+
+      <button class="icon-button" type="button" onclick="openMoreMenu()">···</button>
+    </header>
+
+    <div class="page-body">
+      <div class="result-hero">
+        <div id="resultIcon" class="result-icon">✓</div>
+        <h2 id="resultTitle">道闸已远程开启</h2>
+
+        <p id="resultDescription">
+          客服已同步支付状态并执行远程开闸，
+          请在确保安全的情况下缓慢驶离。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-left">
+            <div class="card-title-icon">单</div>
+
+            <div>
+              <strong>本次处理记录</strong>
+              <small id="resultCaseNo">服务编号生成中</small>
+            </div>
+          </div>
+
+          <span class="status-chip">已处理</span>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot">✓</div>
+
+            <div class="timeline-text">
+              <strong>扫码现场识别完成</strong>
+              <span>已获取项目、车道、车辆和停车订单</span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot">✓</div>
+
+            <div class="timeline-text">
+              <strong>客服核对支付状态</strong>
+              <span>订单金额18.00元，支付状态为成功</span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot">✓</div>
+
+            <div class="timeline-text">
+              <strong id="timelineAction">执行远程开闸</strong>
+              <span id="timelineActionDesc">2号车道道闸已收到开闸指令</span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot">✓</div>
+
+            <div class="timeline-text">
+              <strong>生成服务工单</strong>
+              <span>订单、通话记录和处理结果已经关联留存</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirm-panel">
+        <h3>请确认问题是否已经解决</h3>
+        <p>
+          您的确认将作为本次工单的处理结果。
+          如果仍未解决，可以立即重新连接客服。
+        </p>
+
+        <div class="confirm-options">
+          <button class="confirm-option" type="button" onclick="problemNotSolved()">
+            仍未解决
+          </button>
+
+          <button class="confirm-option ok" type="button" onclick="problemSolved()">
+            已经解决
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 服务评价 -->
+  <section id="page-rating" class="page">
+    <header class="topbar">
+      <button class="icon-button" type="button" onclick="skipRating()">‹</button>
+
+      <div class="topbar-title">
+        <strong>服务评价</strong>
+        <span>您的评价将用于服务改进</span>
+      </div>
+
+      <button class="icon-button" type="button" onclick="skipRating()">跳过</button>
+    </header>
+
+    <div class="page-body">
+      <div class="card rating-card">
+        <div class="rating-avatar">陈</div>
+
+        <h2>请评价本次客服服务</h2>
+        <p>陈客服 · 坐席 A016</p>
+
+        <div class="stars">
+          <button class="star active" type="button" data-score="1" onclick="setRating(1)">★</button>
+          <button class="star active" type="button" data-score="2" onclick="setRating(2)">★</button>
+          <button class="star active" type="button" data-score="3" onclick="setRating(3)">★</button>
+          <button class="star active" type="button" data-score="4" onclick="setRating(4)">★</button>
+          <button class="star active" type="button" data-score="5" onclick="setRating(5)">★</button>
+        </div>
+
+        <div id="ratingText" class="rating-text">非常满意</div>
+
+        <div class="rating-tags">
+          <button class="rating-tag" type="button" onclick="toggleRatingTag(this)">
+            响应迅速
+          </button>
+
+          <button class="rating-tag" type="button" onclick="toggleRatingTag(this)">
+            态度友好
+          </button>
+
+          <button class="rating-tag" type="button" onclick="toggleRatingTag(this)">
+            解决专业
+          </button>
+
+          <button class="rating-tag" type="button" onclick="toggleRatingTag(this)">
+            表达清晰
+          </button>
+
+          <button class="rating-tag" type="button" onclick="toggleRatingTag(this)">
+            一次解决
+          </button>
+        </div>
+
+        <div class="rating-textarea">
+          <span>补充意见（选填）</span>
+
+          <textarea
+            id="ratingComment"
+            maxlength="300"
+            placeholder="请填写您对本次服务的意见或建议……"
+          ></textarea>
+        </div>
+
+        <div class="anonymous">
+          <span>匿名提交本次评价</span>
+          <button id="anonymousSwitch" class="switch on" type="button" onclick="toggleAnonymous()"></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:0">
+          <div class="card-title-left">
+            <div class="card-title-icon">盾</div>
+
+            <div>
+              <strong>评价信息保护</strong>
+              <small>客服不会看到您的联系方式等个人隐私信息</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-action">
+      <button class="secondary-button" type="button" onclick="skipRating()">
+        暂不评价
+      </button>
+
+      <button class="primary-button" type="button" onclick="submitRating()">
+        提交评价
+      </button>
+    </div>
+  </section>
+
+  <!-- 完成及电子回执 -->
+  <section id="page-done" class="page">
+    <header class="topbar">
+      <button class="icon-button" type="button" onclick="showExitTip()">‹</button>
+
+      <div class="topbar-title">
+        <strong>服务已完成</strong>
+        <span>感谢您使用停车云客服</span>
+      </div>
+
+      <button class="icon-button" type="button" onclick="openMoreMenu()">···</button>
+    </header>
+
+    <div class="page-body">
+      <div class="done-hero">
+        <div class="done-check">✓</div>
+        <h2 id="doneTitle">本次服务已闭环完成</h2>
+        <p id="doneSubtitle">处理记录和服务评价已安全保存</p>
+      </div>
+
+      <div class="card receipt">
+        <div class="receipt-head">
+          <span>停车云客服电子服务回执</span>
+          <strong id="receiptCaseNo">CS000000000000</strong>
+        </div>
+
+        <div class="receipt-list">
+          <div class="receipt-row">
+            <span>服务项目</span>
+            <b>第一人民医院停车场</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>服务位置</span>
+            <b>急诊出口 · 2号车道</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>服务车辆</span>
+            <b id="receiptPlate">粤A·8K36Q</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>问题类型</span>
+            <b id="receiptService">支付成功未开闸</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>处理结果</span>
+            <b id="receiptResult" style="color:#159269">问题已解决</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>服务坐席</span>
+            <b>陈客服 · A016</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>服务时间</span>
+            <b id="receiptTime">--</b>
+          </div>
+
+          <div class="receipt-row">
+            <span>服务评价</span>
+            <b id="receiptRating">★★★★★</b>
+          </div>
+        </div>
+
+        <div class="receipt-actions">
+          <button class="mini-button" type="button" onclick="copyCaseNo()">
+            复制工单编号
+          </button>
+
+          <button class="mini-button" type="button" onclick="downloadReceipt()">
+            下载电子回执
+          </button>
+        </div>
+      </div>
+
+      <div class="history-title">最近服务记录</div>
+      <div id="historyList"></div>
+    </div>
+
+    <div class="bottom-action">
+      <button class="secondary-button" type="button" onclick="closeService()">
+        关闭页面
+      </button>
+
+      <button class="primary-button" type="button" onclick="restartService()">
+        再次发起服务
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- 智能诊断过渡 -->
+<div id="diagnosePage" class="diagnose-page">
+  <div class="diagnose-panel">
+    <div class="scan-ring"></div>
+
+    <h2>正在准备云客服会话</h2>
+    <p>系统正在加载现场上下文和停车业务数据</p>
+
+    <div class="diagnose-steps">
+      <div id="diagnose1" class="diagnose-step">
+        <i>1</i>
+        识别停车场、出入口和车道
+      </div>
+
+      <div id="diagnose2" class="diagnose-step">
+        <i>2</i>
+        查询车辆及当前停车订单
+      </div>
+
+      <div id="diagnose3" class="diagnose-step">
+        <i>3</i>
+        检测车道设备和支付状态
+      </div>
+
+      <div id="diagnose4" class="diagnose-step">
+        <i>4</i>
+        创建服务工单并分配客服坐席
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 通用弹窗 -->
+<div id="modalLayer" class="modal-layer">
+  <div id="modalContent" class="modal"></div>
+</div>
+
+<!-- 图片上传 -->
+<input
+  id="photoInput"
+  class="hidden"
+  type="file"
+  accept="image/*"
+  capture="environment"
+  onchange="handlePhotoSelected(event)"
+>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const state = {
+  currentPage: "home",
+  plate: "粤A·8K36Q",
+  selectedService: "支付成功未开闸",
+  agreement: true,
+  queueTimer: null,
+  queueSeconds: 45,
+  queueCount: 3,
+  stream: null,
+  cameraEnabled: true,
+  micEnabled: true,
+  facingMode: "user",
+  callTimer: null,
+  latencyTimer: null,
+  callSeconds: 0,
+  caseNo: "",
+  resultType: "resolved",
+  resultText: "问题已解决",
+  rating: 5,
+  ratingTags: [],
+  anonymous: true,
+  serviceStartedAt: null,
+  serviceEndedAt: null,
+  uploadedPhoto: null,
+  chatResolved: false
+};
+
+const ratingWords = {
+  1: "非常不满意",
+  2: "不满意",
+  3: "一般",
+  4: "满意",
+  5: "非常满意"
+};
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  const target = $("page-" + name);
+
+  if (target) {
+    target.classList.add("active");
+    state.currentPage = name;
+    window.scrollTo(0, 0);
+  }
+}
+
+function toast(message, duration = 2200) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+
+  clearTimeout(el.toastTimer);
+
+  el.toastTimer = setTimeout(() => {
+    el.classList.remove("show");
+  }, duration);
+}
+
+function openModal(html) {
+  $("modalContent").innerHTML = html;
+  $("modalLayer").classList.add("active");
+}
+
+function closeModal() {
+  $("modalLayer").classList.remove("active");
+}
+
+$("modalLayer").addEventListener("click", event => {
+  if (event.target === $("modalLayer")) {
+    closeModal();
+  }
+});
+
+function generateCaseNo() {
+  const now = new Date();
+
+  const date =
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getDate()).padStart(2, "0");
+
+  const random = Math.floor(1000 + Math.random() * 9000);
+
+  return "CS" + date + random;
+}
+
+function formatDateTime(date) {
+  return date.toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+}
+
+function formatClock(date = new Date()) {
+  return date.toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+}
+
+/* 首页 */
+
+function selectService(button) {
+  document.querySelectorAll(".service-item").forEach(item => {
+    item.classList.remove("selected");
+  });
+
+  button.classList.add("selected");
+  state.selectedService = button.dataset.service;
+
+  const placeholderMap = {
+    "支付成功未开闸": "例如：停车费已经支付，但道闸没有开启……",
+    "停车费用异常": "例如：费用过高、优惠券未抵扣或出现重复收费……",
+    "现场设备报障": "例如：道闸无反应、相机无法识别或缴费机故障……",
+    "发票与订单": "例如：需要补开发票或查询历史停车订单……",
+    "服务投诉": "请尽量详细描述投诉事项、发生时间和现场情况……"
+  };
+
+  $("problemDescription").placeholder =
+    placeholderMap[state.selectedService] || "请描述需要客服处理的问题……";
+}
+
+function toggleProblemTag(button) {
+  button.classList.toggle("active");
+
+  const activeTags = Array.from(
+    document.querySelectorAll(".quick-tag.active")
+  ).map(item => item.textContent.trim());
+
+  if (activeTags.length) {
+    $("problemDescription").value = activeTags.join("；");
+  }
+}
+
+function toggleAgreement() {
+  state.agreement = !state.agreement;
+  $("agreementCheck").classList.toggle("checked", state.agreement);
+}
+
+function openPlateModal() {
+  openModal(`
+    <div class="modal-icon">车</div>
+    <h3>修改车辆车牌</h3>
+    <p>请输入当前需要处理的车辆车牌，修改后系统将重新查询停车订单。</p>
+
+    <input
+      id="plateInput"
+      class="plate-input"
+      maxlength="10"
+      value="${state.plate}"
+      placeholder="请输入车牌"
+    >
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        取消
+      </button>
+
+      <button class="primary-button" type="button" onclick="savePlate()">
+        重新查询
+      </button>
+    </div>
+  `);
+
+  setTimeout(() => {
+    const input = $("plateInput");
+
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }, 100);
+}
+
+function savePlate() {
+  const input = $("plateInput");
+  const value = input.value.trim().toUpperCase();
+
+  if (value.length < 5) {
+    toast("请输入正确的车辆车牌");
+    return;
+  }
+
+  state.plate = value;
+  updatePlateDisplays();
+  closeModal();
+  toast("车牌已修改，已重新匹配到当前停车订单");
+}
+
+function updatePlateDisplays() {
+  ["homePlate", "callPlate", "chatPlate", "receiptPlate"].forEach(id => {
+    const el = $(id);
+    if (el) el.textContent = state.plate;
+  });
+}
+
+function validateBeforeService() {
+  if (!state.agreement) {
+    toast("请先阅读并同意服务协议和隐私保护说明");
+    return false;
+  }
+
+  if (!state.selectedService) {
+    toast("请选择需要的服务类型");
+    return false;
+  }
+
+  return true;
+}
+
+/* 视频客服启动 */
+
+function startVideoService() {
+  if (!validateBeforeService()) return;
+
+  state.serviceStartedAt = new Date();
+  state.caseNo = generateCaseNo();
+
+  runDiagnosis(() => {
+    showPage("queue");
+    beginQueue();
+    requestMediaPermission();
+  });
+}
+
+function runDiagnosis(callback) {
+  const diagnose = $("diagnosePage");
+  diagnose.classList.add("active");
+
+  document.querySelectorAll(".diagnose-step").forEach(item => {
+    item.classList.remove("done");
+    const icon = item.querySelector("i");
+    icon.textContent = icon.parentElement.id.replace("diagnose", "");
+  });
+
+  const ids = ["diagnose1", "diagnose2", "diagnose3", "diagnose4"];
+
+  ids.forEach((id, index) => {
+    setTimeout(() => {
+      const item = $(id);
+      item.classList.add("done");
+      item.querySelector("i").textContent = "✓";
+
+      if (index === ids.length - 1) {
+        setTimeout(() => {
+          diagnose.classList.remove("active");
+          callback();
+        }, 500);
+      }
+    }, 550 + index * 550);
+  });
+}
+
+async function requestMediaPermission() {
+  $("micState").textContent = "检测中";
+  $("cameraState").textContent = "检测中";
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setTimeout(() => {
+      $("micState").textContent = "模拟可用";
+      $("cameraState").textContent = "模拟可用";
+    }, 800);
+    return;
+  }
+
+  try {
+    stopMediaStream();
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: {
+        facingMode: state.facingMode
+      }
+    });
+
+    state.stream = stream;
+    $("localVideo").srcObject = stream;
+    $("localPlaceholder").style.display = "none";
+    $("micState").textContent = "已允许";
+    $("cameraState").textContent = "已允许";
+  } catch (error) {
+    $("micState").textContent = "模拟模式";
+    $("cameraState").textContent = "模拟模式";
+    $("localPlaceholder").style.display = "grid";
+
+    toast("未获得摄像头权限，将使用音视频模拟模式", 2800);
+  }
+}
+
+function beginQueue() {
+  clearInterval(state.queueTimer);
+
+  state.queueSeconds = 45;
+  state.queueCount = 3;
+
+  updateQueueUI();
+
+  state.queueTimer = setInterval(() => {
+    state.queueSeconds--;
+
+    if (state.queueSeconds === 33) {
+      state.queueCount = 2;
+      toast("前方一位车主已完成服务");
+    }
+
+    if (state.queueSeconds === 20) {
+      state.queueCount = 1;
+      $("queueStatusText").textContent = "即将轮到您，请准备接听";
+    }
+
+    if (state.queueSeconds === 9) {
+      state.queueCount = 0;
+      $("queueTitle").textContent = "客服坐席已为您预留";
+      $("queueSubtitle").textContent = "正在建立加密音视频连接";
+      $("queueStatusText").textContent = "正在建立 WebRTC 通话通道";
+    }
+
+    updateQueueUI();
+
+    if (state.queueSeconds <= 5) {
+      clearInterval(state.queueTimer);
+      showIncomingCall();
+    }
+  }, 1000);
+}
+
+function updateQueueUI() {
+  $("queueCount").textContent = state.queueCount;
+  $("queueSeconds").textContent =
+    state.queueSeconds > 5 ? `约 ${state.queueSeconds} 秒` : "正在接通";
+
+  const progress = Math.min(100, ((45 - state.queueSeconds) / 40) * 100);
+  $("queueProgress").style.width = progress + "%";
+}
+
+function showIncomingCall() {
+  openModal(`
+    <div class="modal-icon">☎</div>
+    <h3>云客服已为您接通</h3>
+
+    <p>
+      陈客服 · 坐席 A016 正在呼叫您。
+      接听后将开始录音录像，并生成本次服务工单。
+    </p>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="rejectIncomingCall()">
+        暂不接听
+      </button>
+
+      <button class="primary-button" type="button" onclick="acceptIncomingCall()">
+        接听视频
+      </button>
+    </div>
+  `);
+
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 120, 200]);
+  }
+}
+
+function rejectIncomingCall() {
+  closeModal();
+
+  openModal(`
+    <div class="modal-icon danger">!</div>
+    <h3>确定暂不接听吗？</h3>
+    <p>拒绝接听后，本次排队将结束。您可以稍后重新发起服务。</p>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal();beginQueue()">
+        继续等待
+      </button>
+
+      <button class="danger-button" type="button" onclick="cancelService('用户未接听')">
+        结束服务
+      </button>
+    </div>
+  `);
+}
+
+function acceptIncomingCall() {
+  closeModal();
+  clearInterval(state.queueTimer);
+  showPage("call");
+  startCallSimulation();
+}
+
+/* 视频通话模拟 */
+
+function startCallSimulation() {
+  state.callSeconds = 0;
+
+  $("agentSpeech").textContent = "您好，正在为您查询车辆和停车订单";
+  $("caseStatus").textContent = "客服诊断中";
+  $("actionLog").innerHTML =
+    `<b>${formatClock(new Date())}:06</b> 客服已接收现场和订单信息`;
+
+  clearInterval(state.callTimer);
+  clearInterval(state.latencyTimer);
+
+  state.callTimer = setInterval(() => {
+    state.callSeconds++;
+
+    if (state.callSeconds === 4) {
+      $("agentSpeech").textContent =
+        "已查到您的18元停车订单，支付状态确实为成功";
+      $("actionLog").innerHTML =
+        `<b>${formatClock()}</b> 已完成订单和支付状态核对`;
+    }
+
+    if (state.callSeconds === 9) {
+      $("agentSpeech").textContent =
+        "可能是支付状态未及时下发，我正在重新同步";
+      $("caseStatus").textContent = "正在同步支付";
+      $("actionLog").innerHTML =
+        `<b>${formatClock()}</b> 正在向2号车道重新同步支付状态`;
+    }
+
+    if (state.callSeconds === 15) {
+      $("agentSpeech").textContent =
+        "支付状态已同步，现在为您执行远程开闸";
+      $("caseStatus").textContent = "正在远程开闸";
+      $("actionLog").innerHTML =
+        `<b>${formatClock()}</b> 客服已下发远程开闸指令`;
+    }
+
+    if (state.callSeconds === 20) {
+      $("agentSpeech").textContent =
+        "道闸已经开启，请确认现场是否可以正常通行";
+      $("caseStatus").textContent = "等待车主确认";
+      $("actionLog").innerHTML =
+        `<b>${formatClock()}</b> <span style="color:#6fe3cc">道闸反馈：开启成功</span>`;
+
+      toast("2号车道道闸已开启");
+    }
+  }, 1000);
+
+  state.latencyTimer = setInterval(() => {
+    $("latencyText").textContent =
+      Math.floor(68 + Math.random() * 38) + "ms";
+  }, 1800);
+}
+
+function toggleMute() {
+  state.micEnabled = !state.micEnabled;
+
+  const button = $("muteButton");
+  button.classList.toggle("off", !state.micEnabled);
+  button.lastChild.textContent = state.micEnabled ? "静音" : "已静音";
+
+  if (state.stream) {
+    state.stream.getAudioTracks().forEach(track => {
+      track.enabled = state.micEnabled;
+    });
+  }
+
+  toast(state.micEnabled ? "麦克风已开启" : "麦克风已静音");
+}
+
+function toggleCamera() {
+  state.cameraEnabled = !state.cameraEnabled;
+
+  const button = $("cameraButton");
+  button.classList.toggle("off", !state.cameraEnabled);
+  $("localVideoBox").classList.toggle("camera-off", !state.cameraEnabled);
+
+  if (state.stream) {
+    state.stream.getVideoTracks().forEach(track => {
+      track.enabled = state.cameraEnabled;
+    });
+  }
+
+  toast(state.cameraEnabled ? "摄像头已开启" : "摄像头已关闭");
+}
+
+async function flipCamera() {
+  state.facingMode =
+    state.facingMode === "user" ? "environment" : "user";
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    toast(
+      state.facingMode === "environment"
+        ? "已切换至后置摄像头（模拟）"
+        : "已切换至前置摄像头（模拟）"
+    );
+    return;
+  }
+
+  try {
+    stopMediaStream();
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: {
+        facingMode: {
+          ideal: state.facingMode
+        }
+      }
+    });
+
+    state.stream = stream;
+    $("localVideo").srcObject = stream;
+    $("localPlaceholder").style.display = "none";
+
+    toast(
+      state.facingMode === "environment"
+        ? "已切换至后置摄像头"
+        : "已切换至前置摄像头"
+    );
+  } catch (error) {
+    toast("当前设备无法切换摄像头");
+  }
+}
+
+function confirmEndCall() {
+  openModal(`
+    <div class="modal-icon danger">挂</div>
+    <h3>确定结束本次视频服务吗？</h3>
+
+    <p>
+      结束后将停止音视频采集，并进入处理结果确认和服务评价流程。
+    </p>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        继续通话
+      </button>
+
+      <button class="danger-button" type="button" onclick="finishCall()">
+        结束通话
+      </button>
+    </div>
+  `);
+}
+
+function finishCall() {
+  closeModal();
+  clearInterval(state.callTimer);
+  clearInterval(state.latencyTimer);
+  stopMediaStream();
+
+  state.serviceEndedAt = new Date();
+  prepareResolvedResult();
+  showPage("result");
+}
+
+function stopMediaStream() {
+  if (state.stream) {
+    state.stream.getTracks().forEach(track => track.stop());
+    state.stream = null;
+  }
+}
+
+/* 排队自助 */
+
+function selfHelp(type) {
+  if (type === "order") {
+    openModal(`
+      <div class="modal-icon">单</div>
+      <h3>当前停车订单</h3>
+      <p>已查询到与当前车道车辆匹配的停车订单。</p>
+
+      <div class="info-list">
+        <div class="info-row">
+          <span>车辆</span>
+          <strong>${state.plate}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>入场时间</span>
+          <strong>今天 09:16</strong>
+        </div>
+
+        <div class="info-row">
+          <span>停车时长</span>
+          <strong>2小时26分</strong>
+        </div>
+
+        <div class="info-row">
+          <span>订单金额</span>
+          <strong>18.00元</strong>
+        </div>
+
+        <div class="info-row">
+          <span>支付状态</span>
+          <strong style="color:#159269">支付成功</strong>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="primary-button" type="button" onclick="closeModal()">
+          知道了
+        </button>
+      </div>
+    `);
+
+    return;
+  }
+
+  if (type === "sync") {
+    openModal(`
+      <div class="modal-icon">↻</div>
+      <h3>重新同步支付状态</h3>
+
+      <p>
+        系统将向当前2号出口车道重新下发支付成功状态。
+        如果同步成功，道闸可能自动开启。
+      </p>
+
+      <div class="modal-buttons">
+        <button class="secondary-button" type="button" onclick="closeModal()">
+          取消
+        </button>
+
+        <button class="primary-button" type="button" onclick="executeSelfSync()">
+          开始同步
+        </button>
+      </div>
+    `);
+  }
+}
+
+function executeSelfSync() {
+  openModal(`
+    <div class="modal-icon">↻</div>
+    <h3>正在同步支付状态</h3>
+    <p id="syncStatus">正在连接停车订单和车道控制系统……</p>
+  `);
+
+  setTimeout(() => {
+    const status = $("syncStatus");
+    if (status) status.textContent = "支付状态同步成功，正在执行远程开闸……";
+  }, 1200);
+
+  setTimeout(() => {
+    closeModal();
+    clearInterval(state.queueTimer);
+
+    state.resultType = "resolved";
+    state.resultText = "自助同步成功";
+    state.serviceEndedAt = new Date();
+
+    prepareResolvedResult(
+      "支付状态同步成功",
+      "系统已重新向2号车道下发支付状态，道闸已经开启。",
+      "重新同步支付并执行开闸",
+      "车道控制器反馈开闸成功"
+    );
+
+    showPage("result");
+  }, 2600);
+}
+
+/* 图片上传 */
+
+function openPhotoPicker() {
+  $("photoInput").click();
+}
+
+function handlePhotoSelected(event) {
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = e => {
+    state.uploadedPhoto = e.target.result;
+
+    openModal(`
+      <div class="modal-icon">图</div>
+      <h3>现场图片已选择</h3>
+      <p>图片将关联到本次服务工单，供客服查看和后续报障处理。</p>
+
+      <img class="photo-preview" src="${e.target.result}" alt="现场图片">
+
+      <div class="modal-buttons">
+        <button class="secondary-button" type="button" onclick="closeModal()">
+          重新选择
+        </button>
+
+        <button class="primary-button" type="button" onclick="confirmPhotoUpload()">
+          确认上传
+        </button>
+      </div>
+    `);
+  };
+
+  reader.readAsDataURL(file);
+  event.target.value = "";
+}
+
+function confirmPhotoUpload() {
+  closeModal();
+
+  if (state.currentPage === "call") {
+    $("actionLog").innerHTML =
+      `<b>${formatClock()}</b> 车主已上传1张现场图片，客服已接收`;
+    $("agentSpeech").textContent =
+      "现场图片已经收到，我正在核实设备情况";
+  }
+
+  toast("现场图片已上传并关联到服务工单");
+}
+
+/* 取消排队 */
+
+function confirmCancelQueue() {
+  openModal(`
+    <div class="modal-icon danger">!</div>
+    <h3>确定取消本次排队吗？</h3>
+    <p>取消后将释放当前排队位置，稍后重新进入需要再次排队。</p>
+
+    <div class="modal-list">
+      <button type="button" onclick="selectCancelReason(this)">
+        等待时间较长
+      </button>
+
+      <button type="button" onclick="selectCancelReason(this)">
+        问题已经自行解决
+      </button>
+
+      <button type="button" onclick="selectCancelReason(this)">
+        暂时不需要客服
+      </button>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        继续排队
+      </button>
+
+      <button class="danger-button" type="button" onclick="cancelService('用户取消排队')">
+        确认取消
+      </button>
+    </div>
+  `);
+}
+
+function selectCancelReason(button) {
+  document.querySelectorAll(".modal-list button").forEach(item => {
+    item.classList.remove("selected");
+  });
+
+  button.classList.add("selected");
+}
+
+function cancelService(reason) {
+  closeModal();
+  clearInterval(state.queueTimer);
+  clearInterval(state.callTimer);
+  clearInterval(state.latencyTimer);
+  stopMediaStream();
+
+  state.resultType = "cancelled";
+  state.resultText = reason;
+  state.serviceEndedAt = new Date();
+
+  saveHistory({
+    caseNo: state.caseNo || generateCaseNo(),
+    service: state.selectedService,
+    result: reason,
+    time: formatDateTime(state.serviceEndedAt),
+    rating: 0
+  });
+
+  prepareDonePage(false);
+  showPage("done");
+}
+
+/* 文字客服 */
+
+function startTextService() {
+  if (!validateBeforeService()) return;
+
+  state.serviceStartedAt = new Date();
+  state.caseNo = generateCaseNo();
+
+  runDiagnosis(() => {
+    prepareChat();
+    showPage("chat");
+  });
+}
+
+function switchQueueToText() {
+  clearInterval(state.queueTimer);
+  prepareChat();
+  showPage("chat");
+  toast("已保留工单信息并切换至文字客服");
+}
+
+function prepareChat() {
+  $("chatTime").textContent = formatClock();
+  updatePlateDisplays();
+
+  const existingUserMessages =
+    $("chatList").querySelectorAll(".message.me");
+
+  existingUserMessages.forEach(item => item.remove());
+
+  state.chatResolved = false;
+}
+
+function sendQuickChat(text) {
+  addChatMessage(text, true);
+  simulateAgentChat(text);
+}
+
+function handleChatKey(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendChat();
+  }
+}
+
+function sendChat() {
+  const input = $("chatInput");
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  input.value = "";
+  addChatMessage(text, true);
+  simulateAgentChat(text);
+}
+
+function addChatMessage(text, mine = false) {
+  const wrap = document.createElement("div");
+  wrap.className = "message" + (mine ? " me" : "");
+
+  wrap.innerHTML = `
+    <div class="chat-avatar">${mine ? "我" : "陈"}</div>
+    <div class="bubble">${escapeHtml(text)}</div>
+  `;
+
+  $("chatList").appendChild(wrap);
+  wrap.scrollIntoView({ behavior: "smooth", block: "end" });
+}
+
+function simulateAgentChat(userText) {
+  setTimeout(() => {
+    addChatMessage(
+      "已收到。系统显示您的停车费18元已经支付成功，我正在重新同步支付状态。",
+      false
+    );
+  }, 700);
+
+  setTimeout(() => {
+    addChatMessage(
+      "支付状态已经同步完成，2号车道道闸已执行远程开启。请确认现场是否可以正常通行。",
+      false
+    );
+
+    const quick = document.createElement("div");
+    quick.className = "chat-quick";
+    quick.innerHTML = `
+      <button type="button" onclick="finishChatResolved()">已经可以通行</button>
+      <button type="button" onclick="startVideoFromChat()">仍未解决，转视频</button>
+    `;
+
+    $("chatList").appendChild(quick);
+    quick.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, 2100);
+}
+
+function finishChatResolved() {
+  state.chatResolved = true;
+  state.serviceEndedAt = new Date();
+
+  prepareResolvedResult(
+    "道闸已远程开启",
+    "文字客服已同步支付状态并执行远程开闸，请安全驶离。",
+    "文字客服同步支付并开闸",
+    "2号车道已反馈开闸成功"
+  );
+
+  showPage("result");
+}
+
+function startVideoFromChat() {
+  runDiagnosis(() => {
+    showPage("queue");
+    beginQueue();
+    requestMediaPermission();
+  });
+}
+
+function confirmEndChat() {
+  openModal(`
+    <div class="modal-icon danger">!</div>
+    <h3>确定结束文字客服吗？</h3>
+    <p>结束后当前咨询将关闭，并保存已有文字沟通记录。</p>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        继续咨询
+      </button>
+
+      <button class="danger-button" type="button" onclick="cancelService('用户结束文字咨询')">
+        结束咨询
+      </button>
+    </div>
+  `);
+}
+
+function escapeHtml(text) {
+  return text.replace(/[&<>"']/g, char => {
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    };
+
+    return map[char];
+  });
+}
+
+/* 处理结果 */
+
+function prepareResolvedResult(
+  title = "道闸已远程开启",
+  description = "客服已同步支付状态并执行远程开闸，请在确保安全的情况下缓慢驶离。",
+  action = "执行远程开闸",
+  actionDesc = "2号车道道闸已收到开闸指令"
+) {
+  state.resultType = "resolved";
+  state.resultText = "问题已解决";
+
+  $("resultIcon").className = "result-icon";
+  $("resultIcon").textContent = "✓";
+  $("resultTitle").textContent = title;
+  $("resultDescription").textContent = description;
+  $("timelineAction").textContent = action;
+  $("timelineActionDesc").textContent = actionDesc;
+  $("resultCaseNo").textContent = "服务编号 " + state.caseNo;
+}
+
+function problemSolved() {
+  state.resultType = "resolved";
+  state.resultText = "问题已解决";
+  showPage("rating");
+}
+
+function problemNotSolved() {
+  openModal(`
+    <div class="modal-icon danger">!</div>
+    <h3>问题仍未解决</h3>
+    <p>请选择下一步处理方式，当前服务工单和现场信息将自动保留。</p>
+
+    <div class="modal-list">
+      <button type="button" onclick="reconnectVideo()">
+        重新连接视频客服
+      </button>
+
+      <button type="button" onclick="escalateWorkOrder()">
+        升级现场人员处理
+      </button>
+
+      <button type="button" onclick="openEmergency()">
+        转为紧急安全事件
+      </button>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        暂不处理
+      </button>
+    </div>
+  `);
+}
+
+function reconnectVideo() {
+  closeModal();
+
+  runDiagnosis(() => {
+    showPage("queue");
+    state.queueSeconds = 18;
+    state.queueCount = 1;
+    beginQueue();
+    requestMediaPermission();
+  });
+}
+
+function escalateWorkOrder() {
+  closeModal();
+
+  state.resultType = "escalated";
+  state.resultText = "已升级现场处理";
+  state.serviceEndedAt = new Date();
+
+  $("resultIcon").className = "result-icon warning";
+  $("resultIcon").textContent = "!";
+  $("resultTitle").textContent = "已通知现场人员";
+  $("resultDescription").textContent =
+    "工单已升级至停车场现场值班人员，预计3分钟内到达急诊出口2号车道。";
+
+  showPage("rating");
+}
+
+/* 评价 */
+
+function setRating(score) {
+  state.rating = score;
+
+  document.querySelectorAll(".star").forEach(star => {
+    const starScore = Number(star.dataset.score);
+    star.classList.toggle("active", starScore <= score);
+  });
+
+  $("ratingText").textContent = ratingWords[score];
+
+  const tagMap = {
+    1: ["等待时间长", "问题未解决", "服务态度需改进"],
+    2: ["响应较慢", "解释不清晰", "处理不完整"],
+    3: ["服务一般", "基本解决", "仍可改进"],
+    4: ["响应迅速", "态度友好", "表达清晰"],
+    5: ["响应迅速", "态度友好", "解决专业", "一次解决"]
+  };
+
+  const container = document.querySelector(".rating-tags");
+  container.innerHTML = "";
+
+  tagMap[score].forEach(tag => {
+    const button = document.createElement("button");
+    button.className = "rating-tag";
+    button.type = "button";
+    button.textContent = tag;
+    button.onclick = () => toggleRatingTag(button);
+    container.appendChild(button);
+  });
+
+  state.ratingTags = [];
+}
+
+function toggleRatingTag(button) {
+  button.classList.toggle("active");
+
+  state.ratingTags = Array.from(
+    document.querySelectorAll(".rating-tag.active")
+  ).map(item => item.textContent.trim());
+}
+
+function toggleAnonymous() {
+  state.anonymous = !state.anonymous;
+  $("anonymousSwitch").classList.toggle("on", state.anonymous);
+}
+
+function submitRating() {
+  if (!state.rating) {
+    toast("请选择服务星级");
+    return;
+  }
+
+  const comment = $("ratingComment").value.trim();
+
+  const record = {
+    caseNo: state.caseNo,
+    service: state.selectedService,
+    result: state.resultText,
+    time: formatDateTime(state.serviceEndedAt || new Date()),
+    rating: state.rating,
+    tags: state.ratingTags,
+    comment,
+    anonymous: state.anonymous
+  };
+
+  saveHistory(record);
+  prepareDonePage(true);
+  showPage("done");
+  toast("感谢您的评价");
+}
+
+function skipRating() {
+  const record = {
+    caseNo: state.caseNo,
+    service: state.selectedService,
+    result: state.resultText,
+    time: formatDateTime(state.serviceEndedAt || new Date()),
+    rating: 0
+  };
+
+  saveHistory(record);
+  prepareDonePage(true);
+  showPage("done");
+}
+
+/* 完成页 */
+
+function prepareDonePage(normalComplete = true) {
+  updatePlateDisplays();
+
+  $("doneTitle").textContent = normalComplete
+    ? "本次服务已闭环完成"
+    : "本次服务已结束";
+
+  $("doneSubtitle").textContent = normalComplete
+    ? "处理记录和服务评价已安全保存"
+    : "服务过程记录已经保存，您可以随时重新发起服务";
+
+  $("receiptCaseNo").textContent = state.caseNo || generateCaseNo();
+  $("receiptService").textContent = state.selectedService;
+  $("receiptResult").textContent = state.resultText;
+
+  $("receiptResult").style.color =
+    state.resultType === "resolved" ? "#159269" : "#d77b22";
+
+  $("receiptTime").textContent = formatDateTime(
+    state.serviceEndedAt || new Date()
+  );
+
+  $("receiptRating").textContent =
+    state.rating > 0 ? "★".repeat(state.rating) : "未评价";
+
+  renderHistory();
+}
+
+function saveHistory(record) {
+  let history = [];
+
+  try {
+    history = JSON.parse(
+      localStorage.getItem("parkingServiceHistory") || "[]"
+    );
+  } catch (error) {
+    history = [];
+  }
+
+  history.unshift(record);
+  history = history.slice(0, 5);
+
+  localStorage.setItem(
+    "parkingServiceHistory",
+    JSON.stringify(history)
+  );
+}
+
+function renderHistory() {
+  let history = [];
+
+  try {
+    history = JSON.parse(
+      localStorage.getItem("parkingServiceHistory") || "[]"
+    );
+  } catch (error) {
+    history = [];
+  }
+
+  const list = $("historyList");
+
+  if (!history.length) {
+    list.innerHTML = `
+      <div class="history-item">
+        <div class="history-head">
+          <strong>暂无历史服务记录</strong>
+          <span>—</span>
+        </div>
+        <p>完成服务后，最近记录将在这里展示。</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = history.slice(0, 3).map(item => `
+    <div class="history-item">
+      <div class="history-head">
+        <strong>${escapeHtml(item.service || "停车云客服")}</strong>
+        <span>${escapeHtml(item.result || "已完成")}</span>
+      </div>
+
+      <p>
+        ${escapeHtml(item.caseNo || "")}
+        · ${escapeHtml(item.time || "")}
+        · ${item.rating ? "★".repeat(item.rating) : "未评价"}
+      </p>
+    </div>
+  `).join("");
+}
+
+async function copyCaseNo() {
+  const caseNo = $("receiptCaseNo").textContent;
+
+  try {
+    await navigator.clipboard.writeText(caseNo);
+    toast("工单编号已复制");
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = caseNo;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+    toast("工单编号已复制");
+  }
+}
+
+function downloadReceipt() {
+  const content = [
+    "停车云客服电子服务回执",
+    "--------------------------------",
+    "服务编号：" + $("receiptCaseNo").textContent,
+    "服务项目：第一人民医院停车场",
+    "服务位置：急诊出口 · 2号车道",
+    "服务车辆：" + state.plate,
+    "问题类型：" + state.selectedService,
+    "处理结果：" + state.resultText,
+    "服务坐席：陈客服 · A016",
+    "服务时间：" + $("receiptTime").textContent,
+    "服务评价：" + $("receiptRating").textContent,
+    "--------------------------------",
+    "本回执由停车云客服扫码服务端生成。"
+  ].join("\n");
+
+  const blob = new Blob([content], {
+    type: "text/plain;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `${$("receiptCaseNo").textContent}-停车云客服回执.txt`;
+  link.click();
+
+  URL.revokeObjectURL(url);
+  toast("电子回执已下载");
+}
+
+function restartService() {
+  clearInterval(state.queueTimer);
+  clearInterval(state.callTimer);
+  clearInterval(state.latencyTimer);
+  stopMediaStream();
+
+  state.currentPage = "home";
+  state.selectedService = "支付成功未开闸";
+  state.serviceStartedAt = null;
+  state.serviceEndedAt = null;
+  state.caseNo = "";
+  state.resultType = "resolved";
+  state.resultText = "问题已解决";
+  state.rating = 5;
+  state.ratingTags = [];
+  state.cameraEnabled = true;
+  state.micEnabled = true;
+
+  $("problemDescription").value = "";
+  $("ratingComment").value = "";
+
+  document.querySelectorAll(".quick-tag").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  document.querySelectorAll(".service-item").forEach((item, index) => {
+    item.classList.toggle("selected", index === 0);
+  });
+
+  setRating(5);
+  showPage("home");
+}
+
+function closeService() {
+  openModal(`
+    <div class="modal-icon">✓</div>
+    <h3>服务已经完成</h3>
+    <p>您可以直接关闭浏览器页面，电子服务记录已保存。</p>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        返回查看
+      </button>
+
+      <button class="primary-button" type="button" onclick="finishClosePage()">
+        完成
+      </button>
+    </div>
+  `);
+}
+
+function finishClosePage() {
+  closeModal();
+  toast("感谢使用停车云客服");
+
+  setTimeout(() => {
+    document.title = "停车云客服 · 服务已完成";
+  }, 300);
+}
+
+/* 紧急求助 */
+
+function openEmergency() {
+  openModal(`
+    <div class="modal-icon danger">SOS</div>
+    <h3>停车场紧急求助</h3>
+
+    <p>
+      如存在人员受伤、车辆起火、治安事件等紧急危险，
+      请优先拨打当地紧急救援电话，并立即离开危险区域。
+    </p>
+
+    <div class="emergency-number">110 / 119 / 120</div>
+
+    <div class="modal-list">
+      <button type="button" onclick="reportEmergency('人员受伤或身体不适')">
+        人员受伤或身体不适
+      </button>
+
+      <button type="button" onclick="reportEmergency('车辆故障或碰撞事故')">
+        车辆故障或碰撞事故
+      </button>
+
+      <button type="button" onclick="reportEmergency('火灾、治安或其他危险')">
+        火灾、治安或其他危险
+      </button>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        取消
+      </button>
+
+      <button class="danger-button" type="button" onclick="callEmergencyNumber()">
+        拨打紧急电话
+      </button>
+    </div>
+  `);
+}
+
+function callEmergencyNumber() {
+  toast("演示环境不直接拨号，正式版本可调用 tel:110");
+}
+
+function reportEmergency(type) {
+  state.selectedService = "紧急求助";
+  state.serviceStartedAt = new Date();
+  state.caseNo = generateCaseNo();
+
+  closeModal();
+
+  openModal(`
+    <div class="modal-icon danger">!</div>
+    <h3>紧急事件已上报</h3>
+
+    <p>
+      事件类型：${type}<br>
+      已通知停车场现场值班人员和安全负责人。
+      请保持电话畅通并确保自身安全。
+    </p>
+
+    <div class="info-list">
+      <div class="info-row">
+        <span>事件编号</span>
+        <strong>${state.caseNo}</strong>
+      </div>
+
+      <div class="info-row">
+        <span>上报位置</span>
+        <strong>急诊出口 · 2号车道</strong>
+      </div>
+
+      <div class="info-row">
+        <span>响应状态</span>
+        <strong style="color:#e0525f">紧急处理中</strong>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="secondary-button" type="button" onclick="closeModal()">
+        等待现场人员
+      </button>
+
+      <button class="danger-button" type="button" onclick="startEmergencyVideo()">
+        连接紧急视频
+      </button>
+    </div>
+  `);
+}
+
+function startEmergencyVideo() {
+  closeModal();
+
+  runDiagnosis(() => {
+    showPage("queue");
+    beginQueue();
+    requestMediaPermission();
+
+    state.queueSeconds = 12;
+    state.queueCount = 0;
+    $("queueTitle").textContent = "正在优先分配紧急坐席";
+    $("queueSubtitle").textContent = "您的求助已进入优先处理队列";
+  });
+}
+
+/* 更多菜单 */
+
+function openMoreMenu() {
+  openModal(`
+    <div class="modal-icon">···</div>
+    <h3>更多服务</h3>
+    <p>您可以查看服务说明、隐私政策或最近工单。</p>
+
+    <div class="modal-list">
+      <button type="button" onclick="showServiceGuide()">
+        云客服使用说明
+      </button>
+
+      <button type="button" onclick="showPrivacyGuide()">
+        隐私与录音录像说明
+      </button>
+
+      <button type="button" onclick="showStoredHistory()">
+        查看最近服务记录
+      </button>
+
+      <button type="button" onclick="openEmergency()">
+        紧急求助
+      </button>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary-button" type="button" onclick="closeModal()">
+        关闭
+      </button>
+    </div>
+  `);
+}
+
+function showServiceGuide() {
+  openModal(`
+    <div class="modal-icon">?</div>
+    <h3>云客服使用说明</h3>
+
+    <p style="text-align:left">
+      1. 扫码后自动识别停车场和车道。<br>
+      2. 核对车牌和停车订单。<br>
+      3. 选择问题类型并进入客服队列。<br>
+      4. 接通后可通过音视频展示现场情况。<br>
+      5. 客服完成处置后确认结果并评价。<br>
+      6. 系统生成电子服务回执，实现业务闭环。
+    </p>
+
+    <div class="modal-buttons">
+      <button class="primary-button" type="button" onclick="closeModal()">
+        知道了
+      </button>
+    </div>
+  `);
+}
+
+function showPrivacyGuide() {
+  openModal(`
+    <div class="modal-icon">盾</div>
+    <h3>隐私与录音录像说明</h3>
+
+    <p style="text-align:left">
+      为完成停车服务，系统可能处理扫码位置、车牌、停车订单、
+      现场图片和音视频数据。录音录像仅用于工单处理、质量检查、
+      争议追溯和安全审计。正式系统应按照项目隐私政策设置保存期限、
+      访问权限、脱敏规则和删除机制。
+    </p>
+
+    <div class="modal-buttons">
+      <button class="primary-button" type="button" onclick="closeModal()">
+        我知道了
+      </button>
+    </div>
+  `);
+}
+
+function showStoredHistory() {
+  let history = [];
+
+  try {
+    history = JSON.parse(
+      localStorage.getItem("parkingServiceHistory") || "[]"
+    );
+  } catch (error) {
+    history = [];
+  }
+
+  const content = history.length
+    ? history.map(item => `
+        <div class="history-item">
+          <div class="history-head">
+            <strong>${escapeHtml(item.service || "停车服务")}</strong>
+            <span>${escapeHtml(item.result || "已结束")}</span>
+          </div>
+
+          <p>
+            ${escapeHtml(item.caseNo || "")}
+            · ${escapeHtml(item.time || "")}
+          </p>
+        </div>
+      `).join("")
+    : `<p style="text-align:center;color:#8795a1">暂无历史服务记录</p>`;
+
+  openModal(`
+    <div class="modal-icon">单</div>
+    <h3>最近服务记录</h3>
+    <div style="max-height:330px;overflow:auto;margin-top:12px">
+      ${content}
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary-button" type="button" onclick="closeModal()">
+        关闭
+      </button>
+    </div>
+  `);
+}
+
+function showExitTip() {
+  openModal(`
+    <div class="modal-icon">✓</div>
+    <h3>停车云客服</h3>
+    <p>
+      您可以关闭当前页面。若服务正在进行中，建议处理完成并取得电子回执后再离开。
+    </p>
+
+    <div class="modal-buttons">
+      <button class="primary-button" type="button" onclick="closeModal()">
+        继续使用
+      </button>
+    </div>
+  `);
+}
+
+/* 页面关闭保护 */
+
+window.addEventListener("beforeunload", event => {
+  if (
+    state.currentPage === "queue" ||
+    state.currentPage === "call" ||
+    state.currentPage === "chat"
+  ) {
+    event.preventDefault();
+    event.returnValue = "";
+  }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (
+    document.hidden &&
+    (state.currentPage === "queue" || state.currentPage === "call")
+  ) {
+    console.log("页面进入后台，正式系统可上报连接状态。");
+  }
+});
+
+/* 初始化 */
+
+function initialize() {
+  updatePlateDisplays();
+  $("chatTime").textContent = formatClock();
+  renderHistory();
+
+  const params = new URLSearchParams(location.search);
+
+  const project = params.get("project");
+  const lane = params.get("lane");
+  const plate = params.get("plate");
+
+  if (plate) {
+    state.plate = plate;
+    updatePlateDisplays();
+  }
+
+  if (project || lane) {
+    console.log("二维码参数：", {
+      project,
+      lane,
+      plate
+    });
+  }
+}
+
+initialize();
+</script>
+
+</body>
+</html>

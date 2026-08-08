@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章节｜APP 应用服务体系</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 70% 42%, rgba(0, 196, 255, .18), transparent 31%),
+    radial-gradient(circle at 88% 18%, rgba(111, 75, 255, .15), transparent 25%),
+    radial-gradient(circle at 15% 80%, rgba(255, 178, 74, .06), transparent 29%),
+    linear-gradient(135deg, #040c19 0%, #07172b 48%, #061327 73%, #040c19 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .13;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .32) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 17%,
+    #000 90%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  right: -190px;
+  top: -70px;
+  width: 990px;
+  height: 990px;
+  border: 1px solid rgba(64, 191, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 184, 255, .06),
+    inset 0 0 140px rgba(0, 184, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.2;
+  opacity: .20;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #49ddeb;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .14;
+  animation: dataFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5ce8f4;
+  opacity: .66;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes dataFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+.top-bar {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  top: 33px;
+  z-index: 8;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #23d7df);
+  box-shadow:
+    0 7px 22px rgba(0, 181, 255, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.brand-logo::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(53, 214, 238, .15);
+  border-radius: 15px;
+}
+
+.brand-logo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-cn {
+  color: #dff7ff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-en {
+  margin-top: 3px;
+  color: #4f7e9b;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+}
+
+.chapter-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #668ba3;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.chapter-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #49e6cb;
+  box-shadow: 0 0 9px #49e6cb;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .42;
+    box-shadow: 0 0 3px #49e6cb;
+  }
+}
+
+.chapter-copy {
+  position: absolute;
+  left: 90px;
+  top: 145px;
+  z-index: 6;
+  width: 620px;
+  height: 600px;
+}
+
+.chapter-number {
+  position: absolute;
+  left: -11px;
+  top: -35px;
+  z-index: 0;
+  color: transparent;
+  font-size: 225px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -15px;
+  -webkit-text-stroke: 1px rgba(79, 201, 239, .12);
+  text-shadow: 0 0 60px rgba(0, 180, 238, .04);
+  user-select: none;
+}
+
+.chapter-content {
+  position: relative;
+  z-index: 2;
+  padding-top: 80px;
+}
+
+.chapter-label {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #55cbe6;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.chapter-label::before {
+  content: "";
+  width: 43px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #188fff, #39e6dc);
+  box-shadow: 0 0 10px rgba(53, 219, 239, .28);
+}
+
+.chapter-title {
+  margin-top: 28px;
+}
+
+.chapter-title h1 {
+  margin: 0;
+  color: transparent;
+  font-size: 52px;
+  line-height: 1.2;
+  letter-spacing: 3px;
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #a6efff 45%,
+    #66e2ff 70%,
+    #a893ff 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow: 0 10px 35px rgba(0, 10, 30, .25);
+}
+
+.chapter-en {
+  position: relative;
+  margin-top: 17px;
+  padding-bottom: 23px;
+  color: #527f9a;
+  font-size: 11px;
+  letter-spacing: 5px;
+}
+
+.chapter-en::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 460px;
+  height: 1px;
+  opacity: .48;
+  background: linear-gradient(90deg, #289cff, #41e3e3, transparent);
+}
+
+.chapter-slogan {
+  margin-top: 31px;
+  color: #dceff6;
+  font-size: 22px;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.chapter-slogan strong {
+  color: #57e8d2;
+  font-weight: 700;
+}
+
+.chapter-description {
+  margin-top: 15px;
+  width: 545px;
+  color: #7095aa;
+  font-size: 11.5px;
+  line-height: 1.9;
+  letter-spacing: .4px;
+}
+
+.keywords {
+  margin-top: 27px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.keyword {
+  height: 32px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(61, 185, 228, .19);
+  border-radius: 16px;
+  color: #8fc0d2;
+  font-size: 9px;
+  background: rgba(13, 55, 84, .53);
+}
+
+.keyword i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4bdff0;
+  box-shadow: 0 0 7px #4bdff0;
+}
+
+.keyword.purple {
+  color: #b9adf3;
+  border-color: rgba(151, 124, 241, .19);
+  background: rgba(74, 55, 131, .24);
+}
+
+.keyword.purple i {
+  background: #ad94ff;
+  box-shadow: 0 0 7px #ad94ff;
+}
+
+.keyword.orange {
+  color: #e0b27a;
+  border-color: rgba(238, 158, 70, .20);
+  background: rgba(119, 73, 24, .22);
+}
+
+.keyword.orange i {
+  background: #ffb04b;
+  box-shadow: 0 0 7px #ffb04b;
+}
+
+.keyword.green {
+  color: #84d9c6;
+  border-color: rgba(49, 211, 177, .19);
+  background: rgba(23, 121, 103, .20);
+}
+
+.keyword.green i {
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+.app-visual {
+  position: absolute;
+  right: 48px;
+  top: 104px;
+  z-index: 4;
+  width: 850px;
+  height: 642px;
+}
+
+.app-orbit {
+  position: absolute;
+  left: 160px;
+  top: 5px;
+  width: 600px;
+  height: 600px;
+  border: 1px solid rgba(66, 202, 239, .10);
+  border-radius: 50%;
+}
+
+.app-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 39px;
+  border: 1px dashed rgba(71, 220, 235, .14);
+  border-radius: 50%;
+  animation: rotate 35s linear infinite;
+}
+
+.app-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 92px;
+  border: 1px solid rgba(108, 102, 255, .10);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-dot {
+  position: absolute;
+  z-index: 7;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #58e8f3;
+  box-shadow:
+    0 0 9px #58e8f3,
+    0 0 20px rgba(45, 220, 240, .42);
+}
+
+.dot-1 {
+  left: 211px;
+  top: 65px;
+}
+
+.dot-2 {
+  right: 96px;
+  top: 178px;
+  background: #ae96ff;
+  box-shadow:
+    0 0 9px #ae96ff,
+    0 0 20px rgba(144, 111, 255, .42);
+}
+
+.dot-3 {
+  right: 151px;
+  bottom: 69px;
+  background: #ffb04b;
+  box-shadow:
+    0 0 9px #ffb04b,
+    0 0 20px rgba(255, 176, 75, .35);
+}
+
+.app-glow {
+  position: absolute;
+  left: 220px;
+  top: 410px;
+  width: 470px;
+  height: 95px;
+  border-radius: 50%;
+  background: rgba(0, 199, 255, .16);
+  filter: blur(34px);
+}
+
+.visual-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 850px;
+  height: 642px;
+  pointer-events: none;
+}
+
+.app-line {
+  fill: none;
+  stroke: #4bd9ed;
+  stroke-width: 1.4;
+  stroke-dasharray: 6 7;
+  opacity: .53;
+  animation: lineFlow 10s linear infinite;
+}
+
+.app-line-purple {
+  stroke: #a28aff;
+}
+
+.app-line-orange {
+  stroke: #ffb04b;
+}
+
+.app-node {
+  fill: #59e8f3;
+  filter: drop-shadow(0 0 6px #26d8ee);
+}
+
+.app-node-purple {
+  fill: #b39bff;
+  filter: drop-shadow(0 0 6px #9175ff);
+}
+
+.app-node-orange {
+  fill: #ffb04b;
+  filter: drop-shadow(0 0 6px #e98d21);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+.app-console {
+  position: absolute;
+  left: 175px;
+  top: 82px;
+  z-index: 6;
+  width: 548px;
+  height: 372px;
+}
+
+.console-halo {
+  position: absolute;
+  left: 41px;
+  top: 46px;
+  width: 466px;
+  height: 265px;
+  border-radius: 42px;
+  background: rgba(0, 203, 255, .11);
+  filter: blur(28px);
+}
+
+.phone {
+  position: absolute;
+  top: 20px;
+  width: 170px;
+  height: 322px;
+  padding: 10px;
+  border: 1px solid rgba(80, 218, 240, .36);
+  border-radius: 31px;
+  background:
+    linear-gradient(145deg, rgba(20, 50, 80, .96), rgba(5, 21, 40, .98));
+  box-shadow:
+    0 28px 56px rgba(0, 5, 20, .48),
+    inset 0 1px 0 rgba(255, 255, 255, .12);
+}
+
+.phone.owner {
+  left: 35px;
+  transform: rotate(-7deg);
+}
+
+.phone.operator {
+  right: 35px;
+  transform: rotate(7deg);
+  border-color: rgba(163, 137, 255, .34);
+}
+
+.phone::before {
+  content: "";
+  position: absolute;
+  left: 62px;
+  top: 6px;
+  width: 46px;
+  height: 5px;
+  border-radius: 5px;
+  background: rgba(171, 218, 236, .30);
+}
+
+.phone-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(93, 205, 236, .17);
+  border-radius: 23px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(45, 196, 239, .20), transparent 38%),
+    linear-gradient(180deg, #092943, #061e35 55%, #041627);
+}
+
+.phone.operator .phone-screen {
+  border-color: rgba(164, 136, 255, .18);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(150, 112, 255, .18), transparent 38%),
+    linear-gradient(180deg, #161e48, #071d36 60%, #041627);
+}
+
+.app-head {
+  height: 58px;
+  padding: 13px 12px 0;
+}
+
+.app-head strong {
+  display: block;
+  color: #e8f9ff;
+  font-size: 12px;
+  letter-spacing: .4px;
+}
+
+.app-head span {
+  display: block;
+  margin-top: 4px;
+  color: #76a4b8;
+  font-size: 7px;
+}
+
+.app-card {
+  height: 55px;
+  margin: 9px 10px 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(66, 189, 226, .15);
+  border-radius: 12px;
+  background: rgba(8, 45, 72, .66);
+}
+
+.phone.operator .app-card {
+  border-color: rgba(157, 129, 255, .15);
+  background: rgba(47, 41, 92, .48);
+}
+
+.app-card strong {
+  display: block;
+  color: #d6f4fb;
+  font-size: 9.2px;
+}
+
+.app-card span {
+  display: block;
+  margin-top: 6px;
+  color: #7fa5b5;
+  font-size: 7px;
+  line-height: 1.35;
+}
+
+.app-grid {
+  margin: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.mini-action {
+  height: 45px;
+  padding: 7px;
+  border: 1px solid rgba(64, 184, 220, .14);
+  border-radius: 10px;
+  color: #a9d4e1;
+  font-size: 7.5px;
+  background: rgba(5, 30, 53, .62);
+}
+
+.phone.operator .mini-action {
+  border-color: rgba(151, 125, 239, .15);
+  color: #c0b2ec;
+  background: rgba(62, 47, 111, .26);
+}
+
+.mini-action b {
+  display: block;
+  margin-top: 4px;
+  color: #55ddf1;
+  font-size: 8px;
+}
+
+.phone.operator .mini-action b {
+  color: #bba8ff;
+}
+
+.app-nav {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  height: 33px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  padding: 6px;
+  border-radius: 13px;
+  background: rgba(4, 18, 35, .72);
+}
+
+.app-nav i {
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #6693a8;
+  font-size: 7px;
+  font-style: normal;
+}
+
+.app-nav i.active {
+  color: #def9ff;
+  background: rgba(34, 155, 196, .30);
+}
+
+.app-hub {
+  position: absolute;
+  left: 197px;
+  top: 82px;
+  z-index: 5;
+  width: 154px;
+  height: 154px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(67, 229, 239, .36);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(18, 132, 162, .68), rgba(5, 42, 70, .93) 68%);
+  box-shadow:
+    0 0 42px rgba(0, 211, 234, .20),
+    inset 0 0 36px rgba(0, 218, 234, .12);
+}
+
+.app-hub::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed rgba(84, 231, 239, .26);
+  border-radius: 50%;
+  animation: rotate 18s linear infinite;
+}
+
+.app-hub::after {
+  content: "";
+  position: absolute;
+  inset: 28px;
+  border: 1px solid rgba(96, 225, 238, .13);
+  border-radius: 50%;
+}
+
+.hub-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+}
+
+.hub-content svg {
+  width: 39px;
+  height: 39px;
+  color: #e4fbff;
+  filter: drop-shadow(0 0 13px rgba(94, 235, 249, .45));
+}
+
+.hub-content strong {
+  display: block;
+  margin-top: 8px;
+  color: #e8fbff;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.hub-content span {
+  display: block;
+  margin-top: 4px;
+  color: #7ba8ba;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.ai-chip {
+  position: absolute;
+  left: 204px;
+  bottom: 44px;
+  z-index: 8;
+  width: 140px;
+  height: 58px;
+  padding: 10px;
+  border: 1px solid rgba(255, 176, 75, .26);
+  border-radius: 15px;
+  background:
+    linear-gradient(145deg, rgba(92, 55, 21, .72), rgba(6, 27, 51, .92));
+  box-shadow:
+    0 16px 30px rgba(0, 5, 18, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+.ai-chip strong {
+  color: #ffe0ad;
+  font-size: 10px;
+}
+
+.ai-chip span {
+  display: block;
+  margin-top: 5px;
+  color: #b99262;
+  font-size: 7.3px;
+  line-height: 1.35;
+}
+
+.chapter-path {
+  position: absolute;
+  left: 14px;
+  right: 0;
+  bottom: 0;
+  z-index: 7;
+  height: 154px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+}
+
+.path-card {
+  position: relative;
+  height: 143px;
+  padding: 17px 16px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(61, 181, 226, .20);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(15, 56, 87, .87), rgba(6, 27, 51, .92));
+  box-shadow:
+    0 14px 32px rgba(0, 5, 18, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  backdrop-filter: blur(10px);
+}
+
+.path-card::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #57def1, transparent);
+}
+
+.path-card.purple {
+  border-color: rgba(153, 123, 255, .25);
+  background:
+    linear-gradient(145deg, rgba(56, 47, 112, .62), rgba(7, 30, 55, .92));
+}
+
+.path-card.purple::before {
+  background: linear-gradient(90deg, transparent, #aa91ff, transparent);
+}
+
+.path-card.orange {
+  border-color: rgba(236, 156, 57, .23);
+  background:
+    linear-gradient(145deg, rgba(91, 57, 24, .62), rgba(7, 30, 55, .92));
+}
+
+.path-card.orange::before {
+  background: linear-gradient(90deg, transparent, #ffb04b, transparent);
+}
+
+.path-number {
+  position: absolute;
+  right: 14px;
+  top: 9px;
+  color: rgba(71, 211, 235, .13);
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.path-card.purple .path-number {
+  color: rgba(175, 150, 255, .14);
+}
+
+.path-card.orange .path-number {
+  color: rgba(255, 176, 75, .13);
+}
+
+.path-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.path-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(67, 205, 235, .15);
+  border-radius: 10px;
+  color: #56e0f2;
+  background: rgba(23, 149, 190, .15);
+}
+
+.path-card.purple .path-icon {
+  color: #c7b6ff;
+  border-color: rgba(167, 138, 246, .17);
+  background: rgba(127, 90, 218, .16);
+}
+
+.path-card.orange .path-icon {
+  color: #ffc170;
+  border-color: rgba(246, 176, 82, .18);
+  background: rgba(180, 106, 24, .15);
+}
+
+.path-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.path-title {
+  color: #dceff6;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.path-en {
+  margin-top: 3px;
+  color: #597f95;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.path-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 11px;
+  color: #7398aa;
+  font-size: 8.5px;
+  line-height: 1.55;
+}
+
+.path-points {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.path-point {
+  padding: 4px 7px;
+  border-radius: 7px;
+  color: #80b4c6;
+  font-size: 7.5px;
+  background: rgba(17, 70, 98, .48);
+}
+
+.path-card.purple .path-point {
+  color: #aa9ed6;
+  background: rgba(83, 62, 141, .28);
+}
+
+.path-card.orange .path-point {
+  color: #d6aa72;
+  background: rgba(126, 75, 23, .27);
+}
+
+.audience-strip {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  bottom: 96px;
+  z-index: 9;
+  height: 38px;
+  display: grid;
+  grid-template-columns: 82px repeat(5, 1fr);
+  gap: 8px;
+}
+
+.audience-label {
+  display: flex;
+  align-items: center;
+  color: #52788e;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.audience-item {
+  height: 38px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(61, 181, 226, .15);
+  border-radius: 19px;
+  color: #87b7c8;
+  font-size: 8px;
+  background: rgba(8, 45, 72, .42);
+}
+
+.audience-item i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4bdff0;
+  box-shadow: 0 0 7px #4bdff0;
+}
+
+.audience-item.purple {
+  border-color: rgba(151, 124, 241, .16);
+  color: #b0a4df;
+  background: rgba(74, 55, 131, .22);
+}
+
+.audience-item.purple i {
+  background: #ad94ff;
+  box-shadow: 0 0 7px #ad94ff;
+}
+
+.audience-item.orange {
+  border-color: rgba(238, 158, 70, .17);
+  color: #d5a86f;
+  background: rgba(119, 73, 24, .20);
+}
+
+.audience-item.orange i {
+  background: #ffb04b;
+  box-shadow: 0 0 7px #ffb04b;
+}
+
+.chapter-progress {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  bottom: 50px;
+  z-index: 8;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-label {
+  color: #52788e;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.progress-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  margin: 0 17px;
+  background: rgba(65, 136, 172, .18);
+}
+
+.progress-active {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 78%;
+  height: 2px;
+  background: linear-gradient(90deg, #188fff, #42e2e5, #a58cff, #ffb04b);
+  box-shadow: 0 0 8px rgba(55, 215, 235, .24);
+}
+
+.progress-dot {
+  position: absolute;
+  left: 78%;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #ffb04b;
+  box-shadow: 0 0 9px #ffb04b;
+}
+
+.progress-chapter {
+  color: #77a6ba;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.footer {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  bottom: 18px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #476e85;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<div id="stage">
+  <div class="content">
+
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="backgroundGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 718 C229 658 305 755 493 680 C690 601 717 421 904 356 C1090 291 1305 416 1600 228"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 761 C245 710 387 793 568 722 C746 652 787 483 966 420 C1168 349 1371 419 1600 326"
+      />
+
+      <circle class="bg-dot" cx="493" cy="680" r="3"/>
+      <circle class="bg-dot" cx="904" cy="356" r="3"/>
+      <circle class="bg-dot" cx="1305" cy="416" r="3"/>
+    </svg>
+
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect
+              x="6"
+              y="2.8"
+              width="12"
+              height="18.4"
+              rx="3"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M9 7h6M9 11h6M9 15h3"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+            <circle cx="12" cy="18.1" r=".9" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div>
+          <div class="brand-cn">惠泊云</div>
+          <div class="brand-en">HUIBO CLOUD</div>
+        </div>
+      </div>
+
+      <div class="chapter-status">
+        <i></i>
+        CHAPTER · MOBILE APP SERVICE ECOSYSTEM
+      </div>
+    </header>
+
+    <section class="chapter-copy">
+      <div class="chapter-number">04</div>
+
+      <div class="chapter-content">
+        <div class="chapter-label">移动端应用服务体系</div>
+
+        <div class="chapter-title">
+          <h1>APP / 小程序服务矩阵</h1>
+        </div>
+
+        <div class="chapter-en">
+          OWNER APP · OPERATION APP · AI COPILOT
+        </div>
+
+        <div class="chapter-slogan">
+          一端服务车主，一端赋能运营<br>
+          再用<strong>AI 助手贯穿高频任务</strong>
+        </div>
+
+        <div class="chapter-description">
+          本章节从车主、商户、停车场管理人员、稽查人员和运营决策者的真实场景出发，
+          构建可办理、可支付、可管控、可分析、可协同的移动应用体系，
+          让停车、充电、套餐、优惠、工单、稽查与经营分析都能在手机上闭环完成。
+        </div>
+
+        <div class="keywords">
+          <span class="keyword"><i></i>车主服务</span>
+          <span class="keyword purple"><i></i>运营管理</span>
+          <span class="keyword orange"><i></i>AI 助手</span>
+          <span class="keyword green"><i></i>移动闭环</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="app-visual">
+      <div class="app-orbit"></div>
+      <i class="orbit-dot dot-1"></i>
+      <i class="orbit-dot dot-2"></i>
+      <i class="orbit-dot dot-3"></i>
+      <div class="app-glow"></div>
+
+      <svg class="visual-lines" viewBox="0 0 850 642">
+        <path class="app-line" d="M368 448 C296 467 190 464 144 497"/>
+        <circle class="app-node" cx="269" cy="467" r="3.5"/>
+
+        <path class="app-line app-line-purple" d="M450 451 V489"/>
+        <circle class="app-node-purple" cx="450" cy="470" r="3.5"/>
+
+        <path class="app-line app-line-orange" d="M532 448 C605 467 711 464 758 497"/>
+        <circle class="app-node-orange" cx="633" cy="467" r="3.5"/>
+      </svg>
+
+      <div class="app-console">
+        <div class="console-halo"></div>
+
+        <div class="phone owner">
+          <div class="phone-screen">
+            <div class="app-head">
+              <strong>车主小程序</strong>
+              <span>停车 · 充电 · 包月 · 发票</span>
+            </div>
+
+            <div class="app-card">
+              <strong>附近可用车位 / 充电桩</strong>
+              <span>预约、导航、扫码启动、满电提醒</span>
+            </div>
+
+            <div class="app-grid">
+              <div class="mini-action">包月办理<b>续费变更</b></div>
+              <div class="mini-action">访客授权<b>车牌预约</b></div>
+              <div class="mini-action">优惠领取<b>自动抵扣</b></div>
+              <div class="mini-action">订单开票<b>一键申请</b></div>
+            </div>
+
+            <div class="app-nav">
+              <i class="active">首页</i>
+              <i>充电</i>
+              <i>订单</i>
+              <i>我的</i>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-hub">
+          <div class="hub-content">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l7 4v5c0 4.5-2.7 7.3-7 9-4.3-1.7-7-4.5-7-9V7l7-4z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M8.5 12h7M12 8.5v7"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+            <strong>APP HUB</strong>
+            <span>统一身份 · 统一订单</span>
+          </div>
+        </div>
+
+        <div class="ai-chip">
+          <strong>AI 运营助手</strong>
+          <span>问数据、查异常、写公告、生成 Excel 报表</span>
+        </div>
+
+        <div class="phone operator">
+          <div class="phone-screen">
+            <div class="app-head">
+              <strong>运营管理小程序</strong>
+              <span>车场 · 商户 · 稽查 · 工单</span>
+            </div>
+
+            <div class="app-card">
+              <strong>今日营收与异常</strong>
+              <span>套餐、订单、车道视频、设备状态</span>
+            </div>
+
+            <div class="app-grid">
+              <div class="mini-action">远程开闸<b>视频核验</b></div>
+              <div class="mini-action">应急收费<b>补录追溯</b></div>
+              <div class="mini-action">商户券包<b>购买发券</b></div>
+              <div class="mini-action">我的工单<b>闭环处置</b></div>
+            </div>
+
+            <div class="app-nav">
+              <i class="active">运营</i>
+              <i>车道</i>
+              <i>工单</i>
+              <i>AI</i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-path">
+        <article class="path-card">
+          <span class="path-number">01</span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 15l2-6h12l2 6v4H4v-4z" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="7" cy="18" r="1.4" fill="currentColor"/>
+                <circle cx="17" cy="18" r="1.4" fill="currentColor"/>
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">车主小程序服务</div>
+              <div class="path-en">OWNER SERVICE APP</div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            围绕车主高频需求，完成停车、充电、包月、访客、优惠、订单与开票的自助闭环。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">汽车充电</span>
+            <span class="path-point">套餐办理</span>
+            <span class="path-point">订单发票</span>
+          </div>
+        </article>
+
+        <article class="path-card purple">
+          <span class="path-number">02</span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 20V8h6v12M13 20V4h6v16M3 20h18" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 12h1M16 9h1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">运营管理小程序</div>
+              <div class="path-en">MOBILE OPERATION APP</div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            面向管理人员、稽查人员和商户，提供查询、应急、远程控制、券包和工单处理能力。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">远程开闸</span>
+            <span class="path-point">商户发券</span>
+            <span class="path-point">工单处置</span>
+          </div>
+        </article>
+
+        <article class="path-card orange">
+          <span class="path-number">03</span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="4" y="5" width="16" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+                <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+                <path d="M12 2v3M9 16h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">AI 助手与智能任务</div>
+              <div class="path-en">AI COPILOT & AUTOMATION</div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            通过自然语言问数、异常分析、报表生成、公告撰写和策略建议，降低一线操作门槛。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">问数分析</span>
+            <span class="path-point">生成 Excel</span>
+            <span class="path-point">智能建议</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="audience-strip">
+      <div class="audience-label">适用角色</div>
+      <div class="audience-item"><i></i>车主 / 业主</div>
+      <div class="audience-item purple"><i></i>停车场管理人员</div>
+      <div class="audience-item purple"><i></i>道路稽查人员</div>
+      <div class="audience-item orange"><i></i>商户 / 合作伙伴</div>
+      <div class="audience-item"><i></i>运营决策者</div>
+    </div>
+
+    <div class="chapter-progress">
+      <span class="progress-label">SOLUTION JOURNEY</span>
+
+      <div class="progress-track">
+        <i class="progress-active"></i>
+        <i class="progress-dot"></i>
+      </div>
+
+      <span class="progress-chapter">
+        CHAPTER 04 · APP / 小程序服务矩阵
+      </span>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        本章节将从车主端、运营端与 AI 助手三个维度介绍移动端服务能力
+      </div>
+
+      <div class="footer-right">
+        OWNER APP · OPERATION APP · MERCHANT SERVICE · AI COPILOT
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+</body>
+</html>

@@ -1,0 +1,5262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住宅小区智慧停车与物业运营平台</title>
+
+    <style>
+        :root {
+            --primary: #2777c8;
+            --primary-dark: #1d5c9d;
+            --primary-soft: #edf6ff;
+            --success: #168d61;
+            --success-soft: #eaf8f2;
+            --warning: #d88916;
+            --warning-soft: #fff6e7;
+            --danger: #d64f4f;
+            --danger-soft: #fff0f0;
+            --purple: #7359b5;
+            --purple-soft: #f3efff;
+            --cyan: #16899b;
+            --cyan-soft: #eaf9fb;
+            --text: #253348;
+            --text-secondary: #59687a;
+            --muted: #8491a3;
+            --border: #dbe4ed;
+            --background: #f4f7fa;
+            --card: #ffffff;
+            --sidebar: #203e62;
+            --sidebar-active: #2d5f94;
+            --shadow: 0 7px 24px rgba(34, 53, 78, .07);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 30;
+            width: 252px;
+            overflow-y: auto;
+            color: #fff;
+            background: var(--sidebar);
+        }
+
+        .brand {
+            padding: 22px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            display: grid;
+            width: 47px;
+            height: 47px;
+            flex: 0 0 47px;
+            place-items: center;
+            border-radius: 13px;
+            background: #3c79b8;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            color: rgba(255, 255, 255, .65);
+            font-size: 13px;
+        }
+
+        .nav {
+            padding: 14px 12px 28px;
+        }
+
+        .nav-title {
+            margin: 17px 11px 8px;
+            color: rgba(255, 255, 255, .46);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 11px 13px;
+            border: 0;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .82);
+            background: transparent;
+            text-align: left;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: var(--sidebar-active);
+        }
+
+        .nav-icon {
+            display: grid;
+            width: 29px;
+            height: 29px;
+            flex: 0 0 29px;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .1);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .nav-badge {
+            min-width: 24px;
+            margin-left: auto;
+            padding: 1px 7px;
+            border-radius: 999px;
+            color: #fff;
+            background: #df5b5b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* 主区域 */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 252px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            min-height: 72px;
+            padding: 11px 26px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, .97);
+        }
+
+        .page-info h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .page-info p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .top-select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-left: 12px;
+            border-left: 1px solid var(--border);
+        }
+
+        .avatar {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-weight: 800;
+        }
+
+        .user strong,
+        .user span {
+            display: block;
+        }
+
+        .user strong {
+            font-size: 14px;
+        }
+
+        .user span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 24px 27px 50px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* 公共组件 */
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 19px 21px 0;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 19px 21px 21px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .section-heading p {
+            max-width: 930px;
+            margin: 5px 0 0;
+            color: var(--text-secondary);
+        }
+
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .role-strip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 17px;
+            padding: 13px 16px;
+            border: 1px solid #d8e4ef;
+            border-radius: 11px;
+            background: #f8fbfe;
+        }
+
+        .role-strip strong {
+            color: var(--primary-dark);
+        }
+
+        .role-strip span {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 39px;
+            padding: 8px 15px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            color: var(--text);
+            background: #fff;
+        }
+
+        .btn-success {
+            color: #fff;
+            background: var(--success);
+        }
+
+        .btn-warning {
+            color: #fff;
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background: var(--danger);
+        }
+
+        .btn-sm {
+            min-height: 33px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tag-blue {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .tag-green {
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .tag-orange {
+            color: #ae6708;
+            background: var(--warning-soft);
+        }
+
+        .tag-red {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .tag-purple {
+            color: var(--purple);
+            background: var(--purple-soft);
+        }
+
+        .tag-cyan {
+            color: var(--cyan);
+            background: var(--cyan-soft);
+        }
+
+        .tag-gray {
+            color: #667587;
+            background: #eef2f5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .metric-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            margin: 10px 0 4px;
+            font-size: 28px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .info-banner,
+        .warning-banner,
+        .success-banner,
+        .danger-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px 17px;
+            border-radius: 11px;
+        }
+
+        .info-banner {
+            border: 1px solid #c9dff5;
+            color: #315f91;
+            background: var(--primary-soft);
+        }
+
+        .warning-banner {
+            border: 1px solid #eed099;
+            color: #815710;
+            background: var(--warning-soft);
+        }
+
+        .success-banner {
+            border: 1px solid #c2e3d4;
+            color: #226b50;
+            background: var(--success-soft);
+        }
+
+        .danger-banner {
+            border: 1px solid #efc7c7;
+            color: #8f3535;
+            background: var(--danger-soft);
+        }
+
+        .banner-icon {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .banner-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* 待办 */
+
+        .todo-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .todo-item {
+            display: grid;
+            grid-template-columns: 8px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .todo-level {
+            width: 8px;
+            height: 55px;
+            border-radius: 99px;
+            background: var(--primary);
+        }
+
+        .todo-level.warning {
+            background: var(--warning);
+        }
+
+        .todo-level.danger {
+            background: var(--danger);
+        }
+
+        .todo-level.success {
+            background: var(--success);
+        }
+
+        .todo-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .todo-content p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .todo-meta {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* 表格与工具栏 */
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+            max-width: 440px;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .search-box span {
+            padding-left: 12px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+        }
+
+        .toolbar select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 930px;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #e9eef3;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-secondary);
+            background: #f8fafc;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #fbfdff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .plate {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #a9c6e8;
+            border-radius: 6px;
+            color: #215f9e;
+            background: #eff7ff;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        /* 表单 */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required::after {
+            content: "*";
+            margin-left: 3px;
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #83b0e0;
+            box-shadow: 0 0 0 3px rgba(40, 120, 208, .1);
+        }
+
+        textarea.form-control {
+            min-height: 86px;
+            resize: vertical;
+        }
+
+        .readonly-box {
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #f8fafc;
+        }
+
+        .readonly-box p {
+            margin: 3px 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .detail-item {
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f9fbfd;
+        }
+
+        .detail-item > span:first-child {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .detail-section {
+            margin-top: 18px;
+        }
+
+        .detail-section h4 {
+            margin: 0 0 9px;
+            font-size: 16px;
+        }
+
+        /* 房屋档案双栏 */
+
+        .archive-layout {
+            display: grid;
+            grid-template-columns: 360px minmax(0, 1fr);
+            min-height: 680px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .archive-left {
+            border-right: 1px solid var(--border);
+        }
+
+        .archive-search {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .archive-list {
+            overflow-y: auto;
+            max-height: 650px;
+        }
+
+        .house-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #edf1f5;
+            cursor: pointer;
+        }
+
+        .house-item:hover,
+        .house-item.active {
+            background: var(--primary-soft);
+        }
+
+        .house-item-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .house-item strong {
+            font-size: 15px;
+        }
+
+        .house-item p {
+            margin: 3px 0 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .archive-detail {
+            padding: 21px;
+        }
+
+        .archive-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 17px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .archive-header h3 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .archive-header p {
+            margin: 4px 0 0;
+            color: var(--text-secondary);
+        }
+
+        .sub-tabs {
+            display: flex;
+            gap: 4px;
+            margin: 17px 0;
+            padding: 4px;
+            border-radius: 10px;
+            background: #eef2f6;
+        }
+
+        .sub-tab {
+            flex: 1;
+            padding: 9px;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            background: transparent;
+            font-weight: 700;
+        }
+
+        .sub-tab.active {
+            color: var(--primary);
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(40, 70, 100, .08);
+        }
+
+        .sub-content {
+            display: none;
+        }
+
+        .sub-content.active {
+            display: block;
+        }
+
+        .person-card,
+        .vehicle-card,
+        .fee-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .person-card p,
+        .vehicle-card p,
+        .fee-card p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* 门岗访客工作台 */
+
+        .gate-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(360px, .75fr);
+            gap: 17px;
+        }
+
+        .arrival-list {
+            display: grid;
+            gap: 11px;
+        }
+
+        .arrival-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .arrival-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .arrival-card.danger {
+            border-left-color: var(--danger);
+        }
+
+        .arrival-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .arrival-top h4 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .arrival-card p {
+            margin: 4px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .countdown {
+            color: var(--danger);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .gate-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 11px;
+        }
+
+        .confirmation-card {
+            margin-bottom: 11px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .confirmation-card h4 {
+            margin: 0 0 4px;
+        }
+
+        .confirmation-card p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* 车位图 */
+
+        .asset-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 370px;
+            gap: 17px;
+        }
+
+        .parking-map {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #eef2f6;
+        }
+
+        .parking-map-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 14px;
+        }
+
+        .space-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(70px, 1fr));
+            gap: 9px;
+        }
+
+        .space {
+            min-height: 78px;
+            padding: 9px 6px;
+            border: 2px solid transparent;
+            border-radius: 9px;
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .space:hover,
+        .space.selected {
+            border-color: var(--primary);
+        }
+
+        .space strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .space span {
+            display: block;
+            margin-top: 5px;
+            font-size: 11px;
+        }
+
+        .space.owner {
+            background: #edf6ff;
+        }
+
+        .space.developer {
+            background: #fff6e7;
+        }
+
+        .space.public {
+            background: #eaf8f2;
+        }
+
+        .space.trust {
+            background: #f3efff;
+        }
+
+        .space.occupied {
+            box-shadow: inset 0 -5px 0 #d64f4f;
+        }
+
+        .asset-panel {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .asset-panel h3 {
+            margin: 0 0 5px;
+        }
+
+        .asset-panel > p {
+            margin: 0 0 15px;
+            color: var(--text-secondary);
+        }
+
+        .money-breakdown {
+            display: grid;
+            gap: 9px;
+        }
+
+        .money-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f7f9fb;
+        }
+
+        .money-row.total {
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            font-weight: 800;
+        }
+
+        /* 托管向导 */
+
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 19px;
+        }
+
+        .step-item {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--muted);
+            background: #fff;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .step-item.active {
+            border-color: #9ec3ea;
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .wizard-page {
+            display: none;
+        }
+
+        .wizard-page.active {
+            display: block;
+        }
+
+        /* 出账流水线 */
+
+        .billing-pipeline {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .pipeline-step {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .pipeline-step.active {
+            border-color: #8db8e4;
+            background: var(--primary-soft);
+        }
+
+        .pipeline-step.done {
+            border-color: #a8d8c4;
+            background: var(--success-soft);
+        }
+
+        .pipeline-step h4 {
+            margin: 0 0 6px;
+        }
+
+        .pipeline-step p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .pipeline-number {
+            margin-top: 9px;
+            font-size: 23px;
+            font-weight: 850;
+        }
+
+        /* 催缴看板 */
+
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(230px, 1fr));
+            gap: 13px;
+            overflow-x: auto;
+            align-items: start;
+        }
+
+        .kanban-column {
+            min-width: 230px;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #eef2f6;
+        }
+
+        .kanban-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .kanban-title h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .kanban-card {
+            margin-bottom: 9px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+            box-shadow: 0 3px 10px rgba(30, 50, 80, .04);
+        }
+
+        .kanban-card h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .kanban-card p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .kanban-card .amount {
+            margin: 8px 0;
+            color: var(--danger);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        /* 分账瀑布 */
+
+        .split-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 420px;
+            gap: 17px;
+        }
+
+        .waterfall {
+            display: grid;
+            gap: 10px;
+        }
+
+        .waterfall-row {
+            display: grid;
+            grid-template-columns: 210px minmax(0, 1fr) 130px;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .waterfall-bar {
+            height: 16px;
+            border-radius: 999px;
+            background: var(--primary);
+        }
+
+        .waterfall-bar.cost {
+            background: var(--warning);
+        }
+
+        .waterfall-bar.owner {
+            background: var(--purple);
+        }
+
+        .waterfall-bar.property {
+            background: var(--success);
+        }
+
+        .waterfall-bar.committee {
+            background: var(--cyan);
+        }
+
+        .split-summary {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        /* 投诉工单 */
+
+        .ticket-board {
+            display: grid;
+            grid-template-columns: 320px minmax(0, 1fr);
+            min-height: 650px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .ticket-list {
+            border-right: 1px solid var(--border);
+        }
+
+        .ticket-filter {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ticket-item {
+            padding: 14px 15px;
+            border-bottom: 1px solid #edf1f5;
+            cursor: pointer;
+        }
+
+        .ticket-item:hover,
+        .ticket-item.active {
+            background: var(--primary-soft);
+        }
+
+        .ticket-item h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .ticket-item p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .ticket-detail {
+            padding: 21px;
+        }
+
+        .sla-box {
+            display: flex;
+            justify-content: space-between;
+            gap: 13px;
+            padding: 14px;
+            border: 1px solid #efcece;
+            border-radius: 10px;
+            color: #8e3838;
+            background: var(--danger-soft);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 22px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 7px;
+            bottom: 7px;
+            width: 2px;
+            background: #d9e4ef;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0 0 16px 13px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 9px;
+            height: 9px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 2px #c1d7ed;
+        }
+
+        .timeline-item strong {
+            font-size: 14px;
+        }
+
+        .timeline-item p {
+            margin: 2px 0 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* 车位销售 */
+
+        .sales-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            gap: 17px;
+        }
+
+        .sales-space-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(85px, 1fr));
+            gap: 9px;
+        }
+
+        .sales-space {
+            min-height: 95px;
+            padding: 10px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .sales-space:hover,
+        .sales-space.selected {
+            border-color: var(--primary);
+        }
+
+        .sales-space.available {
+            background: var(--success-soft);
+        }
+
+        .sales-space.locked {
+            background: var(--warning-soft);
+        }
+
+        .sales-space.sold {
+            color: var(--muted);
+            background: #eef2f5;
+        }
+
+        .sales-space h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .sales-space p {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+
+        .lead-card {
+            margin-bottom: 10px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .lead-card h4 {
+            margin: 0 0 4px;
+        }
+
+        .lead-card p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 弹窗 */
+
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(28, 41, 59, .48);
+        }
+
+        .modal-mask.show {
+            display: flex;
+        }
+
+        .modal {
+            overflow: hidden;
+            width: min(900px, 100%);
+            max-height: 92vh;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 25px 80px rgba(20, 35, 52, .28);
+        }
+
+        .modal.large {
+            width: min(1120px, 100%);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 19px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-header p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .modal-close {
+            display: grid;
+            width: 37px;
+            height: 37px;
+            place-items: center;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            background: #eef2f5;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            max-height: calc(92vh - 145px);
+            padding: 20px 22px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            padding: 14px 22px;
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+        }
+
+        /* Toast */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            top: 84px;
+            z-index: 200;
+            display: grid;
+            gap: 9px;
+        }
+
+        .toast {
+            width: min(410px, calc(100vw - 35px));
+            padding: 13px 15px;
+            border: 1px solid #bfe0d2;
+            border-radius: 10px;
+            color: #21694f;
+            background: #effaf5;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.error {
+            border-color: #efc8c8;
+            color: #983939;
+            background: #fff3f3;
+        }
+
+        @media (max-width: 1280px) {
+            .grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .asset-layout,
+            .split-layout,
+            .sales-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .space-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .nav-title {
+                display: none;
+            }
+
+            .nav-item {
+                min-width: 165px;
+            }
+
+            .topbar {
+                position: static;
+            }
+
+            .archive-layout,
+            .gate-layout,
+            .ticket-board {
+                grid-template-columns: 1fr;
+            }
+
+            .archive-left,
+            .ticket-list {
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .billing-pipeline {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .kanban {
+                grid-template-columns: repeat(5, 260px);
+            }
+
+            .sales-space-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                font-size: 15px;
+            }
+
+            .content {
+                padding: 17px 13px 35px;
+            }
+
+            .topbar {
+                padding: 11px 14px;
+            }
+
+            .top-select,
+            .date,
+            .user {
+                display: none;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-5,
+            .form-grid,
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .todo-item {
+                grid-template-columns: 7px 1fr;
+            }
+
+            .todo-item .btn {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .space-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .billing-pipeline {
+                grid-template-columns: 1fr;
+            }
+
+            .waterfall-row {
+                grid-template-columns: 1fr;
+            }
+
+            .sales-space-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stepper {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- 左侧导航 -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-row">
+                <div class="brand-logo">家</div>
+                <div>
+                    <h1>住宅智慧停车</h1>
+                    <p>房·人·车·位·费·诉·账</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <div class="nav-title">项目运营</div>
+
+            <button class="nav-item active" data-view="dashboard">
+                <span class="nav-icon">首</span>
+                项目经理工作台
+                <span class="nav-badge">9</span>
+            </button>
+
+            <button class="nav-item" data-view="archive">
+                <span class="nav-icon">档</span>
+                房屋与住户档案
+                <span class="nav-badge">6</span>
+            </button>
+
+            <button class="nav-item" data-view="visitor">
+                <span class="nav-icon">访</span>
+                访客与门岗秩序
+                <span class="nav-badge" id="visitorBadge">4</span>
+            </button>
+
+            <button class="nav-item" data-view="asset">
+                <span class="nav-icon">位</span>
+                车位资产与托管
+                <span class="nav-badge">3</span>
+            </button>
+
+            <div class="nav-title">收费与经营</div>
+
+            <button class="nav-item" data-view="billing">
+                <span class="nav-icon">账</span>
+                下月账单准备
+                <span class="nav-badge" id="billingBadge">5</span>
+            </button>
+
+            <button class="nav-item" data-view="collection">
+                <span class="nav-icon">催</span>
+                催缴任务进度
+                <span class="nav-badge">18</span>
+            </button>
+
+            <button class="nav-item" data-view="split">
+                <span class="nav-icon">分</span>
+                收入与多方分账
+            </button>
+
+            <button class="nav-item" data-view="sales">
+                <span class="nav-icon">售</span>
+                开发商车位销售
+                <span class="nav-badge">7</span>
+            </button>
+
+            <div class="nav-title">服务与现场</div>
+
+            <button class="nav-item" data-view="complaint">
+                <span class="nav-icon">诉</span>
+                投诉与服务工单
+                <span class="nav-badge" id="complaintBadge">5</span>
+            </button>
+
+            <button class="nav-item" data-view="audit">
+                <span class="nav-icon">审</span>
+                资金与操作审计
+            </button>
+        </nav>
+    </aside>
+
+    <!-- 主区域 -->
+    <main class="main">
+        <header class="topbar">
+            <div class="page-info">
+                <h2 id="pageTitle">住宅项目运营工作台</h2>
+                <p id="pageDesc">项目经理今天需要处理的收费、车位、访客和服务问题</p>
+            </div>
+
+            <div class="top-actions">
+                <select class="top-select">
+                    <option>阳光雅苑住宅小区</option>
+                    <option>阳光雅苑商业街</option>
+                    <option>阳光雅苑二期</option>
+                </select>
+
+                <select class="top-select" onchange="changeRole(this.value)">
+                    <option>物业项目经理</option>
+                    <option>客服管家</option>
+                    <option>秩序班长</option>
+                    <option>物业财务</option>
+                    <option>开发商车位销售</option>
+                    <option>业委会监督人员</option>
+                </select>
+
+                <div class="date">2026年7月18日</div>
+
+                <div class="user">
+                    <div class="avatar">王</div>
+                    <div>
+                        <strong id="userName">王经理</strong>
+                        <span id="userRole">物业项目负责人</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- 项目经理工作台 -->
+            <section class="view active" id="view-dashboard">
+                <div class="role-strip">
+                    <strong>当前使用人：物业项目经理</strong>
+                    <span>关注今日秩序、收费准备、催缴、投诉和开发商/业委会/车位业主分账。</span>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">当前在场车辆</div>
+                        <div class="metric-value">1,286</div>
+                        <div class="metric-note">住户1,042 · 访客244</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">剩余公共车位</div>
+                        <div class="metric-value">86</div>
+                        <div class="metric-note">访客区仅剩18个</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">8月账单准备</div>
+                        <div class="metric-value">87%</div>
+                        <div class="metric-note">82户资料存在异常</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">本月综合收缴率</div>
+                        <div class="metric-value">82.6%</div>
+                        <div class="metric-note">未收金额268,420元</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">超时投诉工单</div>
+                        <div class="metric-value">5项</div>
+                        <div class="metric-note">最长已超时3小时</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>今天优先处理</h3>
+                                <p>按安全风险、业主影响和资金风险排序</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="todo-list">
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>消防通道发现车辆占用</strong>
+                                        <p>车牌粤A·82K6Q，位置8栋北侧消防通道，已通知车主但尚未驶离。</p>
+                                        <div class="todo-meta">持续18分钟 · 已升级秩序班长</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="openSafetyTicket()">现场处置</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>8月账单还有5类异常未清理</strong>
+                                        <p>涉及租客到期、车位承担人不明确、托管到期及开发商车位交接问题。</p>
+                                        <div class="todo-meta">82户受影响 · 暂不能正式发布账单</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="navigateTo('billing')">处理异常</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>业主托管车位本月收益待确认</strong>
+                                        <p>共68个托管车位，应结算给业主36,860元，物业佣金4,260元。</p>
+                                        <div class="todo-meta">财务已完成初核 · 待项目经理确认</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('split')">查看分账</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>7名管家催缴进度低于目标</strong>
+                                        <p>本周应完成420户有效联系，当前完成286户，承诺回款56,200元。</p>
+                                        <div class="todo-meta">3名管家任务已出现超时</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('collection')">查看进度</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>B2车库积水投诉重复发生</strong>
+                                        <p>同一位置30天内投诉3次，临时清理后再次发生，需转工程专项整改。</p>
+                                        <div class="todo-meta">工单TS20260718026 · 已超时42分钟</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="openComplaintById('TS026')">进入工单</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>本月资金与经营</h3>
+                                <p>区分租金、管理费、临停收入和各方收益</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span>物业费实收</span>
+                                    <strong>¥836,200</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>车位管理费实收</span>
+                                    <strong>¥128,600</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>车位租金</span>
+                                    <strong>¥186,400</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>临停实收</span>
+                                    <strong>¥96,820</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>业委会应分</span>
+                                    <strong>¥52,680</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>开发商应分</span>
+                                    <strong>¥68,260</strong>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>车位经营状态</h4>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <span>开发商可租车位</span>
+                                        <strong>126个</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>业主托管车位</span>
+                                        <strong>68个</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>公共临停车位</span>
+                                        <strong>96个</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>开发商可售车位</span>
+                                        <strong>82个</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>本月托管出租率</span>
+                                        <strong>86.8%</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>本月车位销售</span>
+                                        <strong>6个</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 房屋与住户档案 -->
+            <section class="view" id="view-archive">
+                <div class="section-heading">
+                    <div>
+                        <h2>房屋与住户档案</h2>
+                        <p>为没有完整物业软件的小物业建立基础房、人、车、位关系，停车资格必须有明确身份依据。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openBatchArchiveImport()">批量导入档案</button>
+                        <button class="btn btn-primary" onclick="startResidentRegistration()">办理入住/租客登记</button>
+                    </div>
+                </div>
+
+                <div class="archive-layout">
+                    <div class="archive-left">
+                        <div class="archive-search">
+                            <div class="search-box" style="min-width:0;max-width:none">
+                                <span>查</span>
+                                <input id="archiveSearch" placeholder="房号、业主、租客、车牌"
+                                       oninput="renderHouseList()">
+                            </div>
+
+                            <div class="toolbar" style="margin-top:10px;margin-bottom:0">
+                                <select id="houseStatusFilter" onchange="renderHouseList()">
+                                    <option value="">全部状态</option>
+                                    <option>业主自住</option>
+                                    <option>出租</option>
+                                    <option>空置</option>
+                                    <option>商铺</option>
+                                    <option>档案异常</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="archive-list" id="houseList"></div>
+                    </div>
+
+                    <div class="archive-detail" id="archiveDetail"></div>
+                </div>
+            </section>
+
+            <!-- 访客与门岗 -->
+            <section class="view" id="view-visitor">
+                <div class="section-heading">
+                    <div>
+                        <h2>访客与门岗秩序</h2>
+                        <p>区分已预约、未预约、高频、夜间、装修和配送车辆，门岗只处理当前需要确认的车辆。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openVisitorRule()">访客规则</button>
+                        <button class="btn btn-primary" onclick="createVisitorOnBehalf()">物业代办访客预约</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>当前使用人：门岗秩序人员</strong>
+                    <span>先看车辆是否有预约、访问哪户、免费多久、是否高频异常，再决定放行或联系住户。</span>
+                </div>
+
+                <div class="gate-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>当前到达车辆</h3>
+                                <p>实时显示入口识别结果和需要执行的动作</p>
+                            </div>
+                            <span class="tag tag-blue">北门入口</span>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="arrival-list" id="arrivalList"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card mb-16">
+                            <div class="card-header">
+                                <div>
+                                    <h3>等待住户确认</h3>
+                                    <p>未预约车辆不会直接进入永久白名单</p>
+                                </div>
+                            </div>
+
+                            <div class="card-body" id="confirmationList"></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>今日秩序提醒</h3>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="warning-banner">
+                                    <div class="banner-icon">!</div>
+                                    <div class="banner-content">
+                                        <strong>发现3辆高频访客车辆</strong>
+                                        近30天来访均超过18次，建议核验是否属于租客、商户员工或长期服务人员。
+                                    </div>
+                                </div>
+
+                                <div class="section-actions mt-16">
+                                    <button class="btn btn-secondary" onclick="openFrequentVisitors()">查看高频车辆</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 车位资产与托管 -->
+            <section class="view" id="view-asset">
+                <div class="section-heading">
+                    <div>
+                        <h2>车位资产、租赁与业主托管</h2>
+                        <p>在车位图上直接查看产权、占用、租赁和托管状态，车位租金与物业管理费分别核算。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openRentListing()">发布可租车位</button>
+                        <button class="btn btn-primary" onclick="startTrustWizard()">办理业主车位托管</button>
+                    </div>
+                </div>
+
+                <div class="asset-layout">
+                    <div class="parking-map">
+                        <div class="parking-map-head">
+                            <div>
+                                <h3 style="margin:0">地下车库B2 · 8栋区域</h3>
+                                <p class="muted" style="margin:3px 0 0">点击车位查看产权、使用和收费关系</p>
+                            </div>
+
+                            <select class="top-select">
+                                <option>B2 · 8栋区域</option>
+                                <option>B1 · 5栋区域</option>
+                                <option>B3 · 12栋区域</option>
+                            </select>
+                        </div>
+
+                        <div class="space-grid" id="spaceGrid"></div>
+
+                        <div class="toolbar" style="margin-top:15px;margin-bottom:0">
+                            <span class="tag tag-blue">业主产权</span>
+                            <span class="tag tag-orange">开发商产权</span>
+                            <span class="tag tag-purple">物业托管</span>
+                            <span class="tag tag-green">公共车位</span>
+                            <span class="tag tag-red">底部红线表示车辆占用</span>
+                        </div>
+                    </div>
+
+                    <div class="asset-panel" id="assetPanel"></div>
+                </div>
+            </section>
+
+            <!-- 下月账单准备 -->
+            <section class="view" id="view-billing">
+                <div class="section-heading">
+                    <div>
+                        <h2>8月账单准备与发布</h2>
+                        <p>账单不是点一次按钮直接生成，而是先核验房屋、租客、车位合同、承担人和收费标准。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="runBillingCheck()">重新执行数据检查</button>
+                        <button class="btn btn-primary" id="publishBillsBtn" disabled onclick="publishBills()">发布8月账单</button>
+                    </div>
+                </div>
+
+                <div class="billing-pipeline mb-16">
+                    <div class="pipeline-step done">
+                        <h4>1. 数据准备</h4>
+                        <p>房屋、住户和收费标准已加载</p>
+                        <div class="pipeline-number">1,286户</div>
+                    </div>
+
+                    <div class="pipeline-step active">
+                        <h4>2. 异常核验</h4>
+                        <p>处理承担人、合同及产权异常</p>
+                        <div class="pipeline-number" id="billingIssueCount">5类</div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <h4>3. 账单试算</h4>
+                        <p>计算物业费、管理费和租金</p>
+                        <div class="pipeline-number">待执行</div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <h4>4. 财务复核</h4>
+                        <p>检查优惠、冲减和重复账单</p>
+                        <div class="pipeline-number">待执行</div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <h4>5. 正式发布</h4>
+                        <p>向住户发送账单和缴费入口</p>
+                        <div class="pipeline-number">未发布</div>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">预计账单户数</div>
+                        <div class="metric-value">1,286户</div>
+                        <div class="metric-note">含住宅及商铺</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">预计物业费</div>
+                        <div class="metric-value">¥986,200</div>
+                        <div class="metric-note">住宅及商铺物业费</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">预计车位管理费</div>
+                        <div class="metric-value">¥142,600</div>
+                        <div class="metric-note">独立于车位租金</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">预计车位租金</div>
+                        <div class="metric-value">¥196,800</div>
+                        <div class="metric-note">按产权和托管关系分账</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>必须处理的出账异常</h3>
+                            <p>异常不清理，相关住户账单不能发布</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>异常类型</th>
+                                    <th>涉及对象</th>
+                                    <th>影响费用</th>
+                                    <th>系统发现的问题</th>
+                                    <th>责任岗位</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="billingIssueTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 催缴任务 -->
+            <section class="view" id="view-collection">
+                <div class="section-heading">
+                    <div>
+                        <h2>收费催缴任务进度</h2>
+                        <p>管家不是只记录“打过电话”，而要推进到有效沟通、承诺付款、争议处理和实际回款。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openCollectionPlan()">本月催缴计划</button>
+                        <button class="btn btn-primary" onclick="assignCollectionTasks()">重新分配任务</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">本月欠费应收</div>
+                        <div class="metric-value">¥268,420</div>
+                        <div class="metric-note">涉及286户</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">已有效联系</div>
+                        <div class="metric-value">186户</div>
+                        <div class="metric-note">有效联系率65%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">承诺付款</div>
+                        <div class="metric-value">¥56,200</div>
+                        <div class="metric-note">72户已承诺日期</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">实际回款</div>
+                        <div class="metric-value">¥82,680</div>
+                        <div class="metric-note">任务转化率30.8%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">费用争议</div>
+                        <div class="metric-value">26户</div>
+                        <div class="metric-note">争议金额32,600元</div>
+                    </div>
+                </div>
+
+                <div class="kanban" id="collectionKanban"></div>
+            </section>
+
+            <!-- 多方分账 -->
+            <section class="view" id="view-split">
+                <div class="section-heading">
+                    <div>
+                        <h2>停车收入与多方透明分账</h2>
+                        <p>车位租金、临停收入、托管佣金和车位管理费分别核算，明确每一笔钱属于谁。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openSplitRule()">查看分账规则</button>
+                        <button class="btn btn-primary" onclick="confirmMonthlySplit()">确认7月分账</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>监督原则：</strong>
+                    <span>车位管理费始终归物业服务收入；租金按产权关系结算；公共临停收入按业委会规则分配。</span>
+                </div>
+
+                <div class="split-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>7月停车资金拆分</h3>
+                                <p>从总收款逐步拆分支付费用、管理费、产权收益和公共收益</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="waterfall">
+                                <div class="waterfall-row">
+                                    <strong>停车业务总收款</strong>
+                                    <div class="waterfall-bar" style="width:100%"></div>
+                                    <strong>¥412,680</strong>
+                                </div>
+
+                                <div class="waterfall-row">
+                                    <strong>支付通道费及退款</strong>
+                                    <div class="waterfall-bar cost" style="width:8%"></div>
+                                    <strong>-¥8,260</strong>
+                                </div>
+
+                                <div class="waterfall-row">
+                                    <strong>物业车位管理费</strong>
+                                    <div class="waterfall-bar property" style="width:31%"></div>
+                                    <strong>¥128,600</strong>
+                                </div>
+
+                                <div class="waterfall-row">
+                                    <strong>开发商车位租金</strong>
+                                    <div class="waterfall-bar owner" style="width:17%"></div>
+                                    <strong>¥68,260</strong>
+                                </div>
+
+                                <div class="waterfall-row">
+                                    <strong>产权业主托管收益</strong>
+                                    <div class="waterfall-bar owner" style="width:9%"></div>
+                                    <strong>¥36,860</strong>
+                                </div>
+
+                                <div class="waterfall-row">
+                                    <strong>业委会公共收益</strong>
+                                    <div class="waterfall-bar committee" style="width:13%"></div>
+                                    <strong>¥52,680</strong>
+                                </div>
+
+                                <div class="waterfall-row">
+                                    <strong>物业运营佣金</strong>
+                                    <div class="waterfall-bar property" style="width:7%"></div>
+                                    <strong>¥28,900</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="split-summary">
+                        <h3 style="margin-top:0">待确认结算</h3>
+
+                        <div class="money-breakdown">
+                            <div class="money-row">
+                                <span>应付开发商</span>
+                                <strong>¥68,260</strong>
+                            </div>
+                            <div class="money-row">
+                                <span>应付68名车位业主</span>
+                                <strong>¥36,860</strong>
+                            </div>
+                            <div class="money-row">
+                                <span>应划入公共收益账户</span>
+                                <strong>¥52,680</strong>
+                            </div>
+                            <div class="money-row">
+                                <span>物业管理费收入</span>
+                                <strong>¥128,600</strong>
+                            </div>
+                            <div class="money-row">
+                                <span>物业运营佣金</span>
+                                <strong>¥28,900</strong>
+                            </div>
+                            <div class="money-row total">
+                                <span>待执行对外结算</span>
+                                <strong>¥157,800</strong>
+                            </div>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-secondary" onclick="openOwnerSettlement()">查看业主明细</button>
+                            <button class="btn btn-secondary" onclick="openCommitteeStatement()">业委会监督报表</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 投诉与工单 -->
+            <section class="view" id="view-complaint">
+                <div class="section-heading">
+                    <div>
+                        <h2>投诉与物业服务工单</h2>
+                        <p>停车秩序、车库卫生、设施故障和收费争议统一受理，并按响应和完成时限推进。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openComplaintAnalysis()">重复问题分析</button>
+                        <button class="btn btn-primary" onclick="createComplaintTicket()">客服登记投诉</button>
+                    </div>
+                </div>
+
+                <div class="ticket-board">
+                    <div class="ticket-list">
+                        <div class="ticket-filter">
+                            <select class="form-control" id="ticketFilter" onchange="renderTicketList()">
+                                <option value="">全部工单</option>
+                                <option>超时</option>
+                                <option>处理中</option>
+                                <option>待回访</option>
+                                <option>已关闭</option>
+                            </select>
+                        </div>
+
+                        <div id="ticketList"></div>
+                    </div>
+
+                    <div class="ticket-detail" id="ticketDetail"></div>
+                </div>
+            </section>
+
+            <!-- 车位销售 -->
+            <section class="view" id="view-sales">
+                <div class="section-heading">
+                    <div>
+                        <h2>开发商车位销售协同</h2>
+                        <p>用住户租赁、临停和车辆数据识别潜在客户，管理推荐、看位、锁定、签约和佣金。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openSalesCommission()">佣金规则</button>
+                        <button class="btn btn-primary" onclick="createSalesLead()">新增销售线索</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">可售车位</div>
+                        <div class="metric-value">82个</div>
+                        <div class="metric-note">其中充电车位16个</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">本月新增意向</div>
+                        <div class="metric-value">36户</div>
+                        <div class="metric-note">系统推荐潜客18户</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">已锁定车位</div>
+                        <div class="metric-value">8个</div>
+                        <div class="metric-note">锁定金额160,000元</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">本月已成交</div>
+                        <div class="metric-value">6个</div>
+                        <div class="metric-note">预计物业佣金42,000元</div>
+                    </div>
+                </div>
+
+                <div class="sales-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>B2可售车位图</h3>
+                                <p>点击车位查看价格、适配楼栋和推荐客户</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="sales-space-grid" id="salesSpaceGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>潜在客户推荐</h3>
+                                <p>根据长期租赁、一户多车和高额临停识别</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body" id="leadList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 审计 -->
+            <section class="view" id="view-audit">
+                <div class="section-heading">
+                    <div>
+                        <h2>资金与操作审计</h2>
+                        <p>人工开闸、收费减免、车位托管、分账调整和销售佣金全部保留操作依据。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作人员</th>
+                                    <th>岗位</th>
+                                    <th>操作内容</th>
+                                    <th>关联对象</th>
+                                    <th>资金/权限影响</th>
+                                    <th>状态</th>
+                                </tr>
+                                </thead>
+                                <tbody id="auditTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- 通用弹窗，仅用于需要集中确认或办理的业务 -->
+<div class="modal-mask" id="modalMask" onclick="maskClose(event)">
+    <div class="modal" id="modalBox">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalTitle">业务处理</h3>
+                <p id="modalSubtitle"></p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+    const pageMeta = {
+        dashboard: ["住宅项目运营工作台", "项目经理今天需要处理的收费、车位、访客和服务问题"],
+        archive: ["房屋与住户档案", "建立房屋、产权人、租客、商户、车辆和车位之间的关系"],
+        visitor: ["访客与门岗秩序", "处理已预约、未预约、高频和特殊临时车辆"],
+        asset: ["车位资产、租赁与托管", "管理产权、租赁、托管、管理费和车位收益"],
+        billing: ["下月账单准备", "核验收费对象、合同和标准后再正式发布账单"],
+        collection: ["催缴任务进度", "从待联系推进到有效沟通、承诺付款和实际回款"],
+        split: ["停车收入与多方分账", "区分开发商、业委会、产权业主和物业收入"],
+        complaint: ["投诉与服务工单", "投诉受理、派单、现场处理、复核和业主评价"],
+        sales: ["开发商车位销售协同", "潜客识别、车位推荐、锁定、成交和佣金"],
+        audit: ["资金与操作审计", "收费、分账、托管、开闸和权益调整全过程留痕"]
+    };
+
+    const houses = [
+        {
+            id: "H001",
+            room: "8栋2单元1201",
+            status: "业主自住",
+            owner: "张敏",
+            phone: "138****5268",
+            people: [
+                {name:"张敏", type:"产权人", phone:"138****5268", valid:"长期有效"},
+                {name:"陈伟", type:"产权人配偶", phone:"139****3271", valid:"长期有效"}
+            ],
+            vehicles: [
+                {plate:"粤A·82K6Q", user:"张敏", right:"产权车位B2-216", status:"在场"},
+                {plate:"粤B·36M8P", user:"陈伟", right:"一户多车备用", status:"场外"}
+            ],
+            spaces: ["B2-216 业主产权自用"],
+            fees: [
+                {name:"住宅物业费", amount:286, status:"已缴至2026年7月"},
+                {name:"车位管理费", amount:80, status:"已缴至2026年7月"}
+            ]
+        },
+        {
+            id: "H002",
+            room: "5栋1单元603",
+            status: "出租",
+            owner: "李建国",
+            phone: "136****9125",
+            people: [
+                {name:"李建国", type:"产权人", phone:"136****9125", valid:"长期有效"},
+                {name:"王晓梅", type:"长租租客", phone:"137****6803", valid:"至2026-08-31"}
+            ],
+            vehicles: [
+                {plate:"粤A·65P1R", user:"王晓梅", right:"开发商车位月租", status:"在场"}
+            ],
+            spaces: ["B3-328 开发商产权月租"],
+            fees: [
+                {name:"住宅物业费", amount:268, status:"业主承担"},
+                {name:"车位租金", amount:500, status:"租客承担"},
+                {name:"车位管理费", amount:80, status:"租客承担"}
+            ]
+        },
+        {
+            id: "H003",
+            room: "12栋1单元1802",
+            status: "空置",
+            owner: "周志强",
+            phone: "135****3218",
+            people: [
+                {name:"周志强", type:"产权人", phone:"135****3218", valid:"长期有效"}
+            ],
+            vehicles: [],
+            spaces: ["B1-086 业主产权，已托管物业"],
+            fees: [
+                {name:"住宅物业费", amount:320, status:"欠费2个月"},
+                {name:"车位管理费", amount:80, status:"从托管收益中代扣"}
+            ]
+        },
+        {
+            id: "H004",
+            room: "商业街A-106",
+            status: "商铺",
+            owner: "林晓东",
+            phone: "132****5689",
+            people: [
+                {name:"林晓东", type:"商铺产权人", phone:"132****5689", valid:"长期有效"},
+                {name:"吴经理", type:"承租经营人", phone:"133****8012", valid:"至2027-03-31"}
+            ],
+            vehicles: [
+                {plate:"粤A·92T6F", user:"吴经理", right:"商户员工月租", status:"场外"},
+                {plate:"粤A·18D7M", user:"配送车辆", right:"08:00—10:00装卸", status:"场外"}
+            ],
+            spaces: ["地面S-018 商铺员工车位"],
+            fees: [
+                {name:"商铺物业费", amount:1680, status:"欠费1个月"},
+                {name:"商户停车费", amount:300, status:"已缴"}
+            ]
+        },
+        {
+            id: "H005",
+            room: "3栋2单元902",
+            status: "档案异常",
+            owner: "产权人待核验",
+            phone: "未登记",
+            people: [],
+            vehicles: [
+                {plate:"粤B·29Q7F", user:"身份待核验", right:"历史月租权限", status:"在场"}
+            ],
+            spaces: [],
+            fees: [
+                {name:"住宅物业费", amount:260, status:"承担人不明确"}
+            ]
+        }
+    ];
+
+    let arrivals = [
+        {
+            id:"A001",
+            plate:"粤A·37K6Q",
+            type:"已预约亲友访客",
+            target:"8栋2单元1201",
+            inviter:"张女士",
+            window:"14:00—19:00",
+            free:"免费2小时，超时访客支付",
+            status:"可放行",
+            level:"normal"
+        },
+        {
+            id:"A002",
+            plate:"粤B·62M9P",
+            type:"未预约访客",
+            target:"5栋1单元603",
+            inviter:"等待住户确认",
+            window:"已等待3分钟",
+            free:"确认后生成一次性权限",
+            status:"待确认",
+            level:"warning"
+        },
+        {
+            id:"A003",
+            plate:"粤A·18D7M",
+            type:"商铺配送车辆",
+            target:"商业街A-106",
+            inviter:"商户配送备案",
+            window:"允许08:00—10:00",
+            free:"免费装卸30分钟",
+            status:"已超时段",
+            level:"danger"
+        },
+        {
+            id:"A004",
+            plate:"粤A·75T2P",
+            type:"高频访客",
+            target:"近30天访问22次",
+            inviter:"曾由3个房屋邀请",
+            window:"今日无预约",
+            free:"建议人工核验长期关系",
+            status:"需核验",
+            level:"danger"
+        }
+    ];
+
+    let confirmations = [
+        {
+            id:"C001",
+            plate:"粤B·62M9P",
+            room:"5栋1单元603",
+            resident:"王晓梅",
+            sent:"14:21",
+            remaining:116,
+            status:"等待确认"
+        },
+        {
+            id:"C002",
+            plate:"粤A·51K8D",
+            room:"2栋2单元1601",
+            resident:"陈先生",
+            sent:"14:19",
+            remaining:42,
+            status:"等待确认"
+        }
+    ];
+
+    const parkingSpaces = [
+        {id:"B2-201", type:"owner", owner:"张女士", status:"自用", occupied:true, vehicle:"粤A·82K6Q", rent:0, management:80},
+        {id:"B2-202", type:"owner", owner:"李先生", status:"空闲", occupied:false, vehicle:"", rent:0, management:80},
+        {id:"B2-203", type:"trust", owner:"周先生", status:"物业托管已出租", occupied:true, vehicle:"粤B·31M6K", rent:600, management:80},
+        {id:"B2-204", type:"developer", owner:"开发商", status:"已出租", occupied:true, vehicle:"粤A·66Q2F", rent:500, management:80},
+        {id:"B2-205", type:"public", owner:"公共车位", status:"临停使用", occupied:true, vehicle:"粤A·38N7P", rent:0, management:0},
+        {id:"B2-206", type:"developer", owner:"开发商", status:"可租可售", occupied:false, vehicle:"", rent:500, management:80},
+        {id:"B2-207", type:"trust", owner:"刘女士", status:"托管待租", occupied:false, vehicle:"", rent:620, management:80},
+        {id:"B2-208", type:"owner", owner:"赵先生", status:"自用", occupied:false, vehicle:"", rent:0, management:80},
+        {id:"B2-209", type:"public", owner:"公共车位", status:"空闲", occupied:false, vehicle:"", rent:0, management:0},
+        {id:"B2-210", type:"developer", owner:"开发商", status:"可售", occupied:false, vehicle:"", rent:520, management:80},
+        {id:"B2-211", type:"owner", owner:"孙女士", status:"自用", occupied:true, vehicle:"粤B·72K9Q", rent:0, management:80},
+        {id:"B2-212", type:"trust", owner:"何先生", status:"物业托管已出租", occupied:true, vehicle:"粤A·16P8M", rent:580, management:80},
+        {id:"B2-213", type:"developer", owner:"开发商", status:"已出租", occupied:false, vehicle:"", rent:500, management:80},
+        {id:"B2-214", type:"public", owner:"公共车位", status:"临停使用", occupied:true, vehicle:"粤A·93T2F", rent:0, management:0},
+        {id:"B2-215", type:"owner", owner:"王先生", status:"空闲", occupied:false, vehicle:"", rent:0, management:80},
+        {id:"B2-216", type:"owner", owner:"张敏", status:"自用", occupied:true, vehicle:"粤A·82K6Q", rent:0, management:80}
+    ];
+
+    let selectedSpaceId = "B2-203";
+
+    let billingIssues = [
+        {
+            id:"BI001",
+            type:"租客合同即将到期",
+            object:"5栋1单元603 · 王晓梅",
+            fee:"车位租金500元、管理费80元",
+            problem:"租赁合同8月31日到期，需要确认9月是否继续出账",
+            owner:"5栋管家",
+            status:"待处理"
+        },
+        {
+            id:"BI002",
+            type:"车位管理费承担人不明确",
+            object:"B2-128 · 业主李先生",
+            fee:"车位管理费80元",
+            problem:"车位已出租，但合同未明确由业主还是承租人承担",
+            owner:"客服主管",
+            status:"待处理"
+        },
+        {
+            id:"BI003",
+            type:"业主托管合同到期",
+            object:"B1-086 · 周志强",
+            fee:"租金600元、管理费80元",
+            problem:"托管合同7月31日到期，承租车辆仍在使用",
+            owner:"车位运营",
+            status:"待处理"
+        },
+        {
+            id:"BI004",
+            type:"开发商车位已售未交接",
+            object:"B3-216 · 新业主陈女士",
+            fee:"车位管理费80元",
+            problem:"开发商已收款，但产权交接状态尚未同步物业",
+            owner:"开发商对接人",
+            status:"待处理"
+        },
+        {
+            id:"BI005",
+            type:"收费标准冲突",
+            object:"商业街A-106",
+            fee:"商铺物业费、员工停车费",
+            problem:"租赁合同附加标准与系统原收费标准不一致",
+            owner:"财务主管",
+            status:"待处理"
+        }
+    ];
+
+    let collectionCards = [
+        {id:"COL001", stage:"待联系", room:"8-2-1201 张女士", amount:240, item:"车位管理费3个月", manager:"管家刘敏", note:"尚未联系"},
+        {id:"COL002", stage:"待联系", room:"5-1-603 李先生", amount:1200, item:"车位租金2个月", manager:"管家陈丽", note:"电话待联系"},
+        {id:"COL003", stage:"已联系", room:"3-2-902", amount:780, item:"物业费3个月", manager:"管家王芳", note:"电话无人接听"},
+        {id:"COL004", stage:"已联系", room:"商铺A-106", amount:3860, item:"物业费及车位费", manager:"管家赵明", note:"已发送对账单"},
+        {id:"COL005", stage:"承诺付款", room:"6-1-1102 周先生", amount:960, item:"物业费及管理费", manager:"管家刘敏", note:"承诺7月20日付款"},
+        {id:"COL006", stage:"承诺付款", room:"9-2-1801 陈女士", amount:580, item:"车位租金", manager:"管家陈丽", note:"承诺7月22日付款"},
+        {id:"COL007", stage:"费用争议", room:"2-1-702 李女士", amount:420, item:"临停及管理费", manager:"管家王芳", note:"认为临停重复计费"},
+        {id:"COL008", stage:"费用争议", room:"商铺B-108", amount:2680, item:"商铺物业费", manager:"管家赵明", note:"合同标准存在争议"},
+        {id:"COL009", stage:"已回款", room:"1-2-1502 王先生", amount:1280, item:"物业费4个月", manager:"管家刘敏", note:"7月18日已到账"}
+    ];
+
+    let tickets = [
+        {
+            id:"TS026",
+            title:"B2车库8栋电梯厅旁反复积水",
+            type:"环境卫生/工程",
+            room:"8栋2单元1201",
+            resident:"张女士",
+            status:"超时",
+            priority:"高",
+            created:"09:28",
+            sla:"已超时42分钟",
+            department:"工程部",
+            assignee:"李师傅",
+            description:"同一位置30天内第3次积水，业主反映存在异味和车辆打滑风险。",
+            timeline:[
+                ["09:28","业主通过小程序提交投诉并上传3张照片"],
+                ["09:31","客服受理，识别为30天内重复投诉"],
+                ["09:35","工单升级工程主管并要求2小时内完成"],
+                ["10:12","工程人员到场，初步判断排水沟堵塞"],
+                ["11:30","工单超过要求完成时间，自动升级项目经理"]
+            ]
+        },
+        {
+            id:"TS031",
+            title:"私家车位B2-238被访客车辆占用",
+            type:"停车秩序",
+            room:"8栋1单元802",
+            resident:"刘先生",
+            status:"处理中",
+            priority:"高",
+            created:"13:42",
+            sla:"剩余18分钟",
+            department:"秩序部",
+            assignee:"张班长",
+            description:"占用车辆已收到两次移车通知，业主车辆正在入口等待。",
+            timeline:[
+                ["13:42","车位相机识别非授权车辆占用"],
+                ["13:43","系统向占用车主发送移车通知"],
+                ["13:48","业主提交车位占用投诉"],
+                ["13:50","秩序班长接单并前往现场"]
+            ]
+        },
+        {
+            id:"TS036",
+            title:"停车费优惠未抵扣",
+            type:"收费服务",
+            room:"5栋1单元603",
+            resident:"王晓梅",
+            status:"待回访",
+            priority:"中",
+            created:"11:18",
+            sla:"待业主确认",
+            department:"客服部",
+            assignee:"陈管家",
+            description:"访客预约包含2小时免费，但离场时按全额收费。",
+            timeline:[
+                ["11:18","业主提交收费投诉"],
+                ["11:23","客服核对访客预约和停车订单"],
+                ["11:40","财务完成退款12元"],
+                ["11:42","向业主发送退款结果，等待确认"]
+            ]
+        },
+        {
+            id:"TS041",
+            title:"地下车库照明故障",
+            type:"设施设备",
+            room:"B3车库12栋区域",
+            resident:"巡检上报",
+            status:"处理中",
+            priority:"中",
+            created:"12:05",
+            sla:"剩余1小时12分钟",
+            department:"工程部",
+            assignee:"何师傅",
+            description:"B3车库12栋区域连续6盏灯不亮。",
+            timeline:[
+                ["12:05","秩序巡检人员上报故障"],
+                ["12:08","工程部接单"],
+                ["12:35","确认照明回路故障，正在更换配件"]
+            ]
+        },
+        {
+            id:"TS045",
+            title:"访客车辆夜间长时间停放",
+            type:"访客秩序",
+            room:"3栋2单元902",
+            resident:"匿名投诉",
+            status:"待处理",
+            priority:"中",
+            created:"13:16",
+            sla:"剩余26分钟",
+            department:"秩序部",
+            assignee:"待分派",
+            description:"同一访客车辆连续5天夜间进入并过夜，疑似长期居住未登记。",
+            timeline:[
+                ["13:16","业主匿名提交投诉"],
+                ["13:18","系统识别该车辆近30天访问22次"],
+                ["13:20","工单转入高频访客核验"]
+            ]
+        }
+    ];
+
+    let selectedTicketId = "TS026";
+
+    const salesSpaces = [
+        {id:"XS-B2-201", status:"available", price:168000, feature:"近8栋电梯厅", charge:false},
+        {id:"XS-B2-202", status:"available", price:175000, feature:"充电车位", charge:true},
+        {id:"XS-B2-203", status:"locked", price:166000, feature:"已锁定至7月20日", charge:false},
+        {id:"XS-B2-204", status:"sold", price:172000, feature:"已售", charge:false},
+        {id:"XS-B2-205", status:"available", price:158000, feature:"微型车位", charge:false},
+        {id:"XS-B2-206", status:"available", price:180000, feature:"近12栋电梯厅", charge:true},
+        {id:"XS-B2-207", status:"available", price:165000, feature:"标准车位", charge:false},
+        {id:"XS-B2-208", status:"locked", price:169000, feature:"客户意向锁定", charge:false},
+        {id:"XS-B2-209", status:"available", price:176000, feature:"充电车位", charge:true},
+        {id:"XS-B2-210", status:"sold", price:170000, feature:"已售", charge:false},
+        {id:"XS-B2-211", status:"available", price:162000, feature:"近车库出口", charge:false},
+        {id:"XS-B2-212", status:"available", price:168000, feature:"标准车位", charge:false}
+    ];
+
+    const salesLeads = [
+        {
+            id:"L001",
+            name:"张敏",
+            room:"8栋2单元1201",
+            reason:"已连续租赁18个月，名下2辆车",
+            current:"月租B3-328，累计租金9,000元",
+            match:"推荐XS-B2-201，距8栋电梯厅60米"
+        },
+        {
+            id:"L002",
+            name:"陈伟",
+            room:"12栋1单元1802",
+            reason:"新能源车，近6个月临停支出3,860元",
+            current:"无产权车位",
+            match:"推荐XS-B2-206充电车位"
+        },
+        {
+            id:"L003",
+            name:"刘女士",
+            room:"6栋2单元902",
+            reason:"一户三车，仅有1个产权车位",
+            current:"第二辆车长期月租",
+            match:"推荐XS-B2-207标准车位"
+        }
+    ];
+
+    let audits = [
+        ["14:02","王经理","项目经理","确认业主托管结算批次","68个托管车位","待支付业主36,860元","待执行"],
+        ["13:50","张班长","秩序部","接收私家车位占用工单","B2-238","现场移车处理中","处理中"],
+        ["11:40","李会计","物业财务","退款停车优惠差额","粤A·62M9P","退款12元","已完成"],
+        ["10:25","陈管家","客服部","修改车位管理费承担人","B2-128","由业主改为承租人承担","已完成"],
+        ["09:30","赵经理","车位运营","发布业主托管车位","B1-086","月租600元、管理费80元","已完成"],
+        ["08:55","系统","合同中心","终止到期租客停车权限","粤A·28M6K","保留一次离场权限","已完成"]
+    ];
+
+    /* 导航 */
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => navigateTo(item.dataset.view));
+    });
+
+    function navigateTo(view) {
+        document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+
+        document.getElementById("view-" + view).classList.add("active");
+        document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[view][0];
+        document.getElementById("pageDesc").textContent = pageMeta[view][1];
+
+        window.scrollTo({top: 0, behavior: "smooth"});
+    }
+
+    function changeRole(role) {
+        const config = {
+            "物业项目经理": ["王经理","物业项目负责人","dashboard"],
+            "客服管家": ["陈管家","5栋客户服务管家","archive"],
+            "秩序班长": ["张班长","停车与秩序管理","visitor"],
+            "物业财务": ["李会计","物业财务部","billing"],
+            "开发商车位销售": ["赵顾问","开发商车位销售","sales"],
+            "业委会监督人员": ["周委员","业委会公共收益监督","split"]
+        };
+
+        const current = config[role];
+        document.getElementById("userName").textContent = current[0];
+        document.getElementById("userRole").textContent = current[1];
+        navigateTo(current[2]);
+
+        showToast(`已切换至“${role}”工作视角。`);
+    }
+
+    /* 房屋住户档案 */
+
+    function renderHouseList() {
+        const keyword = (document.getElementById("archiveSearch")?.value || "").toLowerCase();
+        const status = document.getElementById("houseStatusFilter")?.value || "";
+
+        const list = houses.filter(house => {
+            const text = [
+                house.room,
+                house.status,
+                house.owner,
+                ...house.people.map(p => p.name),
+                ...house.vehicles.map(v => v.plate)
+            ].join("").toLowerCase();
+
+            return (!keyword || text.includes(keyword)) &&
+                (!status || house.status === status);
+        });
+
+        document.getElementById("houseList").innerHTML = list.map(house => `
+            <div class="house-item ${house.id === currentHouseId ? "active" : ""}"
+                 onclick="selectHouse('${house.id}')">
+                <div class="house-item-top">
+                    <strong>${house.room}</strong>
+                    ${statusTag(house.status)}
+                </div>
+                <p>产权人：${house.owner}</p>
+                <p>住户${house.people.length}人 · 车辆${house.vehicles.length}辆 · 车位${house.spaces.length}个</p>
+            </div>
+        `).join("");
+    }
+
+    let currentHouseId = "H001";
+
+    function selectHouse(id) {
+        currentHouseId = id;
+        renderHouseList();
+        renderHouseDetail();
+    }
+
+    function renderHouseDetail() {
+        const house = houses.find(item => item.id === currentHouseId);
+
+        document.getElementById("archiveDetail").innerHTML = `
+            <div class="archive-header">
+                <div>
+                    <h3>${house.room}</h3>
+                    <p>产权人：${house.owner} · 联系方式：${house.phone}</p>
+                </div>
+
+                <div class="section-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="verifyHouseArchive('${house.id}')">重新核验档案</button>
+                    <button class="btn btn-primary btn-sm" onclick="addResidentToHouse('${house.id}')">新增居住人</button>
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item">
+                    <span>房屋状态</span>
+                    <strong>${house.status}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>居住人数</span>
+                    <strong>${house.people.length}人</strong>
+                </div>
+                <div class="detail-item">
+                    <span>登记车辆</span>
+                    <strong>${house.vehicles.length}辆</strong>
+                </div>
+                <div class="detail-item">
+                    <span>关联车位</span>
+                    <strong>${house.spaces.length}个</strong>
+                </div>
+                <div class="detail-item">
+                    <span>停车欠费</span>
+                    <strong>${house.fees.some(f => f.status.includes("欠费")) ? "存在欠费" : "无欠费"}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>档案最后核验</span>
+                    <strong>2026-07-12</strong>
+                </div>
+            </div>
+
+            <div class="sub-tabs">
+                <button class="sub-tab active" onclick="switchArchiveTab(this,'peopleTab')">住户关系</button>
+                <button class="sub-tab" onclick="switchArchiveTab(this,'vehicleTab')">车辆权益</button>
+                <button class="sub-tab" onclick="switchArchiveTab(this,'spaceTab')">车位关系</button>
+                <button class="sub-tab" onclick="switchArchiveTab(this,'feeTab')">收费承担</button>
+            </div>
+
+            <div class="sub-content active" id="peopleTab">
+                ${house.people.length ? house.people.map(person => `
+                    <div class="person-card">
+                        <div>
+                            <strong>${person.name}</strong>
+                            <p>${person.type} · ${person.phone}</p>
+                            <p>身份有效期：${person.valid}</p>
+                        </div>
+
+                        <div class="section-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editResident('${house.id}','${person.name}')">编辑</button>
+                            ${person.type.includes("租客") ? `
+                                <button class="btn btn-warning btn-sm" onclick="endTenant('${house.id}','${person.name}')">办理退租</button>
+                            ` : ""}
+                        </div>
+                    </div>
+                `).join("") : `
+                    <div class="warning-banner">
+                        <div class="banner-icon">!</div>
+                        <div class="banner-content">
+                            <strong>该房屋没有有效住户档案</strong>
+                            历史车辆和收费承担人需要人工核验。
+                        </div>
+                    </div>
+                `}
+            </div>
+
+            <div class="sub-content" id="vehicleTab">
+                ${house.vehicles.length ? house.vehicles.map(vehicle => `
+                    <div class="vehicle-card">
+                        <div>
+                            <strong><span class="plate">${vehicle.plate}</span></strong>
+                            <p>使用人：${vehicle.user}</p>
+                            <p>停车权益：${vehicle.right}</p>
+                        </div>
+
+                        <div>
+                            ${statusTag(vehicle.status)}
+                            <button class="btn btn-secondary btn-sm" style="margin-left:6px"
+                                    onclick="changeVehicleRight('${house.id}','${vehicle.plate}')">
+                                变更权益
+                            </button>
+                        </div>
+                    </div>
+                `).join("") : `
+                    <div class="readonly-box">当前房屋没有登记车辆。</div>
+                `}
+
+                <button class="btn btn-primary mt-16" onclick="addVehicleToHouse('${house.id}')">新增住户车辆</button>
+            </div>
+
+            <div class="sub-content" id="spaceTab">
+                ${house.spaces.length ? house.spaces.map(space => `
+                    <div class="person-card">
+                        <div>
+                            <strong>${space}</strong>
+                            <p>点击进入车位资产页面可查看产权、租赁和管理费。</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="navigateTo('asset')">查看车位</button>
+                    </div>
+                `).join("") : `
+                    <div class="readonly-box">该房屋没有关联产权或租赁车位。</div>
+                `}
+            </div>
+
+            <div class="sub-content" id="feeTab">
+                ${house.fees.map(fee => `
+                    <div class="fee-card">
+                        <div>
+                            <strong>${fee.name}</strong>
+                            <p>本期应收：${fee.amount}元</p>
+                        </div>
+                        <div>
+                            ${statusTag(fee.status)}
+                            <button class="btn btn-secondary btn-sm" style="margin-left:6px"
+                                    onclick="changeFeePayer('${house.id}','${fee.name}')">
+                                变更承担人
+                            </button>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    function switchArchiveTab(button, id) {
+        document.querySelectorAll(".sub-tab").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".sub-content").forEach(item => item.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(id).classList.add("active");
+    }
+
+    function startResidentRegistration() {
+        const body = `
+            <form id="residentRegisterForm" onsubmit="submitResidentRegistration(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">房屋</label>
+                        <input class="form-control" name="room" value="5栋1单元603" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">登记类型</label>
+                        <select class="form-control" name="type">
+                            <option>长租租客入住</option>
+                            <option>产权业主入住</option>
+                            <option>亲属长期居住</option>
+                            <option>商户承租经营</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">姓名</label>
+                        <input class="form-control" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">手机号</label>
+                        <input class="form-control" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">入住开始日期</label>
+                        <input class="form-control" type="date" name="start" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">身份结束日期</label>
+                        <input class="form-control" type="date" name="end" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>业主授权或租赁材料</label>
+                        <input class="form-control" type="file">
+                    </div>
+                </div>
+            </form>
+
+            <div class="info-banner mt-16">
+                <div class="banner-icon">i</div>
+                <div class="banner-content">
+                    租客身份到期时，关联停车权益、访客邀请权限和费用承担关系将同步进入到期处理。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "办理住户入住登记",
+            "使用人：客服管家",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('residentRegisterForm').requestSubmit()">
+                    核验并登记
+                </button>
+            `
+        );
+    }
+
+    function submitResidentRegistration(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        closeModal();
+        showToast(`${data.name}的入住档案已建立，身份有效期与停车权限将同步管理。`);
+    }
+
+    function addResidentToHouse(id) {
+        startResidentRegistration();
+    }
+
+    function editResident(houseId, name) {
+        showToast(`已进入${name}档案编辑，修改内容保存后将记录操作审计。`);
+    }
+
+    function endTenant(houseId, name) {
+        const body = `
+            <div class="warning-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>办理租客退租将影响以下权限</strong>
+                    住户认证、访客邀请、停车月租和关联车辆权限都将进入终止流程。
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>退租人员</span><strong>${name}</strong></div>
+                <div class="detail-item"><span>关联车辆</span><strong>1辆</strong></div>
+                <div class="detail-item"><span>关联车位</span><strong>开发商月租1个</strong></div>
+            </div>
+
+            <div class="form-group mt-16">
+                <label class="required">实际退租日期</label>
+                <input class="form-control" type="date" value="2026-07-31">
+            </div>
+        `;
+
+        openModal(
+            "办理租客退租",
+            "退租后已在场车辆保留一次离场权限",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-warning" onclick="confirmTenantExit('${name}')">确认退租</button>
+            `
+        );
+    }
+
+    function confirmTenantExit(name) {
+        addAudit("陈管家","客服部","办理租客退租",name,"停车及访客权限进入终止流程","已完成");
+        closeModal();
+        showToast(`${name}已办理退租，关联车辆保留一次离场权限。`);
+    }
+
+    function addVehicleToHouse(id) {
+        const body = `
+            <form id="addVehicleForm" onsubmit="submitHouseVehicle(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">车辆使用人</label>
+                        <select class="form-control" name="user">
+                            <option>张敏 · 产权人</option>
+                            <option>陈伟 · 产权人配偶</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">车牌</label>
+                        <input class="form-control" name="plate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">停车权益</label>
+                        <select class="form-control">
+                            <option>一户多车备用车辆</option>
+                            <option>产权车位车辆</option>
+                            <option>个人临停车辆</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>同时在场规则</label>
+                        <div class="readonly-box">同一停车权益只允许一辆车同时享受</div>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新增住户车辆",
+            "系统会检查车牌是否被其他房屋重复绑定",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('addVehicleForm').requestSubmit()">
+                    核验并保存
+                </button>
+            `
+        );
+    }
+
+    function submitHouseVehicle(event) {
+        event.preventDefault();
+        const plate = new FormData(event.target).get("plate");
+        closeModal();
+        showToast(`车辆${plate}已通过重复绑定检查并加入当前房屋。`);
+    }
+
+    function changeVehicleRight(houseId, plate) {
+        showToast(`车辆${plate}的停车权益变更申请已打开。`);
+    }
+
+    function changeFeePayer(houseId, feeName) {
+        const body = `
+            <form id="payerChangeForm" onsubmit="submitPayerChange(event,'${feeName}')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>费用项目</label>
+                        <div class="readonly-box">${feeName}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">新的承担人</label>
+                        <select class="form-control" name="payer">
+                            <option>产权业主</option>
+                            <option>实际承租人</option>
+                            <option>从车位托管收益中代扣</option>
+                            <option>开发商承担</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="required">变更依据</label>
+                        <textarea class="form-control">根据最新租赁/托管合同调整费用承担关系。</textarea>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "变更费用承担人",
+            "不会改变费用归属，只改变由谁负责缴纳",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('payerChangeForm').requestSubmit()">
+                    保存变更
+                </button>
+            `
+        );
+    }
+
+    function submitPayerChange(event, feeName) {
+        event.preventDefault();
+        const payer = new FormData(event.target).get("payer");
+        addAudit("陈管家","客服部","变更费用承担人",feeName,`调整为${payer}`,"已完成");
+        closeModal();
+        showToast(`${feeName}承担人已调整为“${payer}”。`);
+    }
+
+    function verifyHouseArchive(id) {
+        showToast("已重新核验产权、住户、车辆和车位关系，发现1项手机号需要补充。");
+    }
+
+    function openBatchArchiveImport() {
+        const body = `
+            <div class="info-banner">
+                <div class="banner-icon">表</div>
+                <div class="banner-content">
+                    <strong>适合没有物业系统的项目初始化</strong>
+                    可分别导入房屋、产权人、租客、车辆和车位，不会直接覆盖现有档案。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">导入数据类型</label>
+                    <select class="form-control">
+                        <option>房屋与产权人</option>
+                        <option>租客与实际居住人</option>
+                        <option>住户车辆</option>
+                        <option>车位产权资料</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">导入文件</label>
+                    <input class="form-control" type="file">
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "批量导入住户基础档案",
+            "导入后先做重复、缺失和关系冲突检查",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="finishArchiveImport()">上传并校验</button>
+            `
+        );
+    }
+
+    function finishArchiveImport() {
+        closeModal();
+        showToast("文件校验完成：成功1,208条，重复人员18条，房车关系缺失12条。");
+    }
+
+    /* 访客门岗 */
+
+    function renderArrivals() {
+        document.getElementById("arrivalList").innerHTML = arrivals.map(item => `
+            <div class="arrival-card ${item.level}">
+                <div class="arrival-top">
+                    <div>
+                        <h4><span class="plate">${item.plate}</span> ${item.type}</h4>
+                        <p>访问对象：${item.target}</p>
+                        <p>邀请/备案：${item.inviter}</p>
+                        <p>${item.window} · ${item.free}</p>
+                    </div>
+
+                    <div>${statusTag(item.status)}</div>
+                </div>
+
+                <div class="gate-actions">
+                    ${item.status === "可放行" ? `
+                        <button class="btn btn-success btn-sm" onclick="allowArrival('${item.id}')">确认放行</button>
+                        <button class="btn btn-secondary btn-sm" onclick="rejectArrival('${item.id}')">拒绝进入</button>
+                    ` : ""}
+
+                    ${item.status === "待确认" ? `
+                        <button class="btn btn-primary btn-sm" onclick="sendResidentConfirmation('${item.id}')">催促住户确认</button>
+                        <button class="btn btn-secondary btn-sm" onclick="allowWaiting('${item.id}')">允许入口等待5分钟</button>
+                    ` : ""}
+
+                    ${item.status === "已超时段" ? `
+                        <button class="btn btn-warning btn-sm" onclick="contactMerchant('${item.id}')">联系商户核验</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectArrival('${item.id}')">拒绝进入</button>
+                    ` : ""}
+
+                    ${item.status === "需核验" ? `
+                        <button class="btn btn-warning btn-sm" onclick="openFrequentVisitorCheck('${item.id}')">核验长期关系</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectArrival('${item.id}')">暂不放行</button>
+                    ` : ""}
+                </div>
+            </div>
+        `).join("");
+
+        document.getElementById("visitorBadge").textContent =
+            arrivals.filter(item => !["已放行","已拒绝"].includes(item.status)).length;
+    }
+
+    function renderConfirmations() {
+        document.getElementById("confirmationList").innerHTML = confirmations.length
+            ? confirmations.map(item => `
+                <div class="confirmation-card">
+                    <div class="arrival-top">
+                        <div>
+                            <h4><span class="plate">${item.plate}</span></h4>
+                            <p>访问：${item.room}</p>
+                            <p>确认人：${item.resident} · ${item.sent}已发送</p>
+                        </div>
+
+                        <div class="countdown">${formatSeconds(item.remaining)}</div>
+                    </div>
+
+                    <div class="gate-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="callResident('${item.id}')">电话联系住户</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelConfirmation('${item.id}')">超时拒绝</button>
+                    </div>
+                </div>
+            `).join("")
+            : `<div class="readonly-box">当前没有等待住户确认的车辆。</div>`;
+    }
+
+    function allowArrival(id) {
+        const item = arrivals.find(item => item.id === id);
+        item.status = "已放行";
+        item.level = "normal";
+
+        addAudit("北门岗亭","秩序部","放行预约访客",item.plate,`${item.target}一次性访客权限`,"已完成");
+        renderArrivals();
+        showToast(`${item.plate}已放行，开始计算访客免费时长。`);
+    }
+
+    function rejectArrival(id) {
+        const item = arrivals.find(item => item.id === id);
+        item.status = "已拒绝";
+        renderArrivals();
+        showToast(`${item.plate}已拒绝进入，车辆记录已保留。`);
+    }
+
+    function sendResidentConfirmation(id) {
+        const item = arrivals.find(item => item.id === id);
+
+        if (!confirmations.some(c => c.plate === item.plate)) {
+            confirmations.push({
+                id:"C" + Date.now(),
+                plate:item.plate,
+                room:item.target,
+                resident:"关联住户",
+                sent:currentTime(),
+                remaining:120,
+                status:"等待确认"
+            });
+        }
+
+        renderConfirmations();
+        showToast("已再次向住户发送确认消息，门岗可继续查看倒计时。");
+    }
+
+    function allowWaiting(id) {
+        showToast("已允许车辆进入入口等待区5分钟，不产生正式入场记录。");
+    }
+
+    function contactMerchant(id) {
+        showToast("已向商户负责人发送配送车辆到达确认。");
+    }
+
+    function callResident(id) {
+        showToast("已发起住户电话联系，通话结果需由门岗记录。");
+    }
+
+    function cancelConfirmation(id) {
+        confirmations = confirmations.filter(item => item.id !== id);
+        renderConfirmations();
+        showToast("确认等待已结束，车辆暂不允许进入。");
+    }
+
+    function openFrequentVisitorCheck(id) {
+        const item = arrivals.find(item => item.id === id);
+
+        const body = `
+            <div class="danger-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>${item.plate}近30天访问22次</strong>
+                    车辆曾由3个房屋邀请，多次过夜，行为特征接近长期居住车辆。
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>近30天来访</span><strong>22次</strong></div>
+                <div class="detail-item"><span>过夜次数</span><strong>8次</strong></div>
+                <div class="detail-item"><span>邀请房屋</span><strong>3户</strong></div>
+            </div>
+
+            <div class="form-group mt-16">
+                <label class="required">核验处理</label>
+                <select class="form-control" id="frequentDecision">
+                    <option>要求补充租客或长期服务关系</option>
+                    <option>本次按付费访客放行</option>
+                    <option>暂停访客资格，转物业客服核验</option>
+                    <option>确认是正常亲友来访</option>
+                </select>
+            </div>
+        `;
+
+        openModal(
+            "高频访客关系核验",
+            item.plate,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="finishFrequentCheck('${id}')">保存处理结果</button>
+            `
+        );
+    }
+
+    function finishFrequentCheck(id) {
+        const decision = document.getElementById("frequentDecision").value;
+        closeModal();
+        showToast(`高频访客已处理：${decision}。`);
+    }
+
+    function openFrequentVisitors() {
+        navigateTo("visitor");
+        showToast("已筛选近30天访问超过15次的车辆。");
+    }
+
+    function createVisitorOnBehalf() {
+        const body = `
+            <form id="visitorProxyForm" onsubmit="submitVisitorProxy(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">访问房屋</label>
+                        <input class="form-control" name="room" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">邀请人身份</label>
+                        <select class="form-control">
+                            <option>产权业主</option>
+                            <option>有效租客</option>
+                            <option>经授权居住人</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">访客车牌</label>
+                        <input class="form-control" name="plate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">有效时间</label>
+                        <input class="form-control" value="今日14:00—19:00">
+                    </div>
+
+                    <div class="form-group">
+                        <label>免费时长</label>
+                        <select class="form-control">
+                            <option>免费2小时</option>
+                            <option>不免费，访客自付</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>超时承担</label>
+                        <select class="form-control">
+                            <option>访客承担</option>
+                            <option>住户承担</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "物业代办访客预约",
+            "适用于老人不会操作或住户致电客服的情况",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('visitorProxyForm').requestSubmit()">
+                    创建一次性访客权限
+                </button>
+            `
+        );
+    }
+
+    function submitVisitorProxy(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+        closeModal();
+        showToast(`车辆${data.plate}的一次性访客权限已创建。`);
+    }
+
+    function openVisitorRule() {
+        const body = `
+            <div class="readonly-box">
+                <p>普通访客：住户预约后可按规则自动放行。</p>
+                <p>未预约访客：必须由有效住户确认后生成一次性权限。</p>
+                <p>夜间访客：22:00后需二次确认，并停放在指定区域。</p>
+                <p>高频访客：近30天超过15次进入人工核验。</p>
+                <p>访客超时：超出免费时长后由约定承担方支付。</p>
+                <p>装修、搬家、配送车辆：采用专项车辆权限，不使用普通亲友访客规则。</p>
+            </div>
+        `;
+
+        openModal(
+            "小区访客停车规则",
+            "规则可按项目管理规约配置",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    /* 车位资产 */
+
+    function renderSpaceGrid() {
+        document.getElementById("spaceGrid").innerHTML = parkingSpaces.map(space => `
+            <div class="space ${space.type} ${space.occupied ? "occupied" : ""} ${space.id === selectedSpaceId ? "selected" : ""}"
+                 onclick="selectParkingSpace('${space.id}')">
+                <strong>${space.id}</strong>
+                <span>${space.owner}</span>
+                <span>${space.status}</span>
+            </div>
+        `).join("");
+    }
+
+    function selectParkingSpace(id) {
+        selectedSpaceId = id;
+        renderSpaceGrid();
+        renderAssetPanel();
+    }
+
+    function renderAssetPanel() {
+        const space = parkingSpaces.find(item => item.id === selectedSpaceId);
+
+        const typeName = {
+            owner:"业主产权车位",
+            developer:"开发商产权车位",
+            public:"公共停车位",
+            trust:"业主委托物业托管"
+        }[space.type];
+
+        document.getElementById("assetPanel").innerHTML = `
+            <h3>${space.id}</h3>
+            <p>${typeName}</p>
+
+            <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+                <div class="detail-item">
+                    <span>产权/收益主体</span>
+                    <strong>${space.owner}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>当前状态</span>
+                    <strong>${space.status}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>当前车辆</span>
+                    <strong>${space.vehicle || "无车辆"}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>管理费</span>
+                    <strong>${space.management ? space.management + "元/月" : "公共运营成本"}</strong>
+                </div>
+            </div>
+
+            ${space.rent ? `
+                <div class="detail-section">
+                    <h4>每月费用拆分</h4>
+                    <div class="money-breakdown">
+                        <div class="money-row">
+                            <span>车位租金</span>
+                            <strong>${space.rent}元</strong>
+                        </div>
+                        <div class="money-row">
+                            <span>车位管理费</span>
+                            <strong>${space.management}元</strong>
+                        </div>
+                        ${space.type === "trust" ? `
+                            <div class="money-row">
+                                <span>物业托管佣金</span>
+                                <strong>${Math.round(space.rent * .1)}元</strong>
+                            </div>
+                            <div class="money-row total">
+                                <span>产权业主预计到手</span>
+                                <strong>${space.rent - Math.round(space.rent * .1) - space.management}元</strong>
+                            </div>
+                        ` : `
+                            <div class="money-row total">
+                                <span>承租人合计支付</span>
+                                <strong>${space.rent + space.management}元</strong>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            ` : ""}
+
+            <div class="detail-section">
+                <h4>可执行操作</h4>
+                <div class="section-actions">
+                    ${space.type === "owner" && space.status === "空闲" ? `
+                        <button class="btn btn-primary" onclick="startTrustWizard('${space.id}')">委托物业出租</button>
+                    ` : ""}
+
+                    ${space.type === "trust" && space.status.includes("待租") ? `
+                        <button class="btn btn-primary" onclick="openRentListing('${space.id}')">发布出租</button>
+                    ` : ""}
+
+                    ${space.type === "trust" && space.status.includes("已出租") ? `
+                        <button class="btn btn-secondary" onclick="openTrustSettlement('${space.id}')">查看托管结算</button>
+                        <button class="btn btn-warning" onclick="requestSpaceReturn('${space.id}')">业主申请收回</button>
+                    ` : ""}
+
+                    ${space.type === "developer" ? `
+                        <button class="btn btn-secondary" onclick="navigateTo('sales')">查看销售状态</button>
+                    ` : ""}
+
+                    ${space.occupied ? `
+                        <button class="btn btn-secondary" onclick="viewCurrentVehicle('${space.id}')">查看占用车辆</button>
+                    ` : ""}
+                </div>
+            </div>
+        `;
+    }
+
+    let trustStep = 1;
+    let trustSpaceId = "";
+
+    function startTrustWizard(spaceId = "B2-202") {
+        trustStep = 1;
+        trustSpaceId = spaceId;
+
+        const body = `
+            <div class="stepper">
+                <div class="step-item active" id="trustStep1">1. 核验产权</div>
+                <div class="step-item" id="trustStep2">2. 设置出租条件</div>
+                <div class="step-item" id="trustStep3">3. 费用与收益</div>
+                <div class="step-item" id="trustStep4">4. 确认托管</div>
+            </div>
+
+            <div id="trustWizardContent"></div>
+        `;
+
+        openModal(
+            "办理业主产权车位托管",
+            `${spaceId} · 分步骤确认产权、出租条件和收益`,
+            body,
+            `
+                <button class="btn btn-secondary" id="trustPrevBtn" onclick="trustPrev()" disabled>上一步</button>
+                <button class="btn btn-primary" id="trustNextBtn" onclick="trustNext()">下一步</button>
+            `,
+            true
+        );
+
+        renderTrustStep();
+    }
+
+    function renderTrustStep() {
+        document.querySelectorAll(".step-item").forEach((item, index) => {
+            item.classList.toggle("active", index + 1 === trustStep);
+        });
+
+        const content = document.getElementById("trustWizardContent");
+
+        if (trustStep === 1) {
+            content.innerHTML = `
+                <div class="success-banner">
+                    <div class="banner-icon">✓</div>
+                    <div class="banner-content">
+                        <strong>产权核验通过</strong>
+                        车位${trustSpaceId}登记产权人为张女士，当前未出租、未绑定有效车辆、无抵押限制记录。
+                    </div>
+                </div>
+
+                <div class="detail-grid mt-16">
+                    <div class="detail-item"><span>产权人</span><strong>张女士</strong></div>
+                    <div class="detail-item"><span>关联房屋</span><strong>8栋2单元1201</strong></div>
+                    <div class="detail-item"><span>管理费状态</span><strong>无欠费</strong></div>
+                </div>
+            `;
+        }
+
+        if (trustStep === 2) {
+            content.innerHTML = `
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">托管开始日期</label>
+                        <input class="form-control" type="date" value="2026-08-01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">托管期限</label>
+                        <select class="form-control">
+                            <option>12个月</option>
+                            <option>6个月</option>
+                            <option>24个月</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">最低月租</label>
+                        <input class="form-control" id="trustRent" type="number" value="600" oninput="updateTrustIncome()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">允许的租赁方式</label>
+                        <select class="form-control">
+                            <option>仅允许长期月租</option>
+                            <option>月租和短租均可</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>物业调价权限</label>
+                        <select class="form-control">
+                            <option>低于最低价需业主确认</option>
+                            <option>允许上下浮动10%</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>车位收回通知期</label>
+                        <select class="form-control">
+                            <option>提前30天</option>
+                            <option>提前60天</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (trustStep === 3) {
+            content.innerHTML = `
+                <div class="grid-2">
+                    <div class="readonly-box">
+                        <h4 style="margin-top:0">费用规则</h4>
+                        <p>车位租金：600元/月</p>
+                        <p>车位管理费：80元/月</p>
+                        <p>物业托管佣金：租金的10%</p>
+                        <p>管理费承担：从业主租金收益中代扣</p>
+                    </div>
+
+                    <div class="money-breakdown" id="trustIncomeBox">
+                        <div class="money-row"><span>承租人支付租金</span><strong>600元</strong></div>
+                        <div class="money-row"><span>物业托管佣金</span><strong>-60元</strong></div>
+                        <div class="money-row"><span>车位管理费</span><strong>-80元</strong></div>
+                        <div class="money-row total"><span>业主预计到手</span><strong>460元/月</strong></div>
+                    </div>
+                </div>
+
+                <div class="info-banner mt-16">
+                    <div class="banner-icon">i</div>
+                    <div class="banner-content">
+                        车位管理费独立计入物业管理服务收入，不参与业主租金收益分成。
+                    </div>
+                </div>
+            `;
+        }
+
+        if (trustStep === 4) {
+            content.innerHTML = `
+                <div class="success-banner">
+                    <div class="banner-icon">✓</div>
+                    <div class="banner-content">
+                        <strong>托管条件已经确认</strong>
+                        提交后车位将从“业主自用空闲”变更为“物业托管待租”，并发布给本小区住户。
+                    </div>
+                </div>
+
+                <div class="detail-grid mt-16">
+                    <div class="detail-item"><span>托管车位</span><strong>${trustSpaceId}</strong></div>
+                    <div class="detail-item"><span>最低租金</span><strong>600元/月</strong></div>
+                    <div class="detail-item"><span>业主预计到手</span><strong>460元/月</strong></div>
+                    <div class="detail-item"><span>物业管理费</span><strong>80元/月</strong></div>
+                    <div class="detail-item"><span>托管佣金</span><strong>60元/月</strong></div>
+                    <div class="detail-item"><span>结算周期</span><strong>按月结算</strong></div>
+                </div>
+            `;
+        }
+
+        document.getElementById("trustPrevBtn").disabled = trustStep === 1;
+        document.getElementById("trustNextBtn").textContent =
+            trustStep === 4 ? "确认提交托管" : "下一步";
+    }
+
+    function trustNext() {
+        if (trustStep < 4) {
+            trustStep++;
+            renderTrustStep();
+            return;
+        }
+
+        const space = parkingSpaces.find(item => item.id === trustSpaceId);
+        if (space) {
+            space.type = "trust";
+            space.status = "托管待租";
+            space.rent = 600;
+            space.management = 80;
+        }
+
+        addAudit("陈管家","车位运营","办理业主车位托管",trustSpaceId,"进入物业托管待租状态","已完成");
+
+        closeModal();
+        renderSpaceGrid();
+        renderAssetPanel();
+        showToast(`${trustSpaceId}托管已生效，车位已进入可租车位池。`);
+    }
+
+    function trustPrev() {
+        if (trustStep > 1) {
+            trustStep--;
+            renderTrustStep();
+        }
+    }
+
+    function openRentListing(spaceId = selectedSpaceId) {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>车位</span><strong>${spaceId}</strong></div>
+                <div class="detail-item"><span>建议月租</span><strong>600元</strong></div>
+                <div class="detail-item"><span>车位管理费</span><strong>80元</strong></div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">出租对象</label>
+                    <select class="form-control">
+                        <option>仅本小区认证住户</option>
+                        <option>本小区住户及商户</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">租赁起租周期</label>
+                    <select class="form-control">
+                        <option>至少3个月</option>
+                        <option>至少6个月</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "发布可租车位",
+            "租金和管理费将在签约页面分别展示",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmRentListing('${spaceId}')">确认发布</button>
+            `
+        );
+    }
+
+    function confirmRentListing(spaceId) {
+        closeModal();
+        showToast(`${spaceId}已发布至住户端，可按楼栋、价格和距离筛选。`);
+    }
+
+    function openTrustSettlement(spaceId) {
+        const body = `
+            <div class="money-breakdown">
+                <div class="money-row"><span>本月应收租金</span><strong>600元</strong></div>
+                <div class="money-row"><span>实际收取租金</span><strong>600元</strong></div>
+                <div class="money-row"><span>托管佣金</span><strong>-60元</strong></div>
+                <div class="money-row"><span>车位管理费</span><strong>-80元</strong></div>
+                <div class="money-row total"><span>产权业主到手收益</span><strong>460元</strong></div>
+            </div>
+        `;
+
+        openModal(
+            `${spaceId}托管收益`,
+            "租金、佣金和管理费独立展示",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function requestSpaceReturn(spaceId) {
+        showToast(`${spaceId}收回申请已发起，系统正在检查当前承租合同和提前通知期。`);
+    }
+
+    function viewCurrentVehicle(spaceId) {
+        const space = parkingSpaces.find(item => item.id === spaceId);
+        showToast(`${spaceId}当前车辆：${space.vehicle || "无"}。`);
+    }
+
+    /* 下月账单 */
+
+    function renderBillingIssues() {
+        document.getElementById("billingIssueTable").innerHTML = billingIssues.length
+            ? billingIssues.map(item => `
+                <tr>
+                    <td><strong>${item.type}</strong></td>
+                    <td>${item.object}</td>
+                    <td>${item.fee}</td>
+                    <td>${item.problem}</td>
+                    <td>${item.owner}</td>
+                    <td>${statusTag(item.status)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="resolveBillingIssue('${item.id}')">处理异常</button>
+                    </td>
+                </tr>
+            `).join("")
+            : `
+                <tr>
+                    <td colspan="7">
+                        <div class="success-banner">
+                            <div class="banner-icon">✓</div>
+                            <div class="banner-content">
+                                所有账单异常已处理，可以进入试算和财务复核。
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+        document.getElementById("billingIssueCount").textContent =
+            billingIssues.length ? billingIssues.length + "类" : "已清理";
+
+        document.getElementById("billingBadge").textContent = billingIssues.length;
+    }
+
+    function resolveBillingIssue(id) {
+        const issue = billingIssues.find(item => item.id === id);
+
+        const options = {
+            BI001: `
+                <div class="warning-banner">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">租客合同8月31日到期，8月账单可以正常生成，但9月必须停止自动出账。</div>
+                </div>
+                <div class="form-group mt-16">
+                    <label class="required">处理方式</label>
+                    <select class="form-control" id="issueDecision">
+                        <option>8月正常出账，9月暂停并提醒续租</option>
+                        <option>已续租，更新合同有效期</option>
+                    </select>
+                </div>
+            `,
+            BI002: `
+                <div class="form-group">
+                    <label class="required">车位管理费承担人</label>
+                    <select class="form-control" id="issueDecision">
+                        <option>承租人承担</option>
+                        <option>产权业主承担</option>
+                        <option>从托管租金中代扣</option>
+                    </select>
+                </div>
+            `,
+            BI003: `
+                <div class="warning-banner">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">托管合同7月31日到期，当前承租车辆仍在使用，不能直接停止权限。</div>
+                </div>
+                <div class="form-group mt-16">
+                    <label class="required">处理方式</label>
+                    <select class="form-control" id="issueDecision">
+                        <option>托管续期12个月</option>
+                        <option>通知承租人8月31日前退租</option>
+                        <option>转为业主自行管理</option>
+                    </select>
+                </div>
+            `,
+            BI004: `
+                <div class="form-group">
+                    <label class="required">产权交接状态</label>
+                    <select class="form-control" id="issueDecision">
+                        <option>已确认交付，新业主承担管理费</option>
+                        <option>尚未交付，开发商继续承担</option>
+                    </select>
+                </div>
+            `,
+            BI005: `
+                <div class="detail-grid">
+                    <div class="detail-item"><span>系统标准</span><strong>物业费1,580元</strong></div>
+                    <div class="detail-item"><span>合同附加标准</span><strong>物业费1,680元</strong></div>
+                    <div class="detail-item"><span>差额</span><strong>100元</strong></div>
+                </div>
+                <div class="form-group mt-16">
+                    <label class="required">采用标准</label>
+                    <select class="form-control" id="issueDecision">
+                        <option>采用最新租赁合同附加标准</option>
+                        <option>沿用原系统标准并提交财务复核</option>
+                    </select>
+                </div>
+            `
+        };
+
+        openModal(
+            `处理出账异常：${issue.type}`,
+            issue.object,
+            options[id],
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不处理</button>
+                <button class="btn btn-primary" onclick="confirmBillingIssue('${id}')">确认处理</button>
+            `
+        );
+    }
+
+    function confirmBillingIssue(id) {
+        const decision = document.getElementById("issueDecision").value;
+        const issue = billingIssues.find(item => item.id === id);
+
+        addAudit("陈管家",issue.owner,"处理账单异常",issue.object,decision,"已完成");
+
+        billingIssues = billingIssues.filter(item => item.id !== id);
+        renderBillingIssues();
+        closeModal();
+
+        if (!billingIssues.length) {
+            completeBillingTrial();
+        }
+
+        showToast(`异常已处理：${decision}。`);
+    }
+
+    function completeBillingTrial() {
+        const steps = document.querySelectorAll(".pipeline-step");
+        steps[1].classList.remove("active");
+        steps[1].classList.add("done");
+        steps[2].classList.add("done");
+        steps[2].querySelector(".pipeline-number").textContent = "1,286户";
+        steps[3].classList.add("done");
+        steps[3].querySelector(".pipeline-number").textContent = "复核通过";
+        steps[4].classList.add("active");
+
+        document.getElementById("publishBillsBtn").disabled = false;
+    }
+
+    function runBillingCheck() {
+        showToast("数据检查完成，当前仍有" + billingIssues.length + "类异常需要处理。");
+    }
+
+    function publishBills() {
+        if (billingIssues.length) {
+            showToast("仍有账单异常未处理，暂不能发布。", true);
+            return;
+        }
+
+        const body = `
+            <div class="success-banner">
+                <div class="banner-icon">✓</div>
+                <div class="banner-content">
+                    <strong>8月账单已完成试算和财务复核</strong>
+                    共1,286户，预计应收1,325,600元。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label>发布时间</label>
+                    <select class="form-control">
+                        <option>立即发布</option>
+                        <option>7月25日08:00发布</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>通知渠道</label>
+                    <select class="form-control">
+                        <option>公众号、小程序和短信</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "发布8月住户账单",
+            "发布后进入住户缴费和催缴流程",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmBillPublish()">确认发布</button>
+            `
+        );
+    }
+
+    function confirmBillPublish() {
+        closeModal();
+        showToast("8月账单已发布，住户端缴费入口和管家催缴任务已同步生成。");
+    }
+
+    /* 催缴任务 */
+
+    const collectionStages = ["待联系","已联系","承诺付款","费用争议","已回款"];
+
+    function renderCollectionKanban() {
+        document.getElementById("collectionKanban").innerHTML = collectionStages.map(stage => {
+            const cards = collectionCards.filter(item => item.stage === stage);
+            const total = cards.reduce((sum, item) => sum + item.amount, 0);
+
+            return `
+                <div class="kanban-column">
+                    <div class="kanban-title">
+                        <h3>${stage}</h3>
+                        <span class="tag tag-gray">${cards.length}户</span>
+                    </div>
+
+                    <div class="muted" style="font-size:12px;margin-bottom:9px">
+                        金额：${money(total)}元
+                    </div>
+
+                    ${cards.map(card => `
+                        <div class="kanban-card">
+                            <h4>${card.room}</h4>
+                            <p>${card.item}</p>
+                            <div class="amount">${money(card.amount)}元</div>
+                            <p>${card.manager}</p>
+                            <p>${card.note}</p>
+
+                            <button class="btn btn-secondary btn-sm"
+                                    onclick="openCollectionCard('${card.id}')">
+                                跟进处理
+                            </button>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+        }).join("");
+    }
+
+    function openCollectionCard(id) {
+        const card = collectionCards.find(item => item.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>住户/商户</span><strong>${card.room}</strong></div>
+                <div class="detail-item"><span>欠费金额</span><strong>${money(card.amount)}元</strong></div>
+                <div class="detail-item"><span>当前阶段</span><strong>${card.stage}</strong></div>
+                <div class="detail-item"><span>欠费项目</span><strong>${card.item}</strong></div>
+                <div class="detail-item"><span>负责管家</span><strong>${card.manager}</strong></div>
+                <div class="detail-item"><span>最近结果</span><strong>${card.note}</strong></div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">本次联系渠道</label>
+                    <select class="form-control" id="collectionChannel">
+                        <option>电话</option>
+                        <option>微信</option>
+                        <option>短信账单</option>
+                        <option>上门沟通</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">跟进结果</label>
+                    <select class="form-control" id="collectionResult" onchange="collectionResultChanged(this.value)">
+                        <option>无人接听，继续联系</option>
+                        <option>已沟通，暂未承诺付款</option>
+                        <option>承诺指定日期付款</option>
+                        <option>提出费用争议</option>
+                        <option>已付款，等待核销</option>
+                    </select>
+                </div>
+
+                <div class="form-group full hidden" id="promiseDateGroup">
+                    <label>承诺付款日期</label>
+                    <input class="form-control" type="date" value="2026-07-22">
+                </div>
+
+                <div class="form-group full">
+                    <label>沟通记录</label>
+                    <textarea class="form-control" id="collectionNote"></textarea>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "记录催缴跟进结果",
+            card.room,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveCollectionResult('${id}')">保存并推进任务</button>
+            `,
+            true
+        );
+    }
+
+    function collectionResultChanged(value) {
+        document.getElementById("promiseDateGroup").classList.toggle(
+            "hidden",
+            value !== "承诺指定日期付款"
+        );
+    }
+
+    function saveCollectionResult(id) {
+        const card = collectionCards.find(item => item.id === id);
+        const result = document.getElementById("collectionResult").value;
+
+        const stageMap = {
+            "无人接听，继续联系":"已联系",
+            "已沟通，暂未承诺付款":"已联系",
+            "承诺指定日期付款":"承诺付款",
+            "提出费用争议":"费用争议",
+            "已付款，等待核销":"已回款"
+        };
+
+        card.stage = stageMap[result];
+        card.note = result;
+
+        renderCollectionKanban();
+        closeModal();
+        showToast(`催缴任务已推进至“${card.stage}”。`);
+    }
+
+    function openCollectionPlan() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>本月催缴户数</span><strong>286户</strong></div>
+                <div class="detail-item"><span>催缴目标金额</span><strong>268,420元</strong></div>
+                <div class="detail-item"><span>负责管家</span><strong>7人</strong></div>
+                <div class="detail-item"><span>有效联系目标</span><strong>85%</strong></div>
+                <div class="detail-item"><span>回款目标</span><strong>45%</strong></div>
+                <div class="detail-item"><span>专项结束日期</span><strong>7月31日</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "7月欠费催缴计划",
+            "任务量、回款目标和升级规则",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function assignCollectionTasks() {
+        showToast("催缴任务已按楼栋、管家工作量和历史跟进关系重新分配。");
+    }
+
+    /* 多方分账 */
+
+    function openSplitRule() {
+        const body = `
+            <div class="readonly-box">
+                <p><strong>开发商产权车位出租：</strong>租金归开发商，物业收取车位管理费和运营佣金。</p>
+                <p><strong>业主产权车位托管：</strong>租金归产权业主，物业收取托管佣金和车位管理费。</p>
+                <p><strong>公共区域临停：</strong>按业委会约定比例或成本扣除规则进入公共收益。</p>
+                <p><strong>业主自用产权车位：</strong>不收租金，物业独立收取车位管理费。</p>
+                <p><strong>退款与人工减免：</strong>必须追溯原订单并按原收益关系冲减。</p>
+            </div>
+        `;
+
+        openModal(
+            "住宅停车资金分账规则",
+            "不同费用性质不能混在一个停车收入科目中",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openOwnerSettlement() {
+        const body = `
+            <div class="table-wrap">
+                <table style="min-width:820px">
+                    <thead>
+                    <tr>
+                        <th>车位</th>
+                        <th>产权业主</th>
+                        <th>实收租金</th>
+                        <th>托管佣金</th>
+                        <th>管理费</th>
+                        <th>业主到手</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>B1-086</td><td>周志强</td><td>600元</td><td>60元</td><td>80元</td><td>460元</td><td><span class="tag tag-green">可结算</span></td></tr>
+                    <tr><td>B2-203</td><td>刘女士</td><td>620元</td><td>62元</td><td>80元</td><td>478元</td><td><span class="tag tag-green">可结算</span></td></tr>
+                    <tr><td>B2-212</td><td>何先生</td><td>580元</td><td>58元</td><td>80元</td><td>442元</td><td><span class="tag tag-orange">待确认收款账户</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "产权业主托管收益明细",
+            "每个车位可以追溯租金、佣金和管理费",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    function openCommitteeStatement() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>公共临停实收</span><strong>96,820元</strong></div>
+                <div class="detail-item"><span>退款及优惠</span><strong>4,860元</strong></div>
+                <div class="detail-item"><span>支付手续费</span><strong>1,920元</strong></div>
+                <div class="detail-item"><span>物业运营服务费</span><strong>37,360元</strong></div>
+                <div class="detail-item"><span>公共收益应分</span><strong>52,680元</strong></div>
+                <div class="detail-item"><span>待划款</span><strong>52,680元</strong></div>
+            </div>
+
+            <div class="info-banner mt-16">
+                <div class="banner-icon">i</div>
+                <div class="banner-content">
+                    业委会可下钻查看公共收益订单、退款、优惠和人工开闸，但住户个人信息按权限脱敏。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "业委会公共停车收益监督表",
+            "公共临停收入、成本扣除和应分金额",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function confirmMonthlySplit() {
+        const body = `
+            <div class="warning-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>确认后将生成3类结算批次</strong>
+                    开发商结算、产权业主托管收益和业委会公共收益划款。
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>开发商</span><strong>68,260元</strong></div>
+                <div class="detail-item"><span>产权业主</span><strong>36,860元</strong></div>
+                <div class="detail-item"><span>公共收益账户</span><strong>52,680元</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "确认7月停车收入分账",
+            "分账后进入财务付款和银行流水核销",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-success" onclick="executeMonthlySplit()">确认生成结算批次</button>
+            `
+        );
+    }
+
+    function executeMonthlySplit() {
+        addAudit("王经理","项目经理","确认7月停车多方分账","开发商/产权业主/业委会","生成157,800元结算批次","已完成");
+        closeModal();
+        showToast("7月分账已确认，财务付款批次和各方结算单已生成。");
+    }
+
+    /* 投诉工单 */
+
+    function renderTicketList() {
+        const filter = document.getElementById("ticketFilter")?.value || "";
+        const list = tickets.filter(item => !filter || item.status === filter);
+
+        document.getElementById("ticketList").innerHTML = list.map(ticket => `
+            <div class="ticket-item ${ticket.id === selectedTicketId ? "active" : ""}"
+                 onclick="selectTicket('${ticket.id}')">
+                <h4>${ticket.title}</h4>
+                <p>${ticket.id} · ${ticket.type}</p>
+                <p>${ticket.room} · ${ticket.created}</p>
+                <div style="margin-top:7px">
+                    ${statusTag(ticket.status)}
+                    <span class="tag ${ticket.priority === "高" ? "tag-red" : "tag-orange"}">${ticket.priority}优先级</span>
+                </div>
+            </div>
+        `).join("");
+
+        document.getElementById("complaintBadge").textContent =
+            tickets.filter(item => item.status !== "已关闭").length;
+    }
+
+    function selectTicket(id) {
+        selectedTicketId = id;
+        renderTicketList();
+        renderTicketDetail();
+    }
+
+    function renderTicketDetail() {
+        const ticket = tickets.find(item => item.id === selectedTicketId);
+
+        document.getElementById("ticketDetail").innerHTML = `
+            <div class="archive-header">
+                <div>
+                    <h3>${ticket.title}</h3>
+                    <p>${ticket.id} · ${ticket.type} · ${ticket.room}</p>
+                </div>
+
+                <div>${statusTag(ticket.status)}</div>
+            </div>
+
+            <div class="sla-box mt-16">
+                <div>
+                    <strong>服务时限：${ticket.sla}</strong>
+                    <div>责任部门：${ticket.department} · 当前处理人：${ticket.assignee}</div>
+                </div>
+                <strong>${ticket.priority}优先级</strong>
+            </div>
+
+            <div class="detail-section">
+                <h4>投诉内容</h4>
+                <div class="readonly-box">${ticket.description}</div>
+            </div>
+
+            <div class="detail-section">
+                <h4>处理过程</h4>
+                <div class="timeline">
+                    ${ticket.timeline.map(item => `
+                        <div class="timeline-item">
+                            <strong>${item[0]}</strong>
+                            <p>${item[1]}</p>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>当前可执行操作</h4>
+                <div class="section-actions">
+                    ${ticket.assignee === "待分派" ? `
+                        <button class="btn btn-primary" onclick="dispatchTicket('${ticket.id}')">分派处理人员</button>
+                    ` : ""}
+
+                    ${["处理中","超时","待处理"].includes(ticket.status) ? `
+                        <button class="btn btn-secondary" onclick="addTicketProgress('${ticket.id}')">添加处理进展</button>
+                        <button class="btn btn-warning" onclick="transferTicket('${ticket.id}')">转部门/升级</button>
+                        <button class="btn btn-success" onclick="submitTicketResult('${ticket.id}')">提交处理结果</button>
+                    ` : ""}
+
+                    ${ticket.status === "待回访" ? `
+                        <button class="btn btn-primary" onclick="finishResidentCallback('${ticket.id}')">完成业主回访</button>
+                    ` : ""}
+                </div>
+            </div>
+        `;
+    }
+
+    function dispatchTicket(id) {
+        const ticket = tickets.find(item => item.id === id);
+        ticket.assignee = "张班长";
+        ticket.status = "处理中";
+        ticket.timeline.push([currentTime(),"工单已分派张班长处理"]);
+        renderTicketList();
+        renderTicketDetail();
+        showToast("工单已分派给张班长，并开始计算现场响应时间。");
+    }
+
+    function addTicketProgress(id) {
+        const body = `
+            <div class="form-group">
+                <label class="required">现场处理进展</label>
+                <textarea class="form-control" id="ticketProgress">已到达现场，正在检查问题原因。</textarea>
+            </div>
+
+            <div class="form-group mt-16">
+                <label>现场照片</label>
+                <input class="form-control" type="file">
+            </div>
+        `;
+
+        openModal(
+            "添加工单处理进展",
+            id,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveTicketProgress('${id}')">保存进展</button>
+            `
+        );
+    }
+
+    function saveTicketProgress(id) {
+        const ticket = tickets.find(item => item.id === id);
+        const progress = document.getElementById("ticketProgress").value;
+        ticket.timeline.push([currentTime(),progress]);
+
+        closeModal();
+        renderTicketDetail();
+        showToast("处理进展已记录，并同步给客服和投诉业主。");
+    }
+
+    function transferTicket(id) {
+        const body = `
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="required">转交部门</label>
+                    <select class="form-control" id="transferDepartment">
+                        <option>工程部</option>
+                        <option>秩序部</option>
+                        <option>保洁部</option>
+                        <option>财务部</option>
+                        <option>项目经理专项处理</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">转交原因</label>
+                    <select class="form-control">
+                        <option>需要专业部门进一步处理</option>
+                        <option>同类问题重复发生</option>
+                        <option>当前部门无法按时完成</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "工单转交与升级",
+            id,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-warning" onclick="confirmTicketTransfer('${id}')">确认转交</button>
+            `
+        );
+    }
+
+    function confirmTicketTransfer(id) {
+        const ticket = tickets.find(item => item.id === id);
+        const department = document.getElementById("transferDepartment").value;
+
+        ticket.department = department;
+        ticket.assignee = "待分派";
+        ticket.timeline.push([currentTime(),`工单转交至${department}`]);
+
+        closeModal();
+        renderTicketDetail();
+        showToast(`工单已转交${department}。`);
+    }
+
+    function submitTicketResult(id) {
+        const body = `
+            <div class="form-group">
+                <label class="required">处理结果</label>
+                <textarea class="form-control" id="ticketResult">已完成现场处理，问题已恢复正常。</textarea>
+            </div>
+
+            <div class="form-group mt-16">
+                <label>处理后照片</label>
+                <input class="form-control" type="file">
+            </div>
+
+            <div class="info-banner mt-16">
+                <div class="banner-icon">i</div>
+                <div class="banner-content">
+                    提交后由客服复核并回访业主，不会直接关闭投诉。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "提交工单处理结果",
+            id,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmTicketResult('${id}')">提交客服复核</button>
+            `
+        );
+    }
+
+    function confirmTicketResult(id) {
+        const ticket = tickets.find(item => item.id === id);
+        const result = document.getElementById("ticketResult").value;
+
+        ticket.status = "待回访";
+        ticket.timeline.push([currentTime(),result]);
+        ticket.timeline.push([currentTime(),"工单进入客服复核和业主回访"]);
+
+        closeModal();
+        renderTicketList();
+        renderTicketDetail();
+        showToast("处理结果已提交，工单进入客服回访阶段。");
+    }
+
+    function finishResidentCallback(id) {
+        const ticket = tickets.find(item => item.id === id);
+        ticket.status = "已关闭";
+        ticket.timeline.push([currentTime(),"业主确认处理完成，评价满意"]);
+
+        renderTicketList();
+        renderTicketDetail();
+        showToast("业主已确认，工单完成关闭。");
+    }
+
+    function openComplaintById(id) {
+        selectedTicketId = id;
+        navigateTo("complaint");
+        renderTicketList();
+        renderTicketDetail();
+    }
+
+    function openSafetyTicket() {
+        const body = `
+            <div class="danger-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>消防通道车辆尚未驶离</strong>
+                    车牌粤A·82K6Q，位置8栋北侧消防通道，持续占用18分钟。
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>车辆关联</span><strong>8栋2单元1201</strong></div>
+                <div class="detail-item"><span>车主通知</span><strong>短信2次、电话1次</strong></div>
+                <div class="detail-item"><span>现场人员</span><strong>张班长已接单</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "消防通道占用紧急处置",
+            "安全类事件优先于普通停车投诉",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">继续监控</button>
+                <button class="btn btn-danger" onclick="clearFireLane()">确认现场清障</button>
+            `
+        );
+    }
+
+    function clearFireLane() {
+        addAudit("张班长","秩序部","处理消防通道占用","粤A·82K6Q","车辆已驶离并记录违规","已完成");
+        closeModal();
+        showToast("消防通道已恢复畅通，车辆已记录一次严重违规。");
+    }
+
+    function createComplaintTicket() {
+        const body = `
+            <form id="complaintForm" onsubmit="submitComplaint(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">投诉人/房屋</label>
+                        <input class="form-control" name="resident" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">投诉类型</label>
+                        <select class="form-control" name="type">
+                            <option>停车秩序</option>
+                            <option>环境卫生</option>
+                            <option>设施设备</option>
+                            <option>收费服务</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="required">投诉内容</label>
+                        <textarea class="form-control" name="content" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>关联车牌/车位</label>
+                        <input class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>现场照片</label>
+                        <input class="form-control" type="file">
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "客服登记业主投诉",
+            "系统将根据类型和风险自动推荐责任部门和时限",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('complaintForm').requestSubmit()">
+                    创建投诉工单
+                </button>
+            `
+        );
+    }
+
+    function submitComplaint(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("投诉工单已创建，并根据类型自动分派至责任部门。");
+    }
+
+    function openComplaintAnalysis() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>30天重复投诉</span><strong>8项</strong></div>
+                <div class="detail-item"><span>车库积水</span><strong>3项</strong></div>
+                <div class="detail-item"><span>车位占用</span><strong>2项</strong></div>
+                <div class="detail-item"><span>照明故障</span><strong>2项</strong></div>
+                <div class="detail-item"><span>收费争议</span><strong>1项</strong></div>
+                <div class="detail-item"><span>建议专项整改</span><strong>3项</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "重复投诉与专项整改分析",
+            "避免同一问题反复做临时处理",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    /* 车位销售 */
+
+    let selectedSalesSpaceId = "XS-B2-201";
+
+    function renderSalesSpaces() {
+        document.getElementById("salesSpaceGrid").innerHTML = salesSpaces.map(space => `
+            <div class="sales-space ${space.status} ${space.id === selectedSalesSpaceId ? "selected" : ""}"
+                 onclick="selectSalesSpace('${space.id}')">
+                <h4>${space.id}</h4>
+                <p>${money(space.price)}元</p>
+                <p>${space.feature}</p>
+                ${space.charge ? `<span class="tag tag-cyan">充电</span>` : ""}
+                <div style="margin-top:5px">${statusTag(space.status)}</div>
+            </div>
+        `).join("");
+    }
+
+    function renderSalesLeads() {
+        document.getElementById("leadList").innerHTML = salesLeads.map(lead => `
+            <div class="lead-card">
+                <h4>${lead.name} · ${lead.room}</h4>
+                <p>${lead.reason}</p>
+                <p>${lead.current}</p>
+                <p><strong>${lead.match}</strong></p>
+
+                <div class="section-actions" style="margin-top:9px">
+                    <button class="btn btn-secondary btn-sm" onclick="contactSalesLead('${lead.id}')">联系客户</button>
+                    <button class="btn btn-primary btn-sm" onclick="recommendSpaceToLead('${lead.id}')">发送车位推荐</button>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function selectSalesSpace(id) {
+        selectedSalesSpaceId = id;
+        renderSalesSpaces();
+
+        const space = salesSpaces.find(item => item.id === id);
+
+        if (space.status === "sold") {
+            showToast(`${space.id}已经售出，不可再次锁定。`, true);
+            return;
+        }
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>车位</span><strong>${space.id}</strong></div>
+                <div class="detail-item"><span>销售状态</span>${statusTag(space.status)}</div>
+                <div class="detail-item"><span>销售价格</span><strong>${money(space.price)}元</strong></div>
+                <div class="detail-item"><span>车位特点</span><strong>${space.feature}</strong></div>
+                <div class="detail-item"><span>适配楼栋</span><strong>8栋、9栋</strong></div>
+                <div class="detail-item"><span>预计物业佣金</span><strong>${money(space.price * .01)}元</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>系统推荐客户</h4>
+                <div class="readonly-box">
+                    张敏 · 8栋2单元1201 · 已连续租赁18个月 · 名下2辆车。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            `可售车位 ${space.id}`,
+            "查看价格、位置和潜在客户",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                ${space.status === "available" ? `
+                    <button class="btn btn-primary" onclick="lockSalesSpace('${space.id}')">为客户临时锁定</button>
+                ` : ""}
+            `
+        );
+    }
+
+    function lockSalesSpace(id) {
+        const space = salesSpaces.find(item => item.id === id);
+        space.status = "locked";
+
+        addAudit("赵顾问","开发商销售","锁定可售车位",id,"为张敏锁定至7月20日18:00","已完成");
+
+        renderSalesSpaces();
+        closeModal();
+        showToast(`${id}已为客户临时锁定，锁定到期前需完成定金支付。`);
+    }
+
+    function contactSalesLead(id) {
+        const lead = salesLeads.find(item => item.id === id);
+        showToast(`已创建联系任务：${lead.name}，销售人员需记录沟通和看位意向。`);
+    }
+
+    function recommendSpaceToLead(id) {
+        const lead = salesLeads.find(item => item.id === id);
+        showToast(`已向${lead.name}发送推荐车位、价格、位置和预约看位入口。`);
+    }
+
+    function createSalesLead() {
+        const body = `
+            <form id="salesLeadForm" onsubmit="submitSalesLead(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">客户房屋</label>
+                        <input class="form-control" name="room" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">客户姓名</label>
+                        <input class="form-control" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">需求类型</label>
+                        <select class="form-control">
+                            <option>普通产权车位</option>
+                            <option>新能源充电车位</option>
+                            <option>靠近电梯厅</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>预算范围</label>
+                        <input class="form-control" value="15万—18万元">
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新增车位销售线索",
+            "记录客户需求并匹配可售车位",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('salesLeadForm').requestSubmit()">
+                    保存并匹配车位
+                </button>
+            `
+        );
+    }
+
+    function submitSalesLead(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("销售线索已保存，系统已匹配3个适合车位。");
+    }
+
+    function openSalesCommission() {
+        const body = `
+            <div class="readonly-box">
+                <p>物业提供有效销售线索并成交：成交价的0.5%。</p>
+                <p>物业完成推荐、带看并成交：成交价的1%。</p>
+                <p>销售人员个人奖励：按公司内部规则另行计算。</p>
+                <p>客户退款或合同解除：未结佣金取消，已结佣金进入追回流程。</p>
+                <p>佣金确认条件：车位合同签署并完成约定比例回款。</p>
+            </div>
+        `;
+
+        openModal(
+            "开发商车位销售佣金规则",
+            "佣金关联客户来源、带看记录、成交合同和回款",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    /* 审计 */
+
+    function renderAuditTable() {
+        document.getElementById("auditTable").innerHTML = audits.map(item => `
+            <tr>
+                <td>${item[0]}</td>
+                <td><strong>${item[1]}</strong></td>
+                <td>${item[2]}</td>
+                <td>${item[3]}</td>
+                <td>${item[4]}</td>
+                <td>${item[5]}</td>
+                <td>${statusTag(item[6])}</td>
+            </tr>
+        `).join("");
+    }
+
+    function addAudit(user, role, action, object, result, status) {
+        audits.unshift([
+            currentTime(),
+            user,
+            role,
+            action,
+            object,
+            result,
+            status
+        ]);
+
+        renderAuditTable();
+    }
+
+    /* 公共函数 */
+
+    function statusTag(status) {
+        const map = {
+            "业主自住":"tag-green",
+            "出租":"tag-blue",
+            "空置":"tag-gray",
+            "商铺":"tag-purple",
+            "档案异常":"tag-red",
+            "在场":"tag-blue",
+            "场外":"tag-gray",
+            "待处理":"tag-orange",
+            "处理中":"tag-blue",
+            "待回访":"tag-purple",
+            "已关闭":"tag-green",
+            "超时":"tag-red",
+            "可放行":"tag-green",
+            "待确认":"tag-orange",
+            "已超时段":"tag-red",
+            "需核验":"tag-red",
+            "已放行":"tag-green",
+            "已拒绝":"tag-gray",
+            "等待确认":"tag-orange",
+            "自用":"tag-blue",
+            "可租":"tag-green",
+            "托管待租":"tag-purple",
+            "物业托管已出租":"tag-purple",
+            "已出租":"tag-blue",
+            "可租可售":"tag-orange",
+            "可售":"tag-green",
+            "临停使用":"tag-cyan",
+            "有效":"tag-green",
+            "运行中":"tag-green",
+            "数据延迟":"tag-orange",
+            "待执行":"tag-orange",
+            "已完成":"tag-green",
+            "待确认收款账户":"tag-orange",
+            "available":"tag-green",
+            "locked":"tag-orange",
+            "sold":"tag-gray"
+        };
+
+        return `<span class="tag ${map[status] || "tag-gray"}">${status}</span>`;
+    }
+
+    function money(value) {
+        return Number(value).toLocaleString("zh-CN");
+    }
+
+    function currentTime() {
+        return new Date().toLocaleTimeString("zh-CN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+    }
+
+    function formatSeconds(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${String(s).padStart(2, "0")}`;
+    }
+
+    function openModal(title, subtitle, body, footer, large = false) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalSubtitle").textContent = subtitle || "";
+        document.getElementById("modalBody").innerHTML = body;
+        document.getElementById("modalFooter").innerHTML =
+            footer || `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`;
+
+        document.getElementById("modalBox").classList.toggle("large", large);
+        document.getElementById("modalMask").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        document.getElementById("modalMask").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function maskClose(event) {
+        if (event.target.id === "modalMask") {
+            closeModal();
+        }
+    }
+
+    function showToast(message, error = false) {
+        const toast = document.createElement("div");
+
+        toast.className = "toast" + (error ? " error" : "");
+        toast.innerHTML = `
+            <strong>${error ? "暂不能处理" : "处理完成"}</strong><br>
+            ${message}
+        `;
+
+        document.getElementById("toastWrap").appendChild(toast);
+
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+
+    /* 倒计时 */
+
+    setInterval(() => {
+        confirmations.forEach(item => {
+            if (item.remaining > 0) {
+                item.remaining--;
+            }
+        });
+
+        if (document.getElementById("view-visitor").classList.contains("active")) {
+            renderConfirmations();
+        }
+    }, 1000);
+
+    /* 初始化 */
+
+    function init() {
+        renderHouseList();
+        renderHouseDetail();
+
+        renderArrivals();
+        renderConfirmations();
+
+        renderSpaceGrid();
+        renderAssetPanel();
+
+        renderBillingIssues();
+        renderCollectionKanban();
+
+        renderTicketList();
+        renderTicketDetail();
+
+        renderSalesSpaces();
+        renderSalesLeads();
+
+        renderAuditTable();
+    }
+
+    init();
+</script>
+</body>
+</html>

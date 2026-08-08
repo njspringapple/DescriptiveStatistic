@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>看得见的 Gamma：函数与分布</title>
+<style>
+  :root{
+    --bg:#0e1420; --card:#1a2334; --line:#2b3850; --txt:#e6ecf7; --dim:#9aa8c0;
+    --gf:#ffd166;   /* Gamma 函数 金 */
+    --gd:#ff7eb6;   /* Gamma 分布 粉 */
+    --ex:#4ddba0;   /* 指数 绿 */
+    --chi:#ffb04d;  /* 卡方 橙 */
+    --z:#4da3ff;    /* 正态 蓝 */
+    --po:#7ee0ff;   /* 泊松 青 */
+    --warn:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0b1018,#0e1420 40%,#0e1420);color:var(--txt);
+       font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.75}
+  header{padding:56px 20px 34px;text-align:center;background:radial-gradient(60% 120% at 50% 0%,#2a1f33,transparent)}
+  header h1{margin:0 0 10px;font-size:clamp(26px,4.4vw,44px);
+    background:linear-gradient(90deg,var(--gf),var(--gd),var(--ex),var(--z));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{margin:6px auto;max-width:780px;color:var(--dim)}
+  nav{position:sticky;top:0;z-index:20;background:rgba(14,20,32,.92);backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--line);padding:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  nav a{color:var(--dim);text-decoration:none;font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid transparent}
+  nav a:hover{color:#fff;background:#1f2b41;border-color:var(--line)}
+  main{max-width:1060px;margin:0 auto;padding:24px 16px 80px}
+  section{margin:46px 0}
+  h2{font-size:clamp(20px,3vw,29px);margin:0 0 6px;display:flex;align-items:center;gap:12px}
+  .num{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+       font-size:16px;font-weight:700;background:#2a2140;border:1px solid var(--line)}
+  h3{font-size:18px;margin:24px 0 8px}
+  .lead{color:var(--dim);margin:0 0 18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:16px 0;
+        box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+  canvas{width:100%;height:250px;display:block;border-radius:10px;background:#111a29}
+  canvas.short{height:130px}
+  canvas.tall{height:290px}
+  .ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:10px 0 6px;font-size:14px;color:var(--dim)}
+  .ctrl label{display:flex;align-items:center;gap:8px}
+  input[type=range]{width:150px;accent-color:#ff7eb6}
+  button{background:#2b2438;color:var(--txt);border:1px solid var(--line);padding:7px 13px;border-radius:9px;cursor:pointer;font-size:13px}
+  button:hover{background:#3a3050}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700}
+  .bgf{background:rgba(255,209,102,.15);color:var(--gf);border:1px solid rgba(255,209,102,.35)}
+  .bgd{background:rgba(255,126,182,.15);color:var(--gd);border:1px solid rgba(255,126,182,.35)}
+  .bex{background:rgba(77,219,160,.15);color:var(--ex);border:1px solid rgba(77,219,160,.35)}
+  .bchi{background:rgba(255,176,77,.15);color:var(--chi);border:1px solid rgba(255,176,77,.35)}
+  .bz{background:rgba(77,163,255,.15);color:var(--z);border:1px solid rgba(77,163,255,.35)}
+  .bpo{background:rgba(126,224,255,.15);color:var(--po);border:1px solid rgba(126,224,255,.35)}
+  .formula{background:#0f1725;border:1px dashed var(--line);border-radius:12px;padding:12px 16px;
+           font-family:"Cambria Math",Georgia,serif;font-size:19px;text-align:center;margin:12px 0;letter-spacing:.4px}
+  .key{border-left:4px solid var(--gd);background:#181425;padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0}
+  .key.gf{border-color:var(--gf)} .key.ex{border-color:var(--ex)}
+  .key.z{border-color:var(--z)} .key.chi{border-color:var(--chi)} .key.w{border-color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#2a2140;font-size:13px}
+  .out{font-family:ui-monospace,Consolas,monospace;font-size:13.5px;color:#ffd9ec;background:#0f1725;
+       border:1px solid var(--line);border-radius:10px;padding:10px 12px;white-space:pre-wrap}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .chip{padding:9px 13px;border-radius:10px;background:#231d33;border:1px solid var(--line);cursor:pointer;font-size:14px}
+  .chip:hover{background:#2e2643} .chip.on{background:#43305a;border-color:#ff7eb6;color:#fff}
+  .q{cursor:pointer;font-weight:600}
+  .ans{display:none;margin-top:8px;color:var(--dim);border-top:1px dashed var(--line);padding-top:8px}
+  .ans.show{display:block}
+  ul{padding-left:22px} li{margin:6px 0}
+  .mini{font-size:13px;color:var(--dim)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-top:6px;color:var(--dim)}
+  .legend i{display:inline-block;width:22px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+  footer{text-align:center;color:var(--dim);font-size:13px;padding:30px 20px 60px}
+  .big{font-size:17px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>看得见的 Gamma</h1>
+  <p>两个常被搞混的东西：<b class="badge bgf">Γ 函数</b>——阶乘的连续版；<b class="badge bgd">Gamma 分布</b>——「等到第 k 件事发生」要花多久。</p>
+  <p>它们的关系其实特别简单：<b>Γ 函数只是 Gamma 分布用来「把面积压成 1」的那个分母。</b>本页一步步把它们画出来，最后你会看到 χ² 只是 Gamma 的一个特例。</p>
+</header>
+
+<nav>
+  <a href="#s0">0 两个 Gamma</a>
+  <a href="#s1">1 Γ函数＝阶乘连线</a>
+  <a href="#s2">2 Γ其实是一块面积</a>
+  <a href="#s3">3 归一化→分布诞生</a>
+  <a href="#s4">4 等待第k个人</a>
+  <a href="#s5">5 两个参数在干嘛</a>
+  <a href="#s6">6 家谱：χ²的真身</a>
+  <a href="#s7">7 对比表</a>
+  <a href="#s8">8 用哪个</a>
+  <a href="#s9">9 踩坑</a>
+  <a href="#s10">10 记忆法</a>
+  <a href="#s11">11 便利店实战</a>
+  <a href="#s12">12 自测</a>
+</nav>
+
+<main>
+
+<!-- 0 -->
+<section id="s0">
+  <h2><span class="num">0</span>先把两个「Gamma」分开放</h2>
+  <div class="card">
+    <table>
+      <tr><th>　</th><th><span class="badge bgf">Γ 函数</span> Gamma function</th><th><span class="badge bgd">Gamma 分布</span> Gamma distribution</th></tr>
+      <tr><td><b>它是什么</b></td><td>一个普通的<b>数学函数</b>：输入一个数，输出一个数</td><td>一个<b>概率分布</b>：描述某个随机量的取值规律</td></tr>
+      <tr><td><b>解决什么问题</b></td><td>阶乘只能算整数，<b>3.5! 是多少？</b></td><td>顾客一个个来，<b>等到第 3 个要多久？</b></td></tr>
+      <tr><td><b>一句话</b></td><td>Γ(n) = (n−1)!，把阶乘连成光滑曲线</td><td>k 个「指数等待」接力赛的总时间</td></tr>
+      <tr><td><b>两者的关系</b></td><td colspan="2">Gamma 分布的密度公式里要除一个数，才能让总面积＝1。<b>那个数正好就是 Γ 函数的值。</b>—— 仅此而已，别再混了。</td></tr>
+    </table>
+    <div class="key">
+      <b class="big">本页的主线：</b>阶乘 → Γ 函数（一块面积）→ 把面积压成 1 → Gamma 分布 → 特例（指数 / 卡方 / 正态）。
+    </div>
+  </div>
+</section>
+
+<!-- 1 -->
+<section id="s1">
+  <h2><span class="num">1</span>Γ 函数的由来：把阶乘的「点」连成「线」</h2>
+  <p class="lead">300 年前欧拉的问题很朴素：1!=1, 2!=2, 3!=6 … 这些孤立的点，能不能用一条光滑曲线穿过去？</p>
+  <div class="card">
+    <div class="formula">Γ(n) = (n − 1)!　　例：Γ(1)=0!=1,　Γ(4)=3!=6,　Γ(5)=4!=24</div>
+    <div class="ctrl">
+      <label>x = <input type="range" id="gx" min="-3.4" max="5.4" value="4" step="0.02"><span id="gxV"></span></label>
+      <label><input type="checkbox" id="gdots" checked> 显示阶乘整点</label>
+    </div>
+    <canvas id="c_gf" class="tall"></canvas>
+    <div class="out" id="gf_out"></div>
+    <div class="key gf">
+      <b>看图能直接读出的三件事：</b><br>
+      ① <b>金色曲线正好穿过所有阶乘点</b>（1,1)(2,1)(3,2)(4,6)…——阶乘被「连续化」了。<br>
+      ② <b>递推关系 Γ(x+1) = x·Γ(x)</b>：这就是阶乘 n!=n·(n−1)! 的翻译版，拖动滑块可自己验证。<br>
+      ③ <b>0 和负整数处炸成竖直渐近线</b>（0!、(−1)! 本来就没意义）；负半轴还会正负翻转——所以 Γ 只在 x>0 时被概率论使用。
+    </div>
+    <div class="key z">
+      <b>⭐ 一个必须记住的特殊值：Γ(1/2) = √π ≈ 1.7725。</b><br>
+      为什么冒出 π？因为它等价于高斯积分 ∫e<sup>−x²</sup>dx=√π ——<b>正态分布的那个 √(2π) 就是它的亲戚。</b><br>
+      这解释了一个你早就见过的现象：<b>χ²、t 分布的密度公式里为什么老是出现 Γ 和 √π</b>。它们本质上都在做「把面积归一化」这一件事。
+    </div>
+    <p class="mini">历史小坑：为什么是 (n−1)! 而不是 n!？纯属勒让德当年定义时的选择，后人沿用至今。<b>把这个「错位一」当成一个必须硬记的历史遗产就好。</b></p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2><span class="num">2</span>Γ(a) 到底是什么？——它是一块面积</h2>
+  <p class="lead">别怕这个积分，它只是「一条曲线下面的面积」。你只需要看图。</p>
+  <div class="card">
+    <div class="formula">Γ(a) = ∫<sub>0</sub><sup>∞</sup> x<sup>a−1</sup> e<sup>−x</sup> dx　←　<b style="color:#ffd166">就是下图阴影的面积</b></div>
+    <div class="ctrl">
+      <label>a = <input type="range" id="ia" min="0.3" max="7" value="3" step="0.05"><span id="iaV">3</span></label>
+      <label><input type="checkbox" id="ipart" checked> 拆开看两个「打架」的因子</label>
+    </div>
+    <canvas id="c_int" class="tall"></canvas>
+    <div class="out" id="int_out"></div>
+    <div class="key gf">
+      <b>为什么这个形状必然是「先升后降的鼓包」？</b>因为它是两股力量打架的结果：<br>
+      • <b style="color:#7ee0ff">x<sup>a−1</sup></b>：往上推（x 越大越大）<br>
+      • <b style="color:#ff6b6b">e<sup>−x</sup></b>：往下压（指数衰减，压得非常狠）<br>
+      前期推力赢 → 上升；后期指数衰减一定赢 → 迅速趋 0。<b>所以面积是有限的，Γ(a) 才存在。</b><br>
+      a 越大，鼓包越往右移、越高 → 面积暴涨 → 这正是<b>阶乘爆炸式增长</b>的几何解释。
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2><span class="num">3</span>关键一步：把这块面积「压成 1」，概率分布就诞生了</h2>
+  <p class="lead">概率密度只有一个硬要求：<b>总面积必须等于 1</b>。而上面那条曲线的面积恰好是 Γ(a)。怎么办？除掉它就行。</p>
+  <div class="card">
+    <div class="formula">
+      f(x) = <span style="color:#7ee0ff">x<sup>a−1</sup> e<sup>−x</sup></span> ⁄ <span style="color:#ffd166">Γ(a)</span>　　⟹　面积 = Γ(a)/Γ(a) = 1 ✔
+    </div>
+    <div class="grid2">
+      <div><canvas id="c_raw2"></canvas><p class="mini">原始曲线：面积 = Γ(a)，<b>不是</b>概率密度</p></div>
+      <div><canvas id="c_norm2"></canvas><p class="mini">除以 Γ(a) 之后：面积 = 1，<b>正式成为 Gamma 分布</b></p></div>
+    </div>
+    <div class="ctrl">
+      <label>a（形状）= <input type="range" id="na" min="0.4" max="8" value="3" step="0.05"><span id="naV">3</span></label>
+    </div>
+    <div class="key">
+      <b class="big">⭐ 全页最重要的一句话：</b><br>
+      <b>Γ 函数在 Gamma 分布里的唯一职责，就是当那个「归一化常数」（分母）。</b><br>
+      它不神秘，也不参与任何概率意义。你以后看到密度公式里的 Γ、B（Beta 函数）、√(2π)，一律翻译成「负责把面积调成 1 的那个数」，公式立刻不可怕了。
+    </div>
+    <p>再加一个「尺度参数」θ 把横轴单位换掉（分钟→小时、元→万元），就得到完整形式：</p>
+    <div class="formula">f(x) = x<sup>k−1</sup> e<sup>−x/θ</sup> ⁄ ( Γ(k) · θ<sup>k</sup> )　,　x &gt; 0</div>
+    <p class="mini">k = 形状参数（shape，也写 α）；θ = 尺度参数（scale）；有些书用速率 λ = 1/θ（rate）。<b>这两种写法混用是 Gamma 的第一大坑，见第 9 节。</b></p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <h2><span class="num">4</span>Gamma 分布的由来：等到第 k 个人来，要多久？</h2>
+  <p class="lead">上面是「代数上的由来」，这里是<b>「现实中的由来」</b>——也是你真正该记住的那个画面。</p>
+  <div class="card">
+    <p class="big">场景：便利店顾客随机来，平均每 θ 分钟来 1 位（泊松过程）。</p>
+    <ul>
+      <li>等到 <b>第 1 位</b> 顾客的时间 → <span class="badge bex">指数分布 Exp(θ)</span></li>
+      <li>等到 <b>第 k 位</b> 顾客的时间 → <span class="badge bgd">Gamma(k, θ)</span>（k 为整数时也叫 Erlang 分布）</li>
+    </ul>
+    <div class="formula" style="font-size:17px">Gamma(k, θ) = Exp(θ) + Exp(θ) + … + Exp(θ)　（k 个独立相加）</div>
+    <div class="ctrl">
+      <label>k（等第几位）= <input type="range" id="wk" min="1" max="8" value="3" step="1"><span id="wkV">3</span></label>
+      <label>θ（平均间隔，分钟）= <input type="range" id="wt" min="1" max="8" value="4" step="1"><span id="wtV">4</span></label>
+      <button id="w1">模拟 1 天</button><button id="w200">模拟 200 天</button><button id="w2000">模拟 2000 天</button><button id="wclr">清空</button>
+    </div>
+    <canvas id="c_line" class="short"></canvas>
+    <p class="mini" id="line_t">↑ 时间轴：每个蓝点是一位顾客到店；<b style="color:#ff7eb6">粉色</b>是第 k 位到店的时刻，它就是本次抽样值。</p>
+    <canvas id="c_wait" class="tall"></canvas>
+    <div class="legend">
+      <span><i style="background:#3d5b86"></i>模拟直方图</span>
+      <span><i style="background:#ff7eb6"></i>理论 Gamma(k,θ) 密度</span>
+      <span><i style="background:#4ddba0"></i>k=1 的指数分布（对比）</span>
+      <span id="wN"></span>
+    </div>
+    <div class="key">
+      <b>把 k 从 1 拖到 8，观察这个极其重要的变化：</b><br>
+      • <b>k=1</b>：密度最高点贴在 0 上，「最可能马上就来」——这是指数分布的无记忆性。<br>
+      • <b>k 变大</b>：鼓包离开 0、右移、变对称。因为「运气会互相抵消」：有的间隔长、有的短，加起来越来越稳。<br>
+      • 均值 = <b>kθ</b>（k 段，每段平均 θ）；方差 = <b>kθ²</b>；相对波动 CV = <b>1/√k</b> → <b>等的人越多，总时间反而越「可预测」</b>。<br>
+      • k 很大时几乎变成正态——中心极限定理，因为它就是一堆独立随机量之和。
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <h2><span class="num">5</span>两个参数各管什么？（这是最实用的直觉）</h2>
+  <div class="card">
+    <div class="ctrl">
+      <label>k 形状 = <input type="range" id="sk" min="0.3" max="16" value="3" step="0.1"><span id="skV">3.0</span></label>
+      <label>θ 尺度 = <input type="range" id="st" min="0.5" max="5" value="2" step="0.1"><span id="stV">2.0</span></label>
+      <label><input type="checkbox" id="s3m" checked> 显示 众数/中位数/均值</label>
+      <label><input type="checkbox" id="snorm"> 显示正态近似</label>
+    </div>
+    <canvas id="c_shape" class="tall"></canvas>
+    <div class="out" id="shape_out"></div>
+    <div class="grid2">
+      <div class="key gf">
+        <b>k：形状参数 —— 管「长相」</b>
+        <ul>
+          <li><b>k &lt; 1</b>：密度在 0 处冲向无穷（一根尖刺）。含义：绝大多数取值极小，偶尔很大。⚠ 密度无界但面积仍是 1，合法。</li>
+          <li><b>k = 1</b>：正好是<b>指数分布</b>，从最高点一路下滑（滑梯）。</li>
+          <li><b>k &gt; 1</b>：出现鼓包，众数 = (k−1)θ。</li>
+          <li><b>k → 大</b>：右偏消失，趋近正态。</li>
+        </ul>
+      </div>
+      <div class="key">
+        <b>θ：尺度参数 —— 只管「刻度」</b>
+        <ul>
+          <li>改 θ <b>只是横轴拉伸/压缩</b>（形状一模一样），相当于把「分钟」换成「小时」。</li>
+          <li>所以 <b>θ 是单位，k 才是性格。</b></li>
+          <li>右偏分布的铁律：<b>众数 &lt; 中位数 &lt; 均值</b>（看图上三条线的顺序，永远这样）。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <h2><span class="num">6</span>家谱：Gamma 是一整个家族的「母分布」</h2>
+  <p class="lead">上一课的 χ² 到这里终于露出真身：<b>χ²(v) 就是 Gamma(k=v/2, θ=2)</b>。不信？下面这张图叠给你看。</p>
+  <div class="card">
+    <svg viewBox="0 0 900 400" style="width:100%;height:auto">
+      <defs><marker id="ar2" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+        <path d="M0,0 L10,4 L0,8 z" fill="#7c8db0"/></marker></defs>
+
+      <rect x="310" y="150" width="280" height="72" rx="14" fill="#2a1b2a" stroke="#ff7eb6" stroke-width="2"/>
+      <text x="450" y="180" fill="#ff7eb6" font-size="20" text-anchor="middle" font-weight="700">Gamma(k, θ)</text>
+      <text x="450" y="205" fill="#e2b6cd" font-size="13" text-anchor="middle">均值 kθ · 方差 kθ² · 众数 (k−1)θ</text>
+
+      <path d="M310,170 C230,160 190,120 180,96" stroke="#7c8db0" fill="none" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="150" y="140" fill="#4ddba0" font-size="13">k = 1</text>
+      <rect x="40" y="44" width="240" height="52" rx="10" fill="#10241c" stroke="#4ddba0"/>
+      <text x="160" y="66" fill="#4ddba0" font-size="16" text-anchor="middle" font-weight="700">指数分布 Exp(θ)</text>
+      <text x="160" y="86" fill="#a7d9c4" font-size="12" text-anchor="middle">等第 1 个事件 · 无记忆性</text>
+
+      <path d="M450,150 L450,100" stroke="#7c8db0" fill="none" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="458" y="128" fill="#ffb04d" font-size="13">k = v/2, θ = 2 ★</text>
+      <rect x="330" y="44" width="240" height="52" rx="10" fill="#241d10" stroke="#ffb04d"/>
+      <text x="450" y="66" fill="#ffb04d" font-size="16" text-anchor="middle" font-weight="700">卡方分布 χ²(v)</text>
+      <text x="450" y="86" fill="#d9c39a" font-size="12" text-anchor="middle">均值 v ✔ 方差 2v ✔</text>
+
+      <path d="M590,170 C680,160 720,120 730,96" stroke="#7c8db0" fill="none" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="700" y="140" fill="#4da3ff" font-size="13">k → ∞（CLT）</text>
+      <rect x="620" y="44" width="240" height="52" rx="10" fill="#16233a" stroke="#4da3ff"/>
+      <text x="740" y="66" fill="#4da3ff" font-size="16" text-anchor="middle" font-weight="700">正态 N(kθ, kθ²)</text>
+      <text x="740" y="86" fill="#9ec8ff" font-size="12" text-anchor="middle">右偏消失，近似钟形</text>
+
+      <path d="M370,222 C300,260 240,270 200,286" stroke="#7c8db0" fill="none" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="215" y="258" fill="#c08cff" font-size="13">G/(G+G)</text>
+      <rect x="40" y="286" width="240" height="52" rx="10" fill="#1d1430" stroke="#c08cff"/>
+      <text x="160" y="308" fill="#c08cff" font-size="15" text-anchor="middle" font-weight="700">Beta 分布</text>
+      <text x="160" y="328" fill="#cbb4e8" font-size="12" text-anchor="middle">比例/概率的分布（0~1）</text>
+
+      <path d="M450,222 L450,282" stroke="#7c8db0" fill="none" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="458" y="256" fill="#c08cff" font-size="13">两个相除（各除 df）</text>
+      <rect x="330" y="282" width="240" height="52" rx="10" fill="#1d1430" stroke="#c08cff"/>
+      <text x="450" y="304" fill="#c08cff" font-size="15" text-anchor="middle" font-weight="700">F 分布</text>
+      <text x="450" y="324" fill="#cbb4e8" font-size="12" text-anchor="middle">方差之比 / ANOVA</text>
+
+      <path d="M530,222 C620,260 680,270 720,286" stroke="#7ee0ff" fill="none" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ar2)"/>
+      <text x="600" y="262" fill="#7ee0ff" font-size="13">同一件事的两种问法</text>
+      <rect x="620" y="286" width="240" height="52" rx="10" fill="#0f2833" stroke="#7ee0ff"/>
+      <text x="740" y="308" fill="#7ee0ff" font-size="15" text-anchor="middle" font-weight="700">泊松分布（对偶）</text>
+      <text x="740" y="328" fill="#a6e6fa" font-size="12" text-anchor="middle">固定时间数个数 ↔ 固定个数量时间</text>
+
+      <text x="450" y="372" fill="#9aa8c0" font-size="13" text-anchor="middle">相加封闭：Gamma(k₁,θ) + Gamma(k₂,θ) = Gamma(k₁+k₂, θ)　（θ 必须相同！）</text>
+    </svg>
+
+    <h3>眼见为实：Gamma(v/2, 2) 与 χ²(v) 完全重合</h3>
+    <div class="ctrl">
+      <label>自由度 v = <input type="range" id="cv" min="1" max="20" value="4" step="1"><span id="cvV">4</span></label>
+    </div>
+    <canvas id="c_chieq"></canvas>
+    <div class="out" id="chieq_out"></div>
+    <div class="key chi">
+      <b>怎么记这个换算？「自由度对半，尺度取二」。</b><br>
+      验算法（不用背公式）：Gamma 均值 = kθ = (v/2)·2 = <b>v</b> ✔ 与卡方均值一致；方差 = kθ² = (v/2)·4 = <b>2v</b> ✔ 也一致。<br>
+      <b>更深的原因：</b>χ² 是 Z² 之和，而<b>单个 Z² 就是 Gamma(1/2, 2)</b>；相加封闭性一用，v 个加起来就是 Gamma(v/2, 2)。<br>
+      <span class="mini">彩蛋：Γ(1/2)=√π 正是这里出现的——Z² 的密度归一化常数需要它。上一课的公式和这一课在此闭环。</span>
+    </div>
+    <h3>再看那条青色虚线：泊松 ↔ Gamma 对偶</h3>
+    <div class="key">
+      同一条时间轴，两种数法：<br>
+      • <b class="badge bpo">泊松</b>：竖着数——「<b>30 分钟内来了几个人？</b>」（时间固定，个数随机，离散）<br>
+      • <b class="badge bgd">Gamma</b>：横着量——「<b>攒够 3 个人花了多久？</b>」（个数固定，时间随机，连续）<br>
+      于是必然有恒等式：<b>P(等第 k 个人 ≤ t) = P(t 时间内至少来了 k 个人)</b>。第 11 节会用它做一道题。
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <h2><span class="num">7</span>对比表（连上一课一起收进来）</h2>
+  <div class="card">
+    <table>
+      <tr><th>分布</th><th>取值</th><th>回答的问题</th><th>参数</th><th>均值 / 方差</th><th>与 Gamma 的关系</th></tr>
+      <tr><td><span class="badge bpo">泊松</span></td><td>0,1,2…离散</td><td>固定时间内<b>发生几次</b></td><td>λt</td><td>λt / λt</td><td>对偶（数个数版本）</td></tr>
+      <tr><td><span class="badge bex">指数</span></td><td>x&gt;0</td><td>等<b>第 1 次</b>要多久</td><td>θ</td><td>θ / θ²</td><td><b>k=1</b> 的特例</td></tr>
+      <tr><td><span class="badge bgd">Gamma</span></td><td>x&gt;0</td><td>等<b>第 k 次</b>要多久／任意右偏正数量</td><td>k, θ</td><td>kθ / kθ²</td><td>本体（k 整数时称 Erlang）</td></tr>
+      <tr><td><span class="badge bchi">卡方</span></td><td>x≥0</td><td>平方偏差的累加／方差推断</td><td>v</td><td>v / 2v</td><td><b>Gamma(v/2, 2)</b></td></tr>
+      <tr><td><span class="badge bz">正态</span></td><td>全体实数</td><td>对称波动</td><td>μ, σ²</td><td>μ / σ²</td><td>k→∞ 的极限形状</td></tr>
+    </table>
+    <div class="key">
+      <b>三个维度快速区分：</b><br>
+      • <b>离散还是连续？</b> 泊松离散（个数）；其余连续（时间/量）。<br>
+      • <b>能否为负？</b> Gamma 家族一律 x&gt;0 —— 所以它天生适合<b>时间、金额、降雨量、寿命</b>这类「只能是正数且右偏」的数据。<br>
+      • <b>问的是「多少次」还是「多久/多大」？</b> 前者泊松，后者 Gamma。
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+  <h2><span class="num">8</span>该用哪一个？点一下试试</h2>
+  <div class="card">
+    <div class="chips" id="chips">
+      <div class="chip" data-k="0">机器等到第 5 次故障的累计时间</div>
+      <div class="chip" data-k="1">一个灯泡能用多久（无记忆）</div>
+      <div class="chip" data-k="2">带 3 块备用电池，总续航时间</div>
+      <div class="chip" data-k="3">某地一场暴雨的降雨量</div>
+      <div class="chip" data-k="4">保险公司一年的总赔付金额</div>
+      <div class="chip" data-k="5">网站每分钟的访问「次数」</div>
+      <div class="chip" data-k="6">已知平均到达率，想估计 λ 的不确定性（贝叶斯）</div>
+      <div class="chip" data-k="7">检验样本方差是否等于某个值</div>
+      <div class="chip" data-k="8">病人从确诊到事件发生的生存时间</div>
+      <div class="chip" data-k="9">排队系统里「多阶段服务」的总服务时长</div>
+    </div>
+    <div class="out" id="chipout">👆 点上面任意一个场景。</div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+  <h2><span class="num">9</span>踩坑清单（Gamma 的坑比 t/F 更隐蔽）</h2>
+  <div class="grid2">
+    <div class="card key w" style="border-left-width:4px">
+      <h3 style="margin-top:4px">🔥 第一大坑：scale 还是 rate？</h3>
+      <p>同一个分布有两套写法，方向正好相反：</p>
+      <div class="formula" style="font-size:16px">θ（scale，尺度）= 1 / λ（rate，速率）</div>
+      <ul>
+        <li>「平均每 4 分钟来一位」→ <b>θ=4</b>，<b>λ=0.25</b>。写错就差 16 倍。</li>
+        <li><b>R</b>：<code>rgamma(n, shape, rate=)</code> 默认用 <b>rate</b>；也可写 <code>scale=</code>。</li>
+        <li><b>Python/SciPy</b>：<code>gamma(a, scale=)</code> 用 <b>scale</b>，没有 rate 参数。</li>
+        <li><b>自检法</b>：算一下均值。<b>kθ = k/λ</b> 是否等于你心里那个「大概多少」？数量级不对就是搞反了。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>其它常见坑</h3>
+      <ul>
+        <li><b>Γ 函数 ≠ Gamma 分布</b>。前者是归一化常数，后者是分布。别在报告里写「数据服从 Gamma 函数」。</li>
+        <li><b>Γ(n) = (n−1)!，错位一。</b>Γ(5)=24 不是 120。</li>
+        <li><b>k&lt;1 时密度在 0 处无界</b>，这不是 bug；密度可以无穷大，只要面积是 1。但此时不要用「众数」描述中心。</li>
+        <li><b>只有 k=1（指数）才无记忆。</b>k&gt;1 时「已经等了很久」确实意味着「快到了」，不能乱套用指数的结论。</li>
+        <li><b>相加封闭要求 θ 相同</b>：Gamma(2,3)+Gamma(5,3)=Gamma(7,3) ✔；θ 不同则不再是 Gamma ✘。</li>
+        <li><b>右偏 ⇒ 均值会骗人</b>：平均赔付 12 万，但一半的案子低于 10.7 万。汇报时给中位数和分位数。</li>
+        <li><b>x&gt;0 严格成立</b>：数据里有 0 或负值时不能直接拟合 Gamma（考虑零膨胀模型或 Tweedie）。</li>
+        <li><b>数值溢出</b>：Γ(171) 就超出双精度了。永远用 <code>lgamma</code>（对数版）再取指数——本页代码就是这么做的。</li>
+        <li><b>k 是「形状」不是「个数」</b>：k 允许是 2.7 这样的小数（此时不再有「等第 k 个人」的字面解释，纯粹当拟合参数用）。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+  <h2><span class="num">10</span>怎样才不容易忘</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>① 两句话总纲（背这个）</h3>
+      <div class="formula" style="font-size:16.5px;line-height:2;text-align:left">
+        <b style="color:#ffd166">Γ 函数</b>：阶乘的连续版，也是<b>让面积等于 1 的那个分母</b>。<br>
+        <b style="color:#ff7eb6">Gamma 分布</b>：<b>k 个指数等待的接力赛总时间</b>。
+      </div>
+      <p class="mini">前者管「公式长相」，后者管「现实含义」。</p>
+      <h3>② 参数口诀</h3>
+      <p class="big"><b>形状定长相，尺度定刻度。</b></p>
+      <p class="mini">k 决定像滑梯还是像钟；θ 只是把横轴单位换掉。</p>
+    </div>
+    <div class="card">
+      <h3>③ 数字全部从「一个指数」推出来，不用死背</h3>
+      <p>一段等待：均值 θ，方差 θ²。<b>k 段独立相加 → 两个都乘 k</b>：</p>
+      <div class="formula" style="font-size:16px">均值 = kθ　方差 = kθ²　标准差 = √k·θ　CV = 1/√k</div>
+      <p>众数 = (k−1)θ（记法：<b>「去掉一段」才到峰顶</b>，k=1 时峰顶就在 0）。</p>
+    </div>
+    <div class="card">
+      <h3>④ 形状联想（看图记）</h3>
+      <ul>
+        <li><b>k&lt;1</b>：贴墙的<b>一根尖刺</b>。</li>
+        <li><b>k=1</b>：<b>滑梯</b>（指数）。</li>
+        <li><b>k=2~5</b>：<b>右偏的小山包</b>，慢慢往右挪、慢慢变对称。</li>
+        <li><b>k 很大</b>：<b>钟</b>（正态）。</li>
+      </ul>
+      <p class="mini">一句话动画：<b>「刺 → 滑梯 → 小山 → 钟」</b>，k 一路变大就是这个顺序。</p>
+    </div>
+    <div class="card">
+      <h3>⑤ 三个必记特殊值/换算</h3>
+      <ul>
+        <li><b>Γ(1/2) = √π</b>（半整数出 π，正态的老朋友）</li>
+        <li><b>Γ(n) = (n−1)!</b>（错位一）</li>
+        <li><b>χ²(v) = Gamma(v/2, 2)</b>（<b>自由度对半，尺度取二</b>）</li>
+      </ul>
+      <h3>⑥ 用一个故事串全场</h3>
+      <p>便利店等第 3 位顾客 → Gamma；只等第 1 位 → 指数；问「半小时来几个」→ 泊松；把 Z 平方堆起来 → 卡方也是 Gamma。<b>一条时间轴，四个分布。</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+  <h2><span class="num">11</span>实战：一家便利店，把 Gamma 全用一遍</h2>
+  <p class="lead">设定：顾客随机到店，<b>平均每 4 分钟 1 位</b>（θ=4 分钟，λ=0.25 位/分钟）。</p>
+
+  <div class="card">
+    <h3><span class="badge bex">指数</span> Q1：等第 1 位顾客，超过 10 分钟没人来的概率？</h3>
+    <div class="out">T₁ ~ Exp(θ=4)，均值 4 分钟
+P(T₁ > 10) = e^(−10/4) = e^(−2.5) ≈ <b>8.2%</b>
+※ 无记忆性：已经空等了 7 分钟，再等 10 分钟没人的概率<b>还是 8.2%</b>（不会“越等越快来”）。</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="badge bgd">Gamma</span> Q2：你想「凑够 3 单」就去后厨休息，要等多久？</h3>
+    <div class="out">T₃ ~ Gamma(k=3, θ=4)
+均值   = kθ      = 3×4  = <b>12 分钟</b>
+方差   = kθ²     = 3×16 = 48        标准差 = √48 ≈ <b>6.93 分钟</b>
+众数   = (k−1)θ  = 2×4  = <b>8 分钟</b>   ← 最“常见”的等待
+中位数 ≈ <b>10.7 分钟</b>
+CV     = 1/√3   ≈ 58%   （若等第 12 单，CV 降到 29%：<b>越多越稳</b>）
+
+⇒ 右偏铁律：众数 8 &lt; 中位数 10.7 &lt; 均值 12   ✔</div>
+    <div class="key">
+      <b>落地解读：</b>“平均 12 分钟”其实有点骗人——<b>一半的日子 10.7 分钟内就凑够了</b>，但偶尔会拖到 25 分钟以上。
+      排班/承诺时效要看<b>分位数</b>，不能只看均值。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="badge bpo">对偶</span> Q3：10 分钟内能凑够 3 单吗？——用泊松换个算法</h3>
+    <div class="out">要算 P(T₃ ≤ 10)。直接积分麻烦，用对偶恒等式：
+   P(T₃ ≤ 10) = P(10 分钟内至少来 3 位) = 1 − P(N ≤ 2)，其中 N ~ 泊松(λt = 0.25×10 = 2.5)
+
+P(N ≤ 2) = e^(−2.5) × (1 + 2.5 + 2.5²/2) = 0.0821 × 6.625 ≈ 0.544
+⇒ P(T₃ ≤ 10) ≈ <b>45.6%</b>     （不到一半，符合“中位数 10.7 &gt; 10”）</div>
+    <p class="mini">这就是 Erlang 分布 CDF 的来历：一个连续分布的概率，被一串离散泊松项算了出来。<b>看到「第 k 个事件」就想到这条桥。</b></p>
+    <h3>自己动手玩：</h3>
+    <div class="ctrl">
+      <label>k = <input type="range" id="ck" min="1" max="8" value="3" step="1"><span id="ckV">3</span></label>
+      <label>θ 分钟 = <input type="range" id="cth" min="1" max="10" value="4" step="1"><span id="cthV">4</span></label>
+      <label>t 分钟 = <input type="range" id="ct" min="1" max="60" value="10" step="1"><span id="ctV">10</span></label>
+    </div>
+    <canvas id="c_calc" class="tall"></canvas>
+    <div class="out" id="calc_out"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="badge bgd">可靠性</span> Q4：3 块备用电池接力，总续航？</h3>
+    <div class="out">每块电池平均寿命 200 小时（近似指数）→ 总续航 ~ Gamma(3, 200)
+均值 = 600 小时，标准差 = √3×200 ≈ 346 小时，CV = 58%
+带 12 块：均值 2400 小时，CV 降到 29%  ← <b>备件越多，总寿命越可预测</b>（这就是冗余设计的统计学意义）</div>
+  </div>
+
+  <div class="card key chi">
+    <h3 style="margin-top:0">🥚 彩蛋 Q5：你上一课算过的 χ² 也在这里</h3>
+    做方差推断时用的 <b>χ²(4)</b>，其实就是 <b>Gamma(k=2, θ=2)</b>：<br>
+    均值 kθ = 2×2 = <b>4</b> ✔（等于自由度）；方差 kθ² = 2×4 = <b>8</b> ✔（等于 2v）。<br>
+    所以卡方的「右偏、非负、df 越大越像正态」这三条性质，你现在有了<b>更根本的解释</b>：因为它就是一个 Gamma。
+  </div>
+</section>
+
+<!-- 12 -->
+<section id="s12">
+  <h2><span class="num">12</span>三十秒自测（点击题目看答案）</h2>
+  <div class="card">
+    <p class="q" data-a="a1">Q1. Γ 函数在 Gamma 分布的密度公式里扮演什么角色？ ▸</p>
+    <div class="ans" id="a1"><b>归一化常数（分母）</b>。曲线 x^(k−1)e^(−x/θ) 下的面积是 Γ(k)θ^k，除掉它，面积才等于 1，才配叫概率密度。它本身没有概率含义。</div>
+    <hr style="border-color:#2b3850">
+    <p class="q" data-a="a2">Q2. Γ(6) 等于多少？为什么容易错？ ▸</p>
+    <div class="ans" id="a2">Γ(6) = 5! = <b>120</b>，不是 720。因为定义式里的指数是 x^(a−1)，导致「错位一」——历史遗留的定义习惯。</div>
+    <hr style="border-color:#2b3850">
+    <p class="q" data-a="a3">Q3. 「平均每 5 分钟来一个人，等第 4 个人」的均值、方差、众数各是多少？ ▸</p>
+    <div class="ans" id="a3">θ=5, k=4。均值 kθ=<b>20</b> 分钟；方差 kθ²=4×25=<b>100</b>（标准差 10）；众数 (k−1)θ=<b>15</b> 分钟。注意众数 &lt; 中位数 &lt; 均值。</div>
+    <hr style="border-color:#2b3850">
+    <p class="q" data-a="a4">Q4. 某软件要求填 rate，你只知道「平均间隔 8 分钟」，该填什么？ ▸</p>
+    <div class="ans" id="a4">填 <b>rate = 1/8 = 0.125</b>（不是 8）。检查方式：算出的均值 k/λ 应该等于 8k 分钟，量级对了才放心。</div>
+    <hr style="border-color:#2b3850">
+    <p class="q" data-a="a5">Q5. χ²(10) 用 Gamma 怎么写？验算一下。 ▸</p>
+    <div class="ans" id="a5"><b>Gamma(k=5, θ=2)</b>（自由度对半，尺度取二）。均值 kθ=10 ✔（=v），方差 kθ²=5×4=20 ✔（=2v）。</div>
+    <hr style="border-color:#2b3850">
+    <p class="q" data-a="a6">Q6. 为什么 k 越大，Gamma 越像正态、相对波动越小？ ▸</p>
+    <div class="ans" id="a6">因为 Gamma(k,θ) 是 k 个独立指数之和：① 独立随机量求和 → 中心极限定理 → 趋近正态；② 均值随 k 线性增长（kθ），标准差只随 √k 增长（√k·θ），所以 CV=1/√k 逐渐变小。<b>「加起来的东西，运气会互相抵消。」</b></div>
+    <hr style="border-color:#2b3850">
+    <p class="q" data-a="a7">Q7. 一句话说清泊松和 Gamma 的关系。 ▸</p>
+    <div class="ans" id="a7">同一条时间轴的两种问法：<b>泊松＝时间固定问次数（竖着数），Gamma＝次数固定问时间（横着量）</b>；因此 P(T_k ≤ t) = P(N(t) ≥ k)。</div>
+  </div>
+</section>
+
+</main>
+<footer>所有曲线、面积、模拟均由本页 JavaScript 实时计算（Lanczos 近似 lgamma + 数值积分 + Marsaglia–Tsang 抽样）。<br>
+复习建议：明天只回看第 3 节的「除以 Γ(a)」一句、第 5 节参数口诀、第 6 节家谱图，30 秒复述「Γ 是分母、Gamma 是接力赛、卡方是自由度对半尺度取二」，就基本忘不掉了。</footer>
+
+<script>
+/* ===== 数学工具 ===== */
+function lgamma(z){
+  const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5) return Math.log(Math.PI/Math.abs(Math.sin(Math.PI*z)))-lgamma(1-z);
+  z-=1; let x=0.99999999999980993;
+  for(let i=0;i<8;i++) x+=g[i]/(z+i+1);
+  const t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+function gammaFn(x){
+  if(x>0) return Math.exp(lgamma(x));
+  if(Math.abs(x-Math.round(x))<1e-9) return NaN;
+  return Math.PI/(Math.sin(Math.PI*x)*Math.exp(lgamma(1-x)));
+}
+const integrand=(x,a)=> x<=0?(a<1?Infinity:(a===1?1:0)):Math.exp((a-1)*Math.log(x)-x);
+function gpdf(x,k,s){
+  if(x<=0) return k<1?Infinity:(k===1?1/s:0);
+  return Math.exp((k-1)*Math.log(x)-x/s-k*Math.log(s)-lgamma(k));
+}
+const chi2pdf=(x,v)=> x<=0?0:Math.exp((v/2-1)*Math.log(x)-x/2-(v/2)*Math.LN2-lgamma(v/2));
+function cdfTable(pdf,lo,hi,N=6000){
+  const h=(hi-lo)/N,xs=new Float64Array(N+1),cs=new Float64Array(N+1);
+  let prev=pdf(lo+1e-12),c=0; if(!isFinite(prev))prev=0; xs[0]=lo;cs[0]=0;
+  for(let i=1;i<=N;i++){const x=lo+i*h;let cur=pdf(x);if(!isFinite(cur))cur=0;c+=(prev+cur)/2*h;prev=cur;xs[i]=x;cs[i]=c;}
+  return {xs,cs,total:c};
+}
+function quantile(tab,p){
+  const t=p*tab.total; let lo=0,hi=tab.cs.length-1;
+  while(hi-lo>1){const m=(lo+hi)>>1; if(tab.cs[m]<t)lo=m; else hi=m;}
+  const d=tab.cs[hi]-tab.cs[lo];
+  return d>0?tab.xs[lo]+(t-tab.cs[lo])/d*(tab.xs[hi]-tab.xs[lo]):tab.xs[lo];
+}
+let spare=null;
+function randn(){ if(spare!==null){const s=spare;spare=null;return s;}
+  let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  const r=Math.sqrt(-2*Math.log(u)),th=2*Math.PI*v; spare=r*Math.sin(th); return r*Math.cos(th); }
+const randExp=s=>-s*Math.log(1-Math.random());
+
+/* ===== 画图工具 ===== */
+function P(cv){
+  const ctx=cv.getContext('2d');
+  const o={cv,ctx,ml:46,mr:14,mt:14,mb:30};
+  o.setup=function(xmin,xmax,ymin,ymax){
+    const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+    cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    Object.assign(o,{w,h,xmin,xmax,ymin,ymax});
+    ctx.clearRect(0,0,w,h);ctx.fillStyle='#111a29';ctx.fillRect(0,0,w,h);return o;};
+  o.X=x=>o.ml+(x-o.xmin)/(o.xmax-o.xmin)*(o.w-o.ml-o.mr);
+  o.Y=y=>o.h-o.mb-(y-o.ymin)/(o.ymax-o.ymin)*(o.h-o.mt-o.mb);
+  o.axes=function(xt,yt,xlab){
+    ctx.font='11px system-ui';
+    (xt||[]).forEach(v=>{const X=o.X(v);
+      ctx.strokeStyle='#222f45';ctx.beginPath();ctx.moveTo(X,o.mt);ctx.lineTo(X,o.Y(o.ymin));ctx.stroke();
+      ctx.fillStyle='#7f8ea8';ctx.textAlign='center';ctx.fillText(String(v),X,o.h-10);});
+    (yt||[]).forEach(v=>{const Y=o.Y(v);
+      ctx.strokeStyle='#1c2740';ctx.beginPath();ctx.moveTo(o.ml,Y);ctx.lineTo(o.w-o.mr,Y);ctx.stroke();
+      ctx.fillStyle='#7f8ea8';ctx.textAlign='right';ctx.fillText(String(v),o.ml-6,Y+4);});
+    ctx.strokeStyle='#3a4a68';ctx.lineWidth=1;
+    const y0=(o.ymin<0&&o.ymax>0)?o.Y(0):o.Y(o.ymin);
+    ctx.beginPath();ctx.moveTo(o.ml,y0);ctx.lineTo(o.w-o.mr,y0);ctx.stroke();
+    if(o.xmin<0&&o.xmax>0){ctx.beginPath();ctx.moveTo(o.X(0),o.mt);ctx.lineTo(o.X(0),o.h-o.mb);ctx.stroke();}
+    if(xlab){ctx.fillStyle='#5d6b85';ctx.textAlign='right';ctx.fillText(xlab,o.w-o.mr,o.mt+12);}
+    return o;};
+  o.curve=function(fn,color,lw=2,fill=0,dash=null){
+    ctx.save();if(dash)ctx.setLineDash(dash);
+    ctx.beginPath();let st=false;
+    for(let px=o.ml;px<=o.w-o.mr;px++){
+      const x=o.xmin+(px-o.ml)/(o.w-o.ml-o.mr)*(o.xmax-o.xmin);
+      let y=fn(x);if(!isFinite(y))y=o.ymax*1.6;y=Math.min(y,o.ymax*1.6);
+      const py=o.Y(y);if(!st){ctx.moveTo(px,py);st=true;}else ctx.lineTo(px,py);}
+    if(fill>0){ctx.save();ctx.lineTo(o.w-o.mr,o.Y(0));ctx.lineTo(o.ml,o.Y(0));ctx.closePath();
+      ctx.globalAlpha=fill;ctx.fillStyle=color;ctx.fill();ctx.restore();}
+    ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.stroke();ctx.restore();return o;};
+  o.shade=function(fn,a,b,color,al=.35){
+    ctx.save();ctx.beginPath();
+    const pa=Math.max(o.X(a),o.ml),pb=Math.min(o.X(b),o.w-o.mr);
+    ctx.moveTo(pa,o.Y(0));
+    for(let px=pa;px<=pb;px++){const x=o.xmin+(px-o.ml)/(o.w-o.ml-o.mr)*(o.xmax-o.xmin);
+      let y=fn(x);if(!isFinite(y))y=o.ymax*1.6;y=Math.min(y,o.ymax*1.6);ctx.lineTo(px,o.Y(y));}
+    ctx.lineTo(pb,o.Y(0));ctx.closePath();ctx.globalAlpha=al;ctx.fillStyle=color;ctx.fill();ctx.restore();return o;};
+  o.vline=function(x,color,label,dash=[5,4]){
+    if(x<o.xmin||x>o.xmax)return o;
+    ctx.save();ctx.setLineDash(dash);ctx.strokeStyle=color;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(o.X(x),o.mt);ctx.lineTo(o.X(x),o.h-o.mb);ctx.stroke();
+    if(label){ctx.setLineDash([]);ctx.fillStyle=color;ctx.font='bold 11px system-ui';
+      const r=o.X(x)>o.w-90;ctx.textAlign=r?'right':'left';ctx.fillText(label,o.X(x)+(r?-4:4),o.mt+11);}
+    ctx.restore();return o;};
+  o.hist=function(edges,dens,color){ctx.fillStyle=color;
+    for(let i=0;i<dens.length;i++){if(dens[i]<=0)continue;
+      const x0=o.X(edges[i]),x1=o.X(edges[i+1]),y=o.Y(Math.min(dens[i],o.ymax*1.5));
+      ctx.fillRect(x0,y,Math.max(1,x1-x0-1),o.Y(0)-y);}return o;};
+  o.dot=function(x,y,color,r=5){ctx.fillStyle=color;ctx.beginPath();ctx.arc(o.X(x),o.Y(y),r,0,7);ctx.fill();return o;};
+  o.text=function(s,px,py,color,font='12px system-ui',align='left'){
+    ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align;ctx.fillText(s,px,py);return o;};
+  return o;
+}
+const redraws=[];const reg=f=>{redraws.push(f);f();};
+addEventListener('resize',()=>redraws.forEach(f=>f()));
+
+/* ===== 1. Γ 函数 ===== */
+const pGf=P(document.getElementById('c_gf'));
+const gx=document.getElementById('gx'),gxV=document.getElementById('gxV'),
+      gdots=document.getElementById('gdots'),gf_out=document.getElementById('gf_out');
+function drawGf(){
+  const x0=+gx.value; gxV.textContent=x0.toFixed(2);
+  const p=pGf.setup(-3.6,5.6,-6.5,7.5);
+  p.axes([-3,-2,-1,0,1,2,3,4,5],[-6,-4,-2,2,4,6],'x');
+  // 极点虚线
+  [0,-1,-2,-3].forEach(v=>p.vline(v,'#3a2b3a',null,[2,4]));
+  // Γ 曲线分段
+  const c=p.ctx; c.strokeStyle='#ffd166'; c.lineWidth=2.6; c.beginPath(); let st=false;
+  for(let px=p.ml;px<=p.w-p.mr;px+=0.5){
+    const x=p.xmin+(px-p.ml)/(p.w-p.ml-p.mr)*(p.xmax-p.xmin);
+    const y=gammaFn(x);
+    if(!isFinite(y)||Math.abs(y)>9){st=false;continue;}
+    if(!st){c.moveTo(px,p.Y(y));st=true;}else c.lineTo(px,p.Y(y));
+  }
+  c.stroke();
+  if(gdots.checked){
+    for(let n=1;n<=4;n++){const y=gammaFn(n);p.dot(n,y,'#7ee0ff',5.5);
+      p.text('Γ('+n+')='+(n-1)+'!='+y,p.X(n)+8,p.Y(y)-6,'#7ee0ff','11px system-ui');}
+  }
+  const y0=gammaFn(x0);
+  if(isFinite(y0)&&Math.abs(y0)<9){p.vline(x0,'#ff7eb6',null);p.dot(x0,y0,'#ff7eb6',6);}
+  p.text('Γ(x)',p.ml+8,p.mt+14,'#ffd166','bold 13px system-ui');
+  const y1=gammaFn(x0+1);
+  gf_out.textContent=
+   'x = '+x0.toFixed(2)+'\n'+
+   'Γ(x)   = '+(isFinite(y0)?y0.toFixed(4):'不存在（极点）')+
+   '\n验证递推 Γ(x+1) = x·Γ(x):\n'+
+   '  Γ('+(x0+1).toFixed(2)+') = '+(isFinite(y1)?y1.toFixed(4):'—')+
+   '   vs   x·Γ(x) = '+(isFinite(y0)?(x0*y0).toFixed(4):'—')+'  ✔'+
+   (Math.abs(x0-Math.round(x0))<0.02&&x0>0?'\n★ x 是正整数：Γ('+Math.round(x0)+') = '+(Math.round(x0)-1)+'! = '+y0.toFixed(0):'')+
+   (Math.abs(x0-0.5)<0.03?'\n★ Γ(0.5) = √π = '+Math.sqrt(Math.PI).toFixed(5)+' ← 正态分布的老朋友！':'');
+}
+[gx,gdots].forEach(e=>e.addEventListener('input',drawGf));
+reg(drawGf);
+
+/* ===== 2. 被积函数 = 面积 ===== */
+const pInt=P(document.getElementById('c_int'));
+const ia=document.getElementById('ia'),iaV=document.getElementById('iaV'),
+      ipart=document.getElementById('ipart'),int_out=document.getElementById('int_out');
+function drawInt(){
+  const a=+ia.value; iaV.textContent=a.toFixed(2);
+  const xmax=Math.max(10,a+6*Math.sqrt(a)+3);
+  let pmax=0;for(let x=xmax/600;x<xmax;x+=xmax/600)pmax=Math.max(pmax,integrand(x,a));
+  if(a<1)pmax=Math.max(pmax*0.25,integrand(xmax/80,a));
+  const p=pInt.setup(0,xmax,0,pmax*1.3);
+  const xt=[];const stp=xmax<=12?2:(xmax<=25?5:10);for(let v=0;v<=xmax;v+=stp)xt.push(v);
+  p.axes(xt,null,'x');
+  if(ipart.checked){
+    const sc=pmax*1.25;
+    p.curve(x=>Math.min(Math.exp((a-1)*Math.log(Math.max(x,1e-9)))/8*sc/Math.max(sc,1)*1,pmax*1.25),'#7ee0ff',0);// placeholder
+    // 手动画两个因子（各自归一到画布高度便于观察趋势）
+    const c=p.ctx;
+    [['#7ee0ff',x=>Math.pow(Math.max(x,1e-9),a-1)],['#ff6b6b',x=>Math.exp(-x)]].forEach(([col,f],i)=>{
+      let m=0;for(let x=xmax/400;x<xmax;x+=xmax/400)m=Math.max(m,f(x));
+      c.save();c.setLineDash([5,4]);c.strokeStyle=col;c.lineWidth=1.6;c.beginPath();let st=false;
+      for(let px=p.ml;px<=p.w-p.mr;px++){const x=p.xmin+(px-p.ml)/(p.w-p.ml-p.mr)*(p.xmax-p.xmin);
+        let y=f(Math.max(x,1e-9))/m*p.ymax*0.92;y=Math.min(y,p.ymax*1.2);
+        if(!st){c.moveTo(px,p.Y(y));st=true;}else c.lineTo(px,p.Y(y));}
+      c.stroke();c.restore();
+      p.text(i===0?'x^(a−1) 往上推':'e^(−x) 往下压',p.w-p.mr-6,p.mt+16+i*15,col,'11px system-ui','right');
+    });
+  }
+  p.shade(x=>integrand(x,a),0,xmax,'#ffd166',.35);
+  p.curve(x=>integrand(x,a),'#ffd166',2.8);
+  if(a>1)p.vline(a-1,'#8fa4c7','峰在 x=a−1',[2,3]);
+  p.text('被积函数 x^(a−1)·e^(−x)',p.ml+8,p.mt+14,'#ffd166','bold 13px system-ui');
+  // 数值积分
+  const N=20000,h=xmax*3/N;let s=0,prev=integrand(1e-9,a);if(!isFinite(prev))prev=0;
+  for(let i=1;i<=N;i++){const x=i*h;let cur=integrand(x,a);if(!isFinite(cur))cur=0;s+=(prev+cur)/2*h;prev=cur;}
+  int_out.textContent=
+   'a = '+a.toFixed(2)+
+   '\n阴影面积（数值积分）= '+s.toFixed(5)+
+   '\nΓ(a)（Lanczos 公式）  = '+gammaFn(a).toFixed(5)+'    ← 两者相同 ✔'+
+   (Math.abs(a-Math.round(a))<0.02?'\n★ a 是整数：Γ('+Math.round(a)+') = '+(Math.round(a)-1)+'! = '+gammaFn(a).toFixed(0):'')+
+   '\n\n提示：把这块面积“除掉”，曲线就变成概率密度 → 见下一节。';
+}
+[ia,ipart].forEach(e=>e.addEventListener('input',drawInt));
+reg(drawInt);
+
+/* ===== 3. 归一化 ===== */
+const pR2=P(document.getElementById('c_raw2')),pN2=P(document.getElementById('c_norm2'));
+const na=document.getElementById('na'),naV=document.getElementById('naV');
+function drawNorm(){
+  const a=+na.value;naV.textContent=a.toFixed(2);
+  const xmax=Math.max(10,a+6*Math.sqrt(a)+3);
+  const xt=[];const stp=xmax<=12?2:5;for(let v=0;v<=xmax;v+=stp)xt.push(v);
+  let m1=0;for(let x=xmax/500;x<xmax;x+=xmax/500)m1=Math.max(m1,integrand(x,a));
+  if(a<1)m1=integrand(xmax/80,a);
+  pR2.setup(0,xmax,0,m1*1.3).axes(xt,null,'x');
+  pR2.shade(x=>integrand(x,a),0,xmax,'#ffd166',.35);
+  pR2.curve(x=>integrand(x,a),'#ffd166',2.6);
+  pR2.text('面积 = Γ(a) = '+gammaFn(a).toFixed(3),pR2.ml+8,pR2.mt+14,'#ffd166','bold 12px system-ui');
+  let m2=0;for(let x=xmax/500;x<xmax;x+=xmax/500)m2=Math.max(m2,gpdf(x,a,1));
+  if(a<1)m2=gpdf(xmax/80,a,1);
+  pN2.setup(0,xmax,0,m2*1.3).axes(xt,null,'x');
+  pN2.shade(x=>gpdf(x,a,1),0,xmax,'#ff7eb6',.35);
+  pN2.curve(x=>gpdf(x,a,1),'#ff7eb6',2.6);
+  pN2.text('面积 = 1  ✔  Gamma(k='+a.toFixed(2)+', θ=1)',pN2.ml+8,pN2.mt+14,'#ff7eb6','bold 12px system-ui');
+}
+na.addEventListener('input',drawNorm);
+reg(drawNorm);
+
+/* ===== 4. 等待时间模拟 ===== */
+const pLine=P(document.getElementById('c_line')),pW=P(document.getElementById('c_wait'));
+const wk=document.getElementById('wk'),wt=document.getElementById('wt'),
+      wkV=document.getElementById('wkV'),wtV=document.getElementById('wtV'),
+      wN=document.getElementById('wN'),line_t=document.getElementById('line_t');
+let waits=[],lastArr=[],lastK=0;
+function simOne(){
+  const k=+wk.value,th=+wt.value;
+  lastArr=[];let t=0;
+  for(let i=0;i<k+3;i++){t+=randExp(th);lastArr.push(t);}
+  lastK=lastArr[k-1];waits.push(lastK);
+}
+function drawWait(){
+  const k=+wk.value,th=+wt.value;wkV.textContent=k;wtV.textContent=th;
+  // 时间轴
+  const Tmax=Math.max(k*th*2.2,th*4);
+  const pl=pLine.setup(0,Tmax,0,1);
+  const xt=[];const stp=Math.max(2,Math.round(Tmax/8/2)*2);for(let v=0;v<=Tmax;v+=stp)xt.push(v);
+  pl.axes(xt,null,'时间（分钟）');
+  const cy=pl.h/2+4,c=pl.ctx;
+  c.strokeStyle='#3a4a68';c.lineWidth=2;c.beginPath();c.moveTo(pl.ml,cy);c.lineTo(pl.w-pl.mr,cy);c.stroke();
+  lastArr.forEach((t,i)=>{
+    if(t>Tmax)return;
+    const X=pl.X(t),isK=(i===k-1);
+    c.fillStyle=isK?'#ff7eb6':'#4da3ff';c.beginPath();c.arc(X,cy,isK?7:4.5,0,7);c.fill();
+    if(i<k){c.fillStyle=isK?'#ff7eb6':'#9ec8ff';c.font='10px system-ui';c.textAlign='center';
+      c.fillText('#'+(i+1),X,cy-12);}
+  });
+  if(lastK){
+    const X=pl.X(Math.min(lastK,Tmax));
+    c.strokeStyle='#ff7eb6';c.lineWidth=2;c.beginPath();c.moveTo(pl.ml,cy+16);c.lineTo(X,cy+16);c.stroke();
+    c.fillStyle='#ff7eb6';c.font='bold 11px system-ui';c.textAlign='left';
+    c.fillText('等到第'+k+'位 = '+lastK.toFixed(1)+' 分钟',pl.ml+4,cy+30);
+    line_t.innerHTML='本次抽样：第 '+k+' 位顾客在 <b>'+lastK.toFixed(1)+'</b> 分钟到店 → 这个数被扔进下面的直方图。';
+  }
+  // 分布图
+  const xmax=k*th+5*Math.sqrt(k)*th+th;
+  let pmax=0;for(let x=xmax/500;x<xmax;x+=xmax/500)pmax=Math.max(pmax,gpdf(x,k,th));
+  if(k===1)pmax=1/th;
+  const p=pW.setup(0,xmax,0,pmax*1.35);
+  const xt2=[];const s2=Math.max(2,Math.round(xmax/8/5)*5);for(let v=0;v<=xmax;v+=s2)xt2.push(v);
+  p.axes(xt2,null,'等到第 k 位所需时间（分钟）');
+  if(waits.length){
+    const nb=50,bw=xmax/nb,edges=[],cnt=new Array(nb).fill(0);
+    for(let i=0;i<=nb;i++)edges.push(i*bw);
+    waits.forEach(v=>{const b=Math.floor(v/bw);if(b>=0&&b<nb)cnt[b]++;});
+    p.hist(edges,cnt.map(cc=>cc/(waits.length*bw)),'#3d5b86');
+  }
+  if(k>1)p.curve(x=>gpdf(x,1,th),'#4ddba0',1.8,0,[6,4]);
+  p.curve(x=>gpdf(x,k,th),'#ff7eb6',2.8,.12);
+  p.vline(k*th,'#ffd166','均值 kθ='+(k*th));
+  if(k>1)p.vline((k-1)*th,'#8fa4c7','众数 '+((k-1)*th),[2,3]);
+  p.text('Gamma(k='+k+', θ='+th+')',p.ml+8,p.mt+14,'#ff7eb6','bold 13px system-ui');
+  const sd=Math.sqrt(k)*th;
+  wN.innerHTML='已模拟 '+waits.length+' 次｜均值 '+(k*th)+'　标准差 '+sd.toFixed(2)+'　CV=1/√k='+(1/Math.sqrt(k)).toFixed(2);
+}
+[wk,wt].forEach(e=>e.addEventListener('input',()=>{waits=[];lastArr=[];lastK=0;drawWait();}));
+document.getElementById('w1').onclick=()=>{simOne();drawWait();};
+document.getElementById('w200').onclick=()=>{for(let i=0;i<200;i++)simOne();drawWait();};
+document.getElementById('w2000').onclick=()=>{for(let i=0;i<2000;i++)simOne();drawWait();};
+document.getElementById('wclr').onclick=()=>{waits=[];lastArr=[];lastK=0;drawWait();};
+reg(drawWait);
+
+/* ===== 5. 形状/尺度 ===== */
+const pS=P(document.getElementById('c_shape'));
+const sk=document.getElementById('sk'),st_=document.getElementById('st'),
+      skV=document.getElementById('skV'),stV=document.getElementById('stV'),
+      s3m=document.getElementById('s3m'),snorm=document.getElementById('snorm'),
+      shape_out=document.getElementById('shape_out');
+function drawShape(){
+  const k=+sk.value,s=+st_.value;skV.textContent=k.toFixed(1);stV.textContent=s.toFixed(1);
+  const xmax=k*s+5*Math.sqrt(Math.max(k,0.5))*s+s*1.5;
+  let pmax=0;for(let x=xmax/600;x<xmax;x+=xmax/600)pmax=Math.max(pmax,gpdf(x,k,s));
+  if(k<1)pmax=gpdf(xmax/70,k,s);
+  const p=pS.setup(0,xmax,0,pmax*1.32);
+  const stp=Math.max(1,Math.round(xmax/9));const xt=[];for(let v=0;v<=xmax;v+=stp)xt.push(Math.round(v));
+  p.axes(xt,null,'x');
+  const tab=cdfTable(x=>gpdf(x,k,s),0,xmax*3,8000);
+  const med=quantile(tab,.5),mean=k*s,mode=k>=1?(k-1)*s:0;
+  if(snorm.checked)p.curve(x=>Math.exp(-0.5*((x-mean)/(Math.sqrt(k)*s))**2)/(Math.sqrt(k)*s*Math.sqrt(2*Math.PI)),'#4da3ff',1.8,0,[6,4]);
+  p.curve(x=>gpdf(x,1,s),'#4ddba0',1.4,0,[3,4]);
+  p.curve(x=>gpdf(x,k,s),'#ff7eb6',3,.13);
+  if(s3m.checked){
+    if(k>1)p.vline(mode,'#7ee0ff','众数 '+mode.toFixed(2),[2,3]);
+    p.vline(med,'#ffd166','中位数 '+med.toFixed(2),[4,3]);
+    p.vline(mean,'#ff9f5a','均值 '+mean.toFixed(2));
+  }
+  p.text('Gamma(k='+k.toFixed(1)+', θ='+s.toFixed(1)+')',p.ml+8,p.mt+14,'#ff7eb6','bold 13px system-ui');
+  p.text('绿虚线 = 同尺度的指数(k=1)',p.w-p.mr-6,p.mt+14,'#4ddba0','11px system-ui','right');
+  let verdict;
+  if(k<1) verdict='k<1：密度在 0 处冲向无穷（尖刺型）。大量极小值 + 偶发大值。';
+  else if(Math.abs(k-1)<0.06) verdict='k=1：这就是指数分布（滑梯型），具备无记忆性。';
+  else if(k<6) verdict='1<k<6：明显右偏的小山包，众数 < 中位数 < 均值。';
+  else verdict='k 较大：右偏基本消失，已可用正态近似（勾选上面的复选框看看）。';
+  shape_out.textContent=
+   '均值 = kθ = '+mean.toFixed(3)+'    众数 = (k−1)θ = '+(k>=1?mode.toFixed(3):'不存在（在0处无界）')+
+   '    中位数 ≈ '+med.toFixed(3)+
+   '\n方差 = kθ² = '+(k*s*s).toFixed(3)+'    标准差 = √k·θ = '+(Math.sqrt(k)*s).toFixed(3)+
+   '    偏度 = 2/√k = '+(2/Math.sqrt(k)).toFixed(3)+'    CV = 1/√k = '+(1/Math.sqrt(k)).toFixed(3)+
+   '\n'+verdict+
+   '\n\n提示：只改 θ，曲线形状完全不变，只是横轴被拉伸/压缩（换单位）。';
+}
+[sk,st_,s3m,snorm].forEach(e=>e.addEventListener('input',drawShape));
+reg(drawShape);
+
+/* ===== 6. Gamma == 卡方 ===== */
+const pCe=P(document.getElementById('c_chieq'));
+const cvS=document.getElementById('cv'),cvV=document.getElementById('cvV'),chieq_out=document.getElementById('chieq_out');
+function drawChiEq(){
+  const v=+cvS.value;cvV.textContent=v;
+  const xmax=Math.max(10,v+4.5*Math.sqrt(2*v)+4);
+  let pmax=0;for(let x=xmax/600;x<xmax;x+=xmax/600)pmax=Math.max(pmax,chi2pdf(x,v));
+  if(v<=2)pmax=Math.min(pmax,0.6);
+  const p=pCe.setup(0,xmax,0,pmax*1.35);
+  const stp=xmax<=15?2:5;const xt=[];for(let x=0;x<=xmax;x+=stp)xt.push(x);
+  p.axes(xt,null,'x');
+  p.curve(x=>gpdf(x,v/2,2),'#ff7eb6',6,.10);
+  p.curve(x=>chi2pdf(x,v),'#ffb04d',2,0,[7,5]);
+  p.vline(v,'#8fa4c7','均值 = v = '+v,[2,3]);
+  p.text('粗粉线 Gamma(k=v/2, θ=2)',p.ml+8,p.mt+14,'#ff7eb6','bold 12px system-ui');
+  p.text('橙虚线 χ²(v)  —— 完全重合',p.ml+8,p.mt+30,'#ffb04d','bold 12px system-ui');
+  chieq_out.textContent=
+   'χ²('+v+')  ⟺  Gamma(k='+(v/2)+', θ=2)\n'+
+   '均值：kθ = '+(v/2)+'×2 = '+v+'      χ² 均值 = v = '+v+'  ✔\n'+
+   '方差：kθ² = '+(v/2)+'×4 = '+(2*v)+'    χ² 方差 = 2v = '+(2*v)+'  ✔\n'+
+   '记法：自由度对半（k=v/2），尺度取二（θ=2）。'+
+   (v===2?'\n★ v=2 时它就是 Exp(θ=2)——卡方、Gamma、指数三者在此重合！':'');
+}
+cvS.addEventListener('input',drawChiEq);
+reg(drawChiEq);
+
+/* ===== 8. 场景 ===== */
+const answers=[
+ ['Gamma / Erlang','#ff7eb6','等第 k 次事件的累计时间：Gamma(k=5, θ=平均间隔)。均值 5θ，标准差 √5·θ。这是最“字面”的 Gamma 用法。'],
+ ['指数分布','#4ddba0','Gamma 的 k=1 特例。恒定故障率、无记忆性的典型模型。注意：真实灯泡有老化，纯指数只是近似（更一般可用 Weibull）。'],
+ ['Gamma(3, 200)','#ff7eb6','冗余系统总寿命 = 3 个指数寿命之和。均值 600h，CV=1/√3≈58%。备件越多，总寿命的相对波动越小 —— 冗余设计的统计意义。'],
+ ['Gamma 分布','#ff7eb6','降雨量是「只能为正、右偏、偶有极值」的连续量，Gamma 是经典选择（气象学常用）。此时 k 不必是整数，纯作形状参数拟合。'],
+ ['Gamma（复合泊松近似）','#ff7eb6','赔付次数~泊松、单笔金额~指数 → 总额近似 Gamma。精算里 Gamma 是建模正偏总额的主力（也常用对数正态比较）。'],
+ ['泊松分布','#7ee0ff','注意！问的是「次数」不是「时间」，所以是泊松而不是 Gamma。两者是同一过程的对偶问法：P(T_k ≤ t) = P(N(t) ≥ k)。'],
+ ['Gamma 作为共轭先验','#ff7eb6','贝叶斯里 Gamma 是泊松率 λ（以及指数 rate、正态精度）的共轭先验：先验 Gamma(α,β) + 数据 → 后验仍是 Gamma(α+Σx, β+n)。计算极其省事。'],
+ ['卡方分布 = Gamma(v/2, 2)','#ffb04d','(n−1)s²/σ² ~ χ²(n−1)。你现在知道它其实就是一个 Gamma —— 这解释了它为何非负且右偏。'],
+ ['Gamma / Weibull（生存分析）','#ff7eb6','生存时间为正且右偏，Gamma 可用；但若风险率随时间变化明显，Weibull 或 Cox 模型更常用。选择依据是「风险率是否恒定」。'],
+ ['Erlang（Gamma 整数 k）','#ff7eb6','多阶段服务 = k 个指数阶段串联 → Erlang-k。排队论（Erlang 就是电话交换机时代的产物）里的标准工具。']
+];
+document.querySelectorAll('#chips .chip').forEach(c=>{
+  c.onclick=()=>{document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');const a=answers[+c.dataset.k];
+    document.getElementById('chipout').innerHTML='<b style="color:'+a[1]+'">→ '+a[0]+'</b>\n'+a[2];};
+});
+
+/* ===== 11. 便利店计算器 ===== */
+const pC=P(document.getElementById('c_calc'));
+const ck=document.getElementById('ck'),cth=document.getElementById('cth'),ct=document.getElementById('ct'),
+      ckV=document.getElementById('ckV'),cthV=document.getElementById('cthV'),ctV=document.getElementById('ctV'),
+      calc_out=document.getElementById('calc_out');
+function drawCalc(){
+  const k=+ck.value,th=+cth.value,t=+ct.value;
+  ckV.textContent=k;cthV.textContent=th;ctV.textContent=t;
+  const lam=1/th,lt=lam*t;
+  // Erlang CDF via Poisson
+  let term=Math.exp(-lt),sum=term;
+  for(let j=1;j<=k-1;j++){term*=lt/j;sum+=term;}
+  const cdf=1-sum;
+  const xmax=Math.max(k*th+5*Math.sqrt(k)*th,t*1.25);
+  let pmax=0;for(let x=xmax/600;x<xmax;x+=xmax/600)pmax=Math.max(pmax,gpdf(x,k,th));
+  if(k===1)pmax=1/th;
+  const p=pC.setup(0,xmax,0,pmax*1.35);
+  const stp=Math.max(2,Math.round(xmax/9/2)*2);const xt=[];for(let v=0;v<=xmax;v+=stp)xt.push(v);
+  p.axes(xt,null,'等待时间（分钟）');
+  p.shade(x=>gpdf(x,k,th),0,t,'#4ddba0',.45);
+  p.curve(x=>gpdf(x,k,th),'#ff7eb6',2.8);
+  p.vline(t,'#4ddba0','t='+t+' 分钟');
+  p.vline(k*th,'#ffd166','均值 '+(k*th),[2,3]);
+  p.text('Gamma(k='+k+', θ='+th+')',p.ml+8,p.mt+14,'#ff7eb6','bold 13px system-ui');
+  p.text('绿色面积 = P(T ≤ t) = '+(cdf*100).toFixed(1)+'%',p.ml+8,p.mt+30,'#4ddba0','bold 12px system-ui');
+  const tab=cdfTable(x=>gpdf(x,k,th),0,xmax*3,8000);
+  calc_out.textContent=
+   '设定：平均每 '+th+' 分钟来 1 位（λ='+lam.toFixed(3)+'/分钟），等第 '+k+' 位\n'+
+   '均值 '+(k*th)+' 分钟｜标准差 '+(Math.sqrt(k)*th).toFixed(2)+'｜众数 '+((k-1)*th)+'｜中位数 '+quantile(tab,.5).toFixed(2)+
+   '｜90% 分位 '+quantile(tab,.9).toFixed(2)+'\n\n'+
+   'P(T ≤ '+t+') = '+(cdf*100).toFixed(2)+'%\n'+
+   '  ← 等价说法（泊松对偶）：P('+t+' 分钟内至少来 '+k+' 位) = 1 − P(N ≤ '+(k-1)+')，其中 N ~ 泊松(λt='+lt.toFixed(2)+')\n'+
+   '  = 1 − e^(−'+lt.toFixed(2)+')×(1'+(k>1?' + …共'+k+'项':'')+') = '+(cdf*100).toFixed(2)+'%';
+}
+[ck,cth,ct].forEach(e=>e.addEventListener('input',drawCalc));
+reg(drawCalc);
+
+/* ===== 自测 ===== */
+document.querySelectorAll('.q').forEach(q=>{
+  q.onclick=()=>document.getElementById(q.dataset.a).classList.toggle('show');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>停充一体化平台 · 智慧财务</title>
+
+<style>
+/* =========================================================
+   全局
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #020812;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  color: #fff;
+  transform-origin: center center;
+  background:
+    radial-gradient(circle at 51% 42%, rgba(0, 191, 255, .17), transparent 34%),
+    radial-gradient(circle at 89% 14%, rgba(123, 80, 255, .12), transparent 26%),
+    radial-gradient(circle at 8% 73%, rgba(0, 226, 191, .06), transparent 26%),
+    linear-gradient(135deg, #061224 0%, #081a31 50%, #050e1d 100%);
+}
+
+/* 科技网格 */
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .10;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 14%,
+    #000 90%,
+    transparent
+  );
+}
+
+/* 中央背景光环 */
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 500px;
+  top: 90px;
+  width: 650px;
+  height: 650px;
+  border: 1px solid rgba(77, 207, 255, .055);
+  border-radius: 50%;
+  box-shadow:
+    0 0 130px rgba(0, 183, 255, .05),
+    inset 0 0 130px rgba(0, 183, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   顶部标题
+========================================================= */
+
+.header {
+  position: absolute;
+  left: 52px;
+  right: 52px;
+  top: 22px;
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #23d5df);
+  box-shadow:
+    0 8px 30px rgba(0, 177, 255, .32),
+    inset 0 1px 0 rgba(255,255,255,.30);
+}
+
+.logo svg {
+  width: 34px;
+  height: 34px;
+}
+
+h1 {
+  margin: 0;
+  color: #f0fbff;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 7px;
+  color: #65a9d0;
+  font-size: 12px;
+  letter-spacing: 3px;
+}
+
+.header-message {
+  max-width: 520px;
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #d9f8ff;
+  font-size: 16px;
+}
+
+.header-message span {
+  color: #6594ad;
+  font-size: 12px;
+}
+
+.header-message b {
+  color: #4ce4e7;
+}
+
+/* =========================================================
+   通用组件
+========================================================= */
+
+.section-head {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-number {
+  color: #477690;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 25px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #28bdff, #45ebd3);
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #e1f8ff;
+  font-size: 18px;
+}
+
+.english {
+  margin-left: auto;
+  color: #67879a;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(66, 169, 237, .22);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 49, 83, .91),
+      rgba(6, 24, 46, .93)
+    );
+  box-shadow:
+    0 16px 42px rgba(0, 4, 16, .29),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(84, 221, 245, .68),
+    transparent
+  );
+}
+
+/* =========================================================
+   主体布局
+========================================================= */
+
+.main-area {
+  position: absolute;
+  left: 50px;
+  right: 50px;
+  top: 118px;
+  height: 580px;
+}
+
+.pain-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 330px;
+  height: 580px;
+}
+
+.engine-area {
+  position: absolute;
+  left: 355px;
+  top: 0;
+  width: 790px;
+  height: 580px;
+}
+
+.innovation-area {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 330px;
+  height: 580px;
+}
+
+/* =========================================================
+   左侧：客户问题
+========================================================= */
+
+.pain-panel {
+  height: 530px;
+  margin-top: 12px;
+  padding: 15px;
+}
+
+.pain-intro {
+  padding: 13px 14px;
+  border: 1px solid rgba(255, 105, 121, .19);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(145, 40, 58, .13),
+      rgba(76, 30, 49, .08)
+    );
+}
+
+.pain-intro strong {
+  display: block;
+  color: #fff0f2;
+  font-size: 14px;
+}
+
+.pain-intro span {
+  display: block;
+  margin-top: 7px;
+  color: #9f7783;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.pain-intro b {
+  color: #ff8995;
+}
+
+/* 问题图形 */
+
+.pain-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.pain-item {
+  position: relative;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 13px;
+  border: 1px solid rgba(255, 103, 120, .14);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(83, 31, 49, .27),
+      rgba(5, 28, 49, .73)
+    );
+}
+
+.pain-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  flex: 0 0 43px;
+  place-items: center;
+  border: 1px solid rgba(255, 115, 130, .18);
+  border-radius: 12px;
+  color: #ff8b97;
+  background: rgba(181, 46, 65, .12);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.pain-text strong {
+  display: block;
+  color: #e5f4f8;
+  font-size: 13px;
+}
+
+.pain-text span {
+  display: block;
+  margin-top: 6px;
+  color: #718fa0;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.pain-footer {
+  margin-top: 11px;
+  padding: 12px;
+  border-left: 3px solid #ff6878;
+  border-radius: 8px;
+  color: #91aab5;
+  background: rgba(151, 43, 61, .08);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.pain-footer b {
+  color: #ff8995;
+}
+
+/* =========================================================
+   中间：智慧财务引擎
+========================================================= */
+
+.engine-panel {
+  position: relative;
+  height: 530px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-color: rgba(61, 210, 235, .31);
+  background:
+    radial-gradient(circle at 50% 49%, rgba(17, 201, 214, .13), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(12, 59, 91, .95),
+      rgba(5, 25, 48, .96)
+    );
+}
+
+/* 内部网格 */
+.engine-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .08;
+  background-image:
+    linear-gradient(rgba(75, 180, 220, .4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 180, 220, .4) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* 顶部业务来源 */
+
+.business-strip {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  right: 18px;
+  top: 15px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 7px;
+}
+
+.business-source {
+  min-height: 62px;
+  padding: 9px 5px;
+  border: 1px solid rgba(68, 183, 225, .16);
+  border-radius: 10px;
+  color: #729caf;
+  background: rgba(5, 27, 48, .76);
+  font-size: 9px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.business-source i {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  margin: 0 auto 6px;
+  place-items: center;
+  border-radius: 7px;
+  color: #59ddec;
+  background: rgba(20, 135, 174, .14);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.business-source strong {
+  color: #d5f0f5;
+  font-size: 11px;
+}
+
+/* 汇聚线 */
+
+.converge-line {
+  position: absolute;
+  z-index: 3;
+  left: 92px;
+  right: 92px;
+  top: 89px;
+  height: 54px;
+  border-top: 1px solid rgba(65, 211, 228, .34);
+}
+
+.converge-line::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 53px;
+  background: linear-gradient(#43dae9, rgba(67, 218, 233, .1));
+}
+
+.converge-dot {
+  position: absolute;
+  z-index: 5;
+  left: calc(50% - 5px);
+  top: 133px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #48e3da;
+  box-shadow: 0 0 14px #48e3da;
+}
+
+/* 中央智慧财务核心 */
+
+.finance-core {
+  position: absolute;
+  z-index: 6;
+  left: 289px;
+  top: 149px;
+  width: 212px;
+  height: 212px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(69, 237, 222, .47);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(30, 207, 208, .23), rgba(8, 55, 77, .90) 62%);
+  box-shadow:
+    0 0 48px rgba(26, 218, 222, .20),
+    inset 0 0 38px rgba(33, 217, 221, .10);
+}
+
+.finance-core::before {
+  content: "";
+  position: absolute;
+  inset: -21px;
+  border: 1px dashed rgba(70, 216, 232, .27);
+  border-radius: 50%;
+  animation: rotate 25s linear infinite;
+}
+
+.finance-core::after {
+  content: "";
+  position: absolute;
+  inset: -43px;
+  border: 1px solid rgba(87, 179, 231, .12);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.core-content {
+  text-align: center;
+}
+
+.core-icon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  margin: 0 auto 12px;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #31dfd6);
+  box-shadow: 0 0 22px rgba(36, 217, 222, .31);
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.core-content strong {
+  display: block;
+  color: #f0ffff;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.core-content span {
+  display: block;
+  margin-top: 8px;
+  color: #75bdc8;
+  font-size: 11px;
+}
+
+.core-status {
+  margin-top: 12px;
+  color: #56e1c5;
+  font-size: 10px;
+}
+
+/* 环形能力节点 */
+
+.capability {
+  position: absolute;
+  z-index: 8;
+  width: 126px;
+  min-height: 66px;
+  padding: 11px 8px;
+  border: 1px solid rgba(66, 194, 225, .22);
+  border-radius: 11px;
+  background: rgba(5, 28, 50, .91);
+  box-shadow: 0 8px 22px rgba(0, 6, 18, .25);
+  text-align: center;
+}
+
+.capability strong {
+  display: block;
+  color: #dcf6fa;
+  font-size: 12px;
+}
+
+.capability span {
+  display: block;
+  margin-top: 5px;
+  color: #648d9f;
+  font-size: 9px;
+}
+
+.capability.c1 {
+  left: 85px;
+  top: 153px;
+}
+
+.capability.c2 {
+  right: 85px;
+  top: 153px;
+}
+
+.capability.c3 {
+  left: 64px;
+  top: 266px;
+}
+
+.capability.c4 {
+  right: 64px;
+  top: 266px;
+}
+
+.capability.c5 {
+  left: 165px;
+  top: 367px;
+}
+
+.capability.c6 {
+  right: 165px;
+  top: 367px;
+}
+
+.capability.blue {
+  border-color: rgba(57, 190, 242, .27);
+}
+
+.capability.green {
+  border-color: rgba(67, 225, 192, .28);
+}
+
+.capability.orange {
+  border-color: rgba(239, 169, 82, .27);
+}
+
+.capability.purple {
+  border-color: rgba(158, 130, 255, .27);
+}
+
+/* 能力连接线 */
+
+.radial-line {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 255px;
+  width: 190px;
+  height: 1px;
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    rgba(68, 223, 231, .48),
+    rgba(68, 223, 231, .04)
+  );
+}
+
+.line-1 { transform: rotate(202deg); }
+.line-2 { transform: rotate(-22deg); }
+.line-3 { transform: rotate(170deg); }
+.line-4 { transform: rotate(10deg); }
+.line-5 { transform: rotate(135deg); }
+.line-6 { transform: rotate(45deg); }
+
+/* 底部闭环状态 */
+
+.flow-strip {
+  position: absolute;
+  z-index: 8;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  height: 66px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid rgba(64, 188, 221, .16);
+  border-radius: 11px;
+  background: rgba(3, 22, 41, .83);
+}
+
+.flow-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 7px;
+  color: #78a3b4;
+  background: rgba(12, 48, 70, .58);
+  font-size: 9px;
+  text-align: center;
+}
+
+.flow-item:not(:last-child)::after {
+  content: "›";
+  position: absolute;
+  z-index: 4;
+  right: -6px;
+  color: #48d9e7;
+  font-size: 14px;
+}
+
+.flow-item.active {
+  color: #dffafa;
+  border: 1px solid rgba(67, 222, 196, .17);
+  background: rgba(23, 127, 108, .12);
+}
+
+/* =========================================================
+   右侧：创新亮点
+========================================================= */
+
+.innovation-panel {
+  height: 530px;
+  margin-top: 12px;
+  padding: 15px;
+}
+
+.innovation-intro {
+  padding: 13px 14px;
+  border: 1px solid rgba(158, 128, 255, .20);
+  border-radius: 11px;
+  color: #9a92b9;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(92, 63, 164, .12),
+      rgba(38, 45, 85, .08)
+    );
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.innovation-intro b {
+  color: #cabdff;
+}
+
+.innovation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.innovation-item {
+  position: relative;
+  min-height: 87px;
+  padding: 13px 11px 11px 67px;
+  border: 1px solid rgba(66, 183, 224, .16);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 51, 78, .68),
+      rgba(5, 27, 48, .77)
+    );
+}
+
+.innovation-no {
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #69e0ec;
+  background: rgba(22, 130, 168, .15);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.innovation-item:nth-child(2) .innovation-no {
+  color: #64e3c6;
+  background: rgba(29, 156, 130, .13);
+}
+
+.innovation-item:nth-child(3) .innovation-no {
+  color: #c4b5ff;
+  background: rgba(105, 75, 180, .15);
+}
+
+.innovation-item:nth-child(4) .innovation-no {
+  color: #efb16c;
+  background: rgba(176, 108, 37, .13);
+}
+
+.innovation-item strong {
+  display: block;
+  color: #ddf5fa;
+  font-size: 13px;
+}
+
+.innovation-item span {
+  display: block;
+  margin-top: 7px;
+  color: #698fa1;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.innovation-item b {
+  color: #55ddc5;
+}
+
+/* =========================================================
+   区域连接箭头
+========================================================= */
+
+.arrow-left,
+.arrow-right {
+  position: absolute;
+  z-index: 20;
+  top: 322px;
+  width: 35px;
+  height: 40px;
+}
+
+.arrow-left {
+  left: 329px;
+}
+
+.arrow-right {
+  left: 1144px;
+}
+
+.arrow-left::before,
+.arrow-right::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 24px;
+  height: 3px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #227b9e, #4ce2ec);
+  box-shadow: 0 0 12px rgba(45, 218, 235, .28);
+}
+
+.arrow-left::after,
+.arrow-right::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 12px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 11px solid #4ce2ec;
+}
+
+/* =========================================================
+   底部价值指标
+========================================================= */
+
+.value-zone {
+  position: absolute;
+  left: 50px;
+  right: 50px;
+  bottom: 47px;
+  height: 135px;
+}
+
+.value-head {
+  height: 25px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #a1c4d1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.value-head::before {
+  content: "";
+  width: 25px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2dbfff, #43e7ce);
+}
+
+.value-head span {
+  margin-left: auto;
+  color: #577f94;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 7px;
+}
+
+.value-card {
+  position: relative;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(54, 192, 222, .18);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 56, 82, .76),
+      rgba(6, 26, 47, .84)
+    );
+  box-shadow: 0 10px 28px rgba(0, 5, 17, .18);
+}
+
+.value-icon {
+  width: 49px;
+  height: 49px;
+  display: grid;
+  flex: 0 0 49px;
+  place-items: center;
+  border-radius: 14px;
+  color: #64e0ec;
+  background: rgba(24, 140, 175, .15);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.value-card:nth-child(2) .value-icon {
+  color: #54e1bf;
+  background: rgba(25, 151, 123, .13);
+}
+
+.value-card:nth-child(3) .value-icon {
+  color: #c3b4ff;
+  background: rgba(106, 78, 181, .14);
+}
+
+.value-card:nth-child(4) .value-icon {
+  color: #efb16b;
+  background: rgba(171, 102, 32, .13);
+}
+
+.value-card:nth-child(5) .value-icon {
+  color: #ff8491;
+  background: rgba(178, 48, 67, .13);
+}
+
+.value-text strong {
+  display: block;
+  color: #dcf4f8;
+  font-size: 14px;
+}
+
+.value-text span {
+  display: block;
+  margin-top: 7px;
+  color: #6e95a6;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.value-text b {
+  color: #58ddc5;
+}
+
+/* =========================================================
+   页脚
+========================================================= */
+
+.footer {
+  position: absolute;
+  left: 52px;
+  right: 52px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #50758c;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 9px #3ee3c3;
+}
+
+.footer-right {
+  color: #466d84;
+}
+
+/* =========================================================
+   打印
+========================================================= */
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+
+  @page {
+    size: 1600px 900px;
+    margin: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- ===================================================
+         标题
+    ==================================================== -->
+    <header class="header">
+      <div class="title-wrap">
+
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 4h14v16H5V4z"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M8 8h8M8 12h5M8 16h8"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M15 11l2 2 3-4"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>智慧财务：从分散收费到业财资金闭环</h1>
+          <div class="subtitle">
+            SMART FINANCE FOR PARKING & CHARGING
+          </div>
+        </div>
+
+      </div>
+
+      <div class="header-message">
+        <strong>一套平台统一停车、充电、租赁、物业和多种经营财务</strong>
+        <span>
+          让每一笔钱 <b>来源清楚、到账可信、分账准确、付款可控</b>
+        </span>
+      </div>
+    </header>
+
+    <!-- ===================================================
+         主体
+    ==================================================== -->
+    <main class="main-area">
+
+      <!-- 左侧：客户问题 -->
+      <section class="pain-area">
+
+        <div class="section-head">
+          <span class="section-number">01</span>
+          <i class="section-line"></i>
+          <h2>客户现在的难题</h2>
+          <span class="english">PAIN POINTS</span>
+        </div>
+
+        <div class="card pain-panel">
+
+          <div class="pain-intro">
+            <strong>业务已经数字化，财务仍靠人工</strong>
+            <span>
+              多系统下载数据，再通过
+              <b>Excel对账、人工分账、手工制表</b>
+            </span>
+          </div>
+
+          <div class="pain-list">
+
+            <div class="pain-item">
+              <div class="pain-icon">散</div>
+              <div class="pain-text">
+                <strong>数据散、口径乱</strong>
+                <span>多项目、多业态、多账户无法统一汇总</span>
+              </div>
+            </div>
+
+            <div class="pain-item">
+              <div class="pain-icon">核</div>
+              <div class="pain-text">
+                <strong>对账慢、差异多</strong>
+                <span>订单、支付、银行和现金依靠逐笔核对</span>
+              </div>
+            </div>
+
+            <div class="pain-item">
+              <div class="pain-icon">分</div>
+              <div class="pain-text">
+                <strong>分账难、争议多</strong>
+                <span>比例、保底、阶梯和电费拆分计算复杂</span>
+              </div>
+            </div>
+
+            <div class="pain-item">
+              <div class="pain-icon">控</div>
+              <div class="pain-text">
+                <strong>资金操作难管控</strong>
+                <span>退款、减免、调账和付款缺少审批留痕</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="pain-footer">
+            最终无法快速回答：
+            <b>钱是否到账、收入属于谁、应该分给谁、为什么这样分。</b>
+          </div>
+
+        </div>
+      </section>
+
+      <div class="arrow-left"></div>
+
+      <!-- 中央：智慧财务引擎 -->
+      <section class="engine-area">
+
+        <div class="section-head">
+          <span class="section-number">02</span>
+          <i class="section-line"></i>
+          <h2>智慧财务资金引擎</h2>
+          <span class="english">SMART FINANCIAL ENGINE</span>
+        </div>
+
+        <div class="card engine-panel">
+
+          <!-- 业务来源 -->
+          <div class="business-strip">
+
+            <div class="business-source">
+              <i>停</i>
+              <strong>停车</strong><br>
+              临停 / 月租
+            </div>
+
+            <div class="business-source">
+              <i>充</i>
+              <strong>充电</strong><br>
+              电费 / 服务费
+            </div>
+
+            <div class="business-source">
+              <i>位</i>
+              <strong>车位</strong><br>
+              租赁 / 托管
+            </div>
+
+            <div class="business-source">
+              <i>物</i>
+              <strong>物业</strong><br>
+              管理费 / 欠费
+            </div>
+
+            <div class="business-source">
+              <i>商</i>
+              <strong>商户</strong><br>
+              广告 / 洗车
+            </div>
+
+            <div class="business-source">
+              <i>资</i>
+              <strong>资金</strong><br>
+              微信 / 银行
+            </div>
+
+          </div>
+
+          <!-- 汇聚图形 -->
+          <div class="converge-line"></div>
+          <div class="converge-dot"></div>
+
+          <!-- 放射连接线 -->
+          <div class="radial-line line-1"></div>
+          <div class="radial-line line-2"></div>
+          <div class="radial-line line-3"></div>
+          <div class="radial-line line-4"></div>
+          <div class="radial-line line-5"></div>
+          <div class="radial-line line-6"></div>
+
+          <!-- 中央核心 -->
+          <div class="finance-core">
+            <div class="core-content">
+              <div class="core-icon">¥</div>
+              <strong>智慧财务</strong>
+              <span>统一资金与核算中枢</span>
+              <div class="core-status">● 业财五流实时协同</div>
+            </div>
+          </div>
+
+          <!-- 核心能力 -->
+          <div class="capability blue c1">
+            <strong>自动对账</strong>
+            <span>订单 × 渠道 × 银行</span>
+          </div>
+
+          <div class="capability green c2">
+            <strong>收入确认</strong>
+            <span>收入 / 预收 / 押金</span>
+          </div>
+
+          <div class="capability orange c3">
+            <strong>应收催缴</strong>
+            <span>账龄、提醒与核销</span>
+          </div>
+
+          <div class="capability purple c4">
+            <strong>合同清分</strong>
+            <span>比例、保底与阶梯</span>
+          </div>
+
+          <div class="capability green c5">
+            <strong>结算付款</strong>
+            <span>审批、发票与银企</span>
+          </div>
+
+          <div class="capability blue c6">
+            <strong>凭证报表</strong>
+            <span>ERP、月结与审计</span>
+          </div>
+
+          <!-- 财务闭环 -->
+          <div class="flow-strip">
+            <div class="flow-item active">业务订单</div>
+            <div class="flow-item active">支付到账</div>
+            <div class="flow-item active">自动对账</div>
+            <div class="flow-item">收入确认</div>
+            <div class="flow-item">清分计算</div>
+            <div class="flow-item">结算审批</div>
+            <div class="flow-item">付款开票</div>
+            <div class="flow-item active">凭证报表</div>
+          </div>
+
+        </div>
+      </section>
+
+      <div class="arrow-right"></div>
+
+      <!-- 右侧：创新亮点 -->
+      <section class="innovation-area">
+
+        <div class="section-head">
+          <span class="section-number">03</span>
+          <i class="section-line"></i>
+          <h2>方案创新亮点</h2>
+          <span class="english">INNOVATION</span>
+        </div>
+
+        <div class="card innovation-panel">
+
+          <div class="innovation-intro">
+            不只是增加财务功能，而是用
+            <b>统一对象、统一规则、统一状态</b>
+            重构经营资金管理。
+          </div>
+
+          <div class="innovation-list">
+
+            <div class="innovation-item">
+              <div class="innovation-no">01</div>
+              <strong>五流合一，全程追溯</strong>
+              <span>
+                订单、资金、合同、发票和凭证自动关联，
+                <b>一笔钱可追到底。</b>
+              </span>
+            </div>
+
+            <div class="innovation-item">
+              <div class="innovation-no">02</div>
+              <strong>合同直接驱动分账</strong>
+              <span>
+                比例、保底、阶梯和电费拆分自动计算，
+                <b>退款同步冲减。</b>
+              </span>
+            </div>
+
+            <div class="innovation-item">
+              <div class="innovation-no">03</div>
+              <strong>一个平台适配不同客户</strong>
+              <span>
+                小物业使用简易模式；集团国企使用
+                <b>多法人、预算与强审批。</b>
+              </span>
+            </div>
+
+            <div class="innovation-item">
+              <div class="innovation-no">04</div>
+              <strong>异常自动形成处理闭环</strong>
+              <span>
+                差异自动归类并触发补缴、退款、调账、
+                <b>复核及审计任务。</b>
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===================================================
+         底部客户价值
+    ==================================================== -->
+    <section class="value-zone">
+
+      <div class="value-head">
+        客户最终获得什么？
+        <span>从人工核算工具升级为自动化经营资金管理平台</span>
+      </div>
+
+      <div class="value-grid">
+
+        <div class="value-card">
+          <div class="value-icon">准</div>
+          <div class="value-text">
+            <strong>收入更准确</strong>
+            <span>统一所有业态收入口径，<b>减少漏收错收</b></span>
+          </div>
+        </div>
+
+        <div class="value-card">
+          <div class="value-icon">快</div>
+          <div class="value-text">
+            <strong>对账更高效</strong>
+            <span>自动匹配目标 ≥98%，<b>只处理异常</b></span>
+          </div>
+        </div>
+
+        <div class="value-card">
+          <div class="value-icon">明</div>
+          <div class="value-text">
+            <strong>结算更透明</strong>
+            <span>收益追溯至订单，<b>减少合作争议</b></span>
+          </div>
+        </div>
+
+        <div class="value-card">
+          <div class="value-icon">控</div>
+          <div class="value-text">
+            <strong>资金更安全</strong>
+            <span>审批、岗位分离和日志，<b>满足国企内控</b></span>
+          </div>
+        </div>
+
+        <div class="value-card">
+          <div class="value-icon">智</div>
+          <div class="value-text">
+            <strong>决策更可信</strong>
+            <span>实时掌握收入、欠费、成本、<b>分成与利润</b></span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        ONE ORDER · ONE FUND TRACE · ONE SETTLEMENT RESULT · FULL AUDIT
+      </div>
+
+      <div class="footer-right">
+        智慧财务：让每一笔钱清楚、可信、可控
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+
+resizeStage();
+</script>
+
+</body>
+</html>

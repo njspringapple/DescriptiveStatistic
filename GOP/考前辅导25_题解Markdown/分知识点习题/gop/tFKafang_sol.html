@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>从高斯到卡方、t、F 分布｜可视化学习</title>
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --paper: rgba(255, 255, 255, 0.92);
+      --text: #182033;
+      --muted: #667085;
+      --line: #e6eaf2;
+
+      --normal: #7c6df2;
+      --chi: #f3a712;
+      --t: #3b82f6;
+      --f: #ef5da8;
+
+      --green: #24a148;
+      --red: #e5484d;
+
+      --shadow: 0 14px 40px rgba(32, 45, 80, 0.09);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 5%, rgba(124, 109, 242, 0.12), transparent 26%),
+        radial-gradient(circle at 92% 16%, rgba(239, 93, 168, 0.11), transparent 24%),
+        var(--bg);
+      font-family:
+        Inter, "PingFang SC", "Microsoft YaHei",
+        system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+
+    .page-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 4px;
+      z-index: 1000;
+      background: linear-gradient(90deg, var(--normal), var(--t), var(--f));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245, 247, 251, 0.83);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(230, 234, 242, 0.8);
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      min-height: 68px;
+      margin: auto;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--normal), var(--f));
+      box-shadow: 0 8px 22px rgba(124, 109, 242, 0.25);
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    nav a {
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: var(--normal);
+      background: white;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 36px));
+      margin: auto;
+    }
+
+    .hero {
+      padding: 92px 0 54px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      border: 1px solid rgba(124, 109, 242, 0.18);
+      border-radius: 999px;
+      color: var(--normal);
+      background: rgba(255, 255, 255, 0.72);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 24px auto 18px;
+      font-size: clamp(38px, 7vw, 72px);
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+    }
+
+    .gradient-text {
+      color: transparent;
+      background: linear-gradient(90deg, var(--chi), var(--t), var(--f));
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    .hero-desc {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: var(--text);
+      box-shadow: 0 10px 24px rgba(24, 32, 51, 0.18);
+    }
+
+    .btn-soft {
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .hero-map {
+      max-width: 980px;
+      margin: 54px auto 0;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 30px;
+      background: rgba(255,255,255,0.62);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .map-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .map-node {
+      min-height: 118px;
+      padding: 18px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 20px;
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .map-node strong {
+      font-size: 25px;
+    }
+
+    .map-node small {
+      color: var(--muted);
+    }
+
+    .map-node.normal {
+      border-top: 4px solid var(--normal);
+    }
+
+    .map-node.chi {
+      border-top: 4px solid var(--chi);
+    }
+
+    .map-node.t {
+      border-top: 4px solid var(--t);
+    }
+
+    .map-node.f {
+      border-top: 4px solid var(--f);
+    }
+
+    .arrow {
+      color: #a1a8b8;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    section {
+      padding: 78px 0;
+      scroll-margin-top: 76px;
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 34px;
+    }
+
+    .section-index {
+      color: var(--normal);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 8px 0 12px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.2;
+      letter-spacing: -0.035em;
+    }
+
+    h3 {
+      margin-top: 0;
+      line-height: 1.35;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .card {
+      padding: 26px;
+      border: 1px solid rgba(230, 234, 242, 0.9);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .formula {
+      margin: 18px 0;
+      padding: 18px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #f8f9fc;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(18px, 3vw, 25px);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .formula small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 13px;
+      white-space: normal;
+    }
+
+    .known-box {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .known-box::after {
+      content: "Z";
+      position: absolute;
+      right: 24px;
+      bottom: -38px;
+      color: rgba(124, 109, 242, 0.08);
+      font-family: Georgia, serif;
+      font-size: 180px;
+      font-weight: 900;
+    }
+
+    .simple-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .simple-list li {
+      margin: 8px 0;
+    }
+
+    .insight {
+      padding: 16px 18px;
+      border-left: 4px solid var(--normal);
+      border-radius: 0 14px 14px 0;
+      background: rgba(124, 109, 242, 0.08);
+    }
+
+    .distribution-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .distribution-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: var(--accent);
+    }
+
+    .dist-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .dist-symbol {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 17px;
+      color: white;
+      background: var(--accent);
+      font-family: Georgia, serif;
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 3px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: #f2f4f8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .memory-line {
+      margin-top: 18px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--accent) 10%, white);
+      font-weight: 900;
+    }
+
+    .factory {
+      margin-top: 28px;
+    }
+
+    .factory-screen {
+      min-height: 175px;
+      padding: 20px;
+      border-radius: 18px;
+      background: #111827;
+      color: #e5e7eb;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+
+    .factory-line {
+      margin: 7px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .factory-result {
+      color: #78e6b0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .machine-controls {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .machine-btn {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 14px;
+      background: white;
+      font-weight: 800;
+    }
+
+    .machine-btn:hover {
+      border-color: var(--normal);
+      color: var(--normal);
+    }
+
+    .machine-btn[data-machine="chi"] {
+      color: #a66d00;
+    }
+
+    .machine-btn[data-machine="t"] {
+      color: var(--t);
+    }
+
+    .machine-btn[data-machine="f"] {
+      color: var(--f);
+    }
+
+    .chart-card {
+      padding-bottom: 18px;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .chart-header p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 260px;
+      margin-top: 12px;
+      border-radius: 15px;
+      background:
+        linear-gradient(rgba(232,235,242,.55) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,235,242,.55) 1px, transparent 1px),
+        #fbfcff;
+      background-size: 32px 32px;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .slider-row label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent, var(--normal));
+    }
+
+    .value-pill {
+      min-width: 50px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: white;
+      background: var(--accent, var(--normal));
+      text-align: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .relation-stage {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: stretch;
+      gap: 14px;
+    }
+
+    .relation-node {
+      padding: 24px 18px;
+      border: 2px solid var(--accent);
+      border-radius: 22px;
+      background: white;
+      text-align: center;
+    }
+
+    .relation-node .big {
+      color: var(--accent);
+      font-family: Georgia, serif;
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .relation-node p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .relation-arrow {
+      align-self: center;
+      color: #98a2b3;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .special-relation {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 22px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #d946a4);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .special-relation strong {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: clamp(24px, 4vw, 38px);
+    }
+
+    .comparison-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 870px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8f9fc;
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .text-chi {
+      color: #b87800;
+    }
+
+    .text-t {
+      color: var(--t);
+    }
+
+    .text-f {
+      color: var(--f);
+    }
+
+    .decision {
+      display: grid;
+      gap: 14px;
+    }
+
+    .decision-question {
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 24px rgba(32, 45, 80, 0.06);
+    }
+
+    .decision-question strong {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .decision-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .choice {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 9px 13px;
+      background: #f8f9fc;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .choice:hover {
+      border-color: var(--normal);
+      color: var(--normal);
+    }
+
+    .decision-result {
+      min-height: 80px;
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 16px;
+      background: #111827;
+      color: white;
+    }
+
+    .result-chip {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .story {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.97), rgba(255,248,240,.96));
+    }
+
+    .story::after {
+      content: "🧋";
+      position: absolute;
+      right: 28px;
+      top: 12px;
+      opacity: 0.12;
+      font-size: 130px;
+    }
+
+    .story-step {
+      position: relative;
+      margin-left: 17px;
+      padding: 0 0 28px 34px;
+      border-left: 2px dashed #d7dce7;
+    }
+
+    .story-step:last-child {
+      padding-bottom: 0;
+      border-left-color: transparent;
+    }
+
+    .step-dot {
+      position: absolute;
+      left: -15px;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: var(--accent);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .story-step h3 {
+      margin-bottom: 6px;
+    }
+
+    .calc {
+      display: inline-block;
+      max-width: 100%;
+      margin: 8px 0;
+      padding: 9px 13px;
+      overflow-x: auto;
+      border-radius: 10px;
+      background: #f3f4f7;
+      font-family: Georgia, serif;
+      white-space: nowrap;
+    }
+
+    .warning {
+      padding: 19px;
+      border: 1px solid #ffd6d8;
+      border-radius: 17px;
+      background: #fff6f6;
+    }
+
+    .warning h3 {
+      color: var(--red);
+    }
+
+    .warning ul {
+      margin-bottom: 0;
+      padding-left: 20px;
+    }
+
+    .memory-card {
+      min-height: 235px;
+      transition: transform 0.22s ease;
+    }
+
+    .memory-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .memory-icon {
+      font-size: 43px;
+    }
+
+    .memory-word {
+      margin: 10px 0;
+      color: var(--accent);
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .quiz-question {
+      margin-bottom: 18px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .quiz-question h3 {
+      font-size: 17px;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 9px;
+    }
+
+    .quiz-option {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 14px;
+      background: #f8f9fc;
+      text-align: left;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--normal);
+    }
+
+    .quiz-option.correct {
+      border-color: #52c782;
+      color: #087a37;
+      background: #effcf4;
+    }
+
+    .quiz-option.wrong {
+      border-color: #f19a9d;
+      color: #b42328;
+      background: #fff2f2;
+    }
+
+    .quiz-explain {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f3f5f9;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .quiz-score {
+      padding: 22px;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(135deg, var(--normal), var(--t));
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .final-summary {
+      margin-bottom: 84px;
+      padding: 38px;
+      border-radius: 30px;
+      color: white;
+      background: #111827;
+      box-shadow: 0 22px 50px rgba(17, 24, 39, 0.2);
+    }
+
+    .final-summary h2 {
+      margin-top: 0;
+    }
+
+    .summary-sentence {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 24px;
+    }
+
+    .summary-item {
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 17px;
+      background: rgba(255,255,255,.07);
+    }
+
+    .summary-item strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 20px;
+    }
+
+    footer {
+      padding: 0 0 42px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        display: none;
+      }
+
+      .grid-2,
+      .grid-3,
+      .summary-sentence {
+        grid-template-columns: 1fr;
+      }
+
+      .map-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .relation-stage {
+        grid-template-columns: 1fr;
+      }
+
+      .relation-arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .hero {
+        padding-top: 62px;
+      }
+
+      section {
+        padding: 58px 0;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .topbar-inner {
+        padding-inline: 14px;
+      }
+
+      .topbar .btn {
+        display: none;
+      }
+
+      canvas {
+        height: 230px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-progress" id="pageProgress"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top">
+        <span class="brand-icon">∿</span>
+        <span>分布三兄弟</span>
+      </a>
+
+      <nav aria-label="页面导航">
+        <a href="#origin">从正态出发</a>
+        <a href="#visual">看懂形状</a>
+        <a href="#relation">三者关系</a>
+        <a href="#use">怎么选择</a>
+        <a href="#example">奶茶案例</a>
+        <a href="#quiz">小测验</a>
+      </nav>
+
+      <a class="btn btn-primary" href="#origin">开始学习</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">已知高斯分布和标准化，就已经走完一半</div>
+
+        <h1>
+          从一个 <span style="color: var(--normal)">Z</span> 出发，<br />
+          看懂 <span class="gradient-text">卡方、t、F 分布</span>
+        </h1>
+
+        <p class="hero-desc">
+          不做复杂证明，只回答几个真正重要的问题：
+          它们从哪里来、形状为什么不同、什么时候使用，以及怎样记住后不容易忘。
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#origin">从标准正态开始</a>
+          <a class="btn btn-soft" href="#example">先看奶茶店案例</a>
+        </div>
+
+        <div class="hero-map">
+          <div class="map-flow">
+            <div class="map-node normal">
+              <strong>Z</strong>
+              <small>一个标准正态变量</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="map-node chi">
+              <strong>平方后相加</strong>
+              <small>得到卡方 χ²</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="map-node t">
+              <strong>给 Z 除以波动估计</strong>
+              <small>得到 t</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="map-node f">
+              <strong>两份波动相除</strong>
+              <small>得到 F</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Origin -->
+    <section id="origin">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">01 · 起点</div>
+          <h2>先回到你已经熟悉的标准化</h2>
+          <p class="lead">
+            三个分布并不是凭空出现的。它们都能看成标准正态变量 Z
+            经过“平方、相除”等加工之后的结果。
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <article class="card known-box">
+            <h3>你已经知道的事情</h3>
+
+            <div class="formula">
+              Z = (X − μ) / σ
+              <small>原始值减去均值，再除以标准差</small>
+            </div>
+
+            <ul class="simple-list">
+              <li><strong>Z = 0：</strong>刚好位于均值。</li>
+              <li><strong>Z = 2：</strong>高于均值两个标准差。</li>
+              <li><strong>Z = −2：</strong>低于均值两个标准差。</li>
+              <li>Z 保留了偏离的<strong>方向</strong>和<strong>大小</strong>。</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>接下来只做三种加工</h3>
+
+            <p><strong style="color: var(--chi)">加工一：平方并累加</strong></p>
+            <p>Z → Z² → Z₁² + Z₂² + … → 卡方分布</p>
+
+            <p><strong style="color: var(--t)">加工二：除以估计出来的波动</strong></p>
+            <p>Z ÷ “不太确定的标准差” → t 分布</p>
+
+            <p><strong style="color: var(--f)">加工三：比较两份波动</strong></p>
+            <p>“波动一” ÷ “波动二” → F 分布</p>
+
+            <div class="insight">
+              <strong>学习主线：</strong>
+              卡方负责描述“波动有多大”，t 用波动帮助判断均值，
+              F 则直接比较两份波动。
+            </div>
+          </article>
+        </div>
+
+        <div class="grid-3" style="margin-top: 22px">
+          <!-- Chi-square -->
+          <article class="card distribution-card" style="--accent: var(--chi)">
+            <div class="dist-title">
+              <div>
+                <h3>卡方分布 χ²</h3>
+                <span class="tag">平方</span>
+                <span class="tag">累加</span>
+                <span class="tag">非负</span>
+              </div>
+              <div class="dist-symbol">χ²</div>
+            </div>
+
+            <div class="formula">
+              χ² = Z₁² + Z₂² + … + Zₖ²
+            </div>
+
+            <p>
+              把若干个相互独立的标准正态变量平方，再全部加起来，
+              结果就服从自由度为 k 的卡方分布。
+            </p>
+
+            <p>
+              因为平方不可能为负，所以卡方分布只能出现在
+              <strong>0 的右侧</strong>。
+            </p>
+
+            <div class="memory-line">
+              记忆：卡方 = 把偏差“平方装进筐里”
+            </div>
+          </article>
+
+          <!-- t -->
+          <article class="card distribution-card" style="--accent: var(--t)">
+            <div class="dist-title">
+              <div>
+                <h3>t 分布</h3>
+                <span class="tag">均值</span>
+                <span class="tag">小样本</span>
+                <span class="tag">σ 未知</span>
+              </div>
+              <div class="dist-symbol">t</div>
+            </div>
+
+            <div class="formula">
+              t = Z / √(χ² / ν)
+            </div>
+
+            <p>
+              如果总体标准差 σ 不知道，只能用样本估计它，
+              分母就会带来额外不确定性。
+            </p>
+
+            <p>
+              因此 t 分布看起来像标准正态分布，
+              但两边的尾巴更厚，更愿意给极端情况留出空间。
+            </p>
+
+            <div class="memory-line">
+              记忆：t = 戴着“估计误差”帽子的 Z
+            </div>
+          </article>
+
+          <!-- F -->
+          <article class="card distribution-card" style="--accent: var(--f)">
+            <div class="dist-title">
+              <div>
+                <h3>F 分布</h3>
+                <span class="tag">比值</span>
+                <span class="tag">方差</span>
+                <span class="tag">非负</span>
+              </div>
+              <div class="dist-symbol">F</div>
+            </div>
+
+            <div class="formula">
+              F = (χ₁² / d₁) / (χ₂² / d₂)
+            </div>
+
+            <p>
+              先把两份卡方分别除以自己的自由度，
+              再用第一份除以第二份，就得到 F 分布。
+            </p>
+
+            <p>
+              它本质上是<strong>两份波动的比值</strong>，
+              所以经常出现在方差比较和方差分析中。
+            </p>
+
+            <div class="memory-line">
+              记忆：F = 两筐“平方波动”放上天平
+            </div>
+          </article>
+        </div>
+
+        <!-- Distribution factory -->
+        <article class="card factory">
+          <h3>交互实验：分布制造机</h3>
+          <p class="lead">
+            点击按钮，让电脑随机生成标准正态变量，亲眼看见三个分布怎样被“加工”出来。
+          </p>
+
+          <div class="factory-screen" id="factoryScreen">
+            <div class="factory-line">准备就绪。</div>
+            <div class="factory-line">请选择一种分布，启动一次随机制造。</div>
+          </div>
+
+          <div class="machine-controls">
+            <button class="machine-btn" data-machine="chi">
+              制造一次 χ²
+            </button>
+            <button class="machine-btn" data-machine="t">
+              制造一次 t
+            </button>
+            <button class="machine-btn" data-machine="f">
+              制造一次 F
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 2. Visualization -->
+    <section id="visual">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">02 · 形状</div>
+          <h2>拖动自由度，观察分布怎样“长大”</h2>
+          <p class="lead">
+            自由度可以先简单理解为：
+            <strong>有多少份相对独立的信息参与了计算。</strong>
+            一般而言，样本越多，自由度越大，形状也越稳定。
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card chart-card" style="--accent: var(--chi)">
+            <div class="chart-header">
+              <div>
+                <h3>卡方分布</h3>
+                <p>右偏，只能 ≥ 0</p>
+              </div>
+              <span class="tag">χ²(k)</span>
+            </div>
+
+            <canvas id="chiCanvas" aria-label="卡方分布曲线"></canvas>
+
+            <div class="slider-row">
+              <label for="chiDf">自由度 k</label>
+              <input id="chiDf" type="range" min="1" max="30" value="4" />
+              <span class="value-pill" id="chiDfValue">4</span>
+            </div>
+
+            <p>
+              自由度小时明显右偏；自由度增大后，中心向右移动，
+              形状也逐渐不那么歪。
+            </p>
+          </article>
+
+          <article class="card chart-card" style="--accent: var(--t)">
+            <div class="chart-header">
+              <div>
+                <h3>t 分布</h3>
+                <p>左右对称，厚尾</p>
+              </div>
+              <span class="tag">t(ν)</span>
+            </div>
+
+            <canvas id="tCanvas" aria-label="t 分布曲线"></canvas>
+
+            <div class="slider-row">
+              <label for="tDf">自由度 ν</label>
+              <input id="tDf" type="range" min="1" max="40" value="3" />
+              <span class="value-pill" id="tDfValue">3</span>
+            </div>
+
+            <p>
+              自由度越大，对标准差的估计越可靠，
+              t 分布就越接近标准正态分布。
+            </p>
+          </article>
+
+          <article class="card chart-card" style="--accent: var(--f)">
+            <div class="chart-header">
+              <div>
+                <h3>F 分布</h3>
+                <p>右偏，只能 ≥ 0</p>
+              </div>
+              <span class="tag">F(d₁,d₂)</span>
+            </div>
+
+            <canvas id="fCanvas" aria-label="F 分布曲线"></canvas>
+
+            <div class="slider-row">
+              <label for="fDf1">分子 d₁</label>
+              <input id="fDf1" type="range" min="1" max="20" value="5" />
+              <span class="value-pill" id="fDf1Value">5</span>
+            </div>
+
+            <div class="slider-row">
+              <label for="fDf2">分母 d₂</label>
+              <input id="fDf2" type="range" min="2" max="30" value="10" />
+              <span class="value-pill" id="fDf2Value">10</span>
+            </div>
+
+            <p>
+              F 有两个自由度，因为分子和分母分别来自一份波动信息。
+            </p>
+          </article>
+        </div>
+
+        <div class="insight" style="margin-top: 24px">
+          <strong>看图口诀：</strong>
+          t 有正有负，因此左右展开；χ² 和 F 来自平方或方差，
+          所以不可能小于 0，只向右展开。
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Relations -->
+    <section id="relation">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">03 · 关系</div>
+          <h2>它们不是三座孤岛，而是一家人</h2>
+          <p class="lead">
+            抓住“标准正态 → 平方 → 卡方 → 相除”的路线，
+            就不需要死背三个互不相关的公式。
+          </p>
+        </div>
+
+        <div class="relation-stage">
+          <div class="relation-node" style="--accent: var(--normal)">
+            <div class="big">Z</div>
+            <strong>标准正态</strong>
+            <p>保留偏差的方向和大小</p>
+          </div>
+
+          <div class="relation-arrow">→²</div>
+
+          <div class="relation-node" style="--accent: var(--chi)">
+            <div class="big">χ²</div>
+            <strong>平方偏差的总量</strong>
+            <p>描述一堆波动累积起来有多大</p>
+          </div>
+
+          <div class="relation-arrow">→ ÷</div>
+
+          <div class="relation-node" style="--accent: var(--f)">
+            <div class="big">F</div>
+            <strong>两份波动之比</strong>
+            <p>比较两组方差或两种变异来源</p>
+          </div>
+        </div>
+
+        <div class="special-relation">
+          <span>还有一条非常值得记住的近亲关系</span>
+          <strong>如果 T ~ t(ν)，那么 T² ~ F(1, ν)</strong>
+          <span>
+            t 检验把方向保留下来；平方以后方向消失，
+            就变成一种特殊的 F 检验。
+          </span>
+        </div>
+
+        <div class="grid-2" style="margin-top: 24px">
+          <article class="card">
+            <h3>为什么 t 与 Z 很像？</h3>
+            <p>
+              t 的分子就是 Z。区别只在于：
+              t 的分母不是完全已知的 1，而是根据样本估计出来的波动。
+            </p>
+            <p>
+              小样本时，估计可能偏大或偏小，所以 t 必须有更厚的尾巴。
+              样本增多后，估计越来越稳定，t 就逐渐靠近 Z。
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>为什么 χ² 和 F 都向右偏？</h3>
+            <p>
+              χ² 是平方之和；F 是两份非负波动的比值。
+              两者都不会出现负数。
+            </p>
+            <p>
+              但它们偶尔可能出现很大的值，因此通常会拖着一条向右延伸的长尾巴。
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Comparison and use -->
+    <section id="use">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">04 · 用途</div>
+          <h2>到底什么时候用哪一个？</h2>
+          <p class="lead">
+            不要先从公式出发。先问自己：
+            我现在是在研究均值、一个方差、两个方差，还是分类计数？
+          </p>
+        </div>
+
+        <div class="comparison-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>分布</th>
+                <th>它在关注什么</th>
+                <th>典型问题</th>
+                <th>常见用途</th>
+                <th>形状</th>
+                <th>自由度</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td><strong class="text-chi">卡方 χ²</strong></td>
+                <td>平方偏差总量、单个总体方差、分类计数偏差</td>
+                <td>实际人数与预期人数差得是否太多？</td>
+                <td>拟合优度、独立性检验、单总体方差推断</td>
+                <td>非负、通常右偏</td>
+                <td>通常 1 个</td>
+              </tr>
+
+              <tr>
+                <td><strong class="text-t">t</strong></td>
+                <td>均值差异</td>
+                <td>平均灌装量是否等于 500 ml？</td>
+                <td>单样本、配对样本、两独立样本均值检验</td>
+                <td>左右对称、厚尾</td>
+                <td>通常 1 个</td>
+              </tr>
+
+              <tr>
+                <td><strong class="text-f">F</strong></td>
+                <td>方差之比、不同变异来源之比</td>
+                <td>两台机器的稳定程度是否相同？</td>
+                <td>方差比检验、方差分析、回归整体检验</td>
+                <td>非负、通常右偏</td>
+                <td>分子和分母各 1 个</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid-2" style="margin-top: 28px">
+          <article class="card">
+            <h3>场景选择器</h3>
+            <p>点击最符合你问题的描述：</p>
+
+            <div class="decision">
+              <div class="decision-question">
+                <strong>你主要想研究什么？</strong>
+
+                <div class="decision-options">
+                  <button class="choice" data-result="mean">一个或两个均值</button>
+                  <button class="choice" data-result="variance">一个总体的方差</button>
+                  <button class="choice" data-result="twoVariance">两份方差之比</button>
+                  <button class="choice" data-result="category">分类计数</button>
+                  <button class="choice" data-result="manyMeans">三组以上均值</button>
+                </div>
+
+                <div class="decision-result" id="decisionResult">
+                  请选择一种问题类型。
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>一分钟选择口诀</h3>
+
+            <p>
+              <strong class="text-t">问平均：</strong>
+              总体标准差未知时，首先想到 t。
+            </p>
+
+            <p>
+              <strong class="text-chi">问一个方差：</strong>
+              首先想到卡方。
+            </p>
+
+            <p>
+              <strong class="text-f">问两个方差的比：</strong>
+              首先想到 F。
+            </p>
+
+            <p>
+              <strong class="text-chi">问分类人数是否符合预期：</strong>
+              首先想到卡方。
+            </p>
+
+            <p>
+              <strong class="text-f">问三组以上均值：</strong>
+              方差分析最终使用 F。
+            </p>
+
+            <div class="insight">
+              均值找 t，单方差找 χ²，方差比找 F；
+              分类计数再找 χ²，多组均值最终找 F。
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Example -->
+    <section id="example">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">05 · 落地案例</div>
+          <h2>一杯奶茶，把三个分布串起来</h2>
+          <p class="lead">
+            某奶茶店规定每杯应灌装 500 ml。
+            店长抽查灌装机，希望回答三个不同的问题。
+          </p>
+        </div>
+
+        <article class="card story">
+          <div class="story-step" style="--accent: var(--t)">
+            <span class="step-dot">1</span>
+            <h3>问题一：平均灌装量准不准？——用 t</h3>
+
+            <p>
+              店长抽查 10 杯，样本平均值为 504 ml，
+              样本标准差为 6 ml。
+            </p>
+
+            <p>
+              总体标准差不知道，只能使用样本标准差，
+              因此将“均值偏差”除以“估计出来的标准误”：
+            </p>
+
+            <div class="calc">
+              t = (504 − 500) / (6 / √10) ≈ 2.11
+            </div>
+
+            <p>
+              自由度为 10 − 1 = 9。
+              接下来将 2.11 与 t 分布中的常见程度比较。
+            </p>
+
+            <p>
+              <strong>直觉：</strong>
+              平均值虽然高了 4 ml，但还要看机器本身波动有多大。
+              如果每杯都上下波动 30 ml，差 4 ml 不算什么；
+              如果每杯只波动 1 ml，差 4 ml 就很可疑。
+            </p>
+          </div>
+
+          <div class="story-step" style="--accent: var(--chi)">
+            <span class="step-dot">2</span>
+            <h3>问题二：一台机器自身稳定吗？——用卡方</h3>
+
+            <p>
+              现在不关心平均值，而是关心每杯忽多忽少的程度。
+              假设合格机器的总体标准差应为 4 ml。
+            </p>
+
+            <div class="calc">
+              χ² = (n − 1)s² / σ₀²
+            </div>
+
+            <p>
+              这里把样本中所有偏差的平方汇总起来，
+              与“合格机器应该具有的波动”比较。
+            </p>
+
+            <p>
+              <strong>直觉：</strong>
+              卡方像一个“晃动总量收集筐”。
+              杯子之间偏差越大，筐里累积的平方偏差就越多。
+            </p>
+          </div>
+
+          <div class="story-step" style="--accent: var(--f)">
+            <span class="step-dot">3</span>
+            <h3>问题三：A、B 两台机器谁更稳定？——用 F</h3>
+
+            <p>
+              A 机器样本方差为 36，B 机器样本方差为 9。
+            </p>
+
+            <div class="calc">
+              F = s<sub>A</sub>² / s<sub>B</sub>² = 36 / 9 = 4
+            </div>
+
+            <p>
+              A 的样本波动是 B 的 4 倍。
+              但样本中出现 4 倍差距是否足够反常，
+              仍需结合两台机器各自的样本量和 F 分布判断。
+            </p>
+
+            <p>
+              <strong>直觉：</strong>
+              F 就像把两台机器的“晃动筐”放到天平两边，
+              看一边是否明显重于另一边。
+            </p>
+          </div>
+        </article>
+
+        <div class="insight" style="margin-top: 22px">
+          同一个奶茶问题中：
+          <strong>平均量是否准确，用 t；一台机器的波动是否合格，用 χ²；
+          两台机器的波动是否相同，用 F。</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Cautions -->
+    <section id="cautions">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">06 · 注意事项</div>
+          <h2>会套公式，不等于用对方法</h2>
+          <p class="lead">
+            统计检验不是把数字塞进公式就结束了。
+            使用前还要检查数据的来源、独立性和异常值。
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <article class="warning">
+            <h3>三者共同需要注意</h3>
+            <ul>
+              <li>样本最好是随机或具有代表性的。</li>
+              <li>不同观测通常需要相互独立。</li>
+              <li>先画图检查异常值，不要直接机械检验。</li>
+              <li>“没有显著差异”不等于“已经证明完全相同”。</li>
+              <li>p 值小不代表差异一定具有实际意义。</li>
+            </ul>
+          </article>
+
+          <article class="warning">
+            <h3>t 检验的注意点</h3>
+            <ul>
+              <li>小样本且数据严重偏斜时，应谨慎使用。</li>
+              <li>两独立样本不一定具有相同方差。</li>
+              <li>方差不齐时，通常优先考虑 Welch t 检验。</li>
+              <li>配对前后数据应使用配对 t，而不是独立样本 t。</li>
+            </ul>
+          </article>
+
+          <article class="warning">
+            <h3>卡方分类检验的注意点</h3>
+            <ul>
+              <li>输入的通常是人数、次数等计数，而不是比例本身。</li>
+              <li>各格子的期望频数不能普遍过小。</li>
+              <li>同一个人不应被重复算进多个独立观测中。</li>
+              <li>卡方检验发现有关联，不代表存在因果关系。</li>
+            </ul>
+          </article>
+
+          <article class="warning">
+            <h3>F 检验的注意点</h3>
+            <ul>
+              <li>经典方差比检验对非正态和异常值较敏感。</li>
+              <li>分子、分母的位置会改变 F 值和自由度顺序。</li>
+              <li>方差分析显著，只说明至少一组均值不同。</li>
+              <li>要知道具体哪组不同，通常还需事后比较。</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Memory -->
+    <section id="memory">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">07 · 记忆</div>
+          <h2>用三个生活画面记住它们</h2>
+        </div>
+
+        <div class="grid-3">
+          <article class="card memory-card" style="--accent: var(--chi)">
+            <div class="memory-icon">🧺</div>
+            <div class="memory-word">卡方：偏差筐</div>
+            <p>
+              每一个 Z 都是一份偏差，把它平方后扔进筐里。
+              筐中总重量就是 χ²。
+            </p>
+            <p>
+              <strong>关键词：</strong>
+              平方、累加、方差、分类偏差。
+            </p>
+          </article>
+
+          <article class="card memory-card" style="--accent: var(--t)">
+            <div class="memory-icon">🎯</div>
+            <div class="memory-word">t：带抖动的瞄准</div>
+            <p>
+              想判断均值有没有瞄准目标，
+              但手中的标准差只是估计值，所以枪口会多抖一点。
+            </p>
+            <p>
+              <strong>关键词：</strong>
+              均值、小样本、σ 未知、厚尾。
+            </p>
+          </article>
+
+          <article class="card memory-card" style="--accent: var(--f)">
+            <div class="memory-icon">⚖️</div>
+            <div class="memory-word">F：波动天平</div>
+            <p>
+              把两筐平方偏差放到天平两侧，
+              检查一份波动是否明显大于另一份。
+            </p>
+            <p>
+              <strong>关键词：</strong>
+              比值、两份方差、ANOVA。
+            </p>
+          </article>
+        </div>
+
+        <div class="card" style="margin-top: 24px">
+          <h3>终极记忆链</h3>
+
+          <div class="formula">
+            Z → 平方装筐 → χ² → 两筐相除 → F
+          </div>
+
+          <div class="formula">
+            Z → 除以估计的波动 → t
+          </div>
+
+          <p style="text-align: center; margin-bottom: 0">
+            <strong>
+              χ² 收集波动，t 用波动判断均值，F 比较两份波动。
+            </strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Quiz -->
+    <section id="quiz">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-index">08 · 小测验</div>
+          <h2>现在检查一下，你是否真的记住了</h2>
+          <p class="lead">每题点击一个答案，页面会立即给出解释。</p>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <article class="quiz-question" data-answered="false">
+              <h3>1. 想判断 12 名学生的平均身高是否为 170 cm，总体标准差未知，应优先想到什么？</h3>
+
+              <div class="quiz-options">
+                <button class="quiz-option" data-correct="true">t 分布</button>
+                <button class="quiz-option" data-correct="false">卡方分布</button>
+                <button class="quiz-option" data-correct="false">F 分布</button>
+              </div>
+
+              <div class="quiz-explain">
+                研究的是均值，而且总体标准差未知，典型选择是单样本 t 检验。
+              </div>
+            </article>
+
+            <article class="quiz-question" data-answered="false">
+              <h3>2. 为什么卡方分布不会出现负值？</h3>
+
+              <div class="quiz-options">
+                <button class="quiz-option" data-correct="false">因为样本均值总是正数</button>
+                <button class="quiz-option" data-correct="true">因为它由平方项累加而成</button>
+                <button class="quiz-option" data-correct="false">因为自由度不能为负</button>
+              </div>
+
+              <div class="quiz-explain">
+                卡方变量是多个标准正态变量平方后的总和，平方项都不小于 0。
+              </div>
+            </article>
+          </div>
+
+          <div>
+            <article class="quiz-question" data-answered="false">
+              <h3>3. 比较两台机器的生产稳定程度，最直接对应哪个分布？</h3>
+
+              <div class="quiz-options">
+                <button class="quiz-option" data-correct="false">t 分布</button>
+                <button class="quiz-option" data-correct="false">标准正态分布</button>
+                <button class="quiz-option" data-correct="true">F 分布</button>
+              </div>
+
+              <div class="quiz-explain">
+                稳定程度通常由方差表示。比较两份方差，就是比较方差之比，对应 F 分布。
+              </div>
+            </article>
+
+            <article class="quiz-question" data-answered="false">
+              <h3>4. 当 t 分布的自由度不断增加时，它会越来越接近什么？</h3>
+
+              <div class="quiz-options">
+                <button class="quiz-option" data-correct="true">标准正态分布</button>
+                <button class="quiz-option" data-correct="false">卡方分布</button>
+                <button class="quiz-option" data-correct="false">均匀分布</button>
+              </div>
+
+              <div class="quiz-explain">
+                样本越多，对总体标准差的估计越稳定，t 分布的额外不确定性越小，因此逐渐接近标准正态。
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="quiz-score" id="quizScore">
+          已完成 0 / 4 题，答对 0 题
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <article class="final-summary">
+        <h2>最后只带走三句话</h2>
+        <p>
+          忘记公式没有关系。只要记住每个分布在处理什么问题，
+          以后就能顺着逻辑重新想起来。
+        </p>
+
+        <div class="summary-sentence">
+          <div class="summary-item">
+            <strong style="color: #ffc458">χ²：收集波动</strong>
+            标准正态变量平方后累加，用于方差和分类计数偏差。
+          </div>
+
+          <div class="summary-item">
+            <strong style="color: #74b0ff">t：判断均值</strong>
+            总体标准差未知时，用估计的波动判断均值偏差。
+          </div>
+
+          <div class="summary-item">
+            <strong style="color: #ff8bc5">F：比较波动</strong>
+            两份按自由度平均后的卡方相除，用于方差比和方差分析。
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      从一个 Z 开始：平方得到 χ²，估计标准差得到 t，两份波动相除得到 F。
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================
+       页面进度条
+    ========================================================= */
+    const progressBar = document.getElementById("pageProgress");
+
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const scrollHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      const progress = scrollHeight > 0
+        ? (scrollTop / scrollHeight) * 100
+        : 0;
+
+      progressBar.style.width = progress + "%";
+    }
+
+    window.addEventListener("scroll", updateProgress);
+    updateProgress();
+
+
+    /* =========================================================
+       数学工具
+    ========================================================= */
+
+    // Lanczos approximation：计算 Gamma 函数的对数
+    function logGamma(z) {
+      const coefficients = [
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+      ];
+
+      if (z < 0.5) {
+        return Math.log(Math.PI)
+          - Math.log(Math.sin(Math.PI * z))
+          - logGamma(1 - z);
+      }
+
+      z -= 1;
+
+      let x = 0.99999999999980993;
+
+      for (let i = 0; i < coefficients.length; i++) {
+        x += coefficients[i] / (z + i + 1);
+      }
+
+      const t = z + coefficients.length - 0.5;
+
+      return (
+        0.5 * Math.log(2 * Math.PI)
+        + (z + 0.5) * Math.log(t)
+        - t
+        + Math.log(x)
+      );
+    }
+
+    function chiSquarePDF(x, df) {
+      if (x <= 0) return 0;
+
+      const half = df / 2;
+
+      const logValue =
+        (half - 1) * Math.log(x)
+        - x / 2
+        - half * Math.log(2)
+        - logGamma(half);
+
+      return Math.exp(logValue);
+    }
+
+    function tPDF(x, df) {
+      const logCoefficient =
+        logGamma((df + 1) / 2)
+        - logGamma(df / 2)
+        - 0.5 * Math.log(df * Math.PI);
+
+      const logShape =
+        -((df + 1) / 2) * Math.log(1 + (x * x) / df);
+
+      return Math.exp(logCoefficient + logShape);
+    }
+
+    function normalPDF(x) {
+      return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+    }
+
+    function fPDF(x, d1, d2) {
+      if (x <= 0) return 0;
+
+      const a = d1 / 2;
+      const b = d2 / 2;
+
+      const logBeta = logGamma(a) + logGamma(b) - logGamma(a + b);
+
+      const logValue =
+        a * Math.log(d1 / d2)
+        + (a - 1) * Math.log(x)
+        - logBeta
+        - (a + b) * Math.log(1 + (d1 / d2) * x);
+
+      return Math.exp(logValue);
+    }
+
+
+    /* =========================================================
+       通用曲线绘制函数
+    ========================================================= */
+    function drawDistribution({
+      canvas,
+      pdf,
+      minX,
+      maxX,
+      color,
+      comparisonPDF = null,
+      comparisonColor = "#aeb5c3"
+    }) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+
+      const padding = {
+        left: 42,
+        right: 18,
+        top: 24,
+        bottom: 34
+      };
+
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+
+      const points = [];
+      const comparisonPoints = [];
+
+      let maxY = 0;
+      const samples = 350;
+
+      for (let i = 0; i <= samples; i++) {
+        const x = minX + (i / samples) * (maxX - minX);
+
+        let y = pdf(x);
+        if (!Number.isFinite(y)) y = 0;
+
+        // 防止自由度很小时在 0 附近出现无限高尖峰，
+        // 影响教学图形的可读性。
+        y = Math.min(y, 2.5);
+
+        points.push({ x, y });
+        maxY = Math.max(maxY, y);
+
+        if (comparisonPDF) {
+          let comparisonY = comparisonPDF(x);
+          if (!Number.isFinite(comparisonY)) comparisonY = 0;
+
+          comparisonPoints.push({ x, y: comparisonY });
+          maxY = Math.max(maxY, comparisonY);
+        }
+      }
+
+      maxY *= 1.15;
+      if (maxY === 0) maxY = 1;
+
+      const mapX = x =>
+        padding.left + ((x - minX) / (maxX - minX)) * plotWidth;
+
+      const mapY = y =>
+        padding.top + plotHeight - (y / maxY) * plotHeight;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // 坐标轴
+      ctx.strokeStyle = "#98a2b3";
+      ctx.lineWidth = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, padding.top + plotHeight);
+      ctx.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+      ctx.stroke();
+
+      // x 轴刻度
+      ctx.fillStyle = "#7d8697";
+      ctx.font = "12px system-ui";
+      ctx.textAlign = "center";
+
+      const tickCount = 5;
+
+      for (let i = 0; i <= tickCount; i++) {
+        const x = minX + (i / tickCount) * (maxX - minX);
+        const screenX = mapX(x);
+
+        ctx.beginPath();
+        ctx.moveTo(screenX, padding.top + plotHeight);
+        ctx.lineTo(screenX, padding.top + plotHeight + 5);
+        ctx.stroke();
+
+        ctx.fillText(
+          Math.abs(x) >= 10 ? x.toFixed(0) : x.toFixed(1),
+          screenX,
+          padding.top + plotHeight + 20
+        );
+      }
+
+      function drawCurve(data, strokeColor, dashed = false, fill = false) {
+        ctx.save();
+
+        if (dashed) {
+          ctx.setLineDash([7, 6]);
+        }
+
+        ctx.beginPath();
+
+        data.forEach((point, index) => {
+          const sx = mapX(point.x);
+          const sy = mapY(point.y);
+
+          if (index === 0) {
+            ctx.moveTo(sx, sy);
+          } else {
+            ctx.lineTo(sx, sy);
+          }
+        });
+
+        if (fill) {
+          const last = data[data.length - 1];
+          const first = data[0];
+
+          ctx.lineTo(mapX(last.x), padding.top + plotHeight);
+          ctx.lineTo(mapX(first.x), padding.top + plotHeight);
+          ctx.closePath();
+
+          const gradient = ctx.createLinearGradient(
+            0,
+            padding.top,
+            0,
+            padding.top + plotHeight
+          );
+
+          gradient.addColorStop(0, strokeColor + "55");
+          gradient.addColorStop(1, strokeColor + "05");
+
+          ctx.fillStyle = gradient;
+          ctx.fill();
+
+          // 再画一次边线
+          ctx.beginPath();
+
+          data.forEach((point, index) => {
+            const sx = mapX(point.x);
+            const sy = mapY(point.y);
+
+            if (index === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+          });
+        }
+
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = dashed ? 2 : 3;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      if (comparisonPoints.length) {
+        drawCurve(
+          comparisonPoints,
+          comparisonColor,
+          true,
+          false
+        );
+      }
+
+      drawCurve(points, color, false, true);
+
+      if (comparisonPDF) {
+        ctx.fillStyle = comparisonColor;
+        ctx.textAlign = "right";
+        ctx.font = "12px system-ui";
+        ctx.fillText(
+          "虚线：标准正态",
+          width - padding.right,
+          padding.top + 2
+        );
+      }
+    }
+
+
+    /* =========================================================
+       三张分布图
+    ========================================================= */
+    const chiCanvas = document.getElementById("chiCanvas");
+    const tCanvas = document.getElementById("tCanvas");
+    const fCanvas = document.getElementById("fCanvas");
+
+    const chiDf = document.getElementById("chiDf");
+    const tDf = document.getElementById("tDf");
+    const fDf1 = document.getElementById("fDf1");
+    const fDf2 = document.getElementById("fDf2");
+
+    function renderChi() {
+      const df = Number(chiDf.value);
+      document.getElementById("chiDfValue").textContent = df;
+
+      const maxX = Math.max(12, df + 5 * Math.sqrt(2 * df));
+
+      drawDistribution({
+        canvas: chiCanvas,
+        pdf: x => chiSquarePDF(x, df),
+        minX: 0.03,
+        maxX,
+        color: "#f3a712"
+      });
+    }
+
+    function renderT() {
+      const df = Number(tDf.value);
+      document.getElementById("tDfValue").textContent = df;
+
+      drawDistribution({
+        canvas: tCanvas,
+        pdf: x => tPDF(x, df),
+        comparisonPDF: normalPDF,
+        minX: -5,
+        maxX: 5,
+        color: "#3b82f6"
+      });
+    }
+
+    function renderF() {
+      const d1 = Number(fDf1.value);
+      const d2 = Number(fDf2.value);
+
+      document.getElementById("fDf1Value").textContent = d1;
+      document.getElementById("fDf2Value").textContent = d2;
+
+      drawDistribution({
+        canvas: fCanvas,
+        pdf: x => fPDF(x, d1, d2),
+        minX: 0.02,
+        maxX: 6,
+        color: "#ef5da8"
+      });
+    }
+
+    chiDf.addEventListener("input", renderChi);
+    tDf.addEventListener("input", renderT);
+    fDf1.addEventListener("input", renderF);
+    fDf2.addEventListener("input", renderF);
+
+    function renderAllCharts() {
+      renderChi();
+      renderT();
+      renderF();
+    }
+
+    window.addEventListener("resize", renderAllCharts);
+    renderAllCharts();
+
+
+    /* =========================================================
+       随机分布制造机
+    ========================================================= */
+
+    // Box-Muller：生成标准正态随机数
+    function randomNormal() {
+      let u = 0;
+      let v = 0;
+
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+
+      return Math.sqrt(-2 * Math.log(u))
+        * Math.cos(2 * Math.PI * v);
+    }
+
+    function randomChiSquare(df) {
+      let sum = 0;
+      const values = [];
+
+      for (let i = 0; i < df; i++) {
+        const z = randomNormal();
+        values.push(z);
+        sum += z * z;
+      }
+
+      return { value: sum, values };
+    }
+
+    function formatValues(values) {
+      return values.map(value => value.toFixed(2)).join(", ");
+    }
+
+    const factoryScreen = document.getElementById("factoryScreen");
+
+    document.querySelectorAll(".machine-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const type = button.dataset.machine;
+
+        if (type === "chi") {
+          const df = 5;
+          const result = randomChiSquare(df);
+
+          factoryScreen.innerHTML = `
+            <div class="factory-line">[卡方制造机] 自由度 k = ${df}</div>
+            <div class="factory-line">
+              生成 Z：${formatValues(result.values)}
+            </div>
+            <div class="factory-line">
+              加工：Z₁² + Z₂² + ... + Z₅²
+            </div>
+            <div class="factory-line factory-result">
+              本次 χ² = ${result.value.toFixed(3)}
+            </div>
+            <div class="factory-line">
+              每次结果不同；重复很多次后，就会形成 χ²(5) 的曲线。
+            </div>
+          `;
+        }
+
+        if (type === "t") {
+          const df = 8;
+          const z = randomNormal();
+          const chi = randomChiSquare(df).value;
+          const t = z / Math.sqrt(chi / df);
+
+          factoryScreen.innerHTML = `
+            <div class="factory-line">[t 制造机] 自由度 ν = ${df}</div>
+            <div class="factory-line">分子 Z = ${z.toFixed(3)}</div>
+            <div class="factory-line">波动材料 χ² = ${chi.toFixed(3)}</div>
+            <div class="factory-line">
+              加工：t = Z / √(χ² / ${df})
+            </div>
+            <div class="factory-line factory-result">
+              本次 t = ${t.toFixed(3)}
+            </div>
+            <div class="factory-line">
+              分母会随机变化，所以 t 比 Z 更容易出现较大的正值或负值。
+            </div>
+          `;
+        }
+
+        if (type === "f") {
+          const d1 = 4;
+          const d2 = 8;
+
+          const chi1 = randomChiSquare(d1).value;
+          const chi2 = randomChiSquare(d2).value;
+
+          const numerator = chi1 / d1;
+          const denominator = chi2 / d2;
+          const f = numerator / denominator;
+
+          factoryScreen.innerHTML = `
+            <div class="factory-line">
+              [F 制造机] d₁ = ${d1}，d₂ = ${d2}
+            </div>
+            <div class="factory-line">
+              第一筐：χ₁² / d₁ = ${chi1.toFixed(3)} / ${d1}
+              = ${numerator.toFixed(3)}
+            </div>
+            <div class="factory-line">
+              第二筐：χ₂² / d₂ = ${chi2.toFixed(3)} / ${d2}
+              = ${denominator.toFixed(3)}
+            </div>
+            <div class="factory-line">加工：F = 第一筐 / 第二筐</div>
+            <div class="factory-line factory-result">
+              本次 F = ${f.toFixed(3)}
+            </div>
+          `;
+        }
+      });
+    });
+
+
+    /* =========================================================
+       场景选择器
+    ========================================================= */
+    const decisionResult = document.getElementById("decisionResult");
+
+    const decisionContent = {
+      mean: `
+        <span class="result-chip">优先考虑 t</span>
+        <strong>研究一个或两个均值</strong><br />
+        当总体标准差未知时，常使用单样本 t、配对 t 或两独立样本 t。
+      `,
+
+      variance: `
+        <span class="result-chip">优先考虑 χ²</span>
+        <strong>研究一个总体的方差</strong><br />
+        将样本方差与假设的总体方差进行比较。
+      `,
+
+      twoVariance: `
+        <span class="result-chip">优先考虑 F</span>
+        <strong>比较两份方差</strong><br />
+        用一份样本方差除以另一份样本方差，并结合两个自由度判断。
+      `,
+
+      category: `
+        <span class="result-chip">优先考虑 χ²</span>
+        <strong>研究分类计数</strong><br />
+        可用于拟合优度检验，或判断两个分类变量是否存在关联。
+      `,
+
+      manyMeans: `
+        <span class="result-chip">优先考虑 F</span>
+        <strong>比较三组以上均值</strong><br />
+        方差分析通过“组间变异 ÷ 组内变异”构造 F 统计量。
+      `
+    };
+
+    document.querySelectorAll(".choice").forEach(button => {
+      button.addEventListener("click", () => {
+        decisionResult.innerHTML =
+          decisionContent[button.dataset.result];
+      });
+    });
+
+
+    /* =========================================================
+       小测验
+    ========================================================= */
+    let answeredCount = 0;
+    let correctCount = 0;
+
+    const totalQuestions =
+      document.querySelectorAll(".quiz-question").length;
+
+    const quizScore = document.getElementById("quizScore");
+
+    document.querySelectorAll(".quiz-question").forEach(question => {
+      const options = question.querySelectorAll(".quiz-option");
+      const explanation = question.querySelector(".quiz-explain");
+
+      options.forEach(option => {
+        option.addEventListener("click", () => {
+          if (question.dataset.answered === "true") return;
+
+          question.dataset.answered = "true";
+          answeredCount++;
+
+          const isCorrect = option.dataset.correct === "true";
+
+          if (isCorrect) {
+            option.classList.add("correct");
+            correctCount++;
+          } else {
+            option.classList.add("wrong");
+
+            options.forEach(item => {
+              if (item.dataset.correct === "true") {
+                item.classList.add("correct");
+              }
+            });
+          }
+
+          explanation.style.display = "block";
+
+          quizScore.textContent =
+            `已完成 ${answeredCount} / ${totalQuestions} 题，` +
+            `答对 ${correctCount} 题`;
+
+          if (answeredCount === totalQuestions) {
+            if (correctCount === totalQuestions) {
+              quizScore.textContent =
+                `全部答对！${correctCount} / ${totalQuestions}，` +
+                `你已经掌握分布三兄弟的核心逻辑。`;
+            } else {
+              quizScore.textContent =
+                `完成：${correctCount} / ${totalQuestions}。` +
+                `再记一遍：均值找 t，单方差找 χ²，方差比找 F。`;
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

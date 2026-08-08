@@ -1,0 +1,4312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f4f7fb">
+<title>智慧财务管理小程序</title>
+
+<style>
+/* =========================================================
+   基础变量
+========================================================= */
+:root {
+  --primary: #1677ff;
+  --primary-dark: #0958d9;
+  --primary-light: #eaf3ff;
+
+  --success: #19a974;
+  --success-light: #e9f9f3;
+
+  --warning: #f59e0b;
+  --warning-light: #fff7e8;
+
+  --danger: #ef4444;
+  --danger-light: #fff0f0;
+
+  --purple: #7c5cff;
+  --purple-light: #f1efff;
+
+  --text: #172033;
+  --text-secondary: #667085;
+  --text-light: #98a2b3;
+
+  --border: #e8edf3;
+  --background: #f4f7fb;
+  --card: #ffffff;
+
+  --shadow: 0 5px 20px rgba(29, 44, 77, .07);
+  --radius: 16px;
+
+  --app-width: 390px;
+  --app-height: 844px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 10%, rgba(22,119,255,.10), transparent 30%),
+    #dfe5ee;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang SC",
+    "Microsoft YaHei",
+    Arial,
+    sans-serif;
+  color: var(--text);
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   手机框架
+========================================================= */
+.phone {
+  position: relative;
+  width: min(100vw, var(--app-width));
+  height: min(100dvh, var(--app-height));
+  overflow: hidden;
+  background: var(--background);
+  box-shadow:
+    0 30px 80px rgba(15, 23, 42, .24),
+    0 0 0 1px rgba(255,255,255,.7);
+}
+
+.status-bar {
+  position: absolute;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  color: #26354d;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255,255,255,.96);
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 10px;
+}
+
+.signal i {
+  display: block;
+  width: 2px;
+  border-radius: 1px;
+  background: #26354d;
+}
+
+.signal i:nth-child(1) { height: 4px; }
+.signal i:nth-child(2) { height: 6px; }
+.signal i:nth-child(3) { height: 8px; }
+.signal i:nth-child(4) { height: 10px; }
+
+.battery {
+  position: relative;
+  width: 19px;
+  height: 9px;
+  padding: 1px;
+  border: 1px solid #26354d;
+  border-radius: 2px;
+}
+
+.battery::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: -3px;
+  width: 2px;
+  height: 4px;
+  border-radius: 0 1px 1px 0;
+  background: #26354d;
+}
+
+.battery-level {
+  width: 75%;
+  height: 100%;
+  border-radius: 1px;
+  background: #26354d;
+}
+
+/* =========================================================
+   顶部栏
+========================================================= */
+.app-header {
+  position: absolute;
+  z-index: 50;
+  top: 24px;
+  left: 0;
+  right: 0;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  border-bottom: 1px solid rgba(230,235,242,.85);
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(16px);
+}
+
+.header-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.header-title {
+  overflow: hidden;
+  color: #172033;
+  font-size: 18px;
+  font-weight: 750;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.header-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 260px;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  color: #354052;
+  background: #f4f7fb;
+  font-size: 18px;
+}
+
+.header-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+/* =========================================================
+   页面内容
+========================================================= */
+.page-container {
+  position: absolute;
+  top: 82px;
+  bottom: 68px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.page {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.page::-webkit-scrollbar,
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.page-content {
+  min-height: 100%;
+  padding: 13px 13px 24px;
+}
+
+/* =========================================================
+   底部导航
+========================================================= */
+.tab-bar {
+  position: absolute;
+  z-index: 55;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 68px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 5px 4px max(5px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(16px);
+}
+
+.tab-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0;
+  color: #8b96a8;
+  border: 0;
+  background: transparent;
+  font-size: 10px;
+}
+
+.tab-icon {
+  position: relative;
+  width: 30px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 20px;
+  transition: .2s;
+}
+
+.tab-item.active {
+  color: var(--primary);
+  font-weight: 650;
+}
+
+.tab-item.active .tab-icon {
+  background: var(--primary-light);
+}
+
+.tab-badge {
+  position: absolute;
+  top: -1px;
+  right: -3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  color: white;
+  border: 2px solid white;
+  border-radius: 9px;
+  background: var(--danger);
+  font-size: 8px;
+  line-height: 11px;
+}
+
+/* =========================================================
+   通用卡片
+========================================================= */
+.card {
+  margin-bottom: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(232,237,243,.94);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.card-body {
+  padding: 14px;
+}
+
+.card-header {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.card-title {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.card-subtitle {
+  margin-top: 3px;
+  color: var(--text-light);
+  font-size: 10px;
+}
+
+.card-link {
+  flex-shrink: 0;
+  padding: 5px 0;
+  color: var(--primary);
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px 2px 9px;
+}
+
+.section-title strong {
+  font-size: 15px;
+}
+
+.section-title span {
+  color: var(--text-light);
+  font-size: 10px;
+}
+
+/* =========================================================
+   标签、按钮
+========================================================= */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 21px;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.tag-blue {
+  color: #1468d6;
+  background: #eaf3ff;
+}
+
+.tag-green {
+  color: #13865e;
+  background: #e9f9f3;
+}
+
+.tag-orange {
+  color: #b66a03;
+  background: #fff3dc;
+}
+
+.tag-red {
+  color: #d73535;
+  background: #fff0f0;
+}
+
+.tag-purple {
+  color: #6346d8;
+  background: #f0edff;
+}
+
+.tag-gray {
+  color: #667085;
+  background: #f2f4f7;
+}
+
+.btn {
+  height: 38px;
+  padding: 0 16px;
+  color: #344054;
+  border: 1px solid #d9e0e8;
+  border-radius: 11px;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-primary {
+  color: white;
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.btn-danger {
+  color: white;
+  border-color: var(--danger);
+  background: var(--danger);
+}
+
+.btn-light-danger {
+  color: var(--danger);
+  border-color: #ffc9c9;
+  background: var(--danger-light);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-sm {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+/* =========================================================
+   顶部范围筛选
+========================================================= */
+.scope-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 11px;
+  padding: 10px 12px;
+  border: 1px solid #e4ebf4;
+  border-radius: 14px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.scope-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.scope-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--primary);
+  background: var(--primary-light);
+  font-size: 17px;
+}
+
+.scope-name {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.scope-time {
+  margin-top: 3px;
+  color: var(--text-light);
+  font-size: 9px;
+}
+
+.scope-arrow {
+  color: var(--text-light);
+  font-size: 17px;
+}
+
+/* =========================================================
+   财务首页头部
+========================================================= */
+.finance-hero {
+  position: relative;
+  min-height: 172px;
+  margin-bottom: 11px;
+  overflow: hidden;
+  padding: 17px;
+  color: white;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 88% 25%, rgba(255,255,255,.20), transparent 26%),
+    linear-gradient(135deg, #1677ff, #3857dc 62%, #664de1);
+  box-shadow: 0 12px 30px rgba(22,119,255,.25);
+}
+
+.finance-hero::before {
+  content: "";
+  position: absolute;
+  right: -45px;
+  top: -75px;
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 50%;
+}
+
+.finance-hero::after {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: -80px;
+  width: 150px;
+  height: 150px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+}
+
+.hero-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-label {
+  color: rgba(255,255,255,.80);
+  font-size: 12px;
+}
+
+.hero-date {
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,.20);
+  border-radius: 9px;
+  color: rgba(255,255,255,.90);
+  background: rgba(255,255,255,.10);
+  font-size: 9px;
+}
+
+.hero-amount {
+  position: relative;
+  z-index: 2;
+  margin-top: 12px;
+  font-size: 31px;
+  font-weight: 800;
+  letter-spacing: -.8px;
+}
+
+.hero-amount small {
+  margin-right: 3px;
+  font-size: 18px;
+}
+
+.hero-meta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  color: rgba(255,255,255,.78);
+  font-size: 10px;
+}
+
+.hero-meta b {
+  color: #d9fff2;
+}
+
+.hero-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.hero-progress {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: rgba(255,255,255,.20);
+}
+
+.hero-progress-bar {
+  width: 72%;
+  height: 100%;
+  border-radius: 5px;
+  background: #67f0cb;
+}
+
+.hero-progress-text {
+  color: rgba(255,255,255,.82);
+  font-size: 9px;
+}
+
+/* =========================================================
+   首页指标卡
+========================================================= */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.metric-card {
+  position: relative;
+  min-height: 101px;
+  overflow: hidden;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.metric-icon {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.metric-label {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.metric-value {
+  margin-top: 11px;
+  font-size: 19px;
+  font-weight: 760;
+  letter-spacing: -.3px;
+}
+
+.metric-desc {
+  margin-top: 7px;
+  color: var(--text-light);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.metric-desc .up {
+  color: var(--success);
+}
+
+.metric-desc .down {
+  color: var(--danger);
+}
+
+.icon-blue {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.icon-red {
+  color: var(--danger);
+  background: var(--danger-light);
+}
+
+.icon-orange {
+  color: var(--warning);
+  background: var(--warning-light);
+}
+
+.icon-purple {
+  color: var(--purple);
+  background: var(--purple-light);
+}
+
+/* =========================================================
+   图表
+========================================================= */
+.chart-wrap {
+  height: 145px;
+  padding: 8px 4px 0;
+}
+
+.chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-label {
+  fill: #98a2b3;
+  font-size: 8px;
+}
+
+.donut-layout {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.donut {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  flex: 0 0 110px;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      #1677ff 0 46%,
+      #35c6b0 46% 70%,
+      #7c5cff 70% 84%,
+      #f5a623 84% 94%,
+      #d9e1ea 94% 100%
+    );
+}
+
+.donut::after {
+  content: "";
+  position: absolute;
+  inset: 19px;
+  border-radius: 50%;
+  background: white;
+}
+
+.donut-center {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.donut-center strong {
+  font-size: 16px;
+}
+
+.donut-center span {
+  margin-top: 2px;
+  color: var(--text-light);
+  font-size: 8px;
+}
+
+.legend-list {
+  min-width: 0;
+  flex: 1;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 3px;
+}
+
+.legend-value {
+  margin-left: auto;
+  color: var(--text);
+  font-weight: 650;
+}
+
+/* =========================================================
+   快捷入口
+========================================================= */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px 4px;
+  padding: 13px 8px 12px;
+}
+
+.quick-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 0;
+  color: var(--text-secondary);
+  border: 0;
+  background: transparent;
+  font-size: 10px;
+}
+
+.quick-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 20px;
+}
+
+.quick-badge {
+  position: absolute;
+  top: -1px;
+  right: 9px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  color: white;
+  border: 2px solid white;
+  border-radius: 9px;
+  background: var(--danger);
+  font-size: 8px;
+  line-height: 13px;
+}
+
+/* =========================================================
+   列表
+========================================================= */
+.list-card {
+  overflow: hidden;
+}
+
+.list-item {
+  position: relative;
+  display: flex;
+  gap: 11px;
+  min-height: 73px;
+  padding: 13px 14px;
+  border-bottom: 1px solid #f0f2f5;
+  background: white;
+}
+
+.list-item:last-child {
+  border-bottom: 0;
+}
+
+.list-item:active {
+  background: #f8fafc;
+}
+
+.list-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  flex: 0 0 40px;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 18px;
+}
+
+.list-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.list-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.list-title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.list-amount {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.list-desc {
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.list-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 7px;
+  color: var(--text-light);
+  font-size: 9px;
+}
+
+.list-arrow {
+  align-self: center;
+  color: #c1c8d1;
+  font-size: 18px;
+}
+
+/* =========================================================
+   项目排行
+========================================================= */
+.rank-item {
+  display: grid;
+  grid-template-columns: 26px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.rank-item:last-child {
+  margin-bottom: 0;
+}
+
+.rank-no {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #667085;
+  background: #f2f4f7;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.rank-item:nth-child(1) .rank-no {
+  color: #9a5c00;
+  background: #fff1cc;
+}
+
+.rank-item:nth-child(2) .rank-no {
+  color: #596579;
+  background: #e9edf3;
+}
+
+.rank-item:nth-child(3) .rank-no {
+  color: #9b5c36;
+  background: #f8e2d3;
+}
+
+.rank-info {
+  min-width: 0;
+}
+
+.rank-name-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.rank-name {
+  overflow: hidden;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rank-bar {
+  height: 5px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #edf1f5;
+}
+
+.rank-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #1677ff, #5aa5ff);
+}
+
+.rank-change {
+  min-width: 38px;
+  text-align: right;
+  font-size: 10px;
+}
+
+/* =========================================================
+   财务模块功能菜单
+========================================================= */
+.finance-menu-card {
+  padding: 13px;
+}
+
+.finance-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 4px;
+}
+
+.finance-menu-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  color: #475467;
+  border: 0;
+  background: transparent;
+  font-size: 10px;
+}
+
+.finance-menu-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 20px;
+}
+
+/* =========================================================
+   横向筛选
+========================================================= */
+.horizontal-scroll {
+  display: flex;
+  gap: 8px;
+  margin: 0 -13px 11px;
+  padding: 0 13px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-chip {
+  height: 31px;
+  flex: 0 0 auto;
+  padding: 0 13px;
+  color: #667085;
+  border: 1px solid #e1e7ee;
+  border-radius: 16px;
+  background: white;
+  font-size: 11px;
+}
+
+.filter-chip.active {
+  color: white;
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+/* =========================================================
+   页面数据概览
+========================================================= */
+.summary-card {
+  padding: 15px;
+}
+
+.summary-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.summary-label {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.summary-value {
+  margin-top: 7px;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.summary-trend {
+  margin-top: 7px;
+  color: var(--success);
+  font-size: 10px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #edf0f4;
+}
+
+.summary-grid-item {
+  text-align: center;
+}
+
+.summary-grid-item:not(:last-child) {
+  border-right: 1px solid #edf0f4;
+}
+
+.summary-grid-item strong {
+  display: block;
+  font-size: 13px;
+}
+
+.summary-grid-item span {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-light);
+  font-size: 9px;
+}
+
+/* =========================================================
+   审批
+========================================================= */
+.approval-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 11px;
+  padding: 4px;
+  border-radius: 13px;
+  background: #e9eef5;
+}
+
+.approval-tab {
+  height: 34px;
+  padding: 0 4px;
+  color: #667085;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 10px;
+}
+
+.approval-tab.active {
+  color: var(--primary);
+  background: white;
+  box-shadow: 0 3px 10px rgba(31,48,77,.08);
+  font-weight: 650;
+}
+
+.approval-card {
+  margin-bottom: 10px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.approval-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.approval-type {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.approval-time {
+  color: var(--text-light);
+  font-size: 9px;
+}
+
+.approval-title {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.approval-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 11px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f7f9fc;
+}
+
+.approval-info span {
+  color: var(--text-light);
+  font-size: 9px;
+}
+
+.approval-info strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.risk-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 9px 10px;
+  color: #b85e16;
+  border: 1px solid #ffe1b2;
+  border-radius: 9px;
+  background: #fff8ea;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.approval-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 11px;
+}
+
+.approval-node {
+  color: var(--text-secondary);
+  font-size: 9px;
+}
+
+.approval-actions {
+  display: flex;
+  gap: 7px;
+}
+
+/* =========================================================
+   账龄分布
+========================================================= */
+.aging-row {
+  margin-bottom: 13px;
+}
+
+.aging-row:last-child {
+  margin-bottom: 0;
+}
+
+.aging-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 10px;
+}
+
+.aging-head span {
+  color: var(--text-secondary);
+}
+
+.aging-progress {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #edf1f5;
+}
+
+.aging-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* =========================================================
+   预警
+========================================================= */
+.warning-card {
+  display: flex;
+  gap: 11px;
+  margin-bottom: 10px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.warning-level {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 13px;
+  font-size: 19px;
+}
+
+.warning-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.warning-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.warning-title {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.warning-time {
+  flex-shrink: 0;
+  color: var(--text-light);
+  font-size: 9px;
+}
+
+.warning-desc {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.warning-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+/* =========================================================
+   我的
+========================================================= */
+.profile-card {
+  position: relative;
+  min-height: 135px;
+  margin-bottom: 11px;
+  overflow: hidden;
+  padding: 20px 16px;
+  color: white;
+  border-radius: 19px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255,255,255,.18), transparent 30%),
+    linear-gradient(135deg, #1c73e8, #5545cf);
+  box-shadow: 0 12px 28px rgba(50,84,192,.22);
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,.45);
+  border-radius: 18px;
+  background: rgba(255,255,255,.16);
+  font-size: 23px;
+  font-weight: 750;
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.profile-role {
+  margin-top: 5px;
+  color: rgba(255,255,255,.75);
+  font-size: 10px;
+}
+
+.profile-permission {
+  display: flex;
+  gap: 7px;
+  margin-top: 17px;
+}
+
+.profile-tag {
+  padding: 5px 8px;
+  border-radius: 8px;
+  color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.12);
+  font-size: 9px;
+}
+
+.setting-item {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  border-bottom: 1px solid #f0f2f5;
+  background: white;
+}
+
+.setting-item:last-child {
+  border-bottom: 0;
+}
+
+.setting-icon {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 15px;
+}
+
+.setting-name {
+  flex: 1;
+  font-size: 12px;
+}
+
+.setting-value {
+  color: var(--text-light);
+  font-size: 10px;
+}
+
+/* =========================================================
+   底部弹层
+========================================================= */
+.overlay {
+  position: absolute;
+  z-index: 200;
+  inset: 0;
+  display: none;
+  background: rgba(15,23,42,.48);
+  backdrop-filter: blur(2px);
+}
+
+.overlay.show {
+  display: block;
+}
+
+.bottom-sheet {
+  position: absolute;
+  z-index: 210;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: calc(100% - 36px);
+  overflow: hidden;
+  border-radius: 22px 22px 0 0;
+  background: #f7f9fc;
+  box-shadow: 0 -15px 45px rgba(15,23,42,.18);
+  transform: translateY(105%);
+  transition: transform .27s ease;
+}
+
+.overlay.show .bottom-sheet {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 38px;
+  height: 4px;
+  margin: 8px auto 4px;
+  border-radius: 3px;
+  background: #d5dbe3;
+}
+
+.sheet-header {
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px 10px;
+  border-bottom: 1px solid #e9edf2;
+  background: white;
+}
+
+.sheet-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.sheet-close {
+  width: 31px;
+  height: 31px;
+  padding: 0;
+  color: #667085;
+  border: 0;
+  border-radius: 10px;
+  background: #f2f4f7;
+  font-size: 18px;
+}
+
+.sheet-body {
+  max-height: calc(100dvh - 190px);
+  overflow-y: auto;
+  padding: 12px 13px 15px;
+}
+
+.sheet-footer {
+  display: flex;
+  gap: 9px;
+  padding: 11px 13px max(11px, env(safe-area-inset-bottom));
+  border-top: 1px solid #e8edf3;
+  background: white;
+}
+
+.sheet-footer .btn {
+  flex: 1;
+}
+
+.detail-card {
+  margin-bottom: 10px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+}
+
+.detail-title {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 31px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #edf0f3;
+  font-size: 11px;
+}
+
+.detail-row:last-child {
+  border-bottom: 0;
+}
+
+.detail-row span {
+  color: var(--text-secondary);
+}
+
+.detail-row strong {
+  max-width: 62%;
+  text-align: right;
+  word-break: break-all;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 20px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 8px;
+  width: 1px;
+  background: #d8e1eb;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 13px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -19px;
+  top: 3px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 1px #b7d5ff;
+}
+
+.timeline-item.pending::before {
+  background: #cbd2dc;
+  box-shadow: 0 0 0 1px #dce1e7;
+}
+
+.timeline-title {
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.timeline-desc {
+  margin-top: 4px;
+  color: var(--text-light);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 13px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 7px;
+  color: #475467;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  color: var(--text);
+  border: 1px solid #dce2e9;
+  border-radius: 11px;
+  outline: none;
+  background: white;
+  font-size: 12px;
+}
+
+textarea.form-control {
+  min-height: 78px;
+  resize: none;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.option-item {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid #e0e6ed;
+  border-radius: 11px;
+  background: white;
+  font-size: 11px;
+}
+
+.option-item.selected {
+  color: var(--primary);
+  border-color: #83b8ff;
+  background: var(--primary-light);
+}
+
+/* =========================================================
+   Toast
+========================================================= */
+.toast {
+  position: absolute;
+  z-index: 300;
+  left: 50%;
+  bottom: 88px;
+  max-width: 82%;
+  padding: 10px 14px;
+  color: white;
+  border-radius: 11px;
+  background: rgba(18,25,38,.92);
+  box-shadow: 0 8px 25px rgba(15,23,42,.24);
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: .24s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* =========================================================
+   空状态
+========================================================= */
+.empty-state {
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 20px;
+  color: var(--primary);
+  background: var(--primary-light);
+  font-size: 29px;
+}
+
+.empty-title {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.empty-desc {
+  margin-top: 7px;
+  color: var(--text-light);
+  font-size: 10px;
+}
+
+/* =========================================================
+   桌面端手机圆角，移动端全屏
+========================================================= */
+@media (min-width: 601px) {
+  .phone {
+    border-radius: 32px;
+  }
+
+  .status-bar {
+    border-radius: 32px 32px 0 0;
+  }
+
+  .tab-bar {
+    border-radius: 0 0 32px 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .phone {
+    width: 100vw;
+    height: 100dvh;
+    box-shadow: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- 手机状态栏 -->
+  <div class="status-bar">
+    <span id="systemTime">14:32</span>
+
+    <div class="status-icons">
+      <div class="signal">
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <span>5G</span>
+      <div class="battery">
+        <div class="battery-level"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="header-title" id="headerTitle">经营首页</div>
+      <div class="header-subtitle" id="headerSubtitle">
+        华城智慧交通集团 · 全部项目
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="header-icon" onclick="openSearch()">⌕</button>
+
+      <button class="header-icon" onclick="openMessages()">
+        ♢
+        <span class="header-dot"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 页面 -->
+  <main class="page-container">
+    <div class="page" id="page">
+      <div class="page-content" id="pageContent"></div>
+    </div>
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="tab-bar">
+    <button class="tab-item active" data-route="home" onclick="navigate('home')">
+      <span class="tab-icon">⌂</span>
+      <span>首页</span>
+    </button>
+
+    <button class="tab-item" data-route="project" onclick="navigate('project')">
+      <span class="tab-icon">▦</span>
+      <span>项目</span>
+    </button>
+
+    <button class="tab-item" data-route="finance" onclick="navigate('finance')">
+      <span class="tab-icon">¥</span>
+      <span>财务</span>
+    </button>
+
+    <button class="tab-item" data-route="approval" onclick="navigate('approval')">
+      <span class="tab-icon">
+        ✓
+        <i class="tab-badge" id="approvalBadge">8</i>
+      </span>
+      <span>审批</span>
+    </button>
+
+    <button class="tab-item" data-route="mine" onclick="navigate('mine')">
+      <span class="tab-icon">♙</span>
+      <span>我的</span>
+    </button>
+  </nav>
+
+  <!-- 底部弹层 -->
+  <div class="overlay" id="overlay" onclick="overlayClick(event)">
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+        <div class="sheet-title" id="sheetTitle">详情</div>
+        <button class="sheet-close" onclick="closeSheet()">×</button>
+      </div>
+
+      <div class="sheet-body" id="sheetBody"></div>
+      <div class="sheet-footer" id="sheetFooter"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* =========================================================
+   应用状态
+========================================================= */
+const state = {
+  route: "home",
+  financePage: "overview",
+  approvalTab: "pending",
+
+  scope: "华城智慧交通集团",
+  project: "全部项目",
+  period: "今日",
+
+  pendingApproval: 8,
+  warnings: 9,
+
+  approvedItems: [],
+  collectedCustomers: [],
+  reconciledItems: []
+};
+
+const pageMeta = {
+  home: ["经营首页", "华城智慧交通集团 · 全部项目"],
+  project: ["项目经营", "12个项目 · 5种经营业态"],
+  finance: ["智慧财务", "看数 · 预警 · 跟进"],
+  approval: ["审批中心", "退款、减免、结算与付款"],
+  mine: ["我的", "权限、消息与管理设置"]
+};
+
+/* =========================================================
+   通用方法
+========================================================= */
+function money(value) {
+  return "¥" + value;
+}
+
+function navigate(route) {
+  state.route = route;
+
+  document.querySelectorAll(".tab-item").forEach(item => {
+    item.classList.toggle(
+      "active",
+      item.dataset.route === route
+    );
+  });
+
+  updateHeader();
+  renderPage();
+
+  document.getElementById("page").scrollTop = 0;
+}
+
+function updateHeader() {
+  const meta = pageMeta[state.route] || pageMeta.home;
+
+  document.getElementById("headerTitle").textContent = meta[0];
+  document.getElementById("headerSubtitle").textContent =
+    state.route === "home" || state.route === "finance"
+      ? `${state.scope} · ${state.project}`
+      : meta[1];
+}
+
+function renderPage() {
+  const templates = {
+    home: homePage,
+    project: projectPage,
+    finance: financePage,
+    approval: approvalPage,
+    mine: minePage
+  };
+
+  document.getElementById("pageContent").innerHTML =
+    templates[state.route]();
+
+  updateBadges();
+}
+
+function updateBadges() {
+  const badge = document.getElementById("approvalBadge");
+
+  if (badge) {
+    badge.textContent = state.pendingApproval;
+    badge.style.display = state.pendingApproval > 0 ? "block" : "none";
+  }
+}
+
+function showToast(text) {
+  const toast = document.getElementById("toast");
+
+  toast.textContent = text;
+  toast.classList.add("show");
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2400);
+}
+
+/* =========================================================
+   通用模板
+========================================================= */
+function scopeCard() {
+  return `
+    <button class="scope-card" style="width:100%;text-align:left;border:1px solid #e4ebf4"
+            onclick="openScopeSelector()">
+      <div class="scope-main">
+        <div class="scope-icon">⌾</div>
+        <div style="min-width:0">
+          <div class="scope-name">${state.scope} · ${state.project}</div>
+          <div class="scope-time">${state.period} · 数据更新于 2026-07-19 14:32</div>
+        </div>
+      </div>
+      <span class="scope-arrow">›</span>
+    </button>
+  `;
+}
+
+function lineChart() {
+  return `
+    <div class="chart-wrap">
+      <svg class="chart-svg" viewBox="0 0 340 140">
+        <defs>
+          <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1677ff" stop-opacity=".28"/>
+            <stop offset="100%" stop-color="#1677ff" stop-opacity=".02"/>
+          </linearGradient>
+        </defs>
+
+        <line x1="18" y1="20" x2="330" y2="20" stroke="#edf1f5"/>
+        <line x1="18" y1="53" x2="330" y2="53" stroke="#edf1f5"/>
+        <line x1="18" y1="86" x2="330" y2="86" stroke="#edf1f5"/>
+        <line x1="18" y1="118" x2="330" y2="118" stroke="#edf1f5"/>
+
+        <path
+          d="M18 101
+             L68 82
+             L118 91
+             L168 57
+             L218 68
+             L268 37
+             L320 49
+             L320 118
+             L18 118 Z"
+          fill="url(#areaGradient)"
+        />
+
+        <path
+          d="M18 101
+             L68 82
+             L118 91
+             L168 57
+             L218 68
+             L268 37
+             L320 49"
+          fill="none"
+          stroke="#1677ff"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        ${[
+          [18,101],[68,82],[118,91],[168,57],
+          [218,68],[268,37],[320,49]
+        ].map(point => `
+          <circle
+            cx="${point[0]}"
+            cy="${point[1]}"
+            r="3.5"
+            fill="#fff"
+            stroke="#1677ff"
+            stroke-width="2"
+          />
+        `).join("")}
+
+        <text x="8" y="136" class="chart-label">7/13</text>
+        <text x="58" y="136" class="chart-label">7/14</text>
+        <text x="108" y="136" class="chart-label">7/15</text>
+        <text x="158" y="136" class="chart-label">7/16</text>
+        <text x="208" y="136" class="chart-label">7/17</text>
+        <text x="258" y="136" class="chart-label">7/18</text>
+        <text x="309" y="136" class="chart-label">今日</text>
+      </svg>
+    </div>
+  `;
+}
+
+function metricCard(icon, iconClass, label, value, desc) {
+  return `
+    <div class="metric-card">
+      <div class="metric-icon ${iconClass}">${icon}</div>
+      <div class="metric-label">${label}</div>
+      <div class="metric-value">${value}</div>
+      <div class="metric-desc">${desc}</div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   首页
+========================================================= */
+function homePage() {
+  return `
+    ${scopeCard()}
+
+    <section class="finance-hero">
+      <div class="hero-top">
+        <span class="hero-label">今日实收</span>
+        <span class="hero-date">2026年7月19日</span>
+      </div>
+
+      <div class="hero-amount">
+        <small>¥</small>86,420.50
+      </div>
+
+      <div class="hero-meta">
+        <span>订单 <b>3,268</b> 笔</span>
+        <span>较昨日 <b>+12.6%</b></span>
+      </div>
+
+      <div class="hero-footer">
+        <div class="hero-progress">
+          <div class="hero-progress-bar"></div>
+        </div>
+        <span class="hero-progress-text">本月目标 72%</span>
+      </div>
+    </section>
+
+    <div class="metric-grid">
+      ${metricCard(
+        "月",
+        "icon-blue",
+        "本月收入",
+        "¥1,286,300",
+        "环比 <span class='up'>+8.2%</span>"
+      )}
+
+      ${metricCard(
+        "收",
+        "icon-orange",
+        "应收未收",
+        "¥326,800",
+        "收缴率 84.5%"
+      )}
+
+      ${metricCard(
+        "审",
+        "icon-purple",
+        "待我审批",
+        state.pendingApproval + " 条",
+        "退款 3 · 减免 2 · 结算 3"
+      )}
+
+      ${metricCard(
+        "!",
+        "icon-red",
+        "异常预警",
+        state.warnings + " 条",
+        "对账差异 ¥2,360"
+      )}
+    </div>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">快捷处理</div>
+          <div class="card-subtitle">常用财务工作随时处理</div>
+        </div>
+      </div>
+
+      <div class="quick-grid">
+        ${quickItem("流水", "收款明细", "icon-blue", "openFinancePage('income')")}
+        ${quickItem("欠", "欠费管理", "icon-orange", "openFinancePage('receivable')")}
+        ${quickItem("退", "退款审批", "icon-red", "navigate('approval')", "3")}
+        ${quickItem("减", "减免审批", "icon-purple", "navigate('approval')", "2")}
+        ${quickItem("差", "对账差异", "icon-orange", "openFinancePage('reconcile')", "5")}
+        ${quickItem("结", "结算审批", "icon-blue", "openFinancePage('settlement')", "3")}
+        ${quickItem("票", "发票管理", "icon-purple", "openFinancePage('invoice')")}
+        ${quickItem("警", "异常预警", "icon-red", "openFinancePage('warning')", state.warnings)}
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">近7日收入趋势</div>
+          <div class="card-subtitle">收入金额与经营趋势</div>
+        </div>
+        <button class="card-link" onclick="openFinancePage('income')">查看详情</button>
+      </div>
+      ${lineChart()}
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">收入结构</div>
+          <div class="card-subtitle">今日各业务收入占比</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="donut-layout">
+          <div class="donut">
+            <div class="donut-center">
+              <strong>¥8.64万</strong>
+              <span>今日收入</span>
+            </div>
+          </div>
+
+          <div class="legend-list">
+            ${legendRow("#1677ff", "停车收入", "46%")}
+            ${legendRow("#35c6b0", "充电收入", "24%")}
+            ${legendRow("#7c5cff", "月租收入", "14%")}
+            ${legendRow("#f5a623", "物业及其他", "16%")}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">项目收入排行</div>
+          <div class="card-subtitle">今日收入前5名</div>
+        </div>
+        <button class="card-link" onclick="navigate('project')">全部项目</button>
+      </div>
+
+      <div class="card-body">
+        ${rankItem(1, "市民中心停车场", "¥28,620", 92, "+12.8%", true)}
+        ${rankItem(2, "云湖花园停车场", "¥18,360", 72, "+6.2%", true)}
+        ${rankItem(3, "东站超级充电站", "¥16,820", 66, "+18.5%", true)}
+        ${rankItem(4, "高新道路泊位片区", "¥12,680", 50, "-3.6%", false)}
+        ${rankItem(5, "华城商业广场", "¥9,940", 39, "+2.8%", true)}
+      </div>
+    </section>
+  `;
+}
+
+function quickItem(icon, name, iconClass, action, badge = "") {
+  return `
+    <button class="quick-item" onclick="${action}">
+      <span class="quick-icon ${iconClass}">${icon}</span>
+      <span>${name}</span>
+      ${badge ? `<i class="quick-badge">${badge}</i>` : ""}
+    </button>
+  `;
+}
+
+function legendRow(color, name, value) {
+  return `
+    <div class="legend-row">
+      <i class="legend-dot" style="background:${color}"></i>
+      <span>${name}</span>
+      <strong class="legend-value">${value}</strong>
+    </div>
+  `;
+}
+
+function rankItem(no, name, amount, width, change, up) {
+  return `
+    <div class="rank-item">
+      <div class="rank-no">${no}</div>
+
+      <div class="rank-info">
+        <div class="rank-name-row">
+          <span class="rank-name">${name}</span>
+          <strong>${amount}</strong>
+        </div>
+
+        <div class="rank-bar">
+          <i style="width:${width}%"></i>
+        </div>
+      </div>
+
+      <span class="rank-change"
+            style="color:${up ? '#19a974' : '#ef4444'}">
+        ${change}
+      </span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   项目页
+========================================================= */
+function projectPage() {
+  return `
+    <div class="horizontal-scroll">
+      <button class="filter-chip active">全部</button>
+      <button class="filter-chip">停车场</button>
+      <button class="filter-chip">充电站</button>
+      <button class="filter-chip">道路停车</button>
+      <button class="filter-chip">物业项目</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">全部项目今日收入</div>
+          <div class="summary-value">¥86,420.50</div>
+          <div class="summary-trend">较昨日 +12.6%</div>
+        </div>
+        <span class="tag tag-blue">12个项目</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>3,268</strong>
+          <span>订单数</span>
+        </div>
+
+        <div class="summary-grid-item">
+          <strong>84.5%</strong>
+          <span>收缴率</span>
+        </div>
+
+        <div class="summary-grid-item">
+          <strong>5</strong>
+          <span>异常项目</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <strong>项目经营情况</strong>
+      <span>按今日收入排序</span>
+    </div>
+
+    <section class="card list-card">
+      ${projectListItem(
+        "市",
+        "icon-blue",
+        "市民中心停车场",
+        "停车 / 充电",
+        "¥28,620",
+        "+12.8%",
+        "正常"
+      )}
+
+      ${projectListItem(
+        "云",
+        "icon-purple",
+        "云湖花园停车场",
+        "停车 / 车位托管",
+        "¥18,360",
+        "+6.2%",
+        "欠费偏高"
+      )}
+
+      ${projectListItem(
+        "充",
+        "icon-orange",
+        "东站超级充电站",
+        "汽车充电",
+        "¥16,820",
+        "+18.5%",
+        "正常"
+      )}
+
+      ${projectListItem(
+        "路",
+        "icon-red",
+        "高新道路泊位片区",
+        "道路停车",
+        "¥12,680",
+        "-3.6%",
+        "对账差异"
+      )}
+
+      ${projectListItem(
+        "商",
+        "icon-blue",
+        "华城商业广场",
+        "停车 / 商户 / 广告",
+        "¥9,940",
+        "+2.8%",
+        "正常"
+      )}
+    </section>
+  `;
+}
+
+function projectListItem(icon, iconClass, name, type, amount, change, status) {
+  const statusClass =
+    status === "正常"
+      ? "tag-green"
+      : status === "欠费偏高"
+      ? "tag-orange"
+      : "tag-red";
+
+  return `
+    <div class="list-item" onclick="openProjectDetail('${name}')">
+      <div class="list-icon ${iconClass}">${icon}</div>
+
+      <div class="list-main">
+        <div class="list-title-row">
+          <span class="list-title">${name}</span>
+          <strong class="list-amount">${amount}</strong>
+        </div>
+
+        <div class="list-desc">${type}</div>
+
+        <div class="list-meta">
+          <span style="color:${change.startsWith('-') ? '#ef4444' : '#19a974'}">
+            环比 ${change}
+          </span>
+          <span class="tag ${statusClass}">${status}</span>
+        </div>
+      </div>
+
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   财务页
+========================================================= */
+function financePage() {
+  const pages = {
+    overview: financeOverview,
+    income: incomePage,
+    receivable: receivablePage,
+    reconcile: reconcilePage,
+    settlement: settlementPage,
+    invoice: invoicePage,
+    report: reportPage,
+    warning: warningPage
+  };
+
+  return pages[state.financePage]();
+}
+
+function openFinancePage(page) {
+  state.route = "finance";
+  state.financePage = page;
+
+  document.querySelectorAll(".tab-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.route === "finance");
+  });
+
+  updateHeader();
+  renderPage();
+  document.getElementById("page").scrollTop = 0;
+}
+
+function financeBackButton() {
+  if (state.financePage === "overview") {
+    return "";
+  }
+
+  return `
+    <button class="filter-chip" onclick="openFinancePage('overview')">
+      ‹ 财务首页
+    </button>
+  `;
+}
+
+function financeOverview() {
+  return `
+    ${scopeCard()}
+
+    <section class="card finance-menu-card">
+      <div class="finance-menu-grid">
+        ${financeMenuItem("收", "收入", "icon-blue", "income")}
+        ${financeMenuItem("欠", "应收欠费", "icon-orange", "receivable", "26")}
+        ${financeMenuItem("核", "对账", "icon-red", "reconcile", "5")}
+        ${financeMenuItem("结", "结算", "icon-purple", "settlement", "3")}
+        ${financeMenuItem("票", "发票", "icon-blue", "invoice")}
+        ${financeMenuItem("表", "报表", "icon-purple", "report")}
+        ${financeMenuItem("警", "预警", "icon-red", "warning", state.warnings)}
+        ${financeMenuItem("审", "审批", "icon-orange", "approval", state.pendingApproval)}
+      </div>
+    </section>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">本月累计收入</div>
+          <div class="summary-value">¥1,286,300</div>
+          <div class="summary-trend">目标完成率 72% · 环比 +8.2%</div>
+        </div>
+        <span class="tag tag-green">经营正常</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>¥32.68万</strong>
+          <span>应收未收</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>¥2,360</strong>
+          <span>对账差异</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>¥21.86万</strong>
+          <span>待结算</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">近7日收入</div>
+          <div class="card-subtitle">全部项目收入趋势</div>
+        </div>
+        <button class="card-link" onclick="openFinancePage('income')">详情</button>
+      </div>
+      ${lineChart()}
+    </section>
+
+    <div class="section-title">
+      <strong>待处理事项</strong>
+      <span>按风险优先级排序</span>
+    </div>
+
+    <section class="card list-card">
+      <div class="list-item" onclick="openFinancePage('reconcile')">
+        <div class="list-icon icon-red">差</div>
+        <div class="list-main">
+          <div class="list-title-row">
+            <span class="list-title">5笔对账差异待处理</span>
+            <strong class="list-amount" style="color:#ef4444">¥2,360</strong>
+          </div>
+          <div class="list-desc">微信支付、ETC及现金收款存在差异</div>
+          <div class="list-meta">
+            <span class="tag tag-red">高风险</span>
+            <span>今日 13:26</span>
+          </div>
+        </div>
+        <span class="list-arrow">›</span>
+      </div>
+
+      <div class="list-item" onclick="navigate('approval')">
+        <div class="list-icon icon-purple">审</div>
+        <div class="list-main">
+          <div class="list-title-row">
+            <span class="list-title">${state.pendingApproval}条财务审批待处理</span>
+          </div>
+          <div class="list-desc">退款、减免和合作方结算审批</div>
+          <div class="list-meta">
+            <span class="tag tag-orange">待处理</span>
+            <span>2条即将超时</span>
+          </div>
+        </div>
+        <span class="list-arrow">›</span>
+      </div>
+
+      <div class="list-item" onclick="openFinancePage('receivable')">
+        <div class="list-icon icon-orange">欠</div>
+        <div class="list-main">
+          <div class="list-title-row">
+            <span class="list-title">逾期应收账款</span>
+            <strong class="list-amount">¥86,200</strong>
+          </div>
+          <div class="list-desc">最长逾期96天，涉及26个客户</div>
+          <div class="list-meta">
+            <span class="tag tag-orange">需要催缴</span>
+          </div>
+        </div>
+        <span class="list-arrow">›</span>
+      </div>
+    </section>
+  `;
+}
+
+function financeMenuItem(icon, name, iconClass, page, badge = "") {
+  let action = `openFinancePage('${page}')`;
+
+  if (page === "approval") {
+    action = `navigate('approval')`;
+  }
+
+  return `
+    <button class="finance-menu-item" onclick="${action}">
+      <span class="finance-menu-icon ${iconClass}">${icon}</span>
+      <span>${name}</span>
+      ${badge ? `<i class="quick-badge" style="right:8px">${badge}</i>` : ""}
+    </button>
+  `;
+}
+
+/* =========================================================
+   收入
+========================================================= */
+function incomePage() {
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">今日</button>
+      <button class="filter-chip">昨日</button>
+      <button class="filter-chip">本月</button>
+      <button class="filter-chip">自定义</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">今日实收金额</div>
+          <div class="summary-value">¥86,420.50</div>
+          <div class="summary-trend">较昨日 +12.6%</div>
+        </div>
+        <span class="tag tag-blue">3,268笔</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>¥89,680</strong>
+          <span>订单金额</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>¥2,280</strong>
+          <span>优惠金额</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>¥979.50</strong>
+          <span>退款/手续费</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">今日收入趋势</div>
+          <div class="card-subtitle">按小时统计</div>
+        </div>
+      </div>
+      ${lineChart()}
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">支付方式统计</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        ${paymentRow("微信支付", "¥42,680", 49, "#1677ff")}
+        ${paymentRow("支付宝", "¥18,620", 22, "#35c6b0")}
+        ${paymentRow("ETC / 银联", "¥12,860", 15, "#7c5cff")}
+        ${paymentRow("余额 / 企业账户", "¥8,620", 10, "#f5a623")}
+        ${paymentRow("现金及其他", "¥3,640", 4, "#98a2b3")}
+      </div>
+    </section>
+
+    <div class="section-title">
+      <strong>最新收款</strong>
+      <span>共3,268笔</span>
+    </div>
+
+    <section class="card list-card">
+      ${incomeListItem("停", "临时停车费", "市民中心停车场", "粤B·7K2M9", "¥32.00", "微信支付", "已对账")}
+      ${incomeListItem("充", "汽车充电费", "东站超级充电站", "粤B·3Q8H6", "¥86.42", "账户余额", "已对账")}
+      ${incomeListItem("路", "道路停车费", "高新道路泊位片区", "粤A·12P66", "¥18.00", "ETC", "金额差异")}
+      ${incomeListItem("月", "月租停车费", "云湖花园停车场", "深圳远航科技", "¥1,200.00", "银行转账", "待匹配")}
+    </section>
+  `;
+}
+
+function paymentRow(name, amount, percent, color) {
+  return `
+    <div class="aging-row">
+      <div class="aging-head">
+        <span>${name}</span>
+        <strong>${amount} · ${percent}%</strong>
+      </div>
+      <div class="aging-progress">
+        <i style="width:${percent}%;background:${color}"></i>
+      </div>
+    </div>
+  `;
+}
+
+function incomeListItem(icon, type, project, user, amount, payment, status) {
+  const statusClass =
+    status === "已对账" ? "tag-green" : "tag-orange";
+
+  return `
+    <div class="list-item"
+         onclick="openIncomeDetail('${type}','${project}','${user}','${amount}','${payment}','${status}')">
+      <div class="list-icon icon-blue">${icon}</div>
+
+      <div class="list-main">
+        <div class="list-title-row">
+          <span class="list-title">${type}</span>
+          <strong class="list-amount">${amount}</strong>
+        </div>
+
+        <div class="list-desc">${project} · ${user}</div>
+
+        <div class="list-meta">
+          <span>${payment}</span>
+          <span class="tag ${statusClass}">${status}</span>
+          <span>14:26</span>
+        </div>
+      </div>
+
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   应收欠费
+========================================================= */
+function receivablePage() {
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">全部欠费</button>
+      <button class="filter-chip">已逾期</button>
+      <button class="filter-chip">待跟进</button>
+      <button class="filter-chip">已催缴</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">应收未收</div>
+          <div class="summary-value">¥326,800</div>
+          <div class="summary-trend">本月已回款 ¥62,890</div>
+        </div>
+        <span class="tag tag-orange">26个客户</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>¥86,200</strong>
+          <span>逾期金额</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>84.5%</strong>
+          <span>收缴率</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>96天</strong>
+          <span>最长逾期</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">欠费账龄分析</div>
+          <div class="card-subtitle">按逾期天数分组</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        ${agingLine("0－30天", "¥168,200", 51, "#35c6b0")}
+        ${agingLine("31－60天", "¥76,800", 24, "#1677ff")}
+        ${agingLine("61－90天", "¥42,600", 13, "#f5a623")}
+        ${agingLine("90天以上", "¥39,200", 12, "#ef4444")}
+      </div>
+    </section>
+
+    <div class="section-title">
+      <strong>欠费客户</strong>
+      <span>按逾期风险排序</span>
+    </div>
+
+    <section class="card list-card">
+      ${receivableItem(
+        "深圳远航科技有限公司",
+        "企业停车月结",
+        "市民中心停车场",
+        "¥56,200",
+        "逾期19天",
+        "高风险"
+      )}
+
+      ${receivableItem(
+        "优车洗护服务中心",
+        "商户场地租金",
+        "华城商业广场",
+        "¥18,000",
+        "逾期48天",
+        "高风险"
+      )}
+
+      ${receivableItem(
+        "云湖花园3栋业主账户",
+        "物业管理费",
+        "云湖花园停车场",
+        "¥4,400",
+        "部分收款",
+        "待跟进"
+      )}
+
+      ${receivableItem(
+        "粤B·2P8R6",
+        "道路停车欠费",
+        "高新道路泊位片区",
+        "¥286",
+        "逾期96天",
+        "限制通行"
+      )}
+    </section>
+  `;
+}
+
+function agingLine(name, amount, percent, color) {
+  return `
+    <div class="aging-row">
+      <div class="aging-head">
+        <span>${name}</span>
+        <strong>${amount} · ${percent}%</strong>
+      </div>
+      <div class="aging-progress">
+        <i style="width:${percent}%;background:${color}"></i>
+      </div>
+    </div>
+  `;
+}
+
+function receivableItem(customer, type, project, amount, overdue, status) {
+  const collected = state.collectedCustomers.includes(customer);
+
+  return `
+    <div class="list-item"
+         onclick="openReceivableDetail('${customer}','${type}','${project}','${amount}','${overdue}')">
+      <div class="list-icon icon-orange">欠</div>
+
+      <div class="list-main">
+        <div class="list-title-row">
+          <span class="list-title">${customer}</span>
+          <strong class="list-amount" style="color:#ef4444">${amount}</strong>
+        </div>
+
+        <div class="list-desc">${type} · ${project}</div>
+
+        <div class="list-meta">
+          <span>${overdue}</span>
+          <span class="tag ${collected ? "tag-green" : "tag-orange"}">
+            ${collected ? "已催缴" : status}
+          </span>
+        </div>
+      </div>
+
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   对账
+========================================================= */
+function reconcilePage() {
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">今日</button>
+      <button class="filter-chip">昨日</button>
+      <button class="filter-chip">本月</button>
+      <button class="filter-chip">全部渠道</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">今日应对账金额</div>
+          <div class="summary-value">¥86,420.50</div>
+          <div class="summary-trend">自动匹配率 98.63%</div>
+        </div>
+        <span class="tag tag-red">5笔差异</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>¥84,060.50</strong>
+          <span>已对平</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong style="color:#ef4444">¥2,360</strong>
+          <span>差异金额</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>3</strong>
+          <span>待处理</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">渠道对账状态</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        ${channelStatus("微信支付", "¥42,680", "已对平", "tag-green")}
+        ${channelStatus("支付宝", "¥18,620", "已对平", "tag-green")}
+        ${channelStatus("ETC", "¥12,860", "差异3笔", "tag-red")}
+        ${channelStatus("现金收款", "¥3,640", "短款¥230", "tag-orange")}
+      </div>
+    </section>
+
+    <div class="section-title">
+      <strong>对账差异</strong>
+      <span>仅支持查看与发起处理</span>
+    </div>
+
+    <section class="card list-card">
+      ${differenceItem(
+        "RC-D202607190023",
+        "有订单无支付",
+        "高新道路泊位片区",
+        "¥20.00",
+        "ETC",
+        "待处理"
+      )}
+
+      ${differenceItem(
+        "RC-D202607190022",
+        "支付成功无订单",
+        "市民中心停车场",
+        "¥68.00",
+        "微信支付",
+        "待确认收入"
+      )}
+
+      ${differenceItem(
+        "RC-D202607190021",
+        "金额不一致",
+        "东站超级充电站",
+        "¥1.00",
+        "支付宝",
+        "已核实"
+      )}
+
+      ${differenceItem(
+        "RC-D202607190020",
+        "现金短款",
+        "云湖花园停车场",
+        "¥230.00",
+        "现金",
+        "待责任人确认"
+      )}
+    </section>
+  `;
+}
+
+function channelStatus(name, amount, status, statusClass) {
+  return `
+    <div class="detail-row">
+      <span>${name}</span>
+      <strong>
+        ${amount}
+        <i class="tag ${statusClass}" style="margin-left:5px">${status}</i>
+      </strong>
+    </div>
+  `;
+}
+
+function differenceItem(no, type, project, amount, channel, status) {
+  const processed = state.reconciledItems.includes(no);
+
+  return `
+    <div class="list-item"
+         onclick="openDifferenceDetail('${no}','${type}','${project}','${amount}','${channel}')">
+      <div class="list-icon icon-red">差</div>
+
+      <div class="list-main">
+        <div class="list-title-row">
+          <span class="list-title">${type}</span>
+          <strong class="list-amount" style="color:#ef4444">${amount}</strong>
+        </div>
+
+        <div class="list-desc">${project} · ${channel}</div>
+
+        <div class="list-meta">
+          <span>${no}</span>
+          <span class="tag ${processed ? "tag-blue" : "tag-orange"}">
+            ${processed ? "处理审批中" : status}
+          </span>
+        </div>
+      </div>
+
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   结算
+========================================================= */
+function settlementPage() {
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">待处理</button>
+      <button class="filter-chip">待审批</button>
+      <button class="filter-chip">待付款</button>
+      <button class="filter-chip">已结算</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">本期待结算金额</div>
+          <div class="summary-value">¥218,645</div>
+          <div class="summary-trend">本月已结算 ¥112,860</div>
+        </div>
+        <span class="tag tag-purple">18个合作方</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>3单</strong>
+          <span>待审批</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>2单</strong>
+          <span>待付款</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong style="color:#ef4444">¥6,820</strong>
+          <span>异常金额</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <strong>结算单</strong>
+      <span>2026年6月账期</span>
+    </div>
+
+    <section class="card list-card">
+      ${settlementItem(
+        "ST202607000126",
+        "云湖花园业委会",
+        "云湖花园停车场",
+        "¥36,827.70",
+        "审批中",
+        "70%"
+      )}
+
+      ${settlementItem(
+        "ST202607000125",
+        "东站充电桩投资方",
+        "东站超级充电站",
+        "¥16,289.40",
+        "待付款",
+        "服务费60%"
+      )}
+
+      ${settlementItem(
+        "ST202607000124",
+        "个人车位业主126户",
+        "云湖花园停车场",
+        "¥22,842.60",
+        "待确认",
+        "托管收益"
+      )}
+
+      ${settlementItem(
+        "ST202607000123",
+        "优车洗护服务中心",
+        "华城商业广场",
+        "¥7,638.00",
+        "已付款",
+        "佣金10%"
+      )}
+    </section>
+  `;
+}
+
+function settlementItem(no, target, project, amount, status, rule) {
+  const statusClass =
+    status === "已付款"
+      ? "tag-green"
+      : status === "待付款"
+      ? "tag-blue"
+      : "tag-orange";
+
+  return `
+    <div class="list-item"
+         onclick="openSettlementDetail('${no}','${target}','${project}','${amount}','${status}','${rule}')">
+      <div class="list-icon icon-purple">结</div>
+
+      <div class="list-main">
+        <div class="list-title-row">
+          <span class="list-title">${target}</span>
+          <strong class="list-amount">${amount}</strong>
+        </div>
+
+        <div class="list-desc">${project} · ${rule}</div>
+
+        <div class="list-meta">
+          <span>${no}</span>
+          <span class="tag ${statusClass}">${status}</span>
+        </div>
+      </div>
+
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+/* =========================================================
+   发票、报表、预警
+========================================================= */
+function invoicePage() {
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">全部</button>
+      <button class="filter-chip">待开票</button>
+      <button class="filter-chip">开票失败</button>
+      <button class="filter-chip">红冲审批</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">本月开票金额</div>
+          <div class="summary-value">¥386,200</div>
+          <div class="summary-trend">开票成功率 99.2%</div>
+        </div>
+        <span class="tag tag-blue">286张</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>¥62,800</strong>
+          <span>待开票</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>3张</strong>
+          <span>开票失败</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>2张</strong>
+          <span>红冲待审</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card list-card">
+      ${invoiceItem("IV202607190086", "深圳远航科技有限公司", "¥8,620", "增值税专票", "待开票")}
+      ${invoiceItem("IV202607190085", "优车洗护服务中心", "¥7,638", "增值税普票", "已开票")}
+      ${invoiceItem("IV202607190084", "云湖物业服务有限公司", "¥18,600", "增值税专票", "开票失败")}
+    </section>
+  `;
+}
+
+function invoiceItem(no, customer, amount, type, status) {
+  const statusClass =
+    status === "已开票"
+      ? "tag-green"
+      : status === "开票失败"
+      ? "tag-red"
+      : "tag-orange";
+
+  return `
+    <div class="list-item" onclick="showToast('已打开发票详情')">
+      <div class="list-icon icon-blue">票</div>
+      <div class="list-main">
+        <div class="list-title-row">
+          <span class="list-title">${customer}</span>
+          <strong class="list-amount">${amount}</strong>
+        </div>
+        <div class="list-desc">${type} · ${no}</div>
+        <div class="list-meta">
+          <span class="tag ${statusClass}">${status}</span>
+        </div>
+      </div>
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+function reportPage() {
+  const reports = [
+    ["日", "收入日报", "今日收入、订单、退款及异常"],
+    ["月", "收入月报", "月度趋势、目标和收入结构"],
+    ["排", "项目收入排行", "项目收入、环比和经营状态"],
+    ["欠", "应收欠费表", "账龄、逾期和催缴情况"],
+    ["退", "退款统计表", "退款金额、原因和状态"],
+    ["结", "结算统计表", "合作方结算及付款进度"],
+    ["差", "对账差异表", "渠道差异和处理结果"],
+    ["票", "发票统计表", "开票、失败和红冲情况"]
+  ];
+
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">本月</button>
+      <button class="filter-chip">上月</button>
+      <button class="filter-chip">本季度</button>
+    </div>
+
+    <section class="card list-card">
+      ${reports.map(report => `
+        <div class="list-item" onclick="openReport('${report[1]}')">
+          <div class="list-icon icon-blue">${report[0]}</div>
+          <div class="list-main">
+            <div class="list-title">${report[1]}</div>
+            <div class="list-desc">${report[2]}</div>
+            <div class="list-meta">
+              <span>实时数据</span>
+              <span class="tag tag-blue">可申请导出</span>
+            </div>
+          </div>
+          <span class="list-arrow">›</span>
+        </div>
+      `).join("")}
+    </section>
+  `;
+}
+
+function warningPage() {
+  return `
+    <div class="horizontal-scroll">
+      ${financeBackButton()}
+      <button class="filter-chip active">全部预警</button>
+      <button class="filter-chip">高风险</button>
+      <button class="filter-chip">待处理</button>
+      <button class="filter-chip">已关闭</button>
+    </div>
+
+    <section class="card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">当前异常预警</div>
+          <div class="summary-value">${state.warnings} 条</div>
+          <div class="summary-trend" style="color:#ef4444">高风险3条</div>
+        </div>
+        <span class="tag tag-red">需要关注</span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-grid-item">
+          <strong>3</strong>
+          <span>高风险</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>4</strong>
+          <span>中风险</span>
+        </div>
+        <div class="summary-grid-item">
+          <strong>2</strong>
+          <span>低风险</span>
+        </div>
+      </div>
+    </section>
+
+    ${warningItem(
+      "高",
+      "icon-red",
+      "大额退款异常",
+      "东站超级充电站",
+      "单笔退款¥18,000，超过项目经理审批权限",
+      "¥18,000",
+      "14:18"
+    )}
+
+    ${warningItem(
+      "高",
+      "icon-red",
+      "现金短款",
+      "云湖花园停车场",
+      "晚班实缴金额少于应缴金额，需收费员确认",
+      "¥230",
+      "13:56"
+    )}
+
+    ${warningItem(
+      "中",
+      "icon-orange",
+      "对账金额不一致",
+      "高新道路泊位片区",
+      "ETC渠道金额与系统订单金额存在差异",
+      "¥486",
+      "12:26"
+    )}
+
+    ${warningItem(
+      "中",
+      "icon-orange",
+      "长账龄欠费",
+      "高新道路泊位片区",
+      "车辆粤B·2P8R6欠费已超过90天",
+      "¥286",
+      "10:08"
+    )}
+  `;
+}
+
+function warningItem(level, iconClass, title, project, desc, amount, time) {
+  return `
+    <div class="warning-card"
+         onclick="openWarningDetail('${title}','${project}','${desc}','${amount}')">
+      <div class="warning-level ${iconClass}">${level}</div>
+
+      <div class="warning-main">
+        <div class="warning-title-row">
+          <span class="warning-title">${title}</span>
+          <span class="warning-time">${time}</span>
+        </div>
+
+        <div class="warning-desc">${project}<br>${desc}</div>
+
+        <div class="warning-footer">
+          <span class="tag ${level === "高" ? "tag-red" : "tag-orange"}">
+            ${level}风险
+          </span>
+          <strong style="font-size:12px">${amount}</strong>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   审批中心
+========================================================= */
+function approvalPage() {
+  return `
+    <div class="approval-tabs">
+      <button class="approval-tab ${state.approvalTab === "pending" ? "active" : ""}"
+              onclick="switchApprovalTab('pending')">
+        待我审批 ${state.pendingApproval}
+      </button>
+
+      <button class="approval-tab ${state.approvalTab === "created" ? "active" : ""}"
+              onclick="switchApprovalTab('created')">
+        我发起的
+      </button>
+
+      <button class="approval-tab ${state.approvalTab === "done" ? "active" : ""}"
+              onclick="switchApprovalTab('done')">
+        已审批
+      </button>
+
+      <button class="approval-tab ${state.approvalTab === "cc" ? "active" : ""}"
+              onclick="switchApprovalTab('cc')">
+        抄送我的
+      </button>
+    </div>
+
+    ${approvalListByTab()}
+  `;
+}
+
+function switchApprovalTab(tab) {
+  state.approvalTab = tab;
+  renderPage();
+}
+
+function approvalListByTab() {
+  if (state.approvalTab !== "pending") {
+    return `
+      <section class="card">
+        <div class="empty-state">
+          <div class="empty-icon">✓</div>
+          <div class="empty-title">
+            ${state.approvalTab === "done" ? "已审批事项" : "暂无更多数据"}
+          </div>
+          <div class="empty-desc">
+            审批记录和流程状态将在这里展示
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  return `
+    ${approvalCard(
+      "refund",
+      "退款审批",
+      "充电订单设备异常退款",
+      "张敏",
+      "东站超级充电站",
+      "¥18,000",
+      "财务负责人审批",
+      "高风险",
+      "该用户近30天已退款3次；订单已开具发票",
+      "AP202607190036"
+    )}
+
+    ${approvalCard(
+      "settlement",
+      "结算审批",
+      "云湖花园业委会6月结算",
+      "李伟",
+      "云湖花园停车场",
+      "¥36,827.70",
+      "集团财务复核",
+      "大额事项",
+      "结算比例与合同一致，合作方发票尚未上传",
+      "AP202607190035"
+    )}
+
+    ${approvalCard(
+      "discount",
+      "减免审批",
+      "企业停车月结费用减免",
+      "王芳",
+      "市民中心停车场",
+      "¥2,600",
+      "区域经理审批",
+      "关注",
+      "该客户近6个月已申请减免2次",
+      "AP202607190034"
+    )}
+
+    ${approvalCard(
+      "adjustment",
+      "调账审批",
+      "支付成功但系统无业务订单",
+      "赵强",
+      "市民中心停车场",
+      "¥6,820",
+      "财务总监审批",
+      "异常收入",
+      "渠道流水真实存在，建议生成异常收入单",
+      "AP202607190033"
+    )}
+  `;
+}
+
+function approvalCard(type, typeName, title, creator, project, amount, node, risk, tip, no) {
+  if (state.approvedItems.includes(no)) {
+    return "";
+  }
+
+  return `
+    <div class="approval-card">
+      <div class="approval-top">
+        <div class="approval-type">
+          <span class="tag ${risk === "高风险" ? "tag-red" : "tag-purple"}">
+            ${typeName}
+          </span>
+        </div>
+
+        <span class="approval-time">今天 13:26</span>
+      </div>
+
+      <div class="approval-title">${title}</div>
+
+      <div class="approval-info">
+        <div>
+          <span>申请项目</span>
+          <strong>${project}</strong>
+        </div>
+
+        <div>
+          <span>申请金额</span>
+          <strong style="color:#ef4444">${amount}</strong>
+        </div>
+
+        <div>
+          <span>申请人</span>
+          <strong>${creator}</strong>
+        </div>
+
+        <div>
+          <span>当前节点</span>
+          <strong>${node}</strong>
+        </div>
+      </div>
+
+      <div class="risk-tip">
+        <span>⚠</span>
+        <span>${tip}</span>
+      </div>
+
+      <div class="approval-footer">
+        <span class="approval-node">${no}</span>
+
+        <div class="approval-actions">
+          <button class="btn btn-sm btn-light-danger"
+                  onclick="quickReject('${no}','${typeName}')">
+            驳回
+          </button>
+
+          <button class="btn btn-sm btn-primary"
+                  onclick="openApprovalDetail('${type}','${no}','${typeName}','${title}','${project}','${amount}','${creator}','${tip}')">
+            审批
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   我的
+========================================================= */
+function minePage() {
+  return `
+    <section class="profile-card">
+      <div class="profile-head">
+        <div class="avatar">财</div>
+
+        <div>
+          <div class="profile-name">陈晓华</div>
+          <div class="profile-role">集团财务总监 · 华城智慧交通集团</div>
+        </div>
+      </div>
+
+      <div class="profile-permission">
+        <span class="profile-tag">全部项目数据</span>
+        <span class="profile-tag">审批额度 ¥200,000</span>
+      </div>
+    </section>
+
+    <section class="card list-card">
+      <div class="setting-item" onclick="openScopeSelector()">
+        <div class="setting-icon icon-blue">⌾</div>
+        <span class="setting-name">数据权限范围</span>
+        <span class="setting-value">集团全部项目 ›</span>
+      </div>
+
+      <div class="setting-item" onclick="openMessages()">
+        <div class="setting-icon icon-red">信</div>
+        <span class="setting-name">消息中心</span>
+        <span class="tag tag-red">12条未读</span>
+        <span class="list-arrow">›</span>
+      </div>
+
+      <div class="setting-item" onclick="showToast('已打开审批权限设置')">
+        <div class="setting-icon icon-purple">权</div>
+        <span class="setting-name">审批与金额权限</span>
+        <span class="setting-value">查看 ›</span>
+      </div>
+
+      <div class="setting-item" onclick="showToast('已打开消息提醒设置')">
+        <div class="setting-icon icon-orange">铃</div>
+        <span class="setting-name">财务消息提醒</span>
+        <span class="setting-value">已开启 ›</span>
+      </div>
+    </section>
+
+    <section class="card list-card">
+      <div class="setting-item" onclick="showToast('已进入操作日志')">
+        <div class="setting-icon icon-blue">迹</div>
+        <span class="setting-name">我的操作日志</span>
+        <span class="list-arrow">›</span>
+      </div>
+
+      <div class="setting-item" onclick="showToast('当前版本：智慧财务管理端 V1.0')">
+        <div class="setting-icon icon-purple">版</div>
+        <span class="setting-name">关于智慧财务</span>
+        <span class="setting-value">V1.0 ›</span>
+      </div>
+    </section>
+
+    <div style="padding:10px 0 4px;text-align:center;color:#98a2b3;font-size:9px">
+      当前登录时间：2026-07-19 14:32
+    </div>
+  `;
+}
+
+/* =========================================================
+   弹层基础
+========================================================= */
+function openSheet(title, body, footer = "") {
+  document.getElementById("sheetTitle").textContent = title;
+  document.getElementById("sheetBody").innerHTML = body;
+  document.getElementById("sheetFooter").innerHTML = footer;
+  document.getElementById("overlay").classList.add("show");
+}
+
+function closeSheet() {
+  document.getElementById("overlay").classList.remove("show");
+}
+
+function overlayClick(event) {
+  if (event.target.id === "overlay") {
+    closeSheet();
+  }
+}
+
+/* =========================================================
+   范围筛选
+========================================================= */
+function openScopeSelector() {
+  openSheet(
+    "选择数据范围",
+    `
+      <div class="form-group">
+        <label class="form-label">组织范围</label>
+
+        <div class="option-grid">
+          ${scopeOption("华城智慧交通集团", state.scope === "华城智慧交通集团")}
+          ${scopeOption("停车运营公司", state.scope === "停车运营公司")}
+          ${scopeOption("新能源公司", state.scope === "新能源公司")}
+          ${scopeOption("华南区域", state.scope === "华南区域")}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">项目范围</label>
+
+        <select class="form-control" id="scopeProject">
+          <option>全部项目</option>
+          <option>市民中心停车场</option>
+          <option>云湖花园停车场</option>
+          <option>高新道路泊位片区</option>
+          <option>东站超级充电站</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">时间范围</label>
+
+        <div class="option-grid">
+          <div class="option-item selected" onclick="selectOption(this)">今日</div>
+          <div class="option-item" onclick="selectOption(this)">昨日</div>
+          <div class="option-item" onclick="selectOption(this)">本月</div>
+          <div class="option-item" onclick="selectOption(this)">上月</div>
+        </div>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeSheet()">取消</button>
+      <button class="btn btn-primary" onclick="confirmScope()">确定</button>
+    `
+  );
+}
+
+function scopeOption(name, selected) {
+  return `
+    <div class="option-item ${selected ? "selected" : ""}"
+         data-scope="${name}"
+         onclick="selectScopeOption(this)">
+      ${name}
+    </div>
+  `;
+}
+
+function selectScopeOption(element) {
+  element.parentElement
+    .querySelectorAll(".option-item")
+    .forEach(item => item.classList.remove("selected"));
+
+  element.classList.add("selected");
+}
+
+function selectOption(element) {
+  element.parentElement
+    .querySelectorAll(".option-item")
+    .forEach(item => item.classList.remove("selected"));
+
+  element.classList.add("selected");
+}
+
+function confirmScope() {
+  const selectedScope =
+    document.querySelector("#sheetBody [data-scope].selected");
+
+  const project = document.getElementById("scopeProject");
+
+  if (selectedScope) {
+    state.scope = selectedScope.dataset.scope;
+  }
+
+  if (project) {
+    state.project = project.value;
+  }
+
+  closeSheet();
+  updateHeader();
+  renderPage();
+  showToast("数据范围已切换");
+}
+
+/* =========================================================
+   收入详情：订单→支付→对账→发票追踪
+========================================================= */
+function openIncomeDetail(type, project, user, amount, payment, status) {
+  openSheet(
+    "收款详情",
+    `
+      <div class="detail-card">
+        <div class="detail-title">订单信息</div>
+        ${detailRow("业务类型", type)}
+        ${detailRow("所属项目", project)}
+        ${detailRow("用户/账户", user)}
+        ${detailRow("订单金额", amount)}
+        ${detailRow("实收金额", amount)}
+        ${detailRow("支付方式", payment)}
+        ${detailRow("支付时间", "2026-07-19 14:26:18")}
+        ${detailRow("订单状态", "支付成功")}
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-title">财务处理状态</div>
+        <div class="timeline">
+          ${timelineItem("业务订单已完成", "订单号：PK202607192863")}
+          ${timelineItem("支付渠道已到账", payment + "流水已确认")}
+          ${timelineItem(
+            status === "已对账" ? "自动对账成功" : "进入对账差异池",
+            status
+          )}
+          ${timelineItem(
+            status === "已对账" ? "收入已确认" : "暂缓收入确认",
+            status === "已对账" ? "已进入收入统计" : "等待差异处理",
+            status !== "已对账"
+          )}
+          ${timelineItem("发票状态", "当前未开票", true)}
+        </div>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="showToast('订单号已复制')">复制订单号</button>
+      <button class="btn btn-primary" onclick="showToast('已打开支付流水')">支付流水</button>
+    `
+  );
+}
+
+function detailRow(label, value) {
+  return `
+    <div class="detail-row">
+      <span>${label}</span>
+      <strong>${value}</strong>
+    </div>
+  `;
+}
+
+function timelineItem(title, desc, pending = false) {
+  return `
+    <div class="timeline-item ${pending ? "pending" : ""}">
+      <div class="timeline-title">${title}</div>
+      <div class="timeline-desc">${desc}</div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   欠费催缴闭环
+========================================================= */
+function openReceivableDetail(customer, type, project, amount, overdue) {
+  const collected = state.collectedCustomers.includes(customer);
+
+  openSheet(
+    "应收欠费详情",
+    `
+      <div class="detail-card">
+        <div class="detail-title">应收信息</div>
+        ${detailRow("客户名称", customer)}
+        ${detailRow("费用类型", type)}
+        ${detailRow("所属项目", project)}
+        ${detailRow("应收金额", amount)}
+        ${detailRow("已收金额", "¥0.00")}
+        ${detailRow("未收金额", amount)}
+        ${detailRow("账期", "2026年6月")}
+        ${detailRow("到期日", "2026-06-30")}
+        ${detailRow("逾期情况", overdue)}
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-title">催缴记录</div>
+
+        <div class="timeline">
+          ${timelineItem("系统生成应收账单", "2026-06-01 08:00")}
+          ${timelineItem("到期未支付，自动转为欠费", "2026-07-01 00:05")}
+          ${timelineItem("微信模板消息提醒", "2026-07-08 10:20")}
+          ${
+            collected
+              ? timelineItem("管理人员再次催缴", "2026-07-19 · 短信＋微信")
+              : timelineItem("等待责任人跟进", "建议今日再次催缴", true)
+          }
+        </div>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="showToast('缴费链接已复制')">复制缴费链接</button>
+      <button class="btn btn-primary"
+              onclick="openCollectionForm('${customer}')">
+        ${collected ? "再次催缴" : "发起催缴"}
+      </button>
+    `
+  );
+}
+
+function openCollectionForm(customer) {
+  openSheet(
+    "发起欠费催缴",
+    `
+      <div class="form-group">
+        <label class="form-label">催缴客户</label>
+        <input class="form-control" value="${customer}" readonly>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">催缴方式</label>
+
+        <div class="option-grid">
+          <div class="option-item selected" onclick="toggleOption(this)">☑ 微信消息</div>
+          <div class="option-item selected" onclick="toggleOption(this)">☑ 短信通知</div>
+          <div class="option-item" onclick="toggleOption(this)">□ 电话联系</div>
+          <div class="option-item" onclick="toggleOption(this)">□ 缴费二维码</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">催缴内容</label>
+        <textarea class="form-control">您有一笔费用尚未支付，请及时查看账单并完成缴费。逾期可能产生滞纳金或影响停车、充电服务。</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">下次跟进时间</label>
+        <input class="form-control" type="date" value="2026-07-22">
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeSheet()">取消</button>
+      <button class="btn btn-primary"
+              onclick="confirmCollection('${customer}')">
+        发送催缴
+      </button>
+    `
+  );
+}
+
+function toggleOption(element) {
+  element.classList.toggle("selected");
+  element.innerHTML = element.classList.contains("selected")
+    ? element.innerHTML.replace("□", "☑")
+    : element.innerHTML.replace("☑", "□");
+}
+
+function confirmCollection(customer) {
+  if (!state.collectedCustomers.includes(customer)) {
+    state.collectedCustomers.push(customer);
+  }
+
+  closeSheet();
+  renderPage();
+
+  showToast("催缴消息已发送，跟进任务已生成");
+}
+
+/* =========================================================
+   对账差异处理闭环
+========================================================= */
+function openDifferenceDetail(no, type, project, amount, channel) {
+  const processed = state.reconciledItems.includes(no);
+
+  openSheet(
+    "对账差异详情",
+    `
+      <div class="detail-card">
+        <div class="detail-title">差异信息</div>
+        ${detailRow("差异单号", no)}
+        ${detailRow("差异类型", type)}
+        ${detailRow("所属项目", project)}
+        ${detailRow("支付渠道", channel)}
+        ${detailRow("差异金额", amount)}
+        ${detailRow("生成时间", "2026-07-19 12:26")}
+        ${detailRow("处理状态", processed ? "处理审批中" : "待责任人核实")}
+      </div>
+
+      <div class="risk-tip">
+        <span>⚠</span>
+        <span>
+          移动端仅支持核实、备注和发起处理审批；
+          复杂调账需在Web财务后台完成。
+        </span>
+      </div>
+
+      <div class="detail-card" style="margin-top:10px">
+        <div class="detail-title">系统处理建议</div>
+        <div style="font-size:11px;line-height:1.7;color:#667085">
+          ${
+            type === "支付成功无订单"
+              ? "渠道支付流水真实存在，建议生成异常收入单，待财务确认后补录业务归属。"
+              : type === "有订单无支付"
+              ? "建议核实渠道到账延迟；确认未支付后生成补缴账单。"
+              : type === "现金短款"
+              ? "建议通知收费员确认班次实缴金额，并提交现金短款审批。"
+              : "建议核实金额及手续费规则，确认后提交调账审批。"
+          }
+        </div>
+      </div>
+    `,
+    processed
+      ? `
+        <button class="btn btn-block" onclick="closeSheet()">处理中，暂不可重复提交</button>
+      `
+      : `
+        <button class="btn" onclick="showToast('责任人已收到通知')">通知责任人</button>
+        <button class="btn btn-primary"
+                onclick="openDifferenceProcess('${no}','${type}')">
+          发起处理
+        </button>
+      `
+  );
+}
+
+function openDifferenceProcess(no, type) {
+  openSheet(
+    "发起差异处理",
+    `
+      <div class="form-group">
+        <label class="form-label">处理方式</label>
+        <select class="form-control">
+          ${
+            type === "支付成功无订单"
+              ? `<option>生成异常收入单</option>
+                 <option>关联已有订单</option>`
+              : type === "有订单无支付"
+              ? `<option>生成补缴账单</option>
+                 <option>等待跨日到账</option>`
+              : `<option>提交调账审批</option>
+                 <option>归入手续费差异</option>
+                 <option>通知责任人补款</option>`
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">核实结果</label>
+        <textarea class="form-control"
+          placeholder="请输入核实过程、处理依据及相关说明"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">上传凭证</label>
+        <button class="btn btn-block" onclick="showToast('请选择图片或文件')">
+          ＋ 上传支付凭证或银行回单
+        </button>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeSheet()">取消</button>
+      <button class="btn btn-primary"
+              onclick="confirmDifferenceProcess('${no}')">
+        提交审批
+      </button>
+    `
+  );
+}
+
+function confirmDifferenceProcess(no) {
+  if (!state.reconciledItems.includes(no)) {
+    state.reconciledItems.push(no);
+  }
+
+  closeSheet();
+  renderPage();
+
+  showToast("差异处理申请已提交，等待财务复核");
+}
+
+/* =========================================================
+   结算详情
+========================================================= */
+function openSettlementDetail(no, target, project, amount, status, rule) {
+  openSheet(
+    "结算单详情",
+    `
+      <div class="detail-card">
+        <div class="detail-title">结算信息</div>
+        ${detailRow("结算单号", no)}
+        ${detailRow("结算对象", target)}
+        ${detailRow("所属项目", project)}
+        ${detailRow("结算账期", "2026年6月")}
+        ${detailRow("分账规则", rule)}
+        ${detailRow("收入总额", "¥62,860.00")}
+        ${detailRow("退款冲减", "- ¥820.00")}
+        ${detailRow("平台服务费", "- ¥6,286.00")}
+        ${detailRow("税费及其他", "- ¥1,460.00")}
+        ${detailRow("本期应结", amount)}
+        ${detailRow("当前状态", status)}
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-title">审批及付款流程</div>
+        <div class="timeline">
+          ${timelineItem("系统自动生成结算单", "已按合同提取已对账收入")}
+          ${timelineItem("项目运营确认", "李伟 · 2026-07-18 16:20")}
+          ${timelineItem(
+            status === "待确认" ? "等待合作方确认" : "财务复核完成",
+            status === "待确认" ? "尚未进入内部审批" : "合同及分账规则校验通过",
+            status === "待确认"
+          )}
+          ${timelineItem(
+            status === "已付款" ? "银行付款成功" : "等待付款处理",
+            status === "已付款" ? "电子回单已生成" : "审批通过后由出纳付款",
+            status !== "已付款"
+          )}
+        </div>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="showToast('已打开关联合同')">查看合同</button>
+      <button class="btn btn-primary" onclick="showToast('已打开收入明细')">收入明细</button>
+    `
+  );
+}
+
+/* =========================================================
+   审批详情与闭环
+========================================================= */
+function openApprovalDetail(type, no, typeName, title, project, amount, creator, riskTip) {
+  const detailContent = {
+    refund: `
+      ${detailRow("原订单金额", "¥18,620.00")}
+      ${detailRow("已支付金额", "¥18,620.00")}
+      ${detailRow("申请退款金额", amount)}
+      ${detailRow("退款方式", "原支付渠道退回")}
+      ${detailRow("申请原因", "充电设备异常中断")}
+      ${detailRow("原支付渠道", "微信支付")}
+      ${detailRow("发票状态", "已开票，退款后需红冲")}
+    `,
+
+    settlement: `
+      ${detailRow("结算账期", "2026年6月")}
+      ${detailRow("结算收入", "¥62,860.00")}
+      ${detailRow("分账比例", "业委会70%")}
+      ${detailRow("退款及扣减", "- ¥8,200.00")}
+      ${detailRow("应结算金额", amount)}
+      ${detailRow("合作方发票", "尚未上传")}
+    `,
+
+    discount: `
+      ${detailRow("原应收金额", "¥86,200.00")}
+      ${detailRow("申请减免金额", amount)}
+      ${detailRow("减免后应收", "¥83,600.00")}
+      ${detailRow("减免原因", "企业客户服务补偿")}
+      ${detailRow("历史减免", "近6个月2次")}
+    `,
+
+    adjustment: `
+      ${detailRow("渠道流水金额", amount)}
+      ${detailRow("业务订单", "未找到")}
+      ${detailRow("支付渠道", "微信支付")}
+      ${detailRow("建议处理", "生成异常收入单")}
+      ${detailRow("资金状态", "银行已到账")}
+    `
+  };
+
+  openSheet(
+    typeName,
+    `
+      <div class="detail-card">
+        <div class="detail-title">${title}</div>
+        ${detailRow("审批单号", no)}
+        ${detailRow("申请项目", project)}
+        ${detailRow("申请人", creator)}
+        ${detailRow("申请金额", amount)}
+        ${detailContent[type] || ""}
+      </div>
+
+      <div class="risk-tip">
+        <span>⚠</span>
+        <span>${riskTip}</span>
+      </div>
+
+      <div class="detail-card" style="margin-top:10px">
+        <div class="detail-title">审批流程</div>
+        <div class="timeline">
+          ${timelineItem("申请人提交", creator + " · 今天 10:18")}
+          ${timelineItem("项目经理初审通过", "王经理 · 今天 11:26")}
+          ${timelineItem("当前待您审批", "财务总监节点")}
+          ${timelineItem("出纳执行", "审批通过后自动流转", true)}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">审批意见</label>
+        <textarea class="form-control" id="approvalComment"
+          placeholder="请输入审批意见">同意，按规定流程执行。</textarea>
+      </div>
+    `,
+    `
+      <button class="btn btn-light-danger"
+              onclick="confirmApproval('${no}','reject','${typeName}')">
+        驳回
+      </button>
+
+      <button class="btn btn-primary"
+              onclick="confirmApproval('${no}','approve','${typeName}')">
+        同意
+      </button>
+    `
+  );
+}
+
+function confirmApproval(no, action, typeName) {
+  if (!state.approvedItems.includes(no)) {
+    state.approvedItems.push(no);
+  }
+
+  if (state.pendingApproval > 0) {
+    state.pendingApproval--;
+  }
+
+  closeSheet();
+  renderPage();
+  updateBadges();
+
+  showToast(
+    action === "approve"
+      ? `${typeName}已通过，流程已进入下一节点`
+      : `${typeName}已驳回，申请人将收到通知`
+  );
+}
+
+function quickReject(no, typeName) {
+  openSheet(
+    "驳回" + typeName,
+    `
+      <div class="form-group">
+        <label class="form-label">驳回原因</label>
+        <textarea class="form-control"
+          placeholder="请说明驳回原因">申请材料不完整，请补充相关凭证后重新提交。</textarea>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="closeSheet()">取消</button>
+      <button class="btn btn-danger"
+              onclick="confirmApproval('${no}','reject','${typeName}')">
+        确认驳回
+      </button>
+    `
+  );
+}
+
+/* =========================================================
+   其他详情
+========================================================= */
+function openProjectDetail(project) {
+  openSheet(
+    project,
+    `
+      <div class="detail-card">
+        <div class="detail-title">今日经营概览</div>
+        ${detailRow("今日收入", "¥28,620.50")}
+        ${detailRow("订单数量", "1,286笔")}
+        ${detailRow("应收未收", "¥86,200")}
+        ${detailRow("对账差异", "2笔 · ¥486")}
+        ${detailRow("待结算金额", "¥36,827.70")}
+        ${detailRow("经营状态", "收入正常，欠费需要关注")}
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-title">经营建议</div>
+        <div style="color:#667085;font-size:11px;line-height:1.7">
+          本项目收入较昨日增长12.8%，企业月结欠费金额偏高。
+          建议今日完成重点客户催缴，并处理2笔支付渠道差异。
+        </div>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="openFinancePage('receivable');closeSheet()">查看欠费</button>
+      <button class="btn btn-primary" onclick="openFinancePage('income');closeSheet()">查看收入</button>
+    `
+  );
+}
+
+function openWarningDetail(title, project, desc, amount) {
+  openSheet(
+    "预警详情",
+    `
+      <div class="detail-card">
+        ${detailRow("预警类型", title)}
+        ${detailRow("所属项目", project)}
+        ${detailRow("涉及金额", amount)}
+        ${detailRow("风险等级", "高")}
+        ${detailRow("触发时间", "2026-07-19 14:18")}
+        ${detailRow("处理状态", "待处理")}
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-title">异常描述</div>
+        <div style="color:#667085;font-size:11px;line-height:1.7">${desc}</div>
+      </div>
+
+      <div class="risk-tip">
+        <span>建议</span>
+        <span>核实原始订单、支付流水及相关操作记录，并转交责任人处理。</span>
+      </div>
+    `,
+    `
+      <button class="btn" onclick="showToast('预警已转交责任人')">转交</button>
+      <button class="btn btn-primary" onclick="closeWarning()">确认已知晓</button>
+    `
+  );
+}
+
+function closeWarning() {
+  if (state.warnings > 0) {
+    state.warnings--;
+  }
+
+  closeSheet();
+  renderPage();
+
+  showToast("预警已确认，处理记录已保存");
+}
+
+function openReport(name) {
+  openSheet(
+    name,
+    `
+      <div class="detail-card">
+        <div class="detail-title">报表概览</div>
+        ${detailRow("统计期间", "2026年7月")}
+        ${detailRow("统计范围", state.scope + " · " + state.project)}
+        ${detailRow("数据更新时间", "2026-07-19 14:32")}
+      </div>
+
+      <section class="card" style="box-shadow:none">
+        ${lineChart()}
+      </section>
+
+      <div class="risk-tip" style="color:#1468d6;border-color:#c9e0ff;background:#eff6ff">
+        移动端展示简化报表，复杂明细和自定义报表请在Web后台查看。
+      </div>
+    `,
+    `
+      <button class="btn" onclick="showToast('报表已分享给同事')">分享同事</button>
+      <button class="btn btn-primary" onclick="showToast('导出申请已提交')">申请导出</button>
+    `
+  );
+}
+
+/* =========================================================
+   消息与搜索
+========================================================= */
+function openMessages() {
+  openSheet(
+    "消息中心",
+    `
+      <section class="card list-card">
+        ${messageItem("审", "您有3条退款审批待处理", "点击进入审批详情", "2分钟前", "approval")}
+        ${messageItem("差", "ETC渠道发现3笔对账差异", "差异金额合计¥486", "18分钟前", "reconcile")}
+        ${messageItem("欠", "重点客户欠费已逾期19天", "深圳远航科技欠费¥56,200", "1小时前", "receivable")}
+        ${messageItem("结", "云湖花园结算单等待审批", "本期应结¥36,827.70", "2小时前", "settlement")}
+      </section>
+    `,
+    `
+      <button class="btn btn-block" onclick="showToast('全部消息已标记为已读')">
+        全部标记已读
+      </button>
+    `
+  );
+}
+
+function messageItem(icon, title, desc, time, target) {
+  return `
+    <div class="list-item" onclick="closeSheet();${
+      target === "approval"
+        ? "navigate('approval')"
+        : `openFinancePage('${target}')`
+    }">
+      <div class="list-icon icon-blue">${icon}</div>
+      <div class="list-main">
+        <div class="list-title">${title}</div>
+        <div class="list-desc">${desc}</div>
+        <div class="list-meta">${time}</div>
+      </div>
+      <span class="list-arrow">›</span>
+    </div>
+  `;
+}
+
+function openSearch() {
+  openSheet(
+    "全局搜索",
+    `
+      <div class="form-group">
+        <input class="form-control"
+          placeholder="订单号、车牌、客户、项目或审批单号"
+          autofocus>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-title">常用搜索</div>
+        <div class="option-grid">
+          <div class="option-item" onclick="showToast('正在搜索停车订单')">停车订单</div>
+          <div class="option-item" onclick="showToast('正在搜索欠费客户')">欠费客户</div>
+          <div class="option-item" onclick="showToast('正在搜索审批单')">审批单</div>
+          <div class="option-item" onclick="showToast('正在搜索结算单')">结算单</div>
+        </div>
+      </div>
+    `,
+    `
+      <button class="btn btn-primary btn-block" onclick="showToast('搜索结果已更新')">
+        搜索
+      </button>
+    `
+  );
+}
+
+/* =========================================================
+   系统时间
+========================================================= */
+function updateSystemTime() {
+  const now = new Date();
+
+  document.getElementById("systemTime").textContent =
+    now.toLocaleTimeString("zh-CN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+}
+
+/* =========================================================
+   初始化
+========================================================= */
+updateSystemTime();
+setInterval(updateSystemTime, 30000);
+
+updateHeader();
+renderPage();
+</script>
+
+</body>
+</html>

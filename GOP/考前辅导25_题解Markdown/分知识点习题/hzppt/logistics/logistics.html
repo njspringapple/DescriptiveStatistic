@@ -1,0 +1,5251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物流园区智慧车辆与月台协同平台</title>
+
+    <style>
+        :root {
+            --primary: #2878d0;
+            --primary-dark: #1d5fa8;
+            --primary-soft: #edf6ff;
+            --success: #169568;
+            --success-soft: #eaf8f2;
+            --warning: #dd8a16;
+            --warning-soft: #fff6e5;
+            --danger: #d94d4d;
+            --danger-soft: #fff0f0;
+            --purple: #7359bd;
+            --purple-soft: #f3efff;
+            --cyan: #16899b;
+            --cyan-soft: #eaf9fb;
+            --text: #253348;
+            --text-secondary: #59687b;
+            --muted: #8491a3;
+            --border: #dce4ed;
+            --background: #f4f7fa;
+            --card: #ffffff;
+            --sidebar: #203e62;
+            --sidebar-active: #2e6096;
+            --shadow: 0 7px 24px rgba(35, 55, 80, .07);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 30;
+            width: 260px;
+            overflow-y: auto;
+            color: #fff;
+            background: var(--sidebar);
+        }
+
+        .brand {
+            padding: 22px 19px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            display: grid;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            place-items: center;
+            border-radius: 13px;
+            background: #3e7dbf;
+            font-size: 20px;
+            font-weight: 850;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            color: rgba(255,255,255,.65);
+            font-size: 13px;
+        }
+
+        .nav {
+            padding: 14px 12px 30px;
+        }
+
+        .nav-title {
+            margin: 17px 11px 8px;
+            color: rgba(255,255,255,.46);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 11px 13px;
+            border: 0;
+            border-radius: 10px;
+            color: rgba(255,255,255,.83);
+            background: transparent;
+            text-align: left;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: var(--sidebar-active);
+        }
+
+        .nav-icon {
+            display: grid;
+            width: 29px;
+            height: 29px;
+            flex: 0 0 29px;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(255,255,255,.1);
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .nav-badge {
+            min-width: 24px;
+            margin-left: auto;
+            padding: 1px 7px;
+            border-radius: 999px;
+            color: #fff;
+            background: #df5b5b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* 主区域 */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 260px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            min-height: 72px;
+            padding: 11px 26px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,.97);
+        }
+
+        .page-info h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .page-info p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .top-select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-left: 12px;
+            border-left: 1px solid var(--border);
+        }
+
+        .avatar {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-weight: 850;
+        }
+
+        .user strong,
+        .user span {
+            display: block;
+        }
+
+        .user strong {
+            font-size: 14px;
+        }
+
+        .user span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 24px 27px 50px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* 公共组件 */
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 19px 21px 0;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 19px 21px 21px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .section-heading p {
+            max-width: 950px;
+            margin: 5px 0 0;
+            color: var(--text-secondary);
+        }
+
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .role-strip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 17px;
+            padding: 13px 16px;
+            border: 1px solid #d8e4ef;
+            border-radius: 11px;
+            background: #f8fbfe;
+        }
+
+        .role-strip strong {
+            color: var(--primary-dark);
+        }
+
+        .role-strip span {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 39px;
+            padding: 8px 15px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            color: var(--text);
+            background: #fff;
+        }
+
+        .btn-success {
+            color: #fff;
+            background: var(--success);
+        }
+
+        .btn-warning {
+            color: #fff;
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background: var(--danger);
+        }
+
+        .btn-sm {
+            min-height: 33px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: .55;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tag-blue {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .tag-green {
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .tag-orange {
+            color: #ad6808;
+            background: var(--warning-soft);
+        }
+
+        .tag-red {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .tag-purple {
+            color: var(--purple);
+            background: var(--purple-soft);
+        }
+
+        .tag-cyan {
+            color: var(--cyan);
+            background: var(--cyan-soft);
+        }
+
+        .tag-gray {
+            color: #667587;
+            background: #eef2f5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .grid-6 {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .metric-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            margin: 10px 0 4px;
+            font-size: 28px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .info-banner,
+        .warning-banner,
+        .success-banner,
+        .danger-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px 17px;
+            border-radius: 11px;
+        }
+
+        .info-banner {
+            border: 1px solid #c9dff5;
+            color: #315f91;
+            background: var(--primary-soft);
+        }
+
+        .warning-banner {
+            border: 1px solid #eed099;
+            color: #815710;
+            background: var(--warning-soft);
+        }
+
+        .success-banner {
+            border: 1px solid #c2e3d4;
+            color: #226b50;
+            background: var(--success-soft);
+        }
+
+        .danger-banner {
+            border: 1px solid #efc7c7;
+            color: #8f3535;
+            background: var(--danger-soft);
+        }
+
+        .banner-icon {
+            font-size: 22px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .banner-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* 待办 */
+
+        .todo-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .todo-item {
+            display: grid;
+            grid-template-columns: 8px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .todo-level {
+            width: 8px;
+            height: 56px;
+            border-radius: 99px;
+            background: var(--primary);
+        }
+
+        .todo-level.warning {
+            background: var(--warning);
+        }
+
+        .todo-level.danger {
+            background: var(--danger);
+        }
+
+        .todo-level.success {
+            background: var(--success);
+        }
+
+        .todo-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .todo-content p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .todo-meta {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* 工具栏、表格 */
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+            max-width: 450px;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .search-box span {
+            padding-left: 12px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+        }
+
+        .toolbar select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 980px;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #e9eef3;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-secondary);
+            background: #f8fafc;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #fbfdff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .plate {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #a9c6e8;
+            border-radius: 6px;
+            color: #215f9e;
+            background: #eff7ff;
+            font-weight: 850;
+            letter-spacing: 1px;
+        }
+
+        /* 表单详情 */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required::after {
+            content: "*";
+            margin-left: 3px;
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #83b0e0;
+            box-shadow: 0 0 0 3px rgba(40,120,208,.1);
+        }
+
+        textarea.form-control {
+            min-height: 86px;
+            resize: vertical;
+        }
+
+        .readonly-box {
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #f8fafc;
+        }
+
+        .readonly-box p {
+            margin: 3px 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .detail-item {
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f9fbfd;
+        }
+
+        .detail-item > span:first-child {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .detail-section {
+            margin-top: 18px;
+        }
+
+        .detail-section h4 {
+            margin: 0 0 9px;
+            font-size: 16px;
+        }
+
+        .progress {
+            overflow: hidden;
+            height: 10px;
+            border-radius: 999px;
+            background: #edf1f5;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 999px;
+            background: var(--primary);
+        }
+
+        .progress-bar.warning {
+            background: var(--warning);
+        }
+
+        .progress-bar.danger {
+            background: var(--danger);
+        }
+
+        /* 任务预约时段 */
+
+        .capacity-layout {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+            gap: 15px;
+        }
+
+        .warehouse-list {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .warehouse-item {
+            padding: 14px;
+            border-bottom: 1px solid #edf1f5;
+            cursor: pointer;
+        }
+
+        .warehouse-item:last-child {
+            border-bottom: 0;
+        }
+
+        .warehouse-item:hover,
+        .warehouse-item.active {
+            background: var(--primary-soft);
+        }
+
+        .warehouse-item h4 {
+            margin: 0 0 4px;
+        }
+
+        .warehouse-item p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .capacity-board {
+            overflow-x: auto;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .capacity-grid {
+            display: grid;
+            grid-template-columns: 110px repeat(10, minmax(90px, 1fr));
+            min-width: 1050px;
+            gap: 7px;
+        }
+
+        .capacity-head,
+        .capacity-label,
+        .capacity-cell {
+            display: grid;
+            min-height: 54px;
+            place-items: center;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .capacity-head,
+        .capacity-label {
+            color: var(--text-secondary);
+            background: #f1f4f7;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .capacity-cell {
+            border: 1px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .capacity-cell:hover {
+            border-color: var(--primary);
+        }
+
+        .capacity-cell.full {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .capacity-cell.busy {
+            color: #a76207;
+            background: var(--warning-soft);
+        }
+
+        .capacity-cell.free {
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .capacity-cell strong,
+        .capacity-cell span {
+            display: block;
+        }
+
+        .capacity-cell span {
+            font-size: 11px;
+        }
+
+        /* 门岗核验 */
+
+        .gate-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(380px, .8fr);
+            gap: 17px;
+        }
+
+        .gate-camera {
+            position: relative;
+            min-height: 275px;
+            overflow: hidden;
+            border-radius: 12px;
+            color: #fff;
+            background:
+                linear-gradient(rgba(20,38,54,.18), rgba(20,38,54,.4)),
+                linear-gradient(135deg, #738493, #394c5d);
+        }
+
+        .gate-road {
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            bottom: 0;
+            height: 130px;
+            clip-path: polygon(15% 0, 85% 0, 100% 100%, 0 100%);
+            background: #424c55;
+        }
+
+        .truck-visual {
+            position: absolute;
+            left: 32%;
+            bottom: 42px;
+            width: 210px;
+            height: 82px;
+        }
+
+        .truck-cab {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 70px;
+            height: 63px;
+            border-radius: 10px 8px 4px 4px;
+            background: #3b87dc;
+        }
+
+        .truck-box {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 145px;
+            height: 78px;
+            border-radius: 5px;
+            background: #e7edf2;
+        }
+
+        .truck-wheel {
+            position: absolute;
+            bottom: -10px;
+            width: 23px;
+            height: 23px;
+            border: 5px solid #b7c0c8;
+            border-radius: 50%;
+            background: #27323b;
+        }
+
+        .wheel-a { left: 18px; }
+        .wheel-b { left: 90px; }
+        .wheel-c { right: 22px; }
+
+        .camera-label {
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            background: rgba(0,0,0,.35);
+            font-size: 13px;
+        }
+
+        .plate-result {
+            position: absolute;
+            right: 15px;
+            top: 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: var(--text);
+            background: rgba(255,255,255,.94);
+            font-weight: 850;
+        }
+
+        .verification-list {
+            display: grid;
+            gap: 9px;
+        }
+
+        .verify-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .verify-row p {
+            margin: 2px 0 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 排队看板 */
+
+        .queue-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(240px, 1fr));
+            gap: 13px;
+            overflow-x: auto;
+            align-items: start;
+        }
+
+        .queue-column {
+            min-width: 240px;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #eef2f6;
+        }
+
+        .queue-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .queue-title h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .queue-card {
+            margin-bottom: 9px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+            box-shadow: 0 3px 10px rgba(30,50,80,.04);
+        }
+
+        .queue-card h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .queue-card p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .queue-position {
+            color: var(--primary);
+            font-size: 23px;
+            font-weight: 850;
+        }
+
+        /* 月台调度 */
+
+        .dock-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(340px, .65fr);
+            gap: 17px;
+        }
+
+        .dock-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .dock-card {
+            min-height: 180px;
+            padding: 14px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .dock-card:hover,
+        .dock-card.selected {
+            border-color: var(--primary);
+        }
+
+        .dock-card.idle {
+            background: var(--success-soft);
+        }
+
+        .dock-card.working {
+            background: var(--primary-soft);
+        }
+
+        .dock-card.waiting {
+            background: var(--warning-soft);
+        }
+
+        .dock-card.fault {
+            background: var(--danger-soft);
+        }
+
+        .dock-card h3 {
+            margin: 0 0 5px;
+        }
+
+        .dock-card p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .dock-panel {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .dock-panel h3 {
+            margin: 0 0 5px;
+        }
+
+        .waiting-vehicle {
+            margin-bottom: 9px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .waiting-vehicle h4 {
+            margin: 0 0 4px;
+        }
+
+        .waiting-vehicle p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 园区地图 */
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: minmax(650px, 1.35fr) minmax(350px, .65fr);
+            gap: 17px;
+        }
+
+        .park-map {
+            position: relative;
+            min-height: 600px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background:
+                linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.62)),
+                repeating-linear-gradient(0deg, #e7edf2 0, #e7edf2 1px, transparent 1px, transparent 34px),
+                repeating-linear-gradient(90deg, #e7edf2 0, #e7edf2 1px, transparent 1px, transparent 34px);
+        }
+
+        .map-road-h,
+        .map-road-v {
+            position: absolute;
+            border-radius: 7px;
+            background: #cbd4dc;
+        }
+
+        .map-road-h {
+            left: 3%;
+            right: 3%;
+            top: 45%;
+            height: 62px;
+        }
+
+        .map-road-v {
+            top: 3%;
+            bottom: 3%;
+            left: 47%;
+            width: 65px;
+        }
+
+        .map-zone {
+            position: absolute;
+            padding: 14px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .map-zone:hover {
+            border-color: var(--primary);
+        }
+
+        .map-zone h4 {
+            margin: 0 0 4px;
+        }
+
+        .map-zone p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .zone-a {
+            left: 4%;
+            top: 7%;
+            width: 35%;
+            height: 29%;
+            background: var(--primary-soft);
+        }
+
+        .zone-b {
+            right: 4%;
+            top: 7%;
+            width: 35%;
+            height: 29%;
+            background: var(--success-soft);
+        }
+
+        .zone-c {
+            left: 4%;
+            bottom: 7%;
+            width: 35%;
+            height: 31%;
+            background: var(--warning-soft);
+        }
+
+        .zone-d {
+            right: 4%;
+            bottom: 7%;
+            width: 35%;
+            height: 31%;
+            background: var(--purple-soft);
+        }
+
+        .map-truck {
+            position: absolute;
+            z-index: 4;
+            width: 34px;
+            height: 15px;
+            border-radius: 4px;
+            background: #3d83cc;
+            box-shadow: 0 2px 4px rgba(0,0,0,.2);
+        }
+
+        .map-truck.warning {
+            background: var(--warning);
+        }
+
+        .map-truck.danger {
+            background: var(--danger);
+        }
+
+        .map-side {
+            display: grid;
+            align-content: start;
+            gap: 13px;
+        }
+
+        .action-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .action-card h4 {
+            margin: 0 0 6px;
+        }
+
+        .action-card p {
+            margin: 0 0 11px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* 地磅 */
+
+        .weigh-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            gap: 17px;
+        }
+
+        .scale-visual {
+            position: relative;
+            min-height: 360px;
+            overflow: hidden;
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(145deg, #586a76, #2d3c47);
+        }
+
+        .scale-platform {
+            position: absolute;
+            left: 12%;
+            right: 12%;
+            bottom: 50px;
+            height: 92px;
+            border: 6px solid #a9b4bc;
+            border-radius: 7px;
+            background: #67747c;
+        }
+
+        .scale-truck {
+            position: absolute;
+            left: 22%;
+            right: 22%;
+            bottom: 95px;
+            height: 80px;
+            border-radius: 8px;
+            background: #e8edf1;
+        }
+
+        .scale-display {
+            position: absolute;
+            right: 24px;
+            top: 22px;
+            padding: 14px 18px;
+            border: 4px solid #37444d;
+            border-radius: 8px;
+            color: #53e386;
+            background: #10181d;
+            font-family: Consolas, monospace;
+            font-size: 28px;
+            font-weight: 850;
+        }
+
+        .scale-status {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        /* 特殊车辆 */
+
+        .special-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .special-card {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .special-card h3 {
+            margin: 0 0 5px;
+        }
+
+        .temperature {
+            margin: 12px 0;
+            font-size: 31px;
+            font-weight: 850;
+        }
+
+        /* 费用归责 */
+
+        .responsibility-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 430px;
+            gap: 17px;
+        }
+
+        .cost-flow {
+            display: grid;
+            gap: 10px;
+        }
+
+        .cost-row {
+            display: grid;
+            grid-template-columns: 190px minmax(0, 1fr) 140px;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .cost-bar {
+            height: 16px;
+            border-radius: 99px;
+            background: var(--primary);
+        }
+
+        .cost-bar.warning {
+            background: var(--warning);
+        }
+
+        .cost-bar.success {
+            background: var(--success);
+        }
+
+        .cost-summary {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .money-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f7f9fb;
+        }
+
+        .money-row + .money-row {
+            margin-top: 8px;
+        }
+
+        .money-row.total {
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            font-weight: 850;
+        }
+
+        /* 事件 */
+
+        .incident-layout {
+            display: grid;
+            grid-template-columns: 330px minmax(0, 1fr);
+            min-height: 620px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .incident-list {
+            border-right: 1px solid var(--border);
+        }
+
+        .incident-filter {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .incident-item {
+            padding: 14px 15px;
+            border-bottom: 1px solid #edf1f5;
+            cursor: pointer;
+        }
+
+        .incident-item:hover,
+        .incident-item.active {
+            background: var(--primary-soft);
+        }
+
+        .incident-item h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .incident-item p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .incident-detail {
+            padding: 21px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 22px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 7px;
+            bottom: 7px;
+            width: 2px;
+            background: #d9e4ef;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0 0 16px 13px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 9px;
+            height: 9px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 2px #c1d7ed;
+        }
+
+        .timeline-item strong {
+            font-size: 14px;
+        }
+
+        .timeline-item p {
+            margin: 2px 0 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* 弹窗 */
+
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(28,41,59,.48);
+        }
+
+        .modal-mask.show {
+            display: flex;
+        }
+
+        .modal {
+            overflow: hidden;
+            width: min(900px, 100%);
+            max-height: 92vh;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 25px 80px rgba(20,35,52,.28);
+        }
+
+        .modal.large {
+            width: min(1130px, 100%);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 19px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-header p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .modal-close {
+            display: grid;
+            width: 37px;
+            height: 37px;
+            place-items: center;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            background: #eef2f5;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            max-height: calc(92vh - 145px);
+            padding: 20px 22px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            padding: 14px 22px;
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+        }
+
+        /* Toast */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            top: 84px;
+            z-index: 200;
+            display: grid;
+            gap: 9px;
+        }
+
+        .toast {
+            width: min(420px, calc(100vw - 35px));
+            padding: 13px 15px;
+            border: 1px solid #bfe0d2;
+            border-radius: 10px;
+            color: #21694f;
+            background: #effaf5;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.error {
+            border-color: #efc8c8;
+            color: #983939;
+            background: #fff3f3;
+        }
+
+        @media (max-width: 1320px) {
+            .grid-6 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dock-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .map-layout,
+            .responsibility-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .nav-title {
+                display: none;
+            }
+
+            .nav-item {
+                min-width: 175px;
+            }
+
+            .topbar {
+                position: static;
+            }
+
+            .gate-layout,
+            .dock-layout,
+            .weigh-layout,
+            .incident-layout,
+            .capacity-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .incident-list {
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .queue-board {
+                grid-template-columns: repeat(5, 260px);
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                font-size: 15px;
+            }
+
+            .content {
+                padding: 17px 13px 35px;
+            }
+
+            .topbar {
+                padding: 11px 14px;
+            }
+
+            .top-select,
+            .date,
+            .user {
+                display: none;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-5,
+            .grid-6,
+            .form-grid,
+            .detail-grid,
+            .special-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .todo-item {
+                grid-template-columns: 7px 1fr;
+            }
+
+            .todo-item .btn {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .dock-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cost-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- 左侧导航 -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-row">
+                <div class="brand-logo">物流</div>
+                <div>
+                    <h1>物流园智慧车辆平台</h1>
+                    <p>预约·排队·月台·停车·结算</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <div class="nav-title">园区运营</div>
+
+            <button class="nav-item active" data-view="dashboard">
+                <span class="nav-icon">首</span>
+                运营调度工作台
+                <span class="nav-badge">8</span>
+            </button>
+
+            <button class="nav-item" data-view="appointment">
+                <span class="nav-icon">约</span>
+                运输任务与预约
+                <span class="nav-badge">6</span>
+            </button>
+
+            <button class="nav-item" data-view="gate">
+                <span class="nav-icon">门</span>
+                门岗入离园核验
+                <span class="nav-badge" id="gateBadge">3</span>
+            </button>
+
+            <button class="nav-item" data-view="queue">
+                <span class="nav-icon">排</span>
+                虚拟排队与叫号
+                <span class="nav-badge" id="queueBadge">18</span>
+            </button>
+
+            <button class="nav-item" data-view="dock">
+                <span class="nav-icon">台</span>
+                月台调度与作业
+                <span class="nav-badge">4</span>
+            </button>
+
+            <div class="nav-title">场地与安全</div>
+
+            <button class="nav-item" data-view="map">
+                <span class="nav-icon">图</span>
+                园内车辆与停车
+                <span class="nav-badge">2</span>
+            </button>
+
+            <button class="nav-item" data-view="weigh">
+                <span class="nav-icon">磅</span>
+                地磅称重管理
+                <span class="nav-badge">1</span>
+            </button>
+
+            <button class="nav-item" data-view="special">
+                <span class="nav-icon">特</span>
+                冷链与危化车辆
+                <span class="nav-badge">2</span>
+            </button>
+
+            <button class="nav-item" data-view="incident">
+                <span class="nav-icon">异</span>
+                异常事件处置
+                <span class="nav-badge" id="incidentBadge">5</span>
+            </button>
+
+            <div class="nav-title">费用与分析</div>
+
+            <button class="nav-item" data-view="billing">
+                <span class="nav-icon">费</span>
+                费用归责与结算
+                <span class="nav-badge">4</span>
+            </button>
+
+            <button class="nav-item" data-view="analytics">
+                <span class="nav-icon">析</span>
+                运营效率分析
+            </button>
+
+            <button class="nav-item" data-view="audit">
+                <span class="nav-icon">审</span>
+                操作审计
+            </button>
+        </nav>
+    </aside>
+
+    <!-- 主内容 -->
+    <main class="main">
+        <header class="topbar">
+            <div class="page-info">
+                <h2 id="pageTitle">物流园运营调度工作台</h2>
+                <p id="pageDesc">车辆、仓库、月台和园区道路统一协同</p>
+            </div>
+
+            <div class="top-actions">
+                <select class="top-select">
+                    <option>华南智慧物流园</option>
+                    <option>华南智慧物流园·冷链区</option>
+                    <option>华南智慧物流园·二期</option>
+                </select>
+
+                <select class="top-select" onchange="changeRole(this.value)">
+                    <option>园区运营调度主管</option>
+                    <option>仓库月台调度员</option>
+                    <option>南门门岗</option>
+                    <option>承运商调度员</option>
+                    <option>园区安全管理员</option>
+                    <option>园区财务人员</option>
+                </select>
+
+                <div class="date">2026年7月18日</div>
+
+                <div class="user">
+                    <div class="avatar">王</div>
+                    <div>
+                        <strong id="userName">王主管</strong>
+                        <span id="userRole">园区运营调度中心</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- 运营工作台 -->
+            <section class="view active" id="view-dashboard">
+                <div class="role-strip">
+                    <strong>当前使用人：园区运营调度主管</strong>
+                    <span>关注门口排队、候车资源、月台负荷、车辆滞留、道路拥堵及特殊车辆安全。</span>
+                </div>
+
+                <div class="grid-6 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">今日预约车辆</div>
+                        <div class="metric-value">386</div>
+                        <div class="metric-note">入库218 · 出库168</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">当前在园车辆</div>
+                        <div class="metric-value">126</div>
+                        <div class="metric-note">重车82 · 空车44</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">场外虚拟排队</div>
+                        <div class="metric-value">38</div>
+                        <div class="metric-note">预计最长等待48分钟</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">月台作业中</div>
+                        <div class="metric-value">22/30</div>
+                        <div class="metric-note">利用率73.3%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">超时滞留车辆</div>
+                        <div class="metric-value">7</div>
+                        <div class="metric-note">最长已滞留4小时18分</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">园区货车余位</div>
+                        <div class="metric-value">86</div>
+                        <div class="metric-note">危化专位剩余6个</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>今天优先处理</h3>
+                                <p>按安全风险、车辆影响和持续时间排序</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="todo-list">
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>A3仓月台前道路压车</strong>
+                                        <p>6号、7号月台前已有5辆车等待，超过安全上限3辆，后续车辆仍在叫号。</p>
+                                        <div class="todo-meta">持续12分钟 · 已影响仓储二路通行</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="openDockCongestion()">停止叫号并分流</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>冷链车辆温度超限</strong>
+                                        <p>粤B·62M8Q到园温度-12.6℃，任务要求-18℃，当前停在冷链候车区C3。</p>
+                                        <div class="todo-meta">货物：冷冻食品 · 冷库主管尚未确认</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="openColdAlert()">安全处置</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>南门入口排队达到16辆</strong>
+                                        <p>其中6辆尚未完成虚拟排队叫号，2辆无有效预约。</p>
+                                        <div class="todo-meta">预计等待15分钟 · 可能影响园外道路</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('gate')">查看入口</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>车辆作业完成后未离开月台</strong>
+                                        <p>粤A·28T6M已完成装卸23分钟，仍占用B2仓3号月台。</p>
+                                        <div class="todo-meta">下一辆车已等待17分钟 · 司机电话未接</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="openDockOverstay()">通知移车</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>危化车辆预计12分钟后到达</strong>
+                                        <p>车辆粤A·92K6P，二类易燃液体，需从东侧危化专用门进入。</p>
+                                        <div class="todo-meta">专用路线正常 · 押运员资质有效</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('special')">查看保障</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>仓库与月台负荷</h3>
+                                <p>不是只看车辆数量，还要看仓库作业能力</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-wrap">
+                                <table style="min-width:680px">
+                                    <thead>
+                                    <tr>
+                                        <th>仓库</th>
+                                        <th>月台</th>
+                                        <th>候车</th>
+                                        <th>平均等待</th>
+                                        <th>备货状态</th>
+                                        <th>运行状态</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><strong>A3常温仓</strong></td>
+                                        <td>7/8作业</td>
+                                        <td>18辆</td>
+                                        <td>46分钟</td>
+                                        <td>3单未备齐</td>
+                                        <td><span class="tag tag-red">严重拥堵</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>B2电商仓</strong></td>
+                                        <td>6/8作业</td>
+                                        <td>8辆</td>
+                                        <td>22分钟</td>
+                                        <td>正常</td>
+                                        <td><span class="tag tag-green">运行正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>C1冷链仓</strong></td>
+                                        <td>4/6作业</td>
+                                        <td>6辆</td>
+                                        <td>18分钟</td>
+                                        <td>正常</td>
+                                        <td><span class="tag tag-orange">温度事件1项</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>D1零担仓</strong></td>
+                                        <td>5/8作业</td>
+                                        <td>4辆</td>
+                                        <td>12分钟</td>
+                                        <td>正常</td>
+                                        <td><span class="tag tag-green">运行正常</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>今日车辆效率</h4>
+                                <div class="detail-grid">
+                                    <div class="detail-item"><span>平均入园等待</span><strong>26分钟</strong></div>
+                                    <div class="detail-item"><span>平均月台等待</span><strong>32分钟</strong></div>
+                                    <div class="detail-item"><span>平均装卸作业</span><strong>68分钟</strong></div>
+                                    <div class="detail-item"><span>平均在园时长</span><strong>2小时18分</strong></div>
+                                    <div class="detail-item"><span>预约准时率</span><strong>86.2%</strong></div>
+                                    <div class="detail-item"><span>月台准时完成率</span><strong>82.7%</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 运输任务与预约 -->
+            <section class="view" id="view-appointment">
+                <div class="section-heading">
+                    <div>
+                        <h2>运输任务与车辆预约</h2>
+                        <p>预约容量同时考虑仓库吞吐、月台适配、人员、设备、货物和预计作业时长。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openBatchImport()">批量导入运输计划</button>
+                        <button class="btn btn-primary" onclick="openAppointmentCreate()">新建运输预约</button>
+                    </div>
+                </div>
+
+                <div class="capacity-layout mb-16">
+                    <div class="warehouse-list" id="warehouseList"></div>
+
+                    <div class="capacity-board">
+                        <div class="card-header" style="padding:0 0 14px">
+                            <div>
+                                <h3 id="capacityTitle">A3常温仓预约容量</h3>
+                                <p>点击具体时段创建预约或查看已预约车辆</p>
+                            </div>
+
+                            <input class="form-control" style="width:170px" type="date" value="2026-07-18">
+                        </div>
+
+                        <div class="capacity-grid" id="capacityGrid"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>今日运输任务</h3>
+                            <p>从运输计划到预约、车辆指派和到园执行</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <div class="search-box">
+                                <span>查</span>
+                                <input id="taskSearch" placeholder="任务号、车牌、承运商、仓库"
+                                       oninput="renderTaskTable()">
+                            </div>
+
+                            <select id="taskStatusFilter" onchange="renderTaskTable()">
+                                <option value="">全部状态</option>
+                                <option>待指派车辆</option>
+                                <option>已预约</option>
+                                <option>在途</option>
+                                <option>已签到</option>
+                                <option>园内作业</option>
+                                <option>已完成</option>
+                            </select>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>任务/业务</th>
+                                    <th>仓库与货物</th>
+                                    <th>车辆与司机</th>
+                                    <th>预约时段</th>
+                                    <th>当前节点</th>
+                                    <th>预计作业</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="taskTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 门岗核验 -->
+            <section class="view" id="view-gate">
+                <div class="section-heading">
+                    <div>
+                        <h2>南货运门入园核验</h2>
+                        <p>门岗只处理车牌、挂车、司机、预约和资质的异常项，不重复录入运输资料。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openNoAppointment()">登记无预约车辆</button>
+                        <button class="btn btn-primary" onclick="refreshGateVehicle()">读取下一辆车</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>当前使用人：南门门岗</strong>
+                    <span>当前车辆必须完成预约、司机、牵引车、挂车和仓库状态核验后才能入园。</span>
+                </div>
+
+                <div class="gate-layout">
+                    <div>
+                        <div class="gate-camera mb-16">
+                            <div class="camera-label">南货运门 · 入口相机01 · 在线</div>
+                            <div class="plate-result">粤A·52T8M／挂粤B·8621</div>
+                            <div class="gate-road"></div>
+
+                            <div class="truck-visual">
+                                <div class="truck-cab"></div>
+                                <div class="truck-box"></div>
+                                <div class="truck-wheel wheel-a"></div>
+                                <div class="truck-wheel wheel-b"></div>
+                                <div class="truck-wheel wheel-c"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>识别到的运输任务</h3>
+                                    <p>任务RK202607180286 · A3常温仓入库送货</p>
+                                </div>
+                                <span class="tag tag-green">预约有效</span>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="detail-grid">
+                                    <div class="detail-item"><span>牵引车</span><strong>粤A·52T8M</strong></div>
+                                    <div class="detail-item"><span>挂车</span><strong>挂粤B·8621</strong></div>
+                                    <div class="detail-item"><span>司机</span><strong>张建国</strong></div>
+                                    <div class="detail-item"><span>承运商</span><strong>安达物流</strong></div>
+                                    <div class="detail-item"><span>货物</span><strong>饮料22托</strong></div>
+                                    <div class="detail-item"><span>下一节点</span><strong>1号地磅</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>自动核验结果</h3>
+                                <p>全部关键项通过后才能确认入园</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="verification-list">
+                                <div class="verify-row">
+                                    <div><strong>预约时段</strong><p>10:00—11:00，实际到达10:18</p></div>
+                                    <span class="tag tag-green">准时</span>
+                                </div>
+
+                                <div class="verify-row">
+                                    <div><strong>牵引车匹配</strong><p>与预约车辆一致</p></div>
+                                    <span class="tag tag-green">通过</span>
+                                </div>
+
+                                <div class="verify-row">
+                                    <div><strong>挂车匹配</strong><p>挂粤B·8621，与任务一致</p></div>
+                                    <span class="tag tag-green">通过</span>
+                                </div>
+
+                                <div class="verify-row">
+                                    <div><strong>司机身份及资质</strong><p>驾驶证、从业资格均有效</p></div>
+                                    <span class="tag tag-green">通过</span>
+                                </div>
+
+                                <div class="verify-row">
+                                    <div><strong>仓库接收状态</strong><p>A3仓确认接收，货位正常</p></div>
+                                    <span class="tag tag-green">通过</span>
+                                </div>
+
+                                <div class="verify-row">
+                                    <div><strong>候车区容量</strong><p>A3候车区剩余4个重车位</p></div>
+                                    <span class="tag tag-orange">紧张</span>
+                                </div>
+
+                                <div class="verify-row">
+                                    <div><strong>园内路线</strong><p>南门→1号地磅→A3候车区</p></div>
+                                    <span class="tag tag-green">可通行</span>
+                                </div>
+                            </div>
+
+                            <div class="section-actions mt-16">
+                                <button class="btn btn-secondary" onclick="holdAtGate()">引导至门外等待</button>
+                                <button class="btn btn-warning" onclick="openGateCorrection()">修正车辆信息</button>
+                                <button class="btn btn-success" onclick="confirmGateEntry()">确认入园</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-16">
+                    <div class="card-header">
+                        <div>
+                            <h3>当前入口待处理车辆</h3>
+                            <p>只显示需要门岗人工处理的车辆</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>车辆</th>
+                                    <th>问题</th>
+                                    <th>目标仓库</th>
+                                    <th>等待时长</th>
+                                    <th>系统建议</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="gateIssueTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 虚拟排队 -->
+            <section class="view" id="view-queue">
+                <div class="section-heading">
+                    <div>
+                        <h2>场外虚拟排队与园内叫号</h2>
+                        <p>车辆在场外服务区等待，只有收到叫号后才前往入口或月台，避免货车堵在道路上。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openQueueRule()">队列优先级规则</button>
+                        <button class="btn btn-primary" onclick="manualCallVehicle()">人工叫号</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">场外等待</div>
+                        <div class="metric-value">38辆</div>
+                        <div class="metric-note">平均等待31分钟</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">已叫号待入园</div>
+                        <div class="metric-value">8辆</div>
+                        <div class="metric-note">最晚响应剩余4分钟</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">园内候车</div>
+                        <div class="metric-value">26辆</div>
+                        <div class="metric-note">A3区负荷最高</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">已叫月台</div>
+                        <div class="metric-value">6辆</div>
+                        <div class="metric-note">2辆尚未响应</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">今日过号</div>
+                        <div class="metric-value">5次</div>
+                        <div class="metric-note">涉及4名司机</div>
+                    </div>
+                </div>
+
+                <div class="queue-board" id="queueBoard"></div>
+            </section>
+
+            <!-- 月台调度 -->
+            <section class="view" id="view-dock">
+                <div class="section-heading">
+                    <div>
+                        <h2>A3仓月台调度与装卸作业</h2>
+                        <p>月台分配综合考虑车型、货物、预约时段、等待时长、备货状态和设备能力。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openDockPlan()">查看月台计划</button>
+                        <button class="btn btn-primary" onclick="assignWaitingVehicle()">分配等待车辆</button>
+                    </div>
+                </div>
+
+                <div class="danger-banner mb-16" id="dockWarning">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">
+                        <strong>A3仓月台前压车</strong>
+                        当前有5辆车位于月台前道路，超过安全上限。建议暂停叫号并将未到位车辆退回候车区。
+                    </div>
+                </div>
+
+                <div class="dock-layout">
+                    <div>
+                        <div class="dock-grid" id="dockGrid"></div>
+                    </div>
+
+                    <div class="dock-panel" id="dockPanel"></div>
+                </div>
+
+                <div class="card mt-16">
+                    <div class="card-header">
+                        <div>
+                            <h3>A3仓等待车辆</h3>
+                            <p>系统推荐月台，调度员可根据现场情况调整</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body" id="dockWaitingList"></div>
+                </div>
+            </section>
+
+            <!-- 园内地图 -->
+            <section class="view" id="view-map">
+                <div class="section-heading">
+                    <div>
+                        <h2>园内车辆、候车区与停车资源</h2>
+                        <p>查看车辆所在区域、道路状态、候车位、过夜位和月台路线，发现偏航和异常滞留。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openRouteStrategy()">调整车辆路线</button>
+                        <button class="btn btn-primary" onclick="openParkingAllocation()">分配货车停车位</button>
+                    </div>
+                </div>
+
+                <div class="map-layout">
+                    <div class="park-map">
+                        <div class="map-road-h"></div>
+                        <div class="map-road-v"></div>
+
+                        <div class="map-zone zone-a" onclick="openMapZone('WAIT')">
+                            <h4>A区重车候车区</h4>
+                            <p><strong>36/40</strong> 个车位使用中</p>
+                            <p>等待A2、A3仓月台</p>
+                            <span class="tag tag-orange">接近饱和</span>
+                        </div>
+
+                        <div class="map-zone zone-b" onclick="openMapZone('EMPTY')">
+                            <h4>B区空车停车区</h4>
+                            <p><strong>28/60</strong> 个车位使用中</p>
+                            <p>可承接32辆车辆</p>
+                            <span class="tag tag-green">车位充足</span>
+                        </div>
+
+                        <div class="map-zone zone-c" onclick="openMapZone('COLD')">
+                            <h4>C区冷链候车区</h4>
+                            <p><strong>14/20</strong> 个车位使用中</p>
+                            <p>温度异常车辆1辆</p>
+                            <span class="tag tag-red">存在异常</span>
+                        </div>
+
+                        <div class="map-zone zone-d" onclick="openMapZone('NIGHT')">
+                            <h4>D区过夜及司机服务区</h4>
+                            <p><strong>22/50</strong> 个车位使用中</p>
+                            <p>充电、淋浴、餐饮服务</p>
+                            <span class="tag tag-purple">服务区域</span>
+                        </div>
+
+                        <div class="map-truck warning" style="left:43%;top:20%"></div>
+                        <div class="map-truck" style="left:49%;top:36%"></div>
+                        <div class="map-truck danger" style="left:62%;top:46%"></div>
+                        <div class="map-truck" style="left:40%;top:56%"></div>
+                        <div class="map-truck" style="left:53%;top:73%"></div>
+                        <div class="map-truck warning" style="left:29%;top:46%"></div>
+                    </div>
+
+                    <div class="map-side">
+                        <div class="action-card">
+                            <h4>道路拥堵</h4>
+                            <p>仓储二路A3月台段已有5辆车排队，建议暂停A3月台叫号。</p>
+                            <button class="btn btn-danger btn-sm" onclick="closeCongestedRoad()">临时封闭月台前道路</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>路线偏离车辆</h4>
+                            <p>粤A·76M2K应前往B2仓，当前进入A区重车候车区。</p>
+                            <button class="btn btn-warning btn-sm" onclick="correctTruckRoute()">发送路线纠正</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>长期滞留车辆</h4>
+                            <p>7辆车超过计划在园时长，其中3辆因仓库原因、2辆因司机原因。</p>
+                            <button class="btn btn-secondary btn-sm" onclick="openStayAnalysis()">查看滞留归因</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>货车停车资源</h4>
+                            <p>重车位剩余4个、空车位32个、过夜位28个、危化专位6个。</p>
+                            <button class="btn btn-primary btn-sm" onclick="openParkingAllocation()">分配停车位</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 地磅 -->
+            <section class="view" id="view-weigh">
+                <div class="section-heading">
+                    <div>
+                        <h2>地磅称重与重量异常</h2>
+                        <p>自动匹配运输任务、牵引车和挂车，记录毛重、皮重、净重及称重证据。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openScaleQueue()">查看待过磅队列</button>
+                        <button class="btn btn-primary" onclick="startWeighing()">开始读取重量</button>
+                    </div>
+                </div>
+
+                <div class="weigh-layout">
+                    <div class="scale-visual">
+                        <div class="scale-display" id="scaleDisplay">35,820 kg</div>
+                        <div class="scale-platform"></div>
+                        <div class="scale-truck"></div>
+                    </div>
+
+                    <div class="scale-status">
+                        <h3 style="margin-top:0">1号地磅当前车辆</h3>
+                        <p class="muted">任务RK202607180286 · 重车第一次过磅</p>
+
+                        <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+                            <div class="detail-item"><span>牵引车</span><strong>粤A·52T8M</strong></div>
+                            <div class="detail-item"><span>挂车</span><strong>挂粤B·8621</strong></div>
+                            <div class="detail-item"><span>货物</span><strong>饮料22托</strong></div>
+                            <div class="detail-item"><span>当前环节</span><strong>毛重</strong></div>
+                        </div>
+
+                        <div class="verification-list mt-16">
+                            <div class="verify-row">
+                                <div><strong>车辆完全上磅</strong><p>前后轮均在称重区域内</p></div>
+                                <span class="tag tag-green">正常</span>
+                            </div>
+
+                            <div class="verify-row">
+                                <div><strong>重量稳定</strong><p>连续3秒波动小于20kg</p></div>
+                                <span class="tag tag-green">稳定</span>
+                            </div>
+
+                            <div class="verify-row">
+                                <div><strong>任务匹配</strong><p>车辆及运输任务一致</p></div>
+                                <span class="tag tag-green">通过</span>
+                            </div>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-secondary" onclick="reReadWeight()">重新读取</button>
+                            <button class="btn btn-success" onclick="confirmWeight()">确认保存毛重</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-16">
+                    <div class="card-header">
+                        <div>
+                            <h3>今日称重异常</h3>
+                            <p>异常称重必须人工复核，不能自动进入下一节点</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>车辆/任务</th>
+                                    <th>称重环节</th>
+                                    <th>异常</th>
+                                    <th>测量结果</th>
+                                    <th>订单容差</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><span class="plate">粤A·18K6P</span><br>RK202607180236</td>
+                                    <td>第二次过磅</td>
+                                    <td>净重超出订单</td>
+                                    <td>净重28.6吨</td>
+                                    <td>26吨±0.5吨</td>
+                                    <td><span class="tag tag-red">待复核</span></td>
+                                    <td><button class="btn btn-primary btn-sm" onclick="openWeightException()">处理异常</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="plate">粤B·29T5M</span><br>CK202607180118</td>
+                                    <td>空车皮重</td>
+                                    <td>车辆未完全上磅</td>
+                                    <td>12.8吨</td>
+                                    <td>历史皮重14.2吨</td>
+                                    <td><span class="tag tag-orange">需重称</span></td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="showToast('已通知司机重新上磅。')">通知重称</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 特殊车辆 -->
+            <section class="view" id="view-special">
+                <div class="section-heading">
+                    <div>
+                        <h2>冷链、危化及特殊车辆安全管理</h2>
+                        <p>特殊车辆使用独立资质、入口、候车区、路线和异常升级规则。</p>
+                    </div>
+                </div>
+
+                <div class="special-grid">
+                    <div class="special-card">
+                        <div class="card-header" style="padding:0">
+                            <div>
+                                <h3>冷链车辆：粤B·62M8Q</h3>
+                                <p>任务LL202607180068 · 冷冻食品</p>
+                            </div>
+                            <span class="tag tag-red">温度超限</span>
+                        </div>
+
+                        <div class="temperature" style="color:var(--danger)">-12.6℃</div>
+
+                        <div class="detail-grid">
+                            <div class="detail-item"><span>任务要求</span><strong>-18℃以下</strong></div>
+                            <div class="detail-item"><span>到园温度</span><strong>-12.6℃</strong></div>
+                            <div class="detail-item"><span>当前位置</span><strong>冷链候车区C3</strong></div>
+                            <div class="detail-item"><span>制冷设备</span><strong>运行中</strong></div>
+                            <div class="detail-item"><span>目标冷库</span><strong>C1冷链仓</strong></div>
+                            <div class="detail-item"><span>等待时间</span><strong>16分钟</strong></div>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-secondary" onclick="requestTemperatureProof()">要求司机提交温控记录</button>
+                            <button class="btn btn-warning" onclick="notifyColdManager()">通知冷库主管</button>
+                            <button class="btn btn-danger" onclick="isolateColdTruck()">进入异常隔离区</button>
+                        </div>
+                    </div>
+
+                    <div class="special-card">
+                        <div class="card-header" style="padding:0">
+                            <div>
+                                <h3>危化车辆：粤A·92K6P</h3>
+                                <p>任务WH202607180016 · 二类易燃液体</p>
+                            </div>
+                            <span class="tag tag-orange">预计12分钟到达</span>
+                        </div>
+
+                        <div class="detail-grid mt-16">
+                            <div class="detail-item"><span>驾驶员</span><strong>赵师傅</strong></div>
+                            <div class="detail-item"><span>押运员</span><strong>刘师傅</strong></div>
+                            <div class="detail-item"><span>车辆资质</span><strong>有效</strong></div>
+                            <div class="detail-item"><span>指定入口</span><strong>东侧危化门</strong></div>
+                            <div class="detail-item"><span>指定区域</span><strong>危化隔离区H2</strong></div>
+                            <div class="detail-item"><span>园内路线</span><strong>危化专用路线</strong></div>
+                        </div>
+
+                        <div class="verification-list mt-16">
+                            <div class="verify-row">
+                                <div><strong>危货车辆资质</strong></div>
+                                <span class="tag tag-green">有效</span>
+                            </div>
+                            <div class="verify-row">
+                                <div><strong>驾驶及押运资质</strong></div>
+                                <span class="tag tag-green">有效</span>
+                            </div>
+                            <div class="verify-row">
+                                <div><strong>专用候车位</strong></div>
+                                <span class="tag tag-green">已预留H2-06</span>
+                            </div>
+                            <div class="verify-row">
+                                <div><strong>道路状态</strong></div>
+                                <span class="tag tag-green">路线畅通</span>
+                            </div>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-secondary" onclick="notifySecurityTeam()">通知安全人员到位</button>
+                            <button class="btn btn-primary" onclick="activateHazardPlan()">启动到达保障</button>
+                        </div>
+                    </div>
+
+                    <div class="special-card">
+                        <h3>超限车辆</h3>
+                        <p class="muted">粤C·38Q7M · 车高4.6米 · 设备运输</p>
+
+                        <div class="detail-grid">
+                            <div class="detail-item"><span>园区普通限高</span><strong>4.2米</strong></div>
+                            <div class="detail-item"><span>车辆高度</span><strong>4.6米</strong></div>
+                            <div class="detail-item"><span>可用入口</span><strong>西侧大件门</strong></div>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-warning" onclick="openOversizeRoute()">审批大件路线</button>
+                        </div>
+                    </div>
+
+                    <div class="special-card">
+                        <h3>冷链供电停车</h3>
+                        <p class="muted">当前接电车辆8辆，剩余接口4个</p>
+
+                        <div class="detail-grid">
+                            <div class="detail-item"><span>接电车位</span><strong>12个</strong></div>
+                            <div class="detail-item"><span>当前使用</span><strong>8个</strong></div>
+                            <div class="detail-item"><span>本月收入</span><strong>26,800元</strong></div>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-secondary" onclick="showToast('已打开冷链供电车位分配页面。')">管理接电车位</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 异常事件 -->
+            <section class="view" id="view-incident">
+                <div class="section-heading">
+                    <div>
+                        <h2>园区异常事件处置</h2>
+                        <p>车辆偏航、道路阻塞、司机失联、作业超时和车辆故障统一受理并追踪结果。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="createIncident()">人工上报事件</button>
+                    </div>
+                </div>
+
+                <div class="incident-layout">
+                    <div class="incident-list">
+                        <div class="incident-filter">
+                            <select class="form-control" id="incidentFilter" onchange="renderIncidentList()">
+                                <option value="">全部事件</option>
+                                <option>待处理</option>
+                                <option>处理中</option>
+                                <option>待复核</option>
+                                <option>已关闭</option>
+                            </select>
+                        </div>
+
+                        <div id="incidentList"></div>
+                    </div>
+
+                    <div class="incident-detail" id="incidentDetail"></div>
+                </div>
+            </section>
+
+            <!-- 费用结算 -->
+            <section class="view" id="view-billing">
+                <div class="section-heading">
+                    <div>
+                        <h2>停车、等待与作业费用归责</h2>
+                        <p>超时费用先判断发生在哪个节点、由谁造成，再进入租户、承运商、货主或司机账单。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openBillingRule()">费用规则</button>
+                        <button class="btn btn-primary" onclick="generateMonthlyBills()">生成7月结算账单</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">本月停车收入</div>
+                        <div class="metric-value">¥286,400</div>
+                        <div class="metric-note">临停、过夜及月租</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">称重服务费</div>
+                        <div class="metric-value">¥86,200</div>
+                        <div class="metric-note">8,620次称重</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">超时待归责</div>
+                        <div class="metric-value">¥12,680</div>
+                        <div class="metric-note">涉及38个任务</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">承运商待确认</div>
+                        <div class="metric-value">¥68,600</div>
+                        <div class="metric-note">12份月结账单</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">逾期应收</div>
+                        <div class="metric-value">¥36,200</div>
+                        <div class="metric-note">3家承运商</div>
+                    </div>
+                </div>
+
+                <div class="responsibility-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>当前待归责超时费用</h3>
+                                <p>点击记录查看各节点时间和责任依据</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="cost-flow">
+                                <div class="cost-row">
+                                    <strong>司机提前到园等待</strong>
+                                    <div class="cost-bar warning" style="width:72%"></div>
+                                    <strong>4,260元</strong>
+                                </div>
+                                <div class="cost-row">
+                                    <strong>仓库备货延迟</strong>
+                                    <div class="cost-bar" style="width:58%"></div>
+                                    <strong>3,860元</strong>
+                                </div>
+                                <div class="cost-row">
+                                    <strong>单证不齐</strong>
+                                    <div class="cost-bar warning" style="width:38%"></div>
+                                    <strong>2,160元</strong>
+                                </div>
+                                <div class="cost-row">
+                                    <strong>月台设备故障</strong>
+                                    <div class="cost-bar success" style="width:26%"></div>
+                                    <strong>1,480元</strong>
+                                </div>
+                                <div class="cost-row">
+                                    <strong>司机作业后未移车</strong>
+                                    <div class="cost-bar warning" style="width:18%"></div>
+                                    <strong>920元</strong>
+                                </div>
+                            </div>
+
+                            <div class="table-wrap mt-16">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>任务/车辆</th>
+                                        <th>超时环节</th>
+                                        <th>超时时长</th>
+                                        <th>初步责任方</th>
+                                        <th>预计费用</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="costTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cost-summary">
+                        <h3 style="margin-top:0">7月费用承担</h3>
+
+                        <div class="money-row">
+                            <span>园区租户承担</span>
+                            <strong>¥186,200</strong>
+                        </div>
+                        <div class="money-row">
+                            <span>承运商承担</span>
+                            <strong>¥96,860</strong>
+                        </div>
+                        <div class="money-row">
+                            <span>货主承担</span>
+                            <strong>¥52,600</strong>
+                        </div>
+                        <div class="money-row">
+                            <span>司机个人服务消费</span>
+                            <strong>¥28,600</strong>
+                        </div>
+                        <div class="money-row">
+                            <span>园区责任减免</span>
+                            <strong>¥8,260</strong>
+                        </div>
+                        <div class="money-row total">
+                            <span>待对公结算</span>
+                            <strong>¥335,660</strong>
+                        </div>
+
+                        <div class="section-actions mt-16">
+                            <button class="btn btn-secondary" onclick="openTenantStatement()">租户账单</button>
+                            <button class="btn btn-secondary" onclick="openCarrierStatement()">承运商账单</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 分析 -->
+            <section class="view" id="view-analytics">
+                <div class="section-heading">
+                    <div>
+                        <h2>物流园运营效率分析</h2>
+                        <p>评价预约、等待、月台作业、仓库服务、承运商履约和园区安全。</p>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">预约准时率</div>
+                        <div class="metric-value">86.2%</div>
+                        <div class="metric-note">较上月提升3.1%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">车辆日周转</div>
+                        <div class="metric-value">428辆</div>
+                        <div class="metric-note">高峰日可达512辆</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">月台利用率</div>
+                        <div class="metric-value">73.6%</div>
+                        <div class="metric-note">A3仓最高88%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">平均在园时长</div>
+                        <div class="metric-value">2.3小时</div>
+                        <div class="metric-note">较上月下降18分钟</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>仓库服务效率</h3>
+                                <p>区分车辆等待与仓库自身作业效率</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-wrap">
+                                <table style="min-width:680px">
+                                    <thead>
+                                    <tr>
+                                        <th>仓库</th>
+                                        <th>平均等待</th>
+                                        <th>平均装卸</th>
+                                        <th>备货准时率</th>
+                                        <th>超时次数</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr><td>A3常温仓</td><td>46分钟</td><td>82分钟</td><td>78%</td><td>36次</td></tr>
+                                    <tr><td>B2电商仓</td><td>22分钟</td><td>54分钟</td><td>92%</td><td>12次</td></tr>
+                                    <tr><td>C1冷链仓</td><td>18分钟</td><td>66分钟</td><td>95%</td><td>8次</td></tr>
+                                    <tr><td>D1零担仓</td><td>12分钟</td><td>48分钟</td><td>89%</td><td>10次</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>承运商履约评价</h3>
+                                <p>准时、爽约、过号、资质和园区违规综合评价</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-wrap">
+                                <table style="min-width:680px">
+                                    <thead>
+                                    <tr>
+                                        <th>承运商</th>
+                                        <th>准时率</th>
+                                        <th>爽约</th>
+                                        <th>违规</th>
+                                        <th>综合评级</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr><td>安达物流</td><td>96.8%</td><td>1次</td><td>0次</td><td><span class="tag tag-green">A级</span></td></tr>
+                                    <tr><td>顺通运输</td><td>88.2%</td><td>4次</td><td>2次</td><td><span class="tag tag-blue">B级</span></td></tr>
+                                    <tr><td>华兴货运</td><td>72.6%</td><td>9次</td><td>6次</td><td><span class="tag tag-red">重点改善</span></td></tr>
+                                    <tr><td>冷鲜供应链</td><td>93.5%</td><td>2次</td><td>1次</td><td><span class="tag tag-green">A级</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 审计 -->
+            <section class="view" id="view-audit">
+                <div class="section-heading">
+                    <div>
+                        <h2>车辆、调度与费用操作审计</h2>
+                        <p>人工插队、月台调整、异常放行、费用归责和危化路线变更全部留痕。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作人</th>
+                                    <th>岗位</th>
+                                    <th>操作内容</th>
+                                    <th>关联对象</th>
+                                    <th>业务影响</th>
+                                    <th>状态</th>
+                                </tr>
+                                </thead>
+                                <tbody id="auditTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-mask" id="modalMask" onclick="maskClose(event)">
+    <div class="modal" id="modalBox">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalTitle">业务处理</h3>
+                <p id="modalSubtitle"></p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+    const pageMeta = {
+        dashboard: ["物流园运营调度工作台", "车辆、仓库、月台和园区道路统一协同"],
+        appointment: ["运输任务与车辆预约", "根据仓库吞吐能力和月台资源开放预约"],
+        gate: ["门岗入离园核验", "核验任务、司机、牵引车、挂车、货物和资质"],
+        queue: ["虚拟排队与叫号", "场外等待、园内候车、叫号响应和过号处理"],
+        dock: ["月台调度与装卸作业", "月台分配、叫号、到位、装卸、暂停和离位"],
+        map: ["园内车辆与停车资源", "候车区、停车位、园内路线和车辆异常位置"],
+        weigh: ["地磅称重管理", "任务匹配、自动过磅、重量异常和磅单"],
+        special: ["冷链与危化车辆", "专项资质、温度、入口、路线和隔离区域"],
+        incident: ["园区异常事件处置", "车辆偏航、道路阻塞、司机失联和作业超时"],
+        billing: ["费用归责与对公结算", "停车、等待、月台、称重和增值服务费用"],
+        analytics: ["园区运营效率分析", "预约、车辆、仓库、月台和承运商绩效"],
+        audit: ["操作审计", "人工调度、异常放行和费用处理全过程留痕"]
+    };
+
+    const warehouses = [
+        {id:"A3", name:"A3常温仓", docks:8, waiting:18, status:"严重拥堵"},
+        {id:"B2", name:"B2电商仓", docks:8, waiting:8, status:"正常"},
+        {id:"C1", name:"C1冷链仓", docks:6, waiting:6, status:"温度事件"},
+        {id:"D1", name:"D1零担仓", docks:8, waiting:4, status:"正常"}
+    ];
+
+    let selectedWarehouseId = "A3";
+
+    const capacities = {
+        A3: [
+            {time:"08:00", used:4, total:4},
+            {time:"09:00", used:4, total:4},
+            {time:"10:00", used:4, total:4},
+            {time:"11:00", used:3, total:4},
+            {time:"12:00", used:2, total:4},
+            {time:"13:00", used:4, total:4},
+            {time:"14:00", used:3, total:4},
+            {time:"15:00", used:2, total:4},
+            {time:"16:00", used:1, total:4},
+            {time:"17:00", used:0, total:3}
+        ],
+        B2: [
+            {time:"08:00", used:3, total:5},
+            {time:"09:00", used:4, total:5},
+            {time:"10:00", used:3, total:5},
+            {time:"11:00", used:2, total:5},
+            {time:"12:00", used:1, total:4},
+            {time:"13:00", used:3, total:5},
+            {time:"14:00", used:4, total:5},
+            {time:"15:00", used:2, total:5},
+            {time:"16:00", used:2, total:5},
+            {time:"17:00", used:1, total:4}
+        ],
+        C1: [
+            {time:"08:00", used:2, total:3},
+            {time:"09:00", used:3, total:3},
+            {time:"10:00", used:2, total:3},
+            {time:"11:00", used:2, total:3},
+            {time:"12:00", used:1, total:2},
+            {time:"13:00", used:2, total:3},
+            {time:"14:00", used:1, total:3},
+            {time:"15:00", used:2, total:3},
+            {time:"16:00", used:1, total:3},
+            {time:"17:00", used:0, total:2}
+        ],
+        D1: [
+            {time:"08:00", used:3, total:5},
+            {time:"09:00", used:4, total:5},
+            {time:"10:00", used:2, total:5},
+            {time:"11:00", used:3, total:5},
+            {time:"12:00", used:1, total:4},
+            {time:"13:00", used:2, total:5},
+            {time:"14:00", used:3, total:5},
+            {time:"15:00", used:2, total:5},
+            {time:"16:00", used:1, total:5},
+            {time:"17:00", used:1, total:4}
+        ]
+    };
+
+    let tasks = [
+        {
+            id:"RK202607180286",
+            type:"入库送货",
+            warehouse:"A3常温仓",
+            cargo:"饮料22托",
+            truck:"粤A·52T8M",
+            trailer:"挂粤B·8621",
+            driver:"张建国",
+            carrier:"安达物流",
+            slot:"10:00—11:00",
+            node:"南门入园核验",
+            duration:"预计80分钟",
+            status:"已签到"
+        },
+        {
+            id:"CK202607180216",
+            type:"出库提货",
+            warehouse:"B2电商仓",
+            cargo:"电商包裹1,260件",
+            truck:"粤B·36M8P",
+            trailer:"挂粤A·2265",
+            driver:"李师傅",
+            carrier:"顺通运输",
+            slot:"11:00—12:00",
+            node:"场外虚拟排队",
+            duration:"预计60分钟",
+            status:"已预约"
+        },
+        {
+            id:"LL202607180068",
+            type:"冷链入库",
+            warehouse:"C1冷链仓",
+            cargo:"冷冻食品18托",
+            truck:"粤B·62M8Q",
+            trailer:"挂粤C·8136",
+            driver:"王师傅",
+            carrier:"冷鲜供应链",
+            slot:"10:00—11:00",
+            node:"冷链候车区C3",
+            duration:"预计75分钟",
+            status:"园内作业"
+        },
+        {
+            id:"WH202607180016",
+            type:"危化送货",
+            warehouse:"H1危化仓",
+            cargo:"二类易燃液体",
+            truck:"粤A·92K6P",
+            trailer:"挂粤B·7728",
+            driver:"赵师傅",
+            carrier:"华安危运",
+            slot:"11:30—12:00",
+            node:"在途，预计12分钟",
+            duration:"预计50分钟",
+            status:"在途"
+        },
+        {
+            id:"DB202607180032",
+            type:"跨仓调拨",
+            warehouse:"D1零担仓",
+            cargo:"日用品8托",
+            truck:"待指派",
+            trailer:"待指派",
+            driver:"待指派",
+            carrier:"华兴货运",
+            slot:"15:00—16:00",
+            node:"等待承运商指派",
+            duration:"预计45分钟",
+            status:"待指派车辆"
+        }
+    ];
+
+    let gateIssues = [
+        {
+            id:"G001",
+            plate:"粤C·29K7M",
+            issue:"挂车与预约不一致",
+            warehouse:"B2电商仓",
+            wait:"8分钟",
+            suggestion:"承运商提交挂车变更并重新核验资质",
+            status:"待处理"
+        },
+        {
+            id:"G002",
+            plate:"粤A·17Q8P",
+            issue:"无有效预约",
+            warehouse:"司机自报A3仓",
+            wait:"12分钟",
+            suggestion:"联系仓库确认后进入场外临时预约",
+            status:"待仓库确认"
+        },
+        {
+            id:"G003",
+            plate:"粤B·82M6K",
+            issue:"司机从业资格已过期",
+            warehouse:"D1零担仓",
+            wait:"5分钟",
+            suggestion:"更换合格司机，不允许当前司机入园",
+            status:"禁止入园"
+        }
+    ];
+
+    let queueCards = [
+        {id:"Q001", stage:"场外等待", plate:"粤B·36M8P", task:"CK202607180216", warehouse:"B2电商仓", position:3, wait:"预计18分钟", note:"预约11:00—12:00"},
+        {id:"Q002", stage:"场外等待", plate:"粤A·18T6Q", task:"RK202607180228", warehouse:"A3常温仓", position:8, wait:"预计42分钟", note:"司机提前到园38分钟"},
+        {id:"Q003", stage:"已叫号待入园", plate:"粤A·62K7P", task:"RK202607180196", warehouse:"D1零担仓", position:0, wait:"剩余响应4分钟", note:"请前往南货运门"},
+        {id:"Q004", stage:"已叫号待入园", plate:"粤C·31M8F", task:"CK202607180168", warehouse:"B2电商仓", position:0, wait:"剩余响应7分钟", note:"请前往西货运门"},
+        {id:"Q005", stage:"园内候车", plate:"粤A·76M2K", task:"RK202607180166", warehouse:"B2电商仓", position:5, wait:"已等待26分钟", note:"当前位置错误：A区"},
+        {id:"Q006", stage:"园内候车", plate:"粤B·28Q6P", task:"RK202607180158", warehouse:"A3常温仓", position:2, wait:"已等待38分钟", note:"货物未备齐"},
+        {id:"Q007", stage:"已叫月台", plate:"粤A·51T9M", task:"RK202607180138", warehouse:"A3常温仓", position:0, wait:"6号月台", note:"剩余到位时间8分钟"},
+        {id:"Q008", stage:"已叫月台", plate:"粤B·17M6Q", task:"CK202607180126", warehouse:"D1零担仓", position:0, wait:"3号月台", note:"司机尚未确认"},
+        {id:"Q009", stage:"过号/异常", plate:"粤C·28K7P", task:"RK202607180108", warehouse:"A3常温仓", position:0, wait:"已过号12分钟", note:"司机电话未接"},
+        {id:"Q010", stage:"过号/异常", plate:"粤A·39M6T", task:"CK202607180096", warehouse:"B2电商仓", position:0, wait:"迟到68分钟", note:"需重新预约"}
+    ];
+
+    const queueStages = ["场外等待","已叫号待入园","园内候车","已叫月台","过号/异常"];
+
+    let docks = [
+        {id:"A3-01", status:"working", vehicle:"粤A·35K8P", task:"RK202607180132", type:"大型半挂", progress:68, start:"10:02", expected:"11:20", note:"卸货中"},
+        {id:"A3-02", status:"working", vehicle:"粤B·72M6Q", task:"RK202607180126", type:"大型半挂", progress:42, start:"10:26", expected:"11:46", note:"卸货中"},
+        {id:"A3-03", status:"waiting", vehicle:"粤A·28T6M", task:"RK202607180118", type:"厢式货车", progress:100, start:"09:18", expected:"10:35", note:"完成后未离位"},
+        {id:"A3-04", status:"idle", vehicle:"", task:"", type:"大型半挂", progress:0, start:"", expected:"", note:"空闲可分配"},
+        {id:"A3-05", status:"working", vehicle:"粤C·16K8M", task:"RK202607180112", type:"大型半挂", progress:82, start:"09:56", expected:"11:10", note:"卸货中"},
+        {id:"A3-06", status:"waiting", vehicle:"粤A·51T9M", task:"RK202607180138", type:"大型半挂", progress:0, start:"", expected:"", note:"车辆驶入中"},
+        {id:"A3-07", status:"working", vehicle:"粤B·38Q7P", task:"RK202607180102", type:"大型半挂", progress:30, start:"10:38", expected:"12:00", note:"作业暂停：单证异常"},
+        {id:"A3-08", status:"fault", vehicle:"", task:"", type:"大型半挂", progress:0, start:"", expected:"", note:"升降平台故障"}
+    ];
+
+    let selectedDockId = "A3-03";
+
+    let dockWaiting = [
+        {id:"DW01", plate:"粤B·28Q6P", task:"RK202607180158", cargo:"饮料18托", wait:"38分钟", recommended:"A3-04", ready:"货物未备齐", priority:"普通"},
+        {id:"DW02", plate:"粤A·63K2M", task:"RK202607180152", cargo:"包装材料12托", wait:"32分钟", recommended:"A3-04", ready:"货物已备齐", priority:"优先"},
+        {id:"DW03", plate:"粤C·18T7Q", task:"RK202607180146", cargo:"食品16托", wait:"28分钟", recommended:"A3-05", ready:"货物已备齐", priority:"普通"}
+    ];
+
+    let incidents = [
+        {
+            id:"SJ001",
+            title:"A3月台前道路压车",
+            type:"道路拥堵",
+            status:"待处理",
+            priority:"高",
+            time:"10:42",
+            location:"仓储二路A3月台段",
+            object:"5辆货车",
+            description:"月台前等待车辆超过安全上限，影响后续车辆及消防通道。",
+            timeline:[
+                ["10:42","视频系统识别月台前车辆数量达到5辆"],
+                ["10:43","系统暂停新增A3月台自动叫号建议"],
+                ["10:44","事件推送至园区调度主管"]
+            ]
+        },
+        {
+            id:"SJ002",
+            title:"冷链车辆温度超限",
+            type:"冷链安全",
+            status:"处理中",
+            priority:"高",
+            time:"10:36",
+            location:"冷链候车区C3",
+            object:"粤B·62M8Q",
+            description:"到园温度-12.6℃，任务要求-18℃以下。",
+            timeline:[
+                ["10:36","车辆到园温度自动上传"],
+                ["10:37","系统识别温度超过任务上限"],
+                ["10:39","已通知冷库主管，等待处置意见"]
+            ]
+        },
+        {
+            id:"SJ003",
+            title:"车辆偏离指定路线",
+            type:"路线偏离",
+            status:"待处理",
+            priority:"中",
+            time:"10:31",
+            location:"A区重车候车区",
+            object:"粤A·76M2K",
+            description:"任务目标为B2仓，车辆错误进入A区候车区。",
+            timeline:[
+                ["10:31","车辆定位进入非任务区域"],
+                ["10:32","系统向司机发送路线纠正消息"],
+                ["10:35","车辆尚未离开错误区域"]
+            ]
+        },
+        {
+            id:"SJ004",
+            title:"作业完成后未离开月台",
+            type:"月台占用",
+            status:"处理中",
+            priority:"中",
+            time:"10:28",
+            location:"A3仓3号月台",
+            object:"粤A·28T6M",
+            description:"装卸已完成23分钟，车辆仍占用月台。",
+            timeline:[
+                ["10:28","仓库确认装卸完成"],
+                ["10:33","系统提醒司机移车"],
+                ["10:43","通知仓库调度员"],
+                ["10:51","司机电话未接，事件升级"]
+            ]
+        },
+        {
+            id:"SJ005",
+            title:"地磅净重超出订单容差",
+            type:"称重异常",
+            status:"待复核",
+            priority:"中",
+            time:"10:18",
+            location:"2号地磅",
+            object:"粤A·18K6P",
+            description:"净重28.6吨，订单计划26吨±0.5吨。",
+            timeline:[
+                ["10:18","系统完成第二次过磅"],
+                ["10:18","净重自动计算为28.6吨"],
+                ["10:19","超出订单容差，暂停出口放行"]
+            ]
+        }
+    ];
+
+    let selectedIncidentId = "SJ001";
+
+    let costItems = [
+        {id:"F001", task:"RK202607180158", plate:"粤B·28Q6P", stage:"仓库备货延迟", overtime:"38分钟", responsible:"A3仓租户", amount:120, status:"待确认"},
+        {id:"F002", task:"RK202607180142", plate:"粤A·17M8Q", stage:"司机提前到园", overtime:"62分钟", responsible:"承运商", amount:80, status:"待确认"},
+        {id:"F003", task:"RK202607180118", plate:"粤A·28T6M", stage:"作业完成未离位", overtime:"23分钟", responsible:"司机/承运商", amount:60, status:"待确认"},
+        {id:"F004", task:"RK202607180102", plate:"粤B·38Q7P", stage:"单证异常暂停", overtime:"36分钟", responsible:"货主", amount:100, status:"存在争议"}
+    ];
+
+    let audits = [
+        ["10:51","王主管","园区调度","暂停A3月台自动叫号","A3常温仓","避免月台前继续压车","执行中"],
+        ["10:43","李调度","A3仓调度","升级月台车辆未离位事件","粤A·28T6M","通知园区安保前往现场","处理中"],
+        ["10:37","系统","冷链安全中心","识别车辆温度超限","粤B·62M8Q","暂停进入冷库月台","处理中"],
+        ["10:18","地磅系统","计量中心","锁定异常称重任务","粤A·18K6P","暂停车辆出口放行","待复核"],
+        ["09:56","南门门岗","门岗","人工修正挂车信息","粤C·29K7M","重新核验后允许排队","已完成"],
+        ["09:32","赵经理","仓库运营","批准加急预约","RK202607180086","调整至10:00时段","已完成"]
+    ];
+
+    /* 导航 */
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => navigateTo(item.dataset.view));
+    });
+
+    function navigateTo(view) {
+        document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+
+        document.getElementById("view-" + view).classList.add("active");
+        document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[view][0];
+        document.getElementById("pageDesc").textContent = pageMeta[view][1];
+
+        window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function changeRole(role) {
+        const roles = {
+            "园区运营调度主管":["王主管","园区运营调度中心","dashboard"],
+            "仓库月台调度员":["李调度","A3仓月台调度","dock"],
+            "南门门岗":["张师傅","南货运门","gate"],
+            "承运商调度员":["陈调度","安达物流","appointment"],
+            "园区安全管理员":["赵经理","园区安全管理部","special"],
+            "园区财务人员":["刘会计","园区财务结算中心","billing"]
+        };
+
+        const current = roles[role];
+        document.getElementById("userName").textContent = current[0];
+        document.getElementById("userRole").textContent = current[1];
+        navigateTo(current[2]);
+
+        showToast(`已切换到“${role}”工作视角。`);
+    }
+
+    /* 预约容量 */
+
+    function renderWarehouseList() {
+        document.getElementById("warehouseList").innerHTML = warehouses.map(item => `
+            <div class="warehouse-item ${item.id === selectedWarehouseId ? "active" : ""}"
+                 onclick="selectWarehouse('${item.id}')">
+                <h4>${item.name}</h4>
+                <p>月台：${item.docks}个 · 候车：${item.waiting}辆</p>
+                <div style="margin-top:6px">${statusTag(item.status)}</div>
+            </div>
+        `).join("");
+    }
+
+    function selectWarehouse(id) {
+        selectedWarehouseId = id;
+        renderWarehouseList();
+        renderCapacityGrid();
+
+        const warehouse = warehouses.find(item => item.id === id);
+        document.getElementById("capacityTitle").textContent = warehouse.name + "预约容量";
+    }
+
+    function renderCapacityGrid() {
+        const list = capacities[selectedWarehouseId];
+
+        let html = `<div class="capacity-head">业务</div>`;
+        html += list.map(item => `<div class="capacity-head">${item.time}</div>`).join("");
+
+        html += `<div class="capacity-label">大型半挂</div>`;
+        html += list.map(item => capacityCell(item, "大型半挂")).join("");
+
+        html += `<div class="capacity-label">厢式货车</div>`;
+        html += list.map((item, index) => capacityCell({
+            ...item,
+            used: Math.max(0, item.used - (index % 2))
+        }, "厢式货车")).join("");
+
+        html += `<div class="capacity-label">临时加急</div>`;
+        html += list.map((item, index) => capacityCell({
+            ...item,
+            total: 1,
+            used: index === 2 || index === 5 ? 1 : 0
+        }, "临时加急")).join("");
+
+        document.getElementById("capacityGrid").innerHTML = html;
+    }
+
+    function capacityCell(item, vehicleType) {
+        const remaining = item.total - item.used;
+        const cls = remaining <= 0 ? "full" : remaining === 1 ? "busy" : "free";
+
+        return `
+            <div class="capacity-cell ${cls}"
+                 onclick="openCapacitySlot('${item.time}','${vehicleType}',${remaining})">
+                <strong>${item.used}/${item.total}</strong>
+                <span>${remaining > 0 ? "剩余" + remaining : "已满"}</span>
+            </div>
+        `;
+    }
+
+    function openCapacitySlot(time, vehicleType, remaining) {
+        const warehouse = warehouses.find(item => item.id === selectedWarehouseId);
+
+        if (remaining <= 0) {
+            const body = `
+                <div class="warning-banner">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">
+                        <strong>${warehouse.name} ${time}时段已满</strong>
+                        当前仓库、适配月台和装卸人员无法继续接收${vehicleType}。
+                    </div>
+                </div>
+
+                <div class="form-group mt-16">
+                    <label>可调整到</label>
+                    <select class="form-control">
+                        <option>顺延到下一可用时段</option>
+                        <option>申请临时加急审批</option>
+                        <option>改约其他仓库或日期</option>
+                    </select>
+                </div>
+            `;
+
+            openModal(
+                "预约时段已满",
+                `${warehouse.name} · ${time}`,
+                body,
+                `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+            );
+            return;
+        }
+
+        openAppointmentCreate(time, vehicleType);
+    }
+
+    function openAppointmentCreate(defaultTime = "14:00", vehicleType = "大型半挂") {
+        const warehouse = warehouses.find(item => item.id === selectedWarehouseId);
+
+        const body = `
+            <form id="appointmentForm" onsubmit="submitAppointment(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">业务类型</label>
+                        <select class="form-control" name="type">
+                            <option>入库送货</option>
+                            <option>出库提货</option>
+                            <option>跨仓调拨</option>
+                            <option>冷链入库</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">服务仓库</label>
+                        <input class="form-control" name="warehouse" value="${warehouse.name}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">业务单号</label>
+                        <input class="form-control" name="order" placeholder="采购单、发货单或运输单" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">货物名称</label>
+                        <input class="form-control" name="cargo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">货物数量</label>
+                        <input class="form-control" name="quantity" placeholder="例如：18托/1200件" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">预约时段</label>
+                        <input class="form-control" name="slot" value="${defaultTime}—${nextHour(defaultTime)}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">车型</label>
+                        <select class="form-control" name="vehicleType">
+                            <option ${vehicleType === "大型半挂" ? "selected" : ""}>大型半挂</option>
+                            <option ${vehicleType === "厢式货车" ? "selected" : ""}>厢式货车</option>
+                            <option>冷藏车</option>
+                            <option>集卡</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">承运商</label>
+                        <select class="form-control" name="carrier">
+                            <option>安达物流</option>
+                            <option>顺通运输</option>
+                            <option>华兴货运</option>
+                            <option>冷鲜供应链</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>是否需要称重</label>
+                        <select class="form-control" name="weigh">
+                            <option>需要进出两次过磅</option>
+                            <option>仅入园称重</option>
+                            <option>无需称重</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>预计作业时长</label>
+                        <select class="form-control" name="duration">
+                            <option>45分钟</option>
+                            <option selected>60分钟</option>
+                            <option>90分钟</option>
+                            <option>120分钟</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <div class="success-banner mt-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-content">
+                    <strong>容量核验通过</strong>
+                    该时段有适配月台，装卸班组和候车区容量可满足本次预约。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "新建运输车辆预约",
+            "创建运输任务并占用仓库作业容量",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('appointmentForm').requestSubmit()">
+                    创建任务并通知承运商
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitAppointment(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        const id = "RK" + Date.now().toString().slice(-12);
+
+        tasks.unshift({
+            id,
+            type:data.type,
+            warehouse:data.warehouse,
+            cargo:data.cargo + " " + data.quantity,
+            truck:"待指派",
+            trailer:"待指派",
+            driver:"待指派",
+            carrier:data.carrier,
+            slot:data.slot,
+            node:"等待承运商指派车辆",
+            duration:data.duration,
+            status:"待指派车辆"
+        });
+
+        addAudit(
+            "仓库计划员",
+            data.warehouse,
+            "创建运输预约",
+            id,
+            `${data.slot}占用1个预约容量`,
+            "已完成"
+        );
+
+        renderTaskTable();
+        closeModal();
+        showToast(`运输任务${id}已创建，并发送给${data.carrier}指派车辆和司机。`);
+    }
+
+    function renderTaskTable() {
+        const keyword = (document.getElementById("taskSearch")?.value || "").toLowerCase();
+        const status = document.getElementById("taskStatusFilter")?.value || "";
+
+        const list = tasks.filter(item => {
+            const text = `${item.id}${item.truck}${item.carrier}${item.warehouse}`.toLowerCase();
+            return (!keyword || text.includes(keyword)) &&
+                (!status || item.status === status);
+        });
+
+        document.getElementById("taskTableBody").innerHTML = list.map(item => `
+            <tr>
+                <td>
+                    <strong>${item.id}</strong>
+                    <div class="muted">${item.type}</div>
+                </td>
+                <td>
+                    <strong>${item.warehouse}</strong>
+                    <div class="muted">${item.cargo}</div>
+                </td>
+                <td>
+                    ${item.truck === "待指派"
+                        ? "待指派"
+                        : `<span class="plate">${item.truck}</span><div class="muted">${item.trailer} · ${item.driver}</div>`}
+                </td>
+                <td>${item.slot}</td>
+                <td>${item.node}</td>
+                <td>${item.duration}</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-secondary btn-sm" onclick="openTaskDetail('${item.id}')">
+                        查看任务
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openTaskDetail(id) {
+        const task = tasks.find(item => item.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>任务编号</span><strong>${task.id}</strong></div>
+                <div class="detail-item"><span>业务类型</span><strong>${task.type}</strong></div>
+                <div class="detail-item"><span>当前状态</span>${statusTag(task.status)}</div>
+                <div class="detail-item"><span>仓库</span><strong>${task.warehouse}</strong></div>
+                <div class="detail-item"><span>预约时段</span><strong>${task.slot}</strong></div>
+                <div class="detail-item"><span>当前节点</span><strong>${task.node}</strong></div>
+                <div class="detail-item"><span>车辆</span><strong>${task.truck}</strong></div>
+                <div class="detail-item"><span>挂车</span><strong>${task.trailer}</strong></div>
+                <div class="detail-item"><span>司机</span><strong>${task.driver}</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>业务流程</h4>
+                <div class="readonly-box">
+                    运输任务 → 车辆预约 → 到园签到 → 门岗核验 → 地磅/候车 →
+                    月台叫号 → 装卸作业 → 单证确认 → 离园核验。
+                </div>
+            </div>
+        `;
+
+        let actions = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+        if (task.status === "待指派车辆") {
+            actions += `<button class="btn btn-primary" onclick="assignVehicle('${id}')">承运商指派车辆</button>`;
+        } else if (task.status === "已预约") {
+            actions += `<button class="btn btn-primary" onclick="reportDeparture('${id}')">司机确认出发</button>`;
+        } else if (task.status === "在途") {
+            actions += `<button class="btn btn-primary" onclick="updateEta('${id}')">更新预计到达</button>`;
+        }
+
+        openModal(
+            `运输任务 ${task.id}`,
+            `${task.warehouse} · ${task.cargo}`,
+            body,
+            actions,
+            true
+        );
+    }
+
+    function assignVehicle(id) {
+        const body = `
+            <form id="assignVehicleForm" onsubmit="submitVehicleAssignment(event,'${id}')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">牵引车牌</label>
+                        <input class="form-control" name="truck" value="粤A·86T2M" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">挂车车牌</label>
+                        <input class="form-control" name="trailer" value="挂粤B·7286" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">司机姓名</label>
+                        <input class="form-control" name="driver" value="刘师傅" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">司机手机号</label>
+                        <input class="form-control" name="phone" value="13856283126" required>
+                    </div>
+                </div>
+            </form>
+
+            <div class="success-banner mt-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-content">
+                    车辆、挂车和司机证件均在有效期内，与当前任务车型要求匹配。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "承运商指派车辆和司机",
+            id,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('assignVehicleForm').requestSubmit()">
+                    确认指派
+                </button>
+            `
+        );
+    }
+
+    function submitVehicleAssignment(event, id) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+        const task = tasks.find(item => item.id === id);
+
+        task.truck = data.truck;
+        task.trailer = data.trailer;
+        task.driver = data.driver;
+        task.node = "等待司机确认出发";
+        task.status = "已预约";
+
+        renderTaskTable();
+        closeModal();
+        showToast(`${data.truck}和司机${data.driver}已指派，司机已收到预约及入园要求。`);
+    }
+
+    function reportDeparture(id) {
+        const task = tasks.find(item => item.id === id);
+        task.status = "在途";
+        task.node = "司机已出发，预计1小时后到达";
+        renderTaskTable();
+        closeModal();
+        showToast("司机已确认出发，系统开始跟踪预计到达时间。");
+    }
+
+    function updateEta(id) {
+        closeModal();
+        showToast("预计到达时间已更新，并同步给仓库和园区调度。");
+    }
+
+    function openBatchImport() {
+        const body = `
+            <div class="info-banner">
+                <div class="banner-icon">表</div>
+                <div class="banner-content">
+                    支持通过Excel、TMS、WMS或ERP批量导入送货、提货和调拨计划。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">任务类型</label>
+                    <select class="form-control">
+                        <option>入库送货计划</option>
+                        <option>出库提货计划</option>
+                        <option>跨仓调拨计划</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">数据文件</label>
+                    <input class="form-control" type="file">
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "批量导入运输计划",
+            "导入后先检查仓库容量、订单和重复任务",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="finishBatchImport()">上传并校验</button>
+            `
+        );
+    }
+
+    function finishBatchImport() {
+        closeModal();
+        showToast("计划校验完成：成功126条，预约冲突8条，重复运输单3条。");
+    }
+
+    /* 门岗 */
+
+    function renderGateIssueTable() {
+        document.getElementById("gateIssueTable").innerHTML = gateIssues.map(item => `
+            <tr>
+                <td><span class="plate">${item.plate}</span></td>
+                <td>${item.issue}</td>
+                <td>${item.warehouse}</td>
+                <td>${item.wait}</td>
+                <td>${item.suggestion}</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="openGateIssue('${item.id}')">处理</button>
+                </td>
+            </tr>
+        `).join("");
+
+        document.getElementById("gateBadge").textContent = gateIssues.length;
+    }
+
+    function confirmGateEntry() {
+        addAudit(
+            "南门门岗",
+            "门岗",
+            "确认车辆入园",
+            "粤A·52T8M／挂粤B·8621",
+            "下一节点为1号地磅",
+            "已完成"
+        );
+
+        showToast("车辆已入园，导航已下发：南门→1号地磅→A3候车区。");
+    }
+
+    function holdAtGate() {
+        showToast("车辆已引导至门外临时等待区，仓库和司机均已收到通知。");
+    }
+
+    function openGateCorrection() {
+        const body = `
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>识别牵引车</label>
+                    <input class="form-control" value="粤A·52T8M">
+                </div>
+                <div class="form-group">
+                    <label>识别挂车</label>
+                    <input class="form-control" value="挂粤B·8621">
+                </div>
+                <div class="form-group full">
+                    <label class="required">修正原因</label>
+                    <select class="form-control">
+                        <option>车牌识别错误</option>
+                        <option>承运商临时换车</option>
+                        <option>承运商临时更换挂车</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "修正门岗车辆信息",
+            "修正后重新执行资质和任务匹配",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmGateCorrection()">修正并重新核验</button>
+            `
+        );
+    }
+
+    function confirmGateCorrection() {
+        closeModal();
+        showToast("车辆信息已修正，资质、任务和月台适配性已重新核验。");
+    }
+
+    function openNoAppointment() {
+        const body = `
+            <form id="noAppointmentForm" onsubmit="submitNoAppointment(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">牵引车牌</label>
+                        <input class="form-control" name="plate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>挂车车牌</label>
+                        <input class="form-control" name="trailer">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">司机手机号</label>
+                        <input class="form-control" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">目标仓库</label>
+                        <select class="form-control" name="warehouse">
+                            <option>A3常温仓</option>
+                            <option>B2电商仓</option>
+                            <option>C1冷链仓</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">业务单据</label>
+                        <input class="form-control" name="order" placeholder="送货单、提货单或采购单" required>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "登记无预约到场车辆",
+            "车辆需先由目标仓库确认，不能直接长期放行",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('noAppointmentForm').requestSubmit()">
+                    发送仓库确认
+                </button>
+            `
+        );
+    }
+
+    function submitNoAppointment(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+        closeModal();
+        showToast(`${data.plate}已登记，确认请求已发送至${data.warehouse}。`);
+    }
+
+    function openGateIssue(id) {
+        const issue = gateIssues.find(item => item.id === id);
+
+        const body = `
+            <div class="warning-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>${issue.issue}</strong>
+                    车辆${issue.plate}已在入口等待${issue.wait}。
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>目标仓库</span><strong>${issue.warehouse}</strong></div>
+                <div class="detail-item"><span>当前状态</span>${statusTag(issue.status)}</div>
+                <div class="detail-item"><span>系统建议</span><strong>${issue.suggestion}</strong></div>
+            </div>
+        `;
+
+        openModal(
+            `入口异常：${issue.plate}`,
+            issue.id,
+            body,
+            `
+                <button class="btn btn-danger" onclick="rejectGateIssue('${id}')">拒绝入园</button>
+                <button class="btn btn-primary" onclick="resolveGateIssue('${id}')">按建议处理</button>
+            `
+        );
+    }
+
+    function resolveGateIssue(id) {
+        const issue = gateIssues.find(item => item.id === id);
+        gateIssues = gateIssues.filter(item => item.id !== id);
+        renderGateIssueTable();
+        closeModal();
+        showToast(`${issue.plate}已完成异常处理并重新进入核验流程。`);
+    }
+
+    function rejectGateIssue(id) {
+        const issue = gateIssues.find(item => item.id === id);
+        gateIssues = gateIssues.filter(item => item.id !== id);
+        renderGateIssueTable();
+        closeModal();
+        showToast(`${issue.plate}已拒绝入园，并通知承运商处理。`);
+    }
+
+    function refreshGateVehicle() {
+        showToast("已读取下一辆入口车辆，系统正在匹配预约和车辆信息。");
+    }
+
+    /* 虚拟排队 */
+
+    function renderQueueBoard() {
+        document.getElementById("queueBoard").innerHTML = queueStages.map(stage => {
+            const cards = queueCards.filter(item => item.stage === stage);
+
+            return `
+                <div class="queue-column">
+                    <div class="queue-title">
+                        <h3>${stage}</h3>
+                        <span class="tag tag-gray">${cards.length}辆</span>
+                    </div>
+
+                    ${cards.map(card => `
+                        <div class="queue-card">
+                            <h4><span class="plate">${card.plate}</span></h4>
+                            <p>${card.task} · ${card.warehouse}</p>
+
+                            ${card.position ? `<div class="queue-position">第${card.position}位</div>` : ""}
+
+                            <p><strong>${card.wait}</strong></p>
+                            <p>${card.note}</p>
+
+                            <button class="btn btn-secondary btn-sm" onclick="openQueueCard('${card.id}')">
+                                处理车辆
+                            </button>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+        }).join("");
+
+        document.getElementById("queueBadge").textContent =
+            queueCards.filter(item => item.stage !== "已完成").length;
+    }
+
+    function openQueueCard(id) {
+        const card = queueCards.find(item => item.id === id);
+
+        let actions = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+        if (card.stage === "场外等待") {
+            actions += `<button class="btn btn-primary" onclick="callQueueVehicle('${id}')">叫号入园</button>`;
+        }
+
+        if (card.stage === "已叫号待入园") {
+            actions += `<button class="btn btn-success" onclick="confirmQueueArrival('${id}')">确认到达入口</button>`;
+        }
+
+        if (card.stage === "园内候车") {
+            actions += `<button class="btn btn-primary" onclick="callToDock('${id}')">叫号前往月台</button>`;
+        }
+
+        if (card.stage === "已叫月台") {
+            actions += `<button class="btn btn-success" onclick="confirmDockArrivalFromQueue('${id}')">确认到达月台</button>`;
+        }
+
+        if (card.stage === "过号/异常") {
+            actions += `<button class="btn btn-warning" onclick="restoreQueuePosition('${id}')">重新排队</button>`;
+        }
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>车辆</span><span class="plate">${card.plate}</span></div>
+                <div class="detail-item"><span>任务</span><strong>${card.task}</strong></div>
+                <div class="detail-item"><span>仓库</span><strong>${card.warehouse}</strong></div>
+                <div class="detail-item"><span>当前阶段</span><strong>${card.stage}</strong></div>
+                <div class="detail-item"><span>排队/等待</span><strong>${card.wait}</strong></div>
+                <div class="detail-item"><span>说明</span><strong>${card.note}</strong></div>
+            </div>
+        `;
+
+        openModal(
+            `排队车辆 ${card.plate}`,
+            card.task,
+            body,
+            actions
+        );
+    }
+
+    function callQueueVehicle(id) {
+        const card = queueCards.find(item => item.id === id);
+        card.stage = "已叫号待入园";
+        card.position = 0;
+        card.wait = "剩余响应10分钟";
+        card.note = "请前往指定货运门";
+
+        renderQueueBoard();
+        closeModal();
+        showToast(`${card.plate}已叫号，司机需在10分钟内到达入口。`);
+    }
+
+    function confirmQueueArrival(id) {
+        const card = queueCards.find(item => item.id === id);
+        card.stage = "园内候车";
+        card.position = 6;
+        card.wait = "预计等待24分钟";
+        card.note = "已分配园内候车区";
+
+        renderQueueBoard();
+        closeModal();
+        showToast(`${card.plate}已到达入口，完成核验后进入园内候车区。`);
+    }
+
+    function callToDock(id) {
+        const card = queueCards.find(item => item.id === id);
+        card.stage = "已叫月台";
+        card.position = 0;
+        card.wait = "A3-04月台";
+        card.note = "请在15分钟内到达";
+
+        renderQueueBoard();
+        closeModal();
+        showToast(`${card.plate}已叫号前往A3-04月台。`);
+    }
+
+    function confirmDockArrivalFromQueue(id) {
+        const card = queueCards.find(item => item.id === id);
+        queueCards = queueCards.filter(item => item.id !== id);
+        renderQueueBoard();
+        closeModal();
+        showToast(`${card.plate}已到达月台，排队任务结束并进入装卸作业。`);
+    }
+
+    function restoreQueuePosition(id) {
+        const card = queueCards.find(item => item.id === id);
+        card.stage = "场外等待";
+        card.position = 12;
+        card.wait = "预计等待56分钟";
+        card.note = "过号后重新排队";
+
+        renderQueueBoard();
+        closeModal();
+        showToast(`${card.plate}已重新排队，当前排位第12位。`);
+    }
+
+    function manualCallVehicle() {
+        showToast("已打开人工叫号选择，调度员需填写调整优先级原因。");
+    }
+
+    function openQueueRule() {
+        const body = `
+            <div class="readonly-box">
+                <p>正常任务：按照预约时段、到园签到和月台适配顺序排队。</p>
+                <p>冷链任务：在温控条件正常时可获得适当优先级。</p>
+                <p>危化任务：使用独立队列和专用区域，不与普通车辆混排。</p>
+                <p>加急任务：必须由仓库负责人审批，并记录插队原因。</p>
+                <p>过号车辆：重新进入队列，多次过号影响承运商履约评价。</p>
+            </div>
+        `;
+
+        openModal(
+            "虚拟排队优先级规则",
+            "人工调整队列必须填写业务原因",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    /* 月台 */
+
+    function renderDockGrid() {
+        document.getElementById("dockGrid").innerHTML = docks.map(dock => `
+            <div class="dock-card ${dock.status} ${dock.id === selectedDockId ? "selected" : ""}"
+                 onclick="selectDock('${dock.id}')">
+                <div style="display:flex;justify-content:space-between;gap:8px">
+                    <h3>${dock.id}</h3>
+                    ${dockStatusTag(dock.status)}
+                </div>
+
+                <p>适用：${dock.type}</p>
+                <p>${dock.vehicle ? `车辆：${dock.vehicle}` : "当前无车辆"}</p>
+                <p>${dock.note}</p>
+
+                ${dock.status === "working" ? `
+                    <div class="progress" style="margin-top:12px">
+                        <div class="progress-bar" style="width:${dock.progress}%"></div>
+                    </div>
+                    <p>作业进度${dock.progress}% · 预计${dock.expected}完成</p>
+                ` : ""}
+            </div>
+        `).join("");
+    }
+
+    function selectDock(id) {
+        selectedDockId = id;
+        renderDockGrid();
+        renderDockPanel();
+    }
+
+    function renderDockPanel() {
+        const dock = docks.find(item => item.id === selectedDockId);
+
+        let actions = "";
+
+        if (dock.status === "idle") {
+            actions = `<button class="btn btn-primary" onclick="assignVehicleToDock('${dock.id}')">分配等待车辆</button>`;
+        }
+
+        if (dock.status === "working") {
+            actions = `
+                <button class="btn btn-warning" onclick="pauseDockWork('${dock.id}')">暂停作业</button>
+                <button class="btn btn-success" onclick="completeDockWork('${dock.id}')">确认装卸完成</button>
+            `;
+        }
+
+        if (dock.status === "waiting") {
+            actions = `<button class="btn btn-danger" onclick="dispatchDockMove('${dock.id}')">催促车辆离位</button>`;
+        }
+
+        if (dock.status === "fault") {
+            actions = `<button class="btn btn-primary" onclick="createDockRepair('${dock.id}')">创建维修工单</button>`;
+        }
+
+        document.getElementById("dockPanel").innerHTML = `
+            <h3>${dock.id}</h3>
+            <p>${dock.note}</p>
+
+            <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+                <div class="detail-item"><span>状态</span>${dockStatusTag(dock.status)}</div>
+                <div class="detail-item"><span>适用车型</span><strong>${dock.type}</strong></div>
+                <div class="detail-item"><span>当前车辆</span><strong>${dock.vehicle || "无"}</strong></div>
+                <div class="detail-item"><span>运输任务</span><strong>${dock.task || "无"}</strong></div>
+                <div class="detail-item"><span>开始时间</span><strong>${dock.start || "—"}</strong></div>
+                <div class="detail-item"><span>预计完成</span><strong>${dock.expected || "—"}</strong></div>
+            </div>
+
+            <div class="section-actions mt-16">
+                ${actions}
+            </div>
+        `;
+    }
+
+    function renderDockWaitingList() {
+        document.getElementById("dockWaitingList").innerHTML = dockWaiting.map(item => `
+            <div class="waiting-vehicle">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:15px;align-items:center">
+                    <div>
+                        <h4><span class="plate">${item.plate}</span> ${item.task}</h4>
+                        <p>${item.cargo} · 已等待${item.wait}</p>
+                        <p>备货：${item.ready} · 推荐月台：${item.recommended}</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <span class="tag ${item.priority === "优先" ? "tag-orange" : "tag-gray"}">${item.priority}</span>
+                        <button class="btn btn-primary btn-sm" onclick="assignSpecificWaiting('${item.id}')">分配月台</button>
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function assignSpecificWaiting(id) {
+        const item = dockWaiting.find(vehicle => vehicle.id === id);
+
+        if (item.ready !== "货物已备齐") {
+            showToast("仓库货物尚未备齐，不建议立即叫号到月台。", true);
+            return;
+        }
+
+        const idleDock = docks.find(dock => dock.status === "idle");
+
+        if (!idleDock) {
+            showToast("当前没有适配的空闲月台。", true);
+            return;
+        }
+
+        idleDock.status = "waiting";
+        idleDock.vehicle = item.plate;
+        idleDock.task = item.task;
+        idleDock.note = "车辆已叫号，正在驶入";
+        selectedDockId = idleDock.id;
+
+        dockWaiting = dockWaiting.filter(vehicle => vehicle.id !== id);
+
+        renderDockGrid();
+        renderDockPanel();
+        renderDockWaitingList();
+
+        showToast(`${item.plate}已分配${idleDock.id}，司机收到园内导航和15分钟到位要求。`);
+    }
+
+    function assignVehicleToDock(id) {
+        const candidate = dockWaiting.find(item => item.ready === "货物已备齐");
+
+        if (!candidate) {
+            showToast("当前没有已备货且适配该月台的等待车辆。", true);
+            return;
+        }
+
+        const dock = docks.find(item => item.id === id);
+        dock.status = "waiting";
+        dock.vehicle = candidate.plate;
+        dock.task = candidate.task;
+        dock.note = "车辆驶入中";
+
+        dockWaiting = dockWaiting.filter(item => item.id !== candidate.id);
+
+        renderDockGrid();
+        renderDockPanel();
+        renderDockWaitingList();
+
+        showToast(`${candidate.plate}已分配至${dock.id}。`);
+    }
+
+    function pauseDockWork(id) {
+        const dock = docks.find(item => item.id === id);
+
+        const body = `
+            <div class="form-group">
+                <label class="required">暂停原因</label>
+                <select class="form-control" id="pauseReason">
+                    <option>货物数量异常</option>
+                    <option>单证不齐</option>
+                    <option>包装破损</option>
+                    <option>叉车或设备故障</option>
+                    <option>司机未配合</option>
+                    <option>仓库作业调整</option>
+                </select>
+            </div>
+
+            <div class="info-banner mt-16">
+                <div class="banner-icon">i</div>
+                <div class="banner-content">
+                    暂停原因将用于后续超时责任认定和费用处理。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            `暂停${dock.id}装卸作业`,
+            dock.vehicle,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-warning" onclick="confirmPauseDock('${id}')">确认暂停</button>
+            `
+        );
+    }
+
+    function confirmPauseDock(id) {
+        const dock = docks.find(item => item.id === id);
+        const reason = document.getElementById("pauseReason").value;
+
+        dock.note = "作业暂停：" + reason;
+        renderDockGrid();
+        renderDockPanel();
+
+        addAudit("李调度","A3仓调度","暂停月台作业",id,reason,"处理中");
+        closeModal();
+        showToast(`月台作业已暂停，原因：${reason}。`);
+    }
+
+    function completeDockWork(id) {
+        const dock = docks.find(item => item.id === id);
+        dock.status = "waiting";
+        dock.progress = 100;
+        dock.note = "装卸完成，等待签单及离位";
+
+        renderDockGrid();
+        renderDockPanel();
+        showToast(`${dock.id}装卸已完成，司机收到签单和离位提醒。`);
+    }
+
+    function dispatchDockMove(id) {
+        const dock = docks.find(item => item.id === id);
+        showToast(`已向${dock.vehicle}司机和现场安保发送移车任务。`);
+    }
+
+    function createDockRepair(id) {
+        showToast(`${id}维修工单已创建，维修期间系统不再向该月台分配车辆。`);
+    }
+
+    function assignWaitingVehicle() {
+        const candidate = dockWaiting.find(item => item.ready === "货物已备齐");
+        const dock = docks.find(item => item.status === "idle");
+
+        if (!candidate || !dock) {
+            showToast("当前没有同时满足备货和月台适配条件的车辆。", true);
+            return;
+        }
+
+        assignSpecificWaiting(candidate.id);
+    }
+
+    function openDockPlan() {
+        const body = `
+            <div class="table-wrap">
+                <table style="min-width:820px">
+                    <thead>
+                    <tr>
+                        <th>月台</th>
+                        <th>10:00—11:00</th>
+                        <th>11:00—12:00</th>
+                        <th>12:00—13:00</th>
+                        <th>13:00—14:00</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>A3-01</td><td>RK132</td><td>RK168</td><td>空闲</td><td>RK206</td></tr>
+                    <tr><td>A3-02</td><td>RK126</td><td>RK176</td><td>RK188</td><td>空闲</td></tr>
+                    <tr><td>A3-03</td><td>RK118</td><td>RK182</td><td>空闲</td><td>RK216</td></tr>
+                    <tr><td>A3-04</td><td>空闲</td><td>RK152</td><td>RK196</td><td>空闲</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "A3仓月台作业计划",
+            "计划与实际状态对比",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    function openDockCongestion() {
+        const body = `
+            <div class="danger-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>仓储二路A3月台段超过安全等待上限</strong>
+                    5辆车停在月台前，仅允许最多3辆。需要停止新叫号并清理未到位车辆。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label>暂停范围</label>
+                    <div class="readonly-box">A3仓全部月台自动叫号</div>
+                </div>
+                <div class="form-group">
+                    <label>现场任务</label>
+                    <div class="readonly-box">将2辆未到位车辆退回A区候车区</div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "处理A3月台前道路压车",
+            "同步停止叫号、派发现场任务和更新司机等待时间",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">继续观察</button>
+                <button class="btn btn-danger" onclick="confirmDockCongestion()">执行疏导</button>
+            `
+        );
+    }
+
+    function confirmDockCongestion() {
+        document.getElementById("dockWarning").className = "warning-banner mb-16";
+        document.getElementById("dockWarning").innerHTML = `
+            <div class="banner-icon">调</div>
+            <div class="banner-content">
+                <strong>A3自动叫号已暂停</strong>
+                现场人员正在将2辆未到位车辆引导回候车区，预计8分钟恢复道路。
+            </div>
+        `;
+
+        addAudit("王主管","园区调度","暂停A3仓自动叫号","A3常温仓","现场车辆分流处理中","执行中");
+        closeModal();
+        showToast("A3月台自动叫号已暂停，现场疏导任务已派发。");
+    }
+
+    function openDockOverstay() {
+        selectedDockId = "A3-03";
+        navigateTo("dock");
+        renderDockGrid();
+        renderDockPanel();
+    }
+
+    /* 园区地图 */
+
+    function openMapZone(zone) {
+        const data = {
+            WAIT:["A区重车候车区","40个","36辆","剩余4个","A2、A3仓重车"],
+            EMPTY:["B区空车停车区","60个","28辆","剩余32个","空车及完成任务车辆"],
+            COLD:["C区冷链候车区","20个","14辆","剩余6个","冷链车辆"],
+            NIGHT:["D区过夜服务区","50个","22辆","剩余28个","过夜及司机服务"]
+        }[zone];
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>区域</span><strong>${data[0]}</strong></div>
+                <div class="detail-item"><span>总车位</span><strong>${data[1]}</strong></div>
+                <div class="detail-item"><span>当前使用</span><strong>${data[2]}</strong></div>
+                <div class="detail-item"><span>剩余车位</span><strong>${data[3]}</strong></div>
+                <div class="detail-item"><span>服务对象</span><strong>${data[4]}</strong></div>
+                <div class="detail-item"><span>设备状态</span><strong>正常</strong></div>
+            </div>
+        `;
+
+        openModal(
+            data[0],
+            "停车、候车和车辆任务情况",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function closeCongestedRoad() {
+        showToast("仓储二路A3月台段已限制新车辆进入，相关司机导航已调整。");
+    }
+
+    function correctTruckRoute() {
+        showToast("已向粤A·76M2K发送纠正路线，并通知A区现场人员协助引导。");
+    }
+
+    function openStayAnalysis() {
+        const body = `
+            <div class="table-wrap">
+                <table style="min-width:800px">
+                    <thead>
+                    <tr>
+                        <th>车辆</th>
+                        <th>当前节点</th>
+                        <th>超时时长</th>
+                        <th>主要原因</th>
+                        <th>初步责任方</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>粤B·28Q6P</td><td>A3候车区</td><td>38分钟</td><td>仓库未备货</td><td>A3仓租户</td></tr>
+                    <tr><td>粤A·28T6M</td><td>A3-03月台</td><td>23分钟</td><td>司机未离位</td><td>承运商</td></tr>
+                    <tr><td>粤C·38K1P</td><td>出口待检区</td><td>42分钟</td><td>出门单未生成</td><td>货主</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "超时滞留车辆归因",
+            "按候车、月台和离园节点分别分析",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    function openParkingAllocation() {
+        const body = `
+            <form id="parkingForm" onsubmit="submitParkingAllocation(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">车辆</label>
+                        <input class="form-control" name="plate" value="粤A·63M8Q" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">停车类型</label>
+                        <select class="form-control" name="type">
+                            <option>临时候车</option>
+                            <option>空车停车</option>
+                            <option>过夜停车</option>
+                            <option>冷链接电停车</option>
+                            <option>故障车辆停车</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>推荐区域</label>
+                        <select class="form-control" name="area">
+                            <option>B区空车停车区 B-028</option>
+                            <option>D区过夜服务区 D-016</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>费用承担</label>
+                        <select class="form-control">
+                            <option>承运商月结</option>
+                            <option>司机个人支付</option>
+                            <option>园区租户承担</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "分配货车停车位",
+            "根据车辆任务、空重状态和服务需求分配",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('parkingForm').requestSubmit()">
+                    确认分配
+                </button>
+            `
+        );
+    }
+
+    function submitParkingAllocation(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+        closeModal();
+        showToast(`${data.plate}已分配${data.area}，司机导航已更新。`);
+    }
+
+    function openRouteStrategy() {
+        const body = `
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="required">受影响道路</label>
+                    <select class="form-control">
+                        <option>仓储二路A3月台段</option>
+                        <option>园区南北主干道</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">管控方式</label>
+                    <select class="form-control">
+                        <option>暂停新车辆进入</option>
+                        <option>调整为单向通行</option>
+                        <option>全路段临时封闭</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>替代路线</label>
+                    <div class="readonly-box">候车区东出口—仓储三路—A3仓北侧入口</div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "调整园内车辆路线",
+            "调整后同步到司机导航、诱导屏和现场人员",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmRouteStrategy()">发布路线调整</button>
+            `
+        );
+    }
+
+    function confirmRouteStrategy() {
+        closeModal();
+        showToast("新路线已发布，受影响车辆和现场安保已收到通知。");
+    }
+
+    /* 地磅 */
+
+    function startWeighing() {
+        document.getElementById("scaleDisplay").textContent = "35,840 kg";
+        showToast("已读取稳定重量35,840kg。");
+    }
+
+    function reReadWeight() {
+        document.getElementById("scaleDisplay").textContent = "35,820 kg";
+        showToast("重量已重新读取，当前稳定值35,820kg。");
+    }
+
+    function confirmWeight() {
+        addAudit(
+            "1号地磅系统",
+            "计量中心",
+            "确认车辆毛重",
+            "RK202607180286",
+            "毛重35,820kg，下一节点A3候车区",
+            "已完成"
+        );
+
+        showToast("毛重已保存并生成磅单，车辆可前往A3候车区。");
+    }
+
+    function openScaleQueue() {
+        const body = `
+            <div class="table-wrap">
+                <table style="min-width:760px">
+                    <thead>
+                    <tr>
+                        <th>排位</th>
+                        <th>车辆</th>
+                        <th>任务</th>
+                        <th>称重环节</th>
+                        <th>预计等待</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>1</td><td>粤A·63M8Q</td><td>RK202607180276</td><td>重车毛重</td><td>5分钟</td></tr>
+                    <tr><td>2</td><td>粤B·28Q6P</td><td>RK202607180158</td><td>空车皮重</td><td>11分钟</td></tr>
+                    <tr><td>3</td><td>粤C·16K8M</td><td>RK202607180112</td><td>第二次过磅</td><td>18分钟</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "地磅待称重队列",
+            "系统根据任务节点和到达顺序管理",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openWeightException() {
+        const body = `
+            <div class="danger-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>净重超出订单允许范围</strong>
+                    实际净重28.6吨，订单计划26吨±0.5吨，超出2.1吨。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">处理方式</label>
+                    <select class="form-control" id="weightDecision">
+                        <option>要求车辆重新过磅</option>
+                        <option>仓库复核货物数量</option>
+                        <option>货主确认调整订单重量</option>
+                        <option>确认为超载，禁止离园</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>责任部门</label>
+                    <select class="form-control">
+                        <option>仓库收发货</option>
+                        <option>货主业务人员</option>
+                        <option>承运商</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "处理称重异常",
+            "异常未关闭前车辆不能完成离园核验",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不处理</button>
+                <button class="btn btn-primary" onclick="confirmWeightException()">提交处理</button>
+            `
+        );
+    }
+
+    function confirmWeightException() {
+        const decision = document.getElementById("weightDecision").value;
+        closeModal();
+        showToast(`称重异常已处理：${decision}。`);
+    }
+
+    /* 特殊车辆 */
+
+    function openColdAlert() {
+        navigateTo("special");
+    }
+
+    function requestTemperatureProof() {
+        showToast("已要求司机上传近2小时温控曲线和制冷设备运行记录。");
+    }
+
+    function notifyColdManager() {
+        showToast("冷库主管和货主质量人员已收到温度异常通知。");
+    }
+
+    function isolateColdTruck() {
+        addAudit(
+            "赵经理",
+            "安全管理",
+            "冷链异常车辆隔离",
+            "粤B·62M8Q",
+            "转入冷链异常区C-ISO-02",
+            "执行中"
+        );
+
+        showToast("车辆已被引导至冷链异常隔离位C-ISO-02，暂停进入冷库月台。");
+    }
+
+    function notifySecurityTeam() {
+        showToast("危化入口、安全员和应急人员已收到车辆到达提醒。");
+    }
+
+    function activateHazardPlan() {
+        addAudit(
+            "赵经理",
+            "安全管理",
+            "启动危化车辆到达保障",
+            "粤A·92K6P",
+            "危化门、路线和H2-06车位已锁定",
+            "执行中"
+        );
+
+        showToast("危化车辆到达保障已启动，普通车辆不得进入专用路线。");
+    }
+
+    function openOversizeRoute() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>车辆高度</span><strong>4.6米</strong></div>
+                <div class="detail-item"><span>普通道路限高</span><strong>4.2米</strong></div>
+                <div class="detail-item"><span>适用入口</span><strong>西侧大件门</strong></div>
+            </div>
+
+            <div class="readonly-box mt-16">
+                推荐路线：西侧大件门—大件运输通道—设备仓北侧作业区。
+            </div>
+        `;
+
+        openModal(
+            "超限车辆专项路线审批",
+            "需要清空沿途临停车并安排现场引导",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="approveOversizeRoute()">批准路线</button>
+            `
+        );
+    }
+
+    function approveOversizeRoute() {
+        closeModal();
+        showToast("大件车辆路线已批准，沿途清障和现场引导任务已生成。");
+    }
+
+    /* 异常事件 */
+
+    function renderIncidentList() {
+        const filter = document.getElementById("incidentFilter")?.value || "";
+        const list = incidents.filter(item => !filter || item.status === filter);
+
+        document.getElementById("incidentList").innerHTML = list.map(item => `
+            <div class="incident-item ${item.id === selectedIncidentId ? "active" : ""}"
+                 onclick="selectIncident('${item.id}')">
+                <h4>${item.title}</h4>
+                <p>${item.id} · ${item.type}</p>
+                <p>${item.location} · ${item.time}</p>
+                <div style="margin-top:7px">
+                    ${statusTag(item.status)}
+                    <span class="tag ${item.priority === "高" ? "tag-red" : "tag-orange"}">${item.priority}优先级</span>
+                </div>
+            </div>
+        `).join("");
+
+        document.getElementById("incidentBadge").textContent =
+            incidents.filter(item => item.status !== "已关闭").length;
+    }
+
+    function selectIncident(id) {
+        selectedIncidentId = id;
+        renderIncidentList();
+        renderIncidentDetail();
+    }
+
+    function renderIncidentDetail() {
+        const item = incidents.find(incident => incident.id === selectedIncidentId);
+
+        document.getElementById("incidentDetail").innerHTML = `
+            <div style="display:flex;justify-content:space-between;gap:15px">
+                <div>
+                    <h3 style="margin:0">${item.title}</h3>
+                    <p class="muted">${item.id} · ${item.location} · ${item.object}</p>
+                </div>
+                <div>${statusTag(item.status)}</div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>事件类型</span><strong>${item.type}</strong></div>
+                <div class="detail-item"><span>优先级</span><strong>${item.priority}</strong></div>
+                <div class="detail-item"><span>发生时间</span><strong>${item.time}</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>事件描述</h4>
+                <div class="readonly-box">${item.description}</div>
+            </div>
+
+            <div class="detail-section">
+                <h4>事件过程</h4>
+                <div class="timeline">
+                    ${item.timeline.map(step => `
+                        <div class="timeline-item">
+                            <strong>${step[0]}</strong>
+                            <p>${step[1]}</p>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>当前操作</h4>
+                <div class="section-actions">
+                    ${item.status === "待处理" ? `
+                        <button class="btn btn-primary" onclick="acceptIncident('${item.id}')">受理并派单</button>
+                    ` : ""}
+
+                    ${item.status === "处理中" ? `
+                        <button class="btn btn-secondary" onclick="addIncidentProgress('${item.id}')">记录现场进展</button>
+                        <button class="btn btn-success" onclick="completeIncident('${item.id}')">提交处置结果</button>
+                    ` : ""}
+
+                    ${item.status === "待复核" ? `
+                        <button class="btn btn-success" onclick="closeIncident('${item.id}')">复核并关闭</button>
+                    ` : ""}
+                </div>
+            </div>
+        `;
+    }
+
+    function acceptIncident(id) {
+        const item = incidents.find(incident => incident.id === id);
+        item.status = "处理中";
+        item.timeline.push([currentTime(),"园区调度已受理并派发现场任务"]);
+
+        renderIncidentList();
+        renderIncidentDetail();
+        showToast("事件已受理，现场处置人员已收到任务。");
+    }
+
+    function addIncidentProgress(id) {
+        const body = `
+            <div class="form-group">
+                <label class="required">现场进展</label>
+                <textarea class="form-control" id="incidentProgress">现场人员已到达，正在执行交通疏导。</textarea>
+            </div>
+        `;
+
+        openModal(
+            "记录事件处置进展",
+            id,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveIncidentProgress('${id}')">保存进展</button>
+            `
+        );
+    }
+
+    function saveIncidentProgress(id) {
+        const item = incidents.find(incident => incident.id === id);
+        const progress = document.getElementById("incidentProgress").value;
+
+        item.timeline.push([currentTime(),progress]);
+        closeModal();
+        renderIncidentDetail();
+        showToast("现场进展已保存。");
+    }
+
+    function completeIncident(id) {
+        const item = incidents.find(incident => incident.id === id);
+        item.status = "待复核";
+        item.timeline.push([currentTime(),"现场处置完成，等待调度中心复核"]);
+
+        renderIncidentList();
+        renderIncidentDetail();
+        showToast("处置结果已提交，事件进入复核阶段。");
+    }
+
+    function closeIncident(id) {
+        const item = incidents.find(incident => incident.id === id);
+        item.status = "已关闭";
+        item.timeline.push([currentTime(),"调度中心复核通过，事件关闭"]);
+
+        renderIncidentList();
+        renderIncidentDetail();
+        showToast("事件已复核关闭。");
+    }
+
+    function createIncident() {
+        const body = `
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="required">事件类型</label>
+                    <select class="form-control">
+                        <option>车辆故障</option>
+                        <option>道路堵塞</option>
+                        <option>车辆偏航</option>
+                        <option>货物散落</option>
+                        <option>人员安全</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">发生位置</label>
+                    <input class="form-control">
+                </div>
+                <div class="form-group full">
+                    <label class="required">事件描述</label>
+                    <textarea class="form-control"></textarea>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "人工上报园区事件",
+            "上报后根据类型自动分派责任岗位",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="finishIncidentCreate()">提交事件</button>
+            `
+        );
+    }
+
+    function finishIncidentCreate() {
+        closeModal();
+        showToast("事件已创建，并发送至园区调度和现场安保。");
+    }
+
+    /* 费用 */
+
+    function renderCostTable() {
+        document.getElementById("costTableBody").innerHTML = costItems.map(item => `
+            <tr>
+                <td><strong>${item.task}</strong><br><span class="plate">${item.plate}</span></td>
+                <td>${item.stage}</td>
+                <td>${item.overtime}</td>
+                <td>${item.responsible}</td>
+                <td>${item.amount}元</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="openCostResponsibility('${item.id}')">确认归责</button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openCostResponsibility(id) {
+        const item = costItems.find(cost => cost.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>任务</span><strong>${item.task}</strong></div>
+                <div class="detail-item"><span>车辆</span><span class="plate">${item.plate}</span></div>
+                <div class="detail-item"><span>超时环节</span><strong>${item.stage}</strong></div>
+                <div class="detail-item"><span>超时时长</span><strong>${item.overtime}</strong></div>
+                <div class="detail-item"><span>预计费用</span><strong>${item.amount}元</strong></div>
+                <div class="detail-item"><span>初步责任方</span><strong>${item.responsible}</strong></div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">最终责任方</label>
+                    <select class="form-control" id="costResponsible">
+                        <option>${item.responsible}</option>
+                        <option>园区租户</option>
+                        <option>承运商</option>
+                        <option>货主</option>
+                        <option>园区责任减免</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">费用处理</label>
+                    <select class="form-control">
+                        <option>全额计费</option>
+                        <option>部分减免</option>
+                        <option>全部减免</option>
+                    </select>
+                </div>
+
+                <div class="form-group full">
+                    <label class="required">责任依据</label>
+                    <textarea class="form-control">根据车辆到园、备货、叫号和作业节点记录确认责任。</textarea>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "确认超时费用责任",
+            item.task,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不确认</button>
+                <button class="btn btn-primary" onclick="confirmCostResponsibility('${id}')">确认并进入账单</button>
+            `,
+            true
+        );
+    }
+
+    function confirmCostResponsibility(id) {
+        const item = costItems.find(cost => cost.id === id);
+        item.responsible = document.getElementById("costResponsible").value;
+        item.status = "已归责";
+
+        addAudit(
+            "刘会计",
+            "财务结算",
+            "确认超时费用责任",
+            item.task,
+            `${item.responsible}承担${item.amount}元`,
+            "已完成"
+        );
+
+        renderCostTable();
+        closeModal();
+        showToast(`费用已归责至${item.responsible}，将进入对应月结账单。`);
+    }
+
+    function openBillingRule() {
+        const body = `
+            <div class="readonly-box">
+                <p>司机提前到园产生的额外等待：按合同由承运商或司机承担。</p>
+                <p>仓库未备货导致等待：进入仓库租户账单或服务考核。</p>
+                <p>月台设备故障：园区或租户责任，不向司机收费。</p>
+                <p>司机完成作业后不离位：可计收月台超时占用费。</p>
+                <p>费用归责必须以运输节点、时间和异常原因作为依据。</p>
+            </div>
+        `;
+
+        openModal(
+            "物流园费用归责规则",
+            "超时不等于司机责任",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openTenantStatement() {
+        showToast("已打开园区租户月度停车、月台、称重和超时费用账单。");
+    }
+
+    function openCarrierStatement() {
+        showToast("已打开承运商月度停车、过夜、司机责任和增值服务账单。");
+    }
+
+    function generateMonthlyBills() {
+        showToast("7月账单生成完成：28家租户、36家承运商成功，4笔费用等待责任确认。");
+    }
+
+    /* 首页快捷 */
+
+    function notifyColdManager() {
+        showToast("冷库主管和货主质量负责人已收到温度异常通知。");
+    }
+
+    /* 审计 */
+
+    function renderAuditTable() {
+        document.getElementById("auditTableBody").innerHTML = audits.map(item => `
+            <tr>
+                <td>${item[0]}</td>
+                <td><strong>${item[1]}</strong></td>
+                <td>${item[2]}</td>
+                <td>${item[3]}</td>
+                <td>${item[4]}</td>
+                <td>${item[5]}</td>
+                <td>${statusTag(item[6])}</td>
+            </tr>
+        `).join("");
+    }
+
+    function addAudit(user, role, action, object, result, status) {
+        audits.unshift([
+            currentTime(),
+            user,
+            role,
+            action,
+            object,
+            result,
+            status
+        ]);
+
+        renderAuditTable();
+    }
+
+    /* 通用 */
+
+    function statusTag(status) {
+        const map = {
+            "正常":"tag-green",
+            "运行正常":"tag-green",
+            "严重拥堵":"tag-red",
+            "温度事件":"tag-orange",
+            "待指派车辆":"tag-orange",
+            "已预约":"tag-blue",
+            "在途":"tag-purple",
+            "已签到":"tag-blue",
+            "园内作业":"tag-cyan",
+            "已完成":"tag-green",
+            "待处理":"tag-orange",
+            "待仓库确认":"tag-orange",
+            "禁止入园":"tag-red",
+            "待确认":"tag-orange",
+            "存在争议":"tag-red",
+            "已归责":"tag-green",
+            "处理中":"tag-blue",
+            "待复核":"tag-purple",
+            "已关闭":"tag-green",
+            "执行中":"tag-blue"
+        };
+
+        return `<span class="tag ${map[status] || "tag-gray"}">${status}</span>`;
+    }
+
+    function dockStatusTag(status) {
+        const map = {
+            idle:["空闲","tag-green"],
+            working:["作业中","tag-blue"],
+            waiting:["待离位/到位","tag-orange"],
+            fault:["故障","tag-red"]
+        };
+
+        return `<span class="tag ${map[status][1]}">${map[status][0]}</span>`;
+    }
+
+    function currentTime() {
+        return new Date().toLocaleTimeString("zh-CN", {
+            hour:"2-digit",
+            minute:"2-digit",
+            hour12:false
+        });
+    }
+
+    function nextHour(time) {
+        const hour = Number(time.split(":")[0]);
+        return String((hour + 1) % 24).padStart(2,"0") + ":00";
+    }
+
+    function openModal(title, subtitle, body, footer, large = false) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalSubtitle").textContent = subtitle || "";
+        document.getElementById("modalBody").innerHTML = body;
+        document.getElementById("modalFooter").innerHTML =
+            footer || `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`;
+
+        document.getElementById("modalBox").classList.toggle("large", large);
+        document.getElementById("modalMask").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        document.getElementById("modalMask").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function maskClose(event) {
+        if (event.target.id === "modalMask") {
+            closeModal();
+        }
+    }
+
+    function showToast(message, error = false) {
+        const toast = document.createElement("div");
+
+        toast.className = "toast" + (error ? " error" : "");
+        toast.innerHTML = `
+            <strong>${error ? "暂不能处理" : "处理完成"}</strong><br>
+            ${message}
+        `;
+
+        document.getElementById("toastWrap").appendChild(toast);
+
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+
+    function init() {
+        renderWarehouseList();
+        renderCapacityGrid();
+        renderTaskTable();
+
+        renderGateIssueTable();
+        renderQueueBoard();
+
+        renderDockGrid();
+        renderDockPanel();
+        renderDockWaitingList();
+
+        renderIncidentList();
+        renderIncidentDetail();
+
+        renderCostTable();
+        renderAuditTable();
+    }
+
+    init();
+</script>
+</body>
+</html>

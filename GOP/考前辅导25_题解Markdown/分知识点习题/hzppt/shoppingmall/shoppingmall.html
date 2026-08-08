@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商业综合体智慧停车与商业运营平台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --bg:#0b1220; --panel:#111c31; --panel2:#16233d; --line:#22334f;
+    --brand:#3b82f6; --brand2:#06b6d4; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --purple:#a855f7;
+    --txt:#e6edf7; --sub:#8ba0bd;
+  }
+  *{scrollbar-width:thin;scrollbar-color:#2a3a58 transparent}
+  *::-webkit-scrollbar{width:7px;height:7px}
+  *::-webkit-scrollbar-thumb{background:#2a3a58;border-radius:6px}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .panel{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px}
+  .glow{box-shadow:0 0 0 1px rgba(59,130,246,.15),0 8px 30px rgba(0,0,0,.35)}
+  .navi{transition:all .18s}
+  .navi:hover{background:rgba(59,130,246,.12)}
+  .navi.active{background:linear-gradient(90deg,rgba(59,130,246,.28),rgba(59,130,246,.05));border-left:3px solid var(--brand)}
+  .chip{border:1px solid var(--line);border-radius:999px}
+  .view{display:none;animation:fade .3s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .pulse{animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .metric{background:radial-gradient(120% 120% at 0% 0%,rgba(59,130,246,.12),transparent 60%),var(--panel)}
+  .bar{height:8px;border-radius:8px;background:#1c2b45;overflow:hidden}
+  .bar>i{display:block;height:100%;border-radius:8px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+  .lot{transition:.2s;cursor:pointer}
+  .lot:hover{transform:translateY(-3px)}
+  table{border-collapse:collapse;width:100%}
+  th,td{text-align:left;padding:10px 12px;font-size:13px;border-bottom:1px solid var(--line)}
+  th{color:var(--sub);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  tr:hover td{background:rgba(59,130,246,.06)}
+  .badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
+  .modal{position:fixed;inset:0;background:rgba(3,8,18,.75);backdrop-filter:blur(4px);display:none;z-index:60;align-items:center;justify-content:center;padding:16px}
+  .modal.show{display:flex;animation:fade .2s}
+  .kbd{font-size:11px;color:var(--sub)}
+  .slotcell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;transition:.15s}
+  .slotcell:hover{transform:scale(1.15);z-index:2}
+  .tog{width:44px;height:24px;border-radius:999px;background:#25324c;position:relative;cursor:pointer;transition:.2s}
+  .tog.on{background:var(--brand)}
+  .tog i{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:999px;background:#fff;transition:.2s}
+  .tog.on i{left:22px}
+  #sidebar{transition:transform .25s}
+  @media(max-width:1024px){
+    #sidebar{position:fixed;z-index:50;transform:translateX(-100%);height:100vh}
+    #sidebar.open{transform:none}
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ===== TOP BAR ===== -->
+<header class="sticky top-0 z-40 flex items-center gap-3 px-4 h-16 border-b" style="background:rgba(11,18,32,.92);backdrop-filter:blur(10px);border-color:var(--line)">
+  <button id="menuBtn" class="lg:hidden w-9 h-9 rounded-lg grid place-items-center" style="background:var(--panel2)"><i class="fas fa-bars"></i></button>
+  <div class="flex items-center gap-2">
+    <div class="w-9 h-9 rounded-xl grid place-items-center text-white" style="background:linear-gradient(135deg,var(--brand),var(--brand2))"><i class="fas fa-square-parking"></i></div>
+    <div class="leading-tight">
+      <div class="font-bold text-[15px]">星汇天地 · 智慧停车运营平台</div>
+      <div class="text-[11px]" style="color:var(--sub)">商业综合体停车与商业运营一体化</div>
+    </div>
+  </div>
+  <div class="hidden md:flex items-center gap-2 ml-4 chip px-3 py-1.5 text-xs" style="background:var(--panel)">
+    <span class="w-2 h-2 rounded-full pulse" style="background:var(--ok)"></span>
+    <span style="color:var(--sub)">系统在线</span><span class="opacity-30">|</span>
+    <i class="far fa-clock"></i><span id="clock">--:--:--</span>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <select id="roleSel" class="chip text-xs px-3 py-2 outline-none" style="background:var(--panel);color:var(--txt)" onchange="switchRole(this.value)">
+      <option value="ops">🏢 商业运营管理方</option>
+      <option value="command">🎛️ 停车运营指挥中心</option>
+      <option value="merchant">🛍️ 商户管理端</option>
+      <option value="member">💳 会员与营销运营</option>
+      <option value="finance">📊 财务结算端</option>
+      <option value="customer">🚗 顾客服务端</option>
+    </select>
+    <div class="relative">
+      <button class="w-9 h-9 rounded-lg grid place-items-center relative" style="background:var(--panel2)"><i class="far fa-bell"></i><span class="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] grid place-items-center text-white" style="background:var(--danger)">8</span></button>
+    </div>
+  </div>
+</header>
+
+<div class="flex">
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar" class="w-60 shrink-0 border-r overflow-y-auto" style="border-color:var(--line);background:#0c1526;height:calc(100vh - 64px)">
+    <nav class="py-3 text-sm" id="nav">
+      <div class="px-4 py-1.5 text-[11px] font-bold" style="color:var(--sub)">运营与指挥</div>
+      <a data-view="dashboard" class="navi active flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-gauge-high w-5 text-center" style="color:var(--brand)"></i>运营驾驶舱</a>
+      <a data-view="resource" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-layer-group w-5 text-center" style="color:var(--brand2)"></i>多业态资源池</a>
+      <a data-view="command" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-tower-broadcast w-5 text-center" style="color:var(--warn)"></i>车流指挥调度</a>
+      <a data-view="event" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-bullhorn w-5 text-center" style="color:var(--purple)"></i>大型活动与离场</a>
+
+      <div class="px-4 py-1.5 mt-2 text-[11px] font-bold" style="color:var(--sub)">会员与营销</div>
+      <a data-view="member" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-id-card w-5 text-center" style="color:#f472b6"></i>会员停车权益</a>
+      <a data-view="consume" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-link w-5 text-center" style="color:var(--ok)"></i>消费停车联动</a>
+
+      <div class="px-4 py-1.5 mt-2 text-[11px] font-bold" style="color:var(--sub)">商户与结算</div>
+      <a data-view="merchant" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-store w-5 text-center" style="color:#fb923c"></i>商户停车营销</a>
+      <a data-view="settle" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-file-invoice-dollar w-5 text-center" style="color:#22d3ee"></i>停车结算中心</a>
+
+      <div class="px-4 py-1.5 mt-2 text-[11px] font-bold" style="color:var(--sub)">增值服务</div>
+      <a data-view="vip" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-crown w-5 text-center" style="color:#fbbf24"></i>VIP与代客泊车</a>
+      <a data-view="charge" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-charging-station w-5 text-center" style="color:var(--ok)"></i>充停一体化</a>
+      <a data-view="customer" class="navi flex items-center gap-3 px-4 py-2.5 cursor-pointer"><i class="fas fa-mobile-screen w-5 text-center" style="color:var(--brand)"></i>顾客服务端</a>
+    </nav>
+    <div class="m-4 p-3 rounded-xl text-xs" style="background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(6,182,212,.08));border:1px solid var(--line)">
+      <div class="font-bold mb-1"><i class="fas fa-lightbulb" style="color:var(--warn)"></i> 分阶段建设</div>
+      <div style="color:var(--sub)">当前处于 <span style="color:var(--ok);font-weight:700">第二阶段</span>：多业态与高峰车流协同</div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="flex-1 min-w-0 p-4 md:p-6" style="height:calc(100vh - 64px);overflow-y:auto">
+
+  <!-- ========== 运营驾驶舱 ========== -->
+  <section id="view-dashboard" class="view active">
+    <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-gauge-high" style="color:var(--brand)"></i>商业停车运营驾驶舱</h1>
+        <p class="text-sm mt-1" style="color:var(--sub)">实时车流 · 客流业务 · 待办预警 · 经营指标一屏统览</p>
+      </div>
+      <div class="flex gap-2 text-xs">
+        <span class="chip px-3 py-1.5" style="background:var(--panel)">周六 · 商场高峰日</span>
+        <span class="chip px-3 py-1.5" style="background:var(--panel);color:var(--warn)"><i class="fas fa-cloud-sun"></i> 晴 26°C</span>
+      </div>
+    </div>
+
+    <!-- 当前运行 顶部指标 -->
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
+      <div class="metric glow p-4 rounded-2xl">
+        <div class="text-xs" style="color:var(--sub)">总余位</div>
+        <div class="text-3xl font-black mt-1" style="color:var(--ok)"><span data-count="642">0</span></div>
+        <div class="text-[11px] mt-1" style="color:var(--sub)">共 4200 · 使用率 84.7%</div>
+        <div class="bar mt-2"><i style="width:85%;background:linear-gradient(90deg,#22c55e,#84cc16)"></i></div>
+      </div>
+      <div class="metric glow p-4 rounded-2xl">
+        <div class="text-xs" style="color:var(--sub)">入口排队(峰值)</div>
+        <div class="text-3xl font-black mt-1" style="color:var(--warn)"><span data-count="16">0</span><span class="text-base"> 辆</span></div>
+        <div class="text-[11px] mt-1" style="color:var(--warn)"><i class="fas fa-triangle-exclamation"></i> 东门P2排队偏长</div>
+        <div class="bar mt-2"><i style="width:62%;background:linear-gradient(90deg,#f59e0b,#f97316)"></i></div>
+      </div>
+      <div class="metric glow p-4 rounded-2xl">
+        <div class="text-xs" style="color:var(--sub)">今日入场</div>
+        <div class="text-3xl font-black mt-1"><span data-count="8734">0</span></div>
+        <div class="text-[11px] mt-1" style="color:var(--ok)"><i class="fas fa-arrow-up"></i> 同比 +12.4%</div>
+        <div class="bar mt-2"><i style="width:72%;background:linear-gradient(90deg,#3b82f6,#06b6d4)"></i></div>
+      </div>
+      <div class="metric glow p-4 rounded-2xl">
+        <div class="text-xs" style="color:var(--sub)">充电车位</div>
+        <div class="text-3xl font-black mt-1" style="color:var(--brand2)"><span data-count="23">0</span><span class="text-base">/120</span></div>
+        <div class="text-[11px] mt-1" style="color:var(--danger)"><i class="fas fa-clock"></i> 7辆充满超时占位</div>
+        <div class="bar mt-2"><i style="width:81%;background:linear-gradient(90deg,#06b6d4,#22c55e)"></i></div>
+      </div>
+      <div class="metric glow p-4 rounded-2xl">
+        <div class="text-xs" style="color:var(--sub)">VIP预约车位</div>
+        <div class="text-3xl font-black mt-1" style="color:#fbbf24"><span data-count="18">0</span><span class="text-base">/32</span></div>
+        <div class="text-[11px] mt-1" style="color:var(--danger)"><i class="fas fa-ban"></i> 2个被占用待处理</div>
+        <div class="bar mt-2"><i style="width:56%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></i></div>
+      </div>
+      <div class="metric glow p-4 rounded-2xl">
+        <div class="text-xs" style="color:var(--sub)">设备异常</div>
+        <div class="text-3xl font-black mt-1" style="color:var(--danger)"><span data-count="3">0</span><span class="text-base"> 台</span></div>
+        <div class="text-[11px] mt-1" style="color:var(--sub)">道闸1 · 相机1 · 诱导屏1</div>
+        <div class="bar mt-2"><i style="width:15%;background:linear-gradient(90deg,#ef4444,#f97316)"></i></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <!-- 各停车场余位 -->
+      <div class="panel glow p-4 xl:col-span-2">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm"><i class="fas fa-building-columns" style="color:var(--brand)"></i> 各停车场 / 楼层实时余位</h3>
+          <span class="text-xs" style="color:var(--sub)">点击卡片查看区域详情 →</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="lotGrid"></div>
+      </div>
+
+      <!-- 今日待办预警 -->
+      <div class="panel glow p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm"><i class="fas fa-list-check" style="color:var(--warn)"></i> 今日待办 <span class="badge ml-1 text-white" style="background:var(--danger)">12</span></h3>
+        </div>
+        <div class="space-y-2 max-h-96 overflow-y-auto pr-1" id="todoList"></div>
+      </div>
+    </div>
+
+    <!-- 今日客流业务 + 经营指标 -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-people-group" style="color:var(--brand2)"></i> 今日客流业务构成</h3>
+        <div class="h-56"><canvas id="flowChart"></canvas></div>
+        <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
+          <div class="flex justify-between"><span style="color:var(--sub)">会员车辆</span><b>3,241</b></div>
+          <div class="flex justify-between"><span style="color:var(--sub)">新会员绑定</span><b style="color:var(--ok)">+186</b></div>
+          <div class="flex justify-between"><span style="color:var(--sub)">酒店车辆</span><b>412</b></div>
+          <div class="flex justify-between"><span style="color:var(--sub)">影院车辆</span><b>974</b></div>
+          <div class="flex justify-between"><span style="color:var(--sub)">活动车辆</span><b>538</b></div>
+          <div class="flex justify-between"><span style="color:var(--sub)">周边分流</span><b>127</b></div>
+        </div>
+      </div>
+      <div class="panel glow p-4 xl:col-span-2">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm"><i class="fas fa-chart-line" style="color:var(--ok)"></i> 全天车流趋势 · 入场/离场</h3>
+          <div class="flex gap-3 text-xs">
+            <span><span class="inline-block w-3 h-3 rounded-sm align-middle" style="background:var(--brand)"></span> 入场</span>
+            <span><span class="inline-block w-3 h-3 rounded-sm align-middle" style="background:var(--warn)"></span> 离场</span>
+          </div>
+        </div>
+        <div class="h-64"><canvas id="trendChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 商业经营指标 -->
+    <div class="panel glow p-4 mt-4">
+      <h3 class="font-bold text-sm mb-4"><i class="fas fa-store" style="color:var(--purple)"></i> 商业经营指标 · 停车如何带来生意</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">停车会员比例</div><div class="text-2xl font-bold mt-1" style="color:#f472b6">37.1%</div><div class="text-[11px] mt-0.5" style="color:var(--ok)">▲ 4.2pt</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">消费转化率</div><div class="text-2xl font-bold mt-1" style="color:var(--ok)">62.8%</div><div class="text-[11px] mt-0.5" style="color:var(--ok)">▲ 1.9pt</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">平均停留时长</div><div class="text-2xl font-bold mt-1">2.4h</div><div class="text-[11px] mt-0.5" style="color:var(--ok)">▲ 12min</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">关联消费额</div><div class="text-2xl font-bold mt-1" style="color:var(--warn)">¥184.6万</div><div class="text-[11px] mt-0.5" style="color:var(--ok)">▲ 8.7%</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">每元优惠拉动消费</div><div class="text-2xl font-bold mt-1" style="color:var(--brand2)">¥21.3</div><div class="text-[11px] mt-0.5" style="color:var(--ok)">投产比健康</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">停车+充电收入</div><div class="text-2xl font-bold mt-1">¥13.8万</div><div class="text-[11px] mt-0.5" style="color:var(--sub)">优惠成本 ¥8.6万</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 多业态资源池 ========== -->
+  <section id="view-resource" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-layer-group" style="color:var(--brand2)"></i>多业态停车资源池</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">停车资源统一调度 · 按时间动态划拨 · 错峰共享 · 保留刚性配额</p>
+
+    <div class="panel glow p-4 mb-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <h3 class="font-bold text-sm">资源池实时状态</h3>
+        <div class="flex items-center gap-3 text-xs">
+          <span style="color:var(--sub)">动态调度模式</span>
+          <div class="tog on" onclick="this.classList.toggle('on');toast('已切换资源调度模式')"><i></i></div>
+          <span class="chip px-2 py-1" style="background:var(--panel2)">当前时段：周末白天</span>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr><th>资源池</th><th>主要对象</th><th>管理规则</th><th>容量</th><th>使用率</th><th>状态</th></tr></thead>
+          <tbody id="poolTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-arrows-rotate" style="color:var(--warn)"></i> 错峰共享调度建议</h3>
+        <div class="space-y-3 text-sm">
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:var(--panel2)"><i class="fas fa-clock mt-1" style="color:var(--brand)"></i><div><b>工作日晚间</b> · 写字楼P1-B1区释放 210 位给餐饮延时客群<button class="ml-2 text-xs px-2 py-0.5 rounded" style="background:var(--brand);color:#fff" onclick="toast('已下发释放策略')">执行</button></div></div>
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:var(--panel2)"><i class="fas fa-calendar-week mt-1" style="color:var(--purple)"></i><div><b>周末</b> · 释放写字楼固定配额 380 位并入商场高周转区<button class="ml-2 text-xs px-2 py-0.5 rounded" style="background:var(--brand);color:#fff" onclick="toast('已下发释放策略')">执行</button></div></div>
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:var(--panel2)"><i class="fas fa-film mt-1" style="color:var(--warn)"></i><div><b>影院散场前</b> · 提前开放 B2 夜间电梯厅与南出口保障通道</div></div>
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:var(--panel2)"><i class="fas fa-lock mt-1" style="color:var(--danger)"></i><div>刚性保留：企业固定/酒店住客/VIP/消防无障碍/已预约 车位不参与调度</div></div>
+        </div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-chart-pie" style="color:var(--brand2)"></i> 各业态车位占比</h3>
+        <div class="h-72"><canvas id="poolChart"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 车流指挥调度 ========== -->
+  <section id="view-command" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-tower-broadcast" style="color:var(--warn)"></i>车流指挥调度中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">入口出口监控 · 潮汐车道 · 集中离场调度 · 诱导策略下发</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="panel glow p-4">
+          <h3 class="font-bold text-sm mb-3"><i class="fas fa-right-to-bracket" style="color:var(--brand)"></i> 入口 / 出口实时排队</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="gateGrid"></div>
+        </div>
+        <div class="panel glow p-4" style="border-color:var(--warn)">
+          <div class="flex items-center gap-2 mb-2"><span class="w-2 h-2 rounded-full pulse" style="background:var(--danger)"></span><h3 class="font-bold text-sm">集中离场智能建议</h3></div>
+          <div class="p-3 rounded-xl text-sm" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)">
+            <p>当前 <b style="color:var(--warn)">P2出口排队48辆</b>，P3出口排队12辆。建议将 <b>B2南侧备用车道</b> 切换为出口，并引导P2车辆经内部通道前往P3出口，预计缓解 <b style="color:var(--ok)">62%</b> 排队压力。</p>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button class="text-xs px-3 py-1.5 rounded-lg font-semibold" style="background:var(--warn);color:#111" onclick="openTideModal()"><i class="fas fa-road"></i> 启用潮汐车道</button>
+              <button class="text-xs px-3 py-1.5 rounded-lg" style="background:var(--panel2)" onclick="toast('已推送至现场班组长')">通知现场人员</button>
+              <button class="text-xs px-3 py-1.5 rounded-lg" style="background:var(--panel2)" onclick="toast('已更新全场诱导屏')">更新诱导屏</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel glow p-4">
+          <h3 class="font-bold text-sm mb-3"><i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i> 事件处置队列</h3>
+          <div class="overflow-x-auto">
+            <table><thead><tr><th>时间</th><th>类型</th><th>位置</th><th>处置</th></tr></thead>
+            <tbody>
+              <tr><td>14:22</td><td><span class="badge" style="background:rgba(239,68,68,.2);color:#fca5a5">车牌识别失败</span></td><td>东门P2入口2道</td><td><button class="text-xs px-2 py-1 rounded" style="background:var(--brand);color:#fff" onclick="toast('已远程开闸放行')">远程开闸</button></td></tr>
+              <tr><td>14:18</td><td><span class="badge" style="background:rgba(245,158,11,.2);color:#fcd34d">支付异常</span></td><td>P3出口1道</td><td><button class="text-xs px-2 py-1 rounded" style="background:var(--panel2)" onclick="toast('已转客服坐席')">转坐席</button></td></tr>
+              <tr><td>14:05</td><td><span class="badge" style="background:rgba(168,85,247,.2);color:#d8b4fe">VIP车位被占</span></td><td>B1 VIP-08</td><td><button class="text-xs px-2 py-1 rounded" style="background:var(--panel2)" onclick="toast('已派安保现场处理')">派单</button></td></tr>
+              <tr><td>13:51</td><td><span class="badge" style="background:rgba(59,130,246,.2);color:#93c5fd">人工免费放行</span></td><td>南门P1出口</td><td><button class="text-xs px-2 py-1 rounded" style="background:var(--panel2)" onclick="toast('已提交审核')">待审核</button></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel glow p-4">
+          <h3 class="font-bold text-sm mb-3"><i class="fas fa-satellite-dish" style="color:var(--brand2)"></i> 一键诱导策略</h3>
+          <div class="space-y-2 text-sm">
+            <button class="w-full text-left p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)" onclick="toast('已发布：分流东门至北门')"><i class="fas fa-diamond-turn-right" style="color:var(--brand)"></i>分流东门客流至北门入口</button>
+            <button class="w-full text-left p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)" onclick="toast('已发布：引导前往P3空闲区')"><i class="fas fa-map-location-dot" style="color:var(--ok)"></i>引导前往 P3 空闲区域</button>
+            <button class="w-full text-left p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)" onclick="toast('已发布：提示提前缴费')"><i class="fas fa-money-bill-wave" style="color:var(--warn)"></i>推送"提前缴费"提醒</button>
+            <button class="w-full text-left p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)" onclick="toast('已开放备用出口')"><i class="fas fa-door-open" style="color:var(--purple)"></i>开放备用出口</button>
+          </div>
+        </div>
+        <div class="panel glow p-4">
+          <h3 class="font-bold text-sm mb-3"><i class="fas fa-gauge" style="color:var(--warn)"></i> 出口通行效率</h3>
+          <div class="space-y-3 text-xs" id="gateEff"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 大型活动与离场 ========== -->
+  <section id="view-event" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-bullhorn" style="color:var(--purple)"></i>大型活动与高峰调度中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">活动前预测 · 活动中分流 · 活动后集中离场 · 停车营销成本核算</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="panel glow p-4 lg:col-span-2">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm"><i class="fas fa-calendar-star" style="color:var(--purple)"></i> 进行中 / 待启动活动</h3>
+          <button class="text-xs px-3 py-1.5 rounded-lg font-semibold" style="background:var(--brand);color:#fff" onclick="toast('打开活动创建向导')"><i class="fas fa-plus"></i> 创建活动</button>
+        </div>
+        <div class="space-y-3" id="eventList"></div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-clock-rotate-left" style="color:var(--warn)"></i> 散场高峰预测</h3>
+        <div class="p-3 rounded-xl mb-3" style="background:rgba(245,158,11,.1)">
+          <div class="text-xs" style="color:var(--sub)">影院 / 演出联动预测</div>
+          <div class="text-lg font-bold mt-1" style="color:var(--warn)">22:10 预计离场高峰</div>
+          <div class="text-xs mt-1">预计 <b>486辆</b> 集中离场 · 建议提前引导缴费</div>
+        </div>
+        <div class="h-48"><canvas id="exitChart"></canvas></div>
+        <button class="w-full mt-3 text-xs px-3 py-2 rounded-lg font-semibold" style="background:var(--warn);color:#111" onclick="toast('已向影院观众推送提前缴费提醒')"><i class="fas fa-bell"></i> 推送提前缴费提醒</button>
+      </div>
+    </div>
+
+    <div class="panel glow p-4 mt-4">
+      <h3 class="font-bold text-sm mb-3"><i class="fas fa-sack-dollar" style="color:var(--ok)"></i> 活动停车成本与消费转化核算 · 秋季店庆</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3">
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">活动预算</div><div class="text-xl font-bold mt-1">¥10.0万</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">已核销成本</div><div class="text-xl font-bold mt-1" style="color:var(--warn)">¥6.8万</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">带来车辆</div><div class="text-xl font-bold mt-1">3,180</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">关联消费</div><div class="text-xl font-bold mt-1" style="color:var(--ok)">¥212万</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">新增会员</div><div class="text-xl font-bold mt-1" style="color:#f472b6">+864</div></div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">预算剩余</div><div class="text-xl font-bold mt-1" style="color:var(--brand2)">¥3.2万</div></div>
+      </div>
+      <div class="mt-3 text-xs p-3 rounded-xl" style="background:rgba(34,197,94,.08)">
+        <b>成本分摊：</b>商场营销部门承担 60%（¥4.08万）· 参与商户承担 30%（¥2.04万）· 停车运营方承担 10%（¥0.68万）· 按实际核销订单分摊
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 会员停车权益 ========== -->
+  <section id="view-member" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-id-card" style="color:#f472b6"></i>会员停车权益中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">车牌即会员 · 等级权益 · 积分抵扣 · 家庭车辆 · 无感离场</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-layer-group" style="color:#f472b6"></i> 会员等级停车权益配置</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="memberTiers"></div>
+        <div class="mt-4 p-3 rounded-xl text-xs" style="background:var(--panel2)">
+          <b style="color:var(--warn)"><i class="fas fa-shield-halved"></i> 风控规则：</b>
+          单会员最多绑定 <b>3</b> 辆车 · 同时段最多 <b>1</b> 辆享权益 · 每月换牌 ≤ <b>2</b> 次 · 家庭共享需实名 · 权益可跨项目通用
+        </div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-magnifying-glass" style="color:var(--brand)"></i> 车牌会员查询</h3>
+        <div class="flex gap-2 mb-3">
+          <input class="flex-1 px-3 py-2 rounded-lg text-sm outline-none" style="background:var(--panel2);border:1px solid var(--line)" value="沪A·8888U" >
+          <button class="px-3 py-2 rounded-lg text-sm" style="background:var(--brand);color:#fff" onclick="toast('已识别会员身份')">识别</button>
+        </div>
+        <div class="p-3 rounded-xl" style="background:var(--panel2)">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-12 h-12 rounded-full grid place-items-center text-lg" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"><i class="fas fa-crown text-white"></i></div>
+            <div><div class="font-bold">王女士 · 金卡会员</div><div class="text-xs" style="color:var(--sub)">积分 6,240 · 绑定2辆车</div></div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span style="color:var(--sub)">当前权益</span><span style="color:var(--ok)">每日免费3h</span></div>
+            <div class="flex justify-between"><span style="color:var(--sub)">专属车位</span><span>可预约</span></div>
+            <div class="flex justify-between"><span style="color:var(--sub)">无感离场</span><span style="color:var(--ok)">已开通</span></div>
+            <div class="flex justify-between"><span style="color:var(--sub)">历史到访</span><span>142次 · 复访率高</span></div>
+          </div>
+          <button class="w-full mt-3 text-xs px-3 py-2 rounded-lg" style="background:var(--brand);color:#fff" onclick="toast('已发放生日停车礼包')">发放停车礼包</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-arrow-trend-up" style="color:var(--ok)"></i> 停车会员转化漏斗</h3>
+        <div class="space-y-2 text-sm" id="funnel"></div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-gift" style="color:#f472b6"></i> 会员停车活动</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center justify-between p-3 rounded-xl" style="background:var(--panel2)"><div><b>工作日错峰停车</b><div class="text-xs" style="color:var(--sub)">10:00前入场免费2h</div></div><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">进行中</span></div>
+          <div class="flex items-center justify-between p-3 rounded-xl" style="background:var(--panel2)"><div><b>夜间消费停车礼</b><div class="text-xs" style="color:var(--sub)">18:00后消费满额免费3h</div></div><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">进行中</span></div>
+          <div class="flex items-center justify-between p-3 rounded-xl" style="background:var(--panel2)"><div><b>金卡专属周末</b><div class="text-xs" style="color:var(--sub)">周末专属车位+全天优惠</div></div><span class="badge" style="background:rgba(245,158,11,.2);color:#fcd34d">待启动</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 消费停车联动 ========== -->
+  <section id="view-consume" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-link" style="color:var(--ok)"></i>消费停车联动中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">消费自动减免 · 无需盖章 · 退款撤销 · 消费转化分析</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-receipt" style="color:var(--ok)"></i> 消费满额自动减免规则</h3>
+        <div class="overflow-x-auto"><table>
+          <thead><tr><th>业态</th><th>规则</th><th>免费时长</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>购物</td><td>消费满¥100</td><td>1小时</td><td><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">生效</span></td></tr>
+            <tr><td>购物</td><td>消费满¥300</td><td>2小时</td><td><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">生效</span></td></tr>
+            <tr><td>购物</td><td>消费满¥500</td><td>4小时</td><td><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">生效</span></td></tr>
+            <tr><td>餐饮(晚间)</td><td>消费满¥200</td><td>3小时</td><td><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">生效</span></td></tr>
+            <tr><td>超市</td><td>消费满¥188</td><td>2小时</td><td><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">生效</span></td></tr>
+            <tr><td>影院</td><td>凭当日电影票</td><td>3小时</td><td><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">生效</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-rotate-left" style="color:var(--danger)"></i> 消费退款权益撤销监控</h3>
+        <div class="space-y-2" id="refundList"></div>
+      </div>
+    </div>
+
+    <div class="panel glow p-4 mt-4">
+      <h3 class="font-bold text-sm mb-3"><i class="fas fa-chart-column" style="color:var(--brand2)"></i> 停车优惠 → 消费转化分析</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 h-64"><canvas id="convChart"></canvas></div>
+        <div class="space-y-2 text-sm">
+          <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">获优惠顾客</div><div class="text-xl font-bold">5,412 <span class="text-xs font-normal" style="color:var(--sub)">人</span></div></div>
+          <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">后续复访率</div><div class="text-xl font-bold" style="color:var(--ok)">48.6%</div></div>
+          <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">优惠后延长停留</div><div class="text-xl font-bold">+38min</div></div>
+          <div class="p-3 rounded-xl" style="background:var(--panel2)"><div class="text-xs" style="color:var(--sub)">优惠后客单价</div><div class="text-xl font-bold" style="color:var(--warn)">¥341 <span class="text-xs font-normal" style="color:var(--ok)">↑27%</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 商户停车营销(商户端) ========== -->
+  <section id="view-merchant" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-store" style="color:#fb923c"></i>商户停车营销中心 <span class="text-sm font-normal" style="color:var(--sub)">（商户端视图 · 星巴克 L3-08）</span></h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">停车券采购发放 · 顾客核销 · 预算控制 · 异常审计 · 月度结算</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">本月停车券预算</div><div class="text-2xl font-bold mt-1">¥8,000</div><div class="bar mt-2"><i style="width:64%;background:var(--brand)"></i></div><div class="text-[11px] mt-1" style="color:var(--sub)">已用 ¥5,120</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">剩余时长额度</div><div class="text-2xl font-bold mt-1" style="color:var(--ok)">248 h</div><div class="text-[11px] mt-2" style="color:var(--warn)"><i class="fas fa-triangle-exclamation"></i> 预计3天用完</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">今日已发券</div><div class="text-2xl font-bold mt-1">86 <span class="text-sm">张</span></div><div class="text-[11px] mt-2" style="color:var(--sub)">核销 72 张 (83.7%)</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">异常发券提醒</div><div class="text-2xl font-bold mt-1" style="color:var(--danger)">2 <span class="text-sm">笔</span></div><div class="text-[11px] mt-2" style="color:var(--danger)">员工车辆疑似套用</div></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 panel glow p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm"><i class="fas fa-ticket" style="color:#fb923c"></i> 向顾客发放停车券</h3>
+          <button class="text-xs px-3 py-1.5 rounded-lg font-semibold" style="background:#fb923c;color:#111" onclick="openIssueModal()"><i class="fas fa-plus"></i> 发券</button>
+        </div>
+        <div class="overflow-x-auto"><table>
+          <thead><tr><th>时间</th><th>消费订单</th><th>金额</th><th>顾客</th><th>券类型</th><th>状态</th></tr></thead>
+          <tbody id="couponTable"></tbody>
+        </table></div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel glow p-4">
+          <h3 class="font-bold text-sm mb-3"><i class="fas fa-user-shield" style="color:var(--warn)"></i> 发券权限分级</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between p-2 rounded-lg" style="background:var(--panel2)"><span>收银员</span><b>最多1小时</b></div>
+            <div class="flex justify-between p-2 rounded-lg" style="background:var(--panel2)"><span>店长</span><b>最多3小时</b></div>
+            <div class="flex justify-between p-2 rounded-lg" style="background:var(--panel2)"><span>品牌负责人</span><b>金额券</b></div>
+            <div class="flex justify-between p-2 rounded-lg" style="background:rgba(239,68,68,.12)"><span>全免券</span><b style="color:var(--danger)">商场审批</b></div>
+          </div>
+        </div>
+        <div class="panel glow p-4">
+          <h3 class="font-bold text-sm mb-3"><i class="fas fa-users" style="color:var(--brand)"></i> 我的员工车辆</h3>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span style="color:var(--sub)">员工名额</span><b>6 / 8</b></div>
+            <div class="flex justify-between"><span style="color:var(--sub)">当前在场</span><b>4</b></div>
+            <div class="flex justify-between"><span style="color:var(--danger)">员工区违规</span><b style="color:var(--danger)">1辆 (占顾客区)</b></div>
+            <div class="flex justify-between"><span style="color:var(--sub)">权限到期</span><b>李某 · 3天后</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 停车结算中心 ========== -->
+  <section id="view-settle" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-file-invoice-dollar" style="color:#22d3ee"></i>商业停车结算中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">停车收入 · 商户停车券 · 营销补贴 · 酒店写字楼结算 · 充电分账 · 发票回款</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">本月停车总收入</div><div class="text-2xl font-bold mt-1" style="color:var(--ok)">¥386.2万</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">商户停车券成本</div><div class="text-2xl font-bold mt-1" style="color:var(--warn)">¥94.7万</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">营销活动补贴</div><div class="text-2xl font-bold mt-1">¥42.3万</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">待结算/欠费</div><div class="text-2xl font-bold mt-1" style="color:var(--danger)">¥18.6万</div></div>
+    </div>
+
+    <div class="panel glow p-4 mb-4">
+      <h3 class="font-bold text-sm mb-3"><i class="fas fa-scale-balanced" style="color:#22d3ee"></i> 多主体费用承担分摊台账</h3>
+      <div class="overflow-x-auto"><table>
+        <thead><tr><th>结算主体</th><th>类型</th><th>应承担</th><th>已核销</th><th>补贴/分成</th><th>应付/欠费</th><th>状态</th></tr></thead>
+        <tbody id="settleTable"></tbody>
+      </table></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-chart-pie" style="color:var(--brand2)"></i> 停车优惠成本承担构成</h3>
+        <div class="h-64"><canvas id="settleChart"></canvas></div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-magnifying-glass-dollar" style="color:var(--warn)"></i> 异常与审计</h3>
+        <div class="space-y-2 text-sm">
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:rgba(239,68,68,.1)"><i class="fas fa-flag mt-0.5" style="color:var(--danger)"></i><div>某餐饮店：发券后高比例退款(18%)，建议扣回 ¥1,240 并进入审计<button class="ml-2 text-xs px-2 py-0.5 rounded" style="background:var(--danger);color:#fff" onclick="toast('已从结算扣回')">扣回</button></div></div>
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:rgba(245,158,11,.1)"><i class="fas fa-hand mt-0.5" style="color:var(--warn)"></i><div>人工减免损失：本月 ¥8,600 · 涉及42笔，需财务复核</div></div>
+          <div class="p-3 rounded-xl flex items-start gap-3" style="background:rgba(59,130,246,.1)"><i class="fas fa-building mt-0.5" style="color:var(--brand)"></i><div>周边合作车场分流对账：差异订单 6 笔待人工复核</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== VIP与代客泊车 ========== -->
+  <section id="view-vip" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-crown" style="color:#fbbf24"></i>VIP与代客泊车中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">预约保留 · 专属车位 · 车辆交接 · 泊车任务 · 责任留痕</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-calendar-check" style="color:#fbbf24"></i> VIP预约停车</h3>
+        <div class="space-y-2" id="vipList"></div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-key" style="color:var(--brand)"></i> 代客泊车任务与交接</h3>
+        <div class="space-y-3" id="valetList"></div>
+      </div>
+    </div>
+
+    <div class="panel glow p-4 mt-4">
+      <h3 class="font-bold text-sm mb-3"><i class="fas fa-clipboard-check" style="color:var(--ok)"></i> 车辆交接记录（防损伤争议）</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl" style="background:var(--panel2)">
+          <div class="flex items-center justify-between mb-3"><b>沪A·6688X · 保时捷</b><span class="badge" style="background:rgba(34,197,94,.2);color:#86efac">已交还</span></div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div><span style="color:var(--sub)">接车泊车员</span><br>张伟 (工号0231)</div>
+            <div><span style="color:var(--sub)">接车时间</span><br>13:22</div>
+            <div><span style="color:var(--sub)">里程/电量</span><br>32,140km · 68%</div>
+            <div><span style="color:var(--sub)">随车物品</span><br>公文包×1</div>
+          </div>
+          <div class="flex gap-2 mt-3">
+            <div class="flex-1 h-16 rounded-lg grid place-items-center text-xs" style="background:var(--panel);color:var(--sub)"><i class="fas fa-camera mr-1"></i>车头照</div>
+            <div class="flex-1 h-16 rounded-lg grid place-items-center text-xs" style="background:var(--panel);color:var(--sub)"><i class="fas fa-camera mr-1"></i>左侧照</div>
+            <div class="flex-1 h-16 rounded-lg grid place-items-center text-xs" style="background:var(--panel);color:var(--sub)"><i class="fas fa-camera mr-1"></i>车尾照</div>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl" style="background:var(--panel2)">
+          <div class="flex items-center justify-between mb-3"><b>沪B·2233Y · 奔驰S</b><span class="badge" style="background:rgba(245,158,11,.2);color:#fcd34d">取车中</span></div>
+          <div class="text-sm mb-2">顾客已申请取车，泊车员正送车至南门交车点</div>
+          <div class="bar mb-1"><i style="width:70%;background:var(--warn)"></i></div>
+          <div class="text-xs" style="color:var(--sub)">预计 3 分钟送达 · 泊车员：李明</div>
+          <button class="w-full mt-3 text-xs px-3 py-2 rounded-lg" style="background:var(--brand);color:#fff" onclick="toast('已通知顾客前往南门交车点')">通知顾客交车点</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 充停一体化 ========== -->
+  <section id="view-charge" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-charging-station" style="color:var(--ok)"></i>充停一体化中心</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">充电车位 · 充满提醒 · 超时占位治理 · 充停联合营销 · 运营分账</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">充电车位</div><div class="text-2xl font-bold mt-1" style="color:var(--ok)">97 <span class="text-sm">/120使用</span></div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">充满超时占位</div><div class="text-2xl font-bold mt-1" style="color:var(--danger)">7 <span class="text-sm">辆</span></div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">今日充电收入</div><div class="text-2xl font-bold mt-1">¥2.16万</div></div>
+      <div class="metric glow p-4 rounded-2xl"><div class="text-xs" style="color:var(--sub)">充停联合优惠</div><div class="text-2xl font-bold mt-1" style="color:var(--brand2)">213 <span class="text-sm">次</span></div></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-hourglass-end" style="color:var(--danger)"></i> 充满超时占位治理</h3>
+        <div class="space-y-2" id="chargeList"></div>
+      </div>
+      <div class="panel glow p-4">
+        <h3 class="font-bold text-sm mb-3"><i class="fas fa-tags" style="color:var(--brand2)"></i> 充停联合营销规则</h3>
+        <div class="space-y-2 text-sm">
+          <div class="p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)"><i class="fas fa-bolt" style="color:var(--ok)"></i><div>充电满 ¥50 · 减免停车费 <b>1小时</b></div></div>
+          <div class="p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)"><i class="fas fa-id-card" style="color:#f472b6"></i><div>会员充电 · 额外赠送停车 <b>1小时</b></div></div>
+          <div class="p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)"><i class="fas fa-bag-shopping" style="color:var(--warn)"></i><div>商场消费满¥300 · 充电费 <b>9折</b></div></div>
+          <div class="p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2)"><i class="fas fa-money-bill-transfer" style="color:var(--brand)"></i><div>充电费与停车费 · 支持 <b>统一/分别</b> 结算</div></div>
+        </div>
+        <div class="mt-3 p-3 rounded-xl text-xs" style="background:rgba(59,130,246,.08)"><b>运营分账：</b>充电运营商 82% · 商场场地方 12% · 停车运营方 6%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 顾客服务端 ========== -->
+  <section id="view-customer" class="view">
+    <h1 class="text-xl font-bold flex items-center gap-2 mb-1"><i class="fas fa-mobile-screen" style="color:var(--brand)"></i>顾客服务端 · 移动预览</h1>
+    <p class="text-sm mb-5" style="color:var(--sub)">按目的地推荐停车 · 车牌即会员 · 优惠聚合 · 反向寻车 · 无感离场</p>
+
+    <div class="flex flex-wrap gap-6 justify-center">
+      <!-- Phone 1: 到店诱导 -->
+      <div class="w-full max-w-xs">
+        <div class="panel glow overflow-hidden" style="border-radius:28px;padding:12px">
+          <div class="rounded-2xl overflow-hidden" style="background:#0a1220">
+            <div class="p-4 text-white" style="background:linear-gradient(135deg,var(--brand),var(--brand2))">
+              <div class="text-xs opacity-80">星汇天地 · 到店导航</div>
+              <div class="font-bold text-lg mt-1">您准备前往儿童乐园</div>
+            </div>
+            <div class="p-4 space-y-3">
+              <div class="p-3 rounded-xl text-sm" style="background:var(--panel2)"><b style="color:var(--ok)">✓ 推荐从东门进入</b><div class="text-xs mt-1" style="color:var(--sub)">停放 P2停车场 B2亲子区 · 剩余 <b style="color:var(--ok)">86</b> 位 · 步行约5分钟</div></div>
+              <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                <div class="p-2 rounded-lg" style="background:var(--panel2)"><div class="text-lg font-bold" style="color:var(--ok)">642</div>全场余位</div>
+                <div class="p-2 rounded-lg" style="background:var(--panel2)"><div class="text-lg font-bold" style="color:var(--warn)">~4分钟</div>东门排队</div>
+              </div>
+              <div class="p-3 rounded-xl text-xs" style="background:rgba(251,191,36,.1)"><b style="color:#fbbf24"><i class="fas fa-crown"></i> 金卡会员</b> · 每日免费3h · 已识别车牌 沪A·8888U</div>
+              <button class="w-full py-2.5 rounded-xl text-sm font-semibold text-white" style="background:var(--brand)">开始导航</button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center text-xs mt-2" style="color:var(--sub)">按目的地推荐停车</div>
+      </div>
+
+      <!-- Phone 2: 离场缴费 -->
+      <div class="w-full max-w-xs">
+        <div class="panel glow overflow-hidden" style="border-radius:28px;padding:12px">
+          <div class="rounded-2xl overflow-hidden" style="background:#0a1220">
+            <div class="p-4 text-white" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">
+              <div class="text-xs opacity-80">离场缴费 · 优惠聚合</div>
+              <div class="font-bold text-lg mt-1">沪A·8888U</div>
+            </div>
+            <div class="p-4 space-y-2 text-sm">
+              <div class="flex justify-between"><span style="color:var(--sub)">原始停车费</span><b>¥28</b></div>
+              <div class="flex justify-between"><span style="color:var(--sub)">金卡会员减免(2h)</span><b style="color:var(--ok)">-¥12</b></div>
+              <div class="flex justify-between"><span style="color:var(--sub)">商户停车券(1h)</span><b style="color:var(--ok)">-¥6</b></div>
+              <div class="flex justify-between"><span style="color:var(--sub)">积分抵扣(600分)</span><b style="color:var(--ok)">-¥6</b></div>
+              <div class="border-t pt-2 flex justify-between items-center" style="border-color:var(--line)"><span>最低应付</span><b class="text-2xl" style="color:var(--warn)">¥4</b></div>
+              <div class="p-2 rounded-lg text-xs text-center" style="background:rgba(34,197,94,.12);color:#86efac">已为您自动匹配最优方案</div>
+              <button class="w-full py-2.5 rounded-xl text-sm font-semibold text-white" style="background:#a855f7">确认支付 · 无感离场</button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center text-xs mt-2" style="color:var(--sub)">优惠自动聚合 · 最优方案</div>
+      </div>
+
+      <!-- Phone 3: 反向寻车 -->
+      <div class="w-full max-w-xs">
+        <div class="panel glow overflow-hidden" style="border-radius:28px;padding:12px">
+          <div class="rounded-2xl overflow-hidden" style="background:#0a1220">
+            <div class="p-4 text-white" style="background:linear-gradient(135deg,#059669,#22c55e)">
+              <div class="text-xs opacity-80">反向寻车 · 步行导航</div>
+              <div class="font-bold text-lg mt-1">找到您的车</div>
+            </div>
+            <div class="p-4 space-y-3">
+              <div class="h-28 rounded-xl grid place-items-center relative overflow-hidden" style="background:var(--panel2)">
+                <i class="fas fa-car text-3xl" style="color:var(--ok)"></i>
+                <span class="absolute bottom-2 text-xs" style="color:var(--sub)">车位实拍照片</span>
+              </div>
+              <div class="text-sm"><b>P2停车场 · B2 蓝区 · B2-286</b></div>
+              <div class="p-3 rounded-xl text-xs space-y-1" style="background:var(--panel2)">
+                <div><i class="fas fa-person-walking" style="color:var(--brand)"></i> 前往3号客梯，下至B2左转约80米</div>
+                <div><i class="fas fa-door-open" style="color:var(--warn)"></i> 建议从南出口离场 · 当前排队约4分钟</div>
+                <div><i class="fas fa-elevator" style="color:var(--purple)"></i> 夜间可用：3号/5号客梯</div>
+              </div>
+              <button class="w-full py-2.5 rounded-xl text-sm font-semibold text-white" style="background:#22c55e">步行导航到车</button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center text-xs mt-2" style="color:var(--sub)">完整步行导航 · 非只显示"在B2"</div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<!-- ===== MODALS ===== -->
+<div class="modal" id="modal">
+  <div class="panel glow w-full max-w-md p-5" style="max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between mb-4"><h3 class="font-bold" id="modalTitle">标题</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg" style="background:var(--panel2)"><i class="fas fa-xmark"></i></button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-xl text-sm font-semibold z-[70] flex items-center gap-2" style="background:var(--panel);border:1px solid var(--brand);box-shadow:0 10px 40px rgba(0,0,0,.5);opacity:0;transition:.3s;pointer-events:none">
+  <i class="fas fa-circle-check" style="color:var(--ok)"></i><span id="toastMsg"></span>
+</div>
+
+<script>
+// ===== 时钟 =====
+function tick(){const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('zh-CN',{hour12:false});}
+setInterval(tick,1000);tick();
+
+// ===== 导航 =====
+document.querySelectorAll('#nav a').forEach(a=>{
+  a.onclick=()=>{
+    document.querySelectorAll('#nav a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+a.dataset.view).classList.add('active');
+    document.getElementById('sidebar').classList.remove('open');
+    document.querySelector('main').scrollTop=0;
+  };
+});
+document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+
+// ===== 角色切换 =====
+const roleView={ops:'dashboard',command:'command',merchant:'merchant',member:'member',finance:'settle',customer:'customer'};
+function switchRole(r){const v=roleView[r];document.querySelector(`#nav a[data-view="${v}"]`).click();toast('已切换至 '+document.getElementById('roleSel').selectedOptions[0].text+' 视图');}
+
+// ===== Toast =====
+let tt;function toast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.style.opacity=1;t.style.transform='translateX(-50%) translateY(-6px)';clearTimeout(tt);tt=setTimeout(()=>{t.style.opacity=0;t.style.transform='translateX(-50%)';},2200);}
+
+// ===== Modal =====
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+function openModal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modal').classList.add('show');}
+function openTideModal(){openModal('启用潮汐车道 · 二次确认',`
+  <div class="space-y-3 text-sm">
+    <div class="p-3 rounded-xl" style="background:var(--panel2)">将 <b>B2南侧备用车道</b> 由入口切换为出口</div>
+    <div class="space-y-2 text-xs" style="color:var(--sub)">
+      <div>✓ 值班主管确认</div><div>✓ 现场人员清空车道</div><div>✓ 调整隔离设施</div>
+      <div>✓ 切换道闸/相机/指示灯</div><div>✓ 更新诱导屏</div>
+    </div>
+    <div class="flex gap-2 pt-2">
+      <button class="flex-1 py-2 rounded-lg text-sm" style="background:var(--panel2)" onclick="closeModal()">取消</button>
+      <button class="flex-1 py-2 rounded-lg text-sm font-semibold" style="background:var(--warn);color:#111" onclick="closeModal();toast('潮汐车道已启用 · 现场已通知')">确认启用</button>
+    </div>
+  </div>`);}
+function openIssueModal(){openModal('向顾客发放停车券',`
+  <div class="space-y-3 text-sm">
+    <div class="p-3 rounded-xl text-xs" style="background:var(--panel2)"><b>自动带出：</b>消费订单 #SB20260718-0072 · ¥58 · 顾客 138****6621 · 在场车辆 沪A·8888U</div>
+    <label class="block text-xs" style="color:var(--sub)">选择券类型</label>
+    <select class="w-full px-3 py-2 rounded-lg text-sm outline-none" style="background:var(--panel2);border:1px solid var(--line);color:var(--txt)">
+      <option>免费30分钟</option><option selected>免费1小时</option><option>免费2小时</option><option>抵扣10元</option><option disabled>当次全免(需商场审批)</option>
+    </select>
+    <div class="p-2 rounded-lg text-xs" style="background:rgba(34,197,94,.1);color:#86efac"><i class="fas fa-shield-check"></i> 收银员权限：最多1小时 · 已关联真实消费订单</div>
+    <div class="flex gap-2 pt-1">
+      <button class="flex-1 py-2 rounded-lg" style="background:var(--panel2)" onclick="closeModal()">取消</button>
+      <button class="flex-1 py-2 rounded-lg font-semibold" style="background:#fb923c;color:#111" onclick="closeModal();toast('已发券 · 顾客将收到停车优惠消息')">确认发券</button>
+    </div>
+  </div>`);}
+function slotDetail(name){openModal(name+' · 区域详情',`
+  <div class="grid grid-cols-8 gap-1.5 mb-3">${Array.from({length:48}).map((_,i)=>{const r=Math.random();const c=r<0.7?'#22c55e':r<0.82?'#f59e0b':'#334155';const o=r<0.7?'空':r<0.82?'即将':'占';return `<div class="slotcell" style="background:${c}22;color:${c};border:1px solid ${c}55">${o}</div>`}).join('')}</div>
+  <div class="flex gap-3 text-xs" style="color:var(--sub)"><span><span style="color:#22c55e">■</span> 空闲</span><span><span style="color:#f59e0b">■</span> 即将离场</span><span><span style="color:#334155">■</span> 占用</span></div>`);}
+
+// ===== 停车场数据 =====
+const lots=[
+  {n:'P1 · 商场高周转',t:1200,f:98,c:'#22c55e'},
+  {n:'P2 · 会员/亲子区',t:900,f:186,c:'#22c55e'},
+  {n:'B1 · VIP/写字楼',t:600,f:42,c:'#f59e0b'},
+  {n:'B2 · 影院/餐饮',t:700,f:124,c:'#22c55e'},
+  {n:'B3 · 酒店/公寓',t:500,f:156,c:'#22c55e'},
+  {n:'B2 · 充电区',t:120,f:23,c:'#ef4444'},
+];
+document.getElementById('lotGrid').innerHTML=lots.map(l=>{const u=Math.round((1-l.f/l.t)*100);return `
+  <div class="lot p-3 rounded-xl" style="background:var(--panel2);border:1px solid var(--line)" onclick="slotDetail('${l.n}')">
+    <div class="flex items-center justify-between"><span class="text-xs font-semibold">${l.n}</span><span class="text-lg font-black" style="color:${l.c}">${l.f}</span></div>
+    <div class="text-[11px] mb-2" style="color:var(--sub)">余位 / 共${l.t} · 使用率${u}%</div>
+    <div class="bar"><i style="width:${u}%;background:${l.c}"></i></div>
+  </div>`}).join('');
+
+// ===== 待办 =====
+const todos=[
+  {t:'东门P2入口排队16辆',l:'danger',i:'car-side'},
+  {t:'22:10影院集中离场预警',l:'warn',i:'clock'},
+  {t:'星巴克停车券预算即将用完',l:'warn',i:'ticket'},
+  {t:'2笔全免券待商场审批',l:'danger',i:'stamp'},
+  {t:'充电区7辆充满超时占位',l:'warn',i:'charging-station'},
+  {t:'B1 VIP-08车位被占用',l:'danger',i:'crown'},
+  {t:'某餐饮店发券异常(高退款)',l:'danger',i:'triangle-exclamation'},
+  {t:'3笔消费退款权益未撤销',l:'warn',i:'rotate-left'},
+  {t:'2起停车费用投诉待处理',l:'brand',i:'comment-dots'},
+  {t:'物流卸货区A作业超时',l:'warn',i:'truck'},
+  {t:'南门诱导屏离线',l:'danger',i:'display'},
+  {t:'B2-12道闸故障',l:'danger',i:'gears'},
+];
+const lc={danger:'#ef4444',warn:'#f59e0b',brand:'#3b82f6'};
+document.getElementById('todoList').innerHTML=todos.map(x=>`
+  <div class="flex items-center gap-3 p-2.5 rounded-xl text-sm cursor-pointer" style="background:var(--panel2)" onclick="toast('已受理：${x.t}')">
+    <div class="w-8 h-8 rounded-lg grid place-items-center shrink-0" style="background:${lc[x.l]}22;color:${lc[x.l]}"><i class="fas fa-${x.i}"></i></div>
+    <span class="flex-1">${x.t}</span><i class="fas fa-chevron-right text-xs" style="color:var(--sub)"></i>
+  </div>`).join('');
+
+// ===== 资源池 =====
+const pools=[
+  ['商场顾客高周转区','普通购物顾客','靠近入口·控长期占用',1200,82,'ok'],
+  ['会员停车区','中高等级会员','按等级开放',900,79,'ok'],
+  ['VIP预约区','高价值客户','预约保留·超时释放',60,56,'ok'],
+  ['写字楼停车区','企业及员工','工作日白天优先',600,45,'ok'],
+  ['酒店住客区','入住客人','过夜·多次进出',300,68,'ok'],
+  ['公寓住户区','长期住户','固定长期权益',200,88,'warn'],
+  ['影院夜间区','影院顾客','夜间电梯出口保障',400,71,'ok'],
+  ['餐饮延时区','餐饮顾客','闭店后离场',350,84,'warn'],
+  ['充电区','新能源车辆','充满占位管理',120,81,'warn'],
+  ['代客泊车区','VIP及付费顾客','交接责任管理',80,49,'ok'],
+  ['商户员工区','商户员工','不占顾客核心位',150,73,'ok'],
+  ['物流卸货区','配送车辆','任务预约·限时',40,60,'ok'],
+  ['活动临时区','会议演出展览','活动期动态划拨',200,92,'danger'],
+  ['周边协同车场','高峰分流车辆','导航优惠结算联动',500,34,'ok'],
+];
+const sc={ok:['#22c55e','正常'],warn:['#f59e0b','偏紧'],danger:['#ef4444','满位']};
+document.getElementById('poolTable').innerHTML=pools.map(p=>`
+  <tr><td class="font-semibold">${p[0]}</td><td style="color:var(--sub)">${p[1]}</td><td style="color:var(--sub)">${p[2]}</td><td>${p[3]}</td>
+  <td><div class="flex items-center gap-2"><div class="bar w-16"><i style="width:${p[4]}%;background:${sc[p[5]][0]}"></i></div>${p[4]}%</div></td>
+  <td><span class="badge" style="background:${sc[p[5]][0]}22;color:${sc[p[5]][0]}">${sc[p[5]][1]}</span></td></tr>`).join('');
+
+// ===== 门岗 =====
+const gates=[
+  {n:'东门 P2入口',q:16,l:'danger'},{n:'北门 P1入口',q:3,l:'ok'},{n:'西门 B1入口',q:7,l:'warn'},{n:'南门 物流入口',q:1,l:'ok'},
+  {n:'P2出口',q:48,l:'danger'},{n:'P3出口',q:12,l:'warn'},{n:'B2南出口',q:5,l:'ok'},{n:'B1西出口',q:2,l:'ok'},
+];
+const glc={ok:'#22c55e',warn:'#f59e0b',danger:'#ef4444'};
+document.getElementById('gateGrid').innerHTML=gates.map(g=>`
+  <div class="p-3 rounded-xl" style="background:var(--panel2);border:1px solid ${glc[g.l]}44">
+    <div class="text-xs" style="color:var(--sub)">${g.n}</div>
+    <div class="text-2xl font-black mt-1" style="color:${glc[g.l]}">${g.q}<span class="text-xs font-normal">辆</span></div>
+    <div class="bar mt-1"><i style="width:${Math.min(g.q*2,100)}%;background:${glc[g.l]}"></i></div>
+  </div>`).join('');
+document.getElementById('gateEff').innerHTML=[['P2出口','12s/辆','danger'],['P3出口','7s/辆','warn'],['B2南出口','5s/辆','ok'],['B1西出口','4s/辆','ok']].map(e=>`
+  <div class="flex items-center justify-between"><span>${e[0]}</span><span style="color:${glc[e[2]]}">${e[1]}</span></div>
+  <div class="bar mb-2"><i style="width:${e[2]=='danger'?90:e[2]=='warn'?60:35}%;background:${glc[e[2]]}"></i></div>`).join('');
+
+// ===== 活动 =====
+document.getElementById('eventList').innerHTML=[
+  {n:'秋季店庆',t:'今日 10:00-22:00',c:'进行中',cl:'ok',cars:'预计3200辆 · VIP 80 · 媒体 20',budget:78,dept:'商场营销部'},
+  {n:'品牌新品发布会',t:'今晚 19:00-21:00',c:'待启动',cl:'warn',cars:'嘉宾车120 · 预留B1西区',budget:40,dept:'品牌方+商场'},
+  {n:'周末亲子市集',t:'明日 10:00-18:00',c:'待启动',cl:'warn',cars:'预计2400辆 · 临时区200位',budget:25,dept:'商场运营部'},
+  {n:'汽车品鉴展',t:'下周六 全天',c:'筹备中',cl:'brand',cars:'展车40 · 客流车1800',budget:10,dept:'招商部'},
+].map(e=>{
+  const cl={ok:'#22c55e',warn:'#f59e0b',brand:'#3b82f6'}[e.cl];
+  return `<div class="p-3 rounded-xl" style="background:var(--panel2);border-left:3px solid ${cl}">
+    <div class="flex items-center justify-between">
+      <div><b>${e.n}</b> <span class="badge ml-1" style="background:${cl}22;color:${cl}">${e.c}</span></div>
+      <span class="text-xs" style="color:var(--sub)">${e.t}</span>
+    </div>
+    <div class="text-xs mt-1.5" style="color:var(--sub)"><i class="fas fa-car-side"></i> ${e.cars}</div>
+    <div class="flex items-center gap-2 mt-2">
+      <div class="bar flex-1"><i style="width:${e.budget}%;background:${cl}"></i></div>
+      <span class="text-[11px]" style="color:var(--sub)">预算 ${e.budget}%</span>
+      <span class="text-[11px] chip px-2 py-0.5" style="background:var(--panel)">${e.dept}</span>
+    </div>
+    <div class="flex gap-2 mt-2">
+      <button class="text-xs px-2.5 py-1 rounded-lg" style="background:var(--brand);color:#fff" onclick="toast('已加载「${e.n}」高峰预案')">高峰预案</button>
+      <button class="text-xs px-2.5 py-1 rounded-lg" style="background:var(--panel)" onclick="toast('已向周边车场申请分流配额')">周边分流</button>
+      <button class="text-xs px-2.5 py-1 rounded-lg" style="background:var(--panel)" onclick="toast('已预留VIP与媒体车位')">预留车位</button>
+    </div>
+  </div>`;
+}).join('');
+
+// ====== 会员等级权益 ======
+const tiers=[
+  {n:'普卡会员',c:'#94a3b8',ic:'user',free:'消费满额免费',park:'—',pt:'100分=1元',valet:'—'},
+  {n:'金卡会员',c:'#fbbf24',ic:'crown',free:'每日免费3h',park:'可预约',pt:'积分抵扣+无感',valet:'夜间优惠'},
+  {n:'黑钻会员',c:'#a855f7',ic:'gem',free:'每日免费6h',park:'专属车位',pt:'无感离场',valet:'免费代客泊车'},
+];
+document.getElementById('memberTiers').innerHTML=tiers.map(t=>`
+  <div class="p-4 rounded-xl" style="background:var(--panel2);border:1px solid ${t.c}44">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-9 h-9 rounded-full grid place-items-center" style="background:${t.c}22;color:${t.c}"><i class="fas fa-${t.ic}"></i></div>
+      <b style="color:${t.c}">${t.n}</b>
+    </div>
+    <div class="space-y-1.5 text-xs">
+      <div class="flex justify-between"><span style="color:var(--sub)">免费时长</span><span>${t.free}</span></div>
+      <div class="flex justify-between"><span style="color:var(--sub)">专属车位</span><span>${t.park}</span></div>
+      <div class="flex justify-between"><span style="color:var(--sub)">积分/离场</span><span>${t.pt}</span></div>
+      <div class="flex justify-between"><span style="color:var(--sub)">代客泊车</span><span>${t.valet}</span></div>
+    </div>
+    <button class="w-full mt-3 text-xs py-1.5 rounded-lg" style="background:${t.c}22;color:${t.c}" onclick="toast('已进入「${t.n}」权益编辑')">编辑权益</button>
+  </div>`).join('');
+
+// ====== 会员转化漏斗 ======
+const funnel=[
+  ['到店车辆',8734,100,'#3b82f6'],
+  ['识别会员',3241,37,'#06b6d4'],
+  ['产生消费',5486,63,'#22c55e'],
+  ['新绑会员',186,2,'#f472b6'],
+  ['30天复访',4247,49,'#fbbf24'],
+];
+document.getElementById('funnel').innerHTML=funnel.map(f=>`
+  <div>
+    <div class="flex justify-between text-xs mb-1"><span>${f[0]}</span><b>${f[1].toLocaleString()} <span style="color:var(--sub)">(${f[2]}%)</span></b></div>
+    <div class="bar"><i style="width:${f[2]}%;background:${f[3]}"></i></div>
+  </div>`).join('');
+
+// ====== 消费退款监控 ======
+document.getElementById('refundList').innerHTML=[
+  {c:'沪A·1234A',m:'某餐饮 消费¥500→退款',s:'车未离场',act:'重算优惠',cl:'warn'},
+  {c:'沪B·5678B',m:'某超市 消费¥188→退款',s:'已离场',act:'商户结算扣回',cl:'danger'},
+  {c:'沪C·9012C',m:'某服饰 消费¥320→部分退',s:'车未离场',act:'减少优惠',cl:'warn'},
+].map(r=>{const cl={warn:'#f59e0b',danger:'#ef4444'}[r.cl];return`
+  <div class="p-3 rounded-xl" style="background:var(--panel2);border-left:3px solid ${cl}">
+    <div class="flex items-center justify-between"><b class="text-sm">${r.c}</b><span class="badge" style="background:${cl}22;color:${cl}">${r.s}</span></div>
+    <div class="text-xs mt-1" style="color:var(--sub)">${r.m}</div>
+    <button class="text-xs px-2 py-1 rounded mt-2" style="background:${cl};color:#111" onclick="toast('已执行：${r.act}')">${r.act}</button>
+  </div>`}).join('');
+
+// ====== 商户停车券记录 ======
+document.getElementById('couponTable').innerHTML=[
+  ['14:32','#SB-0072','¥58','138****6621','免费1h','已核销'],
+  ['14:20','#SB-0071','¥126','139****3345','免费2h','待绑车'],
+  ['14:05','#SB-0069','¥42','—','免费30min','已发放'],
+  ['13:48','#SB-0065','¥210','137****8890','免费2h','已核销'],
+  ['13:30','#SB-0061','¥88','会员·王先生','免费1h','已核销'],
+].map(c=>{
+  const st={'已核销':['#22c55e'],'待绑车':['#f59e0b'],'已发放':['#3b82f6']}[c[5]][0];
+  return `<tr><td>${c[0]}</td><td class="font-mono text-xs">${c[1]}</td><td>${c[2]}</td><td style="color:var(--sub)">${c[3]}</td><td>${c[4]}</td><td><span class="badge" style="background:${st}22;color:${st}">${c[5]}</span></td></tr>`;
+}).join('');
+
+// ====== 结算台账 ======
+document.getElementById('settleTable').innerHTML=[
+  ['星巴克 L3-08','商户停车券','¥5,120','¥4,280','商场补贴¥840','¥4,280','已确认','ok'],
+  ['海底捞 L4-12','商户停车券','¥12,400','¥10,960','分摊¥1,440','¥10,960','待确认','warn'],
+  ['万达影城','影票联动','¥18,600','¥16,200','—','¥16,200','已结算','ok'],
+  ['凯悦酒店','住客停车','¥24,000','¥21,300','配额结算','¥2,700欠','欠费','danger'],
+  ['写字楼A座','企业月租','¥86,000','—','部门分摊','¥12,600欠','欠费','danger'],
+  ['秋季店庆','营销活动','¥68,000','¥68,000','60%营销/30%商户/10%运营','¥27,200','分摊中','warn'],
+  ['周边合作车场','分流结算','¥6,400','¥6,120','差异6笔复核','¥6,120','复核中','warn'],
+].map(s=>{
+  const cl={ok:'#22c55e',warn:'#f59e0b',danger:'#ef4444'}[s[7]];
+  return `<tr><td class="font-semibold">${s[0]}</td><td style="color:var(--sub)">${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td><td class="text-xs" style="color:var(--sub)">${s[4]}</td><td><b>${s[5]}</b></td><td><span class="badge" style="background:${cl}22;color:${cl}">${s[6]}</span></td></tr>`;
+}).join('');
+
+// ====== VIP预约 ======
+document.getElementById('vipList').innerHTML=[
+  {c:'沪A·6688X',n:'李总',t:'14:00到店',s:'已预留 B1-VIP08',need:'需充电·代客泊车',cl:'ok'},
+  {c:'沪B·2233Y',n:'王女士',t:'15:30到店',s:'已预留 B1-VIP12',need:'靠近凯悦酒店',cl:'ok'},
+  {c:'沪D·8899Z',n:'张先生',t:'16:00到店',s:'车位被占·处理中',need:'需代客泊车',cl:'warn'},
+].map(v=>{const cl={ok:'#22c55e',warn:'#f59e0b'}[v.cl];return`
+  <div class="p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2);border-left:3px solid ${cl}">
+    <div class="w-9 h-9 rounded-full grid place-items-center" style="background:#fbbf2422;color:#fbbf24"><i class="fas fa-crown"></i></div>
+    <div class="flex-1"><div class="text-sm"><b>${v.n}</b> · ${v.c}</div><div class="text-xs" style="color:var(--sub)">${v.t} · ${v.need}</div></div>
+    <span class="badge" style="background:${cl}22;color:${cl}">${v.s}</span>
+  </div>`}).join('');
+
+// ====== 代客泊车任务 ======
+document.getElementById('valetList').innerHTML=[
+  {c:'沪A·6688X',s:'待取车',info:'顾客已到南门·等待送车',cl:'warn',p:70},
+  {c:'沪E·1122Q',s:'泊车中',info:'泊车员张伟·停往B1-08',cl:'brand',p:40},
+  {c:'沪F·3344W',s:'待接车',info:'顾客14:20到达东门',cl:'ok',p:15},
+].map(v=>{const cl={ok:'#22c55e',warn:'#f59e0b',brand:'#3b82f6'}[v.cl];return`
+  <div class="p-3 rounded-xl" style="background:var(--panel2)">
+    <div class="flex items-center justify-between"><b class="text-sm">${v.c}</b><span class="badge" style="background:${cl}22;color:${cl}">${v.s}</span></div>
+    <div class="text-xs mt-1 mb-2" style="color:var(--sub)">${v.info}</div>
+    <div class="bar"><i style="width:${v.p}%;background:${cl}"></i></div>
+  </div>`}).join('');
+
+// ====== 充电超时治理 ======
+document.getElementById('chargeList').innerHTML=[
+  {c:'沪A·7788M',t:'已充满42分钟',fee:'超时占位费 ¥15',cl:'danger',act:'派现场移车'},
+  {c:'沪B·9900N',t:'已充满18分钟',fee:'免费移车倒计时 12min',cl:'warn',act:'再次提醒'},
+  {c:'沪C·1133P',t:'已充满55分钟',fee:'超时占位费 ¥22',cl:'danger',act:'信用提醒'},
+].map(c=>{const cl={danger:'#ef4444',warn:'#f59e0b'}[c.cl];return`
+  <div class="p-3 rounded-xl flex items-center gap-3" style="background:var(--panel2);border-left:3px solid ${cl}">
+    <div class="w-9 h-9 rounded-lg grid place-items-center" style="background:${cl}22;color:${cl}"><i class="fas fa-charging-station"></i></div>
+    <div class="flex-1"><div class="text-sm"><b>${c.c}</b></div><div class="text-xs" style="color:var(--sub)">${c.t} · ${c.fee}</div></div>
+    <button class="text-xs px-2 py-1 rounded" style="background:${cl};color:#fff" onclick="toast('已执行：${c.act}')">${c.act}</button>
+  </div>`}).join('');
+
+// ====== 数字滚动动画 ======
+function animateCount(el){
+  const target=+el.dataset.count;const dur=1200;const start=performance.now();
+  function step(now){const p=Math.min((now-start)/dur,1);const e=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*e).toLocaleString();if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+document.querySelectorAll('[data-count]').forEach(animateCount);
+
+// ====== 图表 ======
+const gc='#8ba0bd',grid='rgba(255,255,255,.06)';
+Chart.defaults.color=gc;Chart.defaults.font.family="'PingFang SC',sans-serif";
+
+new Chart(document.getElementById('flowChart'),{type:'doughnut',data:{
+  labels:['购物顾客','餐饮','影院','酒店住客','写字楼','活动/其他'],
+  datasets:[{data:[3820,1560,974,412,850,1118],backgroundColor:['#3b82f6','#f59e0b','#a855f7','#06b6d4','#22c55e','#f472b6'],borderWidth:0}]
+},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8,font:{size:11}}}},cutout:'60%',maintainAspectRatio:false}});
+
+new Chart(document.getElementById('trendChart'),{type:'line',data:{
+  labels:['8时','10时','12时','14时','16时','18时','20时','22时'],
+  datasets:[
+    {label:'入场',data:[120,680,920,860,740,980,760,320],borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.12)',fill:true,tension:.4},
+    {label:'离场',data:[60,240,780,690,620,540,880,760],borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.1)',fill:true,tension:.4}
+]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{color:grid}},y:{grid:{color:grid}}},maintainAspectRatio:false}});
+
+new Chart(document.getElementById('poolChart'),{type:'bar',data:{
+  labels:['商场','会员','写字楼','酒店','影院','餐饮','充电','其他'],
+  datasets:[{label:'车位',data:[1200,900,600,300,400,350,120,730],backgroundColor:'#3b82f6',borderRadius:6}]
+},options:{plugins:{legend:{display:false}},indexAxis:'y',scales:{x:{grid:{color:grid}},y:{grid:{display:false}}},maintainAspectRatio:false}});
+
+new Chart(document.getElementById('exitChart'),{type:'bar',data:{
+  labels:['21:40','21:50','22:00','22:10','22:20','22:30'],
+  datasets:[{label:'预计离场',data:[80,140,260,486,320,150],backgroundColor:(c)=>c.raw>400?'#ef4444':c.raw>250?'#f59e0b':'#22c55e',borderRadius:5}]
+},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:grid}}},maintainAspectRatio:false}});
+
+new Chart(document.getElementById('convChart'),{type:'bar',data:{
+  labels:['购物','餐饮','影院','超市','娱乐','活动'],
+  datasets:[
+    {label:'优惠成本(万)',data:[3.2,2.1,1.4,0.8,1.1,2.4],backgroundColor:'#f59e0b',borderRadius:5},
+    {label:'关联消费(万)',data:[68,42,18,16,22,46],backgroundColor:'#22c55e',borderRadius:5,yAxisID:'y1'}
+]},options:{plugins:{legend:{position:'top',labels:{boxWidth:10}}},scales:{x:{grid:{display:false}},y:{grid:{color:grid},position:'left'},y1:{grid:{display:false},position:'right'}},maintainAspectRatio:false}});
+
+new Chart(document.getElementById('settleChart'),{type:'doughnut',data:{
+  labels:['商户承担','商场营销','会员部门','酒店','写字楼','运营方'],
+  datasets:[{data:[38,28,12,9,8,5],backgroundColor:['#fb923c','#3b82f6','#f472b6','#06b6d4','#22c55e','#a855f7'],borderWidth:0}]
+},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8,font:{size:11}}}},cutout:'58%',maintainAspectRatio:false}});
+
+// 点击遮罩关闭弹窗
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+</script>
+</body>
+</html>

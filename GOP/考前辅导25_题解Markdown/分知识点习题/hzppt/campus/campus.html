@@ -1,0 +1,4515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>办公园区智慧停车管理平台</title>
+
+    <style>
+        :root {
+            --primary: #2878d0;
+            --primary-dark: #1d5fa8;
+            --primary-soft: #edf6ff;
+            --success: #169968;
+            --success-soft: #eaf8f2;
+            --warning: #df8a16;
+            --warning-soft: #fff6e5;
+            --danger: #d94d4d;
+            --danger-soft: #fff0f0;
+            --purple: #7458bd;
+            --purple-soft: #f3efff;
+            --text: #263449;
+            --text-secondary: #59687b;
+            --muted: #8491a3;
+            --border: #dce4ed;
+            --background: #f4f7fa;
+            --card: #ffffff;
+            --sidebar: #203d63;
+            --sidebar-active: #2d5b91;
+            --shadow: 0 7px 24px rgba(35, 55, 80, 0.07);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 30;
+            width: 252px;
+            overflow-y: auto;
+            color: #fff;
+            background: var(--sidebar);
+        }
+
+        .brand {
+            padding: 22px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            flex: 0 0 46px;
+            place-items: center;
+            border-radius: 12px;
+            color: #fff;
+            background: #3f7dbe;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 13px;
+        }
+
+        .nav {
+            padding: 14px 12px 30px;
+        }
+
+        .nav-title {
+            margin: 17px 11px 8px;
+            color: rgba(255, 255, 255, 0.46);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 11px 13px;
+            border: 0;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.82);
+            background: transparent;
+            text-align: left;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: var(--sidebar-active);
+        }
+
+        .nav-icon {
+            display: grid;
+            width: 28px;
+            height: 28px;
+            flex: 0 0 28px;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .nav-badge {
+            min-width: 24px;
+            margin-left: auto;
+            padding: 1px 7px;
+            border-radius: 999px;
+            color: #fff;
+            background: #df5b5b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* 主区域 */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 252px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            min-height: 72px;
+            padding: 11px 26px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.97);
+        }
+
+        .page-info h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .page-info p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .top-select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-left: 12px;
+            border-left: 1px solid var(--border);
+        }
+
+        .avatar {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-weight: 800;
+        }
+
+        .user strong,
+        .user span {
+            display: block;
+        }
+
+        .user strong {
+            font-size: 14px;
+        }
+
+        .user span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 24px 27px 50px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* 公共组件 */
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 19px 21px 0;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 19px 21px 21px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .section-heading p {
+            max-width: 920px;
+            margin: 5px 0 0;
+            color: var(--text-secondary);
+        }
+
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .role-strip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 17px;
+            padding: 13px 16px;
+            border: 1px solid #d8e4ef;
+            border-radius: 11px;
+            background: #f8fbfe;
+        }
+
+        .role-strip strong {
+            color: var(--primary-dark);
+        }
+
+        .role-strip span {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 39px;
+            padding: 8px 15px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            color: var(--text);
+            background: #fff;
+        }
+
+        .btn-success {
+            color: #fff;
+            background: var(--success);
+        }
+
+        .btn-warning {
+            color: #fff;
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background: var(--danger);
+        }
+
+        .btn-sm {
+            min-height: 33px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tag-blue {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .tag-green {
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .tag-orange {
+            color: #b16a08;
+            background: var(--warning-soft);
+        }
+
+        .tag-red {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .tag-purple {
+            color: var(--purple);
+            background: var(--purple-soft);
+        }
+
+        .tag-gray {
+            color: #667587;
+            background: #eef2f5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .metric-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            margin: 10px 0 4px;
+            font-size: 28px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .info-banner,
+        .warning-banner,
+        .success-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px 17px;
+            border-radius: 11px;
+        }
+
+        .info-banner {
+            border: 1px solid #c9dff5;
+            color: #315f91;
+            background: var(--primary-soft);
+        }
+
+        .warning-banner {
+            border: 1px solid #eed099;
+            color: #815710;
+            background: var(--warning-soft);
+        }
+
+        .success-banner {
+            border: 1px solid #c2e3d4;
+            color: #226b50;
+            background: var(--success-soft);
+        }
+
+        .banner-icon {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .banner-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* 待办 */
+
+        .todo-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .todo-item {
+            display: grid;
+            grid-template-columns: 8px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .todo-level {
+            width: 8px;
+            height: 54px;
+            border-radius: 99px;
+            background: var(--primary);
+        }
+
+        .todo-level.warning {
+            background: var(--warning);
+        }
+
+        .todo-level.danger {
+            background: var(--danger);
+        }
+
+        .todo-level.success {
+            background: var(--success);
+        }
+
+        .todo-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .todo-content p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .todo-meta {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* 工具栏、表格 */
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+            max-width: 430px;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .search-box span {
+            padding-left: 12px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+        }
+
+        .toolbar select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 940px;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #e9eef3;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-secondary);
+            background: #f8fafc;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #fbfdff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .plate {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #a9c6e8;
+            border-radius: 6px;
+            color: #215f9e;
+            background: #eff7ff;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        /* 表单 */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required::after {
+            content: "*";
+            margin-left: 3px;
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #83b0e0;
+            box-shadow: 0 0 0 3px rgba(40, 120, 208, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 86px;
+            resize: vertical;
+        }
+
+        .readonly-box {
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #f8fafc;
+        }
+
+        .readonly-box p {
+            margin: 3px 0;
+        }
+
+        /* 详情 */
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .detail-item {
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f9fbfd;
+        }
+
+        .detail-item > span:first-child {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .detail-section {
+            margin-top: 18px;
+        }
+
+        .detail-section h4 {
+            margin: 0 0 9px;
+            font-size: 16px;
+        }
+
+        .progress {
+            overflow: hidden;
+            height: 10px;
+            border-radius: 999px;
+            background: #edf1f5;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 999px;
+            background: var(--primary);
+        }
+
+        .progress-bar.warning {
+            background: var(--warning);
+        }
+
+        .progress-bar.danger {
+            background: var(--danger);
+        }
+
+        /* 企业资源卡 */
+
+        .enterprise-summary {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 16px;
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .enterprise-summary h3 {
+            margin: 0 0 5px;
+        }
+
+        .enterprise-summary p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .resource-numbers {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(90px, 1fr));
+            gap: 8px;
+            margin-top: 13px;
+        }
+
+        .resource-number {
+            padding: 10px;
+            border-radius: 9px;
+            background: #f7f9fb;
+            text-align: center;
+        }
+
+        .resource-number strong {
+            display: block;
+            font-size: 19px;
+        }
+
+        .resource-number span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* 停车资源地图 */
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: minmax(620px, 1.4fr) minmax(330px, 0.6fr);
+            gap: 17px;
+        }
+
+        .park-map {
+            position: relative;
+            min-height: 560px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background:
+                linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.65)),
+                repeating-linear-gradient(0deg, #e8eef4 0, #e8eef4 1px, transparent 1px, transparent 36px),
+                repeating-linear-gradient(90deg, #e8eef4 0, #e8eef4 1px, transparent 1px, transparent 36px);
+        }
+
+        .road-h,
+        .road-v {
+            position: absolute;
+            border-radius: 8px;
+            background: #cfd8e0;
+        }
+
+        .road-h {
+            left: 4%;
+            right: 4%;
+            top: 46%;
+            height: 57px;
+        }
+
+        .road-v {
+            top: 4%;
+            bottom: 4%;
+            left: 48%;
+            width: 58px;
+        }
+
+        .park-zone {
+            position: absolute;
+            padding: 14px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .park-zone:hover {
+            border-color: var(--primary);
+        }
+
+        .park-zone h4 {
+            margin: 0 0 4px;
+        }
+
+        .park-zone p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .park-zone strong {
+            font-size: 22px;
+        }
+
+        .zone-red {
+            border-color: #e68282;
+            background: #fff4f4;
+        }
+
+        .zone-orange {
+            border-color: #e5ad5a;
+            background: #fff9ec;
+        }
+
+        .zone-green {
+            border-color: #72c8a5;
+            background: #f0fbf6;
+        }
+
+        .zone-purple {
+            border-color: #aa98de;
+            background: #f7f4ff;
+        }
+
+        .zone-a {
+            left: 5%;
+            top: 8%;
+            width: 34%;
+            height: 29%;
+        }
+
+        .zone-b {
+            right: 5%;
+            top: 8%;
+            width: 34%;
+            height: 29%;
+        }
+
+        .zone-c {
+            left: 5%;
+            bottom: 8%;
+            width: 34%;
+            height: 30%;
+        }
+
+        .zone-d {
+            right: 5%;
+            bottom: 8%;
+            width: 34%;
+            height: 30%;
+        }
+
+        .map-side {
+            display: grid;
+            align-content: start;
+            gap: 13px;
+        }
+
+        .action-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .action-card h4 {
+            margin: 0 0 6px;
+        }
+
+        .action-card p {
+            margin: 0 0 11px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .screen-preview {
+            padding: 16px;
+            border: 7px solid #3b4753;
+            border-radius: 8px;
+            color: #f4d84e;
+            background: #182128;
+            text-align: center;
+            font-size: 19px;
+            font-weight: 800;
+            line-height: 1.55;
+        }
+
+        .screen-preview small {
+            display: block;
+            color: #8fe0a8;
+            font-size: 13px;
+        }
+
+        /* 流程 */
+
+        .flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 9px;
+        }
+
+        .flow-step {
+            position: relative;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .flow-step:not(:last-child)::after {
+            content: "→";
+            position: absolute;
+            right: -12px;
+            top: 37%;
+            z-index: 2;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .flow-step strong {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--primary-dark);
+        }
+
+        .flow-step span {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 弹窗 */
+
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(28, 41, 59, 0.48);
+        }
+
+        .modal-mask.show {
+            display: flex;
+        }
+
+        .modal {
+            overflow: hidden;
+            width: min(900px, 100%);
+            max-height: 92vh;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 25px 80px rgba(20, 35, 52, 0.28);
+        }
+
+        .modal.large {
+            width: min(1120px, 100%);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 19px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-header p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .modal-close {
+            display: grid;
+            width: 37px;
+            height: 37px;
+            place-items: center;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            background: #eef2f5;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            max-height: calc(92vh - 145px);
+            padding: 20px 22px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            padding: 14px 22px;
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+        }
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            top: 84px;
+            z-index: 200;
+            display: grid;
+            gap: 9px;
+        }
+
+        .toast {
+            width: min(400px, calc(100vw - 35px));
+            padding: 13px 15px;
+            border: 1px solid #bfe0d2;
+            border-radius: 10px;
+            color: #21694f;
+            background: #effaf5;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.error {
+            border-color: #efc8c8;
+            color: #983939;
+            background: #fff3f3;
+        }
+
+        @media (max-width: 1250px) {
+            .grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .map-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 950px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .nav-title {
+                display: none;
+            }
+
+            .nav-item {
+                min-width: 165px;
+            }
+
+            .topbar {
+                position: static;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-5 {
+                grid-template-columns: 1fr;
+            }
+
+            .flow {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-step:not(:last-child)::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                font-size: 15px;
+            }
+
+            .content {
+                padding: 17px 13px 35px;
+            }
+
+            .topbar {
+                padding: 11px 14px;
+            }
+
+            .top-select,
+            .date,
+            .user {
+                display: none;
+            }
+
+            .form-grid,
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .resource-numbers {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .todo-item {
+                grid-template-columns: 7px 1fr;
+            }
+
+            .todo-item .btn {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .park-map {
+                min-height: 680px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-row">
+                <div class="brand-logo">园</div>
+                <div>
+                    <h1>办公园区智慧停车</h1>
+                    <p>企业账户与对公结算平台</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+
+            <div class="nav-title">运营工作</div>
+
+            <button class="nav-item active" data-view="dashboard">
+                <span class="nav-icon">首</span>
+                运营工作台
+                <span class="nav-badge">7</span>
+            </button>
+
+            <button class="nav-item" data-view="enterprise">
+                <span class="nav-icon">企</span>
+                企业停车账户
+                <span class="nav-badge">3</span>
+            </button>
+
+            <button class="nav-item" data-view="asset">
+                <span class="nav-icon">位</span>
+                车位资产与合同
+            </button>
+
+            <button class="nav-item" data-view="overage">
+                <span class="nav-icon">超</span>
+                超额停车管理
+                <span class="nav-badge">2</span>
+            </button>
+
+            <button class="nav-item" data-view="occupancy">
+                <span class="nav-icon">占</span>
+                专属车位占用
+                <span class="nav-badge" id="occupancyBadge">2</span>
+            </button>
+
+            <div class="nav-title">客户与服务</div>
+
+            <button class="nav-item" data-view="visitor">
+                <span class="nav-icon">访</span>
+                企业访客停车
+            </button>
+
+            <button class="nav-item" data-view="map">
+                <span class="nav-icon">图</span>
+                园区停车资源图
+                <span class="nav-badge">1</span>
+            </button>
+
+            <button class="nav-item" data-view="sharing">
+                <span class="nav-icon">共</span>
+                周边错峰共享
+            </button>
+
+            <div class="nav-title">财务与监督</div>
+
+            <button class="nav-item" data-view="billing">
+                <span class="nav-icon">账</span>
+                企业账单与挂账
+                <span class="nav-badge" id="billBadge">4</span>
+            </button>
+
+            <button class="nav-item" data-view="finance">
+                <span class="nav-icon">财</span>
+                发票与回款核销
+                <span class="nav-badge">3</span>
+            </button>
+
+            <button class="nav-item" data-view="audit">
+                <span class="nav-icon">审</span>
+                财务及操作审计
+            </button>
+
+        </nav>
+    </aside>
+
+    <!-- 主内容 -->
+    <main class="main">
+
+        <header class="topbar">
+            <div class="page-info">
+                <h2 id="pageTitle">园区停车运营工作台</h2>
+                <p id="pageDesc">今天需要处理的企业停车、车位和结算问题</p>
+            </div>
+
+            <div class="top-actions">
+                <select class="top-select">
+                    <option>智谷科技园·一期</option>
+                    <option>智谷科技园·二期</option>
+                    <option>智谷科技园·商业中心</option>
+                </select>
+
+                <select class="top-select" id="roleSelect" onchange="changeRole(this.value)">
+                    <option>园区停车运营主管</option>
+                    <option>企业停车管理员</option>
+                    <option>园区资产管理员</option>
+                    <option>园区财务人员</option>
+                    <option>停车现场班组长</option>
+                </select>
+
+                <div class="date">2026年7月18日</div>
+
+                <div class="user">
+                    <div class="avatar">王</div>
+                    <div>
+                        <strong id="userName">王主管</strong>
+                        <span id="userRole">园区停车运营中心</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- 运营工作台 -->
+            <section class="view active" id="view-dashboard">
+
+                <div class="role-strip">
+                    <strong>当前使用人：园区停车运营主管</strong>
+                    <span>负责处理企业超额、专属车位占用、合同权益异常、车场不均衡和跨部门结算待办。</span>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">园区总余位</div>
+                        <div class="metric-value">826</div>
+                        <div class="metric-note">总使用率78.6%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">当前在场企业车辆</div>
+                        <div class="metric-value">2,786</div>
+                        <div class="metric-note">涉及126家企业</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">企业额度超额</div>
+                        <div class="metric-value">2家</div>
+                        <div class="metric-note">预计产生3,860元费用</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">待确认企业账单</div>
+                        <div class="metric-value">4份</div>
+                        <div class="metric-note">合计286,540元</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">本月未核销回款</div>
+                        <div class="metric-value">3笔</div>
+                        <div class="metric-note">合计98,000元</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>今天优先处理</h3>
+                                <p>按照影响企业、持续时间和财务风险排序</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="todo-list">
+
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>华星科技企业停车额度已超额12辆</strong>
+                                        <p>合同额度100辆，当前112辆使用企业权益，企业配置为统一承担超额费用。</p>
+                                        <div class="todo-meta">预计今日超额费用460元 · 企业管理员已收到提醒</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="openOverageDetail('HX')">
+                                        处理超额
+                                    </button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>华星科技固定车位B2-238被访客车辆占用</strong>
+                                        <p>占用车辆粤A·8K36Q，已发送两次移车通知，企业员工预计5分钟后到达。</p>
+                                        <div class="todo-meta">已占用32分钟 · 现场处置人员尚未接单</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="openOccupancyDetail('ZY001')">
+                                        派单处置
+                                    </button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>云创网络申请临时增加20个停车名额</strong>
+                                        <p>用于7月20日客户大会，申请企业统一承担费用，预计费用2,400元。</p>
+                                        <div class="todo-meta">需要核验园区余位及企业信用额度</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="openTemporaryQuota()">
+                                        审核申请
+                                    </button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>3号停车场与5号停车场使用率不均衡</strong>
+                                        <p>3号停车场使用率96%，5号停车场使用率61%，均可服务A区办公楼。</p>
+                                        <div class="todo-meta">建议将A1、A2楼栋员工引导至5号停车场</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('map')">
+                                        调整诱导
+                                    </button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>宏远咨询6月停车账单提出3笔费用异议</strong>
+                                        <p>企业认为3辆车已离职，不应继续使用企业挂账账户。</p>
+                                        <div class="todo-meta">争议金额186元 · 无争议金额46,820元</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="openBillDetail('BILL003')">
+                                        处理争议
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>园区企业停车经营情况</h3>
+                                <p>按企业合同、资产和结算方式统计</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span>签约企业</span>
+                                    <strong>126家</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>企业合同车位</span>
+                                    <strong>2,480个</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>企业买断车位</span>
+                                    <strong>386个</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>物业托管车位</span>
+                                    <strong>148个</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>招商赠送权益</span>
+                                    <strong>216个</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>共享停车名额</span>
+                                    <strong>860个</strong>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>本月企业应收</h4>
+
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <span>固定租赁费</span>
+                                        <strong>¥1,286,000</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>企业超额停车</span>
+                                        <strong>¥86,420</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>访客停车</span>
+                                        <strong>¥42,680</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>临时增租</span>
+                                        <strong>¥35,600</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>托管管理费</span>
+                                        <strong>¥28,900</strong>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>逾期应收</span>
+                                        <strong style="color: var(--danger)">¥76,500</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- 企业停车账户 -->
+            <section class="view" id="view-enterprise">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>企业停车账户</h2>
+                        <p>每家企业独立管理合同权益、员工车辆、固定车位、共享名额、访客额度和费用承担方式。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openEnterpriseImport()">批量导入企业车辆</button>
+                        <button class="btn btn-primary" onclick="openEnterpriseCreate()">新建企业停车账户</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>园区配置合同和额度；企业管理员自行维护员工车辆；企业财务查看本企业账单。</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="toolbar">
+                            <div class="search-box">
+                                <span>查</span>
+                                <input id="enterpriseSearch" placeholder="搜索企业名称、合同号、楼栋"
+                                       oninput="renderEnterpriseTable()">
+                            </div>
+
+                            <select id="enterpriseType" onchange="renderEnterpriseTable()">
+                                <option value="">全部停车模式</option>
+                                <option>固定车位</option>
+                                <option>共享名额</option>
+                                <option>产权车位</option>
+                                <option>混合模式</option>
+                            </select>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>企业</th>
+                                    <th>停车模式</th>
+                                    <th>停车权益</th>
+                                    <th>当前在场</th>
+                                    <th>超额规则</th>
+                                    <th>结算方式</th>
+                                    <th>账户状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="enterpriseTableBody"></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 车位资产与合同 -->
+            <section class="view" id="view-asset">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>车位资产与合同</h2>
+                        <p>明确每个车位属于谁、谁在使用、是否托管、收益归谁，以及合同何时生效和到期。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openTrustContract()">新建车位托管</button>
+                        <button class="btn btn-primary" onclick="openParkingContract()">新建企业停车合同</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">园区总车位</div>
+                        <div class="metric-value">3,860</div>
+                        <div class="metric-note">包含办公、商业和共享区域</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">园区自有</div>
+                        <div class="metric-value">3,326</div>
+                        <div class="metric-note">当前出租率82%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">企业产权</div>
+                        <div class="metric-value">386</div>
+                        <div class="metric-note">其中托管148个</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">即将到期合同</div>
+                        <div class="metric-value">8份</div>
+                        <div class="metric-note">未来60天内到期</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>车位/区域</th>
+                                    <th>产权主体</th>
+                                    <th>使用企业</th>
+                                    <th>取得方式</th>
+                                    <th>托管状态</th>
+                                    <th>合同期限</th>
+                                    <th>收益归属</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><strong>B2-201至B2-230</strong><br><span class="muted">2号停车场B2</span></td>
+                                    <td>园区资产公司</td>
+                                    <td>华星科技</td>
+                                    <td><span class="tag tag-blue">固定租赁</span></td>
+                                    <td>不适用</td>
+                                    <td>2026-01-01至2027-12-31</td>
+                                    <td>园区资产公司</td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openAssetDetail()">查看合同</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>B3-101至B3-120</strong><br><span class="muted">3号停车场B3</span></td>
+                                    <td>云创网络</td>
+                                    <td>物业代租客户</td>
+                                    <td><span class="tag tag-purple">企业买断</span></td>
+                                    <td><span class="tag tag-green">已托管</span></td>
+                                    <td>托管至2027-06-30</td>
+                                    <td>企业80% / 物业20%</td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openTrustDetail()">托管明细</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>共享区100个名额</strong><br><span class="muted">1、2、5号停车场</span></td>
+                                    <td>园区资产公司</td>
+                                    <td>智联制造</td>
+                                    <td><span class="tag tag-blue">共享额度</span></td>
+                                    <td>不适用</td>
+                                    <td>2026-03-01至2027-02-28</td>
+                                    <td>园区运营公司</td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openAssetDetail()">查看合同</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>免费车位8个</strong><br><span class="muted">招商权益池</span></td>
+                                    <td>园区资产公司</td>
+                                    <td>宏远咨询</td>
+                                    <td><span class="tag tag-orange">招商赠送</span></td>
+                                    <td>不适用</td>
+                                    <td>2026-05-01至2026-10-31</td>
+                                    <td>计入招商让利成本</td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openFreeEntitlement()">权益详情</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 超额停车 -->
+            <section class="view" id="view-overage">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>企业超额停车管理</h2>
+                        <p>企业名额用完后，系统根据合同决定由企业承担、员工承担、双方分摊、临时增购或引导至周边停车场。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openTemporaryQuota()">审核临时额度申请</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">今日发生超额企业</div>
+                        <div class="metric-value">6家</div>
+                        <div class="metric-note">当前仍超额2家</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">企业承担订单</div>
+                        <div class="metric-value">86笔</div>
+                        <div class="metric-note">预计3,860元</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">员工承担订单</div>
+                        <div class="metric-value">43笔</div>
+                        <div class="metric-note">离场前个人支付</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">临时增购额度</div>
+                        <div class="metric-value">50个</div>
+                        <div class="metric-note">涉及3家企业</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>企业</th>
+                                    <th>合同额度</th>
+                                    <th>当前在场</th>
+                                    <th>超额数量</th>
+                                    <th>费用承担规则</th>
+                                    <th>预计费用</th>
+                                    <th>当前处理</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><strong>华星科技</strong><br><span class="muted">A3办公楼</span></td>
+                                    <td>100辆</td>
+                                    <td>112辆</td>
+                                    <td><span class="tag tag-red">超额12辆</span></td>
+                                    <td>企业统一承担</td>
+                                    <td>460元</td>
+                                    <td>已进入企业挂账池</td>
+                                    <td><button class="btn btn-primary btn-sm" onclick="openOverageDetail('HX')">查看处理</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>智联制造</strong><br><span class="muted">B1办公楼</span></td>
+                                    <td>80辆</td>
+                                    <td>87辆</td>
+                                    <td><span class="tag tag-red">超额7辆</span></td>
+                                    <td>企业承担10元，其余员工承担</td>
+                                    <td>企业70元 / 员工84元</td>
+                                    <td>员工已收到费用提醒</td>
+                                    <td><button class="btn btn-primary btn-sm" onclick="openOverageDetail('ZL')">查看处理</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>云创网络</strong><br><span class="muted">A1办公楼</span></td>
+                                    <td>60辆</td>
+                                    <td>57辆</td>
+                                    <td><span class="tag tag-orange">预计超额17辆</span></td>
+                                    <td>临时活动提前增购</td>
+                                    <td>申请2,400元</td>
+                                    <td>待园区审核</td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openTemporaryQuota()">审核申请</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 专属车位占用 -->
+            <section class="view" id="view-occupancy">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>企业专属车位占用</h2>
+                        <p>发现非授权车辆占用企业固定车位后，通知车主、派发现场任务，并为企业员工安排替代车位。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>事件编号</th>
+                                    <th>企业/车位</th>
+                                    <th>占用车辆</th>
+                                    <th>车辆身份</th>
+                                    <th>已占用</th>
+                                    <th>通知情况</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="occupancyTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 企业访客 -->
+            <section class="view" id="view-visitor">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>企业访客停车</h2>
+                        <p>企业前台创建预约，系统根据被访楼栋、访客区域和实时余位推荐入口、停车场及步行路线。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openMeetingParking()">创建会议停车活动</button>
+                        <button class="btn btn-primary" onclick="openVisitorCreate()">新增访客预约</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">今日预约访客</div>
+                        <div class="metric-value">386人</div>
+                        <div class="metric-note">车辆预约218辆</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">当前在场访客车</div>
+                        <div class="metric-value">126辆</div>
+                        <div class="metric-note">平均停留2.6小时</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">企业承担费用</div>
+                        <div class="metric-value">4,280元</div>
+                        <div class="metric-note">进入企业月结账单</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待离场缴费</div>
+                        <div class="metric-value">18辆</div>
+                        <div class="metric-note">已完成企业优惠核验</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>访客/车辆</th>
+                                    <th>来访企业</th>
+                                    <th>被访人</th>
+                                    <th>访问时间</th>
+                                    <th>推荐停车</th>
+                                    <th>费用承担</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="visitorTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 园区资源图 -->
+            <section class="view" id="view-map">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>园区停车资源图</h2>
+                        <p>按照企业、楼栋、停车场和车位余量动态调整车辆去向，并同步到入口诱导屏和员工导航。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openScreenManager()">修改诱导屏</button>
+                        <button class="btn btn-primary" onclick="openParkDiversion()">发布停车场分流</button>
+                    </div>
+                </div>
+
+                <div class="warning-banner mb-16" id="mapWarning">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">
+                        <strong>3号停车场与5号停车场使用率不均衡</strong>
+                        3号停车场仅剩32个车位、使用率96%；5号停车场剩余286个、使用率61%。建议将A1、A2楼栋普通员工车辆引导至5号停车场。
+                    </div>
+                </div>
+
+                <div class="map-layout">
+
+                    <div class="park-map">
+                        <div class="road-h"></div>
+                        <div class="road-v"></div>
+
+                        <div class="park-zone zone-a zone-red" onclick="openParkZone('P3')">
+                            <h4>3号停车场</h4>
+                            <strong>32</strong> 个空位
+                            <p>使用率96% · A1/A2楼栋</p>
+                            <p>内部找位约8分钟</p>
+                            <span class="tag tag-red">需要分流</span>
+                        </div>
+
+                        <div class="park-zone zone-b zone-green" onclick="openParkZone('P5')">
+                            <h4>5号停车场</h4>
+                            <strong>286</strong> 个空位
+                            <p>使用率61% · 可服务A区</p>
+                            <p>内部找位约2分钟</p>
+                            <span class="tag tag-green">可承接车辆</span>
+                        </div>
+
+                        <div class="park-zone zone-c zone-orange" onclick="openParkZone('P2')">
+                            <h4>2号停车场</h4>
+                            <strong>86</strong> 个空位
+                            <p>使用率88% · 企业固定区</p>
+                            <p>专属车位占用事件1项</p>
+                            <span class="tag tag-orange">接近饱和</span>
+                        </div>
+
+                        <div class="park-zone zone-d zone-purple" onclick="openParkZone('P1')">
+                            <h4>1号停车场访客区</h4>
+                            <strong>68</strong> 个空位
+                            <p>今日预约访客218辆</p>
+                            <p>靠近园区接待中心</p>
+                            <span class="tag tag-purple">访客优先</span>
+                        </div>
+                    </div>
+
+                    <div class="map-side">
+
+                        <div class="action-card">
+                            <h4>系统建议</h4>
+                            <p>暂停A1、A2普通员工车辆进入3号停车场，固定车位及高管车辆继续通行。</p>
+                            <button class="btn btn-primary btn-sm" onclick="openParkDiversion()">发布分流策略</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>现场诱导任务</h4>
+                            <p id="fieldTaskStatus">尚未向3号停车场入口派发现场诱导任务。</p>
+                            <button class="btn btn-secondary btn-sm" onclick="openParkFieldTask()">派发任务</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>入口诱导屏</h4>
+                            <div class="screen-preview" id="parkScreen">
+                                3号停车场剩余32<br>
+                                5号停车场剩余286
+                                <small>请按企业区域通行</small>
+                            </div>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>员工端推荐</h4>
+                            <p id="employeeGuide">
+                                A1、A2员工当前仍优先推荐3号停车场，尚未启动分流。
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- 错峰共享 -->
+            <section class="view" id="view-sharing">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>园区与周边住宅错峰共享</h2>
+                        <p>办公车位夜间向住宅开放，住宅车位白天向园区员工开放，并处理预约、清场、补贴和收益结算。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openSharingSettlement()">共享收益结算</button>
+                        <button class="btn btn-primary" onclick="openSharingPlan()">新建共享方案</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">园区夜间开放</div>
+                        <div class="metric-value">420位</div>
+                        <div class="metric-note">当前已预约286位</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">住宅白天开放</div>
+                        <div class="metric-value">180位</div>
+                        <div class="metric-note">园区员工已使用126位</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">超时未清场</div>
+                        <div class="metric-value">3辆</div>
+                        <div class="metric-note">已进入现场移车处理</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">本月共享收入</div>
+                        <div class="metric-value">86,200元</div>
+                        <div class="metric-note">待分账18,600元</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>合作项目</th>
+                                    <th>共享方向</th>
+                                    <th>开放时间</th>
+                                    <th>开放配额</th>
+                                    <th>当前使用</th>
+                                    <th>收费/补贴</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><strong>阳光花园</strong><br><span class="muted">距园区西门420米</span></td>
+                                    <td>住宅白天开放给园区</td>
+                                    <td>工作日07:30—18:30</td>
+                                    <td>100个</td>
+                                    <td>78个</td>
+                                    <td>企业补贴10元/次</td>
+                                    <td><span class="tag tag-green">运行中</span></td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openSharingDetail()">查看管理</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>智谷园区2号停车场</strong></td>
+                                    <td>园区夜间开放给住宅</td>
+                                    <td>18:30—次日07:30</td>
+                                    <td>260个</td>
+                                    <td>186个</td>
+                                    <td>夜间包月380元</td>
+                                    <td><span class="tag tag-green">运行中</span></td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openSharingDetail()">查看管理</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>锦绣家园</strong><br><span class="muted">距园区东门680米</span></td>
+                                    <td>住宅白天开放给园区</td>
+                                    <td>工作日08:00—18:00</td>
+                                    <td>80个</td>
+                                    <td>48个</td>
+                                    <td>员工8元/日</td>
+                                    <td><span class="tag tag-orange">数据延迟</span></td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openSharingDetail()">查看管理</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 企业账单 -->
+            <section class="view" id="view-billing">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>企业账单与挂账</h2>
+                        <p>停车订单现场不付款，按合同进入企业月度账单，支持企业确认、争议冻结、信用额度和逾期管理。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openCreditRequest()">审核临时信用额度</button>
+                        <button class="btn btn-primary" onclick="generateBills()">生成本期企业账单</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">本月企业应收</div>
+                        <div class="metric-value">¥1,479,600</div>
+                        <div class="metric-note">涉及102家月结企业</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">待企业确认</div>
+                        <div class="metric-value">¥286,540</div>
+                        <div class="metric-note">4份账单</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">争议冻结金额</div>
+                        <div class="metric-value">¥8,620</div>
+                        <div class="metric-note">17笔订单</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">逾期应收</div>
+                        <div class="metric-value">¥76,500</div>
+                        <div class="metric-note">3家企业</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">信用额度预警</div>
+                        <div class="metric-value">2家</div>
+                        <div class="metric-note">可用额度不足10%</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>账单号/企业</th>
+                                    <th>结算周期</th>
+                                    <th>固定费用</th>
+                                    <th>变动费用</th>
+                                    <th>争议金额</th>
+                                    <th>应付金额</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="billTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 发票与回款 -->
+            <section class="view" id="view-finance">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>发票与对公回款核销</h2>
+                        <p>建立合同、账单、发票、银行流水和回款核销之间的完整对应关系。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openInvoiceRequest()">处理开票申请</button>
+                        <button class="btn btn-primary" onclick="openBankMatching()">匹配银行流水</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">待开票</div>
+                        <div class="metric-value">12份</div>
+                        <div class="metric-note">合计368,200元</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">本月已开票</div>
+                        <div class="metric-value">1,126,800元</div>
+                        <div class="metric-note">电子发票86张</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">未匹配流水</div>
+                        <div class="metric-value">3笔</div>
+                        <div class="metric-note">合计98,000元</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">部分付款账单</div>
+                        <div class="metric-value">5份</div>
+                        <div class="metric-note">未收余额46,300元</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>流水日期</th>
+                                    <th>付款单位</th>
+                                    <th>付款金额</th>
+                                    <th>银行附言</th>
+                                    <th>系统建议匹配</th>
+                                    <th>匹配差额</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>2026-07-18</td>
+                                    <td><strong>华星科技有限公司</strong></td>
+                                    <td>¥68,000</td>
+                                    <td>6月停车费 HX202606</td>
+                                    <td>BILL-HX-202606</td>
+                                    <td>0元</td>
+                                    <td><span class="tag tag-green">可自动核销</span></td>
+                                    <td><button class="btn btn-primary btn-sm" onclick="confirmBankMatch('华星科技',68000)">确认核销</button></td>
+                                </tr>
+                                <tr>
+                                    <td>2026-07-18</td>
+                                    <td><strong>智联控股集团</strong></td>
+                                    <td>¥20,000</td>
+                                    <td>代子公司支付停车费</td>
+                                    <td>智联制造6月账单</td>
+                                    <td>-8,600元</td>
+                                    <td><span class="tag tag-orange">部分付款</span></td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openPartialPayment()">分配回款</button></td>
+                                </tr>
+                                <tr>
+                                    <td>2026-07-17</td>
+                                    <td><strong>上海宏远管理有限公司</strong></td>
+                                    <td>¥10,000</td>
+                                    <td>无账单号</td>
+                                    <td>可能为宏远咨询代付</td>
+                                    <td>待核实</td>
+                                    <td><span class="tag tag-orange">付款主体不一致</span></td>
+                                    <td><button class="btn btn-secondary btn-sm" onclick="openPayerVerification()">核验代付关系</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 审计 -->
+            <section class="view" id="view-audit">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>财务及操作审计</h2>
+                        <p>企业额度调整、账单冲减、车位托管、人工免费和回款核销全部保留操作记录。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作人</th>
+                                    <th>岗位</th>
+                                    <th>操作内容</th>
+                                    <th>关联对象</th>
+                                    <th>业务结果</th>
+                                    <th>状态</th>
+                                </tr>
+                                </thead>
+                                <tbody id="auditTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-mask" id="modalMask" onclick="maskClose(event)">
+    <div class="modal" id="modalBox">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalTitle">业务处理</h3>
+                <p id="modalSubtitle"></p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+    const pageMeta = {
+        dashboard: ["园区停车运营工作台", "今天需要处理的企业停车、车位和结算问题"],
+        enterprise: ["企业停车账户", "企业合同权益、员工车辆、访客额度和费用策略"],
+        asset: ["车位资产与合同", "产权、租赁、赠送、托管和收益归属管理"],
+        overage: ["企业超额停车管理", "名额用完后的通行、费用承担和临时增购"],
+        occupancy: ["企业专属车位占用", "异常占位、现场处置和替代车位安排"],
+        visitor: ["企业访客停车", "访客预约、入口推荐、停车导航和费用承担"],
+        map: ["园区停车资源图", "按企业、楼栋和余位动态调整车辆去向"],
+        sharing: ["园区与住宅错峰共享", "园区夜间开放和住宅白天共享"],
+        billing: ["企业账单与挂账", "月结账单、信用额度、争议和逾期管理"],
+        finance: ["发票与对公回款核销", "开票、银行流水匹配和应收核销"],
+        audit: ["财务及操作审计", "停车权益、费用调整和财务操作追溯"]
+    };
+
+    let enterprises = [
+        {
+            id: "HX",
+            name: "华星科技有限公司",
+            building: "A3办公楼",
+            type: "混合模式",
+            rights: "固定30位 + 共享100辆",
+            current: 136,
+            limit: 130,
+            rule: "企业统一承担",
+            settlement: "月结挂账",
+            status: "额度超额",
+            contract: "HT-PARK-2026-018",
+            credit: 100000,
+            usedCredit: 72860
+        },
+        {
+            id: "ZL",
+            name: "智联制造有限公司",
+            building: "B1办公楼",
+            type: "共享名额",
+            rights: "共享80辆",
+            current: 87,
+            limit: 80,
+            rule: "企业补贴10元",
+            settlement: "企业+员工分摊",
+            status: "额度超额",
+            contract: "HT-PARK-2026-026",
+            credit: 50000,
+            usedCredit: 28600
+        },
+        {
+            id: "YC",
+            name: "云创网络有限公司",
+            building: "A1办公楼",
+            type: "产权车位",
+            rights: "产权20位 + 租赁40辆",
+            current: 57,
+            limit: 60,
+            rule: "超额由员工承担",
+            settlement: "固定费月结",
+            status: "正常",
+            contract: "HT-PARK-2026-031",
+            credit: 80000,
+            usedCredit: 42600
+        },
+        {
+            id: "HY",
+            name: "宏远咨询有限公司",
+            building: "C2办公楼",
+            type: "固定车位",
+            rights: "固定20位 + 赠送8位",
+            current: 23,
+            limit: 28,
+            rule: "超额禁止进入",
+            settlement: "季度预付",
+            status: "账单争议",
+            contract: "HT-PARK-2026-042",
+            credit: 0,
+            usedCredit: 0
+        }
+    ];
+
+    let occupancyEvents = [
+        {
+            id: "ZY001",
+            enterprise: "华星科技",
+            space: "B2-238",
+            plate: "粤A·8K36Q",
+            identity: "云创网络访客",
+            duration: "32分钟",
+            notices: "短信2次、电话1次",
+            status: "待派单"
+        },
+        {
+            id: "ZY002",
+            enterprise: "宏远咨询",
+            space: "B1-126",
+            plate: "粤B·62M8P",
+            identity: "普通临时车辆",
+            duration: "18分钟",
+            notices: "短信1次",
+            status: "车主处理中"
+        }
+    ];
+
+    let visitors = [
+        {
+            id: "V001",
+            name: "赵先生",
+            plate: "粤A·37K6Q",
+            enterprise: "华星科技",
+            host: "陈经理",
+            time: "09:30—12:00",
+            park: "1号停车场B1访客区",
+            payer: "企业承担2小时",
+            status: "已入场"
+        },
+        {
+            id: "V002",
+            name: "周女士",
+            plate: "粤B·81M2T",
+            enterprise: "云创网络",
+            host: "王总监",
+            time: "13:30—17:00",
+            park: "3号停车场B2 VIP区",
+            payer: "企业全额承担",
+            status: "待入场"
+        },
+        {
+            id: "V003",
+            name: "刘先生",
+            plate: "粤A·52N9D",
+            enterprise: "智联制造",
+            host: "李工",
+            time: "10:00—11:30",
+            park: "5号停车场A区",
+            payer: "免费1小时，超时个人付",
+            status: "准备离场"
+        }
+    ];
+
+    let bills = [
+        {
+            id: "BILL001",
+            number: "BILL-HX-202606",
+            enterprise: "华星科技",
+            period: "2026年6月",
+            fixed: 56000,
+            variable: 12000,
+            dispute: 0,
+            payable: 68000,
+            status: "待回款"
+        },
+        {
+            id: "BILL002",
+            number: "BILL-ZL-202606",
+            enterprise: "智联制造",
+            period: "2026年6月",
+            fixed: 32000,
+            variable: 6600,
+            dispute: 0,
+            payable: 38600,
+            status: "部分付款"
+        },
+        {
+            id: "BILL003",
+            number: "BILL-HY-202606",
+            enterprise: "宏远咨询",
+            period: "2026年6月",
+            fixed: 42000,
+            variable: 5006,
+            dispute: 186,
+            payable: 46820,
+            status: "存在争议"
+        },
+        {
+            id: "BILL004",
+            number: "BILL-YC-202606",
+            enterprise: "云创网络",
+            period: "2026年6月",
+            fixed: 28600,
+            variable: 4200,
+            dispute: 0,
+            payable: 32800,
+            status: "待企业确认"
+        }
+    ];
+
+    let audits = [
+        ["11:20", "王主管", "停车运营", "调整企业临时额度", "华星科技", "临时增加10辆额度，有效至18:00", "已完成"],
+        ["10:48", "李会计", "园区财务", "账单争议冻结", "宏远咨询3笔订单", "冻结争议金额186元", "处理中"],
+        ["10:12", "张班长", "现场安保", "处置专属车位占用", "B1-118", "车辆已驶离，恢复企业车位", "已完成"],
+        ["09:46", "陈管理员", "华星科技企业管理员", "停用离职员工车辆", "粤A·28M6K", "保留一次离场权限", "已完成"],
+        ["09:20", "赵经理", "园区资产管理", "发布招商赠送车位", "宏远咨询8个名额", "权益有效至2026-10-31", "已完成"],
+        ["08:55", "系统", "合同权益中心", "回收到期停车权益", "创科服务有限公司", "停用12辆企业车辆权限", "已完成"]
+    ];
+
+    /* 导航 */
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => navigateTo(item.dataset.view));
+    });
+
+    function navigateTo(view) {
+        document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+
+        document.getElementById("view-" + view).classList.add("active");
+        document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[view][0];
+        document.getElementById("pageDesc").textContent = pageMeta[view][1];
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function changeRole(role) {
+        const config = {
+            "园区停车运营主管": ["王主管", "园区停车运营中心", "dashboard"],
+            "企业停车管理员": ["陈管理员", "华星科技行政部", "enterprise"],
+            "园区资产管理员": ["赵经理", "园区资产管理部", "asset"],
+            "园区财务人员": ["李会计", "园区财务部", "billing"],
+            "停车现场班组长": ["张班长", "停车现场班组", "occupancy"]
+        };
+
+        const item = config[role];
+
+        document.getElementById("userName").textContent = item[0];
+        document.getElementById("userRole").textContent = item[1];
+
+        navigateTo(item[2]);
+        showToast(`已切换到“${role}”工作视角。`);
+    }
+
+    /* 企业账户 */
+
+    function renderEnterpriseTable() {
+        const keyword = (document.getElementById("enterpriseSearch")?.value || "").toLowerCase();
+        const type = document.getElementById("enterpriseType")?.value || "";
+
+        const list = enterprises.filter(item => {
+            const text = `${item.name}${item.building}${item.contract}`.toLowerCase();
+            return (!keyword || text.includes(keyword)) && (!type || item.type === type);
+        });
+
+        document.getElementById("enterpriseTableBody").innerHTML = list.map(item => `
+            <tr>
+                <td>
+                    <strong>${item.name}</strong>
+                    <div class="muted">${item.building} · ${item.contract}</div>
+                </td>
+                <td>${item.type}</td>
+                <td>${item.rights}</td>
+                <td>
+                    <strong>${item.current}/${item.limit}</strong>
+                    <div class="progress" style="width:120px;margin-top:5px">
+                        <div class="progress-bar ${item.current > item.limit ? "danger" : ""}"
+                             style="width:${Math.min(100, item.current / item.limit * 100)}%">
+                        </div>
+                    </div>
+                </td>
+                <td>${item.rule}</td>
+                <td>${item.settlement}</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-secondary btn-sm"
+                            onclick="openEnterpriseDetail('${item.id}')">
+                        管理账户
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openEnterpriseDetail(id) {
+        const enterprise = enterprises.find(item => item.id === id);
+
+        const body = `
+            <div class="enterprise-summary">
+                <div>
+                    <h3>${enterprise.name}</h3>
+                    <p>${enterprise.building} · 合同${enterprise.contract}</p>
+                    <p>停车模式：${enterprise.type} · 结算方式：${enterprise.settlement}</p>
+
+                    <div class="resource-numbers">
+                        <div class="resource-number">
+                            <strong>${enterprise.limit}</strong>
+                            <span>合同总额度</span>
+                        </div>
+                        <div class="resource-number">
+                            <strong>${enterprise.current}</strong>
+                            <span>当前在场</span>
+                        </div>
+                        <div class="resource-number">
+                            <strong>268</strong>
+                            <span>已登记车辆</span>
+                        </div>
+                        <div class="resource-number">
+                            <strong>36</strong>
+                            <span>本月访客车辆</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>${statusTag(enterprise.status)}</div>
+            </div>
+
+            <div class="detail-section">
+                <h4>企业停车资源</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span>固定车位</span>
+                        <strong>30个</strong>
+                        <div>已分配27个</div>
+                    </div>
+                    <div class="detail-item">
+                        <span>共享在场额度</span>
+                        <strong>100辆</strong>
+                        <div>当前使用${Math.max(0, enterprise.current - 30)}辆</div>
+                    </div>
+                    <div class="detail-item">
+                        <span>招商赠送</span>
+                        <strong>0个</strong>
+                        <div>无有效赠送权益</div>
+                    </div>
+                    <div class="detail-item">
+                        <span>访客免费额度</span>
+                        <strong>200小时/月</strong>
+                        <div>本月剩余68小时</div>
+                    </div>
+                    <div class="detail-item">
+                        <span>信用额度</span>
+                        <strong>¥${money(enterprise.credit)}</strong>
+                        <div>已占用¥${money(enterprise.usedCredit)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <span>超额承担方式</span>
+                        <strong>${enterprise.rule}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>企业管理员可以操作</h4>
+                <div class="section-actions">
+                    <button class="btn btn-secondary" onclick="openEmployeeVehicle('${id}')">员工车辆管理</button>
+                    <button class="btn btn-secondary" onclick="openEnterpriseQuota('${id}')">分配停车额度</button>
+                    <button class="btn btn-secondary" onclick="openVisitorCreate()">创建访客预约</button>
+                    <button class="btn btn-secondary" onclick="openCostPolicy('${id}')">费用承担策略</button>
+                    <button class="btn btn-primary" onclick="openEnterpriseBill('${id}')">查看企业账单</button>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            enterprise.name,
+            "企业停车账户及合同权益",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    function openEmployeeVehicle(id) {
+        const enterprise = enterprises.find(item => item.id === id);
+
+        const body = `
+            <div class="info-banner mb-16">
+                <div class="banner-icon">企</div>
+                <div class="banner-content">
+                    <strong>企业管理员只能维护本企业员工和车辆</strong>
+                    新增车辆不能突破合同额度，离职员工车辆会进入权限回收流程。
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table style="min-width:760px">
+                    <thead>
+                    <tr>
+                        <th>员工</th>
+                        <th>部门</th>
+                        <th>车辆</th>
+                        <th>停车类型</th>
+                        <th>费用承担</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>陈明</td>
+                        <td>研发一部</td>
+                        <td><span class="plate">粤A·36M8K</span></td>
+                        <td>共享名额</td>
+                        <td>企业承担</td>
+                        <td><span class="tag tag-green">有效</span></td>
+                    </tr>
+                    <tr>
+                        <td>李莉</td>
+                        <td>行政部</td>
+                        <td><span class="plate">粤A·62K7P</span></td>
+                        <td>固定车位B2-218</td>
+                        <td>企业承担</td>
+                        <td><span class="tag tag-green">有效</span></td>
+                    </tr>
+                    <tr>
+                        <td>周建国</td>
+                        <td>市场部</td>
+                        <td><span class="plate">粤B·18T3Q</span></td>
+                        <td>共享名额</td>
+                        <td>超额个人承担</td>
+                        <td><span class="tag tag-orange">离职待回收</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <form id="employeeVehicleForm" onsubmit="submitEmployeeVehicle(event, '${id}')">
+                <div class="form-grid mt-16">
+                    <div class="form-group">
+                        <label class="required">员工姓名</label>
+                        <input class="form-control" name="employee" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">所属部门</label>
+                        <input class="form-control" name="department" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">车牌</label>
+                        <input class="form-control" name="plate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">停车类型</label>
+                        <select class="form-control" name="type">
+                            <option>共享停车名额</option>
+                            <option>固定车位</option>
+                            <option>个人付费停车</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            `${enterprise.name}员工车辆`,
+            "企业行政人员自主管理",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('employeeVehicleForm').requestSubmit()">
+                    新增员工车辆
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitEmployeeVehicle(event, id) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+        const enterprise = enterprises.find(item => item.id === id);
+
+        addAudit(
+            "陈管理员",
+            `${enterprise.name}企业管理员`,
+            "新增员工停车车辆",
+            `${data.employee} / ${data.plate}`,
+            `分配${data.type}`,
+            "已完成"
+        );
+
+        closeModal();
+        showToast(`员工${data.employee}的车辆${data.plate}已加入企业停车账户。`);
+    }
+
+    function openEnterpriseQuota(id) {
+        const enterprise = enterprises.find(item => item.id === id);
+
+        const body = `
+            <form id="quotaForm" onsubmit="submitEnterpriseQuota(event, '${id}')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>合同停车额度</label>
+                        <div class="readonly-box">${enterprise.limit}辆同时在场</div>
+                    </div>
+                    <div class="form-group">
+                        <label>当前已分配</label>
+                        <div class="readonly-box">${enterprise.limit}辆</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">研发部门保留额度</label>
+                        <input class="form-control" type="number" value="55">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">销售部门保留额度</label>
+                        <input class="form-control" type="number" value="25">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">高管及应急额度</label>
+                        <input class="form-control" type="number" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">公共流动额度</label>
+                        <input class="form-control" type="number" value="10">
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "企业内部停车额度分配",
+            "企业管理员可按部门和人员等级分配合同额度",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('quotaForm').requestSubmit()">
+                    保存额度分配
+                </button>
+            `
+        );
+    }
+
+    function submitEnterpriseQuota(event, id) {
+        event.preventDefault();
+        closeModal();
+        showToast("企业内部停车额度已更新，部门管理员将按新额度管理车辆。");
+    }
+
+    function openCostPolicy(id) {
+        const enterprise = enterprises.find(item => item.id === id);
+
+        const body = `
+            <form id="costPolicyForm" onsubmit="submitCostPolicy(event, '${id}')">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label class="required">企业名额用完后的处理方式</label>
+                        <select class="form-control" name="policy">
+                            <option ${enterprise.rule === "企业统一承担" ? "selected" : ""}>企业统一承担超额费用</option>
+                            <option>超额费用由员工个人承担</option>
+                            <option>企业承担前10元，其余员工承担</option>
+                            <option>企业承担前8小时，其余员工承担</option>
+                            <option>名额用完后禁止进入</option>
+                            <option>引导至周边共享停车场</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>企业每月停车补贴上限</label>
+                        <input class="form-control" value="50000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>员工收到费用提醒时间</label>
+                        <select class="form-control">
+                            <option>入场时立即提醒</option>
+                            <option>离场前提醒</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>超过企业信用额度时</label>
+                        <select class="form-control">
+                            <option>自动切换为员工个人支付</option>
+                            <option>允许使用临时超额信用额度</option>
+                            <option>暂停新增企业挂账车辆</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "企业超额费用承担策略",
+            enterprise.name,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('costPolicyForm').requestSubmit()">
+                    保存并生效
+                </button>
+            `
+        );
+    }
+
+    function submitCostPolicy(event, id) {
+        event.preventDefault();
+        const policy = new FormData(event.target).get("policy");
+        const enterprise = enterprises.find(item => item.id === id);
+
+        enterprise.rule = policy;
+        renderEnterpriseTable();
+        closeModal();
+
+        showToast(`“${enterprise.name}”超额费用策略已更新。`);
+    }
+
+    function openEnterpriseCreate() {
+        const body = `
+            <form id="enterpriseCreateForm" onsubmit="submitEnterpriseCreate(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">企业名称</label>
+                        <input class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">办公楼栋</label>
+                        <input class="form-control" name="building" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">停车合同编号</label>
+                        <input class="form-control" name="contract" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">停车模式</label>
+                        <select class="form-control" name="type">
+                            <option>固定车位</option>
+                            <option>共享名额</option>
+                            <option>产权车位</option>
+                            <option>混合模式</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">同时在场额度</label>
+                        <input class="form-control" type="number" name="limit" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">结算方式</label>
+                        <select class="form-control" name="settlement">
+                            <option>月结挂账</option>
+                            <option>季度预付</option>
+                            <option>年度预付</option>
+                            <option>员工个人支付</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新建企业停车账户",
+            "停车权益必须来源于已生效合同",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('enterpriseCreateForm').requestSubmit()">
+                    创建企业账户
+                </button>
+            `
+        );
+    }
+
+    function submitEnterpriseCreate(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        enterprises.push({
+            id: "E" + Date.now(),
+            name: data.name,
+            building: data.building,
+            type: data.type,
+            rights: `${data.limit}辆停车额度`,
+            current: 0,
+            limit: Number(data.limit),
+            rule: "超额由员工承担",
+            settlement: data.settlement,
+            status: "正常",
+            contract: data.contract,
+            credit: 50000,
+            usedCredit: 0
+        });
+
+        renderEnterpriseTable();
+        closeModal();
+        showToast(`企业“${data.name}”停车账户已创建。`);
+    }
+
+    function openEnterpriseImport() {
+        const body = `
+            <div class="info-banner mb-16">
+                <div class="banner-icon">表</div>
+                <div class="banner-content">
+                    <strong>支持Excel、企业HR接口和API同步</strong>
+                    导入时会核验员工、车牌、重复绑定和企业合同额度。
+                </div>
+            </div>
+
+            <form id="importForm" onsubmit="submitImport(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">选择企业</label>
+                        <select class="form-control">
+                            <option>华星科技有限公司</option>
+                            <option>智联制造有限公司</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">导入方式</label>
+                        <select class="form-control">
+                            <option>Excel文件导入</option>
+                            <option>HR系统同步</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>导入文件</label>
+                        <input class="form-control" type="file">
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "批量导入企业员工车辆",
+            "导入后先进入校验，不会直接覆盖现有车辆",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('importForm').requestSubmit()">
+                    上传并校验
+                </button>
+            `
+        );
+    }
+
+    function submitImport(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("文件已进入校验：共286条，成功278条，重复车牌5条，人员状态异常3条。");
+    }
+
+    /* 超额管理 */
+
+    function openOverageDetail(id) {
+        const enterprise = enterprises.find(item => item.id === id);
+
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>${enterprise.name}当前超过合同停车额度</strong>
+                    合同额度${enterprise.limit}辆，当前在场${enterprise.current}辆，超额${Math.max(0, enterprise.current - enterprise.limit)}辆。
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>合同额度</span>
+                    <strong>${enterprise.limit}辆</strong>
+                </div>
+                <div class="detail-item">
+                    <span>当前在场</span>
+                    <strong>${enterprise.current}辆</strong>
+                </div>
+                <div class="detail-item">
+                    <span>超额数量</span>
+                    <strong style="color:var(--danger)">${Math.max(0, enterprise.current - enterprise.limit)}辆</strong>
+                </div>
+                <div class="detail-item">
+                    <span>承担策略</span>
+                    <strong>${enterprise.rule}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>信用额度</span>
+                    <strong>¥${money(enterprise.credit)}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>剩余信用额度</span>
+                    <strong>¥${money(enterprise.credit - enterprise.usedCredit)}</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>超额车辆处理结果</h4>
+                <div class="readonly-box">
+                    <p>前${enterprise.limit}辆继续使用企业基础权益。</p>
+                    <p>超额车辆进入5号公共停车场。</p>
+                    <p>企业承担部分进入本月挂账订单池。</p>
+                    <p>员工承担部分将在离场前通知员工个人支付。</p>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "企业超额停车处理",
+            enterprise.name,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                <button class="btn btn-warning" onclick="openCostPolicy('${id}')">修改承担策略</button>
+                <button class="btn btn-primary" onclick="openTemporaryQuota('${id}')">临时增加额度</button>
+            `,
+            true
+        );
+    }
+
+    function openTemporaryQuota(defaultId = "YC") {
+        const body = `
+            <form id="temporaryQuotaForm" onsubmit="submitTemporaryQuota(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">申请企业</label>
+                        <select class="form-control" name="enterprise">
+                            <option>云创网络有限公司</option>
+                            <option>华星科技有限公司</option>
+                            <option>智联制造有限公司</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">增加额度</label>
+                        <input class="form-control" type="number" name="count" value="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">生效时间</label>
+                        <input class="form-control" type="datetime-local" value="2026-07-20T08:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">失效时间</label>
+                        <input class="form-control" type="datetime-local" value="2026-07-20T19:00">
+                    </div>
+                    <div class="form-group">
+                        <label>预计费用</label>
+                        <div class="readonly-box">20个 × 120元/日 = 2,400元</div>
+                    </div>
+                    <div class="form-group">
+                        <label>费用结算</label>
+                        <div class="readonly-box">计入企业7月对公月结账单</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">申请原因</label>
+                        <textarea class="form-control">7月20日举办客户大会，预计新增访客及员工车辆80辆。</textarea>
+                    </div>
+                </div>
+            </form>
+
+            <div class="success-banner mt-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-content">
+                    <strong>系统核验通过</strong>
+                    5号停车场可提供20个临时额度；企业信用额度充足；活动时间无其他大型会议冲突。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "审核企业临时停车额度",
+            "批准后生成临时停车权益并进入企业月结账单",
+            body,
+            `
+                <button class="btn btn-danger" onclick="closeModal()">驳回</button>
+                <button class="btn btn-success"
+                        onclick="document.getElementById('temporaryQuotaForm').requestSubmit()">
+                    批准申请
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitTemporaryQuota(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        addAudit(
+            "王主管",
+            "停车运营",
+            "批准企业临时停车额度",
+            data.enterprise,
+            `增加${data.count}个额度，费用进入月结账单`,
+            "已完成"
+        );
+
+        closeModal();
+        showToast(`已批准${data.count}个临时停车额度，企业管理员和财务已收到结果。`);
+    }
+
+    /* 车位占用 */
+
+    function renderOccupancyTable() {
+        document.getElementById("occupancyTableBody").innerHTML = occupancyEvents.map(item => `
+            <tr>
+                <td><strong>${item.id}</strong></td>
+                <td>
+                    <strong>${item.enterprise}</strong>
+                    <div class="muted">${item.space}</div>
+                </td>
+                <td><span class="plate">${item.plate}</span></td>
+                <td>${item.identity}</td>
+                <td>${item.duration}</td>
+                <td>${item.notices}</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm"
+                            onclick="openOccupancyDetail('${item.id}')">
+                        查看处置
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+
+        document.getElementById("occupancyBadge").textContent = occupancyEvents.length;
+    }
+
+    function openOccupancyDetail(id) {
+        const item = occupancyEvents.find(event => event.id === id);
+
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">占</div>
+                <div class="banner-content">
+                    <strong>${item.enterprise}专属车位${item.space}被非授权车辆占用</strong>
+                    当前占用车辆${item.plate}，已占用${item.duration}。
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>车位归属</span>
+                    <strong>${item.enterprise}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>占用车辆</span>
+                    <span class="plate">${item.plate}</span>
+                </div>
+                <div class="detail-item">
+                    <span>车辆身份</span>
+                    <strong>${item.identity}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>车主通知</span>
+                    <strong>${item.notices}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>员工预计到达</span>
+                    <strong>5分钟后</strong>
+                </div>
+                <div class="detail-item">
+                    <span>最近替代车位</span>
+                    <strong>B2-246</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>建议处置</h4>
+                <div class="readonly-box">
+                    <p>1. 向现场班组派发移车处置任务。</p>
+                    <p>2. 通知占用车辆立即驶离企业专属区域。</p>
+                    <p>3. 临时将B2-246分配给企业员工。</p>
+                    <p>4. 车辆驶离后恢复原固定车位。</p>
+                    <p>5. 对占用车辆记录一次专属区域违规。</p>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "企业专属车位占用处置",
+            item.id,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="assignReplacement('${id}')">先分配替代车位</button>
+                <button class="btn btn-primary" onclick="dispatchOccupancy('${id}')">派发现场处置</button>
+            `,
+            true
+        );
+    }
+
+    function assignReplacement(id) {
+        const item = occupancyEvents.find(event => event.id === id);
+
+        closeModal();
+        showToast(`已为${item.enterprise}员工分配临时车位B2-246，并发送导航。`);
+    }
+
+    function dispatchOccupancy(id) {
+        const item = occupancyEvents.find(event => event.id === id);
+
+        item.status = "现场处理中";
+        renderOccupancyTable();
+
+        addAudit(
+            "王主管",
+            "停车运营",
+            "派发专属车位占用任务",
+            `${item.enterprise} / ${item.space}`,
+            "张班长已接收现场移车任务",
+            "处理中"
+        );
+
+        closeModal();
+        showToast("现场任务已派发，张班长已接单，预计3分钟到达。");
+    }
+
+    /* 访客 */
+
+    function renderVisitorTable() {
+        document.getElementById("visitorTableBody").innerHTML = visitors.map(item => `
+            <tr>
+                <td>
+                    <strong>${item.name}</strong>
+                    <div><span class="plate">${item.plate}</span></div>
+                </td>
+                <td>${item.enterprise}</td>
+                <td>${item.host}</td>
+                <td>${item.time}</td>
+                <td>${item.park}</td>
+                <td>${item.payer}</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-secondary btn-sm"
+                            onclick="openVisitorDetail('${item.id}')">
+                        查看服务
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openVisitorCreate() {
+        const body = `
+            <form id="visitorForm" onsubmit="submitVisitor(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">访客姓名</label>
+                        <input class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">联系电话</label>
+                        <input class="form-control" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">访客车牌</label>
+                        <input class="form-control" name="plate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">来访企业</label>
+                        <select class="form-control" name="enterprise">
+                            <option>华星科技</option>
+                            <option>云创网络</option>
+                            <option>智联制造</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">被访人</label>
+                        <input class="form-control" name="host" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">访问时间</label>
+                        <input class="form-control" value="2026-07-18 14:00—17:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">停车费用承担</label>
+                        <select class="form-control" name="payer">
+                            <option>企业承担2小时，超时访客支付</option>
+                            <option>企业全额承担</option>
+                            <option>访客个人承担</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>访客等级</label>
+                        <select class="form-control">
+                            <option>普通商务访客</option>
+                            <option>重要客户</option>
+                            <option>VIP访客</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <div class="success-banner mt-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-content">
+                    <strong>系统推荐</strong>
+                    从东门进入，前往1号停车场B1访客区，距离A3办公楼电梯厅约120米。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "新增企业访客停车预约",
+            "使用人：企业前台或被访员工",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('visitorForm').requestSubmit()">
+                    创建预约并通知访客
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitVisitor(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        visitors.unshift({
+            id: "V" + Date.now(),
+            name: data.name,
+            plate: data.plate,
+            enterprise: data.enterprise,
+            host: data.host,
+            time: "14:00—17:00",
+            park: "1号停车场B1访客区",
+            payer: data.payer,
+            status: "待入场"
+        });
+
+        renderVisitorTable();
+        closeModal();
+
+        showToast(`访客预约已创建，${data.name}已收到入口、停车区和步行导航。`);
+    }
+
+    function openVisitorDetail(id) {
+        const visitor = visitors.find(item => item.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>访客</span><strong>${visitor.name}</strong></div>
+                <div class="detail-item"><span>车辆</span><span class="plate">${visitor.plate}</span></div>
+                <div class="detail-item"><span>来访企业</span><strong>${visitor.enterprise}</strong></div>
+                <div class="detail-item"><span>被访人</span><strong>${visitor.host}</strong></div>
+                <div class="detail-item"><span>停车位置</span><strong>${visitor.park}</strong></div>
+                <div class="detail-item"><span>费用承担</span><strong>${visitor.payer}</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>访客停车导航</h4>
+                <div class="readonly-box">
+                    <p>推荐入口：园区东门。</p>
+                    <p>停车位置：1号停车场B1访客区V-086。</p>
+                    <p>从车位步行至A3办公楼约6分钟。</p>
+                    <p>离场前可从企业前台、短信或自助机查询车辆位置。</p>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "访客停车服务",
+            visitor.name,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="sendCarLocation('${id}')">发送寻车位置</button>
+                <button class="btn btn-primary" onclick="closeModal()">关闭</button>
+            `
+        );
+    }
+
+    function sendCarLocation(id) {
+        const visitor = visitors.find(item => item.id === id);
+        closeModal();
+        showToast(`已向${visitor.name}发送车辆位置、步行路线和推荐出口。`);
+    }
+
+    function openMeetingParking() {
+        const body = `
+            <form id="meetingForm" onsubmit="submitMeeting(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">会议名称</label>
+                        <input class="form-control" value="云创网络年度客户大会">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">主办企业</label>
+                        <select class="form-control">
+                            <option>云创网络有限公司</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">预计车辆</label>
+                        <input class="form-control" type="number" value="80">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">停车区域</label>
+                        <select class="form-control">
+                            <option>5号停车场A区</option>
+                            <option>周边住宅白天共享区</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>免费时长</label>
+                        <select class="form-control">
+                            <option>免费4小时</option>
+                            <option>企业全额承担</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>费用进入</label>
+                        <div class="readonly-box">企业7月月结账单</div>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "创建大型会议停车活动",
+            "批量车牌、活动额度、专用区域和统一结算",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('meetingForm').requestSubmit()">
+                    创建活动
+                </button>
+            `
+        );
+    }
+
+    function submitMeeting(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("会议停车活动已创建，已预留80辆活动额度并开放参会人自助登记。");
+    }
+
+    /* 资源地图 */
+
+    function openParkZone(zone) {
+        const data = {
+            P3: ["3号停车场", 820, 32, "96%", "8分钟", "A1、A2楼栋"],
+            P5: ["5号停车场", 730, 286, "61%", "2分钟", "A区及公共停车"],
+            P2: ["2号停车场", 680, 86, "88%", "5分钟", "企业固定车位"],
+            P1: ["1号停车场", 420, 68, "84%", "3分钟", "访客及园区接待"]
+        }[zone];
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>总车位</span><strong>${data[1]}</strong></div>
+                <div class="detail-item"><span>当前余位</span><strong>${data[2]}</strong></div>
+                <div class="detail-item"><span>使用率</span><strong>${data[3]}</strong></div>
+                <div class="detail-item"><span>平均找位</span><strong>${data[4]}</strong></div>
+                <div class="detail-item"><span>主要服务</span><strong>${data[5]}</strong></div>
+                <div class="detail-item"><span>设备状态</span><strong>正常</strong></div>
+            </div>
+        `;
+
+        openModal(
+            data[0],
+            "停车场余位、服务企业和车辆运行情况",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openParkDiversion() {
+        const body = `
+            <form id="parkDiversionForm" onsubmit="submitParkDiversion(event)">
+                <div class="warning-banner mb-16">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">
+                        3号停车场使用率96%，5号停车场使用率61%，已经达到跨停车场不均衡条件。
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>限制进入</label>
+                        <div class="readonly-box">3号停车场</div>
+                    </div>
+                    <div class="form-group">
+                        <label>承接停车场</label>
+                        <div class="readonly-box">5号停车场</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">受影响车辆</label>
+                        <select class="form-control">
+                            <option>A1、A2普通员工车辆</option>
+                            <option>所有无固定车位车辆</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>继续允许进入3号停车场</label>
+                        <div class="readonly-box">固定车位车辆、高管车辆、企业紧急授权车辆</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">诱导屏内容</label>
+                        <textarea class="form-control">3号停车场即将满位，A1、A2员工请前往5号停车场，剩余286个车位。</textarea>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "发布跨停车场分流策略",
+            "同时调整入口权限、员工导航、诱导屏和现场任务",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('parkDiversionForm').requestSubmit()">
+                    发布分流策略
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitParkDiversion(event) {
+        event.preventDefault();
+
+        document.getElementById("parkScreen").innerHTML =
+            `3号车场即将满位<br>A1/A2请前往5号<small>5号剩余286个车位</small>`;
+
+        document.getElementById("employeeGuide").textContent =
+            "A1、A2普通员工已改为推荐5号停车场；固定车位及高管车辆仍可进入3号停车场。";
+
+        addAudit(
+            "王主管",
+            "停车运营",
+            "发布停车场分流策略",
+            "3号停车场 → 5号停车场",
+            "A1、A2普通员工改道",
+            "执行中"
+        );
+
+        closeModal();
+        showToast("分流策略已发布，入口识别、诱导屏和员工导航已同步更新。");
+    }
+
+    function openParkFieldTask() {
+        const body = `
+            <div class="readonly-box">
+                <p><strong>任务位置：</strong>3号停车场入口</p>
+                <p><strong>接收岗位：</strong>停车场2号巡逻岗</p>
+                <p><strong>到场时限：</strong>3分钟</p>
+                <p><strong>执行动作：</strong>引导A1、A2普通员工车辆前往5号停车场。</p>
+                <p><strong>固定车位车辆：</strong>核验后继续放行。</p>
+            </div>
+        `;
+
+        openModal(
+            "派发现场诱导任务",
+            "现场人员收到任务后需接单、到场和反馈结果",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmParkFieldTask()">确认派发</button>
+            `
+        );
+    }
+
+    function confirmParkFieldTask() {
+        document.getElementById("fieldTaskStatus").textContent =
+            "张师傅已接单，正在前往3号停车场入口，要求3分钟内完成车辆分流。";
+
+        closeModal();
+        showToast("现场诱导任务已派发，张师傅已接单。");
+    }
+
+    function openScreenManager() {
+        const body = `
+            <div class="grid-2">
+                <div>
+                    <h4>当前内容</h4>
+                    <div class="screen-preview">
+                        3号剩余32<br>5号剩余286
+                        <small>请按企业区域通行</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>计划发布</h4>
+                    <div class="screen-preview">
+                        3号即将满位<br>A1/A2前往5号
+                        <small>5号剩余286个</small>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "园区入口诱导屏管理",
+            "人工发布必须记录内容、原因和有效时间",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmScreenPublish()">确认发布</button>
+            `
+        );
+    }
+
+    function confirmScreenPublish() {
+        document.getElementById("parkScreen").innerHTML =
+            `3号即将满位<br>A1/A2前往5号<small>5号剩余286个</small>`;
+
+        closeModal();
+        showToast("新内容已发布至北门、东门及3号停车场入口诱导屏。");
+    }
+
+    /* 合同资产 */
+
+    function openParkingContract() {
+        const body = `
+            <form id="parkingContractForm" onsubmit="submitParkingContract(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">签约企业</label>
+                        <input class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">合同类型</label>
+                        <select class="form-control">
+                            <option>固定车位租赁</option>
+                            <option>共享停车额度</option>
+                            <option>招商赠送车位</option>
+                            <option>产权车位服务</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">车位/额度数量</label>
+                        <input class="form-control" type="number" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">结算周期</label>
+                        <select class="form-control">
+                            <option>月结</option>
+                            <option>季度预付</option>
+                            <option>年度预付</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">生效日期</label>
+                        <input class="form-control" type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">到期日期</label>
+                        <input class="form-control" type="date" required>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新建企业停车合同",
+            "合同生效后自动生成企业停车权益",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('parkingContractForm').requestSubmit()">
+                    保存并提交审批
+                </button>
+            `
+        );
+    }
+
+    function submitParkingContract(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("停车合同已建立，待资产、财务和法务审批后生成企业权益。");
+    }
+
+    function openTrustContract() {
+        const body = `
+            <form id="trustForm" onsubmit="submitTrust(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">产权企业</label>
+                        <select class="form-control">
+                            <option>云创网络有限公司</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">托管车位</label>
+                        <input class="form-control" value="B3-101至B3-120">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">企业收益比例</label>
+                        <input class="form-control" value="80%">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">物业收益比例</label>
+                        <input class="form-control" value="20%">
+                    </div>
+                    <div class="form-group">
+                        <label>结算周期</label>
+                        <select class="form-control">
+                            <option>按月结算</option>
+                            <option>按季度结算</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>临时收回通知期</label>
+                        <select class="form-control">
+                            <option>提前30天</option>
+                            <option>提前15天</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新建产权车位托管",
+            "托管后由物业出租并按合同进行收益分账",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('trustForm').requestSubmit()">
+                    提交托管审批
+                </button>
+            `
+        );
+    }
+
+    function submitTrust(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("车位托管申请已提交，待产权企业与物业双方确认后生效。");
+    }
+
+    function openAssetDetail() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>合同编号</span><strong>HT-PARK-2026-018</strong></div>
+                <div class="detail-item"><span>签约企业</span><strong>华星科技</strong></div>
+                <div class="detail-item"><span>合同类型</span><strong>固定车位租赁</strong></div>
+                <div class="detail-item"><span>车位数量</span><strong>30个</strong></div>
+                <div class="detail-item"><span>租赁费</span><strong>36,000元/月</strong></div>
+                <div class="detail-item"><span>付款方式</span><strong>季度预付</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "企业停车合同",
+            "合同、车位及结算规则",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openTrustDetail() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>托管车位</span><strong>20个</strong></div>
+                <div class="detail-item"><span>已出租</span><strong>18个</strong></div>
+                <div class="detail-item"><span>空闲</span><strong>2个</strong></div>
+                <div class="detail-item"><span>本月租金收入</span><strong>20,000元</strong></div>
+                <div class="detail-item"><span>企业应得</span><strong>16,000元</strong></div>
+                <div class="detail-item"><span>物业留存</span><strong>4,000元</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "产权车位托管经营",
+            "出租、收益及企业分账",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openFreeEntitlement() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>权益来源</span><strong>办公租赁合同</strong></div>
+                <div class="detail-item"><span>免费名额</span><strong>8个</strong></div>
+                <div class="detail-item"><span>有效期</span><strong>6个月</strong></div>
+                <div class="detail-item"><span>标准价值</span><strong>24,000元</strong></div>
+                <div class="detail-item"><span>成本归属</span><strong>招商中心</strong></div>
+                <div class="detail-item"><span>到期处理</span><strong>自动失效</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "招商赠送停车权益",
+            "免费权益也要核算标准价值和招商成本",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    /* 共享停车 */
+
+    function openSharingPlan() {
+        const body = `
+            <form id="sharingPlanForm" onsubmit="submitSharingPlan(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">共享项目</label>
+                        <input class="form-control" placeholder="合作住宅或园区停车场">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">共享方向</label>
+                        <select class="form-control">
+                            <option>园区夜间开放给住宅</option>
+                            <option>住宅白天开放给园区</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">开放配额</label>
+                        <input class="form-control" type="number">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">开放时段</label>
+                        <input class="form-control" value="18:30—次日07:30">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">收费标准</label>
+                        <input class="form-control" value="380元/月">
+                    </div>
+                    <div class="form-group">
+                        <label>超时处理</label>
+                        <select class="form-control">
+                            <option>超时收费并进入移车任务</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新建错峰共享方案",
+            "配置开放配额、时间、清场和收益分账",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('sharingPlanForm').requestSubmit()">
+                    提交合作审批
+                </button>
+            `
+        );
+    }
+
+    function submitSharingPlan(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("共享方案已提交，待双方物业和财务确认后发布。");
+    }
+
+    function openSharingDetail() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>开放配额</span><strong>100个</strong></div>
+                <div class="detail-item"><span>当前使用</span><strong>78个</strong></div>
+                <div class="detail-item"><span>今日订单</span><strong>86笔</strong></div>
+                <div class="detail-item"><span>企业补贴</span><strong>860元</strong></div>
+                <div class="detail-item"><span>个人支付</span><strong>688元</strong></div>
+                <div class="detail-item"><span>数据同步</span><strong>正常</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "错峰共享项目管理",
+            "预约、费用、补贴和清场情况",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openSharingSettlement() {
+        const body = `
+            <div class="table-wrap">
+                <table style="min-width:760px">
+                    <thead>
+                    <tr>
+                        <th>合作项目</th>
+                        <th>订单收入</th>
+                        <th>企业补贴</th>
+                        <th>物业管理费</th>
+                        <th>合作方应得</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>阳光花园白天共享</td>
+                        <td>28,600元</td>
+                        <td>8,600元</td>
+                        <td>3,200元</td>
+                        <td>34,000元</td>
+                        <td><span class="tag tag-green">可结算</span></td>
+                    </tr>
+                    <tr>
+                        <td>园区2号夜间共享</td>
+                        <td>46,800元</td>
+                        <td>0元</td>
+                        <td>8,600元</td>
+                        <td>园区收入38,200元</td>
+                        <td><span class="tag tag-green">可结算</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "错峰共享收益结算",
+            "合作方、物业和平台收入分账",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    /* 企业账单 */
+
+    function renderBillTable() {
+        document.getElementById("billTableBody").innerHTML = bills.map(item => `
+            <tr>
+                <td>
+                    <strong>${item.number}</strong>
+                    <div class="muted">${item.enterprise}</div>
+                </td>
+                <td>${item.period}</td>
+                <td>¥${money(item.fixed)}</td>
+                <td>¥${money(item.variable)}</td>
+                <td>${item.dispute ? `<span style="color:var(--danger)">¥${money(item.dispute)}</span>` : "0元"}</td>
+                <td><strong>¥${money(item.payable)}</strong></td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-secondary btn-sm"
+                            onclick="openBillDetail('${item.id}')">
+                        查看账单
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openBillDetail(id) {
+        const bill = bills.find(item => item.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>企业</span><strong>${bill.enterprise}</strong></div>
+                <div class="detail-item"><span>账单周期</span><strong>${bill.period}</strong></div>
+                <div class="detail-item"><span>账单状态</span>${statusTag(bill.status)}</div>
+                <div class="detail-item"><span>固定费用</span><strong>¥${money(bill.fixed)}</strong></div>
+                <div class="detail-item"><span>变动费用</span><strong>¥${money(bill.variable)}</strong></div>
+                <div class="detail-item"><span>应付金额</span><strong>¥${money(bill.payable)}</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>账单费用构成</h4>
+                <div class="table-wrap">
+                    <table style="min-width:760px">
+                        <thead>
+                        <tr>
+                            <th>费用项目</th>
+                            <th>数量</th>
+                            <th>金额</th>
+                            <th>费用来源</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td>企业固定车位租赁</td><td>20个</td><td>36,000元</td><td>停车合同</td></tr>
+                        <tr><td>招商赠送车位服务费</td><td>8个</td><td>6,000元</td><td>租赁合同附加条款</td></tr>
+                        <tr><td>企业访客停车</td><td>72次</td><td>1,240元</td><td>访客停车订单</td></tr>
+                        <tr><td>超额停车</td><td>86次</td><td>3,766元</td><td>企业挂账订单</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            ${bill.dispute ? `
+                <div class="detail-section">
+                    <h4>企业提出的争议</h4>
+                    <div class="warning-banner">
+                        <div class="banner-icon">!</div>
+                        <div class="banner-content">
+                            企业认为3辆车对应员工已经离职，不应继续使用企业挂账账户。争议金额186元。
+                        </div>
+                    </div>
+                </div>
+            ` : ""}
+        `;
+
+        let footer = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+        if (bill.dispute) {
+            footer += `
+                <button class="btn btn-warning" onclick="retainBillCharge('${id}')">保留费用</button>
+                <button class="btn btn-success" onclick="adjustBillDispute('${id}')">冲减争议费用</button>
+            `;
+        } else if (bill.status === "待企业确认") {
+            footer += `<button class="btn btn-primary" onclick="confirmEnterpriseBill('${id}')">确认账单</button>`;
+        }
+
+        openModal(
+            bill.number,
+            "企业月度停车费用及订单依据",
+            body,
+            footer,
+            true
+        );
+    }
+
+    function retainBillCharge(id) {
+        const bill = bills.find(item => item.id === id);
+        bill.dispute = 0;
+        bill.status = "待企业确认";
+
+        addAudit(
+            "李会计",
+            "园区财务",
+            "保留企业争议停车费用",
+            bill.number,
+            "核验企业授权记录后保留186元费用",
+            "已完成"
+        );
+
+        renderBillTable();
+        closeModal();
+        showToast("已保留原费用，并向企业发送车辆授权记录和入场图片。");
+    }
+
+    function adjustBillDispute(id) {
+        const bill = bills.find(item => item.id === id);
+
+        bill.variable -= bill.dispute;
+        bill.payable -= bill.dispute;
+        bill.dispute = 0;
+        bill.status = "待企业确认";
+
+        addAudit(
+            "李会计",
+            "园区财务",
+            "冲减企业争议费用",
+            bill.number,
+            "冲减186元并生成账单调整记录",
+            "已完成"
+        );
+
+        renderBillTable();
+        closeModal();
+        showToast("争议费用已冲减，企业可先确认调整后的账单。");
+    }
+
+    function confirmEnterpriseBill(id) {
+        const bill = bills.find(item => item.id === id);
+
+        bill.status = "待开票";
+        renderBillTable();
+        closeModal();
+
+        showToast("企业账单已确认，开票申请已提交园区财务。");
+    }
+
+    function openEnterpriseBill(id) {
+        const enterprise = enterprises.find(item => item.id === id);
+        const bill = bills.find(item => item.enterprise.includes(enterprise.name.substring(0, 2))) || bills[0];
+
+        closeModal();
+        setTimeout(() => openBillDetail(bill.id), 100);
+    }
+
+    function openCreditRequest() {
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>华星科技申请临时增加20,000元信用额度</strong>
+                    当前额度100,000元，已占用92,600元，企业预计本月新增活动停车费用15,000元。
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item"><span>历史付款及时率</span><strong>98%</strong></div>
+                <div class="detail-item"><span>当前逾期</span><strong>0元</strong></div>
+                <div class="detail-item"><span>申请额度</span><strong>20,000元</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "企业临时信用额度审批",
+            "批准后仅在本结算周期内有效",
+            body,
+            `
+                <button class="btn btn-danger" onclick="closeModal()">驳回</button>
+                <button class="btn btn-success" onclick="approveCredit()">批准临时提额</button>
+            `
+        );
+    }
+
+    function approveCredit() {
+        const enterprise = enterprises.find(item => item.id === "HX");
+        enterprise.credit += 20000;
+
+        addAudit(
+            "李会计",
+            "园区财务",
+            "批准企业临时信用额度",
+            "华星科技",
+            "额度由100,000元调整为120,000元",
+            "已完成"
+        );
+
+        closeModal();
+        showToast("临时信用额度已增加20,000元，本结算周期结束后自动恢复。");
+    }
+
+    function generateBills() {
+        showToast("本期账单生成任务已完成：102家企业成功，2家因合同数据异常进入人工复核。");
+    }
+
+    /* 发票和回款 */
+
+    function openInvoiceRequest() {
+        const body = `
+            <form id="invoiceForm" onsubmit="submitInvoice(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>账单</label>
+                        <div class="readonly-box">BILL-YC-202606 · 32,800元</div>
+                    </div>
+                    <div class="form-group">
+                        <label>购买方</label>
+                        <div class="readonly-box">云创网络有限公司</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">开票方式</label>
+                        <select class="form-control">
+                            <option>一张账单开一张发票</option>
+                            <option>固定费和变动费分别开票</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">发票类型</label>
+                        <select class="form-control">
+                            <option>增值税电子普通发票</option>
+                            <option>增值税专用发票</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>税务及开票配置</label>
+                        <div class="readonly-box">
+                            具体开票项目和税率根据合同业务性质及园区财务配置执行，系统不允许业务人员自行修改。
+                        </div>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "处理企业开票申请",
+            "发票必须关联企业、合同和已确认账单",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('invoiceForm').requestSubmit()">
+                    提交开票
+                </button>
+            `
+        );
+    }
+
+    function submitInvoice(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("开票申请已提交税控系统，发票成功后将自动回传企业账户。");
+    }
+
+    function openBankMatching() {
+        const body = `
+            <div class="info-banner mb-16">
+                <div class="banner-icon">银</div>
+                <div class="banner-content">
+                    <strong>系统根据付款单位、金额、附言和账单号自动推荐匹配</strong>
+                    付款主体不一致、金额不一致或一笔支付多个账单时需要财务人工确认。
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item"><span>未匹配流水</span><strong>3笔</strong></div>
+                <div class="detail-item"><span>合计金额</span><strong>98,000元</strong></div>
+                <div class="detail-item"><span>可自动匹配</span><strong>1笔</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "银行流水自动匹配",
+            "对公付款和企业应收账单核销",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function confirmBankMatch(name, amount) {
+        addAudit(
+            "李会计",
+            "园区财务",
+            "确认银行回款核销",
+            name,
+            `核销${money(amount)}元`,
+            "已完成"
+        );
+
+        showToast(`${name}付款${money(amount)}元已与对应账单完成核销。`);
+    }
+
+    function openPartialPayment() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>银行回款</span><strong>20,000元</strong></div>
+                <div class="detail-item"><span>账单应付</span><strong>38,600元</strong></div>
+                <div class="detail-item"><span>核销后余额</span><strong>18,600元</strong></div>
+            </div>
+
+            <div class="warning-banner mt-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    付款主体为智联控股集团，需要核验集团代付关系后再执行核销。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "部分付款分配",
+            "一笔回款部分核销企业账单",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmPartialPayment()">确认部分核销</button>
+            `
+        );
+    }
+
+    function confirmPartialPayment() {
+        const bill = bills.find(item => item.id === "BILL002");
+        bill.payable -= 20000;
+        bill.status = "部分付款";
+
+        renderBillTable();
+        closeModal();
+
+        showToast("已核销20,000元，账单剩余18,600元待企业继续付款。");
+    }
+
+    function openPayerVerification() {
+        const body = `
+            <form id="payerForm" onsubmit="submitPayerVerification(event)">
+                <div class="detail-grid">
+                    <div class="detail-item"><span>实际付款单位</span><strong>上海宏远管理有限公司</strong></div>
+                    <div class="detail-item"><span>账单企业</span><strong>宏远咨询有限公司</strong></div>
+                    <div class="detail-item"><span>付款金额</span><strong>10,000元</strong></div>
+                </div>
+
+                <div class="form-group mt-16">
+                    <label class="required">代付依据</label>
+                    <select class="form-control">
+                        <option>集团总部统一付款</option>
+                        <option>关联企业代付</option>
+                        <option>付款单位错误，暂不核销</option>
+                    </select>
+                </div>
+
+                <div class="form-group mt-16">
+                    <label>上传代付说明</label>
+                    <input class="form-control" type="file">
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "核验付款主体",
+            "付款主体与账单企业不一致时必须留存代付依据",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不核销</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('payerForm').requestSubmit()">
+                    确认代付关系
+                </button>
+            `
+        );
+    }
+
+    function submitPayerVerification(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("代付关系已确认，10,000元回款已核销至宏远咨询账单。");
+    }
+
+    /* 审计 */
+
+    function renderAuditTable() {
+        document.getElementById("auditTableBody").innerHTML = audits.map(item => `
+            <tr>
+                <td>${item[0]}</td>
+                <td><strong>${item[1]}</strong></td>
+                <td>${item[2]}</td>
+                <td>${item[3]}</td>
+                <td>${item[4]}</td>
+                <td>${item[5]}</td>
+                <td>${statusTag(item[6])}</td>
+            </tr>
+        `).join("");
+    }
+
+    function addAudit(user, role, action, target, result, status) {
+        audits.unshift([
+            currentTime(),
+            user,
+            role,
+            action,
+            target,
+            result,
+            status
+        ]);
+
+        renderAuditTable();
+    }
+
+    /* 通用 */
+
+    function statusTag(status) {
+        const map = {
+            "正常": "tag-green",
+            "额度超额": "tag-red",
+            "账单争议": "tag-orange",
+            "待派单": "tag-red",
+            "现场处理中": "tag-orange",
+            "车主处理中": "tag-orange",
+            "已入场": "tag-blue",
+            "待入场": "tag-orange",
+            "准备离场": "tag-purple",
+            "待回款": "tag-orange",
+            "部分付款": "tag-orange",
+            "存在争议": "tag-red",
+            "待企业确认": "tag-blue",
+            "待开票": "tag-purple",
+            "运行中": "tag-green",
+            "数据延迟": "tag-orange",
+            "执行中": "tag-blue",
+            "处理中": "tag-orange",
+            "已完成": "tag-green"
+        };
+
+        return `<span class="tag ${map[status] || "tag-gray"}">${status}</span>`;
+    }
+
+    function money(value) {
+        return Number(value).toLocaleString("zh-CN");
+    }
+
+    function currentTime() {
+        return new Date().toLocaleTimeString("zh-CN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+    }
+
+    function openModal(title, subtitle, body, footer, large = false) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalSubtitle").textContent = subtitle || "";
+        document.getElementById("modalBody").innerHTML = body;
+        document.getElementById("modalFooter").innerHTML =
+            footer || `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`;
+
+        document.getElementById("modalBox").classList.toggle("large", large);
+        document.getElementById("modalMask").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        document.getElementById("modalMask").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function maskClose(event) {
+        if (event.target.id === "modalMask") {
+            closeModal();
+        }
+    }
+
+    function showToast(message, error = false) {
+        const toast = document.createElement("div");
+
+        toast.className = "toast" + (error ? " error" : "");
+        toast.innerHTML = `
+            <strong>${error ? "暂不能处理" : "处理完成"}</strong><br>
+            ${message}
+        `;
+
+        document.getElementById("toastWrap").appendChild(toast);
+
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+
+    function init() {
+        renderEnterpriseTable();
+        renderOccupancyTable();
+        renderVisitorTable();
+        renderBillTable();
+        renderAuditTable();
+    }
+
+    init();
+</script>
+
+</body>
+</html>

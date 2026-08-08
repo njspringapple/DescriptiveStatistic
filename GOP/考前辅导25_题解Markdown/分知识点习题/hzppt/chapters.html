@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>目录｜智慧停车数字化解决方案</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 72% 43%, rgba(0, 196, 255, .18), transparent 31%),
+    radial-gradient(circle at 90% 18%, rgba(111, 75, 255, .14), transparent 25%),
+    radial-gradient(circle at 15% 80%, rgba(0, 225, 190, .07), transparent 29%),
+    linear-gradient(
+      135deg,
+      #040c19 0%,
+      #07172b 48%,
+      #061327 73%,
+      #040c19 100%
+    );
+}
+
+/* 背景网格 */
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .13;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .32) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 17%,
+    #000 90%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  right: -190px;
+  top: -70px;
+  width: 990px;
+  height: 990px;
+  border: 1px solid rgba(64, 191, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 184, 255, .06),
+    inset 0 0 140px rgba(0, 184, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   背景科技曲线
+======================================== */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.2;
+  opacity: .20;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #49ddeb;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .14;
+  animation: dataFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5ce8f4;
+  opacity: .66;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes dataFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* ========================================
+   顶部品牌
+======================================== */
+
+.top-bar {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  top: 33px;
+  z-index: 8;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #23d7df);
+  box-shadow:
+    0 7px 22px rgba(0, 181, 255, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.brand-logo::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(53, 214, 238, .15);
+  border-radius: 15px;
+}
+
+.brand-logo svg {
+  width: 25px;
+  height: 25px;
+}
+
+.brand-cn {
+  color: #dff7ff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-en {
+  margin-top: 3px;
+  color: #4f7e9b;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+}
+
+.chapter-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #668ba3;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.chapter-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #49e6cb;
+  box-shadow: 0 0 9px #49e6cb;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .42;
+    box-shadow: 0 0 3px #49e6cb;
+  }
+}
+
+/* ========================================
+   左侧目录信息
+======================================== */
+
+.chapter-copy {
+  position: absolute;
+  left: 90px;
+  top: 145px;
+  z-index: 6;
+  width: 500px;
+  height: 580px;
+}
+
+.chapter-number {
+  position: absolute;
+  left: -10px;
+  top: -35px;
+  z-index: 0;
+  color: transparent;
+  font-size: 225px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -15px;
+  -webkit-text-stroke: 1px rgba(79, 201, 239, .12);
+  text-shadow: 0 0 60px rgba(0, 180, 238, .04);
+  user-select: none;
+}
+
+.chapter-content {
+  position: relative;
+  z-index: 2;
+  padding-top: 80px;
+}
+
+.chapter-label {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #55cbe6;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.chapter-label::before {
+  content: "";
+  width: 43px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #188fff, #39e6dc);
+  box-shadow: 0 0 10px rgba(53, 219, 239, .28);
+}
+
+.chapter-title {
+  margin-top: 28px;
+}
+
+.chapter-title h1 {
+  margin: 0;
+  color: transparent;
+  font-size: 54px;
+  line-height: 1.2;
+  letter-spacing: 5px;
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #a6efff 48%,
+    #55e3e9 78%,
+    #79efd7 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow: 0 10px 35px rgba(0, 10, 30, .25);
+}
+
+.chapter-en {
+  position: relative;
+  margin-top: 17px;
+  padding-bottom: 23px;
+  color: #527f9a;
+  font-size: 11px;
+  letter-spacing: 5px;
+}
+
+.chapter-en::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 430px;
+  height: 1px;
+  opacity: .48;
+  background: linear-gradient(
+    90deg,
+    #289cff,
+    #41e3e3,
+    transparent
+  );
+}
+
+.chapter-slogan {
+  margin-top: 31px;
+  color: #dceff6;
+  font-size: 22px;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.chapter-slogan strong {
+  color: #57e8d2;
+  font-weight: 700;
+}
+
+.chapter-description {
+  margin-top: 15px;
+  width: 445px;
+  color: #7095aa;
+  font-size: 11.5px;
+  line-height: 1.9;
+  letter-spacing: .4px;
+}
+
+.keywords {
+  margin-top: 27px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  width: 440px;
+}
+
+.keyword {
+  height: 32px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(61, 185, 228, .19);
+  border-radius: 16px;
+  color: #8fc0d2;
+  font-size: 9px;
+  background: rgba(13, 55, 84, .53);
+}
+
+.keyword i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4bdff0;
+  box-shadow: 0 0 7px #4bdff0;
+}
+
+.keyword.purple {
+  color: #b9adf3;
+  border-color: rgba(151, 124, 241, .19);
+  background: rgba(74, 55, 131, .24);
+}
+
+.keyword.purple i {
+  background: #ad94ff;
+  box-shadow: 0 0 7px #ad94ff;
+}
+
+.keyword.green {
+  color: #84d9c6;
+  border-color: rgba(49, 211, 177, .19);
+  background: rgba(23, 121, 103, .20);
+}
+
+.keyword.green i {
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+/* 左侧统计 */
+.catalog-stats {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 430px;
+  height: 72px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-item {
+  position: relative;
+  overflow: hidden;
+  padding: 13px 15px;
+  border: 1px solid rgba(61, 181, 226, .18);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 56, 87, .66),
+      rgba(6, 27, 51, .78)
+    );
+  box-shadow:
+    0 12px 28px rgba(0, 5, 18, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .03);
+}
+
+.stat-item::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #57def1,
+    transparent
+  );
+}
+
+.stat-item.green::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #50e5c5,
+    transparent
+  );
+}
+
+.stat-value {
+  color: #dcf8ff;
+  font-size: 23px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.stat-value small {
+  margin-left: 5px;
+  color: #58b5ca;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.stat-label {
+  margin-top: 8px;
+  color: #527d92;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* ========================================
+   右侧目录主视觉
+======================================== */
+
+.catalog-visual {
+  position: absolute;
+  right: 48px;
+  top: 104px;
+  z-index: 4;
+  width: 930px;
+  height: 642px;
+}
+
+/* 环形科技背景 */
+.catalog-orbit {
+  position: absolute;
+  left: 228px;
+  top: 5px;
+  width: 600px;
+  height: 600px;
+  border: 1px solid rgba(66, 202, 239, .10);
+  border-radius: 50%;
+}
+
+.catalog-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 39px;
+  border: 1px dashed rgba(71, 220, 235, .14);
+  border-radius: 50%;
+  animation: rotate 35s linear infinite;
+}
+
+.catalog-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 92px;
+  border: 1px solid rgba(108, 102, 255, .10);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-dot {
+  position: absolute;
+  z-index: 7;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #58e8f3;
+  box-shadow:
+    0 0 9px #58e8f3,
+    0 0 20px rgba(45, 220, 240, .42);
+}
+
+.dot-1 {
+  left: 278px;
+  top: 65px;
+}
+
+.dot-2 {
+  right: 28px;
+  top: 178px;
+  background: #ae96ff;
+  box-shadow:
+    0 0 9px #ae96ff,
+    0 0 20px rgba(144, 111, 255, .42);
+}
+
+.dot-3 {
+  right: 82px;
+  bottom: 69px;
+  background: #4be6c6;
+  box-shadow:
+    0 0 9px #4be6c6,
+    0 0 20px rgba(56, 219, 186, .42);
+}
+
+.catalog-glow {
+  position: absolute;
+  left: 255px;
+  top: 455px;
+  width: 550px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(0, 199, 255, .14);
+  filter: blur(38px);
+}
+
+/* ========================================
+   目录控制台
+======================================== */
+
+.catalog-console {
+  position: absolute;
+  left: 28px;
+  top: 25px;
+  z-index: 6;
+  width: 880px;
+  height: 585px;
+}
+
+/* 控制台顶部斜面 */
+.console-top {
+  position: absolute;
+  left: 38px;
+  top: 0;
+  width: 804px;
+  height: 74px;
+  clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%);
+  border: 1px solid rgba(78, 226, 243, .31);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(31, 105, 145, .96),
+      rgba(9, 57, 89, .97)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    0 -8px 30px rgba(0, 178, 255, .06);
+}
+
+.console-brand {
+  position: absolute;
+  left: 53px;
+  top: 19px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.console-brand-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg, #168dff, #2edfd5);
+  box-shadow:
+    0 0 18px rgba(38, 215, 232, .31),
+    inset 0 1px 0 rgba(255, 255, 255, .23);
+}
+
+.console-brand-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.console-brand-name {
+  color: #e9fbff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.console-brand-en {
+  margin-top: 4px;
+  color: #67abc1;
+  font-size: 7px;
+  letter-spacing: 1.4px;
+}
+
+.console-online {
+  position: absolute;
+  right: 53px;
+  top: 27px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #5ce7cc;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.console-online i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #48ebc9;
+  box-shadow: 0 0 10px #48ebc9;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+/* 控制台主体 */
+.console-body {
+  position: absolute;
+  left: 0;
+  top: 65px;
+  width: 880px;
+  height: 520px;
+  overflow: hidden;
+  border: 1px solid rgba(65, 220, 239, .42);
+  border-radius: 11px 11px 29px 29px;
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(0, 199, 229, .13),
+      transparent 49%
+    ),
+    linear-gradient(
+      150deg,
+      rgba(13, 68, 101, .98),
+      rgba(4, 22, 43, .99)
+    );
+  box-shadow:
+    0 35px 70px rgba(0, 5, 20, .58),
+    0 0 56px rgba(0, 191, 231, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .09);
+}
+
+.console-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .075;
+  background-image:
+    linear-gradient(rgba(80, 214, 243, .4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 214, 243, .4) 1px, transparent 1px);
+  background-size: 27px 27px;
+}
+
+/* 控制台标题 */
+.directory-heading {
+  position: absolute;
+  left: 29px;
+  right: 29px;
+  top: 19px;
+  z-index: 3;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(70, 178, 213, .16);
+}
+
+.directory-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.directory-title i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #53e5ef;
+  box-shadow: 0 0 8px #53e5ef;
+}
+
+.directory-title strong {
+  color: #cfeaf3;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.directory-title span {
+  color: #4f7b91;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+}
+
+.directory-count {
+  color: #5e899e;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.directory-count strong {
+  margin-right: 5px;
+  color: #58e2e4;
+  font-size: 14px;
+}
+
+/* ========================================
+   八个目录卡片
+======================================== */
+
+.directory-grid {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  top: 77px;
+  bottom: 26px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-auto-flow: column;
+  gap: 11px 13px;
+}
+
+.directory-card {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 13px 42px 13px 15px;
+  border: 1px solid rgba(61, 181, 226, .20);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 56, 87, .87),
+      rgba(6, 27, 51, .92)
+    );
+  box-shadow:
+    0 14px 32px rgba(0, 5, 18, .22),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  backdrop-filter: blur(10px);
+  transition:
+    transform .25s ease,
+    border-color .25s ease,
+    box-shadow .25s ease;
+}
+
+.directory-card::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #57def1,
+    transparent
+  );
+}
+
+.directory-card::after {
+  content: "";
+  position: absolute;
+  right: -34px;
+  bottom: -50px;
+  width: 110px;
+  height: 110px;
+  border: 1px solid rgba(80, 215, 238, .07);
+  border-radius: 50%;
+}
+
+.directory-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79, 222, 241, .46);
+  box-shadow:
+    0 18px 38px rgba(0, 5, 18, .34),
+    0 0 24px rgba(0, 194, 233, .08);
+}
+
+.directory-card.purple {
+  border-color: rgba(153, 123, 255, .24);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(56, 47, 112, .62),
+      rgba(7, 30, 55, .92)
+    );
+}
+
+.directory-card.purple::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #aa91ff,
+    transparent
+  );
+}
+
+.directory-card.green {
+  border-color: rgba(47, 215, 177, .23);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 82, 80, .54),
+      rgba(6, 29, 52, .92)
+    );
+}
+
+.directory-card.green::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #50e5c5,
+    transparent
+  );
+}
+
+/* 充电章节突出 */
+.directory-card.charging {
+  border-color: rgba(61, 222, 218, .34);
+  background:
+    radial-gradient(
+      circle at 82% 50%,
+      rgba(50, 220, 201, .10),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(14, 82, 92, .72),
+      rgba(6, 29, 52, .94)
+    );
+}
+
+.directory-card.charging::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #49e5d0,
+    transparent
+  );
+}
+
+.card-number {
+  position: relative;
+  z-index: 3;
+  width: 55px;
+  flex: 0 0 55px;
+  color: rgba(93, 223, 241, .73);
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.directory-card.purple .card-number {
+  color: rgba(186, 164, 255, .78);
+}
+
+.directory-card.green .card-number,
+.directory-card.charging .card-number {
+  color: rgba(85, 229, 199, .80);
+}
+
+.card-number::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  top: 1px;
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(92, 207, 230, .42),
+    transparent
+  );
+}
+
+.card-content {
+  position: relative;
+  z-index: 3;
+  min-width: 0;
+}
+
+.card-title {
+  overflow: hidden;
+  color: #dceff6;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-en {
+  overflow: hidden;
+  margin-top: 6px;
+  color: #597f95;
+  font-size: 7px;
+  letter-spacing: 1px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.directory-card.purple .card-en {
+  color: #756f9d;
+}
+
+.directory-card.green .card-en,
+.directory-card.charging .card-en {
+  color: #527f76;
+}
+
+.card-arrow {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  z-index: 3;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(76, 202, 230, .17);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.card-arrow::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 5px;
+  height: 5px;
+  border-top: 1px solid #5bcfe3;
+  border-right: 1px solid #5bcfe3;
+  transform: rotate(45deg);
+}
+
+.directory-card.purple .card-arrow {
+  border-color: rgba(170, 145, 255, .20);
+}
+
+.directory-card.purple .card-arrow::before {
+  border-color: #aa91ff;
+}
+
+.directory-card.green .card-arrow,
+.directory-card.charging .card-arrow {
+  border-color: rgba(80, 229, 197, .20);
+}
+
+.directory-card.green .card-arrow::before,
+.directory-card.charging .card-arrow::before {
+  border-color: #50e5c5;
+}
+
+/* 卡片装饰序号 */
+.card-index-bg {
+  position: absolute;
+  right: 42px;
+  top: -6px;
+  z-index: 1;
+  color: rgba(79, 211, 236, .055);
+  font-size: 76px;
+  line-height: 1;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.directory-card.purple .card-index-bg {
+  color: rgba(175, 150, 255, .065);
+}
+
+.directory-card.green .card-index-bg,
+.directory-card.charging .card-index-bg {
+  color: rgba(74, 224, 190, .06);
+}
+
+/* ========================================
+   目录视觉连接线
+======================================== */
+
+.visual-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 930px;
+  height: 642px;
+  pointer-events: none;
+}
+
+.catalog-line {
+  fill: none;
+  stroke: #4bd9ed;
+  stroke-width: 1.2;
+  stroke-dasharray: 6 7;
+  opacity: .42;
+  animation: lineFlow 10s linear infinite;
+}
+
+.catalog-line-purple {
+  stroke: #a28aff;
+}
+
+.catalog-line-green {
+  stroke: #49dfbf;
+}
+
+.catalog-node {
+  fill: #59e8f3;
+  filter: drop-shadow(0 0 6px #26d8ee);
+}
+
+.catalog-node-purple {
+  fill: #b39bff;
+  filter: drop-shadow(0 0 6px #9175ff);
+}
+
+.catalog-node-green {
+  fill: #55e9ca;
+  filter: drop-shadow(0 0 6px #38dbb8);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+/* ========================================
+   底部章节进度
+======================================== */
+
+.chapter-progress {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  bottom: 50px;
+  z-index: 8;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-label {
+  color: #52788e;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.progress-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  margin: 0 17px;
+  background: rgba(65, 136, 172, .18);
+}
+
+.progress-active {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #188fff,
+    #42e2e5,
+    #4adfbf
+  );
+  box-shadow: 0 0 8px rgba(55, 215, 235, .24);
+}
+
+.progress-dot {
+  position: absolute;
+  right: 0;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  margin-right: -4px;
+  border-radius: 50%;
+  background: #52e4d1;
+  box-shadow: 0 0 9px #52e4d1;
+}
+
+.progress-chapter {
+  color: #77a6ba;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* ========================================
+   页脚
+======================================== */
+
+.footer {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  bottom: 18px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #476e85;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景科技曲线 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient
+          id="backgroundGradient"
+          x1="0"
+          y1="0"
+          x2="1"
+          y2="1"
+        >
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 718 C229 658 305 755 493 680 C690 601 717 421 904 356 C1090 291 1305 416 1600 228"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 761 C245 710 387 793 568 722 C746 652 787 483 966 420 C1168 349 1371 419 1600 326"
+      />
+
+      <circle class="bg-dot" cx="493" cy="680" r="3"/>
+      <circle class="bg-dot" cx="904" cy="356" r="3"/>
+      <circle class="bg-dot" cx="1305" cy="416" r="3"/>
+    </svg>
+
+    <!-- 顶部品牌 -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M9 20V14M5 17h4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18 14l-2 3h2l-1 3 3-4h-2l1-2h-1z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <div class="brand-cn">惠泊云</div>
+          <div class="brand-en">HUIBO CLOUD</div>
+        </div>
+      </div>
+
+      <div class="chapter-status">
+        <i></i>
+        CONTENTS · SMART PARKING SOLUTION
+      </div>
+    </header>
+
+    <!-- 左侧目录标题 -->
+    <section class="chapter-copy">
+      <div class="chapter-number">00</div>
+
+      <div class="chapter-content">
+        <div class="chapter-label">
+          智慧停车解决方案
+        </div>
+
+        <div class="chapter-title">
+          <h1>方案目录</h1>
+        </div>
+
+        <div class="chapter-en">
+          SMART PARKING SOLUTION CONTENTS
+        </div>
+
+        <div class="chapter-slogan">
+          从“平台能力”<br>
+          到<strong>多场景数字化运营</strong>
+        </div>
+
+        <div class="chapter-description">
+          围绕系统底座、云端服务、车位运营、道路停车、
+          智慧充电、用户服务与多业态场景，
+          构建从基础平台到业务经营的一体化解决方案。
+        </div>
+
+        <div class="keywords">
+          <span class="keyword">
+            <i></i>
+            云端平台
+          </span>
+
+          <span class="keyword">
+            <i></i>
+            停车运营
+          </span>
+
+          <span class="keyword purple">
+            <i></i>
+            多业态场景
+          </span>
+
+          <span class="keyword green">
+            <i></i>
+            充电服务
+          </span>
+        </div>
+      </div>
+
+      <div class="catalog-stats">
+        <div class="stat-item">
+          <div class="stat-value">
+            08<small>CHAPTERS</small>
+          </div>
+          <div class="stat-label">核心方案章节</div>
+        </div>
+
+        <div class="stat-item green">
+          <div class="stat-value">
+            01<small>PLATFORM</small>
+          </div>
+          <div class="stat-label">统一数字化底座</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右侧目录主视觉 -->
+    <section class="catalog-visual">
+
+      <div class="catalog-orbit"></div>
+
+      <i class="orbit-dot dot-1"></i>
+      <i class="orbit-dot dot-2"></i>
+      <i class="orbit-dot dot-3"></i>
+
+      <div class="catalog-glow"></div>
+
+      <!-- 背景连接线 -->
+      <svg class="visual-lines" viewBox="0 0 930 642">
+        <path
+          class="catalog-line"
+          d="M67 160 C171 111 266 108 355 151"
+        />
+
+        <path
+          class="catalog-line catalog-line-purple"
+          d="M555 98 C655 52 786 86 858 160"
+        />
+
+        <path
+          class="catalog-line catalog-line-green"
+          d="M92 542 C204 599 317 591 407 550"
+        />
+
+        <circle
+          class="catalog-node"
+          cx="229"
+          cy="119"
+          r="3.5"
+        />
+
+        <circle
+          class="catalog-node-purple"
+          cx="709"
+          cy="80"
+          r="3.5"
+        />
+
+        <circle
+          class="catalog-node-green"
+          cx="285"
+          cy="582"
+          r="3.5"
+        />
+      </svg>
+
+      <!-- 目录控制台 -->
+      <div class="catalog-console">
+
+        <div class="console-top">
+          <div class="console-brand">
+            <div class="console-brand-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="16"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M7 9h10M7 13h7M7 17h5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="console-brand-name">
+                SMART PARKING SOLUTION
+              </div>
+
+              <div class="console-brand-en">
+                DIGITAL OPERATION PLATFORM
+              </div>
+            </div>
+          </div>
+
+          <div class="console-online">
+            <i></i>
+            SOLUTION ONLINE
+          </div>
+        </div>
+
+        <div class="console-body">
+
+          <div class="directory-heading">
+            <div class="directory-title">
+              <i></i>
+              <strong>方案章节</strong>
+              <span>CONTENTS INDEX</span>
+            </div>
+
+            <div class="directory-count">
+              <strong>08</strong>
+              CHAPTERS
+            </div>
+          </div>
+
+          <div class="directory-grid">
+
+            <!-- 01 -->
+            <article class="directory-card">
+              <span class="card-index-bg">01</span>
+
+              <div class="card-number">01</div>
+
+              <div class="card-content">
+                <div class="card-title">系统架构</div>
+                <div class="card-en">
+                  SYSTEM ARCHITECTURE
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 02 -->
+            <article class="directory-card purple">
+              <span class="card-index-bg">02</span>
+
+              <div class="card-number">02</div>
+
+              <div class="card-content">
+                <div class="card-title">无人值守云客服</div>
+                <div class="card-en">
+                  UNATTENDED CLOUD SERVICE
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 03 -->
+            <article class="directory-card green">
+              <span class="card-index-bg">03</span>
+
+              <div class="card-number">03</div>
+
+              <div class="card-content">
+                <div class="card-title">智慧车位运营</div>
+                <div class="card-en">
+                  SMART PARKING SPACE OPERATION
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 04 -->
+            <article class="directory-card">
+              <span class="card-index-bg">04</span>
+
+              <div class="card-number">04</div>
+
+              <div class="card-content">
+                <div class="card-title">
+                  道路停车数字化管理
+                </div>
+                <div class="card-en">
+                  DIGITAL ON-STREET PARKING
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 05 -->
+            <article class="directory-card charging">
+              <span class="card-index-bg">05</span>
+
+              <div class="card-number">05</div>
+
+              <div class="card-content">
+                <div class="card-title">智慧充电运营</div>
+                <div class="card-en">
+                  SMART EV CHARGING OPERATION
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 06 -->
+            <article class="directory-card purple">
+              <span class="card-index-bg">06</span>
+
+              <div class="card-number">06</div>
+
+              <div class="card-content">
+                <div class="card-title">APP 服务矩阵</div>
+                <div class="card-en">
+                  APP SERVICE MATRIX
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 07 -->
+            <article class="directory-card green">
+              <span class="card-index-bg">07</span>
+
+              <div class="card-number">07</div>
+
+              <div class="card-content">
+                <div class="card-title">
+                  多业态停车解决方案
+                </div>
+                <div class="card-en">
+                  MULTI-SCENARIO PARKING SOLUTIONS
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+            <!-- 08 -->
+            <article class="directory-card">
+              <span class="card-index-bg">08</span>
+
+              <div class="card-number">08</div>
+
+              <div class="card-content">
+                <div class="card-title">经典案例</div>
+                <div class="card-en">
+                  CLASSIC CASES
+                </div>
+              </div>
+
+              <i class="card-arrow"></i>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 目录进度 -->
+    <div class="chapter-progress">
+      <span class="progress-label">SOLUTION JOURNEY</span>
+
+      <div class="progress-track">
+        <i class="progress-active"></i>
+        <i class="progress-dot"></i>
+      </div>
+
+      <span class="progress-chapter">
+        CONTENTS · 01—08
+      </span>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        本方案将从平台架构、停车运营、智慧充电与多业态场景等维度展开介绍
+      </div>
+
+      <div class="footer-right">
+        PLATFORM · CLOUD SERVICE · PARKING · CHARGING · OPERATION
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

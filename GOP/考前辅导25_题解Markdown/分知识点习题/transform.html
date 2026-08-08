@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>粉笔板书 · 一个乘法，八种读法（矩阵乘法全视角）</title>
+<style>
+:root{--chalk:#eef3ea;--y:#ffe08a;--p:#ffa6c9;--c:#8fd9ff;--g:#8ef2a0;--r:#ff7a90;--o:#ffb46b;--v:#c9b6ff}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:#2b2118;overflow:hidden;padding:10px;display:flex;flex-direction:column;align-items:center;gap:8px;
+ font-family:"LXGW WenKai","霞鹜文楷","KaiTi","STKaiti","楷体","PingFang SC","Microsoft YaHei",sans-serif}
+.frame{width:min(1220px,100%);flex:1;min-height:0;border:16px solid #6d4a2a;border-radius:10px;background:#5b3d21;
+ box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 4px #543619;position:relative}
+.board{position:absolute;inset:0;overflow:hidden;background:
+ radial-gradient(120% 90% at 20% 10%,rgba(255,255,255,.06),transparent 60%),
+ radial-gradient(80% 70% at 85% 80%,rgba(255,255,255,.05),transparent 60%),#1e4335}
+.board::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;filter:blur(6px);background:
+ radial-gradient(60% 22% at 28% 26%,#fff,transparent 70%),radial-gradient(50% 18% at 74% 62%,#fff,transparent 70%)}
+.head{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;justify-content:space-between;padding:9px 20px 5px;
+ color:rgba(238,243,234,.7);font-size:13px;letter-spacing:1px;border-bottom:1px dashed rgba(255,255,255,.15)}
+.content{position:absolute;inset:40px 20px 20px 26px;overflow:auto;z-index:2;color:var(--chalk);
+ font-size:clamp(14px,1.8vw,18px);line-height:1.75;transition:opacity .3s,filter .3s}
+.content.fade{opacity:0;filter:blur(4px)}
+.content::-webkit-scrollbar{width:8px;height:8px}.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:8px}
+.atom{opacity:0;display:inline-block}.atom.shown{animation:ci .17s ease-out forwards}
+@keyframes ci{from{opacity:0;filter:blur(3px);transform:translateY(2px)}to{opacity:1;filter:none;transform:none}}
+.line,.box,.ctitle,.matlabel,.cell,.op{text-shadow:0 0 1px rgba(255,255,255,.45),0 0 7px rgba(255,255,255,.13)}
+.line{margin:2px 0;white-space:pre-wrap}
+.ctitle{display:inline-block;font-size:1.28em;color:var(--y);margin:0 0 9px;letter-spacing:2px;
+ border-bottom:2px dashed rgba(255,224,138,.5);padding-bottom:4px}
+.hl{color:var(--y)}.note{color:var(--c);font-size:.85em}
+.box{display:inline-block;margin:8px 0;padding:5px 15px;color:var(--g);border:2px dashed rgba(142,242,160,.6);border-radius:14px}
+.matwrap{display:flex;align-items:center;gap:7px}
+.matrix{display:flex}.brk{width:9px;border-top:3px solid var(--chalk);border-bottom:3px solid var(--chalk)}
+.brk.l{border-left:3px solid var(--chalk);border-radius:7px 0 0 7px}.brk.r{border-right:3px solid var(--chalk);border-radius:0 7px 7px 0}
+.mgrid{display:grid;gap:2px 6px;padding:4px 5px}
+.cell{min-width:2em;text-align:right;padding:2px 6px;border-radius:5px;transition:.25s;font-variant-numeric:tabular-nums}
+.matlabel{white-space:pre}
+.viz{display:block;width:max-content;max-width:100%;margin:10px 0;padding:9px 11px;border:1px solid rgba(255,255,255,.18);
+ border-radius:12px;background:rgba(0,0,0,.15)}
+.vh{color:var(--y);font-size:.78em;margin-bottom:7px}
+.vrow{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.vcol{display:flex;flex-direction:column;gap:8px}
+.vctl{display:flex;gap:7px;align-items:center;margin-top:7px;flex-wrap:wrap}
+.vctl button{font-size:12px;padding:4px 10px}
+.ro{font-size:.78em;color:var(--c);font-family:ui-monospace,Consolas,monospace;margin-top:5px;min-height:1.3em}
+.ro b{color:var(--p)}.ro i{color:var(--g);font-style:normal}
+canvas{display:block;border-radius:8px;touch-action:none}
+.cap{font-size:.72em;color:rgba(238,243,234,.62);text-align:center;margin-top:3px}
+.eqrow{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.op{font-size:1.15em;padding:0 3px;color:var(--chalk)}
+.sl{display:flex;align-items:center;gap:6px;font-size:.78em;color:var(--c)}
+input[type=range]{accent-color:#8fd6b6}input[type=range].mini{width:100px}
+.mm{display:grid;grid-template-columns:auto auto;gap:10px 16px;align-items:center;justify-items:center}
+.mmc{font-size:.72em;color:rgba(238,243,234,.55);text-align:center}
+.tbl{border-collapse:collapse;font-size:.84em;margin:6px 0}
+.tbl td,.tbl th{border:1px solid rgba(255,255,255,.22);padding:5px 12px}
+.tbl th{color:var(--y);font-weight:normal}
+.chalk{position:absolute;width:11px;height:28px;border-radius:3px;z-index:6;pointer-events:none;opacity:0;
+ background:linear-gradient(#fff,#dfe6dc);box-shadow:0 2px 6px rgba(0,0,0,.4);transform:translate(-9999px,-9999px) rotate(28deg);transition:transform .08s linear}
+.chalk.on{opacity:1}
+.dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;z-index:5;pointer-events:none;animation:fl .8s ease-in forwards}
+@keyframes fl{to{transform:translate(4px,40px);opacity:0}}
+.er{position:absolute;top:0;left:-160px;width:120px;height:100%;z-index:7;pointer-events:none;opacity:0;
+ background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.13),rgba(255,255,255,.02))}
+.er.sw{animation:sw .55s linear}@keyframes sw{0%{opacity:1;left:-160px}100%{opacity:1;left:100%}}
+.tray{position:absolute;left:0;right:0;bottom:0;height:13px;background:linear-gradient(#7a5530,#4d3319);z-index:4}
+.bar{width:min(1220px,100%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+button{font-family:inherit;font-size:14px;padding:6px 13px;border-radius:20px;cursor:pointer;color:#f6efe2;background:#3d2b1a;border:1px solid #7a5530}
+button:hover{background:#57391f}button.act{background:#1e4335;border-color:#8fd6b6;color:#d9ffe9}
+.toc{width:min(1220px,100%);display:flex;gap:6px;overflow-x:auto;padding-bottom:3px}
+.toc button{font-size:12px;padding:4px 9px;border-radius:13px;opacity:.7;white-space:nowrap}
+.toc button.cur{opacity:1;background:#1e4335;border-color:#8fd9ff;color:#e7f7ff}
+.lbl{color:#d9c9ae;font-size:13px}
+</style></head>
+<body>
+<div class="frame"><div class="board" id="board">
+ <div class="head"><span>线性代数 · 矩阵乘法的 8 种读法（变换视角）</span><span id="hr"></span></div>
+ <div class="content" id="content"></div>
+ <div class="chalk" id="chalk"></div><div class="er" id="er"></div><div class="tray"></div>
+</div></div>
+<div class="bar">
+ <button id="bF">⏮ 从头</button><button id="bP">◀ 上一页</button>
+ <button id="bA">▶ 自动讲课</button><button id="bN">下一页 ▶</button><button id="bR">↻ 重写本页</button>
+ <span class="lbl">语速</span><input id="sp" type="range" min="0.6" max="2.6" step="0.1" value="1.5">
+ <button id="bS">🔇 粉笔声</button>
+</div>
+<div class="toc" id="toc"></div>
+
+<script>
+/* ================= 基础工具 ================= */
+const CH='#eef3ea',YEL='#ffe08a',CYA='#8fd9ff',PNK='#ffa6c9',GRN='#8ef2a0',RED='#ff7a90',ORG='#ffb46b',VIO='#c9b6ff';
+const FT='13px "LXGW WenKai","KaiTi","楷体",sans-serif';
+const E=(t,c)=>{const d=document.createElement(t);if(c)d.className=c;return d;};
+const dv=(c,h)=>{const d=E('div',c);if(h)d.innerHTML=h;return d;};
+const bt=t=>{const b=E('button');b.textContent=t;return b;};
+const fmt=v=>{let r=Math.round(v*100)/100;if(Object.is(r,-0))r=0;return String(r);};
+function mul(A,B){const m=A.length,n=B.length,p=B[0].length,C=[];
+ for(let i=0;i<m;i++){C[i]=[];for(let j=0;j<p;j++){let s=0;for(let k=0;k<n;k++)s+=A[i][k]*B[k][j];C[i][j]=s;}}return C;}
+function mkc(w,h){const c=E('canvas'),d=window.devicePixelRatio||1;c.width=w*d;c.height=h*d;
+ c.style.width=w+'px';c.style.height=h+'px';const g=c.getContext('2d');g.scale(d,d);g.font=FT;g.textBaseline='middle';return{c,g};}
+function ln(g,a,b,x,y,col,lw,dash){g.save();if(dash)g.setLineDash(dash);g.strokeStyle=col;g.lineWidth=lw||1;
+ g.beginPath();g.moveTo(a,b);g.lineTo(x,y);g.stroke();g.restore();}
+function dt(g,x,y,r,col){g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,7);g.fill();}
+function ar(g,x1,y1,x2,y2,col,lw,dash){g.save();if(dash)g.setLineDash(dash);g.strokeStyle=col;g.lineWidth=lw||2.3;
+ g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.restore();
+ const a=Math.atan2(y2-y1,x2-x1),L=9;g.fillStyle=col;g.beginPath();g.moveTo(x2,y2);
+ g.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42));g.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42));g.closePath();g.fill();}
+function tx(g,s,x,y,col,al){g.fillStyle=col;g.textAlign=al||'left';g.fillText(s,x,y);}
+function grid(g,cx,cy,s,W,H){g.strokeStyle='rgba(238,243,234,.10)';g.lineWidth=1;
+ for(let i=-40;i<=40;i++){const X=cx+i*s,Y=cy+i*s;
+  if(X>0&&X<W){g.beginPath();g.moveTo(X,0);g.lineTo(X,H);g.stroke();}
+  if(Y>0&&Y<H){g.beginPath();g.moveTo(0,Y);g.lineTo(W,Y);g.stroke();}}
+ ln(g,0,cy,W,cy,'rgba(238,243,234,.4)',1.2);ln(g,cx,0,cx,H,'rgba(238,243,234,.4)',1.2);}
+/* 矩阵 DOM */
+function MD(rows,label,op){op=op||{};
+ const wrap=E('div','matwrap');let lab=null;
+ if(label){lab=E('div','matlabel');lab.textContent=label;wrap.appendChild(lab);}
+ const mx=E('div','matrix'),bl=E('div','brk l'),brr=E('div','brk r'),gd=E('div','mgrid');
+ gd.style.gridTemplateColumns='repeat('+rows[0].length+',auto)';
+ const cells=rows.map(r=>r.map(v=>{const c=E('div','cell');c.textContent=(v===null?'·':fmt(v));gd.appendChild(c);return c;}));
+ mx.append(bl,gd,brr);wrap.appendChild(mx);
+ const o={el:wrap,cells,rows:rows.map(r=>r.slice()),label:lab};
+ o.setAll=R=>{o.rows=R.map(r=>r.slice());R.forEach((r,i)=>r.forEach((v,j)=>cells[i][j].textContent=(v===null?'·':fmt(v))));};
+ o.set=(i,j,v)=>{o.rows[i][j]=v;cells[i][j].textContent=(v===null?'·':fmt(v));};
+ o.clear=()=>cells.forEach(r=>r.forEach(c=>{c.style.background='';c.style.color='';c.style.boxShadow='';c.style.opacity='';}));
+ o.hi=(i,j,col)=>{const c=cells[i][j];c.style.background=col+'2e';c.style.color=col;c.style.opacity=1;c.style.boxShadow='inset 0 0 0 2px '+col+'99';};
+ o.soft=(i,j,col)=>{const c=cells[i][j];c.style.background=col+'1a';c.style.color=col;};
+ o.hiRow=(i,col)=>cells[i].forEach((c,j)=>o.hi(i,j,col));
+ o.hiCol=(j,col)=>cells.forEach((r,i)=>o.hi(i,j,col));
+ o.softRow=(i,col)=>cells[i].forEach((c,j)=>o.soft(i,j,col));
+ o.softCol=(j,col)=>cells.forEach((r,i)=>o.soft(i,j,col));
+ return o;}
+const opd=t=>{const d=E('div','op');d.textContent=t;return d;};
+function eq(){const d=E('div','eqrow');[...arguments].forEach(x=>d.appendChild(typeof x==='string'?opd(x):(x.el||x)));return d;}
+function corner(top,left,main,txt){const g=E('div','mm');const c0=dv('mmc',txt||'');
+ g.append(c0,top.el||top,left.el||left,main.el||main);return g;}
+function slider(label,min,max,step,val,cb){const w=E('div','sl');const s=E('span');s.textContent=label;
+ const r=E('input');r.type='range';r.className='mini';r.min=min;r.max=max;r.step=step;r.value=val;
+ const o=E('span');o.textContent=fmt(val);o.style.color=CH;o.style.minWidth='2.4em';
+ r.oninput=()=>{o.textContent=fmt(+r.value);cb(+r.value);};w.append(s,r,o);return w;}
+/* 步进器 */
+function stepper(N,draw,dtms){let k=0,t=null;
+ const ctl=dv('vctl'),bp=bt('▶ 播放'),bn=bt('⏭ 单步'),br=bt('⟲ 重置'),ind=dv('ro');
+ function set(v){k=Math.max(0,Math.min(N-1,v));draw(k);}
+ function stop(){clearInterval(t);t=null;bp.textContent='▶ 播放';}
+ function play(){if(t)return;bp.textContent='⏸ 暂停';t=setInterval(()=>{if(k>=N-1){stop();return;}set(k+1);},dtms||1400);}
+ bp.onclick=()=>t?stop():play();bn.onclick=()=>{stop();set(k>=N-1?0:k+1);};br.onclick=()=>{stop();set(0);};
+ ctl.append(bp,bn,br);return{ctl,ind,set,play,stop,get k(){return k}};}
+
+/* ================= 可视化组件 ================= */
+const VIZ={};
+
+/* 0 · 四种读法循环高亮 */
+VIZ.cycler=function(){
+ const A=[[2,-1,0],[1,2,3],[0,1,-2]];
+ const el=dv('viz');el.appendChild(dv('vh','同一堆数字，换个"切法"就是另一种读法'));
+ const m=MD(A,'A =');el.appendChild(m.el);
+ const cap=dv('ro');el.appendChild(cap);
+ const caps=['① 竖着切 ➜ 一列一列：列 = 基向量 e₁,e₂,e₃ <b>被送到哪里</b>（Ae_j = a_j）',
+             '② 横着切 ➜ 一行一行：行 = 一台<b>测量仪</b>，量出输出的第 i 个坐标',
+             '③ 切成小格 ➜ 每个元素 = 某行 · 某列 的点积（最基础的算法）',
+             '④ 切成"层" ➜ 第 k 列 × 第 k 行 = 一张<b>秩 1 的薄片</b>，叠起来就是乘积'];
+ const st=stepper(4,k=>{m.clear();
+  if(k===0)for(let j=0;j<3;j++)m.softCol(j,[YEL,CYA,PNK][j]);
+  if(k===1)for(let i=0;i<3;i++)m.softRow(i,[YEL,CYA,PNK][i]);
+  if(k===2){let n=0;for(let i=0;i<3;i++)for(let j=0;j<3;j++){m.soft(i,j,(i+j)%2?CYA:YEL);}m.hi(1,1,GRN);}
+  if(k===3){m.hiCol(1,ORG);m.hiRow(1,VIO);m.hi(1,1,GRN);}
+  cap.innerHTML=caps[k];},1700);
+ el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),500);},stop(){st.stop();}};
+};
+
+/* ① Ax = 列的线性组合 */
+VIZ.colcomb=function(){
+ const A=[[2,-1],[1,2]];let x=[1.5,1];
+ const W=400,H=300,s=34,cx=150,cy=200;
+ const el=dv('viz');el.appendChild(dv('vh','视角① 　Ax = x₁a₁ + x₂a₂ 　（列的线性组合）'));
+ const rw=dv('vrow'),{c,g}=mkc(W,H);
+ const left=dv('vcol');left.append(c,dv('cap','a₁ = A的第1列 = A e₁ ；a₂ = A的第2列 = A e₂'));
+ const mA=MD(A,'A ='),mx=MD([[x[0]],[x[1]]],'x ='),mr=MD([[0],[0]],'Ax =');
+ const right=dv('vcol');right.append(eq(mA,'',mx,'=',mr));
+ const ro=dv('ro');right.appendChild(ro);
+ rw.append(left,right);el.appendChild(rw);
+ const sw=dv('vctl');
+ sw.append(slider('x₁',-2,3,.1,x[0],v=>{x[0]=v;upd();}),slider('x₂',-2,3,.1,x[1],v=>{x[1]=v;upd();}));
+ let stp=3;
+ function upd(){
+  const y=[A[0][0]*x[0]+A[0][1]*x[1],A[1][0]*x[0]+A[1][1]*x[1]];
+  mx.setAll([[x[0]],[x[1]]]);mr.setAll([[y[0]],[y[1]]]);
+  mA.clear();mx.clear();mr.clear();
+  if(stp>=1){mA.hiCol(0,YEL);mx.hi(0,0,YEL);}
+  if(stp>=2){mA.hiCol(1,CYA);mx.hi(1,0,CYA);}
+  if(stp>=3){mr.hiCol(0,GRN);}
+  const a1=[A[0][0],A[1][0]],a2=[A[0][1],A[1][1]];
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const P=v=>[cx+v[0]*s,cy-v[1]*s];
+  let p=P(a1);ar(g,cx,cy,p[0],p[1],'rgba(255,224,138,.4)',2);tx(g,'a₁',p[0]+5,p[1]+10,'rgba(255,224,138,.6)');
+  p=P(a2);ar(g,cx,cy,p[0],p[1],'rgba(143,217,255,.4)',2);tx(g,'a₂',p[0]-22,p[1]-8,'rgba(143,217,255,.6)');
+  const u=[a1[0]*x[0],a1[1]*x[0]],w=[u[0]+a2[0]*x[1],u[1]+a2[1]*x[1]];
+  if(stp>=1){const q=P(u);ar(g,cx,cy,q[0],q[1],YEL,3.2);tx(g,'x₁a₁',q[0]+6,q[1]+12,YEL);}
+  if(stp>=2){const q=P(u),r=P(w);ar(g,q[0],q[1],r[0],r[1],CYA,3.2);tx(g,'x₂a₂',r[0]+6,r[1]+12,CYA);
+   const z=P([a2[0]*x[1],a2[1]*x[1]]);ln(g,cx,cy,z[0],z[1],'rgba(143,217,255,.35)',2,[5,4]);ln(g,z[0],z[1],r[0],r[1],'rgba(255,224,138,.3)',1.5,[4,4]);}
+  if(stp>=3){const r=P(w);ar(g,cx,cy,r[0],r[1],GRN,3.6);tx(g,'Ax',r[0]+7,r[1]-10,GRN);}
+  dt(g,cx,cy,4,'#fff');
+  ro.innerHTML='Ax = <b>'+fmt(x[0])+'</b>·(2,1) + <b>'+fmt(x[1])+'</b>·(-1,2) = <i>('+fmt(y[0])+', '+fmt(y[1])+')</i>';
+ }
+ const st=stepper(4,k=>{stp=k;upd();},1300);
+ el.append(st.ctl,sw);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ② Ax = 行的点积 */
+VIZ.rowdot=function(){
+ const A=[[2,-1],[1,2]],x=[1.5,1];
+ const W=380,H=300,s=34,cx=140,cy=190;
+ const el=dv('viz');el.appendChild(dv('vh','视角② 　(Ax)ᵢ = rᵢ · x 　（行 = 一台测量仪）'));
+ const rw=dv('vrow'),{c,g}=mkc(W,H);
+ const left=dv('vcol');left.append(c,dv('cap','行向量 rᵢ 和 x 住在同一个空间 ℝⁿ'));
+ const mA=MD(A,'A ='),mx=MD([[x[0]],[x[1]]],'x ='),mr=MD([[null],[null]],'Ax =');
+ const right=dv('vcol');right.append(eq(mA,'',mx,'=',mr));
+ const ro=dv('ro');right.appendChild(ro);rw.append(left,right);el.appendChild(rw);
+ const cols=[YEL,CYA];
+ function draw(k){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const P=v=>[cx+v[0]*s,cy-v[1]*s];
+  let q=P(x);ar(g,cx,cy,q[0],q[1],PNK,3.2);tx(g,'x',q[0]+7,q[1]-9,PNK);
+  mA.clear();mx.clear();mr.clear();mr.setAll([[null],[null]]);
+  const vals=[A[0][0]*x[0]+A[0][1]*x[1],A[1][0]*x[0]+A[1][1]*x[1]];
+  for(let i=0;i<2;i++){
+   if(k<i+1)continue;
+   const r=[A[i][0],A[i][1]],col=cols[i];
+   const pr=P(r);ar(g,cx,cy,pr[0],pr[1],col,2.6);tx(g,'r'+(i+1),pr[0]+6,pr[1]-9,col);
+   const n2=r[0]*r[0]+r[1]*r[1],t=vals[i]/n2,f=[r[0]*t,r[1]*t],pf=P(f);
+   ln(g,q[0],q[1],pf[0],pf[1],col,1.6,[5,4]);
+   ln(g,cx,cy,pf[0],pf[1],col,5.5);dt(g,pf[0],pf[1],4,col);
+   mA.hiRow(i,col);mr.set(i,0,vals[i]);mr.hi(i,0,col);
+  }
+  if(k>=1){for(let j=0;j<2;j++)mx.soft(j,0,PNK);}
+  dt(g,cx,cy,4,'#fff');
+  if(k===0)ro.innerHTML='把 A 的每一行看成一把"尺子"，用它去<b>量</b> x';
+  if(k===1)ro.innerHTML='r₁·x = 2×1.5 + (-1)×1 = <i>2</i>　（粗线 = x 在 r₁ 上的投影）';
+  if(k===2)ro.innerHTML='r₂·x = 1×1.5 + 2×1 = <i>3.5</i>';
+  if(k===3)ro.innerHTML='两个读数叠成输出： Ax = <i>(2, 3.5)</i>　—— 与视角① 完全一致 ✔';
+ }
+ const st=stepper(4,draw,1500);el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ①②对照 */
+VIZ.twoways=function(){
+ const A=[[2,-1],[1,2]],x=[[1.5],[1]],C=mul(A,x);
+ const el=dv('viz');el.appendChild(dv('vh','同一次计算，纵切 / 横切'));
+ const rw=dv('vrow');
+ const L=dv('vcol'),Rt=dv('vcol');
+ const a1=MD(A,'A ='),x1=MD(x,'x ='),r1=MD([[null],[null]],'=');
+ const a2=MD(A,'A ='),x2=MD(x,'x ='),r2=MD([[null],[null]],'=');
+ L.append(dv('cap','① 列读法：一次组装出整个输出'),eq(a1,'',x1,'',r1));
+ Rt.append(dv('cap','② 行读法：一次算出输出的一个坐标'),eq(a2,'',x2,'',r2));
+ rw.append(L,Rt);el.appendChild(rw);
+ const ro=dv('ro');el.appendChild(ro);
+ const st=stepper(5,k=>{
+  [a1,x1,r1,a2,x2,r2].forEach(m=>m.clear());r1.setAll([[null],[null]]);r2.setAll([[null],[null]]);
+  if(k>=1){a1.hiCol(0,YEL);x1.hi(0,0,YEL);}
+  if(k>=2){a1.hiCol(1,CYA);x1.hi(1,0,CYA);r1.setAll(C);r1.hiCol(0,GRN);}
+  if(k>=3){a2.hiRow(0,YEL);x2.softCol(0,PNK);r2.set(0,0,C[0][0]);r2.hi(0,0,YEL);}
+  if(k>=4){a2.hiRow(1,CYA);r2.set(1,0,C[1][0]);r2.hi(1,0,CYA);}
+  ro.innerHTML=['准备：同一个 A、同一个 x','① 取出第 1 列，乘系数 1.5','① 加上第 2 列的 1 倍 ➜ 一次性得到整个 (2, 3.5)',
+   '② 第 1 行去点 x ➜ 只得到第 1 个坐标 2','② 第 2 行去点 x ➜ 得到第 2 个坐标 3.5 ➜ <i>结果相同</i>'][k];
+ },1400);
+ el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ③ yᵀA = 行的线性组合 */
+VIZ.rowcomb=function(){
+ const A=[[2,-1],[1,2]];let y=[1,2];
+ const W=390,H=300,s=30,cx=110,cy=210;
+ const el=dv('viz');el.appendChild(dv('vh','视角③ 　yᵀA = y₁r₁ + y₂r₂ 　（行的线性组合）'));
+ const rw=dv('vrow'),{c,g}=mkc(W,H);
+ const left=dv('vcol');left.append(c,dv('cap','r₁,r₂ = A 的两行，结果落在"行空间"'));
+ const my=MD([[y[0],y[1]]],'yᵀ ='),mA=MD(A,'A ='),mr=MD([[0,0]],'yᵀA =');
+ const right=dv('vcol');right.append(eq(my,'',mA,'=',mr));
+ const ro=dv('ro');right.appendChild(ro);rw.append(left,right);el.appendChild(rw);
+ const sw=dv('vctl');sw.append(slider('y₁',-2,3,.1,y[0],v=>{y[0]=v;upd();}),slider('y₂',-2,3,.1,y[1],v=>{y[1]=v;upd();}));
+ let stp=3;
+ function upd(){
+  const z=[y[0]*A[0][0]+y[1]*A[1][0],y[0]*A[0][1]+y[1]*A[1][1]];
+  my.setAll([[y[0],y[1]]]);mr.setAll([[z[0],z[1]]]);
+  my.clear();mA.clear();mr.clear();
+  if(stp>=1){mA.hiRow(0,YEL);my.hi(0,0,YEL);}
+  if(stp>=2){mA.hiRow(1,CYA);my.hi(0,1,CYA);}
+  if(stp>=3){mr.hiRow(0,GRN);}
+  const r1=[A[0][0],A[0][1]],r2=[A[1][0],A[1][1]],P=v=>[cx+v[0]*s,cy-v[1]*s];
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  let p=P(r1);ar(g,cx,cy,p[0],p[1],'rgba(255,224,138,.4)',2);tx(g,'r₁',p[0]+5,p[1]+10,'rgba(255,224,138,.6)');
+  p=P(r2);ar(g,cx,cy,p[0],p[1],'rgba(143,217,255,.4)',2);tx(g,'r₂',p[0]+5,p[1]-9,'rgba(143,217,255,.6)');
+  const u=[r1[0]*y[0],r1[1]*y[0]],w=[u[0]+r2[0]*y[1],u[1]+r2[1]*y[1]];
+  if(stp>=1){const q=P(u);ar(g,cx,cy,q[0],q[1],YEL,3.2);tx(g,'y₁r₁',q[0]+6,q[1]+13,YEL);}
+  if(stp>=2){const q=P(u),r=P(w);ar(g,q[0],q[1],r[0],r[1],CYA,3.2);tx(g,'y₂r₂',r[0]-46,r[1]+14,CYA);}
+  if(stp>=3){const r=P(w);ar(g,cx,cy,r[0],r[1],GRN,3.6);tx(g,'yᵀA',r[0]+7,r[1]-10,GRN);}
+  dt(g,cx,cy,4,'#fff');
+  ro.innerHTML='yᵀA = <b>'+fmt(y[0])+'</b>·(2,-1) + <b>'+fmt(y[1])+'</b>·(1,2) = <i>('+fmt(z[0])+', '+fmt(z[1])+')</i>';
+ }
+ const st=stepper(4,k=>{stp=k;upd();},1300);el.append(st.ctl,sw);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ④ (yᵀA)_j = y·a_j */
+VIZ.coldot=function(){
+ const A=[[2,-1],[1,2]],y=[[1,2]],C=mul(y,A);
+ const el=dv('viz');el.appendChild(dv('vh','视角④ 　(yᵀA)_j = y · a_j 　（与每一列做点积）'));
+ const my=MD(y,'yᵀ ='),mA=MD(A,'A ='),mr=MD([[null,null]],'=');
+ el.appendChild(eq(my,'',mA,'',mr));
+ const ro=dv('ro');el.appendChild(ro);
+ const cols=[YEL,CYA];
+ const st=stepper(3,k=>{
+  my.clear();mA.clear();mr.clear();mr.setAll([[null,null]]);
+  for(let j=0;j<k;j++){mA.hiCol(j,cols[j]);mr.set(0,j,C[0][j]);mr.hi(0,j,cols[j]);my.softRow(0,PNK);}
+  ro.innerHTML=['行向量 y 从左边"扫过"A 的每一列',
+   'y·a₁ = 1×2 + 2×1 = <i>4</i>','y·a₂ = 1×(-1) + 2×2 = <i>3</i>　⇒ yᵀA = (4, 3) ，与视角③ 一致 ✔'][k];
+ },1500);
+ el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ⑤ AB 列块：A 批量作用于 B 的每一列 */
+VIZ.batchcol=function(){
+ const A=[[1,.8],[.5,1]],B=[[1,3,3,1],[1,1,3,3]],C=mul(A,B),p=4;
+ const W=470,H=330,s=40,cx=60,cy=H-55;
+ const el=dv('viz');el.appendChild(dv('vh','视角⑤ 　AB = [ Ab₁  Ab₂  …  Ab_p ] 　（A 批量搬运 B 的每一列）'));
+ const rw=dv('vrow'),{c,g}=mkc(W,H);
+ const left=dv('vcol');left.append(c,dv('cap','B 的 4 列 = 正方形的 4 个顶点；A 把它们逐个搬走'));
+ const mA=MD(A,'A ='),mB=MD(B,'B ='),mC=MD([[null,null,null,null],[null,null,null,null]],'AB =');
+ const right=dv('vcol');right.append(eq(mA,'',mB),eq(mC));
+ const ro=dv('ro');right.appendChild(ro);rw.append(left,right);el.appendChild(rw);
+ let prog=[0,0,0,0],tgt=[0,0,0,0],raf=null;
+ const cl=[YEL,CYA,PNK,ORG];
+ function poly(pts,fill,stroke,lw){g.beginPath();pts.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.closePath();
+  if(fill){g.fillStyle=fill;g.fill();}g.strokeStyle=stroke;g.lineWidth=lw||2;g.stroke();}
+ function draw(){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const P=v=>[cx+v[0]*s,cy-v[1]*s];
+  poly([0,1,2,3].map(j=>P([B[0][j],B[1][j]])),'rgba(143,217,255,.10)','rgba(143,217,255,.35)',1.6);
+  const cur=[0,1,2,3].map(j=>[(1-prog[j])*B[0][j]+prog[j]*C[0][j],(1-prog[j])*B[1][j]+prog[j]*C[1][j]]);
+  poly(cur.map(P),'rgba(142,242,160,.13)',GRN,2.2);
+  for(let j=0;j<p;j++){const q=P(cur[j]);ar(g,cx,cy,q[0],q[1],cl[j],prog[j]>.02?2.8:1.4);
+   tx(g,(prog[j]>.5?'Ab':'b')+(j+1),q[0]+6,q[1]-9,cl[j]);}
+  dt(g,cx,cy,4,'#fff');
+ }
+ function loop(){let ch=false;for(let j=0;j<p;j++){const d=tgt[j]-prog[j];
+   if(Math.abs(d)>1e-3){prog[j]+=d*.09;ch=true;}else prog[j]=tgt[j];}
+  draw();raf=requestAnimationFrame(loop);}
+ const st=stepper(6,k=>{
+  for(let j=0;j<p;j++)tgt[j]=(k>=5)?1:(j<k?1:0);
+  mB.clear();mC.clear();mA.clear();
+  mC.setAll([[null,null,null,null],[null,null,null,null]]);
+  const done=(k>=5)?p:k;
+  for(let j=0;j<done;j++){mB.hiCol(j,cl[j]);mC.set(0,j,C[0][j]);mC.set(1,j,C[1][j]);mC.hiCol(j,cl[j]);}
+  if(k>=1&&k<5)mA.clear(),[0,1].forEach(i=>mA.softRow(i,GRN));
+  ro.innerHTML=k===0?'B 的每一列，就是一个待搬运的向量'
+   :(k>=5?'4 列全部搬完 ➜ 整个图形被 A 做了一次线性变换 ✔':'第 '+k+' 列： b'+k+' ⟶ A b'+k+' = ('+fmt(C[0][k-1])+', '+fmt(C[1][k-1])+')');
+ },1400);
+ el.append(st.ctl);
+ return{el,start(){if(!raf)raf=requestAnimationFrame(loop);st.set(0);setTimeout(()=>st.play(),400);},
+        stop(){st.stop();cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* ⑥ AB 行块：每一行被 B 右乘 */
+VIZ.batchrow=function(){
+ const A=[[1,2],[3,1]],B=[[1,1],[2,-1]],C=mul(A,B);
+ const W=380,H=300,s=30,cx=110,cy=170;
+ const el=dv('viz');el.appendChild(dv('vh','视角⑥ 　AB 的第 i 行 = aᵢ* B = A 第 i 行 对 B 的行做线性组合'));
+ const rw=dv('vrow'),{c,g}=mkc(W,H);
+ const left=dv('vcol');left.append(c,dv('cap','B 的两行 b₁*, b₂* 是"素材"，A 的每一行是"配方"'));
+ const mA=MD(A,'A ='),mB=MD(B,'B ='),mC=MD([[null,null],[null,null]],'AB =');
+ const right=dv('vcol');right.append(eq(mA,'',mB,'=',mC));
+ const ro=dv('ro');right.appendChild(ro);rw.append(left,right);el.appendChild(rw);
+ const rc=[YEL,CYA];
+ function draw(k){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const P=v=>[cx+v[0]*s,cy-v[1]*s];
+  let p=P([B[0][0],B[0][1]]);ar(g,cx,cy,p[0],p[1],'rgba(201,182,255,.85)',2.4);tx(g,'b₁*',p[0]+6,p[1]-9,VIO);
+  p=P([B[1][0],B[1][1]]);ar(g,cx,cy,p[0],p[1],'rgba(255,180,107,.85)',2.4);tx(g,'b₂*',p[0]+6,p[1]+11,ORG);
+  mA.clear();mB.clear();mC.clear();mC.setAll([[null,null],[null,null]]);
+  if(k>=1)[0,1].forEach(j=>mB.softRow(j,[VIO,ORG][j]));
+  for(let i=0;i<2;i++){if(k<i+2)continue;
+   const u=[A[i][0]*B[0][0],A[i][0]*B[0][1]],w=[u[0]+A[i][1]*B[1][0],u[1]+A[i][1]*B[1][1]];
+   const q=P(u),r=P(w);
+   ar(g,cx,cy,q[0],q[1],'rgba(201,182,255,.5)',2,[5,4]);ar(g,q[0],q[1],r[0],r[1],'rgba(255,180,107,.5)',2,[5,4]);
+   ar(g,cx,cy,r[0],r[1],rc[i],3.4);tx(g,'c'+(i+1)+'*',r[0]+7,r[1]-10,rc[i]);
+   mA.hiRow(i,rc[i]);mC.set(i,0,C[i][0]);mC.set(i,1,C[i][1]);mC.hiRow(i,rc[i]);}
+  ro.innerHTML=['AB 也可以横着切：一行一行地出','B 的两行 = 两个基本"行素材"',
+   'c₁* = 1·b₁* + 2·b₂* = <i>(5, -1)</i>','c₂* = 3·b₁* + 1·b₂* = <i>(5, 2)</i>　⇒ AB 的行都是 B 的行的组合 ✔'][k];
+ }
+ const st=stepper(4,draw,1500);el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ⑨⑩ 左乘动行，右乘动列 */
+VIZ.sides=function(){
+ const A=[[1,2,3],[4,5,6],[7,8,9]],P=[[0,1,0],[1,0,0],[0,0,1]];
+ const el=dv('viz');el.appendChild(dv('vh','视角⑨⑩ 　左乘 = 对"行"动手术 ／ 右乘 = 对"列"动手术'));
+ const host=dv();el.appendChild(host);const ro=dv('ro');el.appendChild(ro);
+ const rc=[YEL,CYA,PNK];
+ function build(k){
+  host.innerHTML='';
+  if(k===0){const m=MD(A,'A =');[0,1,2].forEach(i=>m.softRow(i,rc[i]));
+   host.appendChild(eq(m));ro.innerHTML='先给 A 的三行分别涂色：<b>黄 / 青 / 粉</b>';return;}
+  if(k===1){const e=MD(P,'P ='),a=MD(A,'A ='),r=MD(mul(P,A),'=');
+   [0,1,2].forEach(i=>a.softRow(i,rc[i]));[1,0,2].forEach((src,i)=>r.hiRow(i,rc[src]));
+   host.appendChild(eq(e,'',a,'',r));ro.innerHTML='<b>P 从左边乘</b>：整块的<b>行</b>被搬动（黄青互换），列内部纹丝不动';return;}
+  if(k===2){const m=MD(A,'A =');[0,1,2].forEach(j=>m.softCol(j,rc[j]));
+   host.appendChild(eq(m));ro.innerHTML='换成给三<b>列</b>涂色：<b>黄 / 青 / 粉</b>';return;}
+  if(k===3){const a=MD(A,'A ='),e=MD(P,'P ='),r=MD(mul(A,P),'=');
+   [0,1,2].forEach(j=>a.softCol(j,rc[j]));[1,0,2].forEach((src,j)=>r.hiCol(j,rc[src]));
+   host.appendChild(eq(a,'',e,'',r));ro.innerHTML='<b>P 从右边乘</b>：整块的<b>列</b>被搬动（黄青互换）';return;}
+  const t=dv('ro');host.appendChild(t);
+  t.innerHTML='口诀： <b>左行右列</b> ——<br>初等行变换 ⇒ 左乘初等矩阵；初等列变换 ⇒ 右乘初等矩阵。<br>'+
+   '因为 (PA) 的每一行 = P 的那一行去组合 A 的所有行； (AP) 的每一列 = A 去变换 P 的那一列。';
+  ro.innerHTML='';
+ }
+ const st=stepper(5,build,1700);el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ⑦ 外积展开 */
+VIZ.outer=function(){
+ const A=[[1,2],[3,4]],B=[[5,6],[7,8]];
+ const L1=mul([[A[0][0]],[A[1][0]]],[[B[0][0],B[0][1]]]);
+ const L2=mul([[A[0][1]],[A[1][1]]],[[B[1][0],B[1][1]]]);
+ const C=mul(A,B);
+ const el=dv('viz');el.appendChild(dv('vh','视角⑦ 　AB = Σₖ aₖ bₖ* 　（n 张"秩 1 薄片"叠起来）'));
+ const host=dv();el.appendChild(host);const ro=dv('ro');el.appendChild(ro);
+ function build(k){
+  host.innerHTML='';
+  const a=MD(A,'A ='),b=MD(B,'B =');
+  if(k>=1){a.hiCol(0,YEL);b.hiRow(0,YEL);}
+  if(k>=2){a.hiCol(1,CYA);b.hiRow(1,CYA);}
+  host.appendChild(eq(a,'',b));
+  const line=E('div','eqrow');line.style.marginTop='8px';
+  if(k>=1){const c1=MD([[A[0][0]],[A[1][0]]],''),r1=MD([[B[0][0],B[0][1]]],''),m1=MD(L1,'=');
+   [c1,r1].forEach(m=>m.cells.forEach(rr=>rr.forEach(cc=>{cc.style.color=YEL;cc.style.background=YEL+'1e';})));
+   m1.cells.forEach(rr=>rr.forEach(cc=>{cc.style.color=YEL;cc.style.background=YEL+'1e';}));
+   const g1=E('div','eqrow');g1.append(c1.el,r1.el,m1.el);line.appendChild(g1);}
+  if(k>=2){line.appendChild(opd('+'));
+   const c2=MD([[A[0][1]],[A[1][1]]],''),r2=MD([[B[1][0],B[1][1]]],''),m2=MD(L2,'=');
+   [c2,r2,m2].forEach(m=>m.cells.forEach(rr=>rr.forEach(cc=>{cc.style.color=CYA;cc.style.background=CYA+'1e';})));
+   const g2=E('div','eqrow');g2.append(c2.el,r2.el,m2.el);line.appendChild(g2);}
+  host.appendChild(line);
+  if(k>=3){const s=MD(L1,''),p=MD(L2,''),c=MD(C,'AB =');
+   s.cells.forEach(rr=>rr.forEach(cc=>cc.style.color=YEL));p.cells.forEach(rr=>rr.forEach(cc=>cc.style.color=CYA));
+   c.cells.forEach(rr=>rr.forEach(cc=>{cc.style.color=GRN;cc.style.background=GRN+'1e';}));
+   const g3=E('div','eqrow');g3.style.marginTop='8px';g3.append(s.el,opd('+'),p.el,opd('='),c.el);host.appendChild(g3);}
+  ro.innerHTML=['把 A 竖着切成列，把 B 横着切成行 —— 一一配对',
+   '第 1 张薄片：a₁ b₁* ＝ 列 × 行 ＝ 一个 <b>秩 1 矩阵</b>（两行成比例）',
+   '第 2 张薄片：a₂ b₂* ，同样是秩 1',
+   '两张薄片<b>逐格相加</b> ＝ AB ✔　（这就是"矩阵分解 / 低秩逼近"的源头）'][k];
+ }
+ const st=stepper(4,build,1700);el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ⑧ 逐元素内积（经典布局） */
+VIZ.entry=function(){
+ const A=[[1,2],[3,4]],B=[[5,6],[7,8]],C=mul(A,B);
+ const el=dv('viz');el.appendChild(dv('vh','视角⑧ 　(AB)ᵢⱼ = A 第 i 行 · B 第 j 列 　（最基础的算法）'));
+ const mB=MD(B,''),mA=MD(A,''),mC=MD([[null,null],[null,null]],'');
+ el.appendChild(corner(mB,mA,mC,'B 放上方\nA 放左侧\n交叉处 = 结果'));
+ const ro=dv('ro');el.appendChild(ro);
+ const seq=[[0,0],[0,1],[1,0],[1,1]];
+ const st=stepper(5,k=>{
+  mA.clear();mB.clear();mC.clear();
+  const R=[[null,null],[null,null]];
+  for(let t=0;t<Math.min(k,4);t++){const[i,j]=seq[t];R[i][j]=C[i][j];}
+  mC.setAll(R);
+  if(k===0){ro.innerHTML='行从左边伸过来，列从上面掉下来，撞在哪一格就填哪一格';return;}
+  const[i,j]=seq[Math.min(k,4)-1];
+  mA.hiRow(i,YEL);mB.hiCol(j,CYA);mC.hi(i,j,GRN);
+  ro.innerHTML='('+ (i+1) +','+ (j+1) +')： '+A[i][0]+'×'+B[0][j]+' + '+A[i][1]+'×'+B[1][j]+' = <i>'+C[i][j]+'</i>';
+ },1400);
+ el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* ⑪ uvᵀ 外积 = 秩 1 */
+VIZ.uv=function(){
+ const u=[2,1],v=[1,1],M=mul([[u[0]],[u[1]]],[[v[0],v[1]]]);
+ const el=dv('viz');el.appendChild(dv('vh','视角⑪ 　u vᵀ ：列 × 行 = 矩阵（秩 1）'));
+ const rw=dv('vrow');
+ const mv=MD([[v[0],v[1]]],''),mu=MD([[u[0]],[u[1]]],''),mm=MD(M,'');
+ const left=dv('vcol');left.append(corner(mv,mu,mm,'像一张\n乘法表'));
+ const W=330,H=280,s=36,cx=W/2-30,cy=H/2;
+ const{c,g}=mkc(W,H);const right=dv('vcol');right.append(c,dv('cap','(uvᵀ)x = u·(vᵀx) ⇒ 输出永远在 span{u} 这条线上'));
+ rw.append(left,right);el.appendChild(rw);
+ const ro=dv('ro');el.appendChild(ro);
+ let ph=0,raf=null,stp=0;
+ function draw(){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const P=p=>[cx+p[0]*s,cy-p[1]*s];
+  const a=P([-3*u[0],-3*u[1]]),b=P([3*u[0],3*u[1]]);
+  ln(g,a[0],a[1],b[0],b[1],GRN,2.5);tx(g,'span{u} = 像空间',8,16,GRN);
+  const kv=[v[1],-v[0]],n=Math.hypot(kv[0],kv[1]),kk=[kv[0]/n,kv[1]/n];
+  const p1=P([-3*kk[0],-3*kk[1]]),p2=P([3*kk[0],3*kk[1]]);
+  ln(g,p1[0],p1[1],p2[0],p2[1],RED,2.5,[7,5]);tx(g,'v⊥ = 核空间',8,H-14,RED);
+  const x=[2.4*Math.cos(ph),2.4*Math.sin(ph)],q=P(x);
+  ar(g,cx,cy,q[0],q[1],PNK,2.8);tx(g,'x',q[0]+6,q[1]-9,PNK);
+  const t=v[0]*x[0]+v[1]*x[1],y=[u[0]*t,u[1]*t],r=P(y);
+  if(Math.abs(t)>.04){ar(g,cx,cy,r[0],r[1],YEL,3.2);tx(g,'(uvᵀ)x',r[0]+6,r[1]-10,YEL);}
+  else{dt(g,cx,cy,7,RED);tx(g,'= 0',cx+12,cy-12,RED);}
+  ln(g,q[0],q[1],r[0],r[1],'rgba(255,255,255,.18)',1.4,[4,4]);dt(g,cx,cy,4,'#fff');
+ }
+ function loop(){ph+=.011;draw();raf=requestAnimationFrame(loop);}
+ const st=stepper(4,k=>{stp=k;mm.clear();mu.clear();mv.clear();
+  if(k===0)ro.innerHTML='每一格 = uᵢ·vⱼ ，就是一张乘法表';
+  if(k===1){[0,1].forEach(i=>mm.softRow(i,[YEL,CYA][i]));mu.hiCol(0,PNK);
+   ro.innerHTML='每一<b>行</b>都是 vᵀ 的倍数（倍数 = uᵢ）';}
+  if(k===2){[0,1].forEach(j=>mm.softCol(j,[YEL,CYA][j]));mv.hiRow(0,PNK);
+   ro.innerHTML='每一<b>列</b>都是 u 的倍数（倍数 = vⱼ）⇒ <i>rank = 1</i>';}
+  if(k===3)ro.innerHTML='变换视角：(uvᵀ)x = u·(vᵀx) —— 先把 x <b>量成一个数</b>，再拿这个数去拉伸 u。<br>'+
+   '所以像空间 = span{u}（1 维），核空间 = v 的正交补（n−1 维）—— 正好 1 + (n−1) = n ✔';
+ },1700);
+ el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);if(!raf)raf=requestAnimationFrame(loop);},
+        stop(){st.stop();cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* ⑫ uᵀv 内积 */
+VIZ.dotv=function(){
+ const u=[3,1];let th=.6,auto=true,raf=null;
+ const W=420,H=300,s=38,cx=W/2-40,cy=H/2+20;
+ const el=dv('viz');el.appendChild(dv('vh','视角⑫ 　uᵀ v ：行 × 列 = 一个数（内积 / 投影）'));
+ const{c,g}=mkc(W,H);el.appendChild(c);
+ const ro=dv('ro');el.appendChild(ro);
+ const ctl=dv('vctl'),b1=bt('⟳ 暂停旋转');b1.onclick=()=>{auto=!auto;b1.textContent=auto?'⟳ 暂停旋转':'⟳ 继续旋转';};
+ ctl.appendChild(b1);el.appendChild(ctl);
+ function draw(){
+  g.clearRect(0,0,W,H);grid(g,cx,cy,s,W,H);
+  const P=p=>[cx+p[0]*s,cy-p[1]*s];
+  const v=[2.3*Math.cos(th),2.3*Math.sin(th)];
+  const a=P([-4*u[0]/3,-4*u[1]/3]),b=P([4*u[0]/3,4*u[1]/3]);
+  ln(g,a[0],a[1],b[0],b[1],'rgba(255,224,138,.28)',1.6,[6,5]);
+  let q=P(u);ar(g,cx,cy,q[0],q[1],YEL,3);tx(g,'u',q[0]+6,q[1]-9,YEL);
+  q=P(v);ar(g,cx,cy,q[0],q[1],PNK,3);tx(g,'v',q[0]+6,q[1]-9,PNK);
+  const d=u[0]*v[0]+u[1]*v[1],n2=u[0]*u[0]+u[1]*u[1],t=d/n2,f=[u[0]*t,u[1]*t],pf=P(f);
+  ln(g,q[0],q[1],pf[0],pf[1],'rgba(255,255,255,.3)',1.5,[5,4]);
+  ln(g,cx,cy,pf[0],pf[1],d>=0?GRN:RED,6);dt(g,pf[0],pf[1],4.5,d>=0?GRN:RED);
+  dt(g,cx,cy,4,'#fff');
+  const ang=Math.acos(d/(Math.hypot(u[0],u[1])*Math.hypot(v[0],v[1])))*180/Math.PI;
+  tx(g,'夹角 ≈ '+ang.toFixed(0)+'°',10,18,CH);
+  ro.innerHTML='uᵀv = '+fmt(u[0])+'×'+fmt(v[0])+' + '+fmt(u[1])+'×'+fmt(v[1])+' = <b>'+fmt(d)+'</b> '+
+   (Math.abs(d)<.08?'　<i>⊥ 垂直：读数为 0</i>':(d>0?'　（同向，正）':'　（反向，负）'))+
+   '　｜ 形状： (1×2)(2×1) = 1×1 ⇒ 标量';
+ }
+ function loop(){if(auto)th+=.012;draw();raf=requestAnimationFrame(loop);}
+ c.addEventListener('pointerdown',e=>{auto=false;b1.textContent='⟳ 继续旋转';
+  const r=c.getBoundingClientRect();th=Math.atan2(cy-(e.clientY-r.top)*(H/r.height),(e.clientX-r.left)*(W/r.width)-cx);draw();});
+ return{el,start(){if(!raf)raf=requestAnimationFrame(loop);},stop(){cancelAnimationFrame(raf);raf=null;}};
+};
+
+/* ⑬⑭ 分块 */
+VIZ.block=function(){
+ const A=[[1,0,2,1],[0,1,0,3],[1,1,1,0],[2,0,0,1]];
+ const B=[[1,2,0,1],[0,1,1,0],[2,0,1,1],[1,1,0,2]];
+ const C=mul(A,B);
+ const sub=(M,bi,bj)=>[[M[2*bi][2*bj],M[2*bi][2*bj+1]],[M[2*bi+1][2*bj],M[2*bi+1][2*bj+1]]];
+ const P1=mul(sub(A,0,0),sub(B,0,0)),P2=mul(sub(A,0,1),sub(B,1,0));
+ const el=dv('viz');el.appendChild(dv('vh','视角⑬⑭ 　分块：把"数"换成"块"，公式一模一样'));
+ const mA=MD(A,'A ='),mB=MD(B,'B ='),mC=MD([[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]],'AB =');
+ [mA,mB,mC].forEach(m=>{m.cells.forEach((r,i)=>r.forEach((c,j)=>{
+  if(j===1)c.style.marginRight='7px';if(i===1)c.style.marginBottom='7px';}));});
+ el.appendChild(eq(mA,'',mB,'=',mC));
+ const host=dv();host.style.marginTop='8px';el.appendChild(host);
+ const ro=dv('ro');el.appendChild(ro);
+ function paint(m,bi,bj,col){for(let i=2*bi;i<2*bi+2;i++)for(let j=2*bj;j<2*bj+2;j++)m.hi(i,j,col);}
+ const st=stepper(5,k=>{
+  mA.clear();mB.clear();mC.clear();host.innerHTML='';
+  const R=[[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]];
+  if(k>=3)for(let i=0;i<4;i++)for(let j=0;j<4;j++)R[i][j]=C[i][j];
+  else if(k>=2)for(let i=0;i<2;i++)for(let j=0;j<2;j++)R[i][j]=C[i][j];
+  mC.setAll(R);
+  if(k===0){[[0,0,YEL],[0,1,CYA],[1,0,PNK],[1,1,ORG]].forEach(t=>{paint(mA,t[0],t[1],t[2]);paint(mB,t[0],t[1],t[2]);});
+   ro.innerHTML='先把两个 4×4 各切成 4 个 2×2 的块： A₁₁ A₁₂ / A₂₁ A₂₂';return;}
+  if(k>=1){paint(mA,0,0,YEL);paint(mB,0,0,YEL);paint(mC,0,0,GRN);
+   const g1=eq(MD(sub(A,0,0),'A₁₁'),'×',MD(sub(B,0,0),'B₁₁'),'=',MD(P1,''));host.appendChild(g1);}
+  if(k>=2){paint(mA,0,1,CYA);paint(mB,1,0,CYA);
+   const g2=eq(MD(sub(A,0,1),'A₁₂'),'×',MD(sub(B,1,0),'B₂₁'),'=',MD(P2,''));g2.style.marginTop='6px';host.appendChild(g2);
+   const g3=eq(MD(P1,''),'+',MD(P2,''),'=',MD(sub(C,0,0),'C₁₁'));g3.style.marginTop='6px';host.appendChild(g3);}
+  if(k>=3)[[0,0],[0,1],[1,0],[1,1]].forEach(t=>paint(mC,t[0],t[1],GRN));
+  ro.innerHTML=['','C₁₁ 的第一项： A₁₁ B₁₁ （块 × 块，仍是矩阵乘法）',
+   '加上第二项 A₁₂ B₂₁ ⇒ <i>C₁₁ = A₁₁B₁₁ + A₁₂B₂₁</i>　—— 与 (AB)ᵢⱼ = Σₖ aᵢₖbₖⱼ 长得一模一样',
+   '其余三块同理 ⇒ 整个 AB 填满','把"块"退化成 1×1，就回到视角⑧；把块取成整列/整行，就回到视角⑤⑥⑦'][Math.min(k,4)];
+ },1900);
+ el.append(st.ctl);
+ return{el,start(){st.set(0);setTimeout(()=>st.play(),400);},stop(){st.stop();}};
+};
+
+/* 表格 */
+VIZ.table=function(o){
+ const el=dv('viz');if(o.title)el.appendChild(dv('vh',o.title));
+ const t=E('table','tbl'),hr=E('tr');
+ o.head.forEach(h=>{const th=E('th');th.innerHTML=h;hr.appendChild(th);});t.appendChild(hr);
+ o.rows.forEach(r=>{const tr=E('tr');tr.style.opacity=0;tr.style.transition='opacity .45s';
+  r.forEach(c=>{const td=E('td');td.innerHTML=c;tr.appendChild(td);});t.appendChild(tr);});
+ el.appendChild(t);let tms=[];
+ return{el,start(){[...t.querySelectorAll('tr')].slice(1).forEach((tr,i)=>tms.push(setTimeout(()=>tr.style.opacity=1,180+i*280)));},
+        stop(){tms.forEach(clearTimeout);tms=[];}};
+};
+
+/* ================= 板书内容 ================= */
+const T=(t,c)=>({y:'t',t,c}),N=t=>({y:'t',t,c:'note'}),H=t=>({y:'t',t,c:'ctitle'}),
+      B=t=>({y:'b',t}),V=(k,o)=>({y:'v',k,o:o||{}}),G=()=>({y:'g'});
+
+const slides=[
+{n:'开场',it:[H('零 · 一个乘法，八种读法'),
+ T('矩阵乘法只有 [[一个定义]]，却有至少 8 种"读法"。'),
+ T('头晕的根源：把"读法"误当成"新规则"。它们算出的是 [[同一个东西]]，只是切法不同。'),
+ T('全程只用两把钥匙：'),
+ T('　　[[列 = 基向量的去处]]（A eⱼ = aⱼ）　　[[行 = 一台测量仪]]（读出一个坐标）'),
+ V('cycler'),
+ T('形状法则： ( m × [[n]] ) ( [[n]] × p ) ⟶ m × p ，中间的 n [[对撞抵消]]。'),
+ B('谁在外面，谁就活下来')]},
+
+{n:'①列组合',it:[H('视角① 　Ax = 列的线性组合'),
+ T('Ax = x₁a₁ + x₂a₂ + … + xₙaₙ'),
+ T('变换思维：A 的第 j 列就是基向量 eⱼ [[被送到的地方]]（因为 A eⱼ = aⱼ）。'),
+ T('而 x 只是一张 [[配方单]]：告诉你每个"去处"各取多少份。'),
+ V('colcomb'),
+ B('输出必落在 [[列空间 R(A) = span{a₁,…,aₙ}]] 之内'),
+ N('拖动滑块 = 改配方；箭头首尾相接 = 线性组合。列的方向由 A 定死，x 只能调长度')]},
+
+{n:'②行点积',it:[H('视角② 　Ax = 行与 x 的点积'),
+ T('(Ax)ᵢ = rᵢ · x　，　rᵢ = A 的第 i 行'),
+ T('变换思维：每一行是一台 [[测量仪]]，输出的第 i 个坐标 = 这台仪器对 x 的 [[读数]]。'),
+ T('内积 = 投影长度 × 尺子长度 ⇒ 这是"投影 / 内积"视角。'),
+ V('rowdot'),
+ N('若 rᵢ · x = 0 ，说明 x 落在第 i 台仪器的"盲区"（一张过原点的超平面）里')]},
+
+{n:'①②对照',it:[H('列读法 vs 行读法：切法不同，答案相同'),
+ V('twoways'),
+ T('[[列读法]]：纵向切。一次组装出 [[整个输出向量]]，适合想"结果去了哪"。'),
+ T('[[行读法]]：横向切。一次算出输出的 [[一个坐标]]，适合想"这个数怎么来的"。'),
+ B('列回答"去哪儿"，行回答"怎么量"')]},
+
+{n:'③行组合',it:[H('视角③ 　yᵀA = 行的线性组合'),
+ T('yᵀA = y₁r₁ + y₂r₂ + … + y_m r_m'),
+ T('完美的左右对称：'),
+ T('　右边乘 [[列向量]] ⟶ 组合 A 的 [[列]] 　（结果是列向量，住在列空间）'),
+ T('　左边乘 [[行向量]] ⟶ 组合 A 的 [[行]] 　（结果是行向量，住在行空间）'),
+ V('rowcomb'),
+ N('看形状就懂： (1×m)(m×n) = 1×n ，出来的当然是一个行向量')]},
+
+{n:'④列点积',it:[H('视角④ 　(yᵀA)ⱼ = y · aⱼ'),
+ T('行向量从左边"扫过"A 的每一列，扫一列吐一个数。'),
+ V('coldot'),
+ T('于是四种基本读法凑齐了 —— 它们两两对称：'),
+ V('table',{head:['形态','按什么切','结果','几何解释'],
+  rows:[['A x','A 的<b>列</b>','列的线性组合','x 是配方，输出在<b>列空间</b>'],
+        ['A x','A 的<b>行</b>','每行与 x 点积','每行是尺子，量出一个坐标'],
+        ['yᵀ A','A 的<b>行</b>','行的线性组合','y 是配方，输出在<b>行空间</b>'],
+        ['yᵀ A','A 的<b>列</b>','y 与每列点积','y 是尺子，量每一列']]})]},
+
+{n:'⑤列块',it:[H('视角⑤ 　AB = A 批量作用于 B 的每一列'),
+ T('AB = A [ b₁ b₂ … b_p ] = [ [[A b₁]]　[[A b₂]]　…　[[A b_p]] ]'),
+ T('这就是你最熟的角度：把 B 看成 p 个列向量打包，A 对它们 [[逐个做同一个线性变换]]。'),
+ V('batchcol'),
+ B('矩阵乘矩阵 = 一次搬运一整批向量'),
+ N('所以"复合变换" (AB)x = A(Bx)：先用 B 搬一次，再用 A 搬一次')]},
+
+{n:'⑥行块',it:[H('视角⑥ 　AB 的每一行 = aᵢ* B'),
+ T('把 AB 横着切：第 i 行 = A 的第 i 行（行向量）[[右乘]] B'),
+ T('由视角③，行向量右乘 B = 对 [[B 的行]] 做线性组合，系数就是 A 第 i 行的分量。'),
+ V('batchrow'),
+ B('AB 的行 = B 的行的线性组合　｜　AB 的列 = A 的列的线性组合'),
+ N('一句话记：<左边的矩阵提供"配方"，右边的矩阵提供"素材"> —— 反过来也成立，看你横切还是竖切')]},
+
+{n:'⑨⑩左行右列',it:[H('视角⑨⑩ 　右乘动列，左乘动行'),
+ V('sides'),
+ T('这正是解方程时"[[初等行变换 = 左乘初等矩阵]]"的来历。'),
+ B('左行右列：想改行就从左边乘，想改列就从右边乘'),
+ N('原因就是视角⑤⑥：右乘时 B 的列被 A 逐列变换；左乘时 A 的行去组合 B 的行')]},
+
+{n:'⑦外积展开',it:[H('视角⑦ 　AB = Σₖ aₖ bₖ* 　（秩 1 薄片叠加）'),
+ T('A 的第 k [[列]] × B 的第 k [[行]] = 一张 [[秩 1]] 的矩阵薄片；'),
+ T('n 张薄片逐格相加，就是 AB。'),
+ V('outer'),
+ B('AB = 秩1 + 秩1 + … + 秩1 （共 n 张）'),
+ N('推论：rank(AB) ≤ min{ rank A, rank B }；SVD、PCA、低秩压缩全都建立在这个视角上')]},
+
+{n:'⑧逐元素',it:[H('视角⑧ 　(AB)ᵢⱼ = 行 · 列'),
+ T('最基础的手算视角：把 B 摆在右上，A 摆在左下，[[交叉处]]就是结果。'),
+ V('entry'),
+ T('它其实是视角②的"批量版"：把 B 的每一列当作 x ，逐个做行点积。'),
+ N('注意 (AB)ᵢⱼ 中 i 只由 A 的行决定、j 只由 B 的列决定 —— 这也是形状法则的来源')]},
+
+{n:'⑪外积uvᵀ',it:[H('视角⑪ 　u vᵀ ：列 × 行 = 矩阵'),
+ T('u ∈ ℝᵐ ，v ∈ ℝⁿ ⇒ u vᵀ ∈ ℝ^{m×n} ，每个元素 = uᵢ vⱼ 。'),
+ V('uv'),
+ B('(u vᵀ) x = u ( vᵀ x ) = 「先量一个数，再拉伸 u 」'),
+ T('所以 rank(u vᵀ) = 1 ：像空间 = span{u} 一条线，核空间 = v 的正交补。'),
+ N('与上一课呼应： 1 + (n−1) = n ，秩-零化度定理再次成立 ✔')]},
+
+{n:'⑫内积uᵀv',it:[H('视角⑫ 　uᵀ v ：行 × 列 = 一个数'),
+ T('形状： (1×n)(n×1) = 1×1 ⇒ [[标量]]。'),
+ V('dotv'),
+ T('uᵀv = |u||v|cosθ ：投影读数。正 = 同向，0 = 垂直，负 = 反向。'),
+ B('列×行 → 撑开成矩阵（升维）　｜　行×列 → 塌缩成数（降维）'),
+ N('同样两个向量，谁在前谁在后，结果的"维度"天差地别 —— 这就是顺序不可交换的直观来源')]},
+
+{n:'⑬⑭分块',it:[H('视角⑬⑭ 　分块：把"数"升级成"块"'),
+ V('block'),
+ T('(AB)ᵢⱼ = Σₖ Aᵢₖ Bₖⱼ —— 与逐元素公式 [[形式完全相同]]，只是每一项都是矩阵。'),
+ B('块 = 标量的推广；前面 7 种视角全是"某种分块"的特例'),
+ N('唯一注意：块之间不能随意交换顺序（矩阵乘法不交换），而且分块要"接得上"（内维匹配）')]},
+
+{n:'总表',it:[H('总结 · 一张表收全'),
+ V('table',{title:'读法总表（横着看＝行视角，竖着看＝列视角）',head:['形态','可看作','结果住在哪','一句话'],
+  rows:['A x 　(列)|A 的列的线性组合|列空间 ℝᵐ|x 是配方，列是去处',
+        'A x 　(行)|每行与 x 的点积|逐个坐标|行是尺子，量出读数',
+        'yᵀA 　(行)|A 的行的线性组合|行空间 ℝⁿ|左乘 = 玩行',
+        'yᵀA 　(列)|y 与每列的点积|逐个坐标|列是被量的对象',
+        'AB 　(看 B 的列)|A 批量变换每一列|列 = A b_j|右乘 = 玩列',
+        'AB 　(看 A 的行)|每行右乘 B|行 = aᵢ* B|左乘 = 玩行',
+        'AB 　(外积展开)|Σ 秩1 薄片|n 张薄片叠加|分解 / 压缩视角',
+        'AB 　(逐元素)|行·列点积|单个数|手算视角',
+        'u vᵀ|列 × 行|秩 1 矩阵|升维：撑开一张表',
+        'uᵀ v|行 × 列|标量|降维：塌成一个数'].map(s=>s.split('|'))}),
+ G(),
+ B('矩阵乘法只有一种，但你可以从任何方向去"切"它'),
+ T('遇到题目时问自己三句话：'),
+ T('　1. 我关心的是 [[整个输出]] 还是 [[某个坐标]]？　→ 选列读法 / 行读法'),
+ T('　2. 我在动 [[行]] 还是动 [[列]]？　→ 左乘 / 右乘'),
+ T('　3. 我想看 [[结构]] 还是想 [[算数]]？　→ 外积展开 / 逐元素')]}
+];
+
+/* ================= 书写引擎 ================= */
+const $=i=>document.getElementById(i),content=$('content'),board=$('board'),chalk=$('chalk'),eraser=$('er');
+let pool=[];
+function chars(p,s,at){String(s).split(/(\[\[.*?\]\])/g).forEach(seg=>{if(!seg)return;
+ let h=false,z=seg;if(seg.startsWith('[[')&&seg.endsWith(']]')){h=true;z=seg.slice(2,-2);}
+ for(const ch of z){const sp=E('span','atom c'+(h?' hl':''));sp.textContent=(ch===' ')?'\u00A0':ch;
+  if(ch===' ')sp.dataset.f=1;p.appendChild(sp);at.push(sp);}});}
+function build(it){const at=[];
+ if(it.y==='g'){const d=E('div');d.style.height='10px';return{el:d,at:[]};}
+ if(it.y==='t'){const d=E('div','line '+(it.c||''));chars(d,it.t,at);return{el:d,at};}
+ if(it.y==='b'){const d=E('div','box');chars(d,it.t,at);return{el:d,at};}
+ if(it.y==='v'){const ins=VIZ[it.k](it.o);ins.el.classList.add('atom');ins.el._v=ins;pool.push(ins);return{el:ins.el,at:[ins.el]};}
+ return{el:E('div'),at:[]};}
+let idx=0,tok=0,anim=false,play=false,snd=false,spd=1.5,ac=null;
+const nap=m=>new Promise(r=>setTimeout(r,m));
+function tick(){if(!snd)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+ const n=.03,b=ac.createBuffer(1,ac.sampleRate*n,ac.sampleRate),d=b.getChannelData(0);
+ for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3)*.22;
+ const s=ac.createBufferSource();s.buffer=b;const f=ac.createBiquadFilter();f.type='bandpass';
+ f.frequency.value=2600+Math.random()*900;const g=ac.createGain();g.gain.value=.3;
+ s.connect(f);f.connect(g);g.connect(ac.destination);s.start();}catch(e){}}
+function moveChalk(a){const r=a.getBoundingClientRect(),b=board.getBoundingClientRect();
+ if(!r.width&&!r.height)return;const x=r.right-b.left,y=r.bottom-b.top;
+ chalk.style.transform='translate('+x+'px,'+(y-24)+'px) rotate(28deg)';
+ if(Math.random()<.14){const d=E('div','dust');d.style.left=x+'px';d.style.top=y+'px';board.appendChild(d);setTimeout(()=>d.remove(),850);}}
+function killPool(){pool.forEach(p=>p.stop&&p.stop());pool=[];}
+async function erase(){eraser.classList.remove('sw');void eraser.offsetWidth;eraser.classList.add('sw');
+ content.classList.add('fade');await nap(500);killPool();content.innerHTML='';content.classList.remove('fade');eraser.classList.remove('sw');}
+function statik(i){killPool();content.innerHTML='';
+ slides[i].it.forEach(it=>{const r=build(it);content.appendChild(r.el);
+  r.at.forEach(a=>{a.classList.add('shown');a.style.animation='none';a.style.opacity=1;if(a._v)a._v.start();});});}
+async function show(i,ers){const my=++tok;idx=(i+slides.length)%slides.length;ui();
+ if(ers!==false)await erase();else{killPool();content.innerHTML='';}
+ if(my!==tok)return;
+ const gs=[];slides[idx].it.forEach(it=>{const r=build(it);content.appendChild(r.el);gs.push(r);});
+ anim=true;chalk.classList.add('on');
+ for(const g of gs){if(my!==tok)return;g.el.scrollIntoView({block:'nearest',behavior:'smooth'});
+  for(const a of g.at){if(my!==tok)return;a.classList.add('shown');moveChalk(a);
+   if(a._v){a._v.start();await nap(2200/spd);continue;}
+   if(!a.dataset.f&&Math.random()<.32)tick();
+   await nap((a.dataset.f?9:(a.classList.contains('c')?31:50))/spd);}
+  await nap(220/spd);}
+ anim=false;chalk.classList.remove('on');
+ if(play&&my===tok){await nap(3200/spd);if(my!==tok)return;
+  if(idx<slides.length-1)show(idx+1);else setP(false);}}
+function skip(){tok++;anim=false;chalk.classList.remove('on');statik(idx);}
+function nx(){if(anim){skip();if(play)setTimeout(()=>show(idx+1),900);return;}
+ if(idx<slides.length-1)show(idx+1);else setP(false);}
+function pv(){setP(false);if(idx>0)show(idx-1);}
+function setP(v){play=v;$('bA').textContent=v?'⏸ 暂停':'▶ 自动讲课';$('bA').classList.toggle('act',v);if(v&&!anim)show(idx);}
+const toc=$('toc');
+slides.forEach((s,i)=>{const b=E('button');b.textContent=(i+1)+'.'+s.n;b.onclick=()=>{setP(false);show(i);};toc.appendChild(b);});
+function ui(){$('hr').textContent='第 '+(idx+1)+' / '+slides.length+' 页';
+ [...toc.children].forEach((b,i)=>b.classList.toggle('cur',i===idx));
+ toc.children[idx].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}
+$('bN').onclick=nx;$('bP').onclick=pv;$('bF').onclick=()=>{setP(false);show(0);};
+$('bR').onclick=()=>show(idx);$('bA').onclick=()=>setP(!play);
+$('bS').onclick=e=>{snd=!snd;e.target.textContent=(snd?'🔊':'🔇')+' 粉笔声';e.target.classList.toggle('act',snd);};
+$('sp').oninput=e=>spd=parseFloat(e.target.value);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nx();}if(e.key==='ArrowLeft')pv();});
+show(0,false);
+</script>
+</body></html>

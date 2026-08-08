@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BMI 随机变量变换公式：从弯曲队伍到竖直薄条</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(12, 27, 49, 0.92);
+      --panel-2: rgba(18, 39, 67, 0.88);
+      --text: #eef7ff;
+      --muted: #a9c2d8;
+      --cyan: #4ee7ff;
+      --blue: #5b8cff;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --red: #ff6b81;
+      --green: #55ef9f;
+      --purple: #c792ea;
+      --border: rgba(127, 206, 255, 0.25);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(58, 113, 255, 0.18), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(78, 231, 255, 0.12), transparent 28%),
+        linear-gradient(180deg, #06101d 0%, #091728 52%, #06101d 100%);
+      font-family:
+        Inter, "PingFang SC", "Microsoft YaHei", "Noto Sans SC",
+        system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .hero {
+      min-height: 88vh;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 58px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(10px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 420px;
+      height: 420px;
+      left: -180px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(78, 231, 255, 0.25), transparent 68%);
+    }
+
+    .hero::after {
+      width: 500px;
+      height: 500px;
+      right: -200px;
+      bottom: -230px;
+      background: radial-gradient(circle, rgba(199, 146, 234, 0.2), transparent 70%);
+    }
+
+    .hero-inner {
+      width: min(1120px, 100%);
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 36px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2.35rem, 6vw, 5rem);
+      line-height: 1.06;
+      margin: 12px 0 22px;
+      letter-spacing: -0.045em;
+    }
+
+    h1 .accent {
+      color: var(--cyan);
+      text-shadow: 0 0 28px rgba(78, 231, 255, 0.3);
+    }
+
+    .lead {
+      color: #c9dcec;
+      font-size: clamp(1.03rem, 2vw, 1.24rem);
+      max-width: 760px;
+    }
+
+    .hero-actions,
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 11px 17px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.055);
+      transition: 0.2s ease;
+      font-weight: 750;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(78, 231, 255, 0.65);
+      background: rgba(78, 231, 255, 0.1);
+    }
+
+    .btn.primary {
+      color: #02141a;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--cyan), #8bfff0);
+      box-shadow: 0 10px 30px rgba(78, 231, 255, 0.2);
+    }
+
+    .btn.warn {
+      border-color: rgba(255, 209, 102, 0.42);
+      background: rgba(255, 209, 102, 0.09);
+    }
+
+    .hero-card {
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(15, 37, 64, 0.9), rgba(7, 18, 32, 0.92));
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "Z";
+      position: absolute;
+      right: -10px;
+      bottom: -68px;
+      font-size: 230px;
+      font-weight: 900;
+      color: rgba(78, 231, 255, 0.045);
+      line-height: 1;
+    }
+
+    .mini-person {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 18px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .person-icon {
+      width: 90px;
+      height: 90px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(78, 231, 255, 0.1);
+      border: 1px solid rgba(78, 231, 255, 0.28);
+      font-size: 48px;
+    }
+
+    .hero-equation {
+      font-family: "Times New Roman", serif;
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      margin: 22px 0 8px;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-equation strong {
+      color: var(--yellow);
+    }
+
+    .progress-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(5, 15, 27, 0.82);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .progress-nav .inner {
+      width: min(1180px, 100%);
+      margin: auto;
+      display: flex;
+      gap: 6px;
+      padding: 10px 18px;
+      min-width: max-content;
+    }
+
+    .progress-nav a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 13px;
+      border-radius: 10px;
+      font-size: 0.91rem;
+      font-weight: 700;
+    }
+
+    .progress-nav a:hover {
+      color: white;
+      background: rgba(78, 231, 255, 0.08);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 90px;
+    }
+
+    section {
+      scroll-margin-top: 78px;
+      margin-top: 38px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(140deg, rgba(14, 33, 57, 0.92), rgba(8, 21, 37, 0.9));
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: #03151a;
+      background: linear-gradient(135deg, var(--cyan), #9effe2);
+      font-size: 1.2rem;
+      font-weight: 900;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2.25rem);
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 5px 0 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.038);
+      border: 1px solid rgba(153, 211, 255, 0.16);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .card.highlight {
+      background: linear-gradient(145deg, rgba(78, 231, 255, 0.09), rgba(255, 255, 255, 0.03));
+      border-color: rgba(78, 231, 255, 0.32);
+    }
+
+    .visual-card {
+      padding: 13px;
+      overflow: hidden;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 430px;
+      border-radius: 15px;
+      overflow: hidden;
+      background: #06101d;
+      border: 1px solid rgba(140, 210, 255, 0.2);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+      touch-action: none;
+    }
+
+    .canvas-label {
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      z-index: 2;
+      padding: 6px 10px;
+      border-radius: 9px;
+      background: rgba(2, 11, 20, 0.72);
+      border: 1px solid rgba(145, 212, 255, 0.18);
+      font-size: 0.84rem;
+      color: #d6edff;
+      pointer-events: none;
+    }
+
+    .equation {
+      overflow-x: auto;
+      padding: 18px;
+      margin: 16px 0;
+      text-align: center;
+      border: 1px solid rgba(78, 231, 255, 0.22);
+      border-radius: 15px;
+      background: rgba(1, 13, 25, 0.58);
+      color: #f5fbff;
+      font-family: "Times New Roman", "Noto Serif SC", serif;
+      font-size: clamp(1.12rem, 2.5vw, 1.65rem);
+      white-space: nowrap;
+    }
+
+    .equation .cyan {
+      color: var(--cyan);
+    }
+
+    .equation .yellow {
+      color: var(--yellow);
+    }
+
+    .equation .green {
+      color: var(--green);
+    }
+
+    .note,
+    .warning,
+    .success {
+      padding: 16px 18px;
+      border-radius: 14px;
+      margin: 16px 0;
+    }
+
+    .note {
+      background: rgba(91, 140, 255, 0.1);
+      border-left: 4px solid var(--blue);
+    }
+
+    .warning {
+      background: rgba(255, 209, 102, 0.09);
+      border-left: 4px solid var(--yellow);
+    }
+
+    .success {
+      background: rgba(85, 239, 159, 0.09);
+      border-left: 4px solid var(--green);
+    }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 145px 1fr 78px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .control label {
+      color: #dceeff;
+      font-weight: 750;
+    }
+
+    .value {
+      color: var(--yellow);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      font-weight: 850;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+
+    .concept-chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .concept-node {
+      padding: 10px 15px;
+      background: rgba(78, 231, 255, 0.08);
+      border: 1px solid rgba(78, 231, 255, 0.24);
+      border-radius: 12px;
+      font-weight: 800;
+    }
+
+    .concept-arrow {
+      color: var(--yellow);
+      font-weight: 900;
+      font-size: 1.3rem;
+    }
+
+    .jacobian-matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(95px, 1fr));
+      gap: 4px;
+      max-width: 430px;
+      margin: 15px auto;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .jacobian-matrix::before,
+    .jacobian-matrix::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 11px;
+      border-top: 2px solid white;
+      border-bottom: 2px solid white;
+    }
+
+    .jacobian-matrix::before {
+      left: 0;
+      border-left: 2px solid white;
+    }
+
+    .jacobian-matrix::after {
+      right: 0;
+      border-right: 2px solid white;
+    }
+
+    .matrix-cell {
+      text-align: center;
+      padding: 12px 5px;
+      font-family: "Times New Roman", serif;
+      font-size: 1.25rem;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .stat {
+      padding: 13px;
+      text-align: center;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .stat b {
+      display: block;
+      color: var(--yellow);
+      font-size: 1.14rem;
+    }
+
+    .narration {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 12px 14px;
+      margin-top: 18px;
+      border-radius: 14px;
+      background: rgba(199, 146, 234, 0.08);
+      border: 1px solid rgba(199, 146, 234, 0.22);
+    }
+
+    .narration span {
+      color: #dac9ed;
+      font-size: 0.92rem;
+    }
+
+    .quiz-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(151, 211, 255, 0.2);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      padding: 13px 15px;
+      border-radius: 12px;
+      margin: 9px 0;
+      cursor: pointer;
+      transition: 0.18s;
+    }
+
+    .quiz-option:hover {
+      background: rgba(78, 231, 255, 0.08);
+      border-color: rgba(78, 231, 255, 0.42);
+    }
+
+    .quiz-option.correct {
+      border-color: var(--green);
+      background: rgba(85, 239, 159, 0.12);
+    }
+
+    .quiz-option.wrong {
+      border-color: var(--red);
+      background: rgba(255, 107, 129, 0.11);
+    }
+
+    .quiz-feedback {
+      min-height: 28px;
+      margin-top: 12px;
+      font-weight: 750;
+    }
+
+    .summary-step {
+      position: relative;
+      padding-left: 48px;
+      margin: 22px 0;
+    }
+
+    .summary-step::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--cyan);
+      color: #03151a;
+      font-weight: 900;
+    }
+
+    .summary-step::after {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 35px;
+      bottom: -20px;
+      width: 2px;
+      background: rgba(78, 231, 255, 0.24);
+    }
+
+    .summary-step:last-child::after {
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 28px;
+      color: #8ba7bd;
+      border-top: 1px solid var(--border);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.91rem;
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 1px 7px;
+      margin: 0 2px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.06);
+      font-size: .85em;
+    }
+
+    @media (max-width: 850px) {
+      .hero-inner,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      .control {
+        grid-template-columns: 1fr 72px;
+      }
+
+      .control input {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+
+      .stat-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">随机变量变换 · 多媒体交互教学</div>
+        <h1>
+          把弯曲的 BMI 队伍<br />
+          <span class="accent">拉成竖直薄条</span>
+        </h1>
+
+        <p class="lead">
+          已知身高与体重的联合密度
+          <strong>f<sub>X,Y</sub>(x,y)</strong>，
+          怎样求 BMI
+          <strong>Z = Y/X²</strong>
+          的密度？关键不只是“代入公式”，而是理解：
+          <strong>为什么要补一个变量、为什么乘雅可比、为什么最后积分。</strong>
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn primary" onclick="startLesson()">开始教学</button>
+          <button class="btn" onclick="speakIntro()">🔊 播放导言</button>
+          <button class="btn" onclick="stopSpeech()">停止语音</button>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="mini-person">
+          <div class="person-icon">🧍</div>
+          <div>
+            <div class="small">随机抓到一个人</div>
+            <div><b>X</b> = 身高，<b>Y</b> = 体重</div>
+          </div>
+        </div>
+
+        <div class="hero-equation">
+          <strong>Z</strong> =
+          <span style="display:inline-block; vertical-align:middle; text-align:center;">
+            <span style="display:block; border-bottom:2px solid currentColor;">Y</span>
+            <span style="display:block;">X²</span>
+          </span>
+        </div>
+
+        <p style="position:relative;z-index:1;color:#bdd3e5;">
+          两个随机量压缩成一个随机量。相同 BMI 的人不在一个点上，
+          而是分布在曲线 <b style="color:#ffd166;">y = zx²</b> 上。
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="progress-nav">
+    <div class="inner">
+      <a href="#scene">0. 墨迹塑料布</a>
+      <a href="#difficulty">1. 为什么不能直接换元</a>
+      <a href="#transform">2. 补变量并拉直</a>
+      <a href="#jacobian">3. 雅可比汇率</a>
+      <a href="#integral">4. 薄条与积分</a>
+      <a href="#summary">5. 完整推导</a>
+      <a href="#quiz">6. 小测验</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- 场景 -->
+    <section id="scene">
+      <div class="section-head">
+        <div class="step-number">0</div>
+        <div>
+          <h2>一张带墨迹的透明塑料布</h2>
+          <p class="subtitle">横轴是身高 X，纵轴是体重 Y；墨越浓，附近的人越多。</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card visual-card">
+          <div class="canvas-wrap">
+            <div class="canvas-label">身高—体重平面：每个光点代表一个人</div>
+            <canvas id="sceneCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>联合密度在描述什么？</h3>
+
+          <p>
+            在旧坐标纸上取一个很小的格子：
+          </p>
+
+          <div class="equation">
+            P(x ≤ X ≤ x+dx, y ≤ Y ≤ y+dy)
+            ≈
+            <span class="cyan">f<sub>X,Y</sub>(x,y)</span> dx dy
+          </div>
+
+          <p>
+            因此，<b>f<sub>X,Y</sub>(x,y)</b> 不是某个点上的人数，
+            而是“每单位旧面积所含的概率”。
+          </p>
+
+          <div class="note">
+            <b>塑料布比喻：</b>
+            把概率看作布上的墨。密度大表示单位面积内墨多，
+            但整个布上的墨迹总量始终是 1。
+          </div>
+
+          <div class="narration">
+            <button class="btn" onclick="speakText(narrations.scene)">🔊 本节讲解</button>
+            <span>浏览器将使用系统中文语音朗读。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 困难 -->
+    <section id="difficulty">
+      <div class="section-head">
+        <div class="step-number">1</div>
+        <div>
+          <h2>BMI 相同的人形成一条曲线</h2>
+          <p class="subtitle">固定 z 后，所有满足 Y/X² = z 的点都属于同一个 BMI 队伍。</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>固定一个 BMI 值 z</h3>
+
+          <div class="equation">
+            z =
+            <span style="display:inline-block;vertical-align:middle;text-align:center;">
+              <span style="display:block;border-bottom:1px solid white;">y</span>
+              <span style="display:block;">x²</span>
+            </span>
+            &nbsp;⟺&nbsp;
+            <span class="yellow">y = zx²</span>
+          </div>
+
+          <p>
+            在身高—体重平面上，这是弯曲的抛物线段。
+            曲线上的每个点都有相同的 BMI，但身高和体重可以不同。
+          </p>
+
+          <div class="controls">
+            <div class="control">
+              <label for="curveZ">BMI 队伍号 z</label>
+              <input id="curveZ" type="range" min="15" max="38" step="0.1" value="23" />
+              <div class="value"><span id="curveZValue">23.0</span></div>
+            </div>
+          </div>
+
+          <div class="warning">
+            <b>困难：</b>
+            映射 (x,y) → z 把二维信息压成一维。
+            许多不同的点会得到同一个 z，因此它不是一一对应，不能直接套二维换元公式。
+          </div>
+        </div>
+
+        <div class="card visual-card">
+          <div class="canvas-wrap">
+            <div class="canvas-label">黄色曲线：y = zx²</div>
+            <canvas id="curveCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-chain">
+        <div class="concept-node">(x,y)：一个人</div>
+        <div class="concept-arrow">→</div>
+        <div class="concept-node">z = y/x²</div>
+        <div class="concept-arrow">→</div>
+        <div class="concept-node">许多人得到同一个 z</div>
+        <div class="concept-arrow">→</div>
+        <div class="concept-node">信息丢失，不可逆</div>
+      </div>
+    </section>
+
+    <!-- 补变量 -->
+    <section id="transform">
+      <div class="section-head">
+        <div class="step-number">2</div>
+        <div>
+          <h2>补一个变量：让“一人一位”重新成立</h2>
+          <p class="subtitle">Z 是队伍号，W 是队伍中的位置标签。</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>选择辅助变量 W = Y</h3>
+
+          <p>给每个人贴两个新标签：</p>
+
+          <div class="equation">
+            <span class="cyan">Z = Y/X²</span>,
+            &nbsp;&nbsp;
+            <span class="yellow">W = Y</span>
+          </div>
+
+          <p>因为 w = y，所以可以反解：</p>
+
+          <div class="equation">
+            <span class="green">
+              x = √(w/z), &nbsp;&nbsp; y = w
+            </span>
+          </div>
+
+          <p>
+            只要 z &gt; 0、w &gt; 0，每一组 (z,w)
+            都能找回唯一的 (x,y)。因此二维到二维的换元重新变得可逆。
+          </p>
+
+          <div class="success">
+            <b>W 是脚手架。</b>
+            它不是最终目标，只是为了在换元过程中保留“这个人究竟是谁”的信息。
+          </div>
+
+          <div class="controls">
+            <div class="control">
+              <label for="transformProgress">坐标变换进度</label>
+              <input id="transformProgress" type="range" min="0" max="1" step="0.01" value="0" />
+              <div class="value"><span id="transformValue">0%</span></div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="animateTransformBtn" class="btn primary">▶ 自动拉直</button>
+            <button class="btn" onclick="resetTransform()">重置</button>
+          </div>
+        </div>
+
+        <div class="card visual-card">
+          <div class="canvas-wrap">
+            <div id="transformLabel" class="canvas-label">
+              旧坐标：(X,Y) 身高—体重平面
+            </div>
+            <canvas id="transformCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        在新坐标纸上，原来的 BMI 等值曲线
+        <b style="color:#ffd166;">y = zx²</b>
+        会变成
+        <b style="color:#4ee7ff;">Z = z</b>
+        的竖线。也就是说，同一个 BMI 队伍被拉直了。
+      </div>
+
+      <div class="narration">
+        <button class="btn" onclick="speakText(narrations.transform)">🔊 本节讲解</button>
+        <span>重点：补变量不是多此一举，而是为了恢复可逆性。</span>
+      </div>
+    </section>
+
+    <!-- 雅可比 -->
+    <section id="jacobian">
+      <div class="section-head">
+        <div class="step-number">3</div>
+        <div>
+          <h2>贴到新纸时，面积变了：雅可比就是兑换率</h2>
+          <p class="subtitle">概率质量不变，但“每单位面积的概率”必须重新结算。</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card visual-card">
+          <div class="canvas-wrap">
+            <div class="canvas-label">拖动 z、w，观察新坐标小格映回旧坐标后的面积</div>
+            <canvas id="jacobianCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>逆变换的导数矩阵</h3>
+
+          <p>
+            因为换元公式需要知道一个新坐标小格
+            <b>dz·dw</b> 映回旧平面后占多大面积，所以计算：
+          </p>
+
+          <div class="jacobian-matrix">
+            <div class="matrix-cell">∂x/∂z</div>
+            <div class="matrix-cell">∂x/∂w</div>
+            <div class="matrix-cell">∂y/∂z</div>
+            <div class="matrix-cell">∂y/∂w</div>
+          </div>
+
+          <div class="equation">
+            x = w<sup>1/2</sup>z<sup>−1/2</sup>,
+            &nbsp; y = w
+          </div>
+
+          <div class="equation" style="font-size:1.18rem;">
+            det
+            <span style="display:inline-block;vertical-align:middle;text-align:center;">
+              <span style="display:block;border-bottom:1px solid white;">∂(x,y)</span>
+              <span style="display:block;">∂(z,w)</span>
+            </span>
+            =
+            −
+            <span style="display:inline-block;vertical-align:middle;text-align:center;">
+              <span style="display:block;border-bottom:1px solid white;">√w</span>
+              <span style="display:block;">2z<sup>3/2</sup></span>
+            </span>
+          </div>
+
+          <div class="equation">
+            <span class="yellow">
+              |J| =
+              <span style="display:inline-block;vertical-align:middle;text-align:center;">
+                <span style="display:block;border-bottom:1px solid currentColor;">√w</span>
+                <span style="display:block;">2z<sup>3/2</sup></span>
+              </span>
+            </span>
+          </div>
+
+          <div class="controls">
+            <div class="control">
+              <label for="jacZ">z（BMI）</label>
+              <input id="jacZ" type="range" min="15" max="38" step="0.1" value="22" />
+              <div class="value"><span id="jacZValue">22.0</span></div>
+            </div>
+
+            <div class="control">
+              <label for="jacW">w（体重）</label>
+              <input id="jacW" type="range" min="48" max="105" step="0.5" value="70" />
+              <div class="value"><span id="jacWValue">70.0</span></div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat">
+              对应身高 x
+              <b id="jacXStat">—</b>
+            </div>
+            <div class="stat">
+              雅可比 |J|
+              <b id="jacValueStat">—</b>
+            </div>
+            <div class="stat">
+              面积换算
+              <b id="jacAreaStat">—</b>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warning">
+        <b>精确理解：</b>
+        |J| = dxdy / dzdw，表示“一个单位的新坐标面积映回旧平面后，
+        相当于多少旧坐标面积”。因此
+        <b>f<sub>X,Y</sub> × |J|</b>
+        才能从“每单位旧面积的概率”换算为“每单位新面积的概率”。
+      </div>
+
+      <div class="equation">
+        <span class="cyan">f<sub>Z,W</sub>(z,w)</span>
+        =
+        f<sub>X,Y</sub>(√(w/z), w)
+        ·
+        <span class="yellow">
+          <span style="display:inline-block;vertical-align:middle;text-align:center;">
+            <span style="display:block;border-bottom:1px solid currentColor;">√w</span>
+            <span style="display:block;">2z<sup>3/2</sup></span>
+          </span>
+        </span>
+      </div>
+
+      <div class="narration">
+        <button class="btn" onclick="speakText(narrations.jacobian)">🔊 本节讲解</button>
+        <span>不用死记“乘正向还是逆向”，只问：当前密度是按哪种面积计价？</span>
+      </div>
+    </section>
+
+    <!-- 积分 -->
+    <section id="integral">
+      <div class="section-head">
+        <div class="step-number">4</div>
+        <div>
+          <h2>为什么最后必须积分？</h2>
+          <p class="subtitle">一条线没有面积；密度真正统计的是宽度为 dz 的薄条。</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>不能直接数“第 z 条线”</h3>
+
+          <p>
+            对连续型随机变量，精确等于某个数的概率通常为零：
+          </p>
+
+          <div class="equation">
+            P(Z = z) = 0
+          </div>
+
+          <p>密度的含义是：</p>
+
+          <div class="equation">
+            P(z ≤ Z ≤ z+dz)
+            ≈
+            <span class="cyan">f<sub>Z</sub>(z)</span> dz
+          </div>
+
+          <p>
+            所以应该统计新坐标平面中宽度为 dz 的竖直薄条。
+            薄条内部，w 从队头到队尾连续变化。
+          </p>
+
+          <div class="controls">
+            <div class="control">
+              <label for="stripZ">薄条位置 z</label>
+              <input id="stripZ" type="range" min="15" max="38" step="0.1" value="23" />
+              <div class="value"><span id="stripZValue">23.0</span></div>
+            </div>
+
+            <div class="control">
+              <label for="stripDz">薄条宽度 dz</label>
+              <input id="stripDz" type="range" min="0.2" max="5" step="0.1" value="1.2" />
+              <div class="value"><span id="stripDzValue">1.2</span></div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat">
+              薄条中的样本数
+              <b id="stripCount">—</b>
+            </div>
+            <div class="stat">
+              样本概率
+              <b id="stripProbability">—</b>
+            </div>
+            <div class="stat">
+              密度近似 P/dz
+              <b id="stripDensity">—</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="card visual-card">
+          <div class="canvas-wrap">
+            <div class="canvas-label">新坐标平面：黄色区域是 [z,z+dz] 薄条</div>
+            <canvas id="stripCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-chain">
+        <div class="concept-node">固定 z</div>
+        <div class="concept-arrow">→</div>
+        <div class="concept-node">沿 w 方向排成一队</div>
+        <div class="concept-arrow">→</div>
+        <div class="concept-node">把每个 w 的贡献相加</div>
+        <div class="concept-arrow">→</div>
+        <div class="concept-node">对 w 积分</div>
+      </div>
+
+      <div class="equation">
+        f<sub>Z</sub>(z)
+        =
+        ∫
+        <span class="cyan">f<sub>Z,W</sub>(z,w)</span>
+        dw
+      </div>
+
+      <div class="equation" style="font-size:clamp(1rem,2.2vw,1.45rem);">
+        <span class="green">
+          f<sub>Z</sub>(z)
+          =
+          ∫
+          f<sub>X,Y</sub>(√(w/z),w)
+          ·
+          <span style="display:inline-block;vertical-align:middle;text-align:center;">
+            <span style="display:block;border-bottom:1px solid currentColor;">√w</span>
+            <span style="display:block;">2z<sup>3/2</sup></span>
+          </span>
+          dw
+        </span>
+      </div>
+
+      <div class="success">
+        <b>∫…dw 的直观意义：</b>
+        将同一个 BMI 队伍中所有不同体重位置的贡献加起来。
+        积分完成后，不再关心座位号 W，所以 W 被“边缘化”掉。
+      </div>
+
+      <div class="narration">
+        <button class="btn" onclick="speakText(narrations.integral)">🔊 本节讲解</button>
+        <span>积分不是额外技巧，而是在把整条队伍从头到尾数一遍。</span>
+      </div>
+    </section>
+
+    <!-- 总结 -->
+    <section id="summary">
+      <div class="section-head">
+        <div class="step-number">5</div>
+        <div>
+          <h2>完整推导：四步走</h2>
+          <p class="subtitle">从目标变量到最终边缘密度。</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="summary-step" data-step="1">
+            <h3>确定目标变量</h3>
+            <div class="equation">
+              Z = Y/X²
+            </div>
+            <p class="small">单独的 Z 不足以找回 X、Y，因此映射不可逆。</p>
+          </div>
+
+          <div class="summary-step" data-step="2">
+            <h3>补辅助变量</h3>
+            <div class="equation">
+              Z = Y/X², &nbsp; W = Y
+            </div>
+            <p class="small">此时可以反解 x = √(w/z)、y = w。</p>
+          </div>
+
+          <div class="summary-step" data-step="3">
+            <h3>做二维密度换元</h3>
+            <div class="equation" style="font-size:1.12rem;">
+              f<sub>Z,W</sub>(z,w)
+              =
+              f<sub>X,Y</sub>(√(w/z),w)
+              ·
+              √w/(2z<sup>3/2</sup>)
+            </div>
+          </div>
+
+          <div class="summary-step" data-step="4">
+            <h3>积分消去辅助变量</h3>
+            <div class="equation">
+              f<sub>Z</sub>(z)
+              =
+              ∫f<sub>Z,W</sub>(z,w)dw
+            </div>
+          </div>
+        </div>
+
+        <div class="card highlight">
+          <h3>一句话记忆</h3>
+
+          <div style="font-size:1.23rem;line-height:1.9;">
+            <p>
+              <b style="color:#4ee7ff;">补 W：</b>
+              让每个人在新坐标中仍有唯一位置。
+            </p>
+
+            <p>
+              <b style="color:#ffd166;">乘 |J|：</b>
+              把“每单位旧面积”兑换成“每单位新面积”。
+            </p>
+
+            <p>
+              <b style="color:#55ef9f;">对 W 积分：</b>
+              把同一 BMI 队伍中的所有位置贡献加起来。
+            </p>
+          </div>
+
+          <div class="equation" style="white-space:normal;">
+            <span class="cyan">先保留信息</span>
+            →
+            <span class="yellow">再换算面积</span>
+            →
+            <span class="green">最后收拢信息</span>
+          </div>
+
+          <div class="warning">
+            积分上下限不能机械地写成 −∞ 到 +∞。
+            严格地说，应在所有满足
+            <b>(√(w/z),w)</b>
+            位于原联合密度支持集内的 w 上积分。
+          </div>
+
+          <button class="btn primary" onclick="playFullNarration()">🔊 播放完整总结</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 测验 -->
+    <section id="quiz">
+      <div class="section-head">
+        <div class="step-number">6</div>
+        <div>
+          <h2>理解检测</h2>
+          <p class="subtitle">选择最准确的答案。</p>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card quiz-card" data-answer="1">
+          <h3>1. 为什么要引入 W？</h3>
+          <button class="quiz-option">A. 为了让公式看起来更复杂</button>
+          <button class="quiz-option">B. 为了恢复二维到二维的一一对应</button>
+          <button class="quiz-option">C. 因为 BMI 本身是二维变量</button>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="card quiz-card" data-answer="2">
+          <h3>2. |J| 的核心作用是？</h3>
+          <button class="quiz-option">A. 改变总概率</button>
+          <button class="quiz-option">B. 把抛物线变成直线</button>
+          <button class="quiz-option">C. 换算新旧坐标下的局部面积单位</button>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="card quiz-card" data-answer="0">
+          <h3>3. 为什么对 w 积分？</h3>
+          <button class="quiz-option">A. 汇总同一个 z 下所有 w 位置的概率贡献</button>
+          <button class="quiz-option">B. 让雅可比变成正数</button>
+          <button class="quiz-option">C. 因为 w 一定服从均匀分布</button>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="success" id="quizSummary">
+        完成三个问题后，这里会显示你的理解结果。
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    BMI 随机变量变换交互课件 ·
+    使用 Canvas、Web Speech API 与原生 JavaScript 制作
+  </footer>
+
+  <script>
+    // =========================
+    // 工具函数
+    // =========================
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function smoothstep(t) {
+      t = clamp(t, 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+
+    function format(n, digits = 2) {
+      return Number(n).toFixed(digits);
+    }
+
+    // 固定随机数，使每次刷新时样本形状一致
+    let seed = 20260731;
+
+    function random() {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    }
+
+    function gaussian() {
+      const u = Math.max(random(), 1e-9);
+      const v = Math.max(random(), 1e-9);
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+
+    function setupCanvas(canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      return {
+        ctx,
+        width: rect.width,
+        height: rect.height
+      };
+    }
+
+    // =========================
+    // 生成身高、体重样本
+    // =========================
+    const people = [];
+
+    function generatePeople() {
+      people.length = 0;
+      seed = 20260731;
+
+      for (let i = 0; i < 900; i++) {
+        let x;
+        let y;
+
+        // 两个略有差异的人群簇，使联合分布更有层次
+        if (random() < 0.55) {
+          x = 1.69 + gaussian() * 0.075;
+          y = 63 + (x - 1.69) * 55 + gaussian() * 8.5;
+        } else {
+          x = 1.78 + gaussian() * 0.078;
+          y = 77 + (x - 1.78) * 64 + gaussian() * 10;
+        }
+
+        x = clamp(x, 1.45, 2.02);
+        y = clamp(y, 43, 112);
+
+        const z = y / (x * x);
+        const w = y;
+
+        people.push({
+          x, y, z, w,
+          glow: 0.35 + random() * 0.65
+        });
+      }
+    }
+
+    generatePeople();
+
+    const ranges = {
+      xMin: 1.43,
+      xMax: 2.04,
+      yMin: 40,
+      yMax: 115,
+      zMin: 13,
+      zMax: 41,
+      wMin: 40,
+      wMax: 115
+    };
+
+    function drawBackground(ctx, width, height) {
+      const g = ctx.createLinearGradient(0, 0, 0, height);
+      g.addColorStop(0, "#071525");
+      g.addColorStop(1, "#030b14");
+
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, width, height);
+
+      const rg = ctx.createRadialGradient(
+        width * 0.55, height * 0.35, 10,
+        width * 0.55, height * 0.35, width * 0.7
+      );
+      rg.addColorStop(0, "rgba(58,135,210,.10)");
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawAxes(ctx, width, height, options) {
+      const {
+        xLabel,
+        yLabel,
+        xTicks,
+        yTicks,
+        xFormat = v => v,
+        yFormat = v => v
+      } = options;
+
+      const pad = { left: 58, right: 20, top: 25, bottom: 47 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+
+      ctx.save();
+
+      ctx.strokeStyle = "rgba(145,205,245,.12)";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= xTicks; i++) {
+        const x = pad.left + plotW * i / xTicks;
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top);
+        ctx.lineTo(x, pad.top + plotH);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i <= yTicks; i++) {
+        const y = pad.top + plotH * i / yTicks;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(pad.left + plotW, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(215,240,255,.65)";
+      ctx.lineWidth = 1.4;
+
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top);
+      ctx.lineTo(pad.left, pad.top + plotH);
+      ctx.lineTo(pad.left + plotW, pad.top + plotH);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(210,235,250,.8)";
+      ctx.font = "12px system-ui";
+      ctx.textAlign = "center";
+
+      for (let i = 0; i <= xTicks; i++) {
+        const x = pad.left + plotW * i / xTicks;
+        const value = options.xMin +
+          (options.xMax - options.xMin) * i / xTicks;
+
+        ctx.fillText(
+          xFormat(value),
+          x,
+          pad.top + plotH + 20
+        );
+      }
+
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i <= yTicks; i++) {
+        const y = pad.top + plotH -
+          plotH * i / yTicks;
+
+        const value = options.yMin +
+          (options.yMax - options.yMin) * i / yTicks;
+
+        ctx.fillText(
+          yFormat(value),
+          pad.left - 9,
+          y
+        );
+      }
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = "#a8d8f2";
+      ctx.font = "600 13px system-ui";
+
+      ctx.fillText(
+        xLabel,
+        pad.left + plotW / 2,
+        height - 8
+      );
+
+      ctx.save();
+      ctx.translate(15, pad.top + plotH / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText(yLabel, 0, 0);
+      ctx.restore();
+
+      ctx.restore();
+
+      return {
+        pad,
+        plotW,
+        plotH,
+        mapX(value) {
+          return pad.left +
+            (value - options.xMin) /
+            (options.xMax - options.xMin) * plotW;
+        },
+        mapY(value) {
+          return pad.top + plotH -
+            (value - options.yMin) /
+            (options.yMax - options.yMin) * plotH;
+        }
+      };
+    }
+
+    function drawPeopleXY(ctx, axes, alpha = 1, radius = 2.2) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+
+      people.forEach(p => {
+        const px = axes.mapX(p.x);
+        const py = axes.mapY(p.y);
+
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(70, 210, 255, ${0.19 * alpha * p.glow})`;
+        ctx.fill();
+      });
+
+      ctx.restore();
+    }
+
+    function drawPeopleZW(ctx, axes, alpha = 1, radius = 2.2) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+
+      people.forEach(p => {
+        const px = axes.mapX(p.z);
+        const py = axes.mapY(p.w);
+
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(89, 238, 190, ${0.2 * alpha * p.glow})`;
+        ctx.fill();
+      });
+
+      ctx.restore();
+    }
+
+    // =========================
+    // 场景画布
+    // =========================
+    function drawScene() {
+      const canvas = document.getElementById("sceneCanvas");
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      drawBackground(ctx, width, height);
+
+      const axes = drawAxes(ctx, width, height, {
+        xLabel: "身高 X（米）",
+        yLabel: "体重 Y（千克）",
+        xMin: ranges.xMin,
+        xMax: ranges.xMax,
+        yMin: ranges.yMin,
+        yMax: ranges.yMax,
+        xTicks: 5,
+        yTicks: 5,
+        xFormat: v => v.toFixed(2),
+        yFormat: v => Math.round(v)
+      });
+
+      // 模糊墨迹层
+      ctx.save();
+      ctx.filter = "blur(8px)";
+      ctx.globalCompositeOperation = "lighter";
+
+      people.forEach(p => {
+        const px = axes.mapX(p.x);
+        const py = axes.mapY(p.y);
+
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(38,151,255,.022)";
+        ctx.fill();
+      });
+
+      ctx.restore();
+      drawPeopleXY(ctx, axes, 1, 2);
+    }
+
+    // =========================
+    // BMI 曲线
+    // =========================
+    function drawCurve() {
+      const canvas = document.getElementById("curveCanvas");
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      drawBackground(ctx, width, height);
+
+      const axes = drawAxes(ctx, width, height, {
+        xLabel: "身高 X（米）",
+        yLabel: "体重 Y（千克）",
+        xMin: ranges.xMin,
+        xMax: ranges.xMax,
+        yMin: ranges.yMin,
+        yMax: ranges.yMax,
+        xTicks: 5,
+        yTicks: 5,
+        xFormat: v => v.toFixed(2),
+        yFormat: v => Math.round(v)
+      });
+
+      drawPeopleXY(ctx, axes, 0.65, 1.8);
+
+      const z = Number(document.getElementById("curveZ").value);
+      document.getElementById("curveZValue").textContent = z.toFixed(1);
+
+      // 高亮靠近该 BMI 曲线的人
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+
+      people.forEach(p => {
+        const distance = Math.abs(p.z - z);
+
+        if (distance < 0.6) {
+          const a = 1 - distance / 0.6;
+
+          ctx.beginPath();
+          ctx.arc(
+            axes.mapX(p.x),
+            axes.mapY(p.y),
+            3 + 2 * a,
+            0,
+            Math.PI * 2
+          );
+
+          ctx.fillStyle = `rgba(255,209,102,${0.35 + a * 0.6})`;
+          ctx.fill();
+        }
+      });
+
+      ctx.restore();
+
+      // 绘制 y = z x^2
+      ctx.save();
+      ctx.beginPath();
+
+      let started = false;
+
+      for (let i = 0; i <= 250; i++) {
+        const x = ranges.xMin +
+          (ranges.xMax - ranges.xMin) * i / 250;
+        const y = z * x * x;
+
+        if (y >= ranges.yMin && y <= ranges.yMax) {
+          const px = axes.mapX(x);
+          const py = axes.mapY(y);
+
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+      }
+
+      ctx.strokeStyle = "#ffd166";
+      ctx.lineWidth = 4;
+      ctx.shadowColor = "#ffd166";
+      ctx.shadowBlur = 15;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = "#ffd166";
+      ctx.font = "700 14px system-ui";
+      ctx.fillText(
+        `BMI = ${z.toFixed(1)}`,
+        axes.mapX(1.93),
+        axes.mapY(clamp(z * 1.93 * 1.93, 45, 109))
+      );
+    }
+
+    // =========================
+    // 坐标变换动画
+    // =========================
+    let transformAnimation = null;
+
+    function drawTransform() {
+      const canvas = document.getElementById("transformCanvas");
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      drawBackground(ctx, width, height);
+
+      const rawT = Number(
+        document.getElementById("transformProgress").value
+      );
+
+      const t = smoothstep(rawT);
+
+      document.getElementById("transformValue").textContent =
+        Math.round(rawT * 100) + "%";
+
+      document.getElementById("transformLabel").textContent =
+        rawT < 0.5
+          ? "正在从旧坐标 (X,Y) 搬到新坐标 (Z,W)"
+          : "正在进入新坐标：BMI 曲线逐渐变成竖线";
+
+      // 两套轴的显示值也插值
+      const xMin = lerp(ranges.xMin, ranges.zMin, t);
+      const xMax = lerp(ranges.xMax, ranges.zMax, t);
+      const yMin = lerp(ranges.yMin, ranges.wMin, t);
+      const yMax = lerp(ranges.yMax, ranges.wMax, t);
+
+      const axes = drawAxes(ctx, width, height, {
+        xLabel: rawT < 0.5
+          ? "横轴：从 X 过渡到 Z"
+          : "横轴：Z（BMI）",
+        yLabel: rawT < 0.5
+          ? "纵轴：从 Y 过渡到 W"
+          : "纵轴：W（体重）",
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+        xTicks: 5,
+        yTicks: 5,
+        xFormat: v =>
+          rawT < 0.48 ? Number(v).toFixed(2) : Number(v).toFixed(0),
+        yFormat: v => Math.round(v)
+      });
+
+      // BMI 等值线上的理论点
+      const highlightedZ = 23;
+
+      ctx.save();
+
+      people.forEach(p => {
+        const displayX = lerp(p.x, p.z, t);
+        const displayY = lerp(p.y, p.w, t);
+
+        const near = Math.abs(p.z - highlightedZ) < 0.65;
+
+        ctx.beginPath();
+        ctx.arc(
+          axes.mapX(displayX),
+          axes.mapY(displayY),
+          near ? 3.3 : 1.8,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fillStyle = near
+          ? "rgba(255,209,102,.85)"
+          : `rgba(78,220,255,${0.13 + p.glow * 0.12})`;
+
+        ctx.fill();
+      });
+
+      ctx.restore();
+
+      // 绘制 BMI=23 的曲线到竖线的连续过渡
+      ctx.save();
+      ctx.beginPath();
+
+      let began = false;
+
+      for (let i = 0; i <= 120; i++) {
+        const oldX = 1.48 + (1.99 - 1.48) * i / 120;
+        const oldY = highlightedZ * oldX * oldX;
+
+        if (oldY < ranges.yMin || oldY > ranges.yMax) continue;
+
+        const newZ = highlightedZ;
+        const newW = oldY;
+
+        const dx = lerp(oldX, newZ, t);
+        const dy = lerp(oldY, newW, t);
+
+        const px = axes.mapX(dx);
+        const py = axes.mapY(dy);
+
+        if (!began) {
+          ctx.moveTo(px, py);
+          began = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+
+      ctx.strokeStyle = "#ffd166";
+      ctx.lineWidth = 3.5;
+      ctx.shadowColor = "#ffd166";
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.restore();
+
+      if (rawT >= 0.95) {
+        const lineX = axes.mapX(23);
+
+        ctx.save();
+        ctx.setLineDash([7, 6]);
+        ctx.strokeStyle = "rgba(255,209,102,.9)";
+        ctx.beginPath();
+        ctx.moveTo(lineX, axes.pad.top);
+        ctx.lineTo(lineX, axes.pad.top + axes.plotH);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function animateTransform() {
+      if (transformAnimation) {
+        cancelAnimationFrame(transformAnimation);
+      }
+
+      const slider = document.getElementById("transformProgress");
+      let start = null;
+      const startValue = Number(slider.value);
+      const duration = 2600 * (1 - startValue);
+
+      function frame(timestamp) {
+        if (!start) start = timestamp;
+
+        const elapsed = timestamp - start;
+        const p = duration <= 0 ? 1 : clamp(elapsed / duration, 0, 1);
+
+        slider.value = lerp(startValue, 1, p);
+        drawTransform();
+
+        if (p < 1) {
+          transformAnimation = requestAnimationFrame(frame);
+        }
+      }
+
+      transformAnimation = requestAnimationFrame(frame);
+    }
+
+    function resetTransform() {
+      if (transformAnimation) {
+        cancelAnimationFrame(transformAnimation);
+      }
+
+      document.getElementById("transformProgress").value = 0;
+      drawTransform();
+    }
+
+    // =========================
+    // 雅可比局部面积演示
+    // =========================
+    function inverseTransform(z, w) {
+      return {
+        x: Math.sqrt(w / z),
+        y: w
+      };
+    }
+
+    function jacobian(z, w) {
+      return Math.sqrt(w) / (2 * Math.pow(z, 1.5));
+    }
+
+    function drawJacobian() {
+      const canvas = document.getElementById("jacobianCanvas");
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      drawBackground(ctx, width, height);
+
+      const axes = drawAxes(ctx, width, height, {
+        xLabel: "旧坐标 X（米）",
+        yLabel: "旧坐标 Y（千克）",
+        xMin: ranges.xMin,
+        xMax: ranges.xMax,
+        yMin: ranges.yMin,
+        yMax: ranges.yMax,
+        xTicks: 5,
+        yTicks: 5,
+        xFormat: v => v.toFixed(2),
+        yFormat: v => Math.round(v)
+      });
+
+      drawPeopleXY(ctx, axes, 0.35, 1.4);
+
+      const z = Number(document.getElementById("jacZ").value);
+      const w = Number(document.getElementById("jacW").value);
+
+      const dz = 1.25;
+      const dw = 5;
+
+      const corners = [
+        inverseTransform(z - dz / 2, w - dw / 2),
+        inverseTransform(z + dz / 2, w - dw / 2),
+        inverseTransform(z + dz / 2, w + dw / 2),
+        inverseTransform(z - dz / 2, w + dw / 2)
+      ];
+
+      // 绘制映回旧平面的弯曲小格
+      ctx.save();
+      ctx.beginPath();
+
+      corners.forEach((p, index) => {
+        const px = axes.mapX(p.x);
+        const py = axes.mapY(p.y);
+
+        if (index === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255,209,102,.22)";
+      ctx.fill();
+
+      ctx.strokeStyle = "#ffd166";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "#ffd166";
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.restore();
+
+      // 中心点
+      const center = inverseTransform(z, w);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(
+        axes.mapX(center.x),
+        axes.mapY(center.y),
+        6,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = "#4ee7ff";
+      ctx.shadowColor = "#4ee7ff";
+      ctx.shadowBlur = 14;
+      ctx.fill();
+      ctx.restore();
+
+      const J = jacobian(z, w);
+      const mappedArea = J * dz * dw;
+
+      document.getElementById("jacZValue").textContent = z.toFixed(1);
+      document.getElementById("jacWValue").textContent = w.toFixed(1);
+      document.getElementById("jacXStat").textContent =
+        center.x.toFixed(3) + " m";
+      document.getElementById("jacValueStat").textContent =
+        J.toFixed(5);
+      document.getElementById("jacAreaStat").textContent =
+        mappedArea.toFixed(4) + " m·kg";
+
+      ctx.fillStyle = "#d8efff";
+      ctx.font = "600 13px system-ui";
+      ctx.fillText(
+        `新小格：dz=${dz.toFixed(2)}, dw=${dw.toFixed(1)}`,
+        axes.pad.left + 145,
+        axes.pad.top + 20
+      );
+
+      ctx.fillStyle = "#ffd166";
+      ctx.fillText(
+        `映回旧平面的面积约为 |J|·dz·dw = ${mappedArea.toFixed(4)}`,
+        axes.pad.left + 205,
+        axes.pad.top + 43
+      );
+    }
+
+    // =========================
+    // 薄条与积分
+    // =========================
+    function drawStrip() {
+      const canvas = document.getElementById("stripCanvas");
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      drawBackground(ctx, width, height);
+
+      const axes = drawAxes(ctx, width, height, {
+        xLabel: "Z（BMI 队伍号）",
+        yLabel: "W（体重位置）",
+        xMin: ranges.zMin,
+        xMax: ranges.zMax,
+        yMin: ranges.wMin,
+        yMax: ranges.wMax,
+        xTicks: 7,
+        yTicks: 5,
+        xFormat: v => Math.round(v),
+        yFormat: v => Math.round(v)
+      });
+
+      const z = Number(document.getElementById("stripZ").value);
+      const dz = Number(document.getElementById("stripDz").value);
+
+      document.getElementById("stripZValue").textContent = z.toFixed(1);
+      document.getElementById("stripDzValue").textContent = dz.toFixed(1);
+
+      const left = axes.mapX(z);
+      const right = axes.mapX(z + dz);
+
+      // 薄条背景
+      ctx.save();
+      ctx.fillStyle = "rgba(255,209,102,.16)";
+      ctx.fillRect(
+        left,
+        axes.pad.top,
+        right - left,
+        axes.plotH
+      );
+
+      ctx.strokeStyle = "#ffd166";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([7, 5]);
+
+      ctx.beginPath();
+      ctx.moveTo(left, axes.pad.top);
+      ctx.lineTo(left, axes.pad.top + axes.plotH);
+      ctx.moveTo(right, axes.pad.top);
+      ctx.lineTo(right, axes.pad.top + axes.plotH);
+      ctx.stroke();
+      ctx.restore();
+
+      let count = 0;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+
+      people.forEach(p => {
+        const inside = p.z >= z && p.z <= z + dz;
+
+        if (inside) count++;
+
+        ctx.beginPath();
+        ctx.arc(
+          axes.mapX(p.z),
+          axes.mapY(p.w),
+          inside ? 3.4 : 1.7,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fillStyle = inside
+          ? "rgba(255,209,102,.88)"
+          : `rgba(80,235,190,${0.10 + 0.12 * p.glow})`;
+
+        ctx.fill();
+      });
+
+      ctx.restore();
+
+      const probability = count / people.length;
+      const densityEstimate = probability / dz;
+
+      document.getElementById("stripCount").textContent =
+        `${count} / ${people.length}`;
+      document.getElementById("stripProbability").textContent =
+        (probability * 100).toFixed(2) + "%";
+      document.getElementById("stripDensity").textContent =
+        densityEstimate.toFixed(4);
+
+      // w 方向加和箭头
+      const midX = (left + right) / 2;
+
+      ctx.save();
+      ctx.strokeStyle = "#4ee7ff";
+      ctx.fillStyle = "#4ee7ff";
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.moveTo(midX, axes.pad.top + axes.plotH - 35);
+      ctx.lineTo(midX, axes.pad.top + 55);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(midX, axes.pad.top + 45);
+      ctx.lineTo(midX - 7, axes.pad.top + 59);
+      ctx.lineTo(midX + 7, axes.pad.top + 59);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.font = "700 13px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        "沿 w 方向累加",
+        midX,
+        axes.pad.top + 28
+      );
+
+      ctx.restore();
+    }
+
+    // =========================
+    // 语音讲解
+    // =========================
+    const narrations = {
+      intro:
+        "假设一屋子里有很多人。随机抓一个，他的身高记作 X，体重记作 Y。已知 X 和 Y 的联合密度。现在我们的目标，是求 BMI，也就是 Z 等于 Y 除以 X 的平方，所对应的概率密度。",
+
+      scene:
+        "可以把身高体重平面想象成一张透明塑料布。布上的墨迹代表概率。墨越浓，说明附近出现人的概率越大。联合密度表示每单位旧坐标面积中含有多少概率，而不是某一个点本身具有多少概率。",
+
+      transform:
+        "只用 Z 等于 Y 除以 X 平方，会把很多不同的人压缩到同一个 BMI 值，因此映射不可逆。我们补充 W 等于 Y，作为队伍中的位置标签。这样从 Z 和 W 可以反解出 X 等于根号 W 除以 Z，Y 等于 W。原来的 BMI 曲线也会在新坐标中变成竖线。",
+
+      jacobian:
+        "坐标变化之后，同样大小的新坐标小格，映回旧平面时面积可能变大，也可能变小。概率总量不变，所以密度必须按面积比例重新结算。雅可比绝对值，就是旧面积除以新面积的局部兑换率。本例中，它等于根号 W 除以二乘 Z 的三分之二次方。",
+
+      integral:
+        "固定一个精确的 Z 值，只得到一条没有宽度的竖线，它的概率为零。密度真正统计的是宽度为 D Z 的薄条。在薄条内部，W 从队头到队尾连续变化。对 W 积分，就是把同一个 BMI 队伍中所有位置的概率贡献加起来。",
+
+      full:
+        "完整思路可以概括为四步。第一，确定目标变量 Z 等于 Y 除以 X 平方。第二，补充辅助变量 W 等于 Y，使换元保持一一对应。第三，用逆变换计算雅可比，把每单位旧面积的密度换算为每单位新面积的密度。第四，对 W 积分，汇总同一个 Z 下所有 W 位置的贡献，最终得到 Z 的边缘密度。"
+    };
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) {
+        alert("当前浏览器不支持语音合成功能。");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "zh-CN";
+      utterance.rate = 0.93;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      const voices = window.speechSynthesis.getVoices();
+      const chineseVoice = voices.find(v =>
+        /^zh/i.test(v.lang)
+      );
+
+      if (chineseVoice) {
+        utterance.voice = chineseVoice;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeech() {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function speakIntro() {
+      speakText(narrations.intro);
+    }
+
+    function playFullNarration() {
+      speakText(narrations.full);
+    }
+
+    function startLesson() {
+      document.getElementById("scene").scrollIntoView({
+        behavior: "smooth"
+      });
+
+      setTimeout(() => speakIntro(), 450);
+    }
+
+    // =========================
+    // 测验
+    // =========================
+    const quizState = new Map();
+
+    document.querySelectorAll(".quiz-card").forEach((card, cardIndex) => {
+      const correctIndex = Number(card.dataset.answer);
+      const options = [...card.querySelectorAll(".quiz-option")];
+      const feedback = card.querySelector(".quiz-feedback");
+
+      options.forEach((option, optionIndex) => {
+        option.addEventListener("click", () => {
+          options.forEach(o => {
+            o.classList.remove("correct", "wrong");
+          });
+
+          if (optionIndex === correctIndex) {
+            option.classList.add("correct");
+            feedback.style.color = "#55ef9f";
+            feedback.textContent = "回答正确。";
+            quizState.set(cardIndex, true);
+          } else {
+            option.classList.add("wrong");
+            options[correctIndex].classList.add("correct");
+            feedback.style.color = "#ff8ba0";
+            feedback.textContent = "再想一想：绿色选项说明了关键原因。";
+            quizState.set(cardIndex, false);
+          }
+
+          updateQuizSummary();
+        });
+      });
+    });
+
+    function updateQuizSummary() {
+      const summary = document.getElementById("quizSummary");
+
+      if (quizState.size < 3) {
+        summary.textContent =
+          `已经完成 ${quizState.size}/3 题，请继续作答。`;
+        return;
+      }
+
+      const score = [...quizState.values()]
+        .filter(Boolean).length;
+
+      if (score === 3) {
+        summary.innerHTML =
+          "<b>3/3，全对！</b> 你已经掌握：补变量恢复可逆性，雅可比换算面积，积分消去辅助变量。";
+      } else {
+        summary.innerHTML =
+          `<b>${score}/3。</b> 建议重新观察“坐标拉直”“雅可比小格”和“竖直薄条”三个动画。`;
+      }
+    }
+
+    // =========================
+    // 事件绑定
+    // =========================
+    document.getElementById("curveZ")
+      .addEventListener("input", drawCurve);
+
+    document.getElementById("transformProgress")
+      .addEventListener("input", drawTransform);
+
+    document.getElementById("animateTransformBtn")
+      .addEventListener("click", animateTransform);
+
+    document.getElementById("jacZ")
+      .addEventListener("input", drawJacobian);
+
+    document.getElementById("jacW")
+      .addEventListener("input", drawJacobian);
+
+    document.getElementById("stripZ")
+      .addEventListener("input", drawStrip);
+
+    document.getElementById("stripDz")
+      .addEventListener("input", drawStrip);
+
+    function drawAll() {
+      drawScene();
+      drawCurve();
+      drawTransform();
+      drawJacobian();
+      drawStrip();
+    }
+
+    let resizeTimer;
+
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(drawAll, 120);
+    });
+
+    window.addEventListener("load", drawAll);
+
+    // 某些浏览器需要等待语音列表载入
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  </script>
+</body>
+</html>

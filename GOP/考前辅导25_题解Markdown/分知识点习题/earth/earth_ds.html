@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 太空探索指挥中心 - 3D地球仪仪表板</title>
+
+    <!-- 引入Google Fonts科技感字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #020810;
+            --bg-panel: rgba(2, 12, 28, 0.85);
+            --cyan: #00e5ff;
+            --cyan-dim: #00b8d4;
+            --gold: #ffab40;
+            --white: #e0e0e0;
+            --border-glow: rgba(0, 229, 255, 0.35);
+            --text-primary: #c8e6ff;
+            --text-secondary: #7eb8da;
+            --danger: #ff5252;
+            --success: #69f0ae;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-deep);
+            overflow: hidden;
+            font-family: 'Share Tech Mono', 'Orbitron', 'Courier New', monospace;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body:active {
+            cursor: grabbing;
+        }
+        body.grabbing {
+            cursor: grabbing;
+        }
+
+        /* ==================== Three.js 画布容器 ==================== */
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+        #canvas-container canvas {
+            display: block;
+        }
+
+        /* ==================== CRT扫描线叠加层 ==================== */
+        #crt-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            animation: crt-scan 8s linear infinite;
+        }
+        #crt-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+            pointer-events: none;
+        }
+        @keyframes crt-scan {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 6px;
+            }
+        }
+
+        /* 噪点叠加 */
+        #noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 11;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            background-size: 180px 180px;
+            animation: noise-shift 0.5s steps(3) infinite;
+        }
+        @keyframes noise-shift {
+            0%,
+            100% {
+                background-position: 0 0;
+            }
+            33% {
+                background-position: -40px -20px;
+            }
+            66% {
+                background-position: 20px 35px;
+            }
+        }
+
+        /* ==================== HUD 顶部状态栏 ==================== */
+        #hud-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px 24px;
+            gap: 16px;
+        }
+        .hud-top-item {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
+            padding: 10px 16px;
+            color: var(--cyan);
+            font-family: 'Orbitron', 'Share Tech Mono', monospace;
+            font-size: clamp(0.65rem, 1.1vw, 0.8rem);
+            letter-spacing: 0.06em;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 0 18px rgba(0, 180, 220, 0.12), inset 0 0 8px rgba(0, 200, 255, 0.04);
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        .hud-top-item .label {
+            font-size: 0.6em;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .hud-top-item .value {
+            font-weight: 700;
+            font-size: 1.25em;
+            color: #fff;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.7);
+        }
+        #hud-time .value {
+            color: #fff;
+        }
+
+        /* ==================== HUD 底部状态栏 ==================== */
+        #hud-bottom {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            pointer-events: none;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .hud-bottom-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success), 0 0 25px var(--success);
+            animation: dot-pulse 2s ease-in-out infinite;
+        }
+        .hud-bottom-dot:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        .hud-bottom-dot:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+        .hud-bottom-dot:nth-child(4) {
+            animation-delay: 1.2s;
+        }
+        .hud-bottom-dot:nth-child(5) {
+            animation-delay: 1.6s;
+        }
+        @keyframes dot-pulse {
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+        #hud-bottom-label {
+            color: var(--text-secondary);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            margin-left: 6px;
+            opacity: 0.7;
+        }
+
+        /* ==================== 侧边数据面板 ==================== */
+        #side-panel {
+            position: fixed;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .data-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: 'Orbitron', 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.04em;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 0 14px rgba(0, 160, 200, 0.1);
+            min-width: 140px;
+            transition: all 0.3s ease;
+        }
+        .data-card:hover {
+            border-color: rgba(0, 229, 255, 0.7);
+            box-shadow: 0 0 22px rgba(0, 200, 240, 0.2);
+        }
+        .data-card .card-label {
+            font-size: 0.55em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 4px;
+        }
+        .data-card .card-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        .data-card .card-unit {
+            font-size: 0.6em;
+            color: var(--cyan-dim);
+            margin-left: 2px;
+        }
+
+        /* ==================== 信息弹出卡片 ==================== */
+        #info-popup {
+            position: fixed;
+            z-index: 30;
+            pointer-events: auto;
+            background: var(--bg-panel);
+            border: 1px solid rgba(0, 229, 255, 0.6);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: #fff;
+            font-family: 'Orbitron', 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(0, 180, 220, 0.3), 0 8px 32px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transform: translate(-50%, -120%) scale(0.85);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            text-align: center;
+            min-width: 120px;
+        }
+        #info-popup.visible {
+            opacity: 1;
+            transform: translate(-50%, -130%) scale(1);
+            pointer-events: auto;
+        }
+        #info-popup .popup-title {
+            font-weight: 700;
+            font-size: 0.9em;
+            color: var(--cyan);
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+            margin-bottom: 4px;
+        }
+        #info-popup .popup-detail {
+            font-size: 0.65em;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        #info-popup::after {
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--bg-panel);
+            border-right: 1px solid rgba(0, 229, 255, 0.6);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.6);
+            rotate: 45deg;
+        }
+
+        /* ==================== HUD环形装饰（CSS） ==================== */
+        #hud-ring {
+            position: fixed;
+            z-index: 8;
+            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(70vmin, 520px);
+            height: min(70vmin, 520px);
+            border-radius: 50%;
+            border: 1.5px solid rgba(0, 200, 240, 0.2);
+            box-shadow: 0 0 40px rgba(0, 180, 220, 0.08), inset 0 0 40px rgba(0, 180, 220, 0.04);
+            animation: ring-rotate 40s linear infinite;
+        }
+        #hud-ring-outer {
+            position: fixed;
+            z-index: 7;
+            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(82vmin, 600px);
+            height: min(82vmin, 600px);
+            border-radius: 50%;
+            border: 1px dashed rgba(0, 180, 210, 0.15);
+            animation: ring-rotate 55s linear infinite reverse;
+        }
+        @keyframes ring-rotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* ==================== 响应式设计 ==================== */
+        @media (max-width: 768px) {
+            #side-panel {
+                right: 4px;
+                gap: 6px;
+            }
+            .data-card {
+                padding: 8px 10px;
+                min-width: 100px;
+                font-size: 0.6rem;
+            }
+            .data-card .card-value {
+                font-size: 1.1em;
+            }
+            #hud-top {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+            .hud-top-item {
+                padding: 6px 10px;
+                font-size: 0.6rem;
+            }
+            .hud-top-item .value {
+                font-size: 1em;
+            }
+            #hud-ring {
+                width: min(80vmin, 350px);
+                height: min(80vmin, 350px);
+            }
+            #hud-ring-outer {
+                width: min(92vmin, 400px);
+                height: min(92vmin, 400px);
+            }
+        }
+        @media (max-width: 480px) {
+            #side-panel {
+                right: 2px;
+                gap: 4px;
+            }
+            .data-card {
+                padding: 5px 7px;
+                min-width: 75px;
+                font-size: 0.5rem;
+                border-radius: 5px;
+            }
+            .data-card .card-value {
+                font-size: 0.9em;
+            }
+            .data-card .card-label {
+                font-size: 0.45em;
+            }
+            #hud-top {
+                padding: 5px 6px;
+                gap: 3px;
+            }
+            .hud-top-item {
+                padding: 4px 7px;
+                font-size: 0.5rem;
+                border-radius: 4px;
+            }
+            .hud-top-item .value {
+                font-size: 0.85em;
+            }
+            .hud-top-item .label {
+                font-size: 0.5em;
+            }
+            #hud-ring,
+            #hud-ring-outer {
+                display: none;
+            }
+            #info-popup {
+                font-size: 0.6rem;
+                padding: 8px 12px;
+                min-width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Three.js画布 -->
+    <div id="canvas-container"></div>
+
+    <!-- CRT扫描线 -->
+    <div id="crt-overlay"></div>
+    <!-- 噪点 -->
+    <div id="noise-overlay"></div>
+
+    <!-- HUD环形装饰 -->
+    <div id="hud-ring"></div>
+    <div id="hud-ring-outer"></div>
+
+    <!-- 顶部状态栏 -->
+    <div id="hud-top">
+        <div class="hud-top-item" id="hud-time">
+            <div class="label">🕐 协调世界时 UTC</div>
+            <div class="value" id="utc-time">--:--:--</div>
+        </div>
+        <div class="hud-top-item" id="hud-coords">
+            <div class="label">📍 视点经纬度</div>
+            <div class="value" id="view-coords">--</div>
+        </div>
+        <div class="hud-top-item" id="hud-fps">
+            <div class="label">⚡ 渲染帧率</div>
+            <div class="value" id="fps-display">60 FPS</div>
+        </div>
+        <div class="hud-top-item" id="hud-status">
+            <div class="label">🛰️ 系统状态</div>
+            <div class="value" style="color:#69f0ae;">NOMINAL</div>
+        </div>
+    </div>
+
+    <!-- 底部状态指示 -->
+    <div id="hud-bottom">
+        <div class="hud-bottom-dot"></div>
+        <div class="hud-bottom-dot"></div>
+        <div class="hud-bottom-dot"></div>
+        <div class="hud-bottom-dot"></div>
+        <div class="hud-bottom-dot"></div>
+        <span id="hud-bottom-label">TRACKING • ACTIVE</span>
+    </div>
+
+    <!-- 侧边数据面板 -->
+    <div id="side-panel">
+        <div class="data-card">
+            <div class="card-label">🛰️ 在轨卫星</div>
+            <div class="card-value">8,261<span class="card-unit">颗</span></div>
+        </div>
+        <div class="data-card">
+            <div class="card-label">🌡️ 全球均温</div>
+            <div class="card-value">15.2<span class="card-unit">°C</span></div>
+        </div>
+        <div class="data-card">
+            <div class="card-label">📡 数据节点</div>
+            <div class="card-value">1,024<span class="card-unit">个</span></div>
+        </div>
+        <div class="data-card">
+            <div class="card-label">🌊 海平面</div>
+            <div class="card-value">+3.4<span class="card-unit">mm/年</span></div>
+        </div>
+        <div class="data-card">
+            <div class="card-label">☀️ 太阳活动</div>
+            <div class="card-value">C2.8<span class="card-unit">级</span></div>
+        </div>
+    </div>
+
+    <!-- 信息弹出卡片 -->
+    <div id="info-popup">
+        <div class="popup-title"></div>
+        <div class="popup-detail"></div>
+    </div>
+
+    <!-- ==================== Three.js Import Map ==================== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // ==================== DOM元素引用 ====================
+        const container = document.getElementById('canvas-container');
+        const utcTimeEl = document.getElementById('utc-time');
+        const viewCoordsEl = document.getElementById('view-coords');
+        const fpsDisplayEl = document.getElementById('fps-display');
+        const infoPopup = document.getElementById('info-popup');
+        const popupTitle = infoPopup.querySelector('.popup-title');
+        const popupDetail = infoPopup.querySelector('.popup-detail');
+
+        // ==================== 场景初始化 ====================
+        const scene = new THREE.Scene();
+
+        // 渲染器
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // 限制像素比以保证性能
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        container.appendChild(renderer.domElement);
+
+        // 相机
+        const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.5, 200);
+        camera.position.set(0, 0.8, 7.5);
+        camera.lookAt(0, 0, 0);
+
+        // OrbitControls - 带阻尼惯性
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08; // 阻尼系数（越小惯性越强）
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.25; // 默认自转速度
+        controls.minDistance = 3.2;
+        controls.maxDistance = 18;
+        controls.maxPolarAngle = Math.PI * 0.78; // 限制极角，避免翻到底部
+        controls.target.set(0, 0, 0);
+        controls.update();
+
+        // ==================== 光照系统 ====================
+        // 环境光 - 避免暗面完全漆黑
+        const ambientLight = new THREE.AmbientLight(0x1a3a5c, 1.8);
+        scene.add(ambientLight);
+
+        // 半球光 - 模拟天空/地面散射光
+        const hemisphereLight = new THREE.HemisphereLight(0x8899cc, 0x223344, 0.9);
+        scene.add(hemisphereLight);
+
+        // 主方向光 - 模拟太阳
+        const sunLight = new THREE.DirectionalLight(0xfff8e8, 5.5);
+        sunLight.position.set(8, 2.5, 5);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 40;
+        sunLight.shadow.camera.left = -8;
+        sunLight.shadow.camera.right = 8;
+        sunLight.shadow.camera.top = 8;
+        sunLight.shadow.camera.bottom = -8;
+        sunLight.shadow.bias = -0.0001;
+        scene.add(sunLight);
+
+        // 微弱的补光 - 柔化暗面
+        const fillLight = new THREE.DirectionalLight(0x4488cc, 1.2);
+        fillLight.position.set(-3, -1, -4);
+        scene.add(fillLight);
+
+        // ==================== 星空系统（2000-3000颗星星） ====================
+        const starsCount = 2600;
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsPositions = new Float32Array(starsCount * 3);
+        const starsSizes = new Float32Array(starsCount);
+        const starsBrightness = new Float32Array(starsCount); // 用于闪烁动画的基准亮度
+
+        const starRadius = 35; // 星空球壳半径
+
+        for (let i = 0; i < starsCount; i++) {
+            // 均匀分布在球壳上（使用球坐标随机采样，避免角落聚集）
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = starRadius + (Math.random() - 0.5) * 8; // 添加径向变化
+
+            starsPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+            starsPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+            starsPositions[i * 3 + 2] = r * Math.cos(phi);
+
+            // 不同大小（大部分小，少数大）
+            const sizeRand = Math.random();
+            if (sizeRand < 0.75) {
+                starsSizes[i] = 0.4 + Math.random() * 0.8; // 小星星
+            } else if (sizeRand < 0.94) {
+                starsSizes[i] = 1.0 + Math.random() * 1.6; // 中等星星
+            } else {
+                starsSizes[i] = 2.0 + Math.random() * 2.5; // 亮星
+            }
+
+            starsBrightness[i] = 0.5 + Math.random() * 0.5;
+        }
+
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        starsGeometry.setAttribute('size', new THREE.BufferAttribute(starsSizes, 1));
+
+        // 星星圆形纹理（Canvas生成）
+        const starCanvas = document.createElement('canvas');
+        starCanvas.width = 64;
+        starCanvas.height = 64;
+        const starCtx = starCanvas.getContext('2d');
+        const starGradient = starCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        starGradient.addColorStop(0, 'rgba(255,255,255,1)');
+        starGradient.addColorStop(0.06, 'rgba(255,255,255,0.9)');
+        starGradient.addColorStop(0.2, 'rgba(220,240,255,0.55)');
+        starGradient.addColorStop(0.5, 'rgba(150,200,255,0.12)');
+        starGradient.addColorStop(0.8, 'rgba(40,80,160,0.02)');
+        starGradient.addColorStop(1, 'rgba(0,0,0,0)');
+        starCtx.fillStyle = starGradient;
+        starCtx.fillRect(0, 0, 64, 64);
+        const starTexture = new THREE.CanvasTexture(starCanvas);
+
+        const starsMaterial = new THREE.PointsMaterial({
+            map: starTexture,
+            color: 0xffffff,
+            size: 0.18,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.85,
+            sizeAttenuation: true,
+        });
+
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+
+        // 存储需要闪烁的星星索引（约30%的星星参与闪烁）
+        const twinkleStars = new Set();
+        const twinkleCount = Math.floor(starsCount * 0.3);
+        while (twinkleStars.size < twinkleCount) {
+            twinkleStars.add(Math.floor(Math.random() * starsCount));
+        }
+        const twinklePhases = new Float32Array(starsCount); // 闪烁相位
+        for (let i = 0; i < starsCount; i++) {
+            twinklePhases[i] = Math.random() * Math.PI * 2;
+        }
+
+        // ==================== 星云效果（大型半透明Sprite） ====================
+        function createNebulaTexture(color1, color2, size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // 多层径向渐变模拟星云
+            const cx = size / 2;
+            const cy = size / 2;
+            const maxR = size / 2;
+
+            // 主渐变
+            const grad1 = ctx.createRadialGradient(cx, cy, maxR * 0.05, cx, cy, maxR);
+            grad1.addColorStop(0, color1);
+            grad1.addColorStop(0.25, color1);
+            grad1.addColorStop(0.55, color2);
+            grad1.addColorStop(0.85, 'rgba(8,12,30,0.04)');
+            grad1.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad1;
+            ctx.fillRect(0, 0, size, size);
+
+            // 次级光斑
+            const spotX = cx + (Math.random() - 0.5) * maxR * 0.7;
+            const spotY = cy + (Math.random() - 0.5) * maxR * 0.7;
+            const grad2 = ctx.createRadialGradient(spotX, spotY, 0, spotX, spotY, maxR * 0.55);
+            grad2.addColorStop(0, 'rgba(180,210,255,0.25)');
+            grad2.addColorStop(0.4, 'rgba(60,120,200,0.08)');
+            grad2.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad2;
+            ctx.fillRect(0, 0, size, size);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const nebulae = [];
+        const nebulaDefs = [
+            { color1: 'rgba(30,60,140,0.5)', color2: 'rgba(15,25,70,0.2)', size: 512, pos: [8, 3, -12], scale: 9 },
+            { color1: 'rgba(20,80,130,0.4)', color2: 'rgba(10,30,60,0.15)', size: 512, pos: [-9, -1.5, -10], scale: 8 },
+            { color1: 'rgba(50,30,100,0.45)', color2: 'rgba(20,10,50,0.18)', size: 512, pos: [3, -5, -14], scale: 10 },
+            { color1: 'rgba(25,55,120,0.38)', color2: 'rgba(8,20,55,0.14)', size: 512, pos: [-5, 4, -11], scale: 7.5 },
+            { color1: 'rgba(35,45,110,0.42)', color2: 'rgba(12,18,45,0.16)', size: 512, pos: [0, -3, -15], scale: 9.5 },
+        ];
+
+        nebulaDefs.forEach((def) => {
+            const texture = createNebulaTexture(def.color1, def.color2, def.size);
+            const spriteMaterial = new THREE.SpriteMaterial({
+                map: texture,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                opacity: 0.55,
+            });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.position.set(...def.pos);
+            sprite.scale.set(def.scale, def.scale, 1);
+            scene.add(sprite);
+            nebulae.push({
+                sprite,
+                basePos: [...def.pos],
+                driftSpeed: 0.015 + Math.random() * 0.04,
+                driftAmp: 0.3 + Math.random() * 0.8,
+                phase: Math.random() * Math.PI * 2,
+            });
+        });
+
+        // ==================== 流星系统 ====================
+        const meteors = [];
+        const maxMeteors = 7;
+        const meteorPool = [];
+
+        function createMeteorTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 8;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 128, 0);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.08, 'rgba(255,255,255,0.9)');
+            grad.addColorStop(0.3, 'rgba(200,230,255,0.5)');
+            grad.addColorStop(0.7, 'rgba(100,160,220,0.1)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 128, 8);
+            return new THREE.CanvasTexture(canvas);
+        }
+        const meteorTexture = createMeteorTexture();
+
+        function spawnMeteor() {
+            const spriteMat = new THREE.SpriteMaterial({
+                map: meteorTexture,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                opacity: 0.9,
+            });
+            const sprite = new THREE.Sprite(spriteMat);
+
+            // 随机起始位置（在屏幕外围的球壳上）
+            const phi = Math.random() * Math.PI * 0.7 + 0.15;
+            const theta = Math.random() * Math.PI * 2;
+            const r = 12 + Math.random() * 8;
+            sprite.position.set(
+                r * Math.sin(phi) * Math.cos(theta),
+                r * Math.cos(phi),
+                r * Math.sin(phi) * Math.sin(theta)
+            );
+            sprite.scale.set(1.8 + Math.random() * 2.5, 0.04, 1);
+
+            const speed = 0.06 + Math.random() * 0.18;
+            const direction = new THREE.Vector3(
+                (Math.random() - 0.5) * 2,
+                -0.3 - Math.random() * 0.7,
+                (Math.random() - 0.5) * 2
+            ).normalize();
+
+            const meteor = { sprite, direction, speed, life: 0, maxLife: 80 + Math.random() * 160 };
+            scene.add(sprite);
+            meteorPool.push(meteor);
+            return meteor;
+        }
+
+        // 预生成一些流星
+        for (let i = 0; i < maxMeteors; i++) {
+            const m = spawnMeteor();
+            m.life = m.maxLife * Math.random(); // 错开生命周期
+            meteors.push(m);
+        }
+
+        // ==================== 地球组 ====================
+        const earthGroup = new THREE.Group();
+        scene.add(earthGroup);
+
+        // 地球球体 - 高分段保证平滑
+        const earthRadius = 1.8;
+        const earthGeometry = new THREE.SphereGeometry(earthRadius, 96, 96);
+
+        // 贴图加载器
+        const textureLoader = new THREE.TextureLoader();
+        // 设置跨域
+        textureLoader.crossOrigin = 'anonymous';
+
+        // 贴图URL（使用Three.js官方示例中的NASA Blue Marble系列贴图）
+        const TEXTURE_URLS = {
+            dayMap: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+            normalMap: 'https://threejs.org/examples/textures/planets/earth_normal_2048.jpg',
+            specularMap: 'https://threejs.org/examples/textures/planets/earth_specular_2048.jpg',
+            cloudMap: 'https://threejs.org/examples/textures/planets/earth_clouds_1024.png',
+            nightLightsMap: 'https://threejs.org/examples/textures/planets/earth_lights_2048.png',
+        };
+
+        // 创建地球材质 - 使用MeshPhongMaterial以支持specularMap
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            map: null, // 日间贴图（稍后设置）
+            normalMap: null,
+            normalScale: new THREE.Vector2(1.8, 1.8), // 法线贴图强度
+            specularMap: null,
+            specular: new THREE.Color(0x333333),
+            shininess: 18,
+            emissiveMap: null,
+            emissive: new THREE.Color(0xffcc88),
+            emissiveIntensity: 0.35,
+            bumpMap: null,
+            bumpScale: 0.03,
+        });
+
+        const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+        earthMesh.castShadow = true;
+        earthMesh.receiveShadow = true;
+        earthGroup.add(earthMesh);
+
+        // 云层球体 - 略大于地球
+        const cloudRadius = earthRadius * 1.012;
+        const cloudGeometry = new THREE.SphereGeometry(cloudRadius, 72, 72);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            map: null,
+            transparent: true,
+            opacity: 0.55,
+            blending: THREE.NormalBlending,
+            depthWrite: false,
+            emissive: new THREE.Color(0xffffff),
+            emissiveIntensity: 0.15,
+            emissiveMap: null,
+            specular: new THREE.Color(0x000000),
+            shininess: 0,
+        });
+        const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        cloudMesh.renderOrder = 1;
+        cloudMesh.material.depthTest = true;
+        earthGroup.add(cloudMesh);
+
+        // 大气层辉光 - 自定义Shader（Fresnel边缘发光）
+        const atmosphereRadius = earthRadius * 1.06;
+        const atmosphereGeometry = new THREE.SphereGeometry(atmosphereRadius, 72, 72);
+
+        const atmosphereVertexShader = /* glsl */ `
+            varying vec3 vNormal;
+            varying vec3 vPosition;
+            varying vec3 vWorldPosition;
+            void main() {
+                vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                vWorldPosition = worldPos.xyz;
+                vNormal = normalize(mat3(modelMatrix) * normal);
+                vPosition = position;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+
+        const atmosphereFragmentShader = /* glsl */ `
+            varying vec3 vNormal;
+            varying vec3 vPosition;
+            varying vec3 vWorldPosition;
+            uniform vec3 uViewDirection;
+            uniform float uTime;
+            void main() {
+                vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                vec3 normal = normalize(vNormal);
+                // Fresnel效果：边缘发光，中心透明
+                float fresnel = 1.0 - abs(dot(normal, viewDir));
+                fresnel = pow(fresnel, 3.5);
+                // 大气颜色：内圈青色，外圈深蓝
+                vec3 innerGlow = vec3(0.25, 0.7, 1.0);
+                vec3 outerGlow = vec3(0.1, 0.35, 0.85);
+                vec3 glowColor = mix(innerGlow, outerGlow, fresnel);
+                float alpha = fresnel * 0.65;
+                // 添加微弱的脉动
+                alpha *= 0.85 + 0.15 * sin(uTime * 0.7 + fresnel * 8.0) * 0.5 + 0.5;
+                gl_FragColor = vec4(glowColor, alpha);
+            }
+        `;
+
+        const atmosphereMaterial = new THREE.ShaderMaterial({
+            vertexShader: atmosphereVertexShader,
+            fragmentShader: atmosphereFragmentShader,
+            uniforms: {
+                uTime: { value: 0 },
+                uViewDirection: { value: new THREE.Vector3(0, 0, 1) },
+            },
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            side: THREE.FrontSide,
+        });
+
+        const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        atmosphereMesh.renderOrder = 2;
+        earthGroup.add(atmosphereMesh);
+
+        // ==================== 加载贴图 ====================
+        let texturesLoaded = 0;
+        const totalTextures = 5;
+
+        function onTextureProgress() {
+            texturesLoaded++;
+            const pct = Math.round((texturesLoaded / totalTextures) * 100);
+            console.log(`🌐 贴图加载进度: ${pct}% (${texturesLoaded}/${totalTextures})`);
+        }
+
+        // 加载日间贴图
+        textureLoader.load(
+            TEXTURE_URLS.dayMap,
+            (tex) => {
+                tex.colorSpace = THREE.SRGBColorSpace;
+                tex.anisotropy = 8;
+                earthMaterial.map = tex;
+                earthMaterial.needsUpdate = true;
+                onTextureProgress();
+            },
+            undefined,
+            () => {
+                // 加载失败，使用程序化颜色
+                console.warn('⚠️ 日间贴图加载失败，使用降级方案');
+                earthMaterial.color = new THREE.Color(0x2255aa);
+                earthMaterial.needsUpdate = true;
+                onTextureProgress();
+            }
+        );
+
+        // 加载法线贴图
+        textureLoader.load(
+            TEXTURE_URLS.normalMap,
+            (tex) => {
+                tex.colorSpace = THREE.LinearSRGBColorSpace;
+                earthMaterial.normalMap = tex;
+                earthMaterial.needsUpdate = true;
+                onTextureProgress();
+            },
+            undefined,
+            () => { onTextureProgress(); }
+        );
+
+        // 加载高光贴图（海洋反光）
+        textureLoader.load(
+            TEXTURE_URLS.specularMap,
+            (tex) => {
+                tex.colorSpace = THREE.LinearSRGBColorSpace;
+                earthMaterial.specularMap = tex;
+                earthMaterial.needsUpdate = true;
+                onTextureProgress();
+            },
+            undefined,
+            () => { onTextureProgress(); }
+        );
+
+        // 加载云层贴图
+        textureLoader.load(
+            TEXTURE_URLS.cloudMap,
+            (tex) => {
+                tex.colorSpace = THREE.SRGBColorSpace;
+                cloudMaterial.map = tex;
+                cloudMaterial.emissiveMap = tex;
+                cloudMaterial.needsUpdate = true;
+                onTextureProgress();
+            },
+            undefined,
+            () => { onTextureProgress(); }
+        );
+
+        // 加载夜晚灯光贴图
+        textureLoader.load(
+            TEXTURE_URLS.nightLightsMap,
+            (tex) => {
+                tex.colorSpace = THREE.SRGBColorSpace;
+                earthMaterial.emissiveMap = tex;
+                earthMaterial.needsUpdate = true;
+                onTextureProgress();
+            },
+            undefined,
+            () => { onTextureProgress(); }
+        );
+
+        // ==================== 城市标记点 ====================
+        const cityMarkers = [];
+        const cities = [
+            { name: '纽约', lat: 40.7, lon: -74.0, color: '#ffcc00', detail: '北美数据中心 · 人口8.6M' },
+            { name: '伦敦', lat: 51.5, lon: -0.1, color: '#ffab40', detail: '欧洲金融枢纽 · 人口9.0M' },
+            { name: '东京', lat: 35.7, lon: 139.7, color: '#ff6e6e', detail: '亚太核心节点 · 人口13.9M' },
+            { name: '上海', lat: 31.2, lon: 121.5, color: '#40c4ff', detail: '东亚数据中枢 · 人口24.8M' },
+            { name: '悉尼', lat: -33.9, lon: 151.2, color: '#69f0ae', detail: '大洋洲网关 · 人口5.3M' },
+            { name: '迪拜', lat: 25.2, lon: 55.3, color: '#ffd740', detail: '中东通信中心 · 人口3.3M' },
+            { name: '圣保罗', lat: -23.5, lon: -46.6, color: '#b388ff', detail: '南美枢纽 · 人口12.3M' },
+            { name: '新加坡', lat: 1.3, lon: 103.8, color: '#40ffd4', detail: '东南亚交换中心 · 人口5.7M' },
+        ];
+
+        function latLonToVec3(lat, lon, radius) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            return new THREE.Vector3(
+                -radius * Math.sin(phi) * Math.cos(theta),
+                radius * Math.cos(phi),
+                radius * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        // 创建发光标记点纹理
+        function createMarkerTexture(colorHex) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const cx = 32,
+                cy = 32;
+            const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, 30);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.08, colorHex);
+            grad.addColorStop(0.3, colorHex.replace('1)', '0.6)').replace(')', ',0.6)'));
+            grad.addColorStop(0.7, 'rgba(0,0,0,0)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 64, 64);
+
+            // 中心亮点
+            const innerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 8);
+            innerGrad.addColorStop(0, 'rgba(255,255,255,1)');
+            innerGrad.addColorStop(0.5, 'rgba(255,255,255,0.7)');
+            innerGrad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = innerGrad;
+            ctx.fillRect(0, 0, 64, 64);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        cities.forEach((city) => {
+            const pos = latLonToVec3(city.lat, city.lon, earthRadius * 1.005);
+            const texture = createMarkerTexture(city.color);
+            const spriteMat = new THREE.SpriteMaterial({
+                map: texture,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                opacity: 0.9,
+            });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.copy(pos);
+            sprite.scale.set(0.28, 0.28, 1);
+            sprite.userData = { city, type: 'marker' };
+            earthGroup.add(sprite);
+            cityMarkers.push(sprite);
+
+            // 添加脉冲光环（稍大的第二层sprite）
+            const ringTexture = createMarkerTexture(city.color.replace('1)', '0.5)').replace(')', ',0.5)'));
+            const ringMat = new THREE.SpriteMaterial({
+                map: ringTexture,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                opacity: 0.5,
+            });
+            const ringSprite = new THREE.Sprite(ringMat);
+            ringSprite.position.copy(pos);
+            ringSprite.scale.set(0.45, 0.45, 1);
+            ringSprite.userData = { city, type: 'ring', baseScale: 0.45 };
+            earthGroup.add(ringSprite);
+            cityMarkers.push(ringSprite);
+        });
+
+        // ==================== 轨道粒子环 ====================
+        function createOrbitRing(radius, tiltAngle, numParticles, color) {
+            const pointsGeo = new THREE.BufferGeometry();
+            const positionsArr = new Float32Array(numParticles * 3);
+            for (let i = 0; i < numParticles; i++) {
+                const angle = (i / numParticles) * Math.PI * 2;
+                positionsArr[i * 3] = Math.cos(angle) * radius;
+                positionsArr[i * 3 + 1] = 0;
+                positionsArr[i * 3 + 2] = Math.sin(angle) * radius;
+            }
+            pointsGeo.setAttribute('position', new THREE.BufferAttribute(positionsArr, 3));
+            const pointsMat = new THREE.PointsMaterial({
+                color,
+                size: 0.025,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                opacity: 0.7,
+            });
+            const ring = new THREE.Points(pointsGeo, pointsMat);
+            ring.rotation.x = tiltAngle;
+            return ring;
+        }
+
+        const orbitRing1 = createOrbitRing(earthRadius * 1.25, 0.35, 400, 0x44aaff);
+        const orbitRing2 = createOrbitRing(earthRadius * 1.32, -0.55, 350, 0x66ccff);
+        const orbitRing3 = createOrbitRing(earthRadius * 1.18, 0.9, 300, 0x88ddff);
+        earthGroup.add(orbitRing1);
+        earthGroup.add(orbitRing2);
+        earthGroup.add(orbitRing3);
+
+        // ==================== Raycaster 交互检测 ====================
+        const raycaster = new THREE.Raycaster();
+        raycaster.params.Points.threshold = 0.3;
+        raycaster.params.Sprite.threshold = 0.3;
+        const mouse = new THREE.Vector2();
+        let hoveredMarker = null;
+        let selectedMarker = null;
+
+        function getMarkerSprites() {
+            // 只返回主标记sprite（非ring）
+            return cityMarkers.filter((s, i) => i % 2 === 0);
+        }
+
+        function updateInfoPopup(sprite, event) {
+            if (!sprite || !sprite.userData.city) {
+                infoPopup.classList.remove('visible');
+                selectedMarker = null;
+                return;
+            }
+            const city = sprite.userData.city;
+            popupTitle.textContent = `📍 ${city.name}`;
+            popupDetail.textContent = city.detail;
+            // 获取sprite的屏幕位置
+            const screenPos = new THREE.Vector3();
+            sprite.getWorldPosition(screenPos);
+            screenPos.project(camera);
+            const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
+            infoPopup.style.left = x + 'px';
+            infoPopup.style.top = y + 'px';
+            infoPopup.classList.add('visible');
+            selectedMarker = sprite;
+        }
+
+        function onPointerDown(event) {
+            const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+            const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+            mouse.x = (clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const markerSprites = getMarkerSprites();
+            const intersects = raycaster.intersectObjects(markerSprites);
+
+            if (intersects.length > 0) {
+                const obj = intersects[0].object;
+                if (obj.userData.type === 'marker') {
+                    updateInfoPopup(obj, event);
+                    // 短暂阻止controls处理此次点击
+                    event.stopPropagation();
+                    return;
+                }
+            }
+            // 点击空白处关闭弹窗
+            infoPopup.classList.remove('visible');
+            selectedMarker = null;
+        }
+
+        function onPointerMove(event) {
+            const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+            const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+            mouse.x = (clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const markerSprites = getMarkerSprites();
+            const intersects = raycaster.intersectObjects(markerSprites);
+
+            if (intersects.length > 0) {
+                const obj = intersects[0].object;
+                if (obj.userData.type === 'marker' && hoveredMarker !== obj) {
+                    hoveredMarker = obj;
+                    document.body.style.cursor = 'pointer';
+                }
+            } else if (hoveredMarker) {
+                hoveredMarker = null;
+                document.body.style.cursor = '';
+            }
+        }
+
+        window.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('touchstart', onPointerDown, { passive: false });
+        window.addEventListener('touchmove', onPointerMove, { passive: true });
+
+        // ==================== 响应式处理 ====================
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ==================== FPS 计数器 ====================
+        let frameCount = 0;
+        let lastFpsTime = performance.now();
+        let currentFPS = 60;
+
+        // ==================== 动画循环 ====================
+        const clock = new THREE.Clock();
+
+        function animate(timestamp) {
+            requestAnimationFrame(animate);
+
+            const dt = Math.min(clock.getDelta(), 0.2); // 防止大帧跳跃
+            const elapsed = timestamp * 0.001;
+
+            // 更新OrbitControls（阻尼+惯性）
+            controls.update();
+
+            // 更新大气层shader时间
+            atmosphereMaterial.uniforms.uTime.value = elapsed;
+
+            // 云层以略微不同的速度旋转（相对于地球主体的自转）
+            // OrbitControls的autoRotate会旋转整个场景，云层额外微调
+            cloudMesh.rotation.y += dt * 0.04; // 云层额外漂移
+
+            // 轨道环微动
+            orbitRing1.rotation.z += dt * 0.08;
+            orbitRing2.rotation.z -= dt * 0.06;
+            orbitRing3.rotation.z += dt * 0.1;
+
+            // 星星闪烁动画
+            const sizesAttr = starsGeometry.getAttribute('size');
+            const baseSizes = starsSizes; // 使用原始尺寸数组
+            for (const idx of twinkleStars) {
+                const phase = twinklePhases[idx];
+                const flicker = 0.55 + 0.45 * Math.sin(elapsed * 3.5 + phase) * Math.sin(elapsed * 7.3 + phase * 1.7);
+                sizesAttr.array[idx] = baseSizes[idx] * flicker;
+            }
+            sizesAttr.needsUpdate = true;
+
+            // 星云漂移
+            nebulae.forEach((neb) => {
+                neb.sprite.position.x = neb.basePos[0] + Math.sin(elapsed * neb.driftSpeed + neb.phase) * neb.driftAmp;
+                neb.sprite.position.y = neb.basePos[1] + Math.cos(elapsed * neb.driftSpeed * 0.7 + neb.phase) * neb
+                    .driftAmp * 0.7;
+            });
+
+            // 流星管理
+            for (let i = meteorPool.length - 1; i >= 0; i--) {
+                const m = meteorPool[i];
+                m.life++;
+                m.sprite.position.addScaledVector(m.direction, m.speed);
+                m.sprite.material.opacity = Math.max(0, 0.9 * (1 - m.life / m.maxLife));
+                if (m.life >= m.maxLife) {
+                    scene.remove(m.sprite);
+                    m.sprite.material.dispose();
+                    meteorPool.splice(i, 1);
+                }
+            }
+            // 补充流星
+            while (meteorPool.length < maxMeteors) {
+                meteorPool.push(spawnMeteor());
+            }
+
+            // 城市标记脉冲动画
+            cityMarkers.forEach((sprite, i) => {
+                if (sprite.userData.type === 'ring') {
+                    const base = sprite.userData.baseScale || 0.45;
+                    const pulse = 1 + 0.25 * Math.sin(elapsed * 2.5 + i * 0.7);
+                    sprite.scale.set(base * pulse, base * pulse, 1);
+                    sprite.material.opacity = 0.3 + 0.2 * Math.sin(elapsed * 2.5 + i * 0.7);
+                }
+            });
+
+            // 渲染场景
+            renderer.render(scene, camera);
+
+            // FPS计算
+            frameCount++;
+            if (timestamp - lastFpsTime >= 1000) {
+                currentFPS = Math.round(frameCount / ((timestamp - lastFpsTime) / 1000));
+                frameCount = 0;
+                lastFpsTime = timestamp;
+                fpsDisplayEl.textContent = currentFPS + ' FPS';
+            }
+
+            // 更新UTC时间
+            const now = new Date();
+            const utcStr = now.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+            utcTimeEl.textContent = utcStr;
+
+            // 更新视点经纬度（基于相机位置推算）
+            const camDir = new THREE.Vector3();
+            camera.getWorldDirection(camDir);
+            // 从相机指向地球中心的方向
+            const toEarth = new THREE.Vector3().subVectors(
+                new THREE.Vector3(0, 0, 0),
+                camera.position
+            ).normalize();
+            const lat = Math.asin(toEarth.y) * (180 / Math.PI);
+            const lon = Math.atan2(toEarth.x, toEarth.z) * (180 / Math.PI);
+            viewCoordsEl.textContent =
+                `N${lat.toFixed(1)}° ${lon >= 0 ? 'E' : 'W'}${Math.abs(lon).toFixed(1)}°`;
+        }
+
+        // ==================== 启动 ====================
+        console.log('🚀 太空探索指挥中心初始化完成');
+        console.log('🌍 地球贴图来源: NASA Blue Marble (via threejs.org)');
+        console.log('🖱️ 交互: 拖拽旋转 | 滚轮缩放 | 点击城市标记查看详情');
+        console.log('📡 贴图加载中，请稍候...');
+
+        // 显示加载提示
+        const loadingHint = document.createElement('div');
+        loadingHint.style.cssText = `
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            z-index: 25; pointer-events: none;
+            color: #7eb8da; font-family: 'Orbitron', monospace; font-size: 0.7rem;
+            letter-spacing: 0.1em; text-align: center;
+            transition: opacity 0.8s ease;
+        `;
+        loadingHint.textContent = '📡 正在加载高分辨率地球贴图...';
+        document.body.appendChild(loadingHint);
+
+        // 贴图加载完成后隐藏提示
+        const checkTexturesInterval = setInterval(() => {
+            if (texturesLoaded >= totalTextures) {
+                loadingHint.style.opacity = '0';
+                setTimeout(() => loadingHint.remove(), 800);
+                clearInterval(checkTexturesInterval);
+            }
+        }, 500);
+
+        // 启动动画循环
+        requestAnimationFrame(animate);
+
+        // ==================== 键盘快捷键 ====================
+        window.addEventListener('keydown', (e) => {
+            switch (e.key.toLowerCase()) {
+                case 'r':
+                    // 重置视角
+                    controls.target.set(0, 0, 0);
+                    camera.position.set(0, 0.8, 7.5);
+                    camera.lookAt(0, 0, 0);
+                    controls.update();
+                    console.log('🔄 视角已重置');
+                    break;
+                case 'f':
+                    // 切换全屏
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        document.body.requestFullscreen().catch(() => {});
+                    }
+                    break;
+                case 'a':
+                    // 切换自动旋转
+                    controls.autoRotate = !controls.autoRotate;
+                    console.log(`🔄 自动旋转: ${controls.autoRotate ? '开启' : '暂停'}`);
+                    break;
+                case '+':
+                case '=':
+                    controls.autoRotateSpeed = Math.min(controls.autoRotateSpeed + 0.1, 3);
+                    break;
+                case '-':
+                    controls.autoRotateSpeed = Math.max(controls.autoRotateSpeed - 0.1, 0.05);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        console.log('⌨️ 快捷键: R=重置视角 F=全屏 A=切换自动旋转 +/-=调整转速');
+    </script>
+</body>
+</html>

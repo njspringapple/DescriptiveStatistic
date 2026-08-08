@@ -1,0 +1,3273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>停充一体化平台 · 智慧财务中心</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --purple: #7c3aed;
+            --cyan: #0891b2;
+            --sidebar: #111827;
+            --sidebar-hover: #1f2937;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --border: #e5e7eb;
+            --background: #f4f7fb;
+            --card: #ffffff;
+            --shadow: 0 3px 12px rgba(15, 23, 42, .06);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
+            font-family: Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .app {
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            background: #0b1220;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .16);
+        }
+
+        .brand {
+            width: 260px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            flex-shrink: 0;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, .35);
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            margin-top: 2px;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .topbar-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-select {
+            height: 36px;
+            min-width: 150px;
+            padding: 0 32px 0 11px;
+            color: #e5e7eb;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            outline: none;
+            background: #172033;
+        }
+
+        .top-select:focus {
+            border-color: #3b82f6;
+        }
+
+        .scope-tip {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mode-switch {
+            display: flex;
+            padding: 3px;
+            border: 1px solid #334155;
+            border-radius: 9px;
+            background: #172033;
+        }
+
+        .mode-switch button {
+            padding: 6px 11px;
+            color: #94a3b8;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+        }
+
+        .mode-switch button.active {
+            color: white;
+            background: var(--primary);
+        }
+
+        .icon-button {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            color: #d1d5db;
+            border: 1px solid #334155;
+            border-radius: 9px;
+            background: #172033;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 2px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            font-weight: 700;
+            background: #334155;
+        }
+
+        .user-name {
+            font-size: 13px;
+        }
+
+        .user-role {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            top: 64px;
+            bottom: 0;
+            left: 0;
+            z-index: 90;
+            width: 240px;
+            overflow-y: auto;
+            color: #cbd5e1;
+            background: var(--sidebar);
+            transition: width .25s ease;
+        }
+
+        .sidebar-section {
+            padding: 15px 12px 6px;
+        }
+
+        .sidebar-title {
+            padding: 0 10px 8px;
+            color: #64748b;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            width: 100%;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 3px;
+            padding: 9px 11px;
+            color: #cbd5e1;
+            text-align: left;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            transition: .2s;
+        }
+
+        .menu-item:hover {
+            color: white;
+            background: var(--sidebar-hover);
+        }
+
+        .menu-item.active {
+            color: white;
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+        }
+
+        .menu-icon {
+            width: 20px;
+            font-size: 17px;
+            text-align: center;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            min-width: 20px;
+            padding: 2px 6px;
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 11px;
+            background: #ef4444;
+        }
+
+        .menu-badge.orange {
+            background: #d97706;
+        }
+
+        .sidebar-footer {
+            margin: 16px 12px;
+            padding: 12px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #172033;
+        }
+
+        .sidebar-footer-title {
+            color: white;
+            font-weight: 600;
+        }
+
+        .sidebar-footer-text {
+            margin-top: 6px;
+            color: #94a3b8;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* 主体 */
+        .main {
+            margin-top: 64px;
+            margin-left: 240px;
+            min-height: calc(100vh - 64px);
+            padding: 22px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        .page-desc {
+            margin-top: 7px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            min-height: 36px;
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #374151;
+            background: white;
+        }
+
+        .btn:hover {
+            border-color: #93c5fd;
+            background: #f8fbff;
+        }
+
+        .btn-primary {
+            color: white;
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            color: white;
+            border-color: var(--primary-dark);
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            color: white;
+            border-color: var(--success);
+            background: var(--success);
+        }
+
+        .btn-danger {
+            color: white;
+            border-color: var(--danger);
+            background: var(--danger);
+        }
+
+        .btn-sm {
+            min-height: 29px;
+            padding: 5px 9px;
+            font-size: 12px;
+        }
+
+        .btn-text {
+            color: var(--primary);
+            border: 0;
+            background: transparent;
+        }
+
+        .period-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            color: #15803d;
+            background: #f0fdf4;
+        }
+
+        .period-badge.locked {
+            color: #6b7280;
+            border-color: #d1d5db;
+            background: #f3f4f6;
+        }
+
+        /* 筛选区域 */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .form-control {
+            height: 36px;
+            min-width: 130px;
+            padding: 0 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .09);
+        }
+
+        .search-input {
+            min-width: 220px;
+        }
+
+        .filter-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 指标卡片 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card {
+            position: relative;
+            min-height: 126px;
+            overflow: hidden;
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            box-shadow: var(--shadow);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .09);
+        }
+
+        .kpi-icon {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .kpi-value {
+            margin-top: 13px;
+            font-size: 25px;
+            font-weight: 750;
+            letter-spacing: -.5px;
+        }
+
+        .kpi-value small {
+            margin-left: 2px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .kpi-trend {
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .up {
+            color: var(--success);
+        }
+
+        .down {
+            color: var(--danger);
+        }
+
+        .blue-bg { color: #2563eb; background: #eff6ff; }
+        .green-bg { color: #16a34a; background: #f0fdf4; }
+        .orange-bg { color: #d97706; background: #fffbeb; }
+        .red-bg { color: #dc2626; background: #fef2f2; }
+        .purple-bg { color: #7c3aed; background: #f5f3ff; }
+        .cyan-bg { color: #0891b2; background: #ecfeff; }
+
+        /* 通用卡片 */
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: minmax(0, 2fr) minmax(330px, 1fr);
+        }
+
+        .grid-half {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .card-subtitle {
+            margin-top: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 260px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 业务闭环 */
+        .flow-card {
+            margin-bottom: 16px;
+        }
+
+        .flow-container {
+            display: flex;
+            align-items: stretch;
+            overflow-x: auto;
+            padding: 18px;
+        }
+
+        .flow-step {
+            position: relative;
+            min-width: 132px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .flow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            top: 22px;
+            left: calc(50% + 24px);
+            width: calc(100% - 48px);
+            height: 2px;
+            background: #dbeafe;
+        }
+
+        .flow-circle {
+            position: relative;
+            z-index: 1;
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            margin: auto;
+            border: 2px solid #93c5fd;
+            border-radius: 50%;
+            color: var(--primary);
+            background: #eff6ff;
+            font-size: 18px;
+        }
+
+        .flow-step.done .flow-circle {
+            color: white;
+            border-color: var(--success);
+            background: var(--success);
+        }
+
+        .flow-step.warning .flow-circle {
+            color: white;
+            border-color: var(--warning);
+            background: var(--warning);
+        }
+
+        .flow-name {
+            margin-top: 9px;
+            font-weight: 650;
+        }
+
+        .flow-number {
+            margin-top: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .flow-step.warning .flow-number {
+            color: var(--warning);
+        }
+
+        /* 表格 */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        th {
+            padding: 11px 13px;
+            color: #6b7280;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        td {
+            padding: 12px 13px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .amount {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .muted {
+            color: var(--text-secondary);
+        }
+
+        .link {
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .tag-success {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .tag-warning {
+            color: #b45309;
+            background: #fef3c7;
+        }
+
+        .tag-danger {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .tag-info {
+            color: #1d4ed8;
+            background: #dbeafe;
+        }
+
+        .tag-purple {
+            color: #6d28d9;
+            background: #ede9fe;
+        }
+
+        .tag-default {
+            color: #4b5563;
+            background: #f3f4f6;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            padding: 12px 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-btn {
+            min-width: 30px;
+            height: 30px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+
+        .page-btn.active {
+            color: white;
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        /* 任务与风险 */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        .task-icon {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 9px;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-weight: 650;
+        }
+
+        .task-desc {
+            margin-top: 5px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .task-amount {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .risk-item {
+            display: flex;
+            gap: 11px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .risk-item:last-child {
+            border-bottom: 0;
+        }
+
+        .risk-dot {
+            width: 8px;
+            height: 8px;
+            margin-top: 6px;
+            flex-shrink: 0;
+            border-radius: 50%;
+        }
+
+        /* 进度条 */
+        .progress {
+            height: 8px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #e5e7eb;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background: var(--primary);
+            transition: width .6s;
+        }
+
+        .progress-bar.green { background: var(--success); }
+        .progress-bar.orange { background: var(--warning); }
+        .progress-bar.red { background: var(--danger); }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .stat-box {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fafcff;
+        }
+
+        .stat-box-value {
+            margin-top: 8px;
+            font-size: 22px;
+            font-weight: 750;
+        }
+
+        /* 快捷操作 */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .quick-action {
+            padding: 14px 9px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: white;
+            transition: .2s;
+        }
+
+        .quick-action:hover {
+            color: var(--primary);
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .quick-action-icon {
+            margin-bottom: 7px;
+            font-size: 21px;
+        }
+
+        /* 规则与报表 */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .report-card {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .report-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            font-size: 20px;
+        }
+
+        .report-name {
+            margin-top: 13px;
+            font-weight: 700;
+        }
+
+        .report-desc {
+            min-height: 38px;
+            margin-top: 7px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .report-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 13px;
+        }
+
+        .rule-form {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #374151;
+            font-size: 13px;
+        }
+
+        .form-group .form-control {
+            width: 100%;
+        }
+
+        .full-column {
+            grid-column: 1 / -1;
+        }
+
+        textarea.form-control {
+            min-height: 84px;
+            padding: 10px;
+            resize: vertical;
+        }
+
+        /* 抽屉与弹窗 */
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, .52);
+        }
+
+        .modal-mask.show {
+            display: flex;
+        }
+
+        .modal {
+            width: min(620px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 17px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: 0;
+            border-radius: 7px;
+            font-size: 20px;
+            background: #f3f4f6;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .toast {
+            position: fixed;
+            z-index: 2000;
+            right: 24px;
+            bottom: 24px;
+            max-width: 360px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 17px;
+            color: white;
+            border-radius: 10px;
+            background: #111827;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+            opacity: 0;
+            transform: translateY(18px);
+            pointer-events: none;
+            transition: .25s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 简易模式 */
+        body.simple-mode .professional-only {
+            display: none !important;
+        }
+
+        body.simple-mode .kpi-grid {
+            grid-template-columns: repeat(4, minmax(170px, 1fr));
+        }
+
+        body.simple-mode .flow-step {
+            min-width: 155px;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            margin-bottom: 12px;
+            font-size: 44px;
+        }
+
+        @media (max-width: 1450px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .report-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .topbar-center {
+                display: none;
+            }
+
+            .brand {
+                flex: 1;
+            }
+
+            .grid-2,
+            .grid-half,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .report-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .rule-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 780px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 14px;
+            }
+
+            .user-box,
+            .topbar-actions > .icon-button {
+                display: none;
+            }
+
+            .kpi-grid,
+            body.simple-mode .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .rule-form {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-logo">¥</div>
+            <div>
+                <div class="brand-title">停充一体化 · 智慧财务</div>
+                <div class="brand-subtitle">停车、充电、租赁、物业、多种经营</div>
+            </div>
+        </div>
+
+        <div class="topbar-center">
+            <select id="subjectSelector" class="top-select">
+                <option value="group">华城智慧交通集团</option>
+                <option value="legal1">华城停车运营有限公司</option>
+                <option value="legal2">华城新能源科技有限公司</option>
+                <option value="legal3">华城城市服务有限公司</option>
+            </select>
+
+            <select id="projectSelector" class="top-select">
+                <option value="all">全部项目（12）</option>
+                <option value="center">市民中心停车场</option>
+                <option value="garden">云湖花园停车场</option>
+                <option value="road">高新道路泊位片区</option>
+                <option value="charge">东站超级充电站</option>
+                <option value="mall">华城商业广场</option>
+            </select>
+
+            <span class="scope-tip" id="scopeTip">当前数据范围：集团全部法人、全部项目</span>
+        </div>
+
+        <div class="topbar-actions">
+            <div class="mode-switch">
+                <button id="simpleModeBtn">简易模式</button>
+                <button id="professionalModeBtn" class="active">专业模式</button>
+            </div>
+
+            <select id="roleSelector" class="top-select">
+                <option value="groupFinance">集团财务管理员</option>
+                <option value="projectFinance">项目财务</option>
+                <option value="propertyManager">物业经理</option>
+                <option value="cashier">出纳</option>
+                <option value="accountant">会计</option>
+                <option value="partner">合作方/业主</option>
+                <option value="auditor">审计员</option>
+            </select>
+
+            <button class="icon-button" onclick="showToast('您有 8 条待处理财务通知')">
+                🔔
+                <span class="notification-dot"></span>
+            </button>
+
+            <div class="user-box">
+                <div class="avatar">财</div>
+                <div>
+                    <div class="user-name" id="userName">集团财务</div>
+                    <div class="user-role" id="userRole">专业财务视图</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+        <div id="pageContainer"></div>
+    </main>
+</div>
+
+<div class="modal-mask" id="modalMask">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">操作</div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter">
+            <button class="btn" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" onclick="confirmModal()">确认</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">
+    <span>✓</span>
+    <span id="toastText"></span>
+</div>
+
+<script>
+    const state = {
+        mode: "professional",
+        role: "groupFinance",
+        page: "dashboard",
+        subject: "group",
+        project: "all",
+        currentModalAction: null
+    };
+
+    const roleNames = {
+        groupFinance: "集团财务管理员",
+        projectFinance: "项目财务",
+        propertyManager: "物业经理",
+        cashier: "出纳",
+        accountant: "会计",
+        partner: "合作方/业主",
+        auditor: "审计员"
+    };
+
+    const projectNames = {
+        all: "全部项目",
+        center: "市民中心停车场",
+        garden: "云湖花园停车场",
+        road: "高新道路泊位片区",
+        charge: "东站超级充电站",
+        mall: "华城商业广场"
+    };
+
+    const subjectNames = {
+        group: "华城智慧交通集团",
+        legal1: "华城停车运营有限公司",
+        legal2: "华城新能源科技有限公司",
+        legal3: "华城城市服务有限公司"
+    };
+
+    const professionalMenus = [
+        {
+            title: "经营总览",
+            items: [
+                ["dashboard", "▦", "财务首页"],
+                ["income", "¥", "收入管理"],
+                ["receivables", "◎", "应收与欠费", "126"],
+                ["payables", "↗", "应付管理", "18"]
+            ]
+        },
+        {
+            title: "资金与清结算",
+            items: [
+                ["reconciliation", "⇄", "自动对账", "23"],
+                ["settlement", "▤", "清分结算", "12"],
+                ["accounts", "▣", "资金账户"],
+                ["prepaid", "◉", "预付与押金"]
+            ]
+        },
+        {
+            title: "财税与内控",
+            items: [
+                ["contracts", "▧", "合同财务"],
+                ["invoices", "▱", "发票管理"],
+                ["vouchers", "⌘", "会计凭证"],
+                ["approvals", "✓", "审批中心", "8"],
+                ["reports", "▥", "报表中心"],
+                ["audit", "⌕", "审计与风控"],
+                ["settings", "⚙", "财务设置"]
+            ]
+        }
+    ];
+
+    const simpleMenus = [
+        {
+            title: "日常财务",
+            items: [
+                ["dashboard", "▦", "首页"],
+                ["income", "¥", "今日收款"],
+                ["receivables", "◎", "欠费管理", "26"],
+                ["refunds", "↩", "退款管理", "3"],
+                ["reconciliation", "⇄", "一键对账", "5"],
+                ["settlement", "▤", "业主/商户结算", "6"],
+                ["reports", "▥", "报表导出"],
+                ["settings", "⚙", "基础设置"]
+            ]
+        }
+    ];
+
+    function getMenus() {
+        let menus = state.mode === "professional" ? professionalMenus : simpleMenus;
+
+        if (state.role === "partner") {
+            return [{
+                title: "合作方中心",
+                items: [
+                    ["dashboard", "▦", "收益首页"],
+                    ["income", "¥", "收入明细"],
+                    ["settlement", "▤", "我的结算", "2"],
+                    ["invoices", "▱", "结算发票"],
+                    ["reports", "▥", "收益报表"]
+                ]
+            }];
+        }
+
+        if (state.role === "auditor") {
+            return [{
+                title: "审计只读中心",
+                items: [
+                    ["dashboard", "▦", "审计概览"],
+                    ["income", "¥", "收入核查"],
+                    ["reconciliation", "⇄", "对账核查"],
+                    ["settlement", "▤", "结算核查"],
+                    ["vouchers", "⌘", "凭证核查"],
+                    ["reports", "▥", "审计报表"],
+                    ["audit", "⌕", "操作日志"]
+                ]
+            }];
+        }
+
+        return menus;
+    }
+
+    function renderSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const menus = getMenus();
+
+        sidebar.innerHTML = menus.map(section => `
+            <div class="sidebar-section">
+                <div class="sidebar-title">${section.title}</div>
+                ${section.items.map(item => `
+                    <button class="menu-item ${state.page === item[0] ? "active" : ""}"
+                            onclick="navigate('${item[0]}')">
+                        <span class="menu-icon">${item[1]}</span>
+                        <span>${item[2]}</span>
+                        ${item[3] ? `<span class="menu-badge ${item[0] === "approvals" ? "orange" : ""}">${item[3]}</span>` : ""}
+                    </button>
+                `).join("")}
+            </div>
+        `).join("") + `
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-title">当前财务期间</div>
+                <div class="sidebar-footer-text">
+                    2026年7月 · 进行中<br>
+                    2026年6月已关账并锁定
+                </div>
+            </div>
+        `;
+    }
+
+    function navigate(page) {
+        state.page = page;
+        renderSidebar();
+        renderPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function pageHeader(title, desc, actions = "") {
+        return `
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">${title}</h1>
+                    <div class="page-desc">${desc}</div>
+                </div>
+                <div class="header-actions">
+                    <span class="period-badge">● 2026年7月 · 核算中</span>
+                    ${actions}
+                </div>
+            </div>
+        `;
+    }
+
+    function dashboardTemplate() {
+        const isPartner = state.role === "partner";
+        const isSimple = state.mode === "simple";
+        const projectLabel = projectNames[state.project];
+
+        if (isPartner) {
+            return partnerDashboard();
+        }
+
+        return `
+            ${pageHeader(
+                isSimple ? "财务首页" : "集团智慧财务驾驶舱",
+                `${subjectNames[state.subject]} · ${projectLabel} · 数据更新于 2026-07-19 14:32`,
+                `<button class="btn" onclick="showToast('经营日报已加入异步导出任务')">导出日报</button>
+                 <button class="btn btn-primary" onclick="openQuickModal()">＋ 快捷处理</button>`
+            )}
+
+            <div class="kpi-grid">
+                ${kpiCard("今日实收", "¥ 286,452.80", "较昨日 +12.6%", "up", "¥", "blue-bg")}
+                ${kpiCard("今日订单", "8,926", "停车 6,834 · 充电 2,092", "", "▤", "cyan-bg")}
+                ${kpiCard("本月累计收入", "¥ 6,842,190", "完成月度目标 73.5%", "up", "↗", "green-bg")}
+                ${kpiCard("待对账金额", "¥ 43,826.12", "23 笔差异待处理", "down", "⇄", "orange-bg")}
+                ${kpiCard("应收未收", "¥ 1,263,580", "逾期金额 ¥386,200", "down", "◎", "red-bg")}
+                ${kpiCard("待结算金额", "¥ 2,186,450", "12 张结算单待审批", "", "▤", "purple-bg")}
+            </div>
+
+            ${isSimple ? simpleFlow() : professionalFlow()}
+
+            <div class="grid grid-2">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">收入趋势与业务结构</div>
+                            <div class="card-subtitle">停车、充电、租赁、物业及多种经营收入</div>
+                        </div>
+                        <select class="form-control" onchange="drawIncomeChart()">
+                            <option>近30天</option>
+                            <option>本月</option>
+                            <option>本季度</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrap">
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">待办与风险预警</div>
+                            <div class="card-subtitle">资金、合同、欠费及内控风险</div>
+                        </div>
+                        <span class="tag tag-danger">共 31 项</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="risk-item">
+                            <span class="risk-dot" style="background:#dc2626"></span>
+                            <div>
+                                <div><strong>大额退款待审批</strong> · 3 笔</div>
+                                <div class="task-desc">合计 ¥28,600，最高单笔 ¥18,000</div>
+                            </div>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-dot" style="background:#d97706"></span>
+                            <div>
+                                <div><strong>支付渠道差异</strong> · 23 笔</div>
+                                <div class="task-desc">微信 12 笔、支付宝 7 笔、ETC 4 笔</div>
+                            </div>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-dot" style="background:#7c3aed"></span>
+                            <div>
+                                <div><strong>合同到期提醒</strong> · 5 份</div>
+                                <div class="task-desc">30 日内到期，涉及 3 个项目</div>
+                            </div>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-dot" style="background:#0891b2"></span>
+                            <div>
+                                <div><strong>月结前置任务</strong> · 完成 7/11</div>
+                                <div class="task-desc">银行对账、发票核验及凭证复核未完成</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="grid grid-half">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">多项目经营概览</div>
+                            <div class="card-subtitle">项目收入、毛利、欠费及对账状态</div>
+                        </div>
+                        <button class="btn btn-sm" onclick="navigate('reports')">查看完整报表</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>业态</th>
+                                <th>本月收入</th>
+                                <th>毛利率</th>
+                                <th>应收未收</th>
+                                <th>对账状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><span class="link">市民中心停车场</span></td>
+                                <td>停车 / 充电</td>
+                                <td class="amount">¥1,862,400</td>
+                                <td><span class="up">42.6%</span></td>
+                                <td>¥86,200</td>
+                                <td><span class="tag tag-success">已对账</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="link">云湖花园停车场</span></td>
+                                <td>停车 / 车位托管</td>
+                                <td class="amount">¥1,286,530</td>
+                                <td><span class="up">38.9%</span></td>
+                                <td>¥198,600</td>
+                                <td><span class="tag tag-warning">差异 5 笔</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="link">高新道路泊位片区</span></td>
+                                <td>道路停车</td>
+                                <td class="amount">¥968,400</td>
+                                <td><span class="up">51.2%</span></td>
+                                <td>¥526,300</td>
+                                <td><span class="tag tag-warning">差异 11 笔</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="link">东站超级充电站</span></td>
+                                <td>汽车充电</td>
+                                <td class="amount">¥842,600</td>
+                                <td><span class="up">29.7%</span></td>
+                                <td>¥32,000</td>
+                                <td><span class="tag tag-success">已对账</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="link">华城商业广场</span></td>
+                                <td>停车 / 商户 / 广告</td>
+                                <td class="amount">¥763,280</td>
+                                <td><span class="up">36.8%</span></td>
+                                <td>¥146,800</td>
+                                <td><span class="tag tag-danger">未到账 7 笔</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">快捷工作台</div>
+                            <div class="card-subtitle">按权限提供常用财务操作</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-grid">
+                            ${quickAction("⇄", "发起对账", "reconciliation")}
+                            ${quickAction("▤", "生成结算", "settlement")}
+                            ${quickAction("◎", "欠费催收", "receivables")}
+                            ${quickAction("↩", "退款审批", "approvals")}
+                            ${quickAction("▱", "开票处理", "invoices")}
+                            ${quickAction("⌘", "生成凭证", "vouchers", true)}
+                            ${quickAction("▥", "导出报表", "reports")}
+                            ${quickAction("⚙", "分账规则", "settings", true)}
+                        </div>
+
+                        <div style="margin-top:18px">
+                            <div class="metric-row">
+                                <span>本月自动对账匹配率</span>
+                                <strong>98.63%</strong>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar green" style="width:98.63%"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:16px">
+                            <div class="metric-row">
+                                <span>本月结算完成率</span>
+                                <strong>76.40%</strong>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width:76.4%"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:16px">
+                            <div class="metric-row">
+                                <span>逾期应收回收率</span>
+                                <strong>68.25%</strong>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar orange" style="width:68.25%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">最新资金流水</div>
+                        <div class="card-subtitle">业务订单、资金到账、对账、分账和凭证状态一体追踪</div>
+                    </div>
+                    <button class="btn btn-sm" onclick="navigate('income')">全部流水</button>
+                </div>
+                ${transactionTable()}
+            </section>
+        `;
+    }
+
+    function kpiCard(label, value, trend, trendClass, icon, iconClass) {
+        return `
+            <div class="kpi-card">
+                <div class="kpi-icon ${iconClass}">${icon}</div>
+                <div class="kpi-label">${label}</div>
+                <div class="kpi-value">${value}</div>
+                <div class="kpi-trend ${trendClass}">${trend}</div>
+            </div>
+        `;
+    }
+
+    function professionalFlow() {
+        return `
+            <section class="card flow-card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">业财资金闭环监控</div>
+                        <div class="card-subtitle">仅已支付、已到账、已对账收入可进入清分结算</div>
+                    </div>
+                    <span class="tag tag-info">今日业务批次 FIN-20260719</span>
+                </div>
+                <div class="flow-container">
+                    ${flowStep("1", "业务订单", "8,926 笔", "done")}
+                    ${flowStep("2", "支付到账", "8,873 笔", "done")}
+                    ${flowStep("3", "自动对账", "8,850 笔", "warning")}
+                    ${flowStep("4", "收入确认", "8,842 笔", "")}
+                    ${flowStep("5", "清分计算", "6,286 笔", "")}
+                    ${flowStep("6", "结算审批", "12 单待审", "warning")}
+                    ${flowStep("7", "付款开票", "9 单待付", "")}
+                    ${flowStep("8", "凭证报表", "待月结", "")}
+                </div>
+            </section>
+        `;
+    }
+
+    function simpleFlow() {
+        return `
+            <section class="card flow-card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">今日收款处理进度</div>
+                        <div class="card-subtitle">用简单状态完成收款、对账、欠费和结算</div>
+                    </div>
+                </div>
+                <div class="flow-container">
+                    ${flowStep("1", "订单收费", "8,926 笔", "done")}
+                    ${flowStep("2", "确认已收", "8,873 笔", "done")}
+                    ${flowStep("3", "一键对账", "23 笔差异", "warning")}
+                    ${flowStep("4", "欠费催收", "126 笔", "")}
+                    ${flowStep("5", "业主分账", "6 单待处理", "")}
+                    ${flowStep("6", "报表导出", "随时可导出", "")}
+                </div>
+            </section>
+        `;
+    }
+
+    function flowStep(number, name, count, className) {
+        return `
+            <div class="flow-step ${className}">
+                <div class="flow-circle">${className === "done" ? "✓" : number}</div>
+                <div class="flow-name">${name}</div>
+                <div class="flow-number">${count}</div>
+            </div>
+        `;
+    }
+
+    function quickAction(icon, text, page, professionalOnly = false) {
+        return `
+            <button class="quick-action ${professionalOnly ? "professional-only" : ""}"
+                    onclick="navigate('${page}')">
+                <div class="quick-action-icon">${icon}</div>
+                <div>${text}</div>
+            </button>
+        `;
+    }
+
+    function transactionTable() {
+        return `
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>收入单号</th>
+                        <th>业务来源</th>
+                        <th>所属项目</th>
+                        <th>付款方</th>
+                        <th>实收金额</th>
+                        <th>支付方式</th>
+                        <th>对账状态</th>
+                        <th>分账状态</th>
+                        <th>凭证状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="link">IN2026071900862</td>
+                        <td>临时停车费</td>
+                        <td>市民中心停车场</td>
+                        <td>粤B·7K2M9</td>
+                        <td class="amount">¥32.00</td>
+                        <td>微信支付</td>
+                        <td><span class="tag tag-success">已对账</span></td>
+                        <td><span class="tag tag-success">已清分</span></td>
+                        <td><span class="tag tag-info">待生成</span></td>
+                    </tr>
+                    <tr>
+                        <td class="link">IN2026071900861</td>
+                        <td>汽车充电费</td>
+                        <td>东站超级充电站</td>
+                        <td>粤B·3Q8H6</td>
+                        <td class="amount">¥86.42</td>
+                        <td>账户余额</td>
+                        <td><span class="tag tag-success">已对账</span></td>
+                        <td><span class="tag tag-success">已清分</span></td>
+                        <td><span class="tag tag-success">已生成</span></td>
+                    </tr>
+                    <tr>
+                        <td class="link">IN2026071900860</td>
+                        <td>道路停车费</td>
+                        <td>高新道路泊位片区</td>
+                        <td>粤A·12P66</td>
+                        <td class="amount">¥18.00</td>
+                        <td>ETC</td>
+                        <td><span class="tag tag-warning">金额差异</span></td>
+                        <td><span class="tag tag-default">暂缓分账</span></td>
+                        <td><span class="tag tag-default">未生成</span></td>
+                    </tr>
+                    <tr>
+                        <td class="link">IN2026071900859</td>
+                        <td>月租停车费</td>
+                        <td>云湖花园停车场</td>
+                        <td>深圳远航科技</td>
+                        <td class="amount">¥1,200.00</td>
+                        <td>银行转账</td>
+                        <td><span class="tag tag-warning">待匹配</span></td>
+                        <td><span class="tag tag-default">未清分</span></td>
+                        <td><span class="tag tag-default">未生成</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function incomeTemplate() {
+        return `
+            ${pageHeader(
+                state.mode === "simple" ? "收款管理" : "收入管理",
+                "统一管理停车、充电、租赁、物业及多种经营收入",
+                `<button class="btn" onclick="showToast('收入明细已开始导出')">导出</button>
+                 <button class="btn btn-primary" onclick="openIncomeModal()">＋ 手工收入</button>`
+            )}
+
+            <div class="filter-bar">
+                <span class="filter-label">业务日期</span>
+                <input class="form-control" type="date" value="2026-07-01">
+                <span>至</span>
+                <input class="form-control" type="date" value="2026-07-19">
+                <select class="form-control">
+                    <option>全部收入类型</option>
+                    <option>停车收入</option>
+                    <option>充电收入</option>
+                    <option>车位租赁</option>
+                    <option>物业收入</option>
+                    <option>商户及广告</option>
+                </select>
+                <select class="form-control">
+                    <option>全部支付方式</option>
+                    <option>微信支付</option>
+                    <option>支付宝</option>
+                    <option>银行卡</option>
+                    <option>现金</option>
+                    <option>账户余额</option>
+                </select>
+                <select class="form-control">
+                    <option>全部对账状态</option>
+                    <option>已对账</option>
+                    <option>未对账</option>
+                    <option>存在差异</option>
+                </select>
+                <input class="form-control search-input" placeholder="订单号 / 车牌 / 付款人">
+                <button class="btn btn-primary">查询</button>
+                <button class="btn">重置</button>
+            </div>
+
+            <div class="kpi-grid">
+                ${kpiCard("应收总额", "¥ 7,982,450", "本期全部业务应收", "", "◎", "blue-bg")}
+                ${kpiCard("实收总额", "¥ 6,842,190", "实收率 85.72%", "up", "¥", "green-bg")}
+                ${kpiCard("优惠减免", "¥ 128,620", "平台承担 68.4%", "", "券", "purple-bg")}
+                ${kpiCard("退款金额", "¥ 46,820", "退款率 0.68%", "down", "↩", "red-bg")}
+                ${kpiCard("未对账收入", "¥ 43,826", "23 笔待处理", "down", "⇄", "orange-bg")}
+                ${kpiCard("未开票金额", "¥ 3,862,450", "可开票订单 9,286 笔", "", "票", "cyan-bg")}
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">收入流水</div>
+                        <div class="card-subtitle">每笔收入关联业务订单、支付记录、退款、发票、分账与凭证</div>
+                    </div>
+                    <span class="tag tag-info">共 68,429 笔</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>收入单号</th>
+                            <th>业务订单号</th>
+                            <th>收入类型</th>
+                            <th>项目</th>
+                            <th>应收</th>
+                            <th>优惠</th>
+                            <th>实收</th>
+                            <th>支付方式</th>
+                            <th>收入确认</th>
+                            <th>对账</th>
+                            <th>开票</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        ${incomeRow("IN2026071900862", "PK202607192863", "临时停车费", "市民中心停车场", "32.00", "0.00", "32.00", "微信", "已确认", "已对账", "未开票")}
+                        ${incomeRow("IN2026071900861", "CH202607191922", "汽车充电费", "东站超级充电站", "88.42", "2.00", "86.42", "余额", "已确认", "已对账", "已开票")}
+                        ${incomeRow("IN2026071900860", "RD202607198266", "道路停车费", "高新道路泊位片区", "20.00", "2.00", "18.00", "ETC", "待确认", "金额差异", "未开票")}
+                        ${incomeRow("IN2026071900859", "MR202607190628", "月租停车费", "云湖花园停车场", "1,200.00", "0.00", "1,200.00", "银行转账", "待确认", "待匹配", "未开票")}
+                        ${incomeRow("IN2026071900858", "PM202607190335", "物业管理费", "华城商业广场", "3,860.00", "0.00", "3,860.00", "支付宝", "已确认", "已对账", "部分开票")}
+                        </tbody>
+                    </table>
+                </div>
+                ${pagination()}
+            </section>
+        `;
+    }
+
+    function incomeRow(no, order, type, project, due, discount, paid, payType, confirm, reconcile, invoice) {
+        const reconcileClass = reconcile === "已对账" ? "tag-success" : "tag-warning";
+        return `
+            <tr>
+                <td class="link" onclick="openTraceModal('${no}')">${no}</td>
+                <td>${order}</td>
+                <td>${type}</td>
+                <td>${project}</td>
+                <td class="amount">¥${due}</td>
+                <td>¥${discount}</td>
+                <td class="amount">¥${paid}</td>
+                <td>${payType}</td>
+                <td><span class="tag ${confirm === "已确认" ? "tag-success" : "tag-warning"}">${confirm}</span></td>
+                <td><span class="tag ${reconcileClass}">${reconcile}</span></td>
+                <td><span class="tag tag-default">${invoice}</span></td>
+                <td><button class="btn-text" onclick="openTraceModal('${no}')">追踪</button></td>
+            </tr>
+        `;
+    }
+
+    function receivablesTemplate() {
+        return `
+            ${pageHeader(
+                state.mode === "simple" ? "欠费管理" : "应收账款与欠费管理",
+                "覆盖企业月结、月租、物业费、车位租赁、商户租金及停车欠费",
+                `<button class="btn" onclick="showToast('已生成本期欠费催收任务')">批量生成催收</button>
+                 <button class="btn btn-primary" onclick="openReceivableModal()">＋ 新增应收</button>`
+            )}
+
+            <div class="kpi-grid">
+                ${kpiCard("应收余额", "¥ 1,263,580", "涉及 486 个客户", "", "◎", "blue-bg")}
+                ${kpiCard("未逾期", "¥ 716,380", "占应收 56.7%", "", "时", "green-bg")}
+                ${kpiCard("逾期金额", "¥ 386,200", "较上月下降 5.2%", "up", "!", "red-bg")}
+                ${kpiCard("争议账款", "¥ 86,400", "12 笔争议处理中", "", "?", "orange-bg")}
+                ${kpiCard("本月回款", "¥ 628,900", "回款率 68.25%", "up", "¥", "purple-bg")}
+                ${kpiCard("坏账风险", "¥ 74,600", "账龄超过 180 天", "down", "⚠", "red-bg")}
+            </div>
+
+            <div class="grid grid-3">
+                ${agingBox("30天以内", "¥ 716,380", 57, "green")}
+                ${agingBox("31－90天", "¥ 286,200", 23, "")}
+                ${agingBox("91－180天", "¥ 186,400", 15, "orange")}
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">应收账单</div>
+                        <div class="card-subtitle">支持短信、微信、邮件、电话任务及停车/充电权限联动</div>
+                    </div>
+                    <button class="btn btn-sm" onclick="showToast('已向选中客户发送欠费提醒')">批量催收</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>应收单号</th>
+                            <th>客户/付款方</th>
+                            <th>应收类型</th>
+                            <th>所属项目</th>
+                            <th>应收金额</th>
+                            <th>已收金额</th>
+                            <th>逾期天数</th>
+                            <th>状态</th>
+                            <th>最近催收</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td class="link">AR202607000182</td>
+                            <td>深圳远航科技有限公司</td>
+                            <td>企业停车月结</td>
+                            <td>市民中心停车场</td>
+                            <td class="amount">¥86,200</td>
+                            <td>¥30,000</td>
+                            <td class="negative">19 天</td>
+                            <td><span class="tag tag-danger">逾期</span></td>
+                            <td>2026-07-18 微信</td>
+                            <td><button class="btn btn-sm" onclick="sendCollection('深圳远航科技有限公司')">催收</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td class="link">AR202607000181</td>
+                            <td>云湖花园 3栋业主账户</td>
+                            <td>物业管理费</td>
+                            <td>云湖花园停车场</td>
+                            <td class="amount">¥32,600</td>
+                            <td>¥28,200</td>
+                            <td>0 天</td>
+                            <td><span class="tag tag-warning">部分收款</span></td>
+                            <td>2026-07-15 短信</td>
+                            <td><button class="btn btn-sm" onclick="sendCollection('云湖花园业主')">催收</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td class="link">AR202607000180</td>
+                            <td>优车洗护服务中心</td>
+                            <td>商户场地租金</td>
+                            <td>华城商业广场</td>
+                            <td class="amount">¥18,000</td>
+                            <td>¥0</td>
+                            <td class="negative">48 天</td>
+                            <td><span class="tag tag-danger">逾期</span></td>
+                            <td>2026-07-17 电话</td>
+                            <td><button class="btn btn-sm" onclick="sendCollection('优车洗护服务中心')">催收</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td class="link">AR202607000179</td>
+                            <td>粤B·2P8R6</td>
+                            <td>道路停车欠费</td>
+                            <td>高新道路泊位片区</td>
+                            <td class="amount">¥286</td>
+                            <td>¥0</td>
+                            <td class="negative">96 天</td>
+                            <td><span class="tag tag-purple">限制通行</span></td>
+                            <td>2026-07-19 微信</td>
+                            <td><button class="btn btn-sm" onclick="sendCollection('粤B·2P8R6')">催收</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                ${pagination()}
+            </section>
+        `;
+    }
+
+    function agingBox(name, value, percent, color) {
+        return `
+            <div class="stat-box">
+                <div class="metric-row">
+                    <strong>${name}</strong>
+                    <span>${percent}%</span>
+                </div>
+                <div class="stat-box-value">${value}</div>
+                <div class="progress" style="margin-top:12px">
+                    <div class="progress-bar ${color}" style="width:${percent}%"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function reconciliationTemplate() {
+        return `
+            ${pageHeader(
+                state.mode === "simple" ? "一键对账" : "自动对账中心",
+                state.mode === "simple"
+                    ? "核对微信、支付宝、现金收款是否与订单一致"
+                    : "订单、支付渠道、银行流水、退款、发票、分账与凭证多方核对",
+                `<button class="btn" onclick="showToast('渠道账单拉取任务已启动')">拉取渠道账单</button>
+                 <button class="btn btn-primary" onclick="openReconcileModal()">＋ 新建对账批次</button>`
+            )}
+
+            <div class="kpi-grid">
+                ${kpiCard("今日应对账", "¥ 286,452.80", "8,926 笔业务订单", "", "⇄", "blue-bg")}
+                ${kpiCard("自动匹配", "¥ 281,968.68", "自动匹配率 98.63%", "up", "✓", "green-bg")}
+                ${kpiCard("差异金额", "¥ 4,484.12", "23 笔进入差异池", "down", "!", "red-bg")}
+                ${kpiCard("渠道未到账", "¥ 3,268.00", "可能存在 T+1 到账", "", "时", "orange-bg")}
+                ${kpiCard("退款待核", "¥ 986.12", "5 笔退款流水", "", "↩", "purple-bg")}
+                ${kpiCard("现金长短款", "-¥ 230.00", "3 个收费班次", "down", "¥", "red-bg")}
+            </div>
+
+            <div class="grid grid-2">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">对账批次执行情况</div>
+                            <div class="card-subtitle">自动匹配完成后，差异进入人工处理与复核</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-row">
+                            <span>业务订单清洗</span>
+                            <strong class="up">100%</strong>
+                        </div>
+                        <div class="progress"><div class="progress-bar green" style="width:100%"></div></div>
+
+                        <div class="metric-row" style="margin-top:18px">
+                            <span>一级精确匹配</span>
+                            <strong>96.82%</strong>
+                        </div>
+                        <div class="progress"><div class="progress-bar" style="width:96.82%"></div></div>
+
+                        <div class="metric-row" style="margin-top:18px">
+                            <span>二级容错匹配</span>
+                            <strong>1.81%</strong>
+                        </div>
+                        <div class="progress"><div class="progress-bar orange" style="width:35%"></div></div>
+
+                        <div class="metric-row" style="margin-top:18px">
+                            <span>差异处理完成率</span>
+                            <strong class="down">43.48%</strong>
+                        </div>
+                        <div class="progress"><div class="progress-bar red" style="width:43.48%"></div></div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">差异分类</div>
+                            <div class="card-subtitle">点击分类进入差异处理池</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid grid-half" style="margin:0">
+                            ${differenceBox("有订单无支付", "7 笔", "¥1,862.00", "red-bg")}
+                            ${differenceBox("支付成功无订单", "4 笔", "¥926.00", "orange-bg")}
+                            ${differenceBox("金额不一致", "5 笔", "¥486.12", "purple-bg")}
+                            ${differenceBox("手续费差异", "3 笔", "¥230.00", "cyan-bg")}
+                            ${differenceBox("退款未冲销", "2 笔", "¥680.00", "red-bg")}
+                            ${differenceBox("现金长短款", "2 笔", "-¥230.00", "orange-bg")}
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">对账差异池</div>
+                        <div class="card-subtitle">差异处理后需复核审批，系统自动生成调账单并更新资金状态</div>
+                    </div>
+                    <button class="btn btn-sm" onclick="showToast('已提交所选差异进入复核审批')">批量提交复核</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>差异单号</th>
+                            <th>差异类型</th>
+                            <th>业务订单</th>
+                            <th>渠道流水</th>
+                            <th>订单金额</th>
+                            <th>渠道金额</th>
+                            <th>差异金额</th>
+                            <th>项目</th>
+                            <th>处理状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="link">RC-D202607190023</td>
+                            <td><span class="tag tag-danger">有订单无支付</span></td>
+                            <td>RD202607198266</td>
+                            <td>—</td>
+                            <td>¥20.00</td>
+                            <td>¥0.00</td>
+                            <td class="negative">¥20.00</td>
+                            <td>高新道路泊位片区</td>
+                            <td><span class="tag tag-warning">待处理</span></td>
+                            <td><button class="btn btn-sm" onclick="openDifferenceModal('RC-D202607190023')">处理</button></td>
+                        </tr>
+                        <tr>
+                            <td class="link">RC-D202607190022</td>
+                            <td><span class="tag tag-warning">支付无订单</span></td>
+                            <td>—</td>
+                            <td>WX9836200172</td>
+                            <td>¥0.00</td>
+                            <td>¥68.00</td>
+                            <td class="negative">¥68.00</td>
+                            <td>市民中心停车场</td>
+                            <td><span class="tag tag-warning">待确认收入</span></td>
+                            <td><button class="btn btn-sm" onclick="openDifferenceModal('RC-D202607190022')">处理</button></td>
+                        </tr>
+                        <tr>
+                            <td class="link">RC-D202607190021</td>
+                            <td><span class="tag tag-purple">金额不一致</span></td>
+                            <td>CH202607191266</td>
+                            <td>ALI726283910</td>
+                            <td>¥86.42</td>
+                            <td>¥85.42</td>
+                            <td class="negative">¥1.00</td>
+                            <td>东站超级充电站</td>
+                            <td><span class="tag tag-info">已调整待复核</span></td>
+                            <td><button class="btn btn-sm" onclick="showToast('差异复核申请已提交')">提交复核</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        `;
+    }
+
+    function differenceBox(name, count, amount, color) {
+        return `
+            <div class="stat-box">
+                <div class="task-icon ${color}">!</div>
+                <div style="margin-top:10px;font-weight:650">${name}</div>
+                <div style="margin-top:7px">
+                    <strong>${count}</strong>
+                    <span class="muted"> · ${amount}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function settlementTemplate() {
+        return `
+            ${pageHeader(
+                state.mode === "simple" ? "业主与商户结算" : "清分结算中心",
+                "对已支付、已到账、已对账收入按合同和分账规则进行清分结算",
+                `<button class="btn" onclick="showToast('结算明细已导出')">导出结算表</button>
+                 <button class="btn btn-primary" onclick="openSettlementModal()">＋ 生成结算单</button>`
+            )}
+
+            <div class="kpi-grid">
+                ${kpiCard("本期可分账收入", "¥ 5,862,400", "已剔除退款及争议订单", "", "¥", "blue-bg")}
+                ${kpiCard("合作方应结", "¥ 2,186,450", "涉及 68 个结算对象", "", "▤", "purple-bg")}
+                ${kpiCard("平台服务费", "¥ 386,200", "平均综合费率 6.59%", "up", "%", "green-bg")}
+                ${kpiCard("电费及成本", "¥ 968,600", "充电业务电费成本", "", "电", "orange-bg")}
+                ${kpiCard("待审批", "12 单", "合计 ¥862,300", "down", "审", "red-bg")}
+                ${kpiCard("已付款", "¥ 1,128,600", "本期付款完成率 51.6%", "up", "✓", "cyan-bg")}
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">结算单</div>
+                        <div class="card-subtitle">支持比例、固定租金、保底+分成、超额分成、阶梯及充电拆分</div>
+                    </div>
+                    <select class="form-control">
+                        <option>全部结算状态</option>
+                        <option>待确认</option>
+                        <option>审批中</option>
+                        <option>待付款</option>
+                        <option>已付款</option>
+                    </select>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>结算单号</th>
+                            <th>结算对象</th>
+                            <th>结算周期</th>
+                            <th>收入总额</th>
+                            <th>退款/扣减</th>
+                            <th>平台服务费</th>
+                            <th>成本费用</th>
+                            <th>应结金额</th>
+                            <th>发票要求</th>
+                            <th>审批状态</th>
+                            <th>付款状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        ${settlementRow("ST202607000126", "云湖花园业委会", "2026-06", "628,600", "8,200", "31,430", "62,860", "368,277", "先票后款", "审批中", "未付款")}
+                        ${settlementRow("ST202607000125", "东站充电桩投资方", "2026-06", "486,200", "3,600", "24,310", "186,800", "162,894", "专票", "已审批", "待付款")}
+                        ${settlementRow("ST202607000124", "个人车位业主（126户）", "2026-06", "328,600", "6,820", "32,860", "28,600", "228,426", "无需发票", "待确认", "未付款")}
+                        ${settlementRow("ST202607000123", "优车洗护服务中心", "2026-06", "86,200", "1,200", "8,620", "0", "76,380", "普票", "已审批", "已付款")}
+                        </tbody>
+                    </table>
+                </div>
+                ${pagination()}
+            </section>
+
+            <div class="grid grid-half" style="margin-top:16px">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">分账金额构成</div>
+                            <div class="card-subtitle">本月已清分收入去向</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        ${splitProgress("平台自营收入", "¥2,182,350", 37, "green")}
+                        ${splitProgress("业委会公共收益", "¥1,128,600", 19, "")}
+                        ${splitProgress("车位业主收益", "¥862,400", 15, "orange")}
+                        ${splitProgress("充电投资方收益", "¥768,300", 13, "")}
+                        ${splitProgress("物业及商户收益", "¥920,750", 16, "green")}
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">结算内控检查</div>
+                            <div class="card-subtitle">结算付款前自动检查</div>
+                        </div>
+                    </div>
+                    <div class="card-body task-list">
+                        ${controlItem("收入均已完成支付及到账验证", "通过", true)}
+                        ${controlItem("参与清分订单已完成对账", "通过", true)}
+                        ${controlItem("退款、冲销、争议订单已剔除", "通过", true)}
+                        ${controlItem("合同与分账规则有效性", "2 条规则即将到期", false)}
+                        ${controlItem("合作方发票完整性", "3 张发票待上传", false)}
+                        ${controlItem("预算及付款账户余额", "通过", true)}
+                    </div>
+                </section>
+            </div>
+        `;
+    }
+
+    function settlementRow(no, target, period, income, refund, platform, cost, payable, invoice, approval, payment) {
+        const approvalClass = approval === "已审批" ? "tag-success" : approval === "审批中" ? "tag-info" : "tag-warning";
+        const paymentClass = payment === "已付款" ? "tag-success" : "tag-default";
+
+        return `
+            <tr>
+                <td class="link" onclick="openSettlementDetail('${no}')">${no}</td>
+                <td>${target}</td>
+                <td>${period}</td>
+                <td class="amount">¥${income}</td>
+                <td>¥${refund}</td>
+                <td>¥${platform}</td>
+                <td>¥${cost}</td>
+                <td class="amount">¥${payable}</td>
+                <td>${invoice}</td>
+                <td><span class="tag ${approvalClass}">${approval}</span></td>
+                <td><span class="tag ${paymentClass}">${payment}</span></td>
+                <td><button class="btn-text" onclick="openSettlementDetail('${no}')">详情</button></td>
+            </tr>
+        `;
+    }
+
+    function splitProgress(name, amount, percent, color) {
+        return `
+            <div style="margin-bottom:15px">
+                <div class="metric-row">
+                    <span>${name}</span>
+                    <strong>${amount} · ${percent}%</strong>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar ${color}" style="width:${percent}%"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function controlItem(name, result, success) {
+        return `
+            <div class="task-item">
+                <div class="task-icon ${success ? "green-bg" : "orange-bg"}">${success ? "✓" : "!"}</div>
+                <div class="task-content">
+                    <div class="task-title">${name}</div>
+                    <div class="task-desc">${result}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function approvalsTemplate() {
+        return `
+            ${pageHeader(
+                "财务审批中心",
+                "退款、减免、结算、付款、开票、调账及规则变更统一审批",
+                `<button class="btn" onclick="showToast('审批列表已刷新')">刷新</button>`
+            )}
+
+            <div class="kpi-grid">
+                ${kpiCard("我的待审批", "8", "退款 3 · 结算 3 · 调账 2", "", "审", "red-bg")}
+                ${kpiCard("今日已审批", "26", "平均处理时长 18 分钟", "up", "✓", "green-bg")}
+                ${kpiCard("大额事项", "3", "超过 ¥100,000", "", "!", "orange-bg")}
+                ${kpiCard("即将超时", "2", "剩余处理时间不足 2 小时", "down", "时", "red-bg")}
+                ${kpiCard("本月驳回", "6", "主要原因为附件不完整", "", "×", "purple-bg")}
+                ${kpiCard("审批效率", "96.8%", "较上月提升 2.1%", "up", "↗", "cyan-bg")}
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">待我审批</div>
+                        <div class="card-subtitle">按照岗位分离原则控制发起、复核、审批和付款权限</div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>审批单号</th>
+                            <th>审批类型</th>
+                            <th>业务事项</th>
+                            <th>金额</th>
+                            <th>所属项目</th>
+                            <th>发起人</th>
+                            <th>当前节点</th>
+                            <th>发起时间</th>
+                            <th>风险提示</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        ${approvalRow("AP202607190036", "退款审批", "充电订单异常退款", "¥18,000", "东站超级充电站", "张敏", "财务负责人", "07-19 13:26", "大额退款")}
+                        ${approvalRow("AP202607190035", "结算审批", "云湖花园业委会6月结算", "¥368,277", "云湖花园停车场", "李伟", "集团财务复核", "07-19 11:42", "大额支出")}
+                        ${approvalRow("AP202607190034", "调账审批", "支付成功无业务订单", "¥6,820", "市民中心停车场", "王芳", "项目财务复核", "07-19 10:18", "异常收入")}
+                        ${approvalRow("AP202607190033", "规则变更", "充电投资方服务费分成调整", "影响约¥86,000/月", "东站超级充电站", "赵强", "合同财务复核", "07-19 09:36", "影响金额较大")}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        `;
+    }
+
+    function approvalRow(no, type, matter, amount, project, creator, node, time, risk) {
+        return `
+            <tr>
+                <td class="link">${no}</td>
+                <td><span class="tag tag-info">${type}</span></td>
+                <td>${matter}</td>
+                <td class="amount">${amount}</td>
+                <td>${project}</td>
+                <td>${creator}</td>
+                <td>${node}</td>
+                <td>${time}</td>
+                <td><span class="tag tag-warning">${risk}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="approveItem('${no}')">审批</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function reportsTemplate() {
+        const reports = [
+            ["📊", "经营日报", "当日收入、订单、退款、欠费及项目经营概况", "今日已生成"],
+            ["📈", "经营月报", "月度趋势、项目排名、收入结构及目标完成率", "2026年7月"],
+            ["🚗", "停车收入报表", "临停、月租、道路停车、错峰及共享车位收入", "实时数据"],
+            ["⚡", "充电经营报表", "充电量、电费、服务费、订单数及单桩效率", "实时数据"],
+            ["◎", "应收账龄表", "应收、已收、逾期、账龄及欠费回收情况", "每日更新"],
+            ["⇄", "支付渠道对账表", "微信、支付宝、银行、ETC及现金对账结果", "每日更新"],
+            ["▤", "分账结算表", "合作方、业委会、车位业主及商户结算明细", "结算周期"],
+            ["¥", "资金日报", "账户余额、资金流入流出及可用资金情况", "今日已生成"],
+            ["▱", "发票统计表", "开票、红冲、未开票、税额及开票限额情况", "实时数据"],
+            ["⌘", "会计凭证清单", "业务凭证、冲销凭证及ERP推送状态", "会计期间"],
+            ["⚠", "异常订单报表", "免费放行、异常退款、现金短款及逃费订单", "实时预警"],
+            ["🏢", "集团收入汇总", "多法人、多项目、多业态集团经营汇总", "集团口径"]
+        ];
+
+        return `
+            ${pageHeader(
+                "报表中心",
+                "按集团、法人、项目、停车场、充电站、商户及合作方多维分析",
+                `<button class="btn" onclick="showToast('已进入我的异步导出任务')">导出任务</button>
+                 <button class="btn btn-primary" onclick="showToast('自定义报表设计器已打开')">＋ 自定义报表</button>`
+            )}
+
+            <div class="filter-bar">
+                <select class="form-control">
+                    <option>2026年7月</option>
+                    <option>2026年6月</option>
+                    <option>2026年第二季度</option>
+                    <option>2026年上半年</option>
+                </select>
+                <select class="form-control">
+                    <option>全部项目</option>
+                    <option>市民中心停车场</option>
+                    <option>云湖花园停车场</option>
+                    <option>高新道路泊位片区</option>
+                    <option>东站超级充电站</option>
+                </select>
+                <select class="form-control professional-only">
+                    <option>全部法人主体</option>
+                    <option>华城停车运营有限公司</option>
+                    <option>华城新能源科技有限公司</option>
+                </select>
+                <input class="form-control search-input" placeholder="搜索报表名称">
+                <button class="btn btn-primary">查询</button>
+            </div>
+
+            <div class="report-grid">
+                ${reports.map((r, i) => `
+                    <div class="report-card">
+                        <div class="report-icon ${["blue-bg","green-bg","orange-bg","purple-bg"][i % 4]}">${r[0]}</div>
+                        <div class="report-name">${r[1]}</div>
+                        <div class="report-desc">${r[2]}</div>
+                        <div class="report-footer">
+                            <span class="muted">${r[3]}</span>
+                            <button class="btn btn-sm" onclick="showToast('${r[1]}已加入导出任务')">查看/导出</button>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    function settingsTemplate() {
+        return `
+            ${pageHeader(
+                state.mode === "simple" ? "基础设置" : "财务配置中心",
+                state.mode === "simple"
+                    ? "设置项目收款方式、业主分成模板和通知方式"
+                    : "配置财务主体、计费、分账、科目、税率、账户及内控规则",
+                `<button class="btn btn-primary" onclick="saveSettings()">保存配置</button>`
+            )}
+
+            <div class="grid grid-half">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">新建分账规则</div>
+                            <div class="card-subtitle">规则变更可配置审批并保留完整版本记录</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="rule-form">
+                            <div class="form-group">
+                                <label>规则名称</label>
+                                <input class="form-control" value="云湖花园公共停车收益分账">
+                            </div>
+                            <div class="form-group">
+                                <label>适用项目</label>
+                                <select class="form-control">
+                                    <option>云湖花园停车场</option>
+                                    <option>市民中心停车场</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>适用业务</label>
+                                <select class="form-control">
+                                    <option>临停停车费</option>
+                                    <option>月租停车费</option>
+                                    <option>充电服务费</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>计算方式</label>
+                                <select class="form-control">
+                                    <option>固定比例分账</option>
+                                    <option>固定租金</option>
+                                    <option>保底 + 分成</option>
+                                    <option>固定租金 + 超额分成</option>
+                                    <option>阶梯分成</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>结算对象</label>
+                                <select class="form-control">
+                                    <option>云湖花园业委会</option>
+                                    <option>云湖物业服务有限公司</option>
+                                    <option>个人车位业主</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>分账比例</label>
+                                <input class="form-control" value="70%">
+                            </div>
+                            <div class="form-group">
+                                <label>生效日期</label>
+                                <input class="form-control" type="date" value="2026-08-01">
+                            </div>
+                            <div class="form-group">
+                                <label>失效日期</label>
+                                <input class="form-control" type="date" value="2027-07-31">
+                            </div>
+                            <div class="form-group">
+                                <label>规则优先级</label>
+                                <input class="form-control" type="number" value="10">
+                            </div>
+                            <div class="form-group">
+                                <label>是否扣除退款</label>
+                                <select class="form-control"><option>是</option><option>否</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>是否扣除手续费</label>
+                                <select class="form-control"><option>是</option><option>否</option></select>
+                            </div>
+                            <div class="form-group professional-only">
+                                <label>变更是否需要审批</label>
+                                <select class="form-control"><option>需要审批</option><option>无需审批</option></select>
+                            </div>
+                            <div class="form-group full-column">
+                                <label>计算说明</label>
+                                <textarea class="form-control">可分账收入扣除退款、优惠及支付手续费后，70%归业委会，10%归物业公司，20%归平台运营方。</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">规则计算预览</div>
+                            <div class="card-subtitle">使用模拟收入验证分账结果</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-box">
+                            <div class="metric-row"><span>周期收入总额</span><strong>¥100,000.00</strong></div>
+                            <div class="metric-row"><span>退款金额</span><span>- ¥2,000.00</span></div>
+                            <div class="metric-row"><span>优惠金额</span><span>- ¥1,000.00</span></div>
+                            <div class="metric-row"><span>支付手续费</span><span>- ¥300.00</span></div>
+                            <hr style="border:0;border-top:1px solid #e5e7eb;margin:14px 0">
+                            <div class="metric-row"><span>可分账收入</span><strong>¥96,700.00</strong></div>
+                        </div>
+
+                        <div style="margin-top:15px">
+                            ${splitProgress("业委会收益 70%", "¥67,690.00", 70, "")}
+                            ${splitProgress("物业公司收益 10%", "¥9,670.00", 10, "orange")}
+                            ${splitProgress("平台运营收益 20%", "¥19,340.00", 20, "green")}
+                        </div>
+
+                        <button class="btn btn-primary" style="width:100%" onclick="showToast('规则试算通过，分账比例合计100%')">
+                            执行规则试算
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card professional-only">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">财务基础配置</div>
+                        <div class="card-subtitle">多法人账套、银行账户、科目、税率和会计期间</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="quick-grid">
+                        ${quickSetting("🏢", "法人主体", "3 个法人")}
+                        ${quickSetting("🏦", "资金账户", "12 个账户")}
+                        ${quickSetting("⌘", "会计科目", "286 个科目")}
+                        ${quickSetting("%", "税率配置", "8 个税率")}
+                        ${quickSetting("📅", "会计期间", "6月已锁定")}
+                        ${quickSetting("🔗", "ERP接口", "金蝶 · 正常")}
+                        ${quickSetting("🔐", "审批流程", "16 条流程")}
+                        ${quickSetting("⚠", "风险阈值", "23 条规则")}
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    function quickSetting(icon, name, desc) {
+        return `
+            <button class="quick-action" onclick="showToast('${name}配置页面已打开')">
+                <div class="quick-action-icon">${icon}</div>
+                <strong>${name}</strong>
+                <div class="muted" style="margin-top:5px;font-size:12px">${desc}</div>
+            </button>
+        `;
+    }
+
+    function partnerDashboard() {
+        return `
+            ${pageHeader(
+                "合作方收益中心",
+                "查看本人或本机构相关项目收入、分账明细及结算进度",
+                `<button class="btn" onclick="showToast('收益明细已导出')">导出收益明细</button>`
+            )}
+
+            <div class="kpi-grid">
+                ${kpiCard("本月经营收入", "¥ 86,420", "关联 26 个车位", "", "¥", "blue-bg")}
+                ${kpiCard("预计可结收益", "¥ 62,386", "扣除服务费及管理费后", "up", "↗", "green-bg")}
+                ${kpiCard("待结算金额", "¥ 28,600", "1 张结算单待确认", "", "▤", "orange-bg")}
+                ${kpiCard("累计已结算", "¥ 286,800", "2026年度累计", "up", "✓", "purple-bg")}
+                ${kpiCard("扣除费用", "¥ 12,860", "平台费、物业费及税费", "", "-", "red-bg")}
+                ${kpiCard("下次结算日", "2026-08-05", "月结，对账确认后付款", "", "日", "cyan-bg")}
+            </div>
+
+            <div class="grid grid-2">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">收益趋势</div>
+                            <div class="card-subtitle">近6个月车位经营收益</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrap"><canvas id="incomeChart"></canvas></div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">本期收益计算</div>
+                            <div class="card-subtitle">数据可追溯至每个车位及停车订单</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-box">
+                            <div class="metric-row"><span>托管车位经营收入</span><strong>¥86,420</strong></div>
+                            <div class="metric-row"><span>平台服务费</span><span>- ¥8,642</span></div>
+                            <div class="metric-row"><span>物业管理费</span><span>- ¥6,914</span></div>
+                            <div class="metric-row"><span>维修及其他费用</span><span>- ¥2,860</span></div>
+                            <div class="metric-row"><span>预估税费</span><span>- ¥5,618</span></div>
+                            <hr style="border:0;border-top:1px solid #e5e7eb;margin:14px 0">
+                            <div class="metric-row">
+                                <strong>本期预计可结收益</strong>
+                                <strong style="font-size:21px;color:#16a34a">¥62,386</strong>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%;margin-top:14px"
+                                onclick="showToast('结算单已确认，等待平台审批付款')">
+                            确认本期结算单
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">车位收益明细</div>
+                        <div class="card-subtitle">仅展示当前合作方有权限查看的数据</div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>车位编号</th>
+                            <th>所属项目</th>
+                            <th>经营方式</th>
+                            <th>订单数</th>
+                            <th>经营收入</th>
+                            <th>扣除费用</th>
+                            <th>业主收益</th>
+                            <th>结算状态</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>YL-B2-086</td>
+                            <td>云湖花园停车场</td>
+                            <td>错峰共享</td>
+                            <td>62</td>
+                            <td>¥3,860</td>
+                            <td>¥926</td>
+                            <td class="amount">¥2,934</td>
+                            <td><span class="tag tag-warning">待结算</span></td>
+                        </tr>
+                        <tr>
+                            <td>YL-B2-087</td>
+                            <td>云湖花园停车场</td>
+                            <td>临停托管</td>
+                            <td>86</td>
+                            <td>¥4,286</td>
+                            <td>¥1,028</td>
+                            <td class="amount">¥3,258</td>
+                            <td><span class="tag tag-success">已结算</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        `;
+    }
+
+    function genericPage(title, desc) {
+        return `
+            ${pageHeader(title, desc, `<button class="btn btn-primary" onclick="showToast('操作已提交')">＋ 新增</button>`)}
+            <section class="card">
+                <div class="empty-state">
+                    <div class="empty-icon">▦</div>
+                    <h3>${title}</h3>
+                    <p>该模块已纳入原型菜单，可继续按照PRD扩展详情页、流程和接口。</p>
+                    <button class="btn btn-primary" onclick="navigate('dashboard')">返回财务首页</button>
+                </div>
+            </section>
+        `;
+    }
+
+    function refundsTemplate() {
+        return `
+            ${pageHeader(
+                "退款管理",
+                "管理停车、充电、预付费及押金退款，退款申请与审批岗位分离",
+                `<button class="btn btn-primary" onclick="showToast('退款申请表单已打开')">＋ 发起退款</button>`
+            )}
+            <div class="kpi-grid">
+                ${kpiCard("今日退款", "¥ 8,620", "16 笔退款申请", "", "↩", "red-bg")}
+                ${kpiCard("待审批", "3 笔", "合计 ¥28,600", "", "审", "orange-bg")}
+                ${kpiCard("退款中", "6 笔", "渠道处理中", "", "时", "blue-bg")}
+                ${kpiCard("退款成功", "126 笔", "本月累计", "", "✓", "green-bg")}
+            </div>
+            <section class="card">
+                <div class="card-header"><div class="card-title">退款记录</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>退款单号</th><th>原订单</th><th>退款类型</th><th>退款金额</th>
+                            <th>退款原因</th><th>申请人</th><th>审批状态</th><th>退款状态</th><th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="link">RF202607190026</td><td>CH202607180862</td>
+                            <td>充电退款</td><td class="amount">¥286.00</td><td>设备异常中断</td>
+                            <td>张敏</td><td><span class="tag tag-warning">审批中</span></td>
+                            <td><span class="tag tag-default">待退款</span></td>
+                            <td><button class="btn btn-sm">详情</button></td>
+                        </tr>
+                        <tr>
+                            <td class="link">RF202607190025</td><td>PK202607180628</td>
+                            <td>停车退款</td><td class="amount">¥32.00</td><td>重复支付</td>
+                            <td>王芳</td><td><span class="tag tag-success">已审批</span></td>
+                            <td><span class="tag tag-info">退款中</span></td>
+                            <td><button class="btn btn-sm">详情</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        `;
+    }
+
+    function pagination() {
+        return `
+            <div class="pagination">
+                <span class="muted">共 68,429 条</span>
+                <button class="page-btn">‹</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">›</button>
+            </div>
+        `;
+    }
+
+    function renderPage() {
+        const container = document.getElementById("pageContainer");
+
+        const templates = {
+            dashboard: dashboardTemplate,
+            income: incomeTemplate,
+            receivables: receivablesTemplate,
+            reconciliation: reconciliationTemplate,
+            settlement: settlementTemplate,
+            approvals: approvalsTemplate,
+            reports: reportsTemplate,
+            settings: settingsTemplate,
+            refunds: refundsTemplate,
+            payables: () => genericPage("应付管理", "管理分成款、租赁费、电费成本、设备租金、手续费及退款应付"),
+            accounts: () => genericPage("资金账户管理", "统一管理银行账户、支付渠道账户、现金账户及资金归集"),
+            prepaid: () => genericPage("预付费与押金管理", "区分预收款、合同负债、消费收入及押金负债"),
+            contracts: () => genericPage("合同财务管理", "管理收费计划、分账条款、保底收益、税费承担及到期提醒"),
+            invoices: () => genericPage("发票管理", "支持用户开票、企业批量开票、合作方结算发票及红冲"),
+            vouchers: () => genericPage("会计凭证管理", "按业务类型、法人账套及项目辅助核算自动生成凭证"),
+            audit: () => genericPage("审计与风险管理", "记录不可删除的操作日志、原值、新值、审批意见及附件")
+        };
+
+        const render = templates[state.page] || dashboardTemplate;
+        container.innerHTML = render();
+
+        requestAnimationFrame(() => {
+            if (document.getElementById("incomeChart")) {
+                drawIncomeChart();
+            }
+        });
+    }
+
+    function drawIncomeChart() {
+        const canvas = document.getElementById("incomeChart");
+        if (!canvas) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+
+        const ctx = canvas.getContext("2d");
+        ctx.scale(dpr, dpr);
+
+        const width = rect.width;
+        const height = rect.height;
+        const padding = { top: 20, right: 18, bottom: 32, left: 46 };
+
+        const data = state.role === "partner"
+            ? [32, 38, 41, 36, 52, 63]
+            : [62, 68, 72, 66, 82, 78, 92, 88, 105, 116, 108, 126];
+
+        const labels = state.role === "partner"
+            ? ["2月", "3月", "4月", "5月", "6月", "7月"]
+            : ["7/1", "7/3", "7/5", "7/7", "7/9", "7/11", "7/13", "7/15", "7/17", "7/18", "7/19", "预测"];
+
+        const max = Math.max(...data) * 1.18;
+        const chartW = width - padding.left - padding.right;
+        const chartH = height - padding.top - padding.bottom;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.font = "11px Arial";
+        ctx.fillStyle = "#9ca3af";
+        ctx.strokeStyle = "#e5e7eb";
+        ctx.lineWidth = 1;
+
+        for (let i = 0; i <= 4; i++) {
+            const y = padding.top + chartH * i / 4;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(width - padding.right, y);
+            ctx.stroke();
+
+            const value = Math.round(max * (1 - i / 4));
+            ctx.fillText(value + "k", 8, y + 4);
+        }
+
+        labels.forEach((label, i) => {
+            const x = padding.left + chartW * i / (labels.length - 1);
+            ctx.fillText(label, x - 10, height - 8);
+        });
+
+        const points = data.map((value, i) => ({
+            x: padding.left + chartW * i / (data.length - 1),
+            y: padding.top + chartH * (1 - value / max)
+        }));
+
+        const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+        gradient.addColorStop(0, "rgba(37,99,235,.26)");
+        gradient.addColorStop(1, "rgba(37,99,235,.02)");
+
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, height - padding.bottom);
+        points.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.lineTo(points[points.length - 1].x, height - padding.bottom);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.beginPath();
+        points.forEach((p, i) => {
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+        });
+        ctx.strokeStyle = "#2563eb";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        points.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+            ctx.strokeStyle = "#2563eb";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
+    }
+
+    function openModal(title, body, action = null, confirmText = "确认") {
+        state.currentModalAction = action;
+        document.getElementById("modalTitle").innerText = title;
+        document.getElementById("modalBody").innerHTML = body;
+        document.getElementById("modalFooter").innerHTML = `
+            <button class="btn" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" onclick="confirmModal()">${confirmText}</button>
+        `;
+        document.getElementById("modalMask").classList.add("show");
+    }
+
+    function closeModal() {
+        document.getElementById("modalMask").classList.remove("show");
+        state.currentModalAction = null;
+    }
+
+    function confirmModal() {
+        if (typeof state.currentModalAction === "function") {
+            state.currentModalAction();
+        }
+        closeModal();
+        showToast("操作成功，流程状态已更新");
+    }
+
+    function openQuickModal() {
+        openModal("快捷处理", `
+            <div class="quick-grid">
+                ${quickAction("⇄", "发起对账", "reconciliation")}
+                ${quickAction("▤", "生成结算", "settlement")}
+                ${quickAction("◎", "欠费催收", "receivables")}
+                ${quickAction("↩", "退款审批", "approvals")}
+            </div>
+        `, () => {}, "关闭");
+    }
+
+    function openIncomeModal() {
+        openModal("新增手工收入", `
+            <div class="rule-form" style="grid-template-columns:repeat(2,1fr)">
+                <div class="form-group">
+                    <label>收入类型</label>
+                    <select class="form-control">
+                        <option>场地租赁费</option>
+                        <option>广告租赁费</option>
+                        <option>商户入驻费</option>
+                        <option>其他收入</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>所属项目</label>
+                    <select class="form-control">
+                        <option>市民中心停车场</option>
+                        <option>华城商业广场</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>收款主体</label>
+                    <select class="form-control">
+                        <option>华城停车运营有限公司</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>实收金额</label>
+                    <input class="form-control" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>付款人</label>
+                    <input class="form-control" placeholder="企业、商户或个人">
+                </div>
+                <div class="form-group">
+                    <label>支付方式</label>
+                    <select class="form-control">
+                        <option>银行转账</option>
+                        <option>现金</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div class="form-group full-column">
+                    <label>附件及说明</label>
+                    <textarea class="form-control" placeholder="录入收入说明及附件信息"></textarea>
+                </div>
+            </div>
+        `, () => {}, "提交审核");
+    }
+
+    function openReceivableModal() {
+        openModal("新增应收账单", `
+            <div class="rule-form" style="grid-template-columns:repeat(2,1fr)">
+                <div class="form-group">
+                    <label>应收类型</label>
+                    <select class="form-control">
+                        <option>企业停车月结</option>
+                        <option>物业管理费</option>
+                        <option>车位租赁费</option>
+                        <option>商户租金</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>客户名称</label>
+                    <input class="form-control" placeholder="选择或输入客户">
+                </div>
+                <div class="form-group">
+                    <label>应收金额</label>
+                    <input class="form-control" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>付款截止日</label>
+                    <input class="form-control" type="date" value="2026-08-15">
+                </div>
+                <div class="form-group full-column">
+                    <label>账单说明</label>
+                    <textarea class="form-control"></textarea>
+                </div>
+            </div>
+        `, () => {}, "生成账单");
+    }
+
+    function openReconcileModal() {
+        openModal("新建对账批次", `
+            <div class="rule-form" style="grid-template-columns:repeat(2,1fr)">
+                <div class="form-group">
+                    <label>对账日期</label>
+                    <input class="form-control" type="date" value="2026-07-19">
+                </div>
+                <div class="form-group">
+                    <label>对账渠道</label>
+                    <select class="form-control">
+                        <option>全部支付渠道</option>
+                        <option>微信支付</option>
+                        <option>支付宝</option>
+                        <option>ETC</option>
+                        <option>现金</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>适用项目</label>
+                    <select class="form-control">
+                        <option>全部项目</option>
+                        <option>市民中心停车场</option>
+                        <option>东站超级充电站</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>容错规则</label>
+                    <select class="form-control">
+                        <option>标准规则：时间±5分钟，金额±0.01元</option>
+                        <option>严格匹配</option>
+                    </select>
+                </div>
+                <div class="form-group full-column">
+                    <label>对账范围</label>
+                    <label><input type="checkbox" checked> 业务订单与支付渠道</label>&nbsp;&nbsp;
+                    <label><input type="checkbox" checked> 支付渠道与银行到账</label>&nbsp;&nbsp;
+                    <label><input type="checkbox" checked> 退款流水</label>
+                </div>
+            </div>
+        `, () => {
+            setTimeout(() => showToast("自动对账完成：匹配率98.63%，23笔进入差异池"), 500);
+        }, "开始自动对账");
+    }
+
+    function openSettlementModal() {
+        openModal("生成结算单", `
+            <div class="rule-form" style="grid-template-columns:repeat(2,1fr)">
+                <div class="form-group">
+                    <label>结算周期</label>
+                    <input class="form-control" value="2026-07-01 至 2026-07-31">
+                </div>
+                <div class="form-group">
+                    <label>结算对象</label>
+                    <select class="form-control">
+                        <option>全部到期结算对象</option>
+                        <option>云湖花园业委会</option>
+                        <option>东站充电桩投资方</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>参与收入范围</label>
+                    <select class="form-control">
+                        <option>已支付 + 已到账 + 已对账</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>处理退款</label>
+                    <select class="form-control"><option>自动冲减本期收入</option></select>
+                </div>
+                <div class="form-group full-column">
+                    <div class="stat-box">
+                        <div class="metric-row"><span>预计提取订单</span><strong>46,286 笔</strong></div>
+                        <div class="metric-row"><span>预计可分账收入</span><strong>¥5,862,400</strong></div>
+                        <div class="metric-row"><span>预计生成结算单</span><strong>68 张</strong></div>
+                    </div>
+                </div>
+            </div>
+        `, () => {}, "计算并生成");
+    }
+
+    function openDifferenceModal(no) {
+        openModal("处理对账差异", `
+            <div class="stat-box">
+                <div class="metric-row"><span>差异单号</span><strong>${no}</strong></div>
+                <div class="metric-row"><span>差异类型</span><span class="tag tag-warning">金额/流水差异</span></div>
+                <div class="metric-row"><span>处理原则</span><span>处理后进入复核审批</span></div>
+            </div>
+            <div class="form-group" style="margin-top:15px">
+                <label>处理方式</label>
+                <select class="form-control" style="width:100%">
+                    <option>生成异常收入待确认</option>
+                    <option>生成补缴账单</option>
+                    <option>发起退款</option>
+                    <option>归入支付手续费</option>
+                    <option>挂暂收款</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-top:15px">
+                <label>处理说明</label>
+                <textarea class="form-control" style="width:100%"></textarea>
+            </div>
+        `, () => {}, "提交复核");
+    }
+
+    function openTraceModal(no) {
+        openModal("资金全链路追踪", `
+            <div class="flow-container" style="padding:5px 0 20px">
+                ${flowStep("1", "业务订单", "已完成", "done")}
+                ${flowStep("2", "支付到账", "已到账", "done")}
+                ${flowStep("3", "自动对账", "已匹配", "done")}
+                ${flowStep("4", "收入确认", "已确认", "done")}
+            </div>
+            <div class="stat-box">
+                <div class="metric-row"><span>收入单号</span><strong>${no}</strong></div>
+                <div class="metric-row"><span>支付渠道流水</span><span>WX9836200172</span></div>
+                <div class="metric-row"><span>所属法人</span><span>华城停车运营有限公司</span></div>
+                <div class="metric-row"><span>所属项目</span><span>市民中心停车场</span></div>
+                <div class="metric-row"><span>是否参与分账</span><span>是</span></div>
+                <div class="metric-row"><span>关联凭证</span><span class="link">记-202607-00862</span></div>
+            </div>
+        `, () => {}, "关闭");
+    }
+
+    function openSettlementDetail(no) {
+        openModal("结算单详情", `
+            <div class="stat-box">
+                <div class="metric-row"><span>结算单号</span><strong>${no}</strong></div>
+                <div class="metric-row"><span>收入总额</span><strong>¥628,600.00</strong></div>
+                <div class="metric-row"><span>退款及冲销</span><span>- ¥8,200.00</span></div>
+                <div class="metric-row"><span>平台服务费</span><span>- ¥31,430.00</span></div>
+                <div class="metric-row"><span>物业管理费</span><span>- ¥62,860.00</span></div>
+                <div class="metric-row"><span>税费</span><span>- ¥12,480.00</span></div>
+                <hr style="border:0;border-top:1px solid #e5e7eb;margin:14px 0">
+                <div class="metric-row">
+                    <strong>本期应结金额</strong>
+                    <strong style="font-size:20px;color:#16a34a">¥513,630.00</strong>
+                </div>
+            </div>
+            <p class="muted">该结算金额可追溯至 8,628 笔已支付、已到账、已对账业务订单。</p>
+        `, () => {}, "关闭");
+    }
+
+    function approveItem(no) {
+        openModal("审批财务事项", `
+            <div class="stat-box">
+                <div class="metric-row"><span>审批单号</span><strong>${no}</strong></div>
+                <div class="metric-row"><span>内控检查</span><span class="tag tag-success">已通过</span></div>
+                <div class="metric-row"><span>预算校验</span><span class="tag tag-success">预算充足</span></div>
+                <div class="metric-row"><span>附件完整性</span><span class="tag tag-success">完整</span></div>
+            </div>
+            <div class="form-group" style="margin-top:15px">
+                <label>审批意见</label>
+                <textarea class="form-control" style="width:100%">同意，按合同及审批流程执行。</textarea>
+            </div>
+        `, () => {}, "同意审批");
+    }
+
+    function sendCollection(name) {
+        openModal("发送欠费提醒", `
+            <div class="form-group">
+                <label>催收对象</label>
+                <input class="form-control" style="width:100%" value="${name}" readonly>
+            </div>
+            <div class="form-group" style="margin-top:14px">
+                <label>通知方式</label>
+                <label><input type="checkbox" checked> 微信</label>&nbsp;&nbsp;
+                <label><input type="checkbox" checked> 短信</label>&nbsp;&nbsp;
+                <label><input type="checkbox"> 邮件</label>
+            </div>
+            <div class="form-group" style="margin-top:14px">
+                <label>提醒内容</label>
+                <textarea class="form-control" style="width:100%">您有一笔费用尚未支付，请及时查看账单并完成缴费。逾期可能产生滞纳金或影响停车、充电服务。</textarea>
+            </div>
+        `, () => {}, "发送提醒");
+    }
+
+    function saveSettings() {
+        if (state.role === "auditor") {
+            showToast("审计员为只读角色，无权修改财务配置");
+            return;
+        }
+        showToast(state.mode === "professional"
+            ? "配置变更已提交审批，审批通过后生效"
+            : "基础设置已保存");
+    }
+
+    function showToast(text) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toastText").innerText = text;
+        toast.classList.add("show");
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function updateScope() {
+        const subject = subjectNames[state.subject];
+        const project = projectNames[state.project];
+        document.getElementById("scopeTip").innerText =
+            `当前数据范围：${subject} / ${project}`;
+    }
+
+    function updateRoleView() {
+        const roleName = roleNames[state.role];
+        document.getElementById("userName").innerText = roleName.replace("管理员", "");
+        document.getElementById("userRole").innerText =
+            state.mode === "professional" ? "专业财务视图" : "简易财务视图";
+
+        if (state.role === "propertyManager" && state.mode === "professional") {
+            setMode("simple", false);
+        }
+
+        if (state.role === "partner") {
+            state.page = "dashboard";
+        }
+
+        renderSidebar();
+        renderPage();
+    }
+
+    function setMode(mode, rerender = true) {
+        state.mode = mode;
+        document.body.classList.toggle("simple-mode", mode === "simple");
+        document.getElementById("simpleModeBtn").classList.toggle("active", mode === "simple");
+        document.getElementById("professionalModeBtn").classList.toggle("active", mode === "professional");
+        document.getElementById("userRole").innerText =
+            mode === "professional" ? "专业财务视图" : "简易财务视图";
+
+        const simplePages = ["dashboard", "income", "receivables", "refunds", "reconciliation", "settlement", "reports", "settings"];
+        if (mode === "simple" && !simplePages.includes(state.page)) {
+            state.page = "dashboard";
+        }
+
+        if (rerender) {
+            renderSidebar();
+            renderPage();
+        }
+    }
+
+    document.getElementById("simpleModeBtn").addEventListener("click", () => setMode("simple"));
+    document.getElementById("professionalModeBtn").addEventListener("click", () => setMode("professional"));
+
+    document.getElementById("roleSelector").addEventListener("change", function () {
+        state.role = this.value;
+        updateRoleView();
+    });
+
+    document.getElementById("subjectSelector").addEventListener("change", function () {
+        state.subject = this.value;
+        updateScope();
+        renderPage();
+    });
+
+    document.getElementById("projectSelector").addEventListener("change", function () {
+        state.project = this.value;
+        updateScope();
+        renderPage();
+    });
+
+    document.getElementById("modalMask").addEventListener("click", function (event) {
+        if (event.target === this) closeModal();
+    });
+
+    window.addEventListener("resize", () => {
+        if (document.getElementById("incomeChart")) drawIncomeChart();
+    });
+
+    renderSidebar();
+    renderPage();
+    updateScope();
+</script>
+</body>
+</html>

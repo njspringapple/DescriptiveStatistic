@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫码停车服务｜四类二维码业务场景</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button,
+input {
+  border: 0;
+  outline: none;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  color: #fff;
+  transform-origin: center center;
+  background:
+    radial-gradient(circle at 51% 45%, rgba(0, 198, 255, .17), transparent 33%),
+    radial-gradient(circle at 85% 18%, rgba(110, 73, 255, .13), transparent 26%),
+    radial-gradient(circle at 7% 78%, rgba(39, 226, 197, .07), transparent 24%),
+    linear-gradient(135deg, #061224 0%, #08192f 50%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 16%,
+    #000 91%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 320px;
+  top: 44px;
+  width: 1040px;
+  height: 790px;
+  border: 1px solid rgba(70, 180, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 175, 255, .05),
+    inset 0 0 130px rgba(0, 175, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   背景科技曲线
+======================================== */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#bgGradient);
+  stroke-width: 1.1;
+  opacity: .18;
+}
+
+.bg-dash {
+  fill: none;
+  stroke: #44d0ff;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .13;
+  animation: bgFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #62dcff;
+  filter: drop-shadow(0 0 6px #29c7ff);
+}
+
+@keyframes bgFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* ========================================
+   顶部标题
+======================================== */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  z-index: 10;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  flex: 0 0 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .30);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(80, 213, 238, .15);
+  border-radius: 19px;
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  color: #f2fbff;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.header-message {
+  max-width: 640px;
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #d8f7ff;
+  font-size: 15px;
+  line-height: 1.45;
+  letter-spacing: .5px;
+}
+
+.header-message strong b {
+  color: #4ae4ef;
+}
+
+.header-message span {
+  color: #6195b5;
+  font-size: 11px;
+}
+
+/* ========================================
+   场景标题
+======================================== */
+
+.process-title {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 112px;
+  z-index: 8;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.process-index {
+  color: #426d8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.process-line {
+  width: 23px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #28bdff, #45ebd3);
+}
+
+.process-title h2 {
+  margin: 0;
+  color: #dff7ff;
+  font-size: 17px;
+}
+
+.process-title span {
+  margin-left: auto;
+  color: #718da0;
+  font-size: 10px;
+  letter-spacing: .5px;
+}
+
+/* ========================================
+   四台手机
+======================================== */
+
+.phone-stage {
+  position: absolute;
+  left: 42px;
+  right: 42px;
+  top: 151px;
+  z-index: 5;
+  height: 578px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 21px;
+}
+
+.phone-group {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  padding: 0 10px;
+  border: 1px solid rgba(63, 173, 229, .13);
+  border-radius: 19px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 185, 239, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(11, 42, 72, .47),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group.purple {
+  border-color: rgba(141, 116, 233, .14);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(129, 91, 232, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(36, 35, 83, .43),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group.orange {
+  border-color: rgba(231, 153, 56, .14);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(220, 130, 31, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(70, 45, 26, .38),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group.green {
+  border-color: rgba(49, 207, 176, .14);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(30, 199, 166, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(12, 68, 67, .39),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group::before {
+  content: "";
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.phone-group.purple::before {
+  background: linear-gradient(90deg, transparent, #a48dff, transparent);
+}
+
+.phone-group.orange::before {
+  background: linear-gradient(90deg, transparent, #ffb150, transparent);
+}
+
+.phone-group.green::before {
+  background: linear-gradient(90deg, transparent, #48dfbf, transparent);
+}
+
+.phone-label {
+  position: relative;
+  height: 51px;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.phone-step {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid rgba(77, 214, 239, .24);
+  border-radius: 8px;
+  color: #54dfef;
+  background: rgba(29, 146, 188, .12);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.purple .phone-step {
+  color: #b7a6ff;
+  border-color: rgba(164, 141, 255, .24);
+  background: rgba(109, 78, 200, .13);
+}
+
+.orange .phone-step {
+  color: #ffc069;
+  border-color: rgba(255, 177, 80, .24);
+  background: rgba(191, 111, 28, .13);
+}
+
+.green .phone-step {
+  color: #55e2c3;
+  border-color: rgba(72, 223, 191, .24);
+  background: rgba(26, 158, 130, .13);
+}
+
+.phone-label-text {
+  min-width: 0;
+}
+
+.phone-label-text strong {
+  display: block;
+  color: #d8f2fa;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.phone-label-text span {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  color: #668fa5;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phone-role {
+  padding: 4px 7px;
+  border-radius: 8px;
+  color: #5ccde5;
+  background: rgba(16, 105, 139, .18);
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.purple .phone-role {
+  color: #b7a8eb;
+  background: rgba(84, 63, 145, .22);
+}
+
+.orange .phone-role {
+  color: #d9a96d;
+  background: rgba(111, 68, 26, .22);
+}
+
+.green .phone-role {
+  color: #75c9b7;
+  background: rgba(19, 111, 92, .22);
+}
+
+/* ========================================
+   手机外壳：接近9:16比例
+======================================== */
+
+.phone {
+  position: relative;
+  width: 286px;
+  height: 516px;
+  margin: 0 auto;
+  padding: 10px;
+  border: 1px solid rgba(99, 215, 239, .33);
+  border-radius: 35px;
+  background:
+    linear-gradient(145deg, #1b3c58, #07182a 48%, #132e46);
+  box-shadow:
+    0 22px 55px rgba(0, 4, 17, .55),
+    0 0 35px rgba(0, 185, 225, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+
+.purple .phone {
+  border-color: rgba(170, 149, 255, .34);
+  background:
+    linear-gradient(145deg, #35365e, #0d1429 48%, #272d4f);
+}
+
+.orange .phone {
+  border-color: rgba(255, 185, 91, .34);
+  background:
+    linear-gradient(145deg, #5a4431, #1e1715 48%, #453326);
+}
+
+.green .phone {
+  border-color: rgba(82, 226, 194, .34);
+  background:
+    linear-gradient(145deg, #26574f, #081c20 48%, #1e433e);
+}
+
+.phone::before {
+  content: "";
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  top: 7px;
+  width: 83px;
+  height: 22px;
+  transform: translateX(-50%);
+  border-radius: 0 0 14px 14px;
+  background: #020913;
+}
+
+.phone::after {
+  content: "";
+  position: absolute;
+  z-index: 21;
+  left: 50%;
+  top: 13px;
+  width: 29px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: #243746;
+}
+
+.phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 26px;
+  color: #18283a;
+  background: #f3f7fa;
+}
+
+.mobile-status {
+  position: relative;
+  z-index: 12;
+  height: 28px;
+  padding: 7px 14px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  color: #183149;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.mobile-icons {
+  letter-spacing: .4px;
+}
+
+/* ========================================
+   H5浏览器栏
+======================================== */
+
+.h5-browser {
+  position: relative;
+  z-index: 5;
+  height: 48px;
+  padding: 6px 10px;
+  display: grid;
+  grid-template-columns: 24px 1fr 39px;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(103, 222, 255, .24), transparent 32%),
+    linear-gradient(135deg, #1769d6, #168fae);
+}
+
+.purple .h5-browser {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(205, 190, 255, .24), transparent 32%),
+    linear-gradient(135deg, #6049c1, #7368d1);
+}
+
+.orange .h5-browser {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(255, 224, 173, .22), transparent 32%),
+    linear-gradient(135deg, #c86e21, #d99b3e);
+}
+
+.green .h5-browser {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(185, 255, 233, .22), transparent 32%),
+    linear-gradient(135deg, #168a77, #20a99a);
+}
+
+.browser-back {
+  font-size: 18px;
+}
+
+.browser-title {
+  min-width: 0;
+  text-align: center;
+}
+
+.browser-title strong {
+  display: block;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-title span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(255,255,255,.70);
+  font-size: 7px;
+}
+
+.browser-more {
+  text-align: right;
+  font-size: 13px;
+}
+
+.mobile-content {
+  position: relative;
+  height: calc(100% - 76px);
+  padding: 9px 10px 12px;
+  overflow: hidden;
+}
+
+/* ========================================
+   通用组件
+======================================== */
+
+.mobile-card {
+  margin-bottom: 7px;
+  padding: 9px;
+  border: 1px solid #e0e8ef;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(37, 66, 91, .055);
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.card-head strong {
+  display: block;
+  color: #2c4356;
+  font-size: 10px;
+}
+
+.card-head span {
+  display: block;
+  margin-top: 3px;
+  color: #80909d;
+  font-size: 7.5px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 2px 6px;
+  color: #526579;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.section-title i {
+  width: 3px;
+  height: 11px;
+  border-radius: 3px;
+  background: #287cd9;
+}
+
+.purple .section-title i {
+  background: #765dda;
+}
+
+.orange .section-title i {
+  background: #e48a31;
+}
+
+.green .section-title i {
+  background: #1eaa91;
+}
+
+.info-row {
+  min-height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  border-bottom: 1px solid #edf1f4;
+  color: #778694;
+  font-size: 8px;
+}
+
+.info-row:last-child {
+  border-bottom: 0;
+}
+
+.info-row strong {
+  color: #31485b;
+  font-size: 8px;
+  text-align: right;
+}
+
+.status-green {
+  color: #14916b !important;
+}
+
+.status-orange {
+  color: #e17c21 !important;
+}
+
+.status-red {
+  color: #d65b59 !important;
+}
+
+.small-badge {
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: #14785d !important;
+  background: #e2f7f0;
+  font-size: 7px !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.small-badge.orange {
+  color: #a9601d !important;
+  background: #fff0dd;
+}
+
+.small-badge.purple {
+  color: #6952bc !important;
+  background: #efebff;
+}
+
+.primary-button {
+  width: 100%;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #1769e8, #16a6bd);
+  box-shadow: 0 5px 13px rgba(23, 105, 232, .18);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.purple .primary-button {
+  background: linear-gradient(135deg, #6d4ed2, #8376de);
+}
+
+.orange .primary-button {
+  background: linear-gradient(135deg, #d87924, #e9a540);
+}
+
+.green .primary-button {
+  background: linear-gradient(135deg, #168e79, #25b09d);
+}
+
+.secondary-button {
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d8e2e9;
+  border-radius: 8px;
+  color: #52697a;
+  background: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* ========================================
+   场景一：停车场二维码
+======================================== */
+
+.parking-banner {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 7px;
+  padding: 10px;
+  border-radius: 11px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 0, rgba(255,255,255,.20), transparent 34%),
+    linear-gradient(135deg, #1769d6, #179cb0);
+}
+
+.parking-banner::after {
+  content: "P";
+  position: absolute;
+  right: 7px;
+  bottom: -30px;
+  color: rgba(255,255,255,.10);
+  font-size: 76px;
+  font-weight: 900;
+}
+
+.banner-top,
+.banner-title,
+.banner-meta {
+  position: relative;
+  z-index: 2;
+}
+
+.banner-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.banner-top strong {
+  font-size: 9px;
+}
+
+.banner-top span {
+  padding: 3px 5px;
+  border-radius: 5px;
+  background: rgba(255,255,255,.16);
+  font-size: 7px;
+}
+
+.banner-title {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.banner-meta {
+  margin-top: 4px;
+  color: rgba(255,255,255,.74);
+  font-size: 7.5px;
+}
+
+.plate-query-card {
+  margin-bottom: 7px;
+  padding: 9px;
+  border: 1px solid #d3e2ed;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.plate-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #536a7b;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.plate-label span {
+  color: #8b98a3;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+.plate-row {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: 1fr 52px;
+  gap: 5px;
+}
+
+.plate-input {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #cedde8;
+  border-radius: 8px;
+  color: #244159;
+  background: #f9fbfc;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+.plate-query-button {
+  border-radius: 8px;
+  color: #fff;
+  background: #1769d6;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.order-summary {
+  margin-bottom: 7px;
+  padding: 9px;
+  border: 1px solid #d4e4ef;
+  border-radius: 10px;
+  background: #edf7ff;
+}
+
+.order-plate {
+  color: #214f70;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+
+.order-location {
+  margin-top: 3px;
+  color: #7191a5;
+  font-size: 7.5px;
+}
+
+.order-state {
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: #138265;
+  background: #daf5ec;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.fee-grid {
+  margin-top: 7px;
+  padding-top: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #d3e2ec;
+}
+
+.fee-cell {
+  text-align: center;
+  border-right: 1px solid #d5e2ea;
+}
+
+.fee-cell:last-child {
+  border-right: 0;
+}
+
+.fee-cell span {
+  display: block;
+  color: #7690a1;
+  font-size: 7px;
+}
+
+.fee-cell strong {
+  display: block;
+  margin-top: 4px;
+  color: #355367;
+  font-size: 9px;
+}
+
+.fee-cell.pay strong {
+  color: #df702c;
+}
+
+.charging-fee {
+  margin-bottom: 7px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 31px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #cfe7df;
+  border-radius: 9px;
+  background: #f0faf7;
+}
+
+.charge-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #fff;
+  background: linear-gradient(135deg, #168e78, #25af99);
+  font-size: 13px;
+}
+
+.charging-fee strong {
+  display: block;
+  color: #365e54;
+  font-size: 8.5px;
+}
+
+.charging-fee span {
+  display: block;
+  margin-top: 3px;
+  color: #779a90;
+  font-size: 7px;
+}
+
+.charge-amount {
+  color: #df6f2c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mini-debt {
+  margin-bottom: 6px;
+  padding: 7px;
+  display: grid;
+  grid-template-columns: 17px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e1e6ea;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.mini-debt.selected {
+  border-color: #3585da;
+  background: #f2f8ff;
+}
+
+.mini-check {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: #fff;
+  background: #287bd3;
+  font-size: 7px;
+}
+
+.mini-debt strong {
+  display: block;
+  color: #506271;
+  font-size: 8px;
+}
+
+.mini-debt span {
+  display: block;
+  margin-top: 2px;
+  color: #909aa3;
+  font-size: 6.5px;
+}
+
+.mini-debt b {
+  color: #dd6e2b;
+  font-size: 9px;
+}
+
+/* ========================================
+   场景二：道路停车小票
+======================================== */
+
+.ticket {
+  position: relative;
+  margin-bottom: 8px;
+  padding: 12px 11px;
+  overflow: hidden;
+  border: 1px solid #ded9f0;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, #fff, #faf9ff);
+  box-shadow: 0 6px 17px rgba(67, 56, 112, .08);
+}
+
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  top: 186px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f3f7fa;
+}
+
+.ticket::before {
+  left: -9px;
+}
+
+.ticket::after {
+  right: -9px;
+}
+
+.ticket-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 9px;
+  border-bottom: 1px dashed #ded9e7;
+}
+
+.ticket-brand strong {
+  color: #514b65;
+  font-size: 11px;
+}
+
+.ticket-brand span {
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: #6754b5;
+  background: #ede9ff;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.ticket-road {
+  margin-top: 11px;
+  color: #403952;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ticket-zone {
+  margin-top: 4px;
+  color: #8a8498;
+  font-size: 7.5px;
+}
+
+.ticket-plate {
+  margin-top: 10px;
+  padding: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 9px;
+  background: #f1effb;
+}
+
+.ticket-plate span {
+  color: #746d88;
+  font-size: 8px;
+}
+
+.ticket-plate strong {
+  color: #4a4261;
+  font-size: 14px;
+  letter-spacing: .5px;
+}
+
+.ticket-data {
+  margin-top: 8px;
+}
+
+.ticket-row {
+  min-height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #85808f;
+  font-size: 8px;
+}
+
+.ticket-row strong {
+  color: #544e61;
+  font-size: 8px;
+}
+
+.ticket-total {
+  margin-top: 8px;
+  padding-top: 9px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px dashed #ded9e7;
+}
+
+.ticket-total span {
+  color: #756f80;
+  font-size: 9px;
+}
+
+.ticket-total strong {
+  color: #dc6c2d;
+  font-size: 20px;
+}
+
+.ticket-code {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #ded9e7;
+  color: #9b95a5;
+  font-size: 7px;
+  text-align: center;
+}
+
+.no-input-tip {
+  margin-bottom: 7px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #d5e9e2;
+  border-radius: 9px;
+  color: #4f7d71;
+  background: #effaf6;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.no-input-tip i {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #22aa8b;
+  box-shadow: 0 0 6px #22aa8b;
+}
+
+/* ========================================
+   场景三：商户优惠券
+======================================== */
+
+.coupon-ticket {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(255,255,255,.20), transparent 35%),
+    linear-gradient(135deg, #c96e22, #e3a13e);
+  box-shadow: 0 8px 20px rgba(202, 117, 32, .18);
+}
+
+.coupon-ticket::before,
+.coupon-ticket::after {
+  content: "";
+  position: absolute;
+  left: 100px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #f3f7fa;
+}
+
+.coupon-ticket::before {
+  top: -9px;
+}
+
+.coupon-ticket::after {
+  bottom: -9px;
+}
+
+.coupon-merchant {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coupon-merchant strong {
+  font-size: 9px;
+}
+
+.coupon-merchant span {
+  padding: 3px 5px;
+  border-radius: 5px;
+  background: rgba(255,255,255,.16);
+  font-size: 7px;
+}
+
+.coupon-value {
+  margin-top: 13px;
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.coupon-name {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.coupon-rule {
+  margin-top: 8px;
+  color: rgba(255,255,255,.76);
+  font-size: 7.5px;
+  line-height: 1.45;
+}
+
+.coupon-id {
+  margin-top: 9px;
+  padding-top: 7px;
+  border-top: 1px dashed rgba(255,255,255,.30);
+  color: rgba(255,255,255,.74);
+  font-size: 6.8px;
+}
+
+.coupon-order {
+  margin-bottom: 7px;
+  padding: 8px;
+  border: 1px solid #ebddc9;
+  border-radius: 9px;
+  background: #fff9f0;
+}
+
+.coupon-discount-line {
+  min-height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #846c53;
+  font-size: 8px;
+}
+
+.coupon-discount-line strong {
+  color: #5e4d3b;
+  font-size: 8px;
+}
+
+.coupon-discount-line.discount strong {
+  color: #178b70;
+}
+
+.coupon-discount-line.total {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px dashed #e1d2c2;
+}
+
+.coupon-discount-line.total strong {
+  color: #dc6e2d;
+  font-size: 13px;
+}
+
+/* ========================================
+   场景四：包月车位合并续费
+======================================== */
+
+.owner-card {
+  margin-bottom: 7px;
+  padding: 9px;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #d5e8e2;
+  border-radius: 10px;
+  background: #effaf6;
+}
+
+.owner-avatar {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, #168b76, #29b19b);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.owner-card strong {
+  display: block;
+  color: #365b52;
+  font-size: 8.5px;
+}
+
+.owner-card span {
+  display: block;
+  margin-top: 3px;
+  color: #76978e;
+  font-size: 7px;
+}
+
+.owner-state {
+  padding: 3px 5px;
+  border-radius: 6px;
+  color: #147c64;
+  background: #d9f3eb;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.space-card {
+  position: relative;
+  margin-bottom: 6px;
+  padding: 8px 29px 8px 8px;
+  border: 1px solid #dfe6e3;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.space-card.selected {
+  border-color: #22a88d;
+  background: #f0faf7;
+}
+
+.space-card strong {
+  display: block;
+  color: #405b53;
+  font-size: 8.5px;
+}
+
+.space-card span {
+  display: block;
+  margin-top: 3px;
+  color: #87958f;
+  font-size: 7px;
+}
+
+.space-valid {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.space-valid em {
+  color: #18866e;
+  font-size: 7px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.space-valid b {
+  color: #df712d;
+  font-size: 8px;
+}
+
+.space-check {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 1px solid #d0dbd7;
+  border-radius: 5px;
+  color: transparent;
+  background: #fff;
+  font-size: 7px;
+}
+
+.space-card.selected .space-check {
+  color: #fff;
+  border-color: #20a68b;
+  background: #20a68b;
+}
+
+.duration-row {
+  margin-bottom: 7px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.duration-item {
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dfe6e3;
+  border-radius: 8px;
+  color: #6d7e78;
+  background: #fff;
+  font-size: 7px;
+  text-align: center;
+}
+
+.duration-item strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 8.5px;
+}
+
+.duration-item.active {
+  color: #167b64;
+  border-color: #20a88d;
+  background: #eaf8f3;
+}
+
+.renew-summary {
+  margin-bottom: 7px;
+  padding: 8px;
+  border: 1px solid #dce7e3;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.renew-row {
+  min-height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #7d8d87;
+  font-size: 8px;
+}
+
+.renew-row strong {
+  color: #4b625b;
+  font-size: 8px;
+}
+
+.renew-row.discount strong {
+  color: #178b71;
+}
+
+.renew-total {
+  margin-top: 5px;
+  padding-top: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px dashed #d6e1dd;
+}
+
+.renew-total span {
+  color: #61756f;
+  font-size: 8px;
+}
+
+.renew-total strong {
+  color: #df6d2c;
+  font-size: 16px;
+}
+
+/* ========================================
+   底部价值
+======================================== */
+
+.value-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 47px;
+  z-index: 8;
+  height: 101px;
+}
+
+.value-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 21px;
+  color: #8eb5c8;
+  font-size: 10px;
+  letter-spacing: .5px;
+}
+
+.value-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dbfff, #43e7ce);
+}
+
+.value-title span {
+  margin-left: auto;
+  color: #587b90;
+  font-size: 9px;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin-top: 6px;
+}
+
+.value-card {
+  position: relative;
+  height: 70px;
+  padding: 10px 10px 8px 49px;
+  overflow: hidden;
+  border: 1px solid rgba(54, 192, 222, .18);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 56, 82, .72),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-card.purple {
+  border-color: rgba(151, 125, 240, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(49, 43, 95, .60),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-card.orange {
+  border-color: rgba(235, 158, 60, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(85, 55, 27, .55),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-card.green {
+  border-color: rgba(47, 210, 178, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 75, 69, .54),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-number {
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  color: rgba(76, 223, 238, .22);
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.value-card.purple .value-number {
+  color: rgba(176, 153, 255, .22);
+}
+
+.value-card.orange .value-number {
+  color: rgba(255, 184, 88, .22);
+}
+
+.value-card.green .value-number {
+  color: rgba(74, 225, 193, .22);
+}
+
+.value-name {
+  color: #d3eff6;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.value-desc {
+  margin-top: 5px;
+  color: #688fa3;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.value-desc b {
+  color: #55dbc9;
+}
+
+.value-card.purple .value-desc b {
+  color: #b6a6ed;
+}
+
+.value-card.orange .value-desc b {
+  color: #ddb077;
+}
+
+.value-card.green .value-desc b {
+  color: #67cfb7;
+}
+
+/* ========================================
+   页脚、Toast
+======================================== */
+
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 17px;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #50758c;
+  font-size: 8px;
+  letter-spacing: .8px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 8px #3ee3c3;
+}
+
+.footer-right {
+  color: #3e637a;
+}
+
+.toast {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 105px;
+  min-width: 330px;
+  max-width: 560px;
+  padding: 12px 17px;
+  display: none;
+  transform: translateX(-50%);
+  border: 1px solid rgba(87, 220, 239, .28);
+  border-radius: 12px;
+  color: #dcfaff;
+  background: rgba(6, 35, 55, .95);
+  box-shadow: 0 12px 35px rgba(0,0,0,.35);
+  font-size: 12px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  transition: opacity .25s;
+}
+
+.phone button,
+.mini-debt,
+.space-card,
+.duration-item {
+  transition:
+    transform .15s ease,
+    filter .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.phone button:hover {
+  filter: brightness(1.05);
+}
+
+.phone button:active {
+  transform: scale(.97);
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景科技曲线 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#53cfff"/>
+          <stop offset="100%" stop-color="#8a67ff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 730 C220 662 320 758 498 681 C684 600 727 423 910 358 C1098 292 1303 419 1600 232"
+      />
+
+      <path
+        class="bg-dash"
+        d="M0 775 C247 713 386 799 570 724 C750 650 790 485 970 420 C1170 350 1370 421 1600 329"
+      />
+
+      <circle class="bg-dot" cx="498" cy="681" r="3"/>
+      <circle class="bg-dot" cx="910" cy="358" r="3"/>
+      <circle class="bg-dot" cx="1303" cy="419" r="3"/>
+    </svg>
+
+    <!-- 顶部标题 -->
+    <header class="header">
+      <!-- <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M9 20V14M5 17h4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M17 15h4M19 13v4"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>扫码停车服务：四类二维码直达不同业务流程</h1>
+
+          <div class="subtitle">
+            QR PARKING SERVICE · PAYMENT · COUPON · MONTHLY RENEWAL
+          </div>
+        </div>
+      </div> -->
+
+      <!-- <div class="header-message">
+        <strong>
+          二维码携带业务上下文，扫码后无需选择入口，直接进入<b>对应停车服务</b>
+        </strong>
+
+        <span>
+          停车场缴费 · 道路小票 · 商户优惠 · 包月续费
+        </span>
+      </div> -->
+    </header>
+
+    <!-- 流程标题 -->
+    <!-- <div class="process-title">
+      <span class="process-index">01</span>
+      <i class="process-line"></i>
+      <h2>一次扫码，按二维码来源自动加载车场、订单、优惠或车位权益</h2>
+
+      <span>
+        AUTO CONTEXT · PLATE QUERY · MERGED BILL · ONLINE PAYMENT
+      </span>
+    </div> -->
+
+    <!-- 四台手机 -->
+    <main class="phone-stage">
+
+      <!-- =================================================
+           01 停车场二维码
+      ================================================== -->
+      <section class="phone-group">
+        <div class="phone-label">
+          <i class="phone-step">01</i>
+
+          <div class="phone-label-text">
+            <strong>停车场二维码缴费</strong>
+            <span>输入车牌 · 临停 · 占位费 · 历史欠费</span>
+          </div>
+
+          <div class="phone-role">车道二维码</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">20:18</span>
+              <span class="mobile-icons">5G ▮▮▮ 86%</span>
+            </div>
+
+            <div class="h5-browser">
+              <span class="browser-back">‹</span>
+
+              <div class="browser-title">
+                <strong>停车场扫码缴费</strong>
+                <span>parking.huibo-cloud.cn</span>
+              </div>
+
+              <span class="browser-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="parking-banner">
+                <div class="banner-top">
+                  <strong>停车场二维码已识别</strong>
+                  <span>B2出口</span>
+                </div>
+
+                <div class="banner-title">
+                  惠泊中心地下停车场
+                </div>
+
+                <div class="banner-meta">
+                  缴费二维码 QRC-B2-008
+                </div>
+              </div>
+
+              <div class="plate-query-card">
+                <div class="plate-label">
+                  输入缴费车牌
+                  <span>支持新能源车牌</span>
+                </div>
+
+                <div class="plate-row">
+                  <input
+                    class="plate-input"
+                    id="parkingPlate"
+                    value="粤BA12345"
+                    maxlength="8"
+                  >
+
+                  <button
+                    class="plate-query-button"
+                    id="parkingQuery"
+                  >
+                    查询
+                  </button>
+                </div>
+              </div>
+
+              <div class="order-summary">
+                <div class="card-head">
+                  <div>
+                    <div class="order-plate">粤B·A12345</div>
+                    <div class="order-location">
+                      B1北入口 · P202607190001
+                    </div>
+                  </div>
+
+                  <div class="order-state">停车中</div>
+                </div>
+
+                <div class="info-row">
+                  <span>入场时间</span>
+                  <strong>2026-07-19 12:16</strong>
+                </div>
+
+                <div class="info-row">
+                  <span>停车时长</span>
+                  <strong>8小时02分钟</strong>
+                </div>
+
+                <div class="fee-grid">
+                  <div class="fee-cell">
+                    <span>停车费</span>
+                    <strong>¥38.00</strong>
+                  </div>
+
+                  <div class="fee-cell">
+                    <span>已优惠</span>
+                    <strong>¥0.00</strong>
+                  </div>
+
+                  <div class="fee-cell pay">
+                    <span>待支付</span>
+                    <strong>¥38.00</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="charging-fee">
+                <div class="charge-icon">⚡</div>
+
+                <div>
+                  <strong>充电满电超时占位费</strong>
+                  <span>超时41分钟 · 0.20元/分钟</span>
+                </div>
+
+                <div class="charge-amount">¥8.20</div>
+              </div>
+
+              <div class="mini-debt selected" data-debt="12">
+                <i class="mini-check">✓</i>
+
+                <div>
+                  <strong>科技路道路停车欠费</strong>
+                  <span>2026-07-12 · P018泊位</span>
+                </div>
+
+                <b>¥12.00</b>
+              </div>
+
+              <div class="mini-debt selected" data-debt="8">
+                <i class="mini-check">✓</i>
+
+                <div>
+                  <strong>惠泊南区历史欠费</strong>
+                  <span>2026-06-28 · 支付失败</span>
+                </div>
+
+                <b>¥8.00</b>
+              </div>
+
+              <button
+                class="primary-button"
+                id="parkingPay"
+              >
+                合并支付 ¥66.20
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           02 道路停车小票
+      ================================================== -->
+      <section class="phone-group purple">
+        <div class="phone-label">
+          <i class="phone-step">02</i>
+
+          <div class="phone-label-text">
+            <strong>道路停车小票缴费</strong>
+            <span>小票绑定车牌、路段和泊位，无需输入</span>
+          </div>
+
+          <div class="phone-role">道路小票</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">20:18</span>
+              <span class="mobile-icons">5G ▮▮▮ 90%</span>
+            </div>
+
+            <div class="h5-browser">
+              <span class="browser-back">‹</span>
+
+              <div class="browser-title">
+                <strong>道路停车小票缴费</strong>
+                <span>票据订单已自动识别</span>
+              </div>
+
+              <span class="browser-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="no-input-tip">
+                <i></i>
+                小票已绑定车牌、泊位和本次停车记录，无需再次输入车牌。
+              </div>
+
+              <div class="ticket">
+                <div class="ticket-brand">
+                  <strong>惠泊道路停车</strong>
+                  <span>待支付</span>
+                </div>
+
+                <div class="ticket-road">
+                  科技路道路停车
+                </div>
+
+                <div class="ticket-zone">
+                  科技园路内停车示范区
+                </div>
+
+                <div class="ticket-plate">
+                  <span>车牌号码</span>
+                  <strong>粤B·A12345</strong>
+                </div>
+
+                <div class="ticket-data">
+                  <div class="ticket-row">
+                    <span>泊位编号</span>
+                    <strong>P032</strong>
+                  </div>
+
+                  <div class="ticket-row">
+                    <span>停车开始</span>
+                    <strong>2026-07-19 16:32</strong>
+                  </div>
+
+                  <div class="ticket-row">
+                    <span>停车结束</span>
+                    <strong>2026-07-19 19:46</strong>
+                  </div>
+
+                  <div class="ticket-row">
+                    <span>停车时长</span>
+                    <strong>3小时14分钟</strong>
+                  </div>
+                </div>
+
+                <div class="ticket-total">
+                  <span>本次道路停车费</span>
+                  <strong>¥18.00</strong>
+                </div>
+
+                <div class="ticket-code">
+                  小票编号 RT202607190032
+                </div>
+              </div>
+
+              <div class="section-title">
+                <i></i>
+                可合并缴纳的历史欠费
+              </div>
+
+              <div class="mini-debt selected" data-road-debt="12">
+                <i class="mini-check">✓</i>
+
+                <div>
+                  <strong>科技路 P018 泊位欠费</strong>
+                  <span>2026-07-12 · 停车1小时35分钟</span>
+                </div>
+
+                <b>¥12.00</b>
+              </div>
+
+              <div class="mini-debt selected" data-road-debt="8">
+                <i class="mini-check">✓</i>
+
+                <div>
+                  <strong>惠泊南区停车场欠费</strong>
+                  <span>2026-06-28 · 出场支付失败</span>
+                </div>
+
+                <b>¥8.00</b>
+              </div>
+
+              <button
+                class="primary-button"
+                id="roadPay"
+              >
+                合并支付 ¥38.00
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           03 商户PDA优惠券
+      ================================================== -->
+      <section class="phone-group orange">
+        <div class="phone-label">
+          <i class="phone-step">03</i>
+
+          <div class="phone-label-text">
+            <strong>商户优惠券扫码结算</strong>
+            <span>先展示优惠 · 再输入车牌 · 试算临停费</span>
+          </div>
+
+          <div class="phone-role">商户发券码</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">20:18</span>
+              <span class="mobile-icons">5G ▮▮▮ 92%</span>
+            </div>
+
+            <div class="h5-browser">
+              <span class="browser-back">‹</span>
+
+              <div class="browser-title">
+                <strong>商户停车优惠</strong>
+                <span>星悦餐厅 · 惠泊中心店</span>
+              </div>
+
+              <span class="browser-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="coupon-ticket">
+                <div class="coupon-merchant">
+                  <strong>星悦餐厅 · 惠泊中心店</strong>
+                  <span>可使用</span>
+                </div>
+
+                <div class="coupon-value">
+                  免费停车 2 小时
+                </div>
+
+                <div class="coupon-name">
+                  商户停车优惠券
+                </div>
+
+                <div class="coupon-rule">
+                  适用：惠泊中心地下停车场<br>
+                  有效期至：2026-07-19 23:59
+                </div>
+
+                <div class="coupon-id">
+                  优惠凭证 CPN202607190086
+                </div>
+              </div>
+
+              <div class="plate-query-card">
+                <div class="plate-label">
+                  输入使用优惠的车牌
+                  <span>优惠尚未绑定车辆</span>
+                </div>
+
+                <div class="plate-row">
+                  <input
+                    class="plate-input"
+                    id="couponPlate"
+                    value="粤BA12345"
+                    maxlength="8"
+                  >
+
+                  <button
+                    class="plate-query-button"
+                    id="couponQuery"
+                  >
+                    查询
+                  </button>
+                </div>
+              </div>
+
+              <div class="coupon-order">
+                <div class="card-head">
+                  <div>
+                    <strong>粤B·A12345 · 当前临停</strong>
+                    <span>惠泊中心地下停车场</span>
+                  </div>
+
+                  <span class="small-badge">可使用</span>
+                </div>
+
+                <div class="coupon-discount-line">
+                  <span>当前临时停车费</span>
+                  <strong>¥38.00</strong>
+                </div>
+
+                <div class="coupon-discount-line">
+                  <span>充电超时占位费</span>
+                  <strong>¥8.20</strong>
+                </div>
+
+                <div class="coupon-discount-line discount">
+                  <span>2小时商户停车券</span>
+                  <strong>-¥16.00</strong>
+                </div>
+
+                <div class="coupon-discount-line total">
+                  <span>优惠后应付</span>
+                  <strong>¥30.20</strong>
+                </div>
+              </div>
+
+              <div class="mini-debt selected" data-coupon-debt="12">
+                <i class="mini-check">✓</i>
+
+                <div>
+                  <strong>合并道路停车欠费</strong>
+                  <span>科技路 P018 · 2026-07-12</span>
+                </div>
+
+                <b>¥12.00</b>
+              </div>
+
+              <button
+                class="primary-button"
+                id="couponPay"
+              >
+                优惠后合并支付 ¥42.20
+              </button>
+
+              <div style="
+                margin-top:6px;
+                color:#8a969f;
+                font-size:7px;
+                line-height:1.45;
+              ">
+                支付成功后优惠券完成核销；充电超时占位费不参与商户优惠。
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           04 包月车位续费
+      ================================================== -->
+      <section class="phone-group green">
+        <div class="phone-label">
+          <i class="phone-step">04</i>
+
+          <div class="phone-label-text">
+            <strong>包月车位合并续费</strong>
+            <span>查询名下车位 · 独立有效期 · 一次支付</span>
+          </div>
+
+          <div class="phone-role">续费二维码</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">20:18</span>
+              <span class="mobile-icons">5G ▮▮▮ 89%</span>
+            </div>
+
+            <div class="h5-browser">
+              <span class="browser-back">‹</span>
+
+              <div class="browser-title">
+                <strong>包月车位续费</strong>
+                <span>实名账户停车权益</span>
+              </div>
+
+              <span class="browser-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="plate-query-card">
+                <div class="plate-label">
+                  输入主车牌查询名下车位
+                  <span>支持家庭车位</span>
+                </div>
+
+                <div class="plate-row">
+                  <input
+                    class="plate-input"
+                    id="monthlyPlate"
+                    value="粤BA12345"
+                    maxlength="8"
+                  >
+
+                  <button
+                    class="plate-query-button"
+                    id="monthlyQuery"
+                  >
+                    查询
+                  </button>
+                </div>
+              </div>
+
+              <div class="owner-card">
+                <div class="owner-avatar">李</div>
+
+                <div>
+                  <strong>李先生 · 138****6688</strong>
+                  <span>查询到名下3个停车权益</span>
+                </div>
+
+                <div class="owner-state">已实名</div>
+              </div>
+
+              <div
+                class="space-card selected"
+                data-space-price="380"
+              >
+                <strong>惠泊中心 B1 · A-086</strong>
+                <span>固定车位 · 粤B·A12345</span>
+
+                <div class="space-valid">
+                  <em>有效至 2026-07-31</em>
+                  <b>¥380/月</b>
+                </div>
+
+                <i class="space-check">✓</i>
+              </div>
+
+              <div
+                class="space-card selected"
+                data-space-price="320"
+              >
+                <strong>惠泊中心 B2 · C-218</strong>
+                <span>家庭第二车位 · 粤B·D88666</span>
+
+                <div class="space-valid">
+                  <em>有效至 2026-08-15</em>
+                  <b>¥320/月</b>
+                </div>
+
+                <i class="space-check">✓</i>
+              </div>
+
+              <div
+                class="space-card"
+                data-space-price="180"
+              >
+                <strong>科技园区 · 夜间共享车位</strong>
+                <span>工作日19:00至次日08:00</span>
+
+                <div class="space-valid">
+                  <em>有效至 2026-09-30</em>
+                  <b>¥180/月</b>
+                </div>
+
+                <i class="space-check">✓</i>
+              </div>
+
+              <div class="section-title">
+                <i></i>
+                统一续费时长
+              </div>
+
+              <div class="duration-row">
+                <div class="duration-item active" data-month="1">
+                  <div>
+                    <strong>1个月</strong>
+                    标准价
+                  </div>
+                </div>
+
+                <div class="duration-item" data-month="3">
+                  <div>
+                    <strong>3个月</strong>
+                    优惠3%
+                  </div>
+                </div>
+
+                <div class="duration-item" data-month="12">
+                  <div>
+                    <strong>12个月</strong>
+                    优惠8%
+                  </div>
+                </div>
+              </div>
+
+              <div class="renew-summary">
+                <div class="renew-row">
+                  <span>已选车位</span>
+                  <strong id="spaceCount">2个</strong>
+                </div>
+
+                <div class="renew-row">
+                  <span>续费原价</span>
+                  <strong id="renewOriginal">¥700.00</strong>
+                </div>
+
+                <div class="renew-row discount">
+                  <span>长周期优惠</span>
+                  <strong id="renewDiscount">-¥0.00</strong>
+                </div>
+
+                <div class="renew-total">
+                  <span>合并续费应付</span>
+                  <strong id="renewTotal">¥700.00</strong>
+                </div>
+              </div>
+
+              <button
+                class="primary-button"
+                id="monthlyPay"
+              >
+                合并续费 ¥700.00
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 底部价值 -->
+    <section class="value-zone">
+      <!-- <div class="value-title">
+        不同二维码自动进入不同业务页面，用户无需判断入口类型或重复填写已知信息
+
+        <span>
+          车牌、订单、泊位、优惠与车位权益按扫码上下文自动加载
+        </span>
+      </div> -->
+
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="value-number">01</div>
+
+          <div class="value-name">停车场二维码：输入车牌</div>
+
+          <div class="value-desc">
+            查询当前临停、充电超时占位费及历史欠费，<b>支持多笔费用一次结清</b>
+          </div>
+        </div>
+
+        <div class="value-card purple">
+          <div class="value-number">02</div>
+
+          <div class="value-name">道路小票：订单直接带出</div>
+
+          <div class="value-desc">
+            小票已绑定车牌、路段和泊位，<b>无需再次输入车牌即可支付</b>
+          </div>
+        </div>
+
+        <div class="value-card orange">
+          <div class="value-number">03</div>
+
+          <div class="value-name">商户券码：先展示优惠</div>
+
+          <div class="value-desc">
+            用户确认优惠权益后输入车牌，<b>实时试算临停费用并完成核销</b>
+          </div>
+        </div>
+
+        <div class="value-card green">
+          <div class="value-number">04</div>
+
+          <div class="value-name">续费码：多车位合并续费</div>
+
+          <div class="value-desc">
+            每个车位展示独立有效期与价格，<b>选择多个权益后统一支付</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <!-- <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        微信与支付宝扫码直接打开标准H5页面，支付结果实时同步停车、充电、道路和商户系统
+      </div>
+
+      <div class="footer-right">
+        PARKING QR · ROAD TICKET · MERCHANT COUPON · MONTHLY RENEWAL
+      </div>
+    </footer> -->
+
+    <div class="toast" id="toast"></div>
+
+  </div>
+</div>
+
+<script>
+/* ========================================
+   画布缩放
+======================================== */
+
+function resizeStage() {
+  const stage = document.getElementById("stage");
+
+  const scale = Math.min(
+    window.innerWidth / 1600,
+    window.innerHeight / 900
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+
+/* ========================================
+   时间
+======================================== */
+
+function updateClocks() {
+  const time = new Date().toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+
+  document.querySelectorAll(".app-clock").forEach(function(item) {
+    item.textContent = time;
+  });
+}
+
+updateClocks();
+setInterval(updateClocks, 30000);
+
+/* ========================================
+   车牌标准化
+======================================== */
+
+function normalizePlate(plate) {
+  let value = String(plate || "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, "")
+    .replace(/[•．。]/g, "·")
+    .replace(/[-—_]/g, "");
+
+  value = value.replace(/·/g, "");
+
+  if (/^[\u4e00-\u9fa5][A-Z][A-Z0-9]{5,6}$/.test(value)) {
+    value = value.slice(0, 2) + "·" + value.slice(2);
+  }
+
+  return value;
+}
+
+function validatePlate(plate) {
+  return /^[\u4e00-\u9fa5][A-Z]·[A-Z0-9]{5,6}$/.test(
+    normalizePlate(plate)
+  );
+}
+
+/* ========================================
+   Toast
+======================================== */
+
+let toastTimer;
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+
+  toast.textContent = "✓ " + message;
+  toast.style.display = "block";
+  toast.style.opacity = "1";
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(function() {
+    toast.style.opacity = "0";
+
+    setTimeout(function() {
+      toast.style.display = "none";
+    }, 250);
+  }, 2200);
+}
+
+/* ========================================
+   查询按钮
+======================================== */
+
+document
+  .getElementById("parkingQuery")
+  .addEventListener("click", function() {
+    const input = document.getElementById("parkingPlate");
+    const plate = normalizePlate(input.value);
+
+    if (!validatePlate(plate)) {
+      showToast("请输入完整有效的车牌号码");
+      return;
+    }
+
+    input.value = plate;
+
+    showToast(
+      plate + "：已查询到临停、充电占位费及2笔历史欠费"
+    );
+  });
+
+document
+  .getElementById("couponQuery")
+  .addEventListener("click", function() {
+    const input = document.getElementById("couponPlate");
+    const plate = normalizePlate(input.value);
+
+    if (!validatePlate(plate)) {
+      showToast("请输入完整有效的车牌号码");
+      return;
+    }
+
+    input.value = plate;
+
+    showToast(
+      plate + "：停车订单查询成功，商户优惠可使用"
+    );
+  });
+
+document
+  .getElementById("monthlyQuery")
+  .addEventListener("click", function() {
+    const input = document.getElementById("monthlyPlate");
+    const plate = normalizePlate(input.value);
+
+    if (!validatePlate(plate)) {
+      showToast("请输入完整有效的车牌号码");
+      return;
+    }
+
+    input.value = plate;
+
+    showToast(
+      plate + "：已查询到名下3个包月停车权益"
+    );
+  });
+
+/* ========================================
+   停车场欠费选择
+======================================== */
+
+function updateParkingTotal() {
+  let debt = 0;
+
+  document
+    .querySelectorAll("[data-debt].selected")
+    .forEach(function(item) {
+      debt += Number(item.dataset.debt);
+    });
+
+  const total = 38 + 8.2 + debt;
+
+  document.getElementById("parkingPay").textContent =
+    "合并支付 ¥" + total.toFixed(2);
+}
+
+document.querySelectorAll("[data-debt]").forEach(function(item) {
+  item.addEventListener("click", function() {
+    item.classList.toggle("selected");
+    updateParkingTotal();
+  });
+});
+
+/* ========================================
+   道路欠费选择
+======================================== */
+
+function updateRoadTotal() {
+  let debt = 0;
+
+  document
+    .querySelectorAll("[data-road-debt].selected")
+    .forEach(function(item) {
+      debt += Number(item.dataset.roadDebt);
+    });
+
+  const total = 18 + debt;
+
+  document.getElementById("roadPay").textContent =
+    "合并支付 ¥" + total.toFixed(2);
+}
+
+document.querySelectorAll("[data-road-debt]").forEach(function(item) {
+  item.addEventListener("click", function() {
+    item.classList.toggle("selected");
+    updateRoadTotal();
+  });
+});
+
+/* ========================================
+   商户券欠费选择
+======================================== */
+
+function updateCouponTotal() {
+  let debt = 0;
+
+  document
+    .querySelectorAll("[data-coupon-debt].selected")
+    .forEach(function(item) {
+      debt += Number(item.dataset.couponDebt);
+    });
+
+  const total = 38 + 8.2 - 16 + debt;
+
+  document.getElementById("couponPay").textContent =
+    "优惠后合并支付 ¥" + total.toFixed(2);
+}
+
+document.querySelectorAll("[data-coupon-debt]").forEach(function(item) {
+  item.addEventListener("click", function() {
+    item.classList.toggle("selected");
+    updateCouponTotal();
+  });
+});
+
+/* ========================================
+   包月车位与月份选择
+======================================== */
+
+let selectedMonths = 1;
+
+function getDiscountRate(months) {
+  if (months === 3) return .03;
+  if (months === 12) return .08;
+  return 0;
+}
+
+function updateRenewTotal() {
+  let monthlyTotal = 0;
+  let count = 0;
+
+  document
+    .querySelectorAll(".space-card.selected")
+    .forEach(function(item) {
+      monthlyTotal += Number(item.dataset.spacePrice);
+      count += 1;
+    });
+
+  const original = monthlyTotal * selectedMonths;
+  const discount = original * getDiscountRate(selectedMonths);
+  const total = original - discount;
+
+  document.getElementById("spaceCount").textContent =
+    count + "个";
+
+  document.getElementById("renewOriginal").textContent =
+    "¥" + original.toFixed(2);
+
+  document.getElementById("renewDiscount").textContent =
+    "-¥" + discount.toFixed(2);
+
+  document.getElementById("renewTotal").textContent =
+    "¥" + total.toFixed(2);
+
+  document.getElementById("monthlyPay").textContent =
+    count
+      ? "合并续费 ¥" + total.toFixed(2)
+      : "请至少选择一个车位";
+}
+
+document.querySelectorAll(".space-card").forEach(function(item) {
+  item.addEventListener("click", function() {
+    item.classList.toggle("selected");
+    updateRenewTotal();
+  });
+});
+
+document.querySelectorAll(".duration-item").forEach(function(item) {
+  item.addEventListener("click", function() {
+    document.querySelectorAll(".duration-item").forEach(function(option) {
+      option.classList.remove("active");
+    });
+
+    item.classList.add("active");
+    selectedMonths = Number(item.dataset.month);
+    updateRenewTotal();
+  });
+});
+
+/* ========================================
+   支付按钮
+======================================== */
+
+document
+  .getElementById("parkingPay")
+  .addEventListener("click", function() {
+    showToast("已进入停车场合并费用收银台");
+  });
+
+document
+  .getElementById("roadPay")
+  .addEventListener("click", function() {
+    showToast("道路小票及历史欠费已合并，正在进入收银台");
+  });
+
+document
+  .getElementById("couponPay")
+  .addEventListener("click", function() {
+    showToast("优惠已锁定，支付成功后自动完成核销");
+  });
+
+document
+  .getElementById("monthlyPay")
+  .addEventListener("click", function() {
+    const count =
+      document.querySelectorAll(".space-card.selected").length;
+
+    if (!count) {
+      showToast("请至少选择一个需要续费的车位");
+      return;
+    }
+
+    showToast(
+      "已生成" + count + "个车位的合并续费订单"
+    );
+  });
+
+/* 初始化 */
+
+updateParkingTotal();
+updateRoadTotal();
+updateCouponTotal();
+updateRenewTotal();
+</script>
+
+</body>
+</html>

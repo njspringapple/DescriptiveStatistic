@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光伏储能系统监测中心</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 48% 42%, rgba(0, 197, 255, .18), transparent 32%),
+    radial-gradient(circle at 88% 17%, rgba(118, 84, 255, .13), transparent 25%),
+    radial-gradient(circle at 11% 78%, rgba(41, 229, 166, .08), transparent 28%),
+    linear-gradient(135deg, #040c19 0%, #07172c 48%, #061327 73%, #040c19 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .30) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .30) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, transparent 1%, #000 15%, #000 91%, transparent);
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 405px;
+  top: 42px;
+  width: 825px;
+  height: 825px;
+  border: 1px solid rgba(64, 191, 255, .055);
+  border-radius: 50%;
+  box-shadow:
+    0 0 145px rgba(0, 184, 255, .055),
+    inset 0 0 145px rgba(0, 184, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.1;
+  opacity: .17;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #46dce9;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .13;
+  animation: backgroundFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #59e7f3;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes backgroundFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* 顶部 */
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  flex: 0 0 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #27d9dc);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 216, 240, .13);
+  border-radius: 18px;
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.header-message {
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #dff8ff;
+  font-size: 15px;
+  letter-spacing: .5px;
+}
+
+.header-message strong b {
+  color: #57e8cf;
+}
+
+.header-message span {
+  color: #6b94ad;
+  font-size: 10.5px;
+}
+
+/* 顶部标签 */
+.concepts {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 101px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.concept {
+  height: 34px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(61, 181, 226, .20);
+  border-radius: 17px;
+  color: #8ebdd0;
+  font-size: 9.2px;
+  background: rgba(11, 48, 77, .56);
+  white-space: nowrap;
+}
+
+.concept i {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: #4bdfe9;
+  box-shadow: 0 0 7px #4bdfe9;
+}
+
+.concept strong {
+  color: #d2eef6;
+  font-weight: 700;
+}
+
+.concept.green i {
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+.concept.orange i {
+  background: #ffb24f;
+  box-shadow: 0 0 7px #ffb24f;
+}
+
+.concept.purple i {
+  background: #a990ff;
+  box-shadow: 0 0 7px #a990ff;
+}
+
+/* 通用卡片 */
+.panel {
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid rgba(66, 169, 237, .22);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(16, 50, 85, .91), rgba(7, 25, 48, .93));
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.panel.green {
+  border-color: rgba(49, 214, 178, .24);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(31, 192, 153, .09), transparent 31%),
+    linear-gradient(145deg, rgba(13, 69, 72, .66), rgba(7, 28, 52, .93));
+}
+
+.panel.green::before {
+  background: linear-gradient(90deg, transparent, #50e5c5, transparent);
+}
+
+.panel.purple {
+  border-color: rgba(151, 123, 246, .26);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(114, 80, 234, .10), transparent 31%),
+    linear-gradient(145deg, rgba(48, 42, 100, .72), rgba(7, 27, 52, .93));
+}
+
+.panel.purple::before {
+  background: linear-gradient(90deg, transparent, #a68fff, transparent);
+}
+
+.panel.orange {
+  border-color: rgba(241, 162, 59, .26);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(224, 135, 31, .10), transparent 31%),
+    linear-gradient(145deg, rgba(72, 47, 27, .64), rgba(6, 25, 47, .94));
+}
+
+.panel.orange::before {
+  background: linear-gradient(90deg, transparent, #ffb24d, transparent);
+}
+
+.panel-head {
+  position: relative;
+  z-index: 2;
+  height: 48px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.panel-index {
+  color: #668ca0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.panel-line {
+  width: 22px;
+  height: 2px;
+  flex: 0 0 22px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #318fff, #4ae0ff);
+}
+
+.panel.green .panel-line {
+  background: linear-gradient(90deg, #31c4a4, #55e5c6);
+}
+
+.panel.purple .panel-line {
+  background: linear-gradient(90deg, #8268ef, #b5a3ff);
+}
+
+.panel.orange .panel-line {
+  background: linear-gradient(90deg, #ff9d32, #ffd27d);
+}
+
+.panel-head h2 {
+  margin: 0;
+  color: #e2f4fb;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.panel-en {
+  margin-left: auto;
+  color: #66869a;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* 主体 */
+.main-area {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 158px;
+  height: 520px;
+}
+
+.energy-flow {
+  left: 0;
+  top: 0;
+  width: 452px;
+  height: 520px;
+}
+
+.monitor-center {
+  left: 474px;
+  top: 0;
+  width: 570px;
+  height: 520px;
+}
+
+.ai-panel {
+  right: 0;
+  top: 0;
+  width: 438px;
+  height: 520px;
+}
+
+/* 左侧能源图 */
+.energy-map {
+  position: relative;
+  z-index: 2;
+  height: 438px;
+  margin: 0 15px 15px;
+  border: 1px solid rgba(58, 184, 222, .15);
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 48% 40%, rgba(0, 191, 228, .10), transparent 45%),
+    rgba(4, 28, 51, .64);
+}
+
+.map-title {
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  z-index: 5;
+  color: #b6d8e2;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.map-title span {
+  display: block;
+  margin-top: 4px;
+  color: #668fa4;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.energy-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.energy-line {
+  fill: none;
+  stroke: #4bd9ed;
+  stroke-width: 1.6;
+  stroke-dasharray: 6 7;
+  opacity: .68;
+  animation: lineFlow 9s linear infinite;
+}
+
+.energy-line.green {
+  stroke: #4ce0c0;
+}
+
+.energy-line.orange {
+  stroke: #ffb24d;
+}
+
+.energy-line.purple {
+  stroke: #a68fff;
+}
+
+.energy-node {
+  fill: #59e8f3;
+  filter: drop-shadow(0 0 6px #26d8ee);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+.energy-source {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border: 1px solid rgba(68, 202, 235, .20);
+  border-radius: 13px;
+  background: rgba(7, 42, 68, .70);
+  box-shadow: 0 12px 28px rgba(0, 4, 16, .22);
+}
+
+.source-icon {
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #5ddff1;
+  background: rgba(25, 149, 190, .15);
+  border: 1px solid rgba(67, 205, 235, .15);
+}
+
+.source-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.energy-source strong {
+  display: block;
+  margin-top: 7px;
+  color: #d9f2f8;
+  font-size: 10px;
+}
+
+.energy-source span {
+  display: block;
+  margin-top: 4px;
+  color: #74a0b3;
+  font-size: 7px;
+}
+
+.source-pv {
+  left: 150px;
+  top: 55px;
+  width: 122px;
+  height: 91px;
+}
+
+.source-storage {
+  left: 40px;
+  top: 196px;
+  width: 120px;
+  height: 91px;
+  border-color: rgba(49, 211, 177, .20);
+  background: rgba(7, 56, 58, .60);
+}
+
+.source-storage .source-icon {
+  color: #56e3c5;
+  background: rgba(31, 174, 139, .14);
+}
+
+.source-charger {
+  right: 42px;
+  top: 196px;
+  width: 120px;
+  height: 91px;
+  border-color: rgba(151, 123, 246, .20);
+  background: rgba(44, 38, 92, .58);
+}
+
+.source-charger .source-icon {
+  color: #c7b6ff;
+  background: rgba(127, 90, 218, .16);
+}
+
+.source-grid {
+  left: 154px;
+  bottom: 36px;
+  width: 118px;
+  height: 87px;
+  border-color: rgba(241, 162, 59, .20);
+  background: rgba(81, 51, 22, .50);
+}
+
+.source-grid .source-icon {
+  color: #ffc16c;
+  background: rgba(191, 123, 46, .14);
+}
+
+.source-load {
+  left: 156px;
+  top: 202px;
+  width: 114px;
+  height: 80px;
+  background: rgba(5, 31, 56, .72);
+}
+
+.source-load .source-icon {
+  width: 31px;
+  height: 31px;
+}
+
+.source-load strong {
+  font-size: 9px;
+}
+
+.map-stats {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 11px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.map-stat {
+  height: 48px;
+  padding: 7px 8px;
+  border: 1px solid rgba(58, 178, 217, .13);
+  border-radius: 9px;
+  background: rgba(5, 31, 56, .55);
+}
+
+.map-stat strong {
+  display: block;
+  color: #d5f0f7;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-stat span {
+  display: block;
+  margin-top: 5px;
+  color: #6e96aa;
+  font-size: 7px;
+}
+
+/* 中间监测 */
+.dashboard {
+  position: relative;
+  z-index: 2;
+  height: 438px;
+  margin: 0 16px 15px;
+  border: 1px solid rgba(58, 184, 222, .16);
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 192, 230, .13), transparent 45%),
+    rgba(4, 27, 51, .70);
+}
+
+.dashboard-title {
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  z-index: 5;
+  color: #b6d8e2;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dashboard-title span {
+  display: block;
+  margin-top: 4px;
+  color: #668fa4;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.hub {
+  position: absolute;
+  left: 174px;
+  top: 73px;
+  width: 188px;
+  height: 188px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(67, 229, 239, .37);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(18, 132, 162, .70), rgba(5, 42, 70, .94) 68%);
+  box-shadow:
+    0 0 48px rgba(0, 211, 234, .22),
+    inset 0 0 38px rgba(0, 218, 234, .13);
+}
+
+.hub::before {
+  content: "";
+  position: absolute;
+  inset: 13px;
+  border: 1px dashed rgba(84, 231, 239, .27);
+  border-radius: 50%;
+  animation: rotate 18s linear infinite;
+}
+
+.hub::after {
+  content: "";
+  position: absolute;
+  inset: 33px;
+  border: 1px solid rgba(96, 225, 238, .13);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hub-symbol {
+  position: relative;
+  z-index: 3;
+  width: 76px;
+  height: 82px;
+}
+
+.hub-symbol .solar {
+  position: absolute;
+  left: 1px;
+  top: 8px;
+  width: 39px;
+  height: 28px;
+  border: 3px solid #e2fcff;
+  border-radius: 4px;
+  box-shadow: 0 0 18px rgba(94, 235, 249, .42);
+}
+
+.hub-symbol .solar::before,
+.hub-symbol .solar::after {
+  content: "";
+  position: absolute;
+  background: #e2fcff;
+  opacity: .8;
+}
+
+.hub-symbol .solar::before {
+  left: 10px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+}
+
+.hub-symbol .solar::after {
+  left: 0;
+  top: 11px;
+  width: 100%;
+  height: 2px;
+}
+
+.hub-symbol .battery {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  width: 35px;
+  height: 48px;
+  border: 4px solid #89ffe7;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(61, 235, 204, .68));
+}
+
+.hub-symbol .battery::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: -9px;
+  width: 11px;
+  height: 6px;
+  border-radius: 3px 3px 0 0;
+  background: #89ffe7;
+}
+
+.hub-symbol .bolt {
+  position: absolute;
+  left: 32px;
+  top: 36px;
+  width: 18px;
+  height: 32px;
+  clip-path: polygon(56% 0, 13% 55%, 43% 55%, 29% 100%, 88% 40%, 56% 40%);
+  background: linear-gradient(180deg, #fff3a6, #33e0c5);
+  filter: drop-shadow(0 0 7px rgba(61, 235, 204, .78));
+}
+
+.monitor-grid {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 282px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.monitor-card {
+  height: 118px;
+  padding: 10px 9px;
+  border: 1px solid rgba(58, 177, 217, .13);
+  border-radius: 10px;
+  background: rgba(5, 31, 56, .58);
+}
+
+.monitor-card.green {
+  border-color: rgba(48, 194, 160, .14);
+  background: rgba(7, 48, 55, .53);
+}
+
+.monitor-card.purple {
+  border-color: rgba(145, 121, 228, .14);
+  background: rgba(24, 27, 62, .55);
+}
+
+.monitor-card.orange {
+  border-color: rgba(236, 153, 49, .15);
+  background: rgba(85, 54, 24, .39);
+}
+
+.monitor-card strong {
+  display: block;
+  color: #d6eef5;
+  font-size: 10px;
+}
+
+.monitor-card span {
+  display: block;
+  margin-top: 7px;
+  color: #7ba2b2;
+  font-size: 7.5px;
+  line-height: 1.55;
+}
+
+.monitor-value {
+  margin-top: 8px;
+  color: #56d9f1;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.monitor-card.green .monitor-value {
+  color: #58dfc2;
+}
+
+.monitor-card.purple .monitor-value {
+  color: #bdaeff;
+}
+
+.monitor-card.orange .monitor-value {
+  color: #ffbd6d;
+}
+
+.asset-strip {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 42px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+}
+
+.asset-chip {
+  height: 39px;
+  padding: 7px 6px;
+  border: 1px solid rgba(65, 184, 223, .13);
+  border-radius: 8px;
+  background: rgba(4, 34, 58, .60);
+  color: #9fc9d6;
+  font-size: 8px;
+  text-align: center;
+}
+
+.asset-chip b {
+  display: block;
+  margin-bottom: 3px;
+  color: #d6eef5;
+  font-size: 8.5px;
+}
+
+.status-panel {
+  position: absolute;
+  left: 32px;
+  top: 95px;
+  width: 123px;
+  display: grid;
+  gap: 7px;
+}
+
+.status-panel.right {
+  left: auto;
+  right: 32px;
+}
+
+.status-item {
+  height: 42px;
+  padding: 8px 9px;
+  border: 1px solid rgba(62, 202, 224, .13);
+  border-radius: 9px;
+  background: rgba(5, 31, 56, .58);
+}
+
+.status-item strong {
+  display: block;
+  color: #bcdde7;
+  font-size: 9px;
+}
+
+.status-item span {
+  display: block;
+  margin-top: 4px;
+  color: #6b93a7;
+  font-size: 7px;
+}
+
+/* 右侧 AI */
+.ai-content {
+  position: relative;
+  z-index: 2;
+  margin: 0 15px 15px;
+  height: 438px;
+  display: grid;
+  grid-template-rows: 120px 1fr 95px;
+  gap: 10px;
+}
+
+.ai-summary {
+  padding: 13px;
+  border: 1px solid rgba(151, 123, 246, .16);
+  border-radius: 13px;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(161, 137, 255, .12), transparent 42%),
+    rgba(25, 27, 62, .57);
+}
+
+.ai-summary strong {
+  display: block;
+  color: #e2dafb;
+  font-size: 13px;
+}
+
+.ai-summary span {
+  display: block;
+  margin-top: 8px;
+  color: #8f8aaa;
+  font-size: 8.5px;
+  line-height: 1.65;
+}
+
+.ai-kpi {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.ai-kpi div {
+  height: 35px;
+  padding: 6px;
+  border-radius: 8px;
+  text-align: center;
+  background: rgba(83, 62, 141, .25);
+}
+
+.ai-kpi b {
+  display: block;
+  color: #c7b6ff;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-kpi em {
+  display: block;
+  margin-top: 3px;
+  color: #827ca3;
+  font-size: 6.5px;
+  font-style: normal;
+}
+
+.suggestions {
+  display: grid;
+  gap: 8px;
+}
+
+.suggestion {
+  position: relative;
+  padding: 10px 11px 10px 37px;
+  border: 1px solid rgba(65, 184, 223, .13);
+  border-radius: 11px;
+  background: rgba(5, 31, 56, .52);
+}
+
+.suggestion i {
+  position: absolute;
+  left: 11px;
+  top: 12px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(75, 223, 233, .15);
+  border: 1px solid rgba(75, 223, 233, .25);
+}
+
+.suggestion i::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #4bdfe9;
+  box-shadow: 0 0 7px #4bdfe9;
+}
+
+.suggestion.orange i {
+  background: rgba(255, 178, 79, .13);
+  border-color: rgba(255, 178, 79, .24);
+}
+
+.suggestion.orange i::after {
+  background: #ffb24f;
+  box-shadow: 0 0 7px #ffb24f;
+}
+
+.suggestion.green i {
+  background: rgba(76, 224, 192, .13);
+  border-color: rgba(76, 224, 192, .24);
+}
+
+.suggestion.green i::after {
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+.suggestion strong {
+  display: block;
+  color: #d7f1fa;
+  font-size: 10px;
+}
+
+.suggestion span {
+  display: block;
+  margin-top: 5px;
+  color: #7fa4b4;
+  font-size: 7.6px;
+  line-height: 1.5;
+}
+
+.alarm-box {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.alarm-level {
+  padding: 9px;
+  border: 1px solid rgba(236, 153, 49, .16);
+  border-radius: 10px;
+  background: rgba(85, 54, 24, .39);
+}
+
+.alarm-level.green {
+  border-color: rgba(48, 194, 160, .15);
+  background: rgba(7, 48, 55, .48);
+}
+
+.alarm-level strong {
+  display: block;
+  color: #ffe0b5;
+  font-size: 10px;
+}
+
+.alarm-level.green strong {
+  color: #b7e7dc;
+}
+
+.alarm-level span {
+  display: block;
+  margin-top: 6px;
+  color: #b39470;
+  font-size: 7.5px;
+  line-height: 1.45;
+}
+
+.alarm-level.green span {
+  color: #7eb4a8;
+}
+
+/* 底部价值 */
+.value-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 48px;
+  height: 154px;
+}
+
+.value-title {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8ab2c6;
+  font-size: 9.8px;
+  letter-spacing: 1px;
+}
+
+.value-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  flex: 0 0 20px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #29bdff, #45e6ce);
+}
+
+.value-title span {
+  margin-left: auto;
+  color: #58788d;
+  font-size: 8px;
+}
+
+.value-grid {
+  height: 122px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+}
+
+.value-card {
+  position: relative;
+  height: 119px;
+  padding: 14px 16px;
+  overflow: hidden;
+  border: 1px solid rgba(58, 178, 217, .18);
+  border-radius: 13px;
+  background: linear-gradient(145deg, rgba(12, 49, 78, .82), rgba(6, 26, 48, .86));
+}
+
+.value-card.green {
+  border-color: rgba(49, 210, 177, .21);
+  background: linear-gradient(145deg, rgba(13, 69, 70, .46), rgba(7, 28, 51, .85));
+}
+
+.value-card.orange {
+  border-color: rgba(229, 159, 71, .20);
+  background: linear-gradient(145deg, rgba(88, 58, 29, .43), rgba(8, 29, 51, .86));
+}
+
+.value-card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.value-card.green::before {
+  background: linear-gradient(90deg, transparent, #4ce0c0, transparent);
+}
+
+.value-card.orange::before {
+  background: linear-gradient(90deg, transparent, #ffb24d, transparent);
+}
+
+.value-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.value-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #55e0f0;
+  background: rgba(23, 143, 184, .14);
+  border: 1px solid rgba(64, 202, 230, .15);
+}
+
+.value-card.green .value-icon {
+  color: #58dfc2;
+  background: rgba(31, 173, 138, .14);
+  border-color: rgba(58, 210, 177, .16);
+}
+
+.value-card.orange .value-icon {
+  color: #f0bc72;
+  background: rgba(191, 123, 46, .14);
+  border-color: rgba(229, 159, 71, .16);
+}
+
+.value-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.value-name {
+  color: #def3f9;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.value-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 12px;
+  color: #7fa5b6;
+  font-size: 8.2px;
+  line-height: 1.55;
+}
+
+.value-tags {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.value-tag {
+  padding: 4px 7px;
+  border-radius: 7px;
+  color: #80b4c6;
+  font-size: 7.3px;
+  background: rgba(17, 70, 98, .48);
+}
+
+.value-card.green .value-tag {
+  color: #79c6b5;
+  background: rgba(22, 117, 97, .24);
+}
+
+.value-card.orange .value-tag {
+  color: #dfb071;
+  background: rgba(120, 76, 28, .27);
+}
+
+/* 页脚 */
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #486f87;
+  font-size: 8px;
+  letter-spacing: 1.1px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<div id="stage">
+  <div class="content">
+
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="backgroundGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 727 C222 660 317 760 495 683 C682 601 723 422 908 358 C1096 293 1303 418 1600 232"
+      />
+      <path
+        class="bg-line-dash"
+        d="M0 772 C247 712 386 799 568 724 C747 650 789 485 969 420 C1170 350 1371 421 1600 329"
+      />
+      <circle class="bg-dot" cx="495" cy="683" r="3"/>
+      <circle class="bg-dot" cx="908" cy="358" r="3"/>
+      <circle class="bg-dot" cx="1303" cy="418" r="3"/>
+    </svg>
+
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V9l7-5 7 5v11"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M8 20v-6h8v6M8 9h8"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M17 4l-2 4h2l-1 4 4-6h-2l1-2h-2z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>光伏 / 储能系统监测与能源管理中心</h1>
+          <div class="subtitle">PV · ENERGY STORAGE · CHARGING · PARKING ENERGY OPERATION</div>
+        </div>
+      </div>
+
+      <div class="header-message">
+        <strong>能源看得见、设备管得住、收益算得清、策略可<b>智能优化</b></strong>
+        <span>光伏发电 · 储能安全 · 充电负荷 · 停车用电 · 能源收益 · AI 调度</span>
+      </div>
+    </header>
+
+    <section class="concepts">
+      <div class="concept"><i></i><strong>一张能源图</strong> 光储充用全链路</div>
+      <div class="concept green"><i></i><strong>一站一策略</strong> 自发自用与削峰填谷</div>
+      <div class="concept purple"><i></i><strong>一柜一健康</strong> SOC / SOH / 热失控预警</div>
+      <div class="concept orange"><i></i><strong>一账算清</strong> 电费、收益、ROI、碳减排</div>
+      <div class="concept green"><i></i><strong>一键优化</strong> AI 策略与工单闭环</div>
+    </section>
+
+    <main class="main-area">
+
+      <section class="panel energy-flow">
+        <div class="panel-head">
+          <span class="panel-index">01</span>
+          <i class="panel-line"></i>
+          <h2>能源流向一张图</h2>
+          <span class="panel-en">ENERGY FLOW</span>
+        </div>
+
+        <div class="energy-map">
+          <div class="map-title">
+            光储充用协同监测
+            <span>光伏、储能、电网、充电桩与停车设备统一纳管</span>
+          </div>
+
+          <svg class="energy-svg" viewBox="0 0 422 438">
+            <path class="energy-line" d="M211 146 V198"/>
+            <path class="energy-line green" d="M211 240 C170 240 160 241 160 241"/>
+            <path class="energy-line purple" d="M211 240 C252 240 262 241 262 241"/>
+            <path class="energy-line orange" d="M211 282 V314"/>
+            <path class="energy-line green" d="M160 242 C175 294 190 307 211 314"/>
+            <path class="energy-line purple" d="M262 242 C247 294 232 307 211 314"/>
+            <circle class="energy-node" cx="211" cy="171" r="3.3"/>
+            <circle class="energy-node" cx="184" cy="240" r="3.3"/>
+            <circle class="energy-node" cx="238" cy="240" r="3.3"/>
+            <circle class="energy-node" cx="211" cy="299" r="3.3"/>
+          </svg>
+
+          <div class="energy-source source-pv">
+            <div class="source-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 9h16l-2 8H6L4 9z" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M8 9l-1 8M12 9v8M16 9l1 8M6 13h12" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M12 3v3M6 5l2 2M18 5l-2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <strong>光伏发电</strong>
+            <span>车棚 / 屋顶 / 路侧微光伏</span>
+          </div>
+
+          <div class="energy-source source-load">
+            <div class="source-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 20V8h5v12M14 20V4h5v16M3 20h18" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <strong>停车设备</strong>
+            <span>视频桩 / 道闸 / 照明</span>
+          </div>
+
+          <div class="energy-source source-storage">
+            <div class="source-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="6" y="5" width="12" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M10 3h4M9 10h6M9 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <strong>储能系统</strong>
+            <span>SOC / SOH / 备电 / 削峰</span>
+          </div>
+
+          <div class="energy-source source-charger">
+            <div class="source-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="5" y="3" width="11" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 7h5M16 7h2l2 2v7a2 2 0 0 1-4 0v-3" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <strong>充电桩负荷</strong>
+            <span>订单 / 功率 / 绿电占比</span>
+          </div>
+
+          <div class="energy-source source-grid">
+            <div class="source-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3l7 6v11H5V9l7-6z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+            </div>
+            <strong>电网并网</strong>
+            <span>购电 / 上网 / 需量控制</span>
+          </div>
+
+          <div class="map-stats">
+            <div class="map-stat">
+              <strong>1,286 kWh</strong>
+              <span>今日光伏发电</span>
+            </div>
+            <div class="map-stat">
+              <strong>76%</strong>
+              <span>储能 SOC</span>
+            </div>
+            <div class="map-stat">
+              <strong>68%</strong>
+              <span>绿电消纳率</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel monitor-center green">
+        <div class="panel-head">
+          <span class="panel-index">02</span>
+          <i class="panel-line"></i>
+          <h2>四类核心监测</h2>
+          <span class="panel-en">MONITORING</span>
+        </div>
+
+        <div class="dashboard">
+          <div class="dashboard-title">
+            光储充能源运行中枢
+            <span>实时监测、异常诊断、收益分析与运维闭环</span>
+          </div>
+
+          <div class="asset-strip">
+            <div class="asset-chip"><b>逆变器</b>12 台在线</div>
+            <div class="asset-chip"><b>储能柜</b>4 组健康</div>
+            <div class="asset-chip"><b>BMS / PCS</b>通信正常</div>
+            <div class="asset-chip"><b>充电桩</b>28 枪在线</div>
+            <div class="asset-chip"><b>配电监控</b>负载 63%</div>
+          </div>
+
+          <div class="status-panel">
+            <div class="status-item">
+              <strong>发电功率</strong>
+              <span>186.5 kW · 正常</span>
+            </div>
+            <div class="status-item">
+              <strong>组串状态</strong>
+              <span>2 处效率偏低</span>
+            </div>
+            <div class="status-item">
+              <strong>停车用电</strong>
+              <span>照明占比 38%</span>
+            </div>
+          </div>
+
+          <div class="status-panel right">
+            <div class="status-item">
+              <strong>储能功率</strong>
+              <span>-72.8 kW · 放电</span>
+            </div>
+            <div class="status-item">
+              <strong>温差压差</strong>
+              <span>风险等级低</span>
+            </div>
+            <div class="status-item">
+              <strong>充电负荷</strong>
+              <span>峰值预测 21:00</span>
+            </div>
+          </div>
+
+          <div class="hub">
+            <div class="hub-symbol">
+              <i class="solar"></i>
+              <i class="battery"></i>
+              <i class="bolt"></i>
+            </div>
+          </div>
+
+          <div class="monitor-grid">
+            <div class="monitor-card">
+              <strong>光伏监测</strong>
+              <div class="monitor-value">96.2%</div>
+              <span>发电效率、逆变器、组串、辐照度与发电偏低预警。</span>
+            </div>
+            <div class="monitor-card green">
+              <strong>储能监测</strong>
+              <div class="monitor-value">SOC 76</div>
+              <span>充放电功率、SOH、电芯温度、电池一致性与消防联动。</span>
+            </div>
+            <div class="monitor-card purple">
+              <strong>用能监测</strong>
+              <div class="monitor-value">¥0.18</div>
+              <span>单泊位能耗成本、关键设备用电与高能耗点位识别。</span>
+            </div>
+            <div class="monitor-card orange">
+              <strong>收益监测</strong>
+              <div class="monitor-value">ROI 8.6</div>
+              <span>发电收益、峰谷套利、充电收入、节省电费与碳减排。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel ai-panel purple">
+        <div class="panel-head">
+          <span class="panel-index">03</span>
+          <i class="panel-line"></i>
+          <h2>AI 优化建议与安全闭环</h2>
+          <span class="panel-en">AI OPTIMIZATION</span>
+        </div>
+
+        <div class="ai-content">
+          <div class="ai-summary">
+            <strong>AI 能源运营助手</strong>
+            <span>不只是展示数据，而是面向收益、安全和低碳目标给出可执行策略，并可自动生成周报、月报与 Excel 明细。</span>
+            <div class="ai-kpi">
+              <div><b>+12%</b><em>绿电自用提升</em></div>
+              <div><b>¥1.8万</b><em>月度节费预测</em></div>
+              <div><b>3 起</b><em>高风险待处理</em></div>
+            </div>
+          </div>
+
+          <div class="suggestions">
+            <div class="suggestion green">
+              <i></i>
+              <strong>明日发电预测与储能计划</strong>
+              <span>预计发电 1,420 kWh，建议 10:30 - 14:00 储能充电，18:00 后优先支撑充电高峰。</span>
+            </div>
+
+            <div class="suggestion orange">
+              <i></i>
+              <strong>低效组件与清洗建议</strong>
+              <span>西区车棚 3 号阵列发电效率低于基准 13%，疑似积灰或遮挡，建议生成清洗工单。</span>
+            </div>
+
+            <div class="suggestion">
+              <i></i>
+              <strong>停车业务联动优化</strong>
+              <span>大型活动前 2 小时提高储能备电比例，优先保障视频桩、诱导屏、道闸和照明。</span>
+            </div>
+
+            <div class="suggestion green">
+              <i></i>
+              <strong>建设点位投资建议</strong>
+              <span>P3 停车场白天车棚遮阳需求高、充电负荷稳定，适合新增 320 kWp 光伏车棚。</span>
+            </div>
+          </div>
+
+          <div class="alarm-box">
+            <div class="alarm-level">
+              <strong>安全告警闭环</strong>
+              <span>热失控、消防、配电跳闸、逆变器停机自动升级工单。</span>
+            </div>
+            <div class="alarm-level green">
+              <strong>策略远程下发</strong>
+              <span>储能充放电、功率限制、关键负荷切换全程审计。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="value-zone">
+      <div class="value-title">
+        三类客户价值
+        <span>面向停车运营、能源管理、充电运营与低碳示范项目形成综合价值闭环</span>
+      </div>
+
+      <div class="value-grid">
+        <article class="value-card green">
+          <div class="value-head">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 19V10M10 19V5M16 19v-7M22 19H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M5 7l5-4 6 5 5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="value-name">提升收益</div>
+          </div>
+          <div class="value-desc">提高光伏自发自用率，增加余电上网、储能峰谷套利与充电服务收入。</div>
+          <div class="value-tags">
+            <span class="value-tag">绿电消纳</span>
+            <span class="value-tag">峰谷套利</span>
+            <span class="value-tag">ROI 看板</span>
+          </div>
+        </article>
+
+        <article class="value-card">
+          <div class="value-head">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 20V8h6v12M13 20V4h6v16M3 20h18" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 12h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="value-name">降低成本</div>
+          </div>
+          <div class="value-desc">降低停车设备用电、人工巡检和故障停机成本，识别高能耗设备与高成本路段。</div>
+          <div class="value-tags">
+            <span class="value-tag">能耗治理</span>
+            <span class="value-tag">单泊位成本</span>
+            <span class="value-tag">智能工单</span>
+          </div>
+        </article>
+
+        <article class="value-card orange">
+          <div class="value-head">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="value-name">强化安全</div>
+          </div>
+          <div class="value-desc">实时监测储能热失控、电气异常、消防温控和关键停车设备备电保障。</div>
+          <div class="value-tags">
+            <span class="value-tag">热失控预警</span>
+            <span class="value-tag">配电告警</span>
+            <span class="value-tag">备电保障</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        将光伏、储能、充电桩和停车设备纳入统一能源运营体系，支撑低碳停车与光储充一体化示范项目
+      </div>
+      <div class="footer-right">PV · STORAGE · CHARGING · PARKING ENERGY · AI OPERATION</div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+  const scale = Math.min(window.innerWidth / baseWidth, window.innerHeight / baseHeight);
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+</body>
+</html>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络基础多媒体教学 / Netzwerk-Lernwerkzeug</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #e2e8f0;
+    line-height: 1.6;
+    padding: 12px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1000px; margin: 0 auto; }
+  header {
+    text-align: center;
+    padding: 20px 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  header h1 { font-size: 1.5rem; color: #38bdf8; margin-bottom: 4px; }
+  header p { color: #94a3b8; font-size: 0.9rem; }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+  .tab-btn {
+    padding: 10px 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #cbd5e1;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+  .tab-btn:hover { background: rgba(56,189,248,0.15); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    color: #fff;
+    border-color: #38bdf8;
+    box-shadow: 0 4px 12px rgba(14,165,233,0.4);
+  }
+  .panel { display: none; animation: fade 0.3s; }
+  .panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .card h2 { color: #38bdf8; font-size: 1.15rem; margin-bottom: 10px; }
+  .card h3 { color: #fbbf24; font-size: 1rem; margin: 14px 0 8px; }
+  .card p { color: #cbd5e1; margin-bottom: 8px; font-size: 0.92rem; }
+  .hint { color: #94a3b8; font-size: 0.82rem; font-style: italic; }
+  label { display: block; margin: 10px 0 4px; color: #94a3b8; font-size: 0.85rem; }
+  input, select {
+    width: 100%;
+    padding: 9px 11px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.3);
+    color: #f1f5f9;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  input:focus, select:focus { outline: none; border-color: #38bdf8; }
+  button.act {
+    margin-top: 12px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  button.act:hover { filter: brightness(1.1); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:600px){ .grid2 { grid-template-columns: 1fr; } }
+  .mono, pre { font-family: "Consolas", "Courier New", monospace; }
+  pre {
+    background: #0b1120;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    color: #a5f3fc;
+    border: 1px solid rgba(255,255,255,0.08);
+    white-space: pre;
+  }
+  .bits { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0; }
+  .bit {
+    width: 42px; text-align: center; cursor: pointer;
+    border-radius: 6px; padding: 6px 0; user-select: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.15s;
+  }
+  .bit .b { font-size: 1.1rem; font-weight: bold; }
+  .bit .v { font-size: 0.65rem; color: #64748b; }
+  .bit.on { background: #0ea5e9; border-color: #38bdf8; color:#fff; }
+  .bit.on .v { color: #bae6fd; }
+  .bit.off { background: rgba(255,255,255,0.03); color:#64748b; }
+  .result {
+    background: rgba(14,165,233,0.12);
+    border-left: 4px solid #38bdf8;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 0.92rem;
+  }
+  .result b { color: #7dd3fc; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem; }
+  th, td { border: 1px solid rgba(255,255,255,0.12); padding: 7px 9px; text-align: center; }
+  th { background: rgba(56,189,248,0.15); color: #7dd3fc; }
+  td.net { color: #4ade80; font-weight: bold; }
+  td.host { color: #f87171; }
+  td.sub { color: #fbbf24; font-weight: bold; background: rgba(251,191,36,0.1); }
+  .octet-group { display:inline-block; margin: 0 2px; }
+  .badge { display:inline-block; padding: 2px 8px; border-radius: 6px; font-size:0.78rem; margin:2px; }
+  .badge.net { background: rgba(74,222,128,0.2); color:#4ade80; }
+  .badge.sub { background: rgba(251,191,36,0.2); color:#fbbf24; }
+  .badge.host { background: rgba(248,113,113,0.2); color:#f87171; }
+  .step-highlight { color:#fde047; background: rgba(253,224,71,0.15); padding: 0 2px; border-radius:3px;}
+  .ok { color:#4ade80; font-weight:bold; }
+  .err { color:#f87171; font-weight:bold; }
+  .flow { display:flex; flex-direction:column; gap:6px; margin:10px 0; }
+  .flow-step { background: rgba(255,255,255,0.05); border-radius:8px; padding:8px 12px; border-left:3px solid #38bdf8; font-size:0.88rem;}
+  .flow-arrow { text-align:center; color:#38bdf8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🌐 网络基础多媒体教学</h1>
+    <p>进制转换 · 子网划分 · CRC · CSMA/CD · 校验码 &nbsp;|&nbsp; Netzwerk-Lernwerkzeug</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="conv">🔢 进制转换</button>
+    <button class="tab-btn" data-tab="subnet">📡 子网划分</button>
+    <button class="tab-btn" data-tab="crc">🔐 CRC</button>
+    <button class="tab-btn" data-tab="csma">📶 CSMA/CD</button>
+    <button class="tab-btn" data-tab="check">✔️ 校验码</button>
+  </div>
+
+  <!-- ============ TAB 1: 进制转换 ============ -->
+  <div class="panel active" id="conv">
+    <div class="card">
+      <h2>核心思想：4位一组 (Nibble)</h2>
+      <p>十六进制 ↔ 二进制最快：<b>每1个16进制位 = 正好4个二进制位</b>。十进制 ↔ 二进制：用"位权表" 128 64 32 16 8 4 2 1 快速对照，从大往小减。</p>
+      <p class="hint">口诀：8-4-2-1。记住 4位组合的值就永远不会出错。</p>
+      <table>
+        <tr><th>Hex</th><th>Bin</th><th>Dec</th><th>Hex</th><th>Bin</th><th>Dec</th></tr>
+        <tr><td>0</td><td class="mono">0000</td><td>0</td><td>8</td><td class="mono">1000</td><td>8</td></tr>
+        <tr><td>1</td><td class="mono">0001</td><td>1</td><td>9</td><td class="mono">1001</td><td>9</td></tr>
+        <tr><td>2</td><td class="mono">0010</td><td>2</td><td>A</td><td class="mono">1010</td><td>10</td></tr>
+        <tr><td>3</td><td class="mono">0011</td><td>3</td><td>B</td><td class="mono">1011</td><td>11</td></tr>
+        <tr><td>4</td><td class="mono">0100</td><td>4</td><td>C</td><td class="mono">1100</td><td>12</td></tr>
+        <tr><td>5</td><td class="mono">0101</td><td>5</td><td>D</td><td class="mono">1101</td><td>13</td></tr>
+        <tr><td>6</td><td class="mono">0110</td><td>6</td><td>E</td><td class="mono">1110</td><td>14</td></tr>
+        <tr><td>7</td><td class="mono">0111</td><td>7</td><td>F</td><td class="mono">1111</td><td>15</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>🎮 交互练习：点击位来理解位权</h2>
+      <p>点击下面每个方块切换 0/1，观察十进制/十六进制如何实时变化。</p>
+      <div class="bits" id="bitToggle"></div>
+      <div class="result">
+        二进制 <b id="tBin">00000000</b> = 十进制 <b id="tDec">0</b> = 十六进制 <b id="tHex">0x00</b>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔄 万能转换器</h2>
+      <div class="grid2">
+        <div>
+          <label>十进制 (Dezimal)</label>
+          <input id="inDec" type="text" placeholder="例如 141">
+        </div>
+        <div>
+          <label>十六进制 (Hex, 不带前缀)</label>
+          <input id="inHex" type="text" placeholder="例如 CDE0">
+        </div>
+      </div>
+      <label>二进制 (Binär)</label>
+      <input id="inBin" type="text" placeholder="例如 10001101">
+      <button class="act" onclick="convertAll('dec')">从十进制转换</button>
+      <button class="act" onclick="convertAll('hex')">从十六进制转换</button>
+      <button class="act" onclick="convertAll('bin')">从二进制转换</button>
+      <div class="result" id="convOut">在上面输入一个数并点击对应按钮。</div>
+    </div>
+  </div>
+
+  <!-- ============ TAB 2: 子网划分 ============ -->
+  <div class="panel" id="subnet">
+    <div class="card">
+      <h2>📐 三步法：如何"借位"划分子网</h2>
+      <div class="flow">
+        <div class="flow-step"><b>第1步</b>：看原始 CIDR（如 /16）→ 前16位是网络，其余是主机。</div>
+        <div class="flow-step"><b>第2步</b>：要划分成 N 个子网 → 需要借 <b>k = ⌈log₂N⌉</b> 位。例如4个子网 → 2位；1024个子网 → 10位。新 CIDR = 原 + k。</div>
+        <div class="flow-step"><b>第3步</b>：这 k 位从主机部分的<b>最高位</b>开始拿。它们的所有组合 (00,01,10,11…) 就是各个子网编号，把它们放回原位就得到子网地址。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 IPv4 子网可视化计算器</h2>
+      <div class="grid2">
+        <div>
+          <label>IP / 网络地址</label>
+          <input id="ip4" type="text" value="141.84.32.0">
+        </div>
+        <div>
+          <label>原始 CIDR 前缀 /</label>
+          <input id="cidr4" type="number" value="19" min="0" max="32">
+        </div>
+      </div>
+      <button class="act" onclick="analyzeIPv4()">分析网络 / 广播地址</button>
+      <div id="ip4out"></div>
+    </div>
+
+    <div class="card">
+      <h2>➗ 再划分子网 (Subnetting)</h2>
+      <div class="grid2">
+        <div>
+          <label>想划分成几个子网？</label>
+          <input id="numSub" type="number" value="4" min="2" max="256">
+        </div>
+        <div>
+          <label>（自动使用上方 IP 和 CIDR）</label>
+          <input id="dummy" type="text" value="见上方输入" disabled>
+        </div>
+      </div>
+      <button class="act" onclick="splitSubnets()">生成子网列表</button>
+      <div id="splitOut"></div>
+    </div>
+
+    <div class="card">
+      <h2>🌍 IPv6 子网划分（对照考题）</h2>
+      <p>例：<span class="mono">2001:CDE0::/27</span> 分成 4 份 → 借 2 位 → 新前缀 <b>/29</b>。IPv6 每个 hex 位=4 bit，第 27~28 位落在第 7 个 hex 字符里。</p>
+      <div class="grid2">
+        <div>
+          <label>IPv6 前缀地址</label>
+          <input id="ip6" type="text" value="2001:CDE0::">
+        </div>
+        <div>
+          <label>原始前缀 /</label>
+          <input id="cidr6" type="number" value="27">
+        </div>
+      </div>
+      <label>划分成几份 (2的幂)</label>
+      <input id="num6" type="number" value="4">
+      <button class="act" onclick="splitIPv6()">生成 IPv6 子网</button>
+      <div id="ip6out"></div>
+    </div>
+  </div>
+
+  <!-- ============ TAB 3: CRC ============ -->
+  <div class="panel" id="crc">
+    <div class="card">
+      <h2>🔐 CRC 原理</h2>
+      <p>生成多项式 G 用二进制表示：\(G = x^3 + 1\) → 系数 <b class="mono">1001</b>（4位）。<br>
+      一个 \(r\) 阶多项式 → \(r+1\) 位；需在消息后补 <b>r 个 0</b>，用<b>模2除法(XOR)</b>相除，余数就是 CRC 校验和。</p>
+      <p class="hint">发送：消息 + 余数。接收端再除一遍，余数为 0 即正确。</p>
+    </div>
+
+    <div class="card">
+      <h2>🧮 CRC 生成计算器</h2>
+      <div class="grid2">
+        <div>
+          <label>消息 (二进制)</label>
+          <input id="crcMsg" type="text" value="110011">
+        </div>
+        <div>
+          <label>生成多项式 G (二进制)</label>
+          <input id="crcGen" type="text" value="1001">
+        </div>
+      </div>
+      <button class="act" onclick="crcEncode()">计算 CRC 并显示除法过程</button>
+      <div id="crcEncOut"></div>
+    </div>
+
+    <div class="card">
+      <h2>✅ CRC 接收端验证</h2>
+      <div class="grid2">
+        <div>
+          <label>收到的位序列</label>
+          <input id="crcRecv" type="text" value="10011001">
+        </div>
+        <div>
+          <label>生成多项式 G</label>
+          <input id="crcGen2" type="text" value="1001">
+        </div>
+      </div>
+      <button class="act" onclick="crcVerify()">验证是否正确</button>
+      <div id="crcVerOut"></div>
+    </div>
+  </div>
+
+  <!-- ============ TAB 4: CSMA/CD ============ -->
+  <div class="panel" id="csma">
+    <div class="card">
+      <h2>📶 CSMA/CD 冲突检测核心公式</h2>
+      <p>为了能可靠检测冲突，发送方必须在帧发完之前收到冲突信号，即信号往返时间 ≤ 帧传输时间：</p>
+      <pre>2 · t_prop ≤ t_frame
+
+t_frame = 帧长(bit) / 传输速率
+t_prop  ≤ t_frame / 2
+d_max   = t_prop · v (传播速度)</pre>
+      <p class="hint">结论：<b>速率↑ → t_frame↓ → 最大距离↓</b>；速率↓ → 最大距离↑。</p>
+    </div>
+
+    <div class="card">
+      <h2>🧮 最大线路长度计算器</h2>
+      <div class="grid2">
+        <div>
+          <label>帧长 (字节 Byte)</label>
+          <input id="frameBytes" type="number" value="128">
+        </div>
+        <div>
+          <label>传输速率 (bit/s)</label>
+          <input id="rate" type="text" value="1e7">
+        </div>
+      </div>
+      <label>信号传播速度 (m/s)</label>
+      <input id="vprop" type="text" value="2e8">
+      <button class="act" onclick="csmaCalc()">计算 d_max</button>
+      <div id="csmaOut"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 CSMA/CD vs Slotted Aloha</h2>
+      <table>
+        <tr><th>特性</th><th>CSMA/CD</th><th>Slotted Aloha</th></tr>
+        <tr><td>载波侦听</td><td>发送前侦听</td><td>不侦听</td></tr>
+        <tr><td>冲突检测</td><td>发送时检测</td><td>不检测</td></tr>
+        <tr><td>时间分槽</td><td>无</td><td>有(时隙开始发)</td></tr>
+        <tr><td>效率</td><td>约90%+</td><td>约37% (1/e)</td></tr>
+        <tr><td>应用</td><td>有线以太网</td><td>早期卫星通信</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>🔁 CSMA/CD 流程</h2>
+      <div class="flow">
+        <div class="flow-step">1. 载波侦听 (Carrier Sense)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">2. 信道空闲 → 开始发送并持续检测冲突</div>
+        <div class="flow-arrow">↓ 检测到冲突</div>
+        <div class="flow-step">3. 发送干扰信号 (Jam-Signal)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">4. 等待 — 指数退避 (exponentielles Backoff)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">5. 返回步骤 1 (zurück zu Carrier Sense)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB 5: 校验码 ============ -->
+  <div class="panel" id="check">
+    <div class="card">
+      <h2>✔️ 奇偶校验 & 块校验字符 (BCC)</h2>
+      <p>BCC：把消息按行排列，对<b>每一列</b>做偶校验（该列1的个数为偶）。行末也可加一个奇偶位。</p>
+    </div>
+
+    <div class="card">
+      <h2>🧮 BCC 块校验计算器（偶校验）</h2>
+      <p class="hint">每行输入等长二进制，多行用换行分隔。例：<span class="mono">1100101</span> 换行 <span class="mono">0011101</span></p>
+      <label>数据行</label>
+      <textarea id="bccIn" rows="4" style="width:100%;padding:9px;border-radius:8px;background:rgba(0,0,0,0.3);color:#f1f5f9;border:1px solid rgba(255,255,255,0.15);font-family:monospace;">1100101
+0011101</textarea>
+      <button class="act" onclick="calcBCC()">计算 BCC</button>
+      <div id="bccOut"></div>
+    </div>
+
+    <div class="card">
+      <h2>📏 汉明距离 (Hamming-Distanz)</h2>
+      <p>定义：\(H(C) = \min\{H(x,y) \mid x \neq y,\; x,y \in C\}\)，即码字集合中任意两个不同码字的最小比特差异数。</p>
+      <p><b>检测</b> d 位错误需要：\(H(C) \ge d+1\)<br>
+         <b>纠正</b> d 位错误需要：\(H(C) \ge 2d+1\)</p>
+      <label>输入若干码字（每行一个，等长）</label>
+      <textarea id="hamIn" rows="4" style="width:100%;padding:9px;border-radius:8px;background:rgba(0,0,0,0.3);color:#f1f5f9;border:1px solid rgba(255,255,255,0.15);font-family:monospace;">000
+011
+101
+110</textarea>
+      <button class="act" onclick="calcHamming()">计算汉明距离</button>
+      <div id="hamOut"></div>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:#64748b;font-size:0.8rem;margin:20px 0;">
+    ⚠️ 本页交互组件在沙盒中运行，弹窗/本地存储可能受限；如需可复制代码到本地使用。
+  </p>
+</div>
+
+<script>
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  };
+});
+
+/* ---------- TAB1: Bit toggle ---------- */
+let bitState=[0,0,0,0,0,0,0,0];
+const weights=[128,64,32,16,8,4,2,1];
+const bt=document.getElementById('bitToggle');
+weights.forEach((w,i)=>{
+  const d=document.createElement('div');
+  d.className='bit off';
+  d.innerHTML=`<div class="b">0</div><div class="v">${w}</div>`;
+  d.onclick=()=>{ bitState[i]^=1; d.className='bit '+(bitState[i]?'on':'off'); d.querySelector('.b').textContent=bitState[i]; updateBits(); };
+  bt.appendChild(d);
+});
+function updateBits(){
+  const bin=bitState.join('');
+  const dec=parseInt(bin,2);
+  document.getElementById('tBin').textContent=bin;
+  document.getElementById('tDec').textContent=dec;
+  document.getElementById('tHex').textContent='0x'+dec.toString(16).toUpperCase().padStart(2,'0');
+}
+
+/* ---------- TAB1: Converter ---------- */
+function convertAll(from){
+  let dec;
+  try{
+    if(from==='dec') dec=parseInt(document.getElementById('inDec').value.trim(),10);
+    else if(from==='hex') dec=parseInt(document.getElementById('inHex').value.trim(),16);
+    else dec=parseInt(document.getElementById('inBin').value.trim(),2);
+  }catch(e){}
+  const out=document.getElementById('convOut');
+  if(isNaN(dec)||dec<0){ out.innerHTML='<span class="err">请输入有效的非负数字。</span>'; return; }
+  const hex=dec.toString(16).toUpperCase();
+  const bin=dec.toString(2);
+  // nibble grouping for hex illustration
+  const padBin=bin.padStart(Math.ceil(bin.length/4)*4,'0');
+  let groups=[];
+  for(let i=0;i<padBin.length;i+=4) groups.push(padBin.slice(i,i+4));
+  const hexPad=hex.padStart(groups.length,'0');
+  let table='<table><tr><th>Hex位</th>'+hexPad.split('').map(h=>`<td>${h}</td>`).join('')+'</tr>';
+  table+='<tr><th>4位二进制</th>'+groups.map(g=>`<td class="mono">${g}</td>`).join('')+'</tr></table>';
+  document.getElementById('inDec').value=dec;
+  document.getElementById('inHex').value=hex;
+  document.getElementById('inBin').value=bin;
+  out.innerHTML=`<b>十进制</b> ${dec} &nbsp;=&nbsp; <b>十六进制</b> 0x${hex} &nbsp;=&nbsp; <b>二进制</b> ${bin}
+    <p class="hint" style="margin-top:8px;">Nibble 分组（每4位对应1个hex位）：</p>${table}`;
+}
+
+/* ---------- TAB2: IPv4 helpers ---------- */
+function ipToBits(ip){
+  return ip.split('.').map(o=>parseInt(o,10).toString(2).padStart(8,'0')).join('');
+}
+function bitsToIp(bits){
+  let o=[];
+  for(let i=0;i<32;i+=8) o.push(parseInt(bits.slice(i,i+8),2));
+  return o.join('.');
+}
+function renderBits32(bits,netLen,subStart,subLen){
+  let html='<div class="mono" style="font-size:0.75rem;word-break:break-all;margin:8px 0;">';
+  for(let i=0;i<32;i++){
+    let cls='host';
+    if(i<netLen) cls='net';
+    if(subStart!=null && i>=subStart && i<subStart+subLen) cls='sub';
+    html+=`<span class="badge ${cls}">${bits[i]}</span>`;
+    if((i+1)%8===0 && i<31) html+=' <b style="color:#475569">.</b> ';
+  }
+  html+='</div>';
+  return html;
+}
+
+function analyzeIPv4(){
+  const ip=document.getElementById('ip4').value.trim();
+  const cidr=parseInt(document.getElementById('cidr4').value,10);
+  const out=document.getElementById('ip4out');
+  if(!/^\d+\.\d+\.\d+\.\d+$/.test(ip)||cidr<0||cidr>32){ out.innerHTML='<span class="err">输入无效。</span>'; return;}
+  let bits=ipToBits(ip);
+  let netBits=bits.slice(0,cidr).padEnd(32,'0');
+  let bcBits=bits.slice(0,cidr).padEnd(32,'1');
+  const network=bitsToIp(netBits);
+  const broadcast=bitsToIp(bcBits);
+  const hostBits=32-cidr;
+  const numHosts=hostBits>=2?Math.pow(2,hostBits)-2:0;
+  out.innerHTML=`
+    ${renderBits32(netBits,cidr,null,0)}
+    <div class="result">
+      <p>主机位数 = 32 − ${cidr} = <b>${hostBits}</b> 位</p>
+      <p>网络地址 (Netz)：<b>${network}/${cidr}</b></p>
+      <p>广播地址 (Broadcast) = 网络位 + 全1主机位 = <b>${broadcast}</b></p>
+      <p>可用主机数：<b>2^${hostBits} − 2 = ${numHosts.toLocaleString()}</b></p>
+    </div>
+    <p class="hint"><span class="badge net">绿=网络位</span> <span class="badge host">红=主机位</span></p>`;
+}
+
+function splitSubnets(){
+  const ip=document.getElementById('ip4').value.trim();
+  const cidr=parseInt(document.getElementById('cidr4').value,10);
+  const n=parseInt(document.getElementById('numSub').value,10);
+  const out=document.getElementById('splitOut');
+  if(!/^\d+\.\d+\.\d+\.\d+$/.test(ip)){ out.innerHTML='<span class="err">请先在上方填有效IP。</span>'; return;}
+  const k=Math.ceil(Math.log2(n));
+  const newCidr=cidr+k;
+  if(newCidr>32){ out.innerHTML='<span class="err">位数不够，无法划分这么多子网。</span>'; return;}
+  const count=Math.pow(2,k);
+  let bits=ipToBits(ip).slice(0,cidr).padEnd(32,'0');
+  let rows='';
+  for(let s=0;s<count;s++){
+    const subVal=s.toString(2).padStart(k,'0');
+    let sb=bits.slice(0,cidr)+subVal;
+    sb=sb.padEnd(32,'0');
+    let bc=(bits.slice(0,cidr)+subVal).padEnd(32,'1');
+    rows+=`<tr><td>${s+1}</td><td class="sub mono">${subVal}</td><td class="net">${bitsToIp(sb)}/${newCidr}</td><td class="host">${bitsToIp(bc)}</td></tr>`;
+  }
+  out.innerHTML=`
+    <div class="result">
+      <p>需要 <b>k = ⌈log₂${n}⌉ = ${k}</b> 位来编号 → 实际生成 <b>2^${k} = ${count}</b> 个子网</p>
+      <p>新前缀：/${cidr} + ${k} = <b>/${newCidr}</b></p>
+      ${renderBits32(bits,cidr,cidr,k)}
+      <p class="hint"><span class="badge net">网络</span> <span class="badge sub">借出的${k}位(子网号)</span> <span class="badge host">主机</span></p>
+    </div>
+    <table><tr><th>#</th><th>子网号(${k}位)</th><th>子网地址</th><th>广播地址</th></tr>${rows}</table>`;
+}
+
+/* ---------- TAB2: IPv6 ---------- */
+function expandV6Prefix(addr){
+  // return array of 32 hex chars for the leading part (fill zeros)
+  addr=addr.replace(/::$/,'').replace(/:$/,'');
+  let parts=addr.split(':').filter(x=>x!=='');
+  let hex='';
+  parts.forEach(p=>{ hex+=p.padStart(4,'0'); });
+  return hex.padEnd(32,'0');
+}
+function hexToBinStr(h){
+  return h.split('').map(c=>parseInt(c,16).toString(2).padStart(4,'0')).join('');
+}
+function binToHexStr(b){
+  let h='';
+  for(let i=0;i<b.length;i+=4) h+=parseInt(b.slice(i,i+4),2).toString(16);
+  return h.toUpperCase();
+}
+function formatV6(hex){
+  // hex is 32 chars; group into 8 blocks, compress trailing zeros
+  let blocks=[];
+  for(let i=0;i<32;i+=4) blocks.push(hex.slice(i,i+4).replace(/^0+(?=.)/,''));
+  // find trailing zero blocks
+  let str=blocks.join(':');
+  str=str.replace(/(:0)+$/,'::').replace(/:0:/g,':');
+  // simple compress trailing
+  let arr=blocks.map(b=>b==='0'?'0':b);
+  // rebuild with :: for trailing zeros
+  let lastNonZero=-1;
+  for(let i=0;i<8;i++) if(arr[i]!=='0') lastNonZero=i;
+  let res=arr.slice(0,lastNonZero+1).join(':');
+  if(lastNonZero<7) res+='::';
+  return res.toUpperCase();
+}
+function splitIPv6(){
+  const addr=document.getElementById('ip6').value.trim();
+  const cidr=parseInt(document.getElementById('cidr6').value,10);
+  const n=parseInt(document.getElementById('num6').value,10);
+  const out=document.getElementById('ip6out');
+  const hex=expandV6Prefix(addr);
+  const bin=hexToBinStr(hex);
+  const k=Math.ceil(Math.log2(n));
+  const newCidr=cidr+k;
+  const count=Math.pow(2,k);
+  let base=bin.slice(0,cidr).padEnd(128,'0');
+  let rows='';
+  for(let s=0;s<count;s++){
+    const subVal=s.toString(2).padStart(k,'0');
+    let sb=(base.slice(0,cidr)+subVal).padEnd(128,'0');
+    let sbHex=binToHexStr(sb.slice(0,32)); // only first 32 bits matter here
+    rows+=`<tr><td>${s+1}</td><td class="sub mono">${subVal}</td><td class="net">${formatV6(sbHex)}/${newCidr}</td></tr>`;
+  }
+  out.innerHTML=`
+    <div class="result">
+      <p>划分 ${n} 份 → 借 <b>k=${k}</b> 位 → 新前缀 <b>/${newCidr}</b></p>
+      <p>前缀二进制(前32位)：<span class="mono">${bin.slice(0,cidr)}</span><span class="step-highlight mono">[这里借${k}位]</span></p>
+    </div>
+    <table><tr><th>#</th><th>子网号</th><th>CIDR 表示</th></tr>${rows}</table>`;
+}
+
+/* ---------- TAB3: CRC ---------- */
+function crcDivision(msgBits, genBits){
+  const n=genBits.length;
+  let arr=msgBits.split('').map(Number);
+  const gen=genBits.split('').map(Number);
+  let lines=[];
+  lines.push(msgBits);
+  for(let i=0;i<=arr.length-n;i++){
+    if(arr[i]===1){
+      let xorLine=' '.repeat(i)+genBits;
+      for(let j=0;j<n;j++) arr[i+j]^=gen[j];
+      lines.push(xorLine);
+      lines.push(' '.repeat(i)+'-'.repeat(n));
+      lines.push(arr.join(''));
+    }
+  }
+  const remainder=arr.slice(arr.length-(n-1)).join('');
+  return {remainder, lines};
+}
+function crcEncode(){
+  const msg=document.getElementById('crcMsg').value.trim();
+  const gen=document.getElementById('crcGen').value.trim();
+  const out=document.getElementById('crcEncOut');
+  if(!/^[01]+$/.test(msg)||!/^[01]+$/.test(gen)){ out.innerHTML='<span class="err">请输入二进制。</span>'; return;}
+  const r=gen.length-1;
+  const padded=msg+'0'.repeat(r);
+  const {remainder,lines}=crcDivision(padded,gen);
+  const transmitted=msg+remainder;
+  out.innerHTML=`
+    <div class="result">
+      <p>阶数 r = ${r}，补 <b>${r}</b> 个0：<span class="mono">${padded}</span></p>
+      <p>模2除法过程：</p>
+      <pre>${lines.join('\n')}</pre>
+      <p>余数 (CRC) = <b class="mono">${remainder}</b></p>
+      <p>✅ 要传输的位序列 = 消息 + CRC = <b class="mono">${transmitted}</b></p>
+    </div>`;
+}
+function crcVerify(){
+  const recv=document.getElementById('crcRecv').value.trim();
+  const gen=document.getElementById('crcGen2').value.trim();
+  const out=document.getElementById('crcVerOut');
+  if(!/^[01]+$/.test(recv)||!/^[01]+$/.test(gen)){ out.innerHTML='<span class="err">请输入二进制。</span>'; return;}
+  const {remainder,lines}=crcDivision(recv,gen);
+  const zero=/^0+$/.test(remainder);
+  out.innerHTML=`
+    <div class="result">
+      <p>用 G=${gen} 对收到的序列做模2除法：</p>
+      <pre>${lines.join('\n')}</pre>
+      <p>余数 = <b class="mono">${remainder}</b> ← 判断位置</p>
+      <p>${zero?'<span class="ok">✅ 余数为0 → 传输正确，无错误！</span>':'<span class="err">❌ 余数≠0 → 传输出错！</span>'}</p>
+    </div>`;
+}
+
+/* ---------- TAB4: CSMA/CD ---------- */
+function csmaCalc(){
+  const bytes=parseFloat(document.getElementById('frameBytes').value);
+  const rate=parseFloat(document.getElementById('rate').value);
+  const v=parseFloat(document.getElementById('vprop').value);
+  const out=document.getElementById('csmaOut');
+  if(!(bytes>0&&rate>0&&v>0)){ out.innerHTML='<span class="err">输入无效。</span>'; return;}
+  const bits=bytes*8;
+  const tframe=bits/rate;
+  const tprop=tframe/2;
+  const d=tprop*v;
+  out.innerHTML=`
+    <div class="result">
+      <p>帧长 = ${bytes} B × 8 = <b>${bits} bit</b></p>
+      <p>t_frame = ${bits} / ${rate.toExponential()} = <b>${(tframe*1e6).toFixed(2)} µs</b></p>
+      <p>t_prop ≤ t_frame/2 = <b>${(tprop*1e6).toFixed(2)} µs</b></p>
+      <p>d_max = t_prop · v = ${(tprop*1e6).toFixed(2)}µs × ${v.toExponential()} m/s</p>
+      <p>= <b>${d.toLocaleString()} m = ${(d/1000).toFixed(2)} km</b></p>
+    </div>`;
+}
+
+/* ---------- TAB5: BCC ---------- */
+function calcBCC(){
+  const raw=document.getElementById('bccIn').value.trim().split('\n').map(r=>r.trim()).filter(r=>r);
+  const out=document.getElementById('bccOut');
+  if(raw.length===0){ out.innerHTML='<span class="err">请输入数据。</span>'; return;}
+  const len=raw[0].length;
+  if(!raw.every(r=>/^[01]+$/.test(r)&&r.length===len)){ out.innerHTML='<span class="err">所有行必须等长且为二进制。</span>'; return;}
+  let bcc='';
+  for(let c=0;c<len;c++){
+    let sum=0;
+    raw.forEach(r=>sum+=parseInt(r[c]));
+    bcc+= (sum%2); // even parity bit makes column even
+  }
+  let table='<table>';
+  raw.forEach(r=>{ table+='<tr>'+r.split('').map(b=>`<td class="mono">${b}</td>`).join('')+'</tr>';});
+  table+='<tr>'+bcc.split('').map(b=>`<td class="sub mono">${b}</td>`).join('')+'</tr></table>';
+  out.innerHTML=`
+    <div class="result">
+      <p>对每列做偶校验，BCC = <b class="mono">${bcc}</b></p>
+      <p class="hint">加上BCC行后，每列1的总数为偶数。</p>
+      ${table}
+    </div>`;
+}
+
+/* ---------- TAB5: Hamming ---------- */
+function hDist(a,b){ let d=0; for(let i=0;i<a.length;i++) if(a[i]!==b[i]) d++; return d;}
+function calcHamming(){
+  const words=document.getElementById('hamIn').value.trim().split('\n').map(w=>w.trim()).filter(w=>w);
+  const out=document.getElementById('hamOut');
+  if(words.length<2){ out.innerHTML='<span class="err">至少输入2个码字。</span>'; return;}
+  const len=words[0].length;
+  if(!words.every(w=>/^[01]+$/.test(w)&&w.length===len)){ out.innerHTML='<span class="err">码字须等长且为二进制。</span>'; return;}
+  let min=Infinity, pair=[];
+  for(let i=0;i<words.length;i++)
+    for(let j=i+1;j<words.length;j++){
+      const d=hDist(words[i],words[j]);
+      if(d<min){ min=d; pair=[words[i],words[j]];}
+    }
+  const detect=min-1;
+  const correct=Math.floor((min-1)/2);
+  out.innerHTML=`
+    <div class="result">
+      <p>最小汉明距离 <b>H(C) = ${min}</b>（来自 ${pair[0]} 与 ${pair[1]}）</p>
+      <p>可<b>检测</b>错误位数 = H−1 = <b>${detect}</b> 位</p>
+      <p>可<b>纠正</b>错误位数 = ⌊(H−1)/2⌋ = <b>${correct}</b> 位</p>
+    </div>`;
+}
+
+/* init defaults */
+analyzeIPv4();
+</script>
+</body>
+</html>

@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>停车运营管理平台低保真线框图</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px Arial,"Microsoft YaHei";color:#333;background:#f5f5f5}.app{display:flex;min-height:100vh}.side{width:240px;flex:none;padding:20px 12px;color:#fff;background:#263238;overflow-y:auto}.logo{padding:0 10px 20px;border-bottom:1px solid #526068;font-size:18px;font-weight:bold}.group{margin:20px 10px 8px;color:#9eabb1;font-size:12px}.menu{margin:4px 0;padding:12px;border-radius:4px;cursor:pointer}.menu:hover,.menu.active{background:#455a64}.agent-entry{margin:22px 4px 0;padding:13px;text-align:center;border:1px solid #829096;background:#37474f;cursor:pointer}.main{flex:1;min-width:0}.head{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#fff;border-bottom:1px solid #ccc;font-size:16px;font-weight:bold}.head-right{font-size:13px;font-weight:normal;color:#777}.content{padding:20px}.page{display:none}.page.active{display:block}.title{margin-bottom:18px}.title h2{margin:0 0 6px}.title p,.box p{margin:5px 0;color:#777;line-height:1.7}.box{margin-bottom:16px;padding:16px;background:#fff;border:2px solid #aaa}.box h3{margin:0 0 12px;font-size:15px}.row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.row.two{grid-template-columns:repeat(2,1fr)}.row.three{grid-template-columns:repeat(3,1fr)}.cell{min-height:80px;padding:12px;border:1px dashed #999;background:#fafafa;line-height:1.6}.cell b{display:block;margin-bottom:8px}.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.filter{min-height:38px;padding:10px;color:#888;border:1px solid #aaa;background:#fafafa}.btn{display:inline-block;margin:12px 8px 0 0;padding:8px 20px;border:1px solid #555;background:#eee;cursor:pointer}.placeholder{display:flex;align-items:center;justify-content:center;min-height:150px;padding:20px;color:#888;text-align:center;background:#f3f3f3;border:1px dashed #999}.map{min-height:300px}.screen{min-height:220px}.table{width:100%;border-collapse:collapse}.table th,.table td{height:38px;padding:8px;border:1px solid #bbb;text-align:left}.table th{background:#eee}.note{padding:10px;color:#666;line-height:1.8;background:#fafafa;border:1px dashed #888}.flow{display:flex;align-items:center;gap:10px}.flow .cell{flex:1}.arrow{font-size:20px;color:#888}.nine{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.video{display:flex;align-items:center;justify-content:center;min-height:100px;color:#888;background:#eee;border:1px dashed #888}.designer{display:grid;grid-template-columns:180px 1fr 220px;gap:12px}.panel{min-height:330px;padding:12px;border:1px dashed #888;background:#f7f7f7}.node{margin:10px 0;padding:10px;text-align:center;border:1px solid #888;background:#fff}.canvas{display:flex;align-items:center;justify-content:center;gap:8px;min-height:330px;padding:15px;border:1px dashed #888;background:#fafafa}.phone{width:310px;margin:auto;padding:10px;border:3px solid #555;border-radius:24px;background:#eee}.phone-head{padding:10px;text-align:center;border-bottom:1px solid #999}.phone-body{min-height:390px;padding:10px;background:#fff}.phone-item{margin-bottom:9px;padding:10px;border:1px dashed #888}.agent-back{padding:7px 14px;border:1px solid #666;background:#eee;cursor:pointer}.chat{min-height:350px;padding:12px;border:1px dashed #888;background:#fafafa}.bubble{max-width:75%;margin:10px 0;padding:10px;border:1px solid #999;background:#fff;line-height:1.7}.bubble.right{margin-left:auto;background:#eee}.chat-input{margin-top:20px;padding:14px;border:1px solid #888;background:#fff;color:#888}.agent-layout{display:grid;grid-template-columns:240px 1fr 260px;gap:12px}.skill{margin-bottom:9px;padding:10px;border:1px dashed #888;background:#fafafa}@media(max-width:1100px){.row,.filters,.row.three{grid-template-columns:repeat(2,1fr)}.designer,.agent-layout{grid-template-columns:1fr}.flow{display:block}.arrow{padding:5px;text-align:center;transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+
+<!-- 主管理平台 -->
+<div class="app" id="platform-app">
+<aside class="side">
+  <div class="logo">停车运营管理平台</div>
+
+  <div class="group">智能催缴</div>
+  <div class="menu active" data-page="collection-strategy">催缴策略设置</div>
+  <div class="menu" data-page="collection-task">催缴任务管理</div>
+  <div class="menu" data-page="collection-evaluate">催缴任务评估</div>
+  <div class="menu" data-page="arrears-warning">欠费预警策略</div>
+  <div class="menu" data-page="warning-evaluate">预警执行及评估</div>
+
+  <div class="group">收费员管理</div>
+  <div class="menu" data-page="attendance-setting">考勤设置</div>
+  <div class="menu" data-page="attendance-detail">考勤明细</div>
+  <div class="menu" data-page="attendance-warning">异常告警</div>
+  <div class="menu" data-page="attendance-report">考勤报表</div>
+  <div class="menu" data-page="staff-dynamic">收费员收费动态</div>
+  <div class="menu" data-page="parking-warning">停车场异常监测</div>
+  <div class="menu" data-page="ai-decision">AI辅助决策</div>
+  <div class="menu" data-page="assessment">360°考核</div>
+
+  <div class="group">远程值班室</div>
+  <div class="menu" data-page="duty-screen">值守大屏</div>
+  <div class="menu" data-page="duty-order">值班工单</div>
+  <div class="menu" data-page="duty-report">值班报告</div>
+
+  <div class="group">流程管理</div>
+  <div class="menu" data-page="flow-rule">规则配置</div>
+  <div class="menu" data-page="flow-pc">工单处置（PC）</div>
+  <div class="menu" data-page="flow-mobile">工单处置（手机）</div>
+  <div class="menu" data-page="flow-analysis">工单数据分析</div>
+
+  <div class="group">综合管理</div>
+  <div class="menu" data-page="display-screen">展示大屏</div>
+  <div class="menu" data-page="parking-assessment">考核指标</div>
+  <div class="menu" data-page="ledger">台账管理</div>
+
+  <div class="agent-entry" onclick="openAgent()">进入停车运营智能体 →</div>
+</aside>
+
+<main class="main">
+<header class="head">
+  <span id="head">催缴策略设置</span>
+  <span class="head-right">平台管理员　消息中心</span>
+</header>
+
+<div class="content">
+
+<!-- 催缴策略设置 -->
+<section class="page active" id="collection-strategy">
+  <div class="title">
+    <h2>催缴策略设置</h2>
+    <p>多维筛选欠费对象，统计欠费情况并创建催缴任务。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 欠费对象筛选</h3>
+    <div class="filters">
+      <div class="filter">停车场</div>
+      <div class="filter">车场类别</div>
+      <div class="filter">车牌号</div>
+      <div class="filter">所属街道/片区</div>
+      <div class="filter">欠费金额范围</div>
+      <div class="filter">欠费时间范围</div>
+      <div class="filter">欠费时长</div>
+      <div class="filter">欠费次数</div>
+    </div>
+    <span class="btn">查询统计</span>
+    <span class="btn">重置</span>
+  </div>
+
+  <div class="box">
+    <h3>② 欠费统计结果</h3>
+    <div class="row">
+      <div class="cell"><b>欠费车辆数</b>展示匹配的欠费车辆总数</div>
+      <div class="cell"><b>欠费订单数</b>展示匹配的欠费订单总数</div>
+      <div class="cell"><b>欠费总金额</b>展示查询范围内累计欠费</div>
+      <div class="cell"><b>涉及区域</b>展示涉及街道和停车场数量</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 催缴策略配置</h3>
+    <div class="row two">
+      <div class="cell"><b>按欠费金额</b>例如只催缴50元以下欠费订单</div>
+      <div class="cell"><b>按欠费周期</b>按年度、月份或自定义周期催缴</div>
+      <div class="cell"><b>按车场性质</b>选择封闭或非封闭停车场</div>
+      <div class="cell"><b>按街道/片区</b>选择重点欠费区域专项催缴</div>
+      <div class="cell"><b>跨车场联动</b>道口拦截、语音、扫码、弹窗及PDA提示</div>
+      <div class="cell"><b>自动黑名单</b>按周期内欠费次数自动重点标记</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 联动催缴配置</h3>
+    <div class="row">
+      <div class="cell"><b>入口拦截</b>欠费车辆进入封闭车场时进行拦截</div>
+      <div class="cell"><b>出口拦截</b>车辆离场时提示补缴历史欠费</div>
+      <div class="cell"><b>现场提示</b>语音、扫码、电脑弹窗和PDA提示</div>
+      <div class="cell"><b>补缴放行</b>补缴成功后道闸自动抬杆放行</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 欠费明细预览</h3>
+    <table class="table">
+      <tr>
+        <th>车牌号</th><th>欠费时间</th><th>停车场</th><th>车场类型</th>
+        <th>欠费金额</th><th>欠费次数</th><th>风险标记</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示查询后的车辆欠费明细及历史欠费记录</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 创建催缴任务</h3>
+    <div class="row">
+      <div class="cell">预计催缴车辆、订单及欠费金额</div>
+      <div class="cell">短信、微信、电话及现场触达渠道</div>
+      <div class="cell">任务开始时间、结束时间及执行频率</div>
+      <div class="cell">黑名单及跨车场联动规则</div>
+    </div>
+    <span class="btn">保存策略</span>
+    <span class="btn">创建催缴任务</span>
+  </div>
+</section>
+
+<!-- 催缴任务管理 -->
+<section class="page" id="collection-task">
+  <div class="title">
+    <h2>催缴任务管理</h2>
+    <p>实时查看催缴任务执行时长、渠道触达和催缴到账情况。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 任务查询</h3>
+    <div class="filters">
+      <div class="filter">任务名称/编号</div>
+      <div class="filter">任务状态</div>
+      <div class="filter">执行渠道</div>
+      <div class="filter">创建时间范围</div>
+    </div>
+    <span class="btn">查询</span>
+    <span class="btn">新建任务</span>
+  </div>
+
+  <div class="box">
+    <h3>② 任务执行概览</h3>
+    <div class="row">
+      <div class="cell"><b>执行中任务</b>当前正在运行的任务数量</div>
+      <div class="cell"><b>累计触达次数</b>各类渠道触达次数合计</div>
+      <div class="cell"><b>已缴费车辆</b>催缴后完成缴费的车辆数</div>
+      <div class="cell"><b>催缴到账金额</b>任务累计回收金额</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 催缴任务列表</h3>
+    <table class="table">
+      <tr>
+        <th>任务名称</th><th>状态</th><th>执行时长</th><th>目标车辆</th>
+        <th>触达次数</th><th>缴费车辆</th><th>到账金额</th><th>进度</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示催缴任务及实时执行情况</td></tr>
+      <tr><td colspan="9">支持查看详情、暂停、继续、终止和复制任务</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>④ 渠道执行情况</h3>
+    <div class="row">
+      <div class="cell">短信发送量、成功率及回款情况</div>
+      <div class="cell">微信触达量及缴费转化情况</div>
+      <div class="cell">电话呼叫、接通及缴费情况</div>
+      <div class="cell">道口拦截和PDA提醒情况</div>
+    </div>
+  </div>
+</section>
+
+<!-- 催缴任务评估 -->
+<section class="page" id="collection-evaluate">
+  <div class="title">
+    <h2>催缴任务评估</h2>
+    <p>多维分析任务效果、触达渠道及缴费车主画像。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 评估条件</h3>
+    <div class="filters">
+      <div class="filter">催缴任务</div>
+      <div class="filter">评估周期</div>
+      <div class="filter">停车场/区域</div>
+      <div class="filter">触达渠道</div>
+    </div>
+    <span class="btn">生成评估</span>
+    <span class="btn">导出报告</span>
+  </div>
+
+  <div class="box">
+    <h3>② 催缴效果指标</h3>
+    <div class="row">
+      <div class="cell">车辆缴费率</div>
+      <div class="cell">金额回款率</div>
+      <div class="cell">平均缴费时长</div>
+      <div class="cell">任务投入产出情况</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>③ 回款趋势</h3>
+      <div class="placeholder">图表占位：触达、缴费车辆及回收金额趋势</div>
+    </div>
+    <div class="box">
+      <h3>④ 渠道效果</h3>
+      <div class="placeholder">图表占位：短信、微信、电话和拦截渠道转化率</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 缴费车主画像</h3>
+    <div class="row">
+      <div class="cell">欠费金额分布</div>
+      <div class="cell">欠费时长分布</div>
+      <div class="cell">欠费次数分布</div>
+      <div class="cell">区域及车场分布</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 策略优化建议</h3>
+    <div class="note">根据任务效果输出金额范围、催缴周期、触达渠道、重点区域及黑名单策略优化建议。</div>
+  </div>
+</section>
+
+<!-- 欠费预警策略 -->
+<section class="page" id="arrears-warning">
+  <div class="title">
+    <h2>欠费预警策略</h2>
+    <p>结合车主画像、停车行为和收费员GPS位置识别欠费高风险停车位。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 策略基础信息</h3>
+    <div class="filters">
+      <div class="filter">策略名称</div>
+      <div class="filter">适用区域</div>
+      <div class="filter">适用停车场</div>
+      <div class="filter">预警级别</div>
+      <div class="filter">启用状态</div>
+      <div class="filter">有效时间</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 风险识别条件</h3>
+    <div class="row two">
+      <div class="cell"><b>车主画像</b>历史欠费次数、欠费金额和缴费习惯</div>
+      <div class="cell"><b>停车行为</b>当前停车时长、停车时段及历史行为</div>
+      <div class="cell"><b>泊位风险</b>泊位历史欠费率和所在区域</div>
+      <div class="cell"><b>收费员位置</b>GPS距离、工作状态和当前工作量</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 通知与调度规则</h3>
+    <div class="filters">
+      <div class="filter">通知对象</div>
+      <div class="filter">通知方式</div>
+      <div class="filter">响应时限</div>
+      <div class="filter">超时升级对象</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 欠费风险地图</h3>
+      <div class="placeholder map">地图占位：高风险泊位、车辆及收费员GPS位置</div>
+    </div>
+    <div class="box">
+      <h3>⑤ 策略命中预估</h3>
+      <div class="placeholder map">展示预计预警数量、涉及泊位、车辆和可调度收费员</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <span class="btn">保存草稿</span>
+    <span class="btn">保存并启用</span>
+  </div>
+</section>
+
+<!-- 预警执行评估 -->
+<section class="page" id="warning-evaluate">
+  <div class="title">
+    <h2>预警执行及评估</h2>
+    <p>分析平台预警、收费员实际执行情况及策略有效性。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 执行概览</h3>
+    <div class="row">
+      <div class="cell">预警数量</div>
+      <div class="cell">收费员响应率</div>
+      <div class="cell">平均响应时长</div>
+      <div class="cell">预警有效率</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>② 预警执行趋势</h3>
+      <div class="placeholder">图表占位：平台预警与实际执行数量</div>
+    </div>
+    <div class="box">
+      <h3>③ 执行结果构成</h3>
+      <div class="placeholder">图表占位：及时处理、超时、未处理和误报</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 收费员执行力</h3>
+    <table class="table">
+      <tr>
+        <th>收费员</th><th>所属区域</th><th>收到预警</th><th>响应率</th>
+        <th>响应时长</th><th>有效处理</th><th>综合评分</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示收费员预警执行情况及排名</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 策略合理性</h3>
+    <div class="row">
+      <div class="cell">策略命中准确率</div>
+      <div class="cell">策略误报率</div>
+      <div class="cell">人员调度合理率</div>
+      <div class="cell">策略综合评分</div>
+    </div>
+  </div>
+</section>
+
+<!-- 考勤设置 -->
+<section class="page" id="attendance-setting">
+  <div class="title">
+    <h2>考勤设置</h2>
+    <p>配置收费员上下班、蓝牙信标打卡和后台抽检参数。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 考勤规则基础信息</h3>
+    <div class="filters">
+      <div class="filter">规则名称</div>
+      <div class="filter">适用物业公司</div>
+      <div class="filter">适用停车场/路段</div>
+      <div class="filter">规则启用状态</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 上下班时间设置</h3>
+    <div class="row">
+      <div class="cell">班次设置</div>
+      <div class="cell">上班时间及允许偏差</div>
+      <div class="cell">下班时间及允许偏差</div>
+      <div class="cell">排班周期设置</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 蓝牙信标考勤设置</h3>
+    <div class="row two">
+      <div class="cell">信标设备与停车场、路段、岗亭绑定</div>
+      <div class="cell">有效打卡距离设置</div>
+      <div class="cell">信标连接持续时间设置</div>
+      <div class="cell">信标异常时GPS或人工补卡</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 后台抽检与异常参数</h3>
+    <div class="filters">
+      <div class="filter">抽检频率</div>
+      <div class="filter">抽检验证方式</div>
+      <div class="filter">响应时限</div>
+      <div class="filter">未响应处理</div>
+      <div class="filter">迟到判定</div>
+      <div class="filter">早退判定</div>
+      <div class="filter">脱岗判定</div>
+      <div class="filter">异常通知对象</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <span class="btn">保存草稿</span>
+    <span class="btn">保存并启用</span>
+  </div>
+</section>
+
+<!-- 考勤明细 -->
+<section class="page" id="attendance-detail">
+  <div class="title">
+    <h2>考勤明细</h2>
+    <p>查询收费员上下班打卡、信标连接、定位和抽检记录。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 考勤查询</h3>
+    <div class="filters">
+      <div class="filter">收费员姓名/工号</div>
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">班次</div>
+      <div class="filter">考勤日期</div>
+      <div class="filter">考勤结果</div>
+      <div class="filter">打卡方式</div>
+      <div class="filter">异常类型</div>
+    </div>
+    <span class="btn">查询</span>
+    <span class="btn">导出明细</span>
+  </div>
+
+  <div class="box">
+    <h3>② 今日考勤概览</h3>
+    <div class="row">
+      <div class="cell">应出勤人数</div>
+      <div class="cell">正常出勤人数</div>
+      <div class="cell">异常考勤人数</div>
+      <div class="cell">当前在岗人数</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 上下班打卡明细</h3>
+    <table class="table">
+      <tr>
+        <th>收费员</th><th>所属公司</th><th>停车场/路段</th><th>班次</th>
+        <th>上班打卡</th><th>下班打卡</th><th>打卡方式</th><th>结果</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示收费员每日上下班考勤记录</td></tr>
+    </table>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 打卡位置</h3>
+      <div class="placeholder">地图占位：打卡位置、路段和蓝牙信标</div>
+    </div>
+    <div class="box">
+      <h3>⑤ 考勤时间轴</h3>
+      <div class="placeholder">时间轴占位：签到、抽检、定位变化和签退</div>
+    </div>
+  </div>
+</section>
+
+<!-- 考勤异常告警 -->
+<section class="page" id="attendance-warning">
+  <div class="title">
+    <h2>异常告警</h2>
+    <p>监测迟到、早退、脱岗、漏卡和抽检未响应等异常。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 告警查询</h3>
+    <div class="filters">
+      <div class="filter">收费员</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">异常类型</div>
+      <div class="filter">告警级别</div>
+      <div class="filter">处置状态</div>
+      <div class="filter">告警时间</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 异常概览</h3>
+    <div class="row">
+      <div class="cell">待处理告警</div>
+      <div class="cell">迟到/早退</div>
+      <div class="cell">脱岗/缺岗</div>
+      <div class="cell">抽检未响应</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 异常告警列表</h3>
+    <table class="table">
+      <tr>
+        <th>告警时间</th><th>收费员</th><th>所属区域</th><th>异常类型</th>
+        <th>异常说明</th><th>持续时长</th><th>处置状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示异常告警及处置状态</td></tr>
+    </table>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 异常位置核验</h3>
+      <div class="placeholder map">地图占位：负责区域及收费员异常轨迹</div>
+    </div>
+    <div class="box">
+      <h3>⑤ 告警处置</h3>
+      <div class="cell">异常基本信息</div>
+      <div class="cell">电话确认、要求返岗或通知负责人</div>
+      <div class="cell">填写处置结果和责任认定</div>
+      <span class="btn">提交处置</span>
+    </div>
+  </div>
+</section>
+
+<!-- 考勤报表 -->
+<section class="page" id="attendance-report">
+  <div class="title">
+    <h2>考勤报表</h2>
+    <p>按时间周期、物业公司和停车区域生成考勤报表。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 报表条件</h3>
+    <div class="filters">
+      <div class="filter">统计周期</div>
+      <div class="filter">日期范围</div>
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">收费员</div>
+      <div class="filter">班次</div>
+      <div class="filter">考勤状态</div>
+      <div class="filter">报表类型</div>
+    </div>
+    <span class="btn">生成报表</span>
+    <span class="btn">下载报表</span>
+  </div>
+
+  <div class="box">
+    <h3>② 统计指标</h3>
+    <div class="row">
+      <div class="cell">应出勤人次</div>
+      <div class="cell">实际出勤人次</div>
+      <div class="cell">综合出勤率</div>
+      <div class="cell">异常考勤人次</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>③ 出勤率趋势</h3>
+      <div class="placeholder">图表占位：出勤率变化</div>
+    </div>
+    <div class="box">
+      <h3>④ 异常类型分布</h3>
+      <div class="placeholder">图表占位：迟到、早退、脱岗和漏卡占比</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 物业公司考勤对比</h3>
+    <table class="table">
+      <tr>
+        <th>物业公司</th><th>应出勤</th><th>实际出勤</th><th>出勤率</th>
+        <th>迟到</th><th>早退</th><th>脱岗</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">按物业公司或停车区域统计考勤结果</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 收费员收费动态 -->
+<section class="page" id="staff-dynamic">
+  <div class="title">
+    <h2>收费员收费动态</h2>
+    <p>融合PDA定位、车牌录入、泊位状态和收费流水展示现场态势。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 实时监控条件</h3>
+    <div class="filters">
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">收费员</div>
+      <div class="filter">人员状态</div>
+      <div class="filter">泊位状态</div>
+      <div class="filter">收费状态</div>
+      <div class="filter">异常类型</div>
+      <div class="filter">刷新频率</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 实时运营概览</h3>
+    <div class="row">
+      <div class="cell">在线收费员</div>
+      <div class="cell">在场车辆</div>
+      <div class="cell">泊位占用率</div>
+      <div class="cell">今日收费金额</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 动态运营地图</h3>
+    <div class="placeholder map">地图占位：收费员位置、运动轨迹、泊位状态、车辆和异常点位</div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 收费员实时状态</h3>
+      <div class="placeholder">列表占位：人员位置、状态、录入量和收费量</div>
+    </div>
+    <div class="box">
+      <h3>⑤ 泊位实时状态</h3>
+      <div class="placeholder">列表占位：泊位、车辆、订单和负责人员</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 运动轨迹与操作时间轴</h3>
+    <div class="placeholder">时间轴占位：定位、车牌录入、车辆离场及收费流水</div>
+  </div>
+</section>
+
+<!-- 停车场异常监测 -->
+<section class="page" id="parking-warning">
+  <div class="title">
+    <h2>停车场异常监测</h2>
+    <p>监测道路停车超时未录入、提前离场和订单异常。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 监测条件</h3>
+    <div class="filters">
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">收费员</div>
+      <div class="filter">异常类型</div>
+      <div class="filter">异常级别</div>
+      <div class="filter">时间范围</div>
+      <div class="filter">处置状态</div>
+      <div class="filter">车牌/泊位</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 异常概览</h3>
+    <div class="row">
+      <div class="cell">今日异常总数</div>
+      <div class="cell">超时未录入</div>
+      <div class="cell">提前离场</div>
+      <div class="cell">待处理异常</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 异常类型</h3>
+    <div class="row two">
+      <div class="cell">超时未录入</div>
+      <div class="cell">提前离场</div>
+      <div class="cell">有车无订单</div>
+      <div class="cell">无车有订单</div>
+      <div class="cell">车牌录入异常</div>
+      <div class="cell">收费流水异常</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 异常点位地图</h3>
+      <div class="placeholder map">地图占位：异常路段、泊位和车辆</div>
+    </div>
+    <div class="box">
+      <h3>⑤ 异常趋势</h3>
+      <div class="placeholder map">图表占位：异常趋势和高发区域</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 异常明细</h3>
+    <table class="table">
+      <tr>
+        <th>异常时间</th><th>停车场/路段</th><th>泊位</th><th>车牌号</th>
+        <th>异常类型</th><th>收费员</th><th>状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示停车异常记录及相关核查证据</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- AI辅助决策 -->
+<section class="page" id="ai-decision">
+  <div class="title">
+    <h2>AI辅助决策</h2>
+    <p>向收费员推送站位优化、重点巡查和重点车辆建议。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 决策条件</h3>
+    <div class="filters">
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">收费员班组</div>
+      <div class="filter">建议类型</div>
+      <div class="filter">风险等级</div>
+      <div class="filter">推送状态</div>
+      <div class="filter">生成时间</div>
+      <div class="filter">实时/历史</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② AI决策概览</h3>
+    <div class="row">
+      <div class="cell">待执行建议</div>
+      <div class="cell">站位优化建议</div>
+      <div class="cell">重点车辆提醒</div>
+      <div class="cell">建议执行率</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>③ 推荐站位地图</h3>
+      <div class="placeholder map">地图占位：当前位置、推荐站位、路线和重点泊位</div>
+    </div>
+    <div class="box">
+      <h3>④ AI建议列表</h3>
+      <div class="cell">站位优化建议</div>
+      <div class="cell">重点区域巡查建议</div>
+      <div class="cell">高风险车辆关注提醒</div>
+      <div class="cell">人员工作负荷调整建议</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 建议执行效果</h3>
+    <table class="table">
+      <tr>
+        <th>建议时间</th><th>建议类型</th><th>推送对象</th>
+        <th>建议内容</th><th>响应结果</th><th>执行时长</th><th>效果评价</th>
+      </tr>
+      <tr><td colspan="7">展示AI建议、收费员执行及效果评估</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 360考核 -->
+<section class="page" id="assessment">
+  <div class="title">
+    <h2>360°考核</h2>
+    <p>综合工作量、收费量、运动轨迹和考勤异常生成收费员考核画像。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 考核条件</h3>
+    <div class="filters">
+      <div class="filter">考核周期</div>
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场/路段</div>
+      <div class="filter">收费员/班组</div>
+      <div class="filter">考核等级</div>
+      <div class="filter">考核方案</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 考核指标</h3>
+    <div class="row two">
+      <div class="cell">工作量：车牌录入、订单及负责泊位</div>
+      <div class="cell">收费绩效：收费金额、收缴率及欠费率</div>
+      <div class="cell">出勤表现：出勤、迟到、早退及脱岗</div>
+      <div class="cell">运动轨迹：巡查距离、范围及合理性</div>
+      <div class="cell">异常处置：响应时长和完成率</div>
+      <div class="cell">AI建议执行：响应率和执行效果</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 综合概览</h3>
+    <div class="row">
+      <div class="cell">参评收费员</div>
+      <div class="cell">平均考核分</div>
+      <div class="cell">优秀人员占比</div>
+      <div class="cell">待改进人员</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 综合考核画像</h3>
+      <div class="placeholder map">图表占位：工作量、收缴率、出勤率和脱岗率</div>
+    </div>
+    <div class="box">
+      <h3>⑤ 指标得分</h3>
+      <div class="cell">各指标得分和权重</div>
+      <div class="cell">同组平均分</div>
+      <div class="cell">同组排名</div>
+      <div class="cell">历史成绩变化</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 考核排名</h3>
+    <table class="table">
+      <tr>
+        <th>排名</th><th>收费员</th><th>所属公司</th><th>工作量</th>
+        <th>收缴率</th><th>出勤得分</th><th>脱岗率</th><th>综合得分</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示收费员考核成绩、排名和个人画像</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 值守大屏 -->
+<section class="page" id="duty-screen">
+  <div class="title">
+    <h2>值守大屏</h2>
+    <p>统一展示车场地图、视频监控、运营数据、设备和人员异常。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 值守筛选条件</h3>
+    <div class="filters">
+      <div class="filter">区域/街道</div>
+      <div class="filter">车场类型</div>
+      <div class="filter">停车场</div>
+      <div class="filter">统计时段</div>
+      <div class="filter">业务类型</div>
+      <div class="filter">设备状态</div>
+      <div class="filter">人员状态</div>
+      <div class="filter">刷新频率</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 全域运营概览</h3>
+    <div class="row">
+      <div class="cell">订单总额</div>
+      <div class="cell">实收金额</div>
+      <div class="cell">泊位利用率</div>
+      <div class="cell">泊位周转率</div>
+      <div class="cell">欠费金额</div>
+      <div class="cell">支付占比</div>
+      <div class="cell">在线设备</div>
+      <div class="cell">在岗人员</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>③ 全域车场地图</h3>
+      <div class="placeholder map">地图占位：封闭/非封闭车场、泊位饱和度和告警点位</div>
+    </div>
+    <div class="box">
+      <h3>④ 车场档案卡片</h3>
+      <div class="cell">车场基础信息和地址</div>
+      <div class="cell">泊位总数、占用数和空闲数</div>
+      <div class="cell">收费标准和运营时间</div>
+      <div class="cell">人员配置和当前在岗情况</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 封闭车场远程值守</h3>
+    <div class="row two">
+      <div class="placeholder screen">视频占位：入口、出口、岗亭和车牌识别画面</div>
+      <div>
+        <div class="cell">车辆进出及车牌识别结果</div>
+        <div class="cell">当前停车订单及历史欠费</div>
+        <div class="cell">远程开闸、关闸和语音提示</div>
+        <span class="btn">远程开闸</span>
+        <span class="btn">远程关闸</span>
+        <span class="btn">创建工单</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 非封闭车场九宫格监控</h3>
+    <div class="nine">
+      <div class="video">监控画面</div><div class="video">监控画面</div><div class="video">监控画面</div>
+      <div class="video">监控画面</div><div class="video">监控画面</div><div class="video">监控画面</div>
+      <div class="video">监控画面</div><div class="video">监控画面</div><div class="video">监控画面</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>⑦ 泊位占用平面图</h3>
+      <div class="placeholder map">平面图占位：泊位编号、占用状态和车辆信息</div>
+    </div>
+    <div class="box">
+      <h3>⑧ 运营趋势与异常提示</h3>
+      <div class="placeholder map">图表占位：收入、订单、欠费和泊位运营趋势</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑨ 设备及人员告警</h3>
+    <table class="table">
+      <tr>
+        <th>告警时间</th><th>来源</th><th>停车场/区域</th><th>告警类型</th>
+        <th>告警说明</th><th>级别</th><th>处理状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示道闸、识别仪、地锁、人员在岗及轨迹异常</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 值班工单 -->
+<section class="page" id="duty-order">
+  <div class="title">
+    <h2>值班工单</h2>
+    <p>建立发现、分派、计时、处理、回溯和绩效统计闭环。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 工单查询</h3>
+    <div class="filters">
+      <div class="filter">工单编号/关键词</div>
+      <div class="filter">工单来源</div>
+      <div class="filter">工单类型</div>
+      <div class="filter">工单级别</div>
+      <div class="filter">停车场/区域</div>
+      <div class="filter">处理状态</div>
+      <div class="filter">负责人</div>
+      <div class="filter">创建时间</div>
+    </div>
+    <span class="btn">查询</span>
+    <span class="btn">新建工单</span>
+  </div>
+
+  <div class="box">
+    <h3>② 工单概览</h3>
+    <div class="row">
+      <div class="cell">待接单</div>
+      <div class="cell">处理中</div>
+      <div class="cell">即将超时</div>
+      <div class="cell">今日完成</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 工单列表</h3>
+    <table class="table">
+      <tr>
+        <th>工单编号</th><th>来源</th><th>问题类型</th><th>停车场/区域</th>
+        <th>级别</th><th>负责人</th><th>处理时长</th><th>状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示系统告警、人工发现和车场上报工单</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>④ 工单闭环流程</h3>
+    <div class="flow">
+      <div class="cell">问题发现</div><div class="arrow">→</div>
+      <div class="cell">创建分派</div><div class="arrow">→</div>
+      <div class="cell">接单计时</div><div class="arrow">→</div>
+      <div class="cell">远程/现场处理</div><div class="arrow">→</div>
+      <div class="cell">结果复核</div><div class="arrow">→</div>
+      <div class="cell">评价归档</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 远程管理操作</h3>
+    <div class="row">
+      <div class="cell">远程开闸</div>
+      <div class="cell">远程关闸</div>
+      <div class="cell">语音对讲</div>
+      <div class="cell">设备状态刷新或重启</div>
+    </div>
+  </div>
+</section>
+
+<!-- 值班报告 -->
+<section class="page" id="duty-report">
+  <div class="title">
+    <h2>值班报告</h2>
+    <p>系统自动汇总运营、告警、工单和远程操作记录生成报告。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 报告查询</h3>
+    <div class="filters">
+      <div class="filter">报告名称/编号</div>
+      <div class="filter">值班日期</div>
+      <div class="filter">班次</div>
+      <div class="filter">值班人员</div>
+      <div class="filter">所属区域</div>
+      <div class="filter">停车场</div>
+      <div class="filter">报告状态</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 值班报告列表</h3>
+    <table class="table">
+      <tr>
+        <th>报告编号</th><th>值班日期</th><th>班次</th><th>值班人员</th>
+        <th>负责区域</th><th>告警数量</th><th>工单数量</th><th>状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示系统自动生成的历史值班报告</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>③ 报告内容</h3>
+    <div class="row two">
+      <div class="cell">值班期间订单、收入、停车及欠费概况</div>
+      <div class="cell">设备、人员、订单和运营告警汇总</div>
+      <div class="cell">新增、完成、超时和未完成工单</div>
+      <div class="cell">远程开关闸和设备控制操作记录</div>
+      <div class="cell">待处理告警及未完成事项</div>
+      <div class="cell">下一班次重点关注和交接说明</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 报告流程</h3>
+    <div class="flow">
+      <div class="cell">系统自动生成</div><div class="arrow">→</div>
+      <div class="cell">值班人员补充</div><div class="arrow">→</div>
+      <div class="cell">负责人审核</div><div class="arrow">→</div>
+      <div class="cell">交接确认</div><div class="arrow">→</div>
+      <div class="cell">报告归档</div>
+    </div>
+  </div>
+</section>
+
+<!-- 流程规则 -->
+<section class="page" id="flow-rule">
+  <div class="title">
+    <h2>规则配置</h2>
+    <p>通过可视化流程设计器配置节点、条件、分支、双派和处理人员。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 流程规则查询</h3>
+    <div class="filters">
+      <div class="filter">流程名称/编号</div>
+      <div class="filter">业务类型</div>
+      <div class="filter">适用部门</div>
+      <div class="filter">流程状态</div>
+    </div>
+    <span class="btn">查询</span>
+    <span class="btn">新建流程</span>
+    <span class="btn">调用模板</span>
+  </div>
+
+  <div class="box">
+    <h3>② 可视化流程设计器</h3>
+    <div class="designer">
+      <div class="panel">
+        <b>节点组件区</b>
+        <div class="node">开始节点</div>
+        <div class="node">审批节点</div>
+        <div class="node">处理节点</div>
+        <div class="node">条件分支</div>
+        <div class="node">双派节点</div>
+        <div class="node">结束节点</div>
+      </div>
+
+      <div class="canvas">
+        <div class="node">开始</div>→
+        <div class="node">提交</div>→
+        <div class="node">条件</div>→
+        <div class="node">审核</div>→
+        <div class="node">结束</div>
+      </div>
+
+      <div class="panel">
+        <b>节点属性配置</b>
+        <div class="cell">节点名称和说明</div>
+        <div class="cell">处理人配置</div>
+        <div class="cell">处理条件和时限</div>
+        <div class="cell">表单及操作权限</div>
+        <div class="cell">超时提醒与升级</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 节点和流转规则</h3>
+    <div class="row two">
+      <div class="cell">按金额、区域、类型或风险等级配置条件</div>
+      <div class="cell">不同条件进入不同处理分支</div>
+      <div class="cell">同一任务同时分派多个部门或人员</div>
+      <div class="cell">按角色、部门或具体人员配置处理人</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 流程模板</h3>
+    <div class="row">
+      <div class="cell">设备维修流程模板</div>
+      <div class="cell">投诉处理流程模板</div>
+      <div class="cell">业务审批流程模板</div>
+      <div class="cell">自定义流程模板</div>
+    </div>
+  </div>
+</section>
+
+<!-- PC工单 -->
+<section class="page" id="flow-pc">
+  <div class="title">
+    <h2>工单处置（PC）</h2>
+    <p>在PC端完成工单查询、新建、分派、处理、审核和关闭。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 工单检索</h3>
+    <div class="filters">
+      <div class="filter">工单编号/关键词</div>
+      <div class="filter">工单类型</div>
+      <div class="filter">工单状态</div>
+      <div class="filter">优先级</div>
+      <div class="filter">所属部门</div>
+      <div class="filter">处理人</div>
+      <div class="filter">停车场/区域</div>
+      <div class="filter">创建时间</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 工单概览</h3>
+    <div class="row">
+      <div class="cell">待接单</div>
+      <div class="cell">处理中</div>
+      <div class="cell">即将超时</div>
+      <div class="cell">今日完成</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 工单列表</h3>
+    <table class="table">
+      <tr>
+        <th>编号</th><th>标题</th><th>类型</th><th>来源</th>
+        <th>优先级</th><th>处理人</th><th>剩余时间</th><th>状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示全部状态工单及相关操作</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>④ 新建工单</h3>
+    <div class="filters">
+      <div class="filter">工单标题</div>
+      <div class="filter">业务类型</div>
+      <div class="filter">问题来源</div>
+      <div class="filter">紧急程度</div>
+      <div class="filter">关联车场</div>
+      <div class="filter">关联设备/订单</div>
+      <div class="filter">处理部门</div>
+      <div class="filter">处理时限</div>
+    </div>
+    <div class="cell" style="margin-top:10px">问题描述和附件上传区域</div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>⑤ 流转时间轴</h3>
+      <div class="placeholder">创建、分派、接单、处理、审核和关闭</div>
+    </div>
+    <div class="box">
+      <h3>⑥ 工单处理面板</h3>
+      <div class="cell">处理过程和结果</div>
+      <div class="cell">证明材料上传</div>
+      <div class="cell">转派、退回或提交审核</div>
+    </div>
+  </div>
+</section>
+
+<!-- 手机工单 -->
+<section class="page" id="flow-mobile">
+  <div class="title">
+    <h2>工单处置（手机）</h2>
+    <p>现场人员通过手机接单、导航、处理并上传结果。</p>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>① 手机工单首页</h3>
+      <div class="phone">
+        <div class="phone-head">移动工单</div>
+        <div class="phone-body">
+          <div class="phone-item">待接单数量</div>
+          <div class="phone-item">处理中数量</div>
+          <div class="phone-item">即将超时提醒</div>
+          <div class="phone-item">状态筛选和搜索</div>
+          <div class="phone-item">工单列表</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>② 手机工单详情</h3>
+      <div class="phone">
+        <div class="phone-head">工单详情</div>
+        <div class="phone-body">
+          <div class="phone-item">工单基础信息</div>
+          <div class="phone-item">停车场和设备信息</div>
+          <div class="phone-item">问题描述和附件</div>
+          <div class="phone-item">地图定位和导航</div>
+          <div class="phone-item">接单、转派和联系发起人</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>③ 现场处理反馈</h3>
+      <div class="phone">
+        <div class="phone-head">处理反馈</div>
+        <div class="phone-body">
+          <div class="phone-item">填写处理过程</div>
+          <div class="phone-item">选择处理结果</div>
+          <div class="phone-item">拍照和录像上传</div>
+          <div class="phone-item">设备扫码核验</div>
+          <div class="phone-item">提交处理结果</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>④ 移动消息通知</h3>
+      <div class="phone">
+        <div class="phone-head">消息通知</div>
+        <div class="phone-body">
+          <div class="phone-item">新工单通知</div>
+          <div class="phone-item">即将超时提醒</div>
+          <div class="phone-item">工单退回通知</div>
+          <div class="phone-item">协同处理通知</div>
+          <div class="phone-item">审核和关闭通知</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 工单分析 -->
+<section class="page" id="flow-analysis">
+  <div class="title">
+    <h2>工单数据分析</h2>
+    <p>按类型、部门、时间和处理人分析流程任务数据。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 分析条件</h3>
+    <div class="filters">
+      <div class="filter">统计时间</div>
+      <div class="filter">工单类型</div>
+      <div class="filter">所属部门</div>
+      <div class="filter">处理人</div>
+      <div class="filter">停车场/区域</div>
+      <div class="filter">工单来源</div>
+      <div class="filter">工单状态</div>
+      <div class="filter">流程模板</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 核心效率指标</h3>
+    <div class="row">
+      <div class="cell">平均响应时间</div>
+      <div class="cell">平均处理时长</div>
+      <div class="cell">平均超时时长</div>
+      <div class="cell">总体完成时长</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box"><h3>③ 工单数量趋势</h3><div class="placeholder">趋势图占位</div></div>
+    <div class="box"><h3>④ 工单类型分布</h3><div class="placeholder">饼图占位</div></div>
+    <div class="box"><h3>⑤ 部门处理效率</h3><div class="placeholder">柱状图占位</div></div>
+    <div class="box"><h3>⑥ 处理人绩效</h3><div class="placeholder">排名图占位</div></div>
+  </div>
+
+  <div class="box">
+    <h3>⑦ 流程节点耗时</h3>
+    <div class="flow">
+      <div class="cell">创建</div><div class="arrow">→</div>
+      <div class="cell">分派</div><div class="arrow">→</div>
+      <div class="cell">响应</div><div class="arrow">→</div>
+      <div class="cell">处理</div><div class="arrow">→</div>
+      <div class="cell">审核关闭</div>
+    </div>
+  </div>
+</section>
+
+<!-- 融合展示大屏 -->
+<section class="page" id="display-screen">
+  <div class="title">
+    <h2>展示大屏</h2>
+    <p>融合全域停车、智能催缴、收费员、运营预警和AI分析。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 全域核心指标</h3>
+    <div class="row">
+      <div class="cell">停车场总数</div>
+      <div class="cell">泊位总数</div>
+      <div class="cell">泊位利用率</div>
+      <div class="cell">今日实收金额</div>
+      <div class="cell">催缴回收金额</div>
+      <div class="cell">收费员在岗人数</div>
+      <div class="cell">设备在线率</div>
+      <div class="cell">实时告警数量</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>② 全域停车一张图</h3>
+      <div class="placeholder map">
+        GIS地图占位：车场分布、车场类型、泊位饱和度、收费员位置、运动轨迹和异常点位
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>③ AI智能催缴态势</h3>
+      <div class="cell">催缴任务实时执行进度</div>
+      <div class="cell">触达车辆和渠道效果</div>
+      <div class="cell">催缴回收金额和回款率</div>
+      <div class="cell">最新缴费记录滚动展示</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>④ 收费员数字孪生与考勤</h3>
+      <div class="placeholder screen">地图和图表占位：位置、轨迹、在岗状态和考核排行</div>
+    </div>
+
+    <div class="box">
+      <h3>⑤ 运营监控与预警中心</h3>
+      <div class="placeholder screen">告警占位：设备、人员、收入、欠费和工单处置进度</div>
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>⑥ 运营趋势</h3>
+      <div class="placeholder screen">图表占位：收入、订单、欠费和泊位利用率趋势</div>
+    </div>
+
+    <div class="box">
+      <h3>⑦ AI自主分析看板</h3>
+      <div class="cell">收入波动分析摘要</div>
+      <div class="cell">欠费趋势和重点区域分析</div>
+      <div class="cell">设备健康分析</div>
+      <div class="cell">排班和工单效率建议</div>
+    </div>
+  </div>
+</section>
+
+<!-- 考核指标 -->
+<section class="page" id="parking-assessment">
+  <div class="title">
+    <h2>考核指标</h2>
+    <p>导入非封闭车场考核指标，完成校验、月度统计和排名。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 查询条件</h3>
+    <div class="filters">
+      <div class="filter">考核月份</div>
+      <div class="filter">所属区域</div>
+      <div class="filter">物业公司</div>
+      <div class="filter">停车场</div>
+      <div class="filter">考核状态</div>
+      <div class="filter">结果等级</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 指标导入和校验</h3>
+    <div class="row">
+      <div class="cell">下载标准导入模板</div>
+      <div class="cell">上传Excel考核数据</div>
+      <div class="cell">校验字段、格式和异常值</div>
+      <div class="cell">预览并确认数据入库</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 月度考核概览</h3>
+    <div class="row">
+      <div class="cell">参评车场数量</div>
+      <div class="cell">平均考核得分</div>
+      <div class="cell">异常指标数量</div>
+      <div class="cell">优秀车场数量</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 考核结果</h3>
+    <table class="table">
+      <tr>
+        <th>停车场</th><th>考核月份</th><th>指标数量</th><th>完成项</th>
+        <th>异常项</th><th>综合得分</th><th>排名</th><th>同比变化</th><th>操作</th>
+      </tr>
+      <tr><td colspan="9">展示各非封闭车场月度考核结果</td></tr>
+    </table>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>⑤ 月度得分趋势</h3>
+      <div class="placeholder">图表占位：车场月度考核得分变化</div>
+    </div>
+    <div class="box">
+      <h3>⑥ 历史对比</h3>
+      <div class="placeholder">图表占位：排名及历史同期对比</div>
+    </div>
+  </div>
+</section>
+
+<!-- 台账管理 -->
+<section class="page" id="ledger">
+  <div class="title">
+    <h2>台账管理</h2>
+    <p>线上维护停车场、设备、合同和资产台账。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 台账分类</h3>
+    <div class="row">
+      <div class="cell"><b>停车场基础信息</b>地址、类型、泊位、收费标准和运营单位</div>
+      <div class="cell"><b>设备台账</b>设备编号、类型、位置、状态和维保信息</div>
+      <div class="cell"><b>合同台账</b>合同主体、金额、期限、附件和履约状态</div>
+      <div class="cell"><b>资产台账</b>资产编号、类别、归属、使用和变更情况</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 台账查询</h3>
+    <div class="filters">
+      <div class="filter">台账类型</div>
+      <div class="filter">名称/编号</div>
+      <div class="filter">所属区域/部门</div>
+      <div class="filter">责任人</div>
+      <div class="filter">审核状态</div>
+      <div class="filter">更新状态</div>
+      <div class="filter">到期时间</div>
+      <div class="filter">资料完整性</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 台账概览</h3>
+    <div class="row">
+      <div class="cell">台账记录总数</div>
+      <div class="cell">待审核记录</div>
+      <div class="cell">即将到期记录</div>
+      <div class="cell">资料异常记录</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 台账列表</h3>
+    <table class="table">
+      <tr>
+        <th>台账类型</th><th>名称/编号</th><th>所属区域</th><th>责任人</th>
+        <th>最近更新</th><th>审核状态</th><th>资料状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示停车场、设备、合同和资产台账记录</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>⑤ 维护和审核设置</h3>
+    <div class="row">
+      <div class="cell">配置台账更新责任人</div>
+      <div class="cell">配置新增和变更审核流程</div>
+      <div class="cell">配置定期更新及到期提醒</div>
+      <div class="cell">保留历史版本和变更记录</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>⑥ 变更记录</h3>
+    <table class="table">
+      <tr>
+        <th>业务对象</th><th>变更字段</th><th>变更前</th><th>变更后</th>
+        <th>操作人</th><th>变更时间</th><th>审核状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示台账新增、修改、审核和历史版本记录</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+
+<!-- 停车运营智能体独立界面 -->
+<div class="app" id="agent-app" style="display:none">
+<aside class="side">
+  <div class="logo">停车运营智能体</div>
+
+  <div class="group">智能工作台</div>
+  <div class="agent-menu menu active" data-agent-page="agent-assistant">智能助理</div>
+  <div class="agent-menu menu" data-agent-page="agent-template">场景任务模板</div>
+  <div class="agent-menu menu" data-agent-page="agent-automation">自动化任务</div>
+  <div class="agent-menu menu" data-agent-page="agent-customer">AI客服</div>
+  <div class="agent-menu menu" data-agent-page="agent-business">批量业务处理</div>
+
+  <div class="group">分析与审计</div>
+  <div class="agent-menu menu" data-agent-page="agent-report">自主分析报告</div>
+  <div class="agent-menu menu" data-agent-page="agent-resident">居民认证分析</div>
+  <div class="agent-menu menu" data-agent-page="agent-audit">财务与日志审计</div>
+
+  <div class="group">平台管理</div>
+  <div class="agent-menu menu" data-agent-page="agent-model">模型与算力</div>
+  <div class="agent-menu menu" data-agent-page="agent-data">数据接入管理</div>
+  <div class="agent-menu menu" data-agent-page="agent-security">权限与安全</div>
+</aside>
+
+<main class="main">
+<header class="head">
+  <span id="agent-head">智能助理</span>
+  <button class="agent-back" onclick="closeAgent()">返回管理平台</button>
+</header>
+
+<div class="content">
+
+<!-- 智能助理 -->
+<section class="agent-page page active" id="agent-assistant">
+  <div class="title">
+    <h2>停车运营智能助理</h2>
+    <p>通过自然语言查询停车数据、执行任务并生成分析报告。</p>
+  </div>
+
+  <div class="agent-layout">
+    <div class="box">
+      <h3>历史任务</h3>
+      <div class="skill">昨日收入异常分析</div>
+      <div class="skill">本周欠费趋势报告</div>
+      <div class="skill">设备健康分析</div>
+      <div class="skill">收费员排班建议</div>
+      <div class="skill">工单处置效率分析</div>
+    </div>
+
+    <div class="box">
+      <h3>助理对话</h3>
+      <div class="chat">
+        <div class="bubble">您好，我可以查询运营数据、分析异常、生成报告或执行授权业务。</div>
+        <div class="bubble right">分析本周各停车场收入异常，并生成报告。</div>
+        <div class="bubble">正在调用订单、支付、停车场和历史同期数据。结果将展示异常车场、影响金额、原因和建议。</div>
+        <div class="chat-input">输入问题或上传 Excel / Word / PDF 文件</div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>常用技能</h3>
+      <div class="skill">收入和欠费分析</div>
+      <div class="skill">Excel批量业务处理</div>
+      <div class="skill">财务对账分析</div>
+      <div class="skill">临时车报障诊断</div>
+      <div class="skill">居民认证分析</div>
+      <div class="skill">生成并发送报表</div>
+      <div class="skill">邮件、短信和钉钉通知</div>
+    </div>
+  </div>
+</section>
+
+<!-- 场景模板 -->
+<section class="agent-page page" id="agent-template">
+  <div class="title">
+    <h2>场景任务模板</h2>
+    <p>预置客服、业务办理、流程、报表及自动化任务模板。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 模板查询</h3>
+    <div class="filters">
+      <div class="filter">模板名称</div>
+      <div class="filter">应用类型</div>
+      <div class="filter">适用部门</div>
+      <div class="filter">启用状态</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 常用模板</h3>
+    <div class="row three">
+      <div class="cell"><b>每日收入分析</b>自动分析收入变化和异常原因</div>
+      <div class="cell"><b>欠费趋势分析</b>识别重点区域、车辆和欠费变化</div>
+      <div class="cell"><b>收费员工作分析</b>分析工作量、在岗状态和收缴率</div>
+      <div class="cell"><b>设备健康分析</b>分析设备离线、故障及风险</div>
+      <div class="cell"><b>套餐到期分析</b>识别即将到期客户并发送提醒</div>
+      <div class="cell"><b>排班合理性分析</b>分析人员数量和工作负荷</div>
+      <div class="cell"><b>工单效率分析</b>分析响应、处理和超时情况</div>
+      <div class="cell"><b>临时车报障诊断</b>融合进出、支付和监控数据</div>
+      <div class="cell"><b>批量业务办理</b>执行开户、销户、续费和改期</div>
+    </div>
+  </div>
+</section>
+
+<!-- 自动化任务 -->
+<section class="agent-page page" id="agent-automation">
+  <div class="title">
+    <h2>自动化任务</h2>
+    <p>按每日、每周或自定义周期自动分析并发送报告。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 任务配置</h3>
+    <div class="filters">
+      <div class="filter">任务名称</div>
+      <div class="filter">分析主题</div>
+      <div class="filter">执行周期</div>
+      <div class="filter">数据范围</div>
+      <div class="filter">报告格式</div>
+      <div class="filter">接收人员</div>
+      <div class="filter">发送渠道</div>
+      <div class="filter">任务状态</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 自动分析主题</h3>
+    <div class="row">
+      <div class="cell">收入和欠费分析</div>
+      <div class="cell">收费员工作状况分析</div>
+      <div class="cell">套餐到期和设计分析</div>
+      <div class="cell">设备运行状况分析</div>
+      <div class="cell">收费员排班合理性</div>
+      <div class="cell">工单处置效率</div>
+      <div class="cell">居民认证有效性</div>
+      <div class="cell">综合运营分析</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 执行流程</h3>
+    <div class="flow">
+      <div class="cell">定时触发</div><div class="arrow">→</div>
+      <div class="cell">获取业务数据</div><div class="arrow">→</div>
+      <div class="cell">智能分析</div><div class="arrow">→</div>
+      <div class="cell">生成报表</div><div class="arrow">→</div>
+      <div class="cell">发送指定人员</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 自动任务列表</h3>
+    <table class="table">
+      <tr>
+        <th>任务名称</th><th>分析主题</th><th>执行周期</th><th>最近执行</th>
+        <th>发现异常</th><th>报告状态</th><th>发送状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示自动分析任务及执行记录</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- AI客服 -->
+<section class="agent-page page" id="agent-customer">
+  <div class="title">
+    <h2>AI客服</h2>
+    <p>为运营坐席和车主提供报障、缴费、套餐和居民业务咨询。</p>
+  </div>
+
+  <div class="row two">
+    <div class="box">
+      <h3>① 客服工作区</h3>
+      <div class="chat">
+        <div class="bubble right">车辆已缴费，为什么出口道闸没有打开？</div>
+        <div class="bubble">正在查询车辆进出、订单、支付、车牌识别、道闸和监控数据。</div>
+        <div class="bubble">此处展示原因判断、证据数据和建议处理方式。</div>
+        <div class="chat-input">继续提问 / 转人工 / 创建工单</div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>② 车主手机AI客服</h3>
+      <div class="phone">
+        <div class="phone-head">停车AI客服</div>
+        <div class="phone-body">
+          <div class="phone-item">停车缴费咨询</div>
+          <div class="phone-item">车辆进出异常</div>
+          <div class="phone-item">发票问题</div>
+          <div class="phone-item">套餐办理和续费</div>
+          <div class="phone-item">居民认证咨询</div>
+          <div class="phone-item">转人工客服</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 客服分析数据</h3>
+    <div class="row">
+      <div class="cell">车辆进出记录</div>
+      <div class="cell">停车订单和支付流水</div>
+      <div class="cell">套餐和居民认证信息</div>
+      <div class="cell">车牌识别、道闸和视频监控</div>
+    </div>
+  </div>
+</section>
+
+<!-- 批量业务 -->
+<section class="agent-page page" id="agent-business">
+  <div class="title">
+    <h2>批量业务处理</h2>
+    <p>识别Excel数据，经校验和确认后执行批量业务。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 文件上传和业务选择</h3>
+    <div class="filters">
+      <div class="filter">上传Excel文件</div>
+      <div class="filter">业务类型</div>
+      <div class="filter">所属停车场</div>
+      <div class="filter">执行人员</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 支持业务</h3>
+    <div class="row">
+      <div class="cell">批量开户</div>
+      <div class="cell">批量销户</div>
+      <div class="cell">套餐续费</div>
+      <div class="cell">修改套餐日期</div>
+      <div class="cell">客户资料更新</div>
+      <div class="cell">异常数据重新处理</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 处理流程</h3>
+    <div class="flow">
+      <div class="cell">上传文件</div><div class="arrow">→</div>
+      <div class="cell">识别字段</div><div class="arrow">→</div>
+      <div class="cell">校验数据</div><div class="arrow">→</div>
+      <div class="cell">影响预览</div><div class="arrow">→</div>
+      <div class="cell">人工确认</div><div class="arrow">→</div>
+      <div class="cell">执行并归档</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 执行任务列表</h3>
+    <table class="table">
+      <tr>
+        <th>任务名称</th><th>业务类型</th><th>上传人员</th><th>数据量</th>
+        <th>成功数</th><th>失败数</th><th>状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示批量业务执行和失败数据</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 分析报告 -->
+<section class="agent-page page" id="agent-report">
+  <div class="title">
+    <h2>自主分析报告</h2>
+    <p>集中管理智能体自动生成的各类停车运营分析报告。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 报告查询</h3>
+    <div class="filters">
+      <div class="filter">报告名称</div>
+      <div class="filter">分析主题</div>
+      <div class="filter">数据周期</div>
+      <div class="filter">生成方式</div>
+      <div class="filter">生成时间</div>
+      <div class="filter">接收人员</div>
+      <div class="filter">报告状态</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 报告主题</h3>
+    <div class="row">
+      <div class="cell">收入波动分析</div>
+      <div class="cell">欠费趋势分析</div>
+      <div class="cell">设备健康分析</div>
+      <div class="cell">收费员工作分析</div>
+      <div class="cell">排班合理性分析</div>
+      <div class="cell">套餐设计分析</div>
+      <div class="cell">工单效率分析</div>
+      <div class="cell">综合运营分析</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 报告列表</h3>
+    <table class="table">
+      <tr>
+        <th>报告名称</th><th>分析主题</th><th>数据周期</th><th>异常数量</th>
+        <th>生成时间</th><th>接收人员</th><th>发送状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">支持预览、下载、邮件发送和生成任务</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>④ 报告内容预览</h3>
+    <div class="row">
+      <div class="cell">核心分析结论</div>
+      <div class="cell">异常数据和影响范围</div>
+      <div class="cell">原因分析</div>
+      <div class="cell">AI优化建议</div>
+    </div>
+  </div>
+</section>
+
+<!-- 居民认证分析 -->
+<section class="agent-page page" id="agent-resident">
+  <div class="title">
+    <h2>居民认证分析</h2>
+    <p>分析认证居民资料有效性、有效期和异常使用情况。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 分析条件</h3>
+    <div class="filters">
+      <div class="filter">居民姓名/证件</div>
+      <div class="filter">车辆</div>
+      <div class="filter">所属区域</div>
+      <div class="filter">认证状态</div>
+      <div class="filter">到期时间</div>
+      <div class="filter">异常类型</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 分析概览</h3>
+    <div class="row">
+      <div class="cell">有效认证</div>
+      <div class="cell">即将到期</div>
+      <div class="cell">已经过期</div>
+      <div class="cell">资料缺失</div>
+      <div class="cell">疑似重复认证</div>
+      <div class="cell">异常使用</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 认证分析列表</h3>
+    <table class="table">
+      <tr>
+        <th>居民</th><th>车辆</th><th>认证区域</th><th>有效期</th>
+        <th>资料状态</th><th>风险提示</th><th>建议动作</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示认证有效性、风险判断和个性化提示</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 审计 -->
+<section class="agent-page page" id="agent-audit">
+  <div class="title">
+    <h2>财务与日志审计</h2>
+    <p>对财务对账差异和停车系统操作日志进行智能追溯。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 财务对账分析</h3>
+    <div class="row">
+      <div class="cell">订单和支付差异</div>
+      <div class="cell">退款和到账差异</div>
+      <div class="cell">渠道结算差异</div>
+      <div class="cell">差异根源追溯</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 操作日志审计</h3>
+    <div class="row">
+      <div class="cell">敏感数据修改</div>
+      <div class="cell">高频异常操作</div>
+      <div class="cell">越权操作</div>
+      <div class="cell">非正常时段操作</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 风险记录</h3>
+    <table class="table">
+      <tr>
+        <th>发生时间</th><th>风险类型</th><th>操作人员</th><th>业务对象</th>
+        <th>风险说明</th><th>影响范围</th><th>处理状态</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示财务差异和操作日志风险记录</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 模型算力 -->
+<section class="agent-page page" id="agent-model">
+  <div class="title">
+    <h2>模型与算力</h2>
+    <p>管理本地算力硬件、开源大模型和智能体服务。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 算力资源</h3>
+    <div class="row">
+      <div class="cell">Apple算力节点</div>
+      <div class="cell">NVIDIA算力节点</div>
+      <div class="cell">华硕算力节点</div>
+      <div class="cell">CPU、GPU、内存和存储使用率</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 模型管理</h3>
+    <table class="table">
+      <tr>
+        <th>模型名称</th><th>参数规模</th><th>部署节点</th><th>服务状态</th>
+        <th>响应时间</th><th>资源占用</th><th>适用任务</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">根据硬件能力部署和切换不同规模的开源模型</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>③ 运行监控</h3>
+    <div class="row">
+      <div class="cell">请求数量</div>
+      <div class="cell">并发任务</div>
+      <div class="cell">平均响应时间</div>
+      <div class="cell">服务失败和资源负载</div>
+    </div>
+  </div>
+</section>
+
+<!-- 数据接入 -->
+<section class="agent-page page" id="agent-data">
+  <div class="title">
+    <h2>数据接入管理</h2>
+    <p>管理停车平台全量数据接入、同步和性能隔离。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 数据接入范围</h3>
+    <div class="row">
+      <div class="cell">临停订单、进出、支付和开票</div>
+      <div class="cell">套餐客户和居民认证</div>
+      <div class="cell">流程、工单和客服数据</div>
+      <div class="cell">地磁、泊位和收费员数据</div>
+      <div class="cell">停车场及基础信息</div>
+      <div class="cell">设备和视频监控</div>
+      <div class="cell">合同和资产台账</div>
+      <div class="cell">系统操作日志</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 数据源列表</h3>
+    <table class="table">
+      <tr>
+        <th>数据源</th><th>系统模块</th><th>连接方式</th><th>同步周期</th>
+        <th>最近同步</th><th>数据状态</th><th>责任人</th><th>操作</th>
+      </tr>
+      <tr><td colspan="8">展示各业务系统数据接入和同步状态</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>③ 性能隔离和数据治理</h3>
+    <div class="row two">
+      <div class="cell">只读数据副本和异步同步</div>
+      <div class="cell">查询资源限制和大任务排队</div>
+      <div class="cell">在线业务保护、超时和熔断</div>
+      <div class="cell">字段映射、质量校验和敏感数据脱敏</div>
+    </div>
+  </div>
+</section>
+
+<!-- 权限安全 -->
+<section class="agent-page page" id="agent-security">
+  <div class="title">
+    <h2>权限与安全</h2>
+    <p>通过加密隧道、身份认证、数据权限和审计保障智能体安全。</p>
+  </div>
+
+  <div class="box">
+    <h3>① 安全访问架构</h3>
+    <div class="flow">
+      <div class="cell">手机/电脑客户端</div><div class="arrow">→</div>
+      <div class="cell">身份认证</div><div class="arrow">→</div>
+      <div class="cell">数据权限校验</div><div class="arrow">→</div>
+      <div class="cell">专用加密隧道</div><div class="arrow">→</div>
+      <div class="cell">内网智能体服务</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>② 权限配置</h3>
+    <div class="row">
+      <div class="cell">智能体应用权限</div>
+      <div class="cell">停车数据访问范围</div>
+      <div class="cell">文件处理和导出权限</div>
+      <div class="cell">业务执行和消息发送权限</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>③ 高风险操作确认</h3>
+    <div class="row">
+      <div class="cell">批量开户和销户</div>
+      <div class="cell">套餐续费和日期修改</div>
+      <div class="cell">批量邮件、短信和钉钉发送</div>
+      <div class="cell">敏感数据导出和修改</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>④ 智能体审计记录</h3>
+    <table class="table">
+      <tr>
+        <th>用户</th><th>智能体应用</th><th>数据范围</th><th>执行动作</th>
+        <th>影响数量</th><th>审批人</th><th>执行时间</th><th>执行结果</th>
+      </tr>
+      <tr><td colspan="8">记录数据查询、文件处理、业务执行和消息发送行为</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+
+<script>
+const platformMenus=document.querySelectorAll("#platform-app .menu");
+const platformPages=document.querySelectorAll("#platform-app .page");
+const platformHead=document.getElementById("head");
+
+platformMenus.forEach(menu=>{
+  menu.onclick=()=>{
+    platformMenus.forEach(item=>item.classList.remove("active"));
+    platformPages.forEach(page=>page.classList.remove("active"));
+    menu.classList.add("active");
+    document.getElementById(menu.dataset.page).classList.add("active");
+    platformHead.innerText=menu.innerText;
+    scrollTo(0,0);
+  };
+});
+
+const agentMenus=document.querySelectorAll(".agent-menu");
+const agentPages=document.querySelectorAll(".agent-page");
+const agentHead=document.getElementById("agent-head");
+
+agentMenus.forEach(menu=>{
+  menu.onclick=()=>{
+    agentMenus.forEach(item=>item.classList.remove("active"));
+    agentPages.forEach(page=>page.classList.remove("active"));
+    menu.classList.add("active");
+    document.getElementById(menu.dataset.agentPage).classList.add("active");
+    agentHead.innerText=menu.innerText;
+    scrollTo(0,0);
+  };
+});
+
+function openAgent(){
+  document.getElementById("platform-app").style.display="none";
+  document.getElementById("agent-app").style.display="flex";
+  scrollTo(0,0);
+}
+
+function closeAgent(){
+  document.getElementById("agent-app").style.display="none";
+  document.getElementById("platform-app").style.display="flex";
+  scrollTo(0,0);
+}
+</script>
+</body>
+</html>

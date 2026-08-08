@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>
+        充电车位防燃油车占位与停充一体化运营方案
+    </title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #020711;
+            font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #stage {
+            position: relative;
+            width: 1600px;
+            height: 900px;
+            overflow: hidden;
+            transform-origin: center center;
+            color: #fff;
+            background: radial-gradient(circle at 51% 41%, rgba(24, 148, 255, .15), transparent 34%), radial-gradient(circle at 87% 23%, rgba(139, 92, 246, .12), transparent 24%), radial-gradient(circle at 11% 82%, rgba(255, 158, 42, .06), transparent 26%), linear-gradient(135deg, #020711 0%, #071426 50%, #07101f 74%, #030812 100%);
+        }
+
+        #stage:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: .1;
+            background-image: linear-gradient(rgba(66, 150, 255, .28) 1px, transparent 1px), linear-gradient(90deg, rgba(66, 150, 255, .28) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 93%, transparent);
+        }
+
+        #stage:after {
+            content: "";
+            position: absolute;
+            left: 397px;
+            top: 42px;
+            width: 810px;
+            height: 810px;
+            border: 1px solid rgba(68, 171, 255, .045);
+            border-radius: 50%;
+            box-shadow: 0 0 150px rgba(0, 153, 255, .035), inset 0 0 150px rgba(0, 153, 255, .02);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+        }
+
+        .background-svg {
+            position: absolute;
+            inset: 0;
+            width: 1600px;
+            height: 900px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-line {
+            fill: none;
+            stroke: url(#bgGradient);
+            stroke-width: 1.1;
+            opacity: .17;
+        }
+
+        .bg-dash {
+            fill: none;
+            stroke: #43c9ff;
+            stroke-width: 1;
+            stroke-dasharray: 7 10;
+            opacity: .12;
+            animation: bgflow 14s linear infinite;
+        }
+
+        .bg-dot {
+            fill: #5bd5ff;
+            filter: drop-shadow(0 0 6px #28bfff);
+        }
+
+        @keyframes bgflow {
+            to {
+                stroke-dashoffset: -190;
+            }
+
+        }
+
+        .header {
+            position: absolute;
+            left: 48px;
+            right: 48px;
+            top: 20px;
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #1786ff, #785cff);
+            box-shadow: 0 9px 30px rgba(51, 127, 255, .30), inset 0 1px 0 rgba(255, 255, 255, .25);
+        }
+
+        .logo:after {
+            content: "";
+            position: absolute;
+            inset: -5px;
+            border: 1px solid rgba(87, 160, 255, .15);
+            border-radius: 19px;
+        }
+
+        .logo svg {
+            width: 31px;
+            height: 31px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.15;
+            letter-spacing: .8px;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            color: #648fb3;
+            font-size: 11.5px;
+            letter-spacing: 2.7px;
+        }
+
+        .header-message {
+            text-align: right;
+        }
+
+        .header-message strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #e6f5ff;
+            font-size: 16px;
+        }
+
+        .header-message strong b {
+            color: #ffb44f;
+        }
+
+        .header-message span {
+            color: #6f92aa;
+            font-size: 12px;
+        }
+
+        .strategy-bar {
+            position: absolute;
+            left: 100px;
+            right: 100px;
+            top: 106px;
+            height: 68px;
+            display: grid;
+            grid-template-columns: 1fr 190px 1fr;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid rgba(74, 159, 224, .23);
+            border-radius: 34px;
+            background: linear-gradient(90deg, rgba(30, 40, 95, .58), rgba(6, 45, 78, .83) 48%, rgba(92, 51, 27, .48));
+            box-shadow: 0 14px 34px rgba(0, 4, 16, .22), inset 0 1px 0 rgba(255, 255, 255, .04);
+        }
+
+        .strategy {
+            height: 100%;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .strategy.left {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .strategy.right {
+            justify-content: flex-start;
+        }
+
+        .strategy-icon {
+            width: 43px;
+            height: 43px;
+            flex: 0 0 43px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(142, 120, 242, .22);
+            border-radius: 13px;
+            color: #c8b9ff;
+            background: rgba(115, 83, 220, .15);
+        }
+
+        .strategy.right .strategy-icon {
+            color: #ffc16c;
+            border-color: rgba(255, 181, 78, .19);
+            background: rgba(210, 126, 31, .12);
+        }
+
+        .strategy-icon svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .strategy.left .strategy-icon {
+            order: 2;
+            margin-left: 14px;
+        }
+
+        .strategy.right .strategy-icon {
+            margin-right: 14px;
+        }
+
+        .strategy-content strong {
+            display: block;
+            color: #e9e3ff;
+            font-size: 15px;
+        }
+
+        .strategy.right .strategy-content strong {
+            color: #ffe5bd;
+        }
+
+        .strategy-content span {
+            display: block;
+            margin-top: 6px;
+            color: #9691b7;
+            font-size: 11px;
+        }
+
+        .strategy.right .strategy-content span {
+            color: #b99a72;
+        }
+
+        .strategy-center {
+            text-align: center;
+        }
+
+        .strategy-center strong {
+            display: block;
+            color: #ecf8ff;
+            font-size: 15px;
+        }
+
+        .strategy-center span {
+            display: block;
+            margin-top: 5px;
+            color: #7195aa;
+            font-size: 10px;
+        }
+
+        .main-area {
+            position: absolute;
+            left: 48px;
+            right: 48px;
+            top: 194px;
+            height: 484px;
+            display: grid;
+            grid-template-columns: 402px 650px 408px;
+            gap: 22px;
+        }
+
+        .panel {
+            position: relative;
+            min-width: 0;
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(66, 165, 235, .22);
+            border-radius: 17px;
+            background: linear-gradient(145deg, rgba(13, 47, 82, .94), rgba(5, 22, 43, .96));
+            box-shadow: 0 18px 44px rgba(0, 4, 16, .32), inset 0 1px 0 rgba(255, 255, 255, .05);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel:before {
+            content: "";
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #5cc8ff, transparent);
+        }
+
+        .hardware-panel {
+            border-color: rgba(106, 101, 232, .27);
+            background: radial-gradient(circle at 50% 0%, rgba(117, 76, 210, .11), transparent 31%), linear-gradient(145deg, rgba(34, 39, 87, .84), rgba(5, 23, 45, .96));
+        }
+
+        .hardware-panel:before {
+            background: linear-gradient(90deg, transparent, #9d82ff, transparent);
+        }
+
+        .platform-panel {
+            border-color: rgba(54, 190, 235, .42);
+            background: radial-gradient(circle at 50% 43%, rgba(0, 158, 232, .14), transparent 43%), linear-gradient(145deg, rgba(7, 58, 94, .98), rgba(4, 23, 47, .99));
+            box-shadow: 0 24px 64px rgba(0, 4, 18, .44), 0 0 48px rgba(0, 171, 243, .07), inset 0 1px 0 rgba(255, 255, 255, .07);
+        }
+
+        .billing-panel {
+            border-color: rgba(241, 162, 59, .27);
+            background: radial-gradient(circle at 50% 0%, rgba(224, 135, 31, .10), transparent 31%), linear-gradient(145deg, rgba(72, 47, 27, .64), rgba(6, 25, 47, .96));
+        }
+
+        .billing-panel:before {
+            background: linear-gradient(90deg, transparent, #ffb24d, transparent);
+        }
+
+        .billing-panel .section-head h2 {
+            font-size: 16px;
+            letter-spacing: -.2px;
+        }
+
+        .billing-panel .section-en {
+            display: none;
+        }
+
+        .section-head {
+            height: 50px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-index {
+            color: #668ca0;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .section-line {
+            width: 24px;
+            height: 2px;
+            flex: 0 0 24px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #318fff, #4ae0ff);
+        }
+
+        .hardware-panel .section-line {
+            background: linear-gradient(90deg, #8268ef, #b5a3ff);
+        }
+
+        .billing-panel .section-line {
+            background: linear-gradient(90deg, #ff9d32, #ffd27d);
+        }
+
+        .section-head h2 {
+            margin: 0;
+            color: #e2f4fb;
+            font-size: 17px;
+            white-space: nowrap;
+        }
+
+        .section-en {
+            margin-left: auto;
+            color: #66869a;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        .panel-summary {
+            height: 52px;
+            margin: 0 14px;
+            padding: 8px 11px;
+            border-radius: 10px;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .hardware-panel .panel-summary {
+            border: 1px solid rgba(144, 117, 241, .17);
+            color: #b7afd4;
+            background: rgba(63, 45, 116, .23);
+        }
+
+        .platform-panel .panel-summary {
+            border: 1px solid rgba(54, 200, 236, .19);
+            color: #b2d6e2;
+            background: rgba(4, 44, 73, .67);
+        }
+
+        .billing-panel .panel-summary {
+            border: 1px solid rgba(242, 160, 56, .17);
+            color: #d5b68d;
+            background: rgba(96, 58, 22, .22);
+        }
+
+        .panel-summary strong {
+            font-size: 12px;
+            color: #eef8ff;
+        }
+
+        .hardware-panel .panel-summary strong {
+            color: #e0d8fa;
+        }
+
+        .billing-panel .panel-summary strong {
+            color: #ffe4be;
+        }
+
+        /* 左侧车位硬件 */
+
+        .bay-scene {
+            position: relative;
+            height: 207px;
+            margin: 10px 14px 0;
+            overflow: hidden;
+            border: 1px solid rgba(137, 111, 235, .16);
+            border-radius: 12px;
+            background: radial-gradient(circle at 50% 58%, rgba(111, 75, 208, .08), transparent 47%), rgba(20, 25, 52, .58);
+        }
+
+        .scene-label {
+            position: absolute;
+            left: 12px;
+            top: 10px;
+            z-index: 8;
+            color: #c9c0e3;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .scene-label span {
+            margin-left: 7px;
+            color: #7f7895;
+            font-size: 9.3px;
+            font-weight: 400;
+        }
+
+        .bay-layout {
+            position: absolute;
+            left: 0px;
+            right: 10px;
+            top: 34px;
+            bottom: 9px;
+            overflow: hidden;
+            border: 1px solid rgba(147, 160, 194, .17);
+            border-radius: 10px;
+            background: linear-gradient(rgba(255, 255, 255, .018) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .018) 1px, transparent 1px), linear-gradient(180deg, #25303e, #192431 58%, #121d29);
+            background-size: 14px 14px, 14px 14px, auto;
+            box-shadow: inset 0 0 26px rgba(0, 0, 0, .34);
+        }
+
+        .bay-layout::after {
+            content: "车道入口";
+            position: absolute;
+            left: 10px;
+            bottom: 6px;
+            color: rgba(223, 233, 245, .42);
+            font-size: 7.5px;
+            letter-spacing: 1px;
+        }
+
+        .bay-space {
+            position: absolute;
+            left: 64px;
+            top: 9px;
+            width: 194px;
+            height: 139px;
+            border-top: 2px solid rgba(238, 244, 250, .66);
+            border-left: 2px solid rgba(238, 244, 250, .66);
+            border-right: 2px solid rgba(238, 244, 250, .66);
+            background: linear-gradient(180deg, rgba(35, 93, 137, .14), rgba(18, 39, 57, .04));
+        }
+
+        .bay-space::before,
+        .bay-space::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            width: 51px;
+            height: 2px;
+            background: rgba(238, 244, 250, .66);
+        }
+
+        .bay-space::before {
+            left: 0;
+        }
+
+        .bay-space::after {
+            right: 0;
+        }
+
+        .ev-ground-mark {
+            position: absolute;
+            left: 55%;
+            top: 40px;
+            width: 78px;
+            height: 39px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: 1px solid rgba(89, 187, 238, .34);
+            border-radius: 5px;
+            color: rgba(116, 211, 255, .78);
+            background: rgba(20, 104, 151, .28);
+            box-shadow: inset 0 0 12px rgba(44, 169, 226, .08);
+        }
+
+        .ev-ground-mark svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .ev-ground-mark span {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
+
+        .camera-pole {
+            position: absolute;
+            right: 17px;
+            top: 10px;
+            width: 55px;
+            height: 36px;
+            z-index: 6;
+            transform: rotate(-20deg);
+        }
+
+        .camera-head {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            width: 32px;
+            height: 20px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(104, 203, 255, .38);
+            border-radius: 4px 8px 8px 4px;
+            background: linear-gradient(145deg, #285b78, #122f43);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .28);
+        }
+
+        .camera-lens {
+            width: 9px;
+            height: 9px;
+            border: 2px solid #70d2ff;
+            border-radius: 50%;
+            box-shadow: 0 0 7px rgba(80, 199, 255, .6);
+        }
+
+        .camera-stand {
+            position: absolute;
+            left: 24px;
+            top: 20px;
+            width: 3px;
+            height: 40px;
+            border-radius: 3px;
+            background: #66798a;
+        }
+
+        .camera-stand::after {
+            content: "";
+            position: absolute;
+            left: -8px;
+            bottom: -4px;
+            width: 19px;
+            height: 5px;
+            border-radius: 50%;
+            background: #435260;
+        }
+
+        .camera-pole>span {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 55px;
+            color: #90cce7;
+            font-size: 8px;
+            text-align: center;
+        }
+
+        .camera-beam {
+            position: absolute;
+            right: 55px;
+            top: 20px;
+            z-index: 2;
+            width: 94px;
+            height: 48px;
+            clip-path: polygon(100% 42%, 0 0, 0 100%);
+            background: linear-gradient(90deg, rgba(73, 194, 255, .18), rgba(73, 194, 255, .01));
+            animation: cameraPulse 2.3s ease-in-out infinite alternate;
+            rotate: -20deg;
+        }
+
+        .barrier-post {
+            position: absolute;
+            left: 58px;
+            bottom: 13px;
+            z-index: 7;
+            width: 21px;
+            height: 32px;
+            border: 1px solid rgba(238, 166, 65, .32);
+            border-radius: 4px;
+            background: linear-gradient(180deg, #84511e, #3f2a18);
+        }
+
+        .barrier-post i {
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ffad42;
+            box-shadow: 0 0 7px rgba(255, 173, 66, .7);
+        }
+
+        .barrier-post span {
+            position: absolute;
+            left: -12px;
+            bottom: -13px;
+            width: 48px;
+            color: #c9a16b;
+            font-size: 7.5px;
+            text-align: center;
+        }
+
+        .barrier-arm {
+            position: absolute;
+            left: 75px;
+            bottom: 37px;
+            z-index: 6;
+            width: 89px;
+            height: 6px;
+            border: 1px solid rgba(255, 213, 147, .42);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+            transform-origin: left center;
+            background: repeating-linear-gradient(90deg, #e7e8e8 0 14px, #d68130 14px 28px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+        }
+
+        .ground-lock {
+            position: absolute;
+            left: 70px;
+            bottom: 10px;
+            width: 54px;
+            height: 28px;
+            z-index: 4;
+            perspective: 80px;
+        }
+
+        .ground-lock i {
+            position: absolute;
+            left: 7px;
+            top: 2px;
+            width: 40px;
+            height: 16px;
+            border: 2px solid #ec9f3a;
+            border-bottom-width: 5px;
+            border-radius: 8px 8px 3px 3px;
+            transform: rotateX(-18deg);
+            background: rgba(126, 73, 18, .56);
+            box-shadow: 0 0 10px rgba(238, 156, 47, .18);
+        }
+
+        .ground-lock span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            color: #d9af73;
+            font-size: 7.3px;
+            text-align: center;
+        }
+
+        .charger-unit {
+            position: absolute;
+            right: 13px;
+            top: 55px;
+            z-index: 5;
+            width: 48px;
+            height: 76px;
+            border: 1px solid rgba(90, 198, 246, .34);
+            border-radius: 7px;
+            background: linear-gradient(145deg, #1d6f98, #102f47 62%, #0b2133);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, .34);
+        }
+
+        .charger-screen {
+            width: 31px;
+            height: 18px;
+            margin: 8px auto 7px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(109, 211, 255, .32);
+            border-radius: 3px;
+            color: #7ed7ff;
+            background: #071622;
+            font-size: 7px;
+        }
+
+        .charger-port {
+            width: 11px;
+            height: 11px;
+            margin: auto;
+            border: 2px solid #6ccff9;
+            border-radius: 50%;
+            box-shadow: 0 0 7px rgba(79, 192, 238, .35);
+        }
+
+        .charger-unit>span {
+            display: block;
+            margin-top: 8px;
+            color: #9cc7d8;
+            font-size: 7.5px;
+            text-align: center;
+        }
+
+
+        .top-car {
+            position: absolute;
+            left: 130px;
+            bottom: -31px;
+            z-index: 5;
+            width: 84px;
+            height: 79px;
+            border: 1px solid rgba(194, 207, 222, .28);
+            border-radius: 24px 24px 18px 18px;
+            background: linear-gradient(90deg, #34485e, #647489 48%, #314357);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, .45);
+        }
+
+        .top-car::before,
+        .top-car::after {
+            content: "";
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(205, 219, 231, .2);
+        }
+
+        .top-car::before {
+            top: 6px;
+        }
+
+        .top-car::after {
+            bottom: 7px;
+        }
+
+        .car-roof {
+            position: absolute;
+            left: 18px;
+            top: 26px;
+            width: 48px;
+            height: 28px;
+            border: 1px solid rgba(169, 199, 219, .22);
+            border-radius: 11px;
+            background: linear-gradient(180deg, #3d556b, #21384c);
+        }
+
+        .car-windshield {
+            position: absolute;
+            left: 18px;
+            width: 48px;
+            height: 13px;
+            border-radius: 7px;
+            background: linear-gradient(180deg, rgba(92, 137, 165, .85), rgba(25, 55, 73, .9));
+        }
+
+        .car-windshield.front {
+            top: 11px;
+            border-radius: 14px 14px 4px 4px;
+        }
+
+        .car-windshield.rear {
+            bottom: 10px;
+            border-radius: 4px 4px 12px 12px;
+        }
+
+        .car-wheel {
+            position: absolute;
+            width: 8px;
+            height: 19px;
+            border-radius: 4px;
+            background: #05080d;
+        }
+
+        .wheel-lf {
+            left: -5px;
+            top: 15px;
+        }
+
+        .wheel-rf {
+            right: -5px;
+            top: 15px;
+        }
+
+        .wheel-lr {
+            left: -5px;
+            bottom: 13px;
+        }
+
+        .wheel-rr {
+            right: -5px;
+            bottom: 13px;
+        }
+
+        .front-plate {
+            position: absolute;
+            left: 22px;
+            top: 2px;
+            width: 40px;
+            height: 10px;
+            display: grid;
+            place-items: center;
+            border-radius: 2px;
+            color: #142438;
+            background: #eef4f8;
+            font-size: 6.5px;
+            font-weight: 700;
+        }
+
+        .top-car b {
+            position: absolute;
+            right: 8px;
+            top: 38px;
+            color: #ffb14a;
+            font-size: 7px;
+            letter-spacing: .5px;
+        }
+
+        .recognition-tag {
+            position: absolute;
+            left: 8px;
+            top: 7px;
+            z-index: 7;
+            padding: 4px 6px;
+            border: 1px solid rgba(78, 191, 242, .25);
+            border-radius: 5px;
+            color: #87d6f8;
+            background: rgba(8, 55, 79, .78);
+            font-size: 7.7px;
+        }
+
+        .deny-badge {
+            position: absolute;
+            right: 9px;
+            bottom: 3px;
+            z-index: 8;
+            padding: 4px 7px;
+            border: 1px solid rgba(255, 174, 66, .32);
+            border-radius: 5px;
+            color: #ffc06d;
+            background: rgba(91, 52, 16, .88);
+            font-size: 7.7px;
+            font-weight: 700;
+        }
+
+        @keyframes cameraPulse {
+            from {
+                opacity: .55;
+            }
+
+            to {
+                opacity: 1;
+            }
+
+        }
+
+        .rule-grid {
+            margin: 10px 14px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 7px;
+        }
+
+        .rule-item {
+            height: 72px;
+            padding: 9px 10px;
+            overflow: hidden;
+            border: 1px solid rgba(130, 104, 230, .14);
+            border-radius: 9px;
+            background: rgba(48, 38, 89, .39);
+        }
+
+        .rule-item.orange {
+            border-color: rgba(236, 153, 49, .14);
+            background: rgba(91, 56, 25, .34);
+        }
+
+        .rule-item strong {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #ddd5f7;
+            font-size: 11.5px;
+        }
+
+        .rule-item.orange strong {
+            color: #ffe0b4;
+        }
+
+        .rule-item strong i {
+            width: 6px;
+            height: 6px;
+            flex: 0 0 6px;
+            border-radius: 50%;
+            background: #9d81ff;
+            box-shadow: 0 0 7px rgba(157, 129, 255, .58);
+        }
+
+        .rule-item.orange strong i {
+            background: #ffb04b;
+            box-shadow: 0 0 7px rgba(255, 176, 75, .56);
+        }
+
+        .rule-item span {
+            display: block;
+            margin-top: 6px;
+            color: #938cad;
+            font-size: 9.7px;
+            line-height: 1.4;
+        }
+
+        .rule-item.orange span {
+            color: #b4946f;
+        }
+
+        /* 中间平台 */
+
+        .platform-map {
+            position: relative;
+            height: 227px;
+            margin: 10px 16px 0;
+            overflow: hidden;
+            border: 1px solid rgba(54, 184, 224, .17);
+            border-radius: 13px;
+            background: radial-gradient(circle at 50% 54%, rgba(0, 164, 225, .10), transparent 46%), rgba(4, 27, 51, .70);
+        }
+
+        .platform-title {
+            position: absolute;
+            left: 13px;
+            top: 11px;
+            z-index: 5;
+            color: #acd4e1;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .platform-title span {
+            margin-left: 8px;
+            color: #668fa4;
+            font-size: 9.5px;
+            font-weight: 400;
+        }
+
+        .platform-core {
+            position: absolute;
+            left: 203px;
+            top: 53px;
+            width: 244px;
+            height: 136px;
+            border: 1px solid rgba(67, 195, 238, .30);
+            border-radius: 15px;
+            background: radial-gradient(circle at 50% 38%, rgba(33, 161, 225, .15), transparent 50%), linear-gradient(145deg, rgba(10, 82, 125, .96), rgba(5, 32, 58, .98));
+            box-shadow: 0 18px 36px rgba(0, 4, 16, .38), 0 0 28px rgba(49, 187, 239, .08);
+        }
+
+        .core-head {
+            height: 43px;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            border-bottom: 1px solid rgba(90, 191, 227, .12);
+        }
+
+        .core-icon {
+            width: 29px;
+            height: 29px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            color: #71d6ff;
+            background: rgba(24, 143, 193, .18);
+        }
+
+        .core-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .core-head strong {
+            font-size: 12px;
+            color: #e2f7ff;
+        }
+
+        .core-head span {
+            display: block;
+            margin-top: 2px;
+            color: #78a8bb;
+            font-size: 8.5px;
+        }
+
+        .core-metrics {
+            padding: 9px 10px;
+            display: grid;
+            grid-template-columns: 1.16fr .88fr .96fr;
+            gap: 5px;
+        }
+
+        .core-metric {
+            min-width: 0;
+            height: 62px;
+            padding: 7px 6px;
+            overflow: hidden;
+            border: 1px solid rgba(69, 173, 213, .13);
+            border-radius: 7px;
+            background: rgba(7, 45, 72, .54);
+        }
+
+        .core-metric strong {
+            display: block;
+            overflow: hidden;
+            color: #d7f1fa;
+            font-size: 9.2px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .metric-number {
+            min-width: 0;
+            margin-top: 5px;
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
+            overflow: hidden;
+            color: #54ceff;
+            font-size: 15px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -.25px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .metric-number small {
+            flex: 0 0 auto;
+            color: #82cde9;
+            font-size: 7.5px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .core-metric>span {
+            display: block;
+            margin-top: 5px;
+            overflow: hidden;
+            color: #6f9bad;
+            font-size: 7.4px;
+            line-height: 1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .input-stack,
+        .output-stack {
+            position: absolute;
+            top: 54px;
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .input-stack {
+            left: 15px;
+        }
+
+        .output-stack {
+            right: 15px;
+        }
+
+        .platform-node-card {
+            height: 38px;
+            padding: 0 9px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid rgba(52, 175, 219, .15);
+            border-radius: 8px;
+            color: #a7c8d5;
+            font-size: 9.7px;
+            background: rgba(8, 48, 75, .60);
+        }
+
+        .platform-node-card i {
+            width: 8px;
+            height: 8px;
+            border-radius: 3px;
+            background: #3ca5cd;
+            box-shadow: 0 0 6px rgba(71, 187, 228, .25);
+        }
+
+        .output-stack .platform-node-card {
+            border-color: rgba(239, 159, 54, .15);
+            color: #d4b58e;
+            background: rgba(84, 54, 25, .37);
+        }
+
+        .output-stack .platform-node-card i {
+            background: #f0a13d;
+            box-shadow: 0 0 6px rgba(241, 161, 61, .30);
+        }
+
+        .platform-svg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .flow-line {
+            fill: none;
+            stroke: #4fd2ff;
+            stroke-width: 1.5;
+            stroke-dasharray: 5 6;
+            opacity: .62;
+            animation: flow 8s linear infinite;
+        }
+
+        .flow-line.orange {
+            stroke: #ffac45;
+        }
+
+        .flow-node {
+            fill: #58d3ff;
+            filter: drop-shadow(0 0 5px #26c5ef);
+        }
+
+        .flow-node.orange {
+            fill: #ffae48;
+            filter: drop-shadow(0 0 5px #e98b1c);
+        }
+
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -120;
+            }
+
+        }
+
+        .workflow {
+            margin: 10px 16px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 7px;
+        }
+
+        .flow-card {
+            position: relative;
+            height: 78px;
+            padding: 9px 8px 8px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 177, 220, .14);
+            border-radius: 9px;
+            background: rgba(7, 40, 66, .58);
+        }
+
+        .flow-card:nth-child(2) {
+            border-color: rgba(140, 112, 235, .16);
+            background: rgba(48, 42, 97, .38);
+        }
+
+        .flow-card:nth-child(3) {
+            border-color: rgba(236, 153, 49, .16);
+            background: rgba(91, 57, 25, .34);
+        }
+
+        .flow-card:nth-child(4) {
+            border-color: rgba(60, 190, 235, .16);
+            background: rgba(7, 48, 74, .58);
+        }
+
+        .flow-no {
+            position: absolute;
+            right: 7px;
+            top: 6px;
+            color: #47778d;
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .flow-card strong {
+            display: block;
+            color: #d6eef5;
+            font-size: 10.5px;
+        }
+
+        .flow-card:nth-child(2) strong {
+            color: #ded7f5;
+        }
+
+        .flow-card:nth-child(3) strong {
+            color: #ffe0b5;
+        }
+
+        .flow-card span {
+            display: block;
+            margin-top: 6px;
+            color: #7ea4b4;
+            font-size: 9px;
+            line-height: 1.35;
+        }
+
+        .flow-card:nth-child(2) span {
+            color: #928dab;
+        }
+
+        .flow-card:nth-child(3) span {
+            color: #b39470;
+        }
+
+        .flow-pill {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 5px;
+            border-radius: 5px;
+            color: #65d5ff;
+            font-size: 8px;
+            background: rgba(23, 138, 181, .18);
+        }
+
+        .flow-card:nth-child(2) .flow-pill {
+            color: #bbaaff;
+            background: rgba(117, 83, 205, .17);
+        }
+
+        .flow-card:nth-child(3) .flow-pill {
+            color: #ffc06b;
+            background: rgba(196, 113, 28, .17);
+        }
+
+        /* 右侧票据 */
+
+        .receipt-wrap {
+            height: 280px;
+            margin: 10px 14px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .receipt {
+            position: relative;
+            height: 274px;
+            padding: 11px 10px 10px;
+            overflow: visible;
+            border: 1px solid #d8d5cd;
+            border-radius: 6px 6px 2px 2px;
+            color: #252a30;
+            background: repeating-linear-gradient(0deg, rgba(56, 62, 68, .018) 0 1px, transparent 1px 4px), linear-gradient(180deg, #fbfaf6, #f1efe8);
+            box-shadow: 0 13px 25px rgba(0, 0, 0, .34), inset 0 0 0 1px rgba(255, 255, 255, .75);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+        }
+
+        .receipt.operator {
+            border-color: #d8d5cd;
+            background: repeating-linear-gradient(0deg, rgba(56, 62, 68, .018) 0 1px, transparent 1px 4px), linear-gradient(180deg, #fbfaf6, #f1efe8);
+        }
+
+        .receipt::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            top: 47px;
+            border-top: 1px dashed #b8b5ad;
+        }
+
+        .receipt.operator::before {
+            border-color: #b8b5ad;
+        }
+
+        .paper-teeth {
+            position: absolute;
+            left: -1px;
+            right: -1px;
+            bottom: -6px;
+            height: 7px;
+            background: linear-gradient(135deg, transparent 50%, #f1efe8 51%) 0 0 / 8px 8px repeat-x, linear-gradient(225deg, transparent 50%, #f1efe8 51%) 4px 0 / 8px 8px repeat-x;
+            filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .16));
+            pointer-events: none;
+        }
+
+        .receipt-title {
+            padding-right: 24px;
+            text-align: center;
+        }
+
+        .receipt-title strong,
+        .receipt.operator .receipt-title strong {
+            display: block;
+            color: #1d2228;
+            font-size: 11px;
+            letter-spacing: .2px;
+        }
+
+        .receipt-title span,
+        .receipt.operator .receipt-title span {
+            display: block;
+            margin-top: 3px;
+            color: #73777c;
+            font-size: 7.3px;
+            letter-spacing: .25px;
+        }
+
+        .receipt-code {
+            position: absolute;
+            right: 8px;
+            top: 9px;
+            width: 23px;
+            height: 23px;
+            padding: 2px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            border: 1px solid #c4c2bb;
+            border-radius: 2px;
+            background: #fff;
+        }
+
+        .receipt-code i {
+            background: #202428;
+        }
+
+        .bill-meta {
+            margin-top: 17px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4px;
+        }
+
+        .bill-row,
+        .receipt.operator .bill-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 7px;
+            color: #696e73;
+            font-size: 7.8px;
+            line-height: 1.25;
+        }
+
+        .bill-row b,
+        .receipt.operator .bill-row b {
+            color: #252a2f;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .bill-divider,
+        .receipt.operator .bill-divider {
+            height: 1px;
+            margin: 7px 0;
+            background: linear-gradient(90deg, transparent, #a9a79f, transparent);
+        }
+
+        .bill-item,
+        .receipt.operator .bill-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 7px;
+            margin-bottom: 5px;
+            color: #34393e;
+            font-size: 8.1px;
+        }
+
+        .bill-item em,
+        .receipt.operator .bill-item em {
+            color: #1f2429;
+            font-style: normal;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .bill-sub,
+        .receipt.operator .bill-sub {
+            display: block;
+            margin-top: 2px;
+            color: #81858a;
+            font-size: 6.9px;
+        }
+
+        .bill-total,
+        .receipt.operator .bill-total {
+            margin-top: 8px;
+            padding-top: 7px;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            border-top: 1px dashed #aaa79f;
+        }
+
+        .bill-total span,
+        .receipt.operator .bill-total span {
+            color: #5c6166;
+            font-size: 8px;
+        }
+
+        .bill-total strong,
+        .receipt.operator .bill-total strong {
+            color: #111519;
+            font-size: 15px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .bill-status,
+        .receipt.operator .bill-status {
+            height: 21px;
+            margin-top: 27px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #c8c5bd;
+            border-radius: 4px;
+            color: #30353a;
+            background: rgba(226, 224, 216, .72);
+            font-size: 7.8px;
+            font-weight: 700;
+        }
+
+        .ledger-tags {
+            margin: 36px 14px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+        }
+
+        .ledger-tag {
+            height: 45px;
+            padding: 7px;
+            border: 1px solid rgba(236, 154, 51, .13);
+            border-radius: 8px;
+            background: rgba(79, 51, 25, .33);
+        }
+
+        .ledger-tag:nth-child(2) {
+            border-color: rgba(92, 181, 229, .13);
+            background: rgba(7, 47, 73, .52);
+        }
+
+        .ledger-tag:nth-child(3) {
+            border-color: rgba(136, 111, 231, .13);
+            background: rgba(47, 40, 91, .38);
+        }
+
+        .ledger-tag strong {
+            display: block;
+            color: #ffe0b3;
+            font-size: 9.5px;
+        }
+
+        .ledger-tag:nth-child(2) strong {
+            color: #d6f0f8;
+        }
+
+        .ledger-tag:nth-child(3) strong {
+            color: #dcd4f5;
+        }
+
+        .ledger-tag span {
+            display: block;
+            margin-top: 5px;
+            color: #a48663;
+            font-size: 7.8px;
+            line-height: 1.25;
+        }
+
+        .ledger-tag:nth-child(2) span {
+            color: #7399aa;
+        }
+
+        .ledger-tag:nth-child(3) span {
+            color: #8c85a4;
+        }
+
+        /* 主体连接 */
+
+        .stage-lines {
+            position: absolute;
+            left: 48px;
+            top: 194px;
+            z-index: 1;
+            width: 1504px;
+            height: 484px;
+            pointer-events: none;
+        }
+
+        .stage-arrow {
+            fill: none;
+            stroke: #6e8dff;
+            stroke-width: 1.6;
+            stroke-dasharray: 7 7;
+            opacity: .64;
+            animation: stageflow 9s linear infinite;
+        }
+
+        .stage-arrow.orange {
+            stroke: #ffad45;
+        }
+
+        .stage-node {
+            fill: #8b7bff;
+            filter: drop-shadow(0 0 6px #6759f5);
+        }
+
+        .stage-node.orange {
+            fill: #ffaf49;
+            filter: drop-shadow(0 0 6px #e98d21);
+        }
+
+        @keyframes stageflow {
+            to {
+                stroke-dashoffset: -140;
+            }
+
+        }
+
+        /* 底部价值 */
+
+        .value-zone {
+            position: absolute;
+            left: 48px;
+            right: 48px;
+            bottom: 48px;
+            height: 151px;
+        }
+
+        .value-title {
+            height: 28px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8ab1c5;
+            font-size: 11px;
+            letter-spacing: .4px;
+        }
+
+        .value-title:before {
+            content: "";
+            width: 20px;
+            height: 2px;
+            flex: 0 0 20px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #3ba8ff, #ffb14a);
+        }
+
+        .value-title span {
+            margin-left: auto;
+            color: #627f92;
+            font-size: 10px;
+        }
+
+        .value-grid {
+            height: 119px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .value-card {
+            position: relative;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid rgba(60, 177, 226, .18);
+            border-radius: 13px;
+            background: linear-gradient(145deg, rgba(10, 48, 78, .80), rgba(5, 24, 46, .86));
+        }
+
+        .value-card.purple {
+            border-color: rgba(142, 116, 236, .21);
+            background: linear-gradient(145deg, rgba(51, 43, 100, .49), rgba(6, 26, 49, .87));
+        }
+
+        .value-card.orange {
+            border-color: rgba(232, 157, 60, .21);
+            background: linear-gradient(145deg, rgba(88, 57, 28, .44), rgba(7, 27, 49, .87));
+        }
+
+        .value-card.cyan {
+            border-color: rgba(61, 187, 230, .21);
+            background: linear-gradient(145deg, rgba(10, 66, 89, .48), rgba(6, 27, 50, .87));
+        }
+
+        .value-card:after {
+            content: "";
+            position: absolute;
+            right: -42px;
+            bottom: -49px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(49, 202, 228, .035);
+        }
+
+        .value-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            color: #60cfff;
+            background: rgba(23, 143, 184, .14);
+        }
+
+        .value-card.purple .value-icon {
+            color: #c2b3ff;
+            background: rgba(121, 87, 210, .15);
+        }
+
+        .value-card.orange .value-icon {
+            color: #ffc16c;
+            background: rgba(191, 123, 46, .14);
+        }
+
+        .value-card.cyan .value-icon {
+            color: #61d4f6;
+            background: rgba(28, 155, 192, .14);
+        }
+
+        .value-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .value-content {
+            position: relative;
+            z-index: 2;
+            padding-left: 10px;
+        }
+
+        .value-content strong {
+            display: block;
+            color: #e0f3fa;
+            font-size: 13.5px;
+        }
+
+        .value-content span {
+            display: block;
+            margin-top: 7px;
+            color: #82a6b7;
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+
+        .value-highlight {
+            margin-top: 7px;
+            color: #62ceff;
+            font-size: 9.7px;
+            font-weight: 700;
+        }
+
+        .value-card.purple .value-highlight {
+            color: #b8a9e4;
+        }
+
+        .value-card.orange .value-highlight {
+            color: #e2af6d;
+        }
+
+        .footer {
+            position: absolute;
+            left: 49px;
+            right: 49px;
+            bottom: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #557b91;
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-left i {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #57cfff;
+            box-shadow: 0 0 8px #57cfff;
+        }
+
+        .footer-right {
+            color: #45687d;
+        }
+
+        @media print {
+
+            html,
+            body {
+                width: 1600px;
+                height: 900px;
+            }
+
+            #stage {
+                transform: none !important;
+            }
+
+        }
+    
+
+        /* =========================================================
+           浅色主题覆盖
+        ========================================================= */
+
+        html,
+        body {
+            background: #eef3f8;
+        }
+
+        #stage {
+            color: #1f2a37;
+            background:
+                radial-gradient(circle at 50% 36%, rgba(55, 142, 255, .10), transparent 34%),
+                radial-gradient(circle at 86% 18%, rgba(124, 92, 246, .08), transparent 25%),
+                radial-gradient(circle at 10% 84%, rgba(255, 167, 54, .07), transparent 28%),
+                linear-gradient(135deg, #f8fbff 0%, #eef5fb 48%, #f6f8fc 76%, #edf3f8 100%);
+        }
+
+        #stage::before {
+            opacity: .42;
+            background-image:
+                linear-gradient(rgba(73, 127, 188, .10) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(73, 127, 188, .10) 1px, transparent 1px);
+        }
+
+        #stage::after {
+            border-color: rgba(48, 120, 196, .08);
+            box-shadow:
+                0 0 150px rgba(56, 132, 214, .07),
+                inset 0 0 150px rgba(56, 132, 214, .04);
+        }
+
+        .bg-line {
+            opacity: .22;
+        }
+
+        .bg-dash {
+            stroke: #6aaee8;
+            opacity: .22;
+        }
+
+        .bg-dot {
+            fill: #4da8e8;
+            filter: drop-shadow(0 0 5px rgba(77, 168, 232, .45));
+        }
+
+        h1 {
+            color: #172033;
+        }
+
+        .subtitle {
+            color: #6f8198;
+        }
+
+        .header-message strong {
+            color: #24344a;
+        }
+
+        .header-message span {
+            color: #74859a;
+        }
+
+        .strategy-bar {
+            border-color: rgba(79, 126, 178, .22);
+            background:
+                linear-gradient(90deg, rgba(239, 237, 255, .96), rgba(242, 248, 255, .98) 48%, rgba(255, 244, 229, .96));
+            box-shadow:
+                0 10px 28px rgba(57, 76, 101, .10),
+                inset 0 1px 0 rgba(255, 255, 255, .95);
+        }
+
+        .strategy-icon {
+            color: #735bd5;
+            border-color: rgba(115, 91, 213, .18);
+            background: rgba(115, 91, 213, .09);
+        }
+
+        .strategy.right .strategy-icon {
+            color: #d88922;
+            border-color: rgba(216, 137, 34, .18);
+            background: rgba(244, 165, 61, .10);
+        }
+
+        .strategy-content strong {
+            color: #433b66;
+        }
+
+        .strategy.right .strategy-content strong {
+            color: #71471e;
+        }
+
+        .strategy-content span,
+        .strategy.right .strategy-content span,
+        .strategy-center span {
+            color: #7d8798;
+        }
+
+        .strategy-center strong {
+            color: #2c4158;
+        }
+
+        .panel {
+            border-color: rgba(82, 121, 161, .20);
+            background: rgba(255, 255, 255, .90);
+            box-shadow:
+                0 16px 36px rgba(65, 84, 107, .12),
+                inset 0 1px 0 rgba(255, 255, 255, .96);
+            backdrop-filter: blur(8px);
+        }
+
+        .panel::before {
+            background: linear-gradient(90deg, transparent, #72b8eb, transparent);
+        }
+
+        .hardware-panel {
+            border-color: rgba(112, 91, 205, .20);
+            background:
+                radial-gradient(circle at 50% 0%, rgba(120, 92, 218, .08), transparent 31%),
+                rgba(255, 255, 255, .92);
+        }
+
+        .platform-panel {
+            border-color: rgba(61, 145, 205, .25);
+            background:
+                radial-gradient(circle at 50% 43%, rgba(47, 154, 222, .08), transparent 44%),
+                rgba(255, 255, 255, .94);
+            box-shadow:
+                0 20px 46px rgba(62, 93, 124, .14),
+                0 0 34px rgba(67, 156, 219, .06),
+                inset 0 1px 0 rgba(255, 255, 255, .96);
+        }
+
+        .billing-panel {
+            border-color: rgba(219, 145, 54, .20);
+            background:
+                radial-gradient(circle at 50% 0%, rgba(236, 165, 79, .08), transparent 31%),
+                rgba(255, 255, 255, .92);
+        }
+
+        .section-index,
+        .section-en {
+            color: #8291a3;
+        }
+
+        .section-head h2 {
+            color: #26364a;
+        }
+
+        .panel-summary,
+        .hardware-panel .panel-summary,
+        .platform-panel .panel-summary,
+        .billing-panel .panel-summary {
+            border-color: rgba(101, 129, 160, .16);
+            color: #66778a;
+            background: rgba(246, 249, 252, .94);
+        }
+
+        .panel-summary strong,
+        .hardware-panel .panel-summary strong,
+        .billing-panel .panel-summary strong {
+            color: #2d3d52;
+        }
+
+        .bay-scene,
+        .platform-map {
+            border-color: rgba(97, 128, 160, .16);
+            background:
+                radial-gradient(circle at 50% 55%, rgba(88, 156, 214, .08), transparent 46%),
+                #f7fafc;
+        }
+
+        .scene-label,
+        .platform-title {
+            color: #475b70;
+        }
+
+        .scene-label span,
+        .platform-title span {
+            color: #8a98a8;
+        }
+
+        .bay-layout {
+            border-color: rgba(100, 116, 139, .18);
+            background:
+                linear-gradient(rgba(70, 86, 105, .035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(70, 86, 105, .035) 1px, transparent 1px),
+                linear-gradient(180deg, #dfe6ec, #d3dbe2 58%, #cbd4dc);
+            background-size: 14px 14px, 14px 14px, auto;
+            box-shadow: inset 0 0 24px rgba(90, 104, 120, .10);
+        }
+
+        .bay-layout::after {
+            color: rgba(53, 66, 82, .48);
+        }
+
+        .bay-space,
+        .bay-space::before,
+        .bay-space::after {
+            border-color: rgba(255, 255, 255, .88);
+        }
+
+        .ev-ground-mark {
+            color: #2477a8;
+            border-color: rgba(64, 149, 202, .28);
+            background: rgba(220, 241, 253, .74);
+        }
+
+        .camera-head {
+            border-color: rgba(64, 138, 186, .30);
+            background: linear-gradient(145deg, #e3edf4, #bccbd7);
+        }
+
+        .camera-lens {
+            border-color: #2f8fca;
+            box-shadow: 0 0 7px rgba(47, 143, 202, .40);
+        }
+
+        .camera-pole > span {
+            color: #416f8f;
+        }
+
+        .camera-beam {
+            background: linear-gradient(90deg, rgba(61, 153, 214, .18), rgba(61, 153, 214, .01));
+        }
+
+        .charger-unit {
+            border-color: rgba(61, 142, 194, .26);
+            background: linear-gradient(145deg, #eff6fb, #d5e4ee 62%, #c7d9e5);
+            box-shadow: 0 8px 18px rgba(75, 90, 108, .16);
+        }
+
+        .charger-screen {
+            color: #246f9c;
+            border-color: rgba(72, 149, 197, .26);
+            background: #f6fbff;
+        }
+
+        .charger-port {
+            border-color: #3f9bca;
+            box-shadow: 0 0 7px rgba(63, 155, 202, .28);
+        }
+
+        .charger-unit > span {
+            color: #506e83;
+        }
+
+        .top-car {
+            border-color: rgba(83, 96, 112, .20);
+            background: linear-gradient(90deg, #aebcc9, #d7dfe6 48%, #9eafbd);
+            box-shadow: 0 12px 22px rgba(67, 79, 92, .20);
+        }
+
+        .car-roof {
+            border-color: rgba(74, 102, 122, .18);
+            background: linear-gradient(180deg, #c5d1db, #92a7b8);
+        }
+
+        .car-windshield {
+            background: linear-gradient(180deg, rgba(114, 158, 184, .72), rgba(79, 113, 134, .78));
+        }
+
+        .recognition-tag {
+            color: #25668d;
+            border-color: rgba(68, 139, 184, .22);
+            background: rgba(234, 246, 253, .94);
+        }
+
+        .deny-badge {
+            color: #a66008;
+            border-color: rgba(214, 130, 25, .24);
+            background: rgba(255, 244, 225, .96);
+        }
+
+        .rule-item,
+        .rule-item.orange {
+            border-color: rgba(109, 126, 148, .14);
+            background: #f7f9fc;
+        }
+
+        .rule-item strong,
+        .rule-item.orange strong {
+            color: #35465b;
+        }
+
+        .rule-item span,
+        .rule-item.orange span {
+            color: #738295;
+        }
+
+        .platform-core {
+            border-color: rgba(62, 148, 203, .22);
+            background:
+                radial-gradient(circle at 50% 38%, rgba(64, 160, 217, .10), transparent 50%),
+                linear-gradient(145deg, #ffffff, #eef6fb);
+            box-shadow:
+                0 14px 28px rgba(72, 93, 116, .14),
+                0 0 22px rgba(58, 151, 210, .06);
+        }
+
+        .core-head {
+            border-bottom-color: rgba(93, 135, 166, .13);
+        }
+
+        .core-icon {
+            color: #2b91c7;
+            background: rgba(54, 150, 205, .10);
+        }
+
+        .core-head strong {
+            color: #28445b;
+        }
+
+        .core-head span {
+            color: #7f94a5;
+        }
+
+        .core-metric {
+            border-color: rgba(80, 129, 165, .14);
+            background: #f7fafc;
+        }
+
+        .core-metric strong {
+            color: #41566b;
+        }
+
+        .metric-number {
+            color: #178cc3;
+        }
+
+        .metric-number small {
+            color: #6292aa;
+        }
+
+        .core-metric > span {
+            color: #8292a2;
+        }
+
+        .platform-node-card,
+        .output-stack .platform-node-card {
+            border-color: rgba(89, 126, 160, .14);
+            color: #52687d;
+            background: #f5f8fb;
+        }
+
+        .output-stack .platform-node-card i {
+            background: #df942f;
+            box-shadow: 0 0 6px rgba(223, 148, 47, .22);
+        }
+
+        .flow-card,
+        .flow-card:nth-child(2),
+        .flow-card:nth-child(3),
+        .flow-card:nth-child(4) {
+            border-color: rgba(100, 126, 152, .14);
+            background: #f7f9fc;
+        }
+
+        .flow-card strong,
+        .flow-card:nth-child(2) strong,
+        .flow-card:nth-child(3) strong {
+            color: #33485c;
+        }
+
+        .flow-card span,
+        .flow-card:nth-child(2) span,
+        .flow-card:nth-child(3) span {
+            color: #748497;
+        }
+
+        .flow-pill,
+        .flow-card:nth-child(2) .flow-pill,
+        .flow-card:nth-child(3) .flow-pill {
+            color: #2d78a6;
+            background: rgba(55, 139, 191, .09);
+        }
+
+        .receipt {
+            box-shadow: 0 12px 24px rgba(73, 79, 86, .20), inset 0 0 0 1px rgba(255, 255, 255, .85);
+        }
+
+        .ledger-tag,
+        .ledger-tag:nth-child(2),
+        .ledger-tag:nth-child(3) {
+            border-color: rgba(113, 126, 143, .14);
+            background: #f7f9fc;
+        }
+
+        .ledger-tag strong,
+        .ledger-tag:nth-child(2) strong,
+        .ledger-tag:nth-child(3) strong {
+            color: #34495d;
+        }
+
+        .ledger-tag span,
+        .ledger-tag:nth-child(2) span,
+        .ledger-tag:nth-child(3) span {
+            color: #7a8899;
+        }
+
+        .stage-arrow {
+            stroke: #7f92d8;
+        }
+
+        .stage-arrow.orange {
+            stroke: #dc9a46;
+        }
+
+        .stage-node {
+            fill: #7a6de0;
+            filter: drop-shadow(0 0 5px rgba(122, 109, 224, .32));
+        }
+
+        .stage-node.orange {
+            fill: #dd9a43;
+            filter: drop-shadow(0 0 5px rgba(221, 154, 67, .28));
+        }
+
+        .value-title {
+            color: #64778a;
+        }
+
+        .value-title span {
+            color: #8190a0;
+        }
+
+        .value-card,
+        .value-card.purple,
+        .value-card.orange,
+        .value-card.cyan {
+            border-color: rgba(99, 123, 148, .16);
+            background: rgba(255, 255, 255, .91);
+            box-shadow: 0 10px 24px rgba(70, 85, 103, .09);
+        }
+
+        .value-card::after {
+            background: rgba(76, 148, 202, .05);
+        }
+
+        .value-icon {
+            color: #2f9ad0;
+            background: rgba(47, 154, 208, .09);
+        }
+
+        .value-card.purple .value-icon {
+            color: #765ed0;
+            background: rgba(118, 94, 208, .09);
+        }
+
+        .value-card.orange .value-icon {
+            color: #d18b2e;
+            background: rgba(209, 139, 46, .10);
+        }
+
+        .value-card.cyan .value-icon {
+            color: #238fbc;
+            background: rgba(35, 143, 188, .09);
+        }
+
+        .value-content strong {
+            color: #2c3d51;
+        }
+
+        .value-content span {
+            color: #748397;
+        }
+
+        .value-highlight {
+            color: #2d86b7;
+        }
+
+        .value-card.purple .value-highlight {
+            color: #7767bc;
+        }
+
+        .value-card.orange .value-highlight {
+            color: #b6782b;
+        }
+
+        .footer,
+        .footer-right {
+            color: #73869a;
+        }
+
+        .footer-left i {
+            background: #3aa6d9;
+            box-shadow: 0 0 7px rgba(58, 166, 217, .35);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="stage">
+        <div class="content">
+            <svg class="background-svg" viewbox="0 0 1600 900">
+                <defs>
+                    <lineargradient id="bgGradient" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#7fb8e8">
+                        </stop>
+                        <stop offset="52%" stop-color="#9ecde9">
+                        </stop>
+                        <stop offset="100%" stop-color="#b5a5ef">
+                        </stop>
+                    </lineargradient>
+                </defs>
+                <path class="bg-line"
+                    d="M0 730 C220 662 320 758 498 681 C684 600 727 423 910 358 C1098 292 1303 419 1600 232">
+                </path>
+                <path class="bg-dash"
+                    d="M0 775 C247 713 386 799 570 724 C750 650 790 485 970 420 C1170 350 1370 421 1600 329">
+                </path>
+                <circle class="bg-dot" cx="498" cy="681" r="3">
+                </circle>
+                <circle class="bg-dot" cx="910" cy="358" r="3">
+                </circle>
+                <circle class="bg-dot" cx="1303" cy="419" r="3">
+                </circle>
+            </svg>
+            <header class="header">
+                <div class="title-wrap">
+                    <div class="logo">
+                        <svg fill="none" viewbox="0 0 24 24">
+                            <path d="M8 2v6M16 2v6M6 8h12v5a6 6 0 0 1-12 0V8z" stroke="currentColor" stroke-width="1.8">
+                            </path>
+                            <path d="M9 13h6M12 10v6M4 20h16" stroke="currentColor" stroke-linecap="round"
+                                stroke-width="1.8">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>
+                            充电车位防燃油车占位与停充一体化运营方案
+                        </h1>
+                        <div class="subtitle">
+                            LICENSE PLATE CONTROL · CHARGE &amp; PARKING · OCCUPANCY BILLING · CLEAR LEDGER
+                        </div>
+                    </div>
+                </div>
+                <div class="header-message">
+                    <strong>
+                        让充电车位真正服务充电，并把每一笔费用
+                        <b>
+                            算清、收清、对清
+                        </b>
+                    </strong>
+                    <span>
+                        车牌识别 · 地锁／道闸联动 · 充电状态校验 · 超时占位费 · 双向账单
+                    </span>
+                </div>
+            </header>
+            <section class="strategy-bar">
+                <div class="strategy left">
+                    <div class="strategy-content">
+                        <strong>
+                            车主体验
+                        </strong>
+                        <span>
+                            预约可达 · 充电可用 · 费用透明 · 离场无感支付
+                        </span>
+                    </div>
+                    <div class="strategy-icon">
+                        <svg fill="none" viewbox="0 0 24 24">
+                            <path d="M4 15l2-6h12l2 6v4H4v-4z" stroke="currentColor" stroke-width="1.8">
+                            </path>
+                            <circle cx="7" cy="18" fill="currentColor" r="1.5">
+                            </circle>
+                            <circle cx="17" cy="18" fill="currentColor" r="1.5">
+                            </circle>
+                        </svg>
+                    </div>
+                </div>
+                <div class="strategy-center">
+                    <strong>
+                        一套规则 · 两本清账
+                    </strong>
+                    <span>
+                        停充一体化闭环
+                    </span>
+                </div>
+                <div class="strategy right">
+                    <div class="strategy-icon">
+                        <svg fill="none" viewbox="0 0 24 24">
+                            <path d="M4 20V8h6v12M14 20V4h6v16M2 20h20" stroke="currentColor" stroke-width="1.8">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="strategy-content">
+                        <strong>
+                            运营方收益
+                        </strong>
+                        <span>
+                            提高车位周转 · 降低占位投诉 · 统一清分结算
+                        </span>
+                    </div>
+                </div>
+            </section>
+            <svg class="stage-lines" viewbox="0 0 1504 484">
+                <path class="stage-arrow" d="M402 242 H424">
+                </path>
+                <circle class="stage-node" cx="413" cy="242" r="3.2">
+                </circle>
+                <path class="stage-arrow orange" d="M1074 242 H1096">
+                </path>
+                <circle class="stage-node orange" cx="1085" cy="242" r="3.2">
+                </circle>
+            </svg>
+            <main class="main-area">
+                <section class="panel hardware-panel">
+                    <div class="section-head">
+                        <span class="section-index">
+                            01
+                        </span>
+                        <i class="section-line">
+                        </i>
+                        <h2>
+                            车位侧：识别与硬件管控
+                        </h2>
+                        <span class="section-en">
+                            BAY CONTROL
+                        </span>
+                    </div>
+                    <div class="panel-summary">
+                        <strong>
+                            车牌相机先判断“谁在用”，地锁／道闸再决定“能否进”。
+                        </strong>
+                        <br />
+                        车位、车辆、充电枪和订单实时绑定，避免仅靠人工巡检。
+                    </div>
+                    <div class="bay-scene">
+                        <div class="scene-label">
+                            充电专用车位
+                            <span>
+                                俯视现场布局 · 入口识别后联动放行
+                            </span>
+                        </div>
+                        <div class="bay-layout">
+                            <div class="bay-space">
+                                <div class="ev-ground-mark">
+                                    <svg aria-hidden="true" fill="none" viewbox="0 0 24 24">
+                                        <path d="M8 3v6M16 3v6M6 9h12v4a6 6 0 0 1-12 0V9Z" stroke="currentColor"
+                                            stroke-width="1.8">
+                                        </path>
+                                        <path d="M10 13h4" stroke="currentColor" stroke-linecap="round"
+                                            stroke-width="1.8">
+                                        </path>
+                                    </svg>
+                                    <span>
+                                        专用地锁
+                                    </span>
+                                </div>
+                                <div class="ground-lock">
+                                    <i>
+                                    </i>
+                                    <span>
+                                        地锁升起
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="camera-beam">
+                            </div>
+                            <div class="camera-pole">
+                                <div class="camera-head">
+                                    <i class="camera-lens">
+                                    </i>
+                                </div>
+                                <!-- <i class="camera-stand">
+         </i> -->
+                                <span>
+                                    车牌相机
+                                </span>
+                            </div>
+                            <!-- <div class="barrier-post">
+         <i>
+         </i>
+         <span>
+          专用道闸
+         </span>
+        </div>
+        <div class="barrier-arm">
+        </div> -->
+                            <div class="charger-unit">
+                                <div class="charger-screen">
+                                    待机
+                                </div>
+                                <div class="charger-port">
+                                </div>
+                                <span>
+                                    120 kW
+                                </span>
+                            </div>
+                            <div class="top-car fuel-car">
+                                <i class="car-wheel wheel-lf">
+                                </i>
+                                <i class="car-wheel wheel-rf">
+                                </i>
+                                <i class="car-wheel wheel-lr">
+                                </i>
+                                <i class="car-wheel wheel-rr">
+                                </i>
+                                <div class="car-windshield front">
+                                </div>
+                                <div class="car-roof">
+                                </div>
+                                <div class="car-windshield rear">
+                                </div>
+                                <span class="front-plate">
+                                    京A·F1234
+                                </span>
+                                <b>
+                                    燃油车
+                                </b>
+                            </div>
+                            <div class="recognition-tag">
+                                车牌已识别 · 新能源资格校验失败
+                            </div>
+                            <div class="deny-badge">
+                                地锁不降 / 道闸不抬
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rule-grid">
+                        <div class="rule-item">
+                            <strong>
+                                <i>
+                                </i>
+                                燃油车直接拦截
+                            </strong>
+                            <span>
+                                白名单／新能源车型库校验失败，车位锁不下降或专用道闸不放行。
+                            </span>
+                        </div>
+                        <div class="rule-item orange">
+                            <strong>
+                                <i>
+                                </i>
+                                新能源车未充电提醒
+                            </strong>
+                            <span>
+                                车辆入位后限定时间内未插枪，App、短信与现场屏同步提示。
+                            </span>
+                        </div>
+                        <div class="rule-item">
+                            <strong>
+                                <i>
+                                </i>
+                                充电中锁定车位
+                            </strong>
+                            <span>
+                                车牌、枪号、订单三方绑定，异常拔枪或换车立即告警。
+                            </span>
+                        </div>
+                        <div class="rule-item orange">
+                            <strong>
+                                <i>
+                                </i>
+                                满电后进入宽限期
+                            </strong>
+                            <span>
+                                充电结束开始倒计时，超时仍不驶离自动计收车位占用费。
+                            </span>
+                        </div>
+                    </div>
+                </section>
+                <section class="panel platform-panel">
+                    <div class="section-head">
+                        <span class="section-index">
+                            02
+                        </span>
+                        <i class="section-line">
+                        </i>
+                        <h2>
+                            停充一体化平台：规则、控制与收费
+                        </h2>
+                        <span class="section-en">
+                            PLATFORM
+                        </span>
+                    </div>
+                    <div class="panel-summary">
+                        <strong>
+                            平台统一判断车辆身份、车位状态、充电进度与收费路径。
+                        </strong>
+                        <br />
+                        不是单独管桩，而是把车位控制、用电计量、停车计费和支付清分合成一个订单。
+                    </div>
+                    <div class="platform-map">
+                        <div class="platform-title">
+                            实时控制闭环
+                            <span>
+                                车位事件、充电事件和收费事件统一编排
+                            </span>
+                        </div>
+                        <svg class="platform-svg" viewbox="0 0 618 227">
+                            <path class="flow-line" d="M165 74 H203">
+                            </path>
+                            <path class="flow-line" d="M165 119 H203">
+                            </path>
+                            <path class="flow-line" d="M165 164 H203">
+                            </path>
+                            <path class="flow-line orange" d="M447 74 H483">
+                            </path>
+                            <path class="flow-line orange" d="M447 119 H483">
+                            </path>
+                            <path class="flow-line orange" d="M447 164 H483">
+                            </path>
+                            <circle class="flow-node" cx="184" cy="74" r="3">
+                            </circle>
+                            <circle class="flow-node" cx="184" cy="119" r="3">
+                            </circle>
+                            <circle class="flow-node" cx="184" cy="164" r="3">
+                            </circle>
+                            <circle class="flow-node orange" cx="465" cy="74" r="3">
+                            </circle>
+                            <circle class="flow-node orange" cx="465" cy="119" r="3">
+                            </circle>
+                            <circle class="flow-node orange" cx="465" cy="164" r="3">
+                            </circle>
+                        </svg>
+                        <div class="input-stack">
+                            <div class="platform-node-card">
+                                <i>
+                                </i>
+                                车牌与车型识别
+                            </div>
+                            <div class="platform-node-card">
+                                <i>
+                                </i>
+                                地锁／道闸状态
+                            </div>
+                            <div class="platform-node-card">
+                                <i>
+                                </i>
+                                桩功率、SOC、枪状态
+                            </div>
+                        </div>
+                        <div class="platform-core">
+                            <div class="core-head">
+                                <div class="core-icon">
+                                    <svg fill="none" viewbox="0 0 24 24">
+                                        <path d="M12 3l7 4v5c0 4.5-2.7 7.3-7 9-4.3-1.7-7-4.5-7-9V7l7-4z"
+                                            stroke="currentColor" stroke-width="1.8">
+                                        </path>
+                                        <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="1.8">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <strong>
+                                        停充一体化规则引擎
+                                    </strong>
+                                    <span>
+                                        一车一位一枪一订单
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="core-metrics">
+                                <div class="core-metric">
+                                    <strong>
+                                        当前功率
+                                    </strong>
+                                    <b class="metric-number">
+                                        86.4
+                                        <small>
+                                            kW
+                                        </small>
+                                    </b>
+                                    <span>
+                                        充电正常
+                                    </span>
+                                </div>
+                                <div class="core-metric">
+                                    <strong>
+                                        电量 SOC
+                                    </strong>
+                                    <b class="metric-number">
+                                        78
+                                        <small>
+                                            %
+                                        </small>
+                                    </b>
+                                    <span>
+                                        预计 12 分钟
+                                    </span>
+                                </div>
+                                <div class="core-metric">
+                                    <strong>
+                                        占位计时
+                                    </strong>
+                                    <b class="metric-number">
+                                        00:36
+                                    </b>
+                                    <span>
+                                        宽限期内
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="output-stack">
+                            <div class="platform-node-card">
+                                <i>
+                                </i>
+                                控制车位锁／道闸
+                            </div>
+                            <div class="platform-node-card">
+                                <i>
+                                </i>
+                                App／短信／现场提醒
+                            </div>
+                            <div class="platform-node-card">
+                                <i>
+                                </i>
+                                账户扣款／出口补缴
+                            </div>
+                        </div>
+                    </div>
+                    <div class="workflow">
+                        <div class="flow-card">
+                            <span class="flow-no">
+                                01
+                            </span>
+                            <strong>
+                                预约或到场识别
+                            </strong>
+                            <span>
+                                核验新能源车型、预约资格与账户状态。
+                            </span>
+                            <i class="flow-pill">
+                                允许入位
+                            </i>
+                        </div>
+                        <div class="flow-card">
+                            <span class="flow-no">
+                                02
+                            </span>
+                            <strong>
+                                开始充电与计量
+                            </strong>
+                            <span>
+                                绑定车牌、枪号和停车订单，记录电量与时长。
+                            </span>
+                            <i class="flow-pill">
+                                停充同单
+                            </i>
+                        </div>
+                        <div class="flow-card">
+                            <span class="flow-no">
+                                03
+                            </span>
+                            <strong>
+                                结束充电倒计时
+                            </strong>
+                            <span>
+                                满电或主动停止后进入免费宽限期，持续提醒驶离。
+                            </span>
+                            <i class="flow-pill">
+                                超时计费
+                            </i>
+                        </div>
+                        <div class="flow-card">
+                            <span class="flow-no">
+                                04
+                            </span>
+                            <strong>
+                                离场统一结算
+                            </strong>
+                            <span>
+                                余额优先扣款；不足时并入停车场出口订单补缴。
+                            </span>
+                            <i class="flow-pill">
+                                无感离场
+                            </i>
+                        </div>
+                    </div>
+                </section>
+                <section class="panel billing-panel">
+                    <div class="section-head">
+                        <span class="section-index">
+                            03
+                        </span>
+                        <i class="section-line">
+                        </i>
+                        <h2>
+                            账单票据：车主看得懂，运营方对得上
+                        </h2>
+                        <span class="section-en">
+                            LEDGER
+                        </span>
+                    </div>
+                    <div class="panel-summary">
+                        <strong>
+                            同一订单拆清“电费、服务费、停车费、占位费”。
+                        </strong>
+                        <br />
+                        车主账单解释收费原因，运营票据记录收入归属、优惠承担和结算渠道。
+                    </div>
+                    <div class="receipt-wrap">
+                        <article class="receipt">
+                            <div class="receipt-code">
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                            </div>
+                            <div class="receipt-title">
+                                <strong>
+                                    车主停充结算单
+                                </strong>
+                                <span>
+                                    CHARGING &amp; PARKING RECEIPT
+                                </span>
+                            </div>
+                            <div class="bill-meta">
+                                <div class="bill-row">
+                                    <span>
+                                        订单号
+                                    </span>
+                                    <b>
+                                        CP202607170018
+                                    </b>
+                                </div>
+                                <div class="bill-row">
+                                    <span>
+                                        车牌
+                                    </span>
+                                    <b>
+                                        京A·E5863
+                                    </b>
+                                </div>
+                                <div class="bill-row">
+                                    <span>
+                                        车位 / 枪号
+                                    </span>
+                                    <b>
+                                        B2-018 / DC-07
+                                    </b>
+                                </div>
+                                <div class="bill-row">
+                                    <span>
+                                        充电时段
+                                    </span>
+                                    <b>
+                                        19:42 - 20:31
+                                    </b>
+                                </div>
+                            </div>
+                            <div class="bill-divider">
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    充电电费
+                                    <span class="bill-sub">
+                                        42.6 kWh × 分时电价
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥34.72
+                                </em>
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    充电服务费
+                                    <span class="bill-sub">
+                                        42.6 kWh × ¥0.35
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥14.91
+                                </em>
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    停车费
+                                    <span class="bill-sub">
+                                        充电期间减免 60 分钟
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥0.00
+                                </em>
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    超时占位费
+                                    <span class="bill-sub">
+                                        宽限 15 分钟后计费 18 分钟
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥9.00
+                                </em>
+                            </div>
+                            <div class="bill-total">
+                                <span>
+                                    本次应付
+                                </span>
+                                <strong>
+                                    ¥58.63
+                                </strong>
+                            </div>
+                            <div class="bill-status">
+                                账户余额已扣款 · 可开电子发票
+                            </div>
+                            <div class="paper-teeth">
+                            </div>
+                        </article>
+                        <article class="receipt operator">
+                            <div class="receipt-code">
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                                <i>
+                                </i>
+                            </div>
+                            <div class="receipt-title">
+                                <strong>
+                                    运营清分结算票据
+                                </strong>
+                                <span>
+                                    OPERATOR SETTLEMENT VOUCHER
+                                </span>
+                            </div>
+                            <div class="bill-meta">
+                                <div class="bill-row">
+                                    <span>
+                                        结算批次
+                                    </span>
+                                    <b>
+                                        ST20260717-03
+                                    </b>
+                                </div>
+                                <div class="bill-row">
+                                    <span>
+                                        场站 / 运营主体
+                                    </span>
+                                    <b>
+                                        中心广场 / 城投能源
+                                    </b>
+                                </div>
+                                <div class="bill-row">
+                                    <span>
+                                        渠道
+                                    </span>
+                                    <b>
+                                        会员余额 + 停车出口
+                                    </b>
+                                </div>
+                                <div class="bill-row">
+                                    <span>
+                                        税务状态
+                                    </span>
+                                    <b>
+                                        待汇总开票
+                                    </b>
+                                </div>
+                            </div>
+                            <div class="bill-divider">
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    电费代收
+                                    <span class="bill-sub">
+                                        归属售电主体
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥34.72
+                                </em>
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    充电服务收入
+                                    <span class="bill-sub">
+                                        归属充电运营方
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥14.91
+                                </em>
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    停车收入
+                                    <span class="bill-sub">
+                                        本单优惠减免
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥0.00
+                                </em>
+                            </div>
+                            <div class="bill-item">
+                                <span>
+                                    占位管理收入
+                                    <span class="bill-sub">
+                                        归属场站运营方
+                                    </span>
+                                </span>
+                                <em>
+                                    ¥9.00
+                                </em>
+                            </div>
+                            <div class="bill-total">
+                                <span>
+                                    结算净额
+                                </span>
+                                <strong>
+                                    ¥58.63
+                                </strong>
+                            </div>
+                            <div class="bill-status">
+                                车主账单、平台流水、场站账务三账一致
+                            </div>
+                            <div class="paper-teeth">
+                            </div>
+                        </article>
+                    </div>
+                    <div class="ledger-tags">
+                        <div class="ledger-tag">
+                            <strong>
+                                收费有依据
+                            </strong>
+                            <span>
+                                展示规则、宽限期、单价与计费时段。
+                            </span>
+                        </div>
+                        <div class="ledger-tag">
+                            <strong>
+                                支付有路径
+                            </strong>
+                            <span>
+                                余额扣款、聚合支付、停车出口补缴。
+                            </span>
+                        </div>
+                        <div class="ledger-tag">
+                            <strong>
+                                收入有归属
+                            </strong>
+                            <span>
+                                电费、服务费、停车费、占位费分账。
+                            </span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            <section class="value-zone">
+                <div class="value-title">
+                    防占位不是简单“拦车”，而是识别、控制、提醒、计费和清账的完整运营闭环
+                    <span>
+                        硬件管住车位 · 平台管住规则 · 账单管住争议
+                    </span>
+                </div>
+                <div class="value-grid">
+                    <article class="value-card purple">
+                        <div class="value-icon">
+                            <svg fill="none" viewbox="0 0 24 24">
+                                <path d="M4 15l2-6h12l2 6v4H4v-4z" stroke="currentColor" stroke-width="1.8">
+                                </path>
+                                <path d="M8 9l2-4h4l2 4" stroke="currentColor" stroke-width="1.8">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>
+                                杜绝燃油车长期占位
+                            </strong>
+                            <span>
+                                车牌识别与地锁／道闸联动，把违规占位挡在车位之外。
+                            </span>
+                            <div class="value-highlight">
+                                从“事后投诉”变成“事前控制”
+                            </div>
+                        </div>
+                    </article>
+                    <article class="value-card cyan">
+                        <div class="value-icon">
+                            <svg fill="none" viewbox="0 0 24 24">
+                                <path d="M8 2v6M16 2v6M6 8h12v5a6 6 0 0 1-12 0V8z" stroke="currentColor"
+                                    stroke-width="1.8">
+                                </path>
+                                <path d="M10 13h4" stroke="currentColor" stroke-width="1.8">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>
+                                提升充电车位周转率
+                            </strong>
+                            <span>
+                                充完即提醒、超时即计费，让稀缺快充车位更快释放。
+                            </span>
+                            <div class="value-highlight">
+                                提高单枪日服务车辆数
+                            </div>
+                        </div>
+                    </article>
+                    <article class="value-card orange">
+                        <div class="value-icon">
+                            <svg fill="none" viewbox="0 0 24 24">
+                                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8">
+                                </circle>
+                                <path d="M9 9.5h4a2 2 0 0 1 0 4H9M12 7.5v9" stroke="currentColor" stroke-width="1.8">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>
+                                形成可解释的占位收费
+                            </strong>
+                            <span>
+                                明确宽限期、计费起点和支付来源，减少现场争议。
+                            </span>
+                            <div class="value-highlight">
+                                规则透明、扣费可追溯
+                            </div>
+                        </div>
+                    </article>
+                    <article class="value-card">
+                        <div class="value-icon">
+                            <svg fill="none" viewbox="0 0 24 24">
+                                <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8">
+                                </path>
+                                <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>
+                                账务、票据与审计统一
+                            </strong>
+                            <span>
+                                车主端账单、运营清分票据和平台流水可一一核对。
+                            </span>
+                            <div class="value-highlight">
+                                每一分钱都能说明去向
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+            <footer class="footer">
+                <div class="footer-left">
+                    <i>
+                    </i>
+                    以车位为最小运营单元，把识别、用电、停车、收费和票据连接成一套可复制方案
+                </div>
+                <div class="footer-right">
+                    BAY CONTROL · CHARGE &amp; PARKING · OCCUPANCY FEE · CLEAR LEDGER
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script>
+        function resizeStage() {
+            const stage = document.getElementById("stage");
+            const baseWidth = 1600;
+            const baseHeight = 900;
+
+            const scale = Math.min(
+                window.innerWidth / baseWidth,
+                window.innerHeight / baseHeight
+            );
+
+            stage.style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener("resize", resizeStage);
+        resizeStage();
+    </script>
+</body>
+
+</html>

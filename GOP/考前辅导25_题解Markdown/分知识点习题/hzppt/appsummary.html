@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>车主小程序｜停车充电一体化服务</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #020711;
+            font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #stage {
+            position: relative;
+            width: 1600px;
+            height: 900px;
+            overflow: hidden;
+            transform-origin: center center;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 50% 43%, rgba(26, 145, 255, 0.16), transparent 35%),
+                radial-gradient(circle at 87% 18%, rgba(139, 92, 246, 0.12), transparent 25%),
+                radial-gradient(circle at 10% 83%, rgba(255, 161, 58, 0.07), transparent 28%),
+                linear-gradient(135deg, #020711 0%, #071426 50%, #07101f 76%, #030812 100%);
+        }
+
+        #stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.11;
+            background-image:
+                linear-gradient(rgba(70, 151, 255, 0.28) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(70, 151, 255, 0.28) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 92%, transparent 100%);
+        }
+
+        #stage::after {
+            content: "";
+            position: absolute;
+            left: 405px;
+            top: 42px;
+            width: 790px;
+            height: 790px;
+            border: 1px solid rgba(74, 176, 255, 0.05);
+            border-radius: 50%;
+            box-shadow:
+                0 0 150px rgba(0, 153, 255, 0.035),
+                inset 0 0 150px rgba(0, 153, 255, 0.025);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+        }
+
+        .background-svg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            width: 1600px;
+            height: 900px;
+            pointer-events: none;
+        }
+
+        .bg-line {
+            fill: none;
+            stroke: url(#bgGradient);
+            stroke-width: 1.1;
+            opacity: 0.17;
+        }
+
+        .bg-dash {
+            fill: none;
+            stroke: #49cbff;
+            stroke-width: 1;
+            stroke-dasharray: 7 10;
+            opacity: 0.13;
+            animation: bgFlow 14s linear infinite;
+        }
+
+        .bg-dot {
+            fill: #62d9ff;
+            filter: drop-shadow(0 0 6px #2bc1ff);
+        }
+
+        @keyframes bgFlow {
+            to {
+                stroke-dashoffset: -190;
+            }
+        }
+
+        /* 标题 */
+        .header {
+            position: absolute;
+            left: 48px;
+            right: 48px;
+            top: 20px;
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #168cff, #775cff);
+            box-shadow:
+                0 9px 30px rgba(51, 127, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .logo::after {
+            content: "";
+            position: absolute;
+            inset: -5px;
+            border: 1px solid rgba(86, 161, 255, 0.15);
+            border-radius: 19px;
+        }
+
+        .logo svg {
+            width: 31px;
+            height: 31px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.15;
+            letter-spacing: 0.8px;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            color: #668fb1;
+            font-size: 11.5px;
+            letter-spacing: 2.6px;
+        }
+
+        .header-message {
+            text-align: right;
+        }
+
+        .header-message strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #e6f5ff;
+            font-size: 16px;
+        }
+
+        .header-message strong b {
+            color: #64d6ff;
+        }
+
+        .header-message span {
+            color: #7092aa;
+            font-size: 12px;
+        }
+
+        /* 顶部定位 */
+        .strategy-bar {
+            position: absolute;
+            left: 100px;
+            right: 100px;
+            top: 106px;
+            height: 68px;
+            display: grid;
+            grid-template-columns: 1fr 196px 1fr;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid rgba(74, 159, 224, 0.23);
+            border-radius: 34px;
+            background: linear-gradient(
+                90deg,
+                rgba(31, 41, 98, 0.59),
+                rgba(6, 45, 78, 0.84) 48%,
+                rgba(90, 54, 29, 0.48)
+            );
+            box-shadow:
+                0 14px 34px rgba(0, 4, 16, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .strategy {
+            height: 100%;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .strategy.left {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .strategy.right {
+            justify-content: flex-start;
+        }
+
+        .strategy-icon {
+            width: 43px;
+            height: 43px;
+            flex: 0 0 43px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(143, 120, 242, 0.22);
+            border-radius: 13px;
+            color: #c9baff;
+            background: rgba(115, 83, 220, 0.15);
+        }
+
+        .strategy.right .strategy-icon {
+            color: #ffc16d;
+            border-color: rgba(255, 181, 78, 0.19);
+            background: rgba(210, 126, 31, 0.12);
+        }
+
+        .strategy-icon svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .strategy.left .strategy-icon {
+            order: 2;
+            margin-left: 14px;
+        }
+
+        .strategy.right .strategy-icon {
+            margin-right: 14px;
+        }
+
+        .strategy-content strong {
+            display: block;
+            color: #e9e4ff;
+            font-size: 15px;
+        }
+
+        .strategy.right .strategy-content strong {
+            color: #ffe5bd;
+        }
+
+        .strategy-content span {
+            display: block;
+            margin-top: 6px;
+            color: #9792b8;
+            font-size: 11px;
+        }
+
+        .strategy.right .strategy-content span {
+            color: #bb9b72;
+        }
+
+        .strategy-center {
+            text-align: center;
+        }
+
+        .strategy-center strong {
+            display: block;
+            color: #eef9ff;
+            font-size: 15px;
+        }
+
+        .strategy-center span {
+            display: block;
+            margin-top: 5px;
+            color: #7196aa;
+            font-size: 10px;
+        }
+
+        /* 主体 */
+        .main-area {
+            position: absolute;
+            left: 48px;
+            right: 48px;
+            top: 194px;
+            height: 492px;
+            display: grid;
+            grid-template-columns: 404px 654px 402px;
+            gap: 22px;
+        }
+
+        .panel {
+            position: relative;
+            min-width: 0;
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(66, 165, 235, 0.22);
+            border-radius: 17px;
+            background: linear-gradient(145deg, rgba(13, 47, 82, 0.94), rgba(5, 22, 43, 0.96));
+            box-shadow:
+                0 18px 44px rgba(0, 4, 16, 0.32),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #5cc8ff, transparent);
+        }
+
+        .charging-panel {
+            border-color: rgba(101, 104, 232, 0.27);
+            background:
+                radial-gradient(circle at 50% 0%, rgba(115, 77, 210, 0.11), transparent 31%),
+                linear-gradient(145deg, rgba(34, 39, 87, 0.84), rgba(5, 23, 45, 0.96));
+        }
+
+        .charging-panel::before {
+            background: linear-gradient(90deg, transparent, #9d82ff, transparent);
+        }
+
+        .app-panel {
+            border-color: rgba(54, 190, 235, 0.42);
+            background:
+                radial-gradient(circle at 50% 43%, rgba(0, 158, 232, 0.14), transparent 43%),
+                linear-gradient(145deg, rgba(7, 58, 94, 0.98), rgba(4, 23, 47, 0.99));
+            box-shadow:
+                0 24px 64px rgba(0, 4, 18, 0.44),
+                0 0 48px rgba(0, 171, 243, 0.07),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        }
+
+        .account-panel {
+            border-color: rgba(241, 162, 59, 0.27);
+            background:
+                radial-gradient(circle at 50% 0%, rgba(224, 135, 31, 0.1), transparent 31%),
+                linear-gradient(145deg, rgba(72, 47, 27, 0.64), rgba(6, 25, 47, 0.96));
+        }
+
+        .account-panel::before {
+            background: linear-gradient(90deg, transparent, #ffb24d, transparent);
+        }
+
+        .section-head {
+            height: 50px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-index {
+            color: #668ca0;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .section-line {
+            width: 24px;
+            height: 2px;
+            flex: 0 0 24px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #318fff, #4ae0ff);
+        }
+
+        .charging-panel .section-line {
+            background: linear-gradient(90deg, #8268ef, #b5a3ff);
+        }
+
+        .account-panel .section-line {
+            background: linear-gradient(90deg, #ff9d32, #ffd27d);
+        }
+
+        .section-head h2 {
+            margin: 0;
+            color: #e2f4fb;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .section-en {
+            margin-left: auto;
+            color: #66869a;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        .panel-summary {
+            height: 52px;
+            margin: 0 14px;
+            padding: 8px 11px;
+            border-radius: 10px;
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        .charging-panel .panel-summary {
+            border: 1px solid rgba(144, 117, 241, 0.17);
+            color: #b8b0d5;
+            background: rgba(63, 45, 116, 0.23);
+        }
+
+        .account-panel .panel-summary {
+            border: 1px solid rgba(242, 160, 56, 0.17);
+            color: #d5b68d;
+            background: rgba(96, 58, 22, 0.22);
+        }
+
+        .panel-summary strong {
+            color: #eef8ff;
+            font-size: 12px;
+        }
+
+        .charging-panel .panel-summary strong {
+            color: #e0d8fa;
+        }
+
+        .account-panel .panel-summary strong {
+            color: #ffe4be;
+        }
+
+        /* 左侧：充电旅程 */
+        .charge-journey {
+            position: relative;
+            height: 190px;
+            margin: 10px 14px 0;
+            overflow: hidden;
+            border: 1px solid rgba(137, 111, 235, 0.16);
+            border-radius: 12px;
+            background:
+                radial-gradient(circle at 50% 55%, rgba(111, 75, 208, 0.09), transparent 48%),
+                rgba(20, 25, 52, 0.59);
+        }
+
+        .journey-title {
+            position: absolute;
+            left: 12px;
+            top: 10px;
+            z-index: 5;
+            color: #c9c0e3;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .journey-title span {
+            margin-left: 7px;
+            color: #807995;
+            font-size: 9.3px;
+            font-weight: 400;
+        }
+
+        .journey-line {
+            position: absolute;
+            left: 39px;
+            right: 39px;
+            top: 93px;
+            height: 2px;
+            background: linear-gradient(90deg, #8c72ff, #53c9ff, #ffad4a);
+            box-shadow: 0 0 12px rgba(90, 190, 255, 0.18);
+        }
+
+        .journey-line::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: -1px;
+            width: 42%;
+            height: 4px;
+            border-radius: 3px;
+            background: #66d5ff;
+            box-shadow: 0 0 10px rgba(83, 205, 255, 0.7);
+            animation: journeyProgress 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes journeyProgress {
+            from {
+                width: 24%;
+            }
+            to {
+                width: 78%;
+            }
+        }
+
+        .journey-steps {
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            top: 52px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 7px;
+        }
+
+        .journey-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .journey-icon {
+            width: 45px;
+            height: 45px;
+            margin: 0 auto 13px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(143, 120, 242, 0.24);
+            border-radius: 14px;
+            color: #c7b9ff;
+            background: linear-gradient(145deg, rgba(93, 68, 172, 0.56), rgba(30, 39, 78, 0.83));
+            box-shadow: 0 8px 18px rgba(0, 3, 12, 0.24);
+        }
+
+        .journey-step:nth-child(2) .journey-icon,
+        .journey-step:nth-child(3) .journey-icon {
+            color: #6fd8ff;
+            border-color: rgba(66, 187, 232, 0.24);
+            background: linear-gradient(145deg, rgba(19, 105, 149, 0.5), rgba(18, 40, 68, 0.84));
+        }
+
+        .journey-step:nth-child(4) .journey-icon {
+            color: #ffc16d;
+            border-color: rgba(244, 169, 70, 0.24);
+            background: linear-gradient(145deg, rgba(111, 69, 24, 0.54), rgba(40, 36, 51, 0.84));
+        }
+
+        .journey-icon svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .journey-step strong {
+            display: block;
+            color: #ddd7f2;
+            font-size: 9.8px;
+        }
+
+        .journey-step:nth-child(2) strong,
+        .journey-step:nth-child(3) strong {
+            color: #d8f2fb;
+        }
+
+        .journey-step:nth-child(4) strong {
+            color: #ffe0b5;
+        }
+
+        .journey-step span {
+            display: block;
+            margin-top: 5px;
+            color: #8f89a6;
+            font-size: 8px;
+            line-height: 1.3;
+        }
+
+        .charge-service-grid {
+            margin: 10px 14px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 7px;
+        }
+
+        .charge-service {
+            height: 76px;
+            padding: 9px 10px;
+            overflow: hidden;
+            border: 1px solid rgba(130, 104, 230, 0.14);
+            border-radius: 9px;
+            background: rgba(48, 38, 89, 0.39);
+        }
+
+        .charge-service.blue {
+            border-color: rgba(60, 188, 232, 0.14);
+            background: rgba(7, 49, 75, 0.55);
+        }
+
+        .charge-service.orange {
+            border-color: rgba(236, 153, 49, 0.14);
+            background: rgba(91, 56, 25, 0.34);
+        }
+
+        .charge-service strong {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #ddd5f7;
+            font-size: 11.3px;
+        }
+
+        .charge-service.blue strong {
+            color: #d7f0f8;
+        }
+
+        .charge-service.orange strong {
+            color: #ffe0b4;
+        }
+
+        .charge-service strong i {
+            width: 6px;
+            height: 6px;
+            flex: 0 0 6px;
+            border-radius: 50%;
+            background: #9d81ff;
+            box-shadow: 0 0 7px rgba(157, 129, 255, 0.58);
+        }
+
+        .charge-service.blue strong i {
+            background: #55d2ff;
+            box-shadow: 0 0 7px rgba(85, 210, 255, 0.56);
+        }
+
+        .charge-service.orange strong i {
+            background: #ffb04b;
+            box-shadow: 0 0 7px rgba(255, 176, 75, 0.56);
+        }
+
+        .charge-service span {
+            display: block;
+            margin-top: 6px;
+            color: #938cad;
+            font-size: 9.4px;
+            line-height: 1.38;
+        }
+
+        .charge-service.blue span {
+            color: #789eb0;
+        }
+
+        .charge-service.orange span {
+            color: #b4946f;
+        }
+
+        /* 中间：手机小程序 */
+        .app-canvas {
+            position: relative;
+            height: 426px;
+            margin: 0 14px 14px;
+            overflow: hidden;
+            border: 1px solid rgba(54, 184, 224, 0.17);
+            border-radius: 13px;
+            background:
+                radial-gradient(circle at 50% 52%, rgba(0, 164, 225, 0.11), transparent 47%),
+                rgba(4, 27, 51, 0.71);
+        }
+
+        .app-canvas-title {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            z-index: 6;
+            color: #acd4e1;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .app-canvas-title span {
+            margin-left: 8px;
+            color: #668fa4;
+            font-size: 9.5px;
+            font-weight: 400;
+        }
+
+        .capability-stack {
+            position: absolute;
+            top: 61px;
+            width: 154px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .capability-stack.left {
+            left: 14px;
+        }
+
+        .capability-stack.right {
+            right: 14px;
+        }
+
+        .capability-card {
+            position: relative;
+            height: 100px;
+            padding: 9px 9px 8px;
+            overflow: hidden;
+            border: 1px solid rgba(57, 180, 222, 0.15);
+            border-radius: 10px;
+            background: rgba(8, 48, 75, 0.61);
+        }
+
+        .capability-card.purple {
+            border-color: rgba(139, 112, 235, 0.16);
+            background: rgba(48, 42, 97, 0.4);
+        }
+
+        .capability-card.orange {
+            border-color: rgba(239, 159, 54, 0.16);
+            background: rgba(84, 54, 25, 0.39);
+        }
+
+        .capability-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .capability-icon {
+            width: 28px;
+            height: 28px;
+            flex: 0 0 28px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            color: #64d5ff;
+            background: rgba(22, 137, 181, 0.18);
+        }
+
+        .capability-card.purple .capability-icon {
+            color: #c3b2ff;
+            background: rgba(120, 86, 208, 0.18);
+        }
+
+        .capability-card.orange .capability-icon {
+            color: #ffc06b;
+            background: rgba(198, 115, 29, 0.18);
+        }
+
+        .capability-icon svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .capability-head strong {
+            color: #d6eef5;
+            font-size: 10.5px;
+        }
+
+        .capability-card.purple .capability-head strong {
+            color: #ded7f5;
+        }
+
+        .capability-card.orange .capability-head strong {
+            color: #ffe0b5;
+        }
+
+        .capability-card p {
+            height: 25px;
+            margin: 6px 0 0;
+            overflow: hidden;
+            display: -webkit-box;
+            color: #7ea4b4;
+            font-size: 8.2px;
+            line-height: 1.45;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+        .capability-card.purple p {
+            color: #928dab;
+        }
+
+        .capability-card.orange p {
+            color: #b39470;
+        }
+
+        .capability-tag {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 2px 6px;
+            border-radius: 5px;
+            color: #65d5ff;
+            font-size: 7.7px;
+            background: rgba(23, 138, 181, 0.18);
+        }
+
+        .capability-card.purple .capability-tag {
+            color: #bbaaff;
+            background: rgba(117, 83, 205, 0.17);
+        }
+
+        .capability-card.orange .capability-tag {
+            color: #ffc06b;
+            background: rgba(196, 113, 28, 0.17);
+        }
+
+        .app-svg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .app-flow {
+            fill: none;
+            stroke: #4fd2ff;
+            stroke-width: 1.35;
+            stroke-dasharray: 5 6;
+            opacity: 0.56;
+            animation: appFlow 8s linear infinite;
+        }
+
+        .app-flow.purple {
+            stroke: #9c84ff;
+        }
+
+        .app-flow.orange {
+            stroke: #ffac45;
+        }
+
+        .app-node {
+            fill: #58d3ff;
+            filter: drop-shadow(0 0 5px #26c5ef);
+        }
+
+        .app-node.purple {
+            fill: #a58bff;
+            filter: drop-shadow(0 0 5px #7e61f0);
+        }
+
+        .app-node.orange {
+            fill: #ffae48;
+            filter: drop-shadow(0 0 5px #e98b1c);
+        }
+
+        @keyframes appFlow {
+            to {
+                stroke-dashoffset: -120;
+            }
+        }
+
+        .phone {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            z-index: 4;
+            width: 278px;
+            height: 412px;
+            transform: translateX(-50%);
+            border: 1px solid rgba(136, 193, 222, 0.27);
+            border-radius: 34px;
+            background: linear-gradient(145deg, #1a2938, #07101a 60%, #0c1722);
+            box-shadow:
+                0 28px 52px rgba(0, 0, 0, 0.45),
+                0 0 32px rgba(55, 183, 235, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .phone::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 8px;
+            width: 72px;
+            height: 4px;
+            transform: translateX(-50%);
+            border-radius: 4px;
+            background: rgba(210, 226, 237, 0.35);
+        }
+
+        .phone-screen {
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            top: 8px;
+            bottom: 14px;
+            overflow: hidden;
+            border-radius: 27px;
+            color: #163044;
+            background: #f4f8fb;
+        }
+
+        .dynamic-island {
+            position: absolute;
+            left: 50%;
+            top: 9px;
+            z-index: 8;
+            width: 70px;
+            height: 18px;
+            transform: translateX(-50%);
+            border-radius: 12px;
+            background: #0a1118;
+        }
+
+        .mini-header {
+            height: 101px;
+            padding: 31px 16px 12px;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 84% 22%, rgba(255, 255, 255, 0.18), transparent 31%),
+                linear-gradient(135deg, #1477e7, #3b86ed 48%, #6a5ce8);
+        }
+
+        .mini-location {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 8px;
+            opacity: 0.9;
+        }
+
+        .mini-location span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .mini-location i {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #8cf0ff;
+            box-shadow: 0 0 5px rgba(140, 240, 255, 0.8);
+        }
+
+        .mini-greeting {
+            margin-top: 12px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        .mini-greeting strong {
+            display: block;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+        }
+
+        .mini-greeting span {
+            display: block;
+            margin-top: 4px;
+            font-size: 7.4px;
+            opacity: 0.78;
+        }
+
+        .car-chip {
+            padding: 5px 7px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 9px;
+            font-size: 7.5px;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .mini-body {
+            position: relative;
+            padding: 10px 11px 50px;
+        }
+
+        .charge-card {
+            height: 100px;
+            padding: 11px;
+            overflow: hidden;
+            border-radius: 14px;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 78% 27%, rgba(123, 240, 255, 0.35), transparent 35%),
+                linear-gradient(135deg, #0a91ba, #1aa7d3 48%, #327bd9);
+            box-shadow: 0 8px 18px rgba(34, 124, 179, 0.2);
+        }
+
+        .charge-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .charge-card-head strong {
+            font-size: 10.5px;
+        }
+
+        .charge-card-head span {
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-size: 6.7px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .charge-card-main {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: 1.3fr 0.8fr;
+            align-items: end;
+            gap: 8px;
+        }
+
+        .charge-station strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .charge-station span {
+            display: block;
+            margin-top: 5px;
+            font-size: 6.8px;
+            opacity: 0.82;
+        }
+
+        .charge-action {
+            height: 35px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            color: #16709d;
+            background: #ffffff;
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .mini-quick-grid {
+            margin-top: 9px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .mini-quick {
+            height: 51px;
+            padding: 6px 2px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e8eef3;
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 3px 9px rgba(33, 62, 84, 0.04);
+        }
+
+        .mini-quick i {
+            width: 23px;
+            height: 23px;
+            display: grid;
+            place-items: center;
+            border-radius: 7px;
+            color: #357ee8;
+            background: #eef5ff;
+        }
+
+        .mini-quick:nth-child(2) i {
+            color: #7657da;
+            background: #f3efff;
+        }
+
+        .mini-quick:nth-child(3) i {
+            color: #e88925;
+            background: #fff5e9;
+        }
+
+        .mini-quick:nth-child(4) i {
+            color: #1a9c98;
+            background: #eaf9f7;
+        }
+
+        .mini-quick svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .mini-quick span {
+            margin-top: 4px;
+            color: #456275;
+            font-size: 6.8px;
+        }
+
+        .monthly-card {
+            margin-top: 9px;
+            height: 72px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 1fr 70px;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid #e8edf3;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #ffffff, #f6f3ff);
+            box-shadow: 0 4px 12px rgba(48, 53, 89, 0.05);
+        }
+
+        .monthly-card strong {
+            display: block;
+            color: #283f53;
+            font-size: 9.4px;
+        }
+
+        .monthly-card span {
+            display: block;
+            margin-top: 5px;
+            color: #7a8d9b;
+            font-size: 6.6px;
+            line-height: 1.35;
+        }
+
+        .monthly-card em {
+            display: block;
+            margin-top: 5px;
+            color: #7657da;
+            font-size: 7px;
+            font-style: normal;
+            font-weight: 700;
+        }
+
+        .monthly-button {
+            height: 31px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #775ce5, #4f7be5);
+            font-size: 7.2px;
+            font-weight: 700;
+        }
+
+        .notice-strip {
+            margin-top: 8px;
+            height: 34px;
+            padding: 0 9px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid #f0e8dc;
+            border-radius: 10px;
+            color: #7e6848;
+            background: #fffaf2;
+            font-size: 6.8px;
+        }
+
+        .notice-strip i {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+            color: #ec912b;
+            background: #fff0dd;
+        }
+
+        .notice-strip svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        .mini-nav {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 47px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            align-items: center;
+            border-top: 1px solid #e7edf2;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .mini-nav-item {
+            text-align: center;
+            color: #8da0ad;
+            font-size: 6.4px;
+        }
+
+        .mini-nav-item i {
+            width: 18px;
+            height: 18px;
+            margin: 0 auto 2px;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+        }
+
+        .mini-nav-item.active {
+            color: #367ee6;
+            font-weight: 700;
+        }
+
+        .mini-nav-item.active i {
+            color: #ffffff;
+            background: #367ee6;
+        }
+
+        .mini-nav-item svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        /* 右侧：套餐账户 */
+        .package-lifecycle {
+            position: relative;
+            height: 137px;
+            margin: 10px 14px 0;
+            overflow: hidden;
+            border: 1px solid rgba(239, 159, 54, 0.16);
+            border-radius: 12px;
+            background:
+                radial-gradient(circle at 50% 10%, rgba(231, 142, 38, 0.09), transparent 42%),
+                rgba(69, 48, 27, 0.42);
+        }
+
+        .package-title {
+            position: absolute;
+            left: 12px;
+            top: 10px;
+            color: #d8bf9d;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .package-title span {
+            margin-left: 7px;
+            color: #907b62;
+            font-size: 9.2px;
+            font-weight: 400;
+        }
+
+        .package-track {
+            position: absolute;
+            left: 25px;
+            right: 25px;
+            top: 74px;
+            height: 2px;
+            background: linear-gradient(90deg, #ff9e37, #ffd076);
+        }
+
+        .package-steps {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            top: 45px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .package-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .package-step i {
+            width: 38px;
+            height: 38px;
+            margin: 0 auto 11px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(247, 175, 80, 0.24);
+            border-radius: 12px;
+            color: #ffc16d;
+            background: linear-gradient(145deg, rgba(120, 75, 28, 0.62), rgba(51, 40, 37, 0.85));
+            box-shadow: 0 7px 16px rgba(0, 2, 10, 0.23);
+        }
+
+        .package-step svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .package-step strong {
+            display: block;
+            color: #ffe1b9;
+            font-size: 9.2px;
+        }
+
+        .package-step span {
+            display: block;
+            margin-top: 4px;
+            color: #a58967;
+            font-size: 7.6px;
+        }
+
+        .account-grid {
+            margin: 10px 14px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 7px;
+        }
+
+        .account-item {
+            height: 72px;
+            padding: 8px 9px;
+            overflow: hidden;
+            border: 1px solid rgba(239, 159, 54, 0.14);
+            border-radius: 9px;
+            background: rgba(83, 54, 26, 0.34);
+        }
+
+        .account-item.blue {
+            border-color: rgba(59, 181, 228, 0.14);
+            background: rgba(7, 47, 73, 0.53);
+        }
+
+        .account-item.purple {
+            border-color: rgba(136, 111, 231, 0.14);
+            background: rgba(47, 40, 91, 0.39);
+        }
+
+        .account-item strong {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #ffe0b3;
+            font-size: 10.5px;
+        }
+
+        .account-item.blue strong {
+            color: #d6f0f8;
+        }
+
+        .account-item.purple strong {
+            color: #dcd4f5;
+        }
+
+        .account-item strong i {
+            width: 6px;
+            height: 6px;
+            flex: 0 0 6px;
+            border-radius: 50%;
+            background: #ffae48;
+            box-shadow: 0 0 7px rgba(255, 174, 72, 0.55);
+        }
+
+        .account-item.blue strong i {
+            background: #55d1ff;
+            box-shadow: 0 0 7px rgba(85, 209, 255, 0.52);
+        }
+
+        .account-item.purple strong i {
+            background: #9d82ff;
+            box-shadow: 0 0 7px rgba(157, 130, 255, 0.52);
+        }
+
+        .account-item span {
+            display: block;
+            margin-top: 5px;
+            overflow: hidden;
+            display: -webkit-box;
+            color: #a48663;
+            font-size: 8.2px;
+            line-height: 1.35;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+        }
+
+        .account-item.blue span {
+            color: #7399aa;
+        }
+
+        .account-item.purple span {
+            color: #8c85a4;
+        }
+
+        /* 主体连接线 */
+        .stage-lines {
+            position: absolute;
+            left: 48px;
+            top: 194px;
+            z-index: 1;
+            width: 1504px;
+            height: 492px;
+            pointer-events: none;
+        }
+
+        .stage-arrow {
+            fill: none;
+            stroke: #6e8dff;
+            stroke-width: 1.6;
+            stroke-dasharray: 7 7;
+            opacity: 0.64;
+            animation: stageFlow 9s linear infinite;
+        }
+
+        .stage-arrow.orange {
+            stroke: #ffad45;
+        }
+
+        .stage-node {
+            fill: #8b7bff;
+            filter: drop-shadow(0 0 6px #6759f5);
+        }
+
+        .stage-node.orange {
+            fill: #ffaf49;
+            filter: drop-shadow(0 0 6px #e98d21);
+        }
+
+        @keyframes stageFlow {
+            to {
+                stroke-dashoffset: -140;
+            }
+        }
+
+        /* 底部价值 */
+        .value-zone {
+            position: absolute;
+            left: 48px;
+            right: 48px;
+            bottom: 48px;
+            height: 151px;
+        }
+
+        .value-title {
+            height: 28px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8ab1c5;
+            font-size: 11px;
+            letter-spacing: 0.4px;
+        }
+
+        .value-title::before {
+            content: "";
+            width: 20px;
+            height: 2px;
+            flex: 0 0 20px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #3ba8ff, #9d7dff, #ffb14a);
+        }
+
+        .value-title span {
+            margin-left: auto;
+            color: #627f92;
+            font-size: 10px;
+        }
+
+        .value-grid {
+            height: 119px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .value-card {
+            position: relative;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid rgba(60, 177, 226, 0.18);
+            border-radius: 13px;
+            background: linear-gradient(145deg, rgba(10, 48, 78, 0.8), rgba(5, 24, 46, 0.86));
+        }
+
+        .value-card.purple {
+            border-color: rgba(142, 116, 236, 0.21);
+            background: linear-gradient(145deg, rgba(51, 43, 100, 0.49), rgba(6, 26, 49, 0.87));
+        }
+
+        .value-card.orange {
+            border-color: rgba(232, 157, 60, 0.21);
+            background: linear-gradient(145deg, rgba(88, 57, 28, 0.44), rgba(7, 27, 49, 0.87));
+        }
+
+        .value-card.cyan {
+            border-color: rgba(61, 187, 230, 0.21);
+            background: linear-gradient(145deg, rgba(10, 66, 89, 0.48), rgba(6, 27, 50, 0.87));
+        }
+
+        .value-card::after {
+            content: "";
+            position: absolute;
+            right: -42px;
+            bottom: -49px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(49, 202, 228, 0.035);
+        }
+
+        .value-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            color: #60cfff;
+            background: rgba(23, 143, 184, 0.14);
+        }
+
+        .value-card.purple .value-icon {
+            color: #c2b3ff;
+            background: rgba(121, 87, 210, 0.15);
+        }
+
+        .value-card.orange .value-icon {
+            color: #ffc16c;
+            background: rgba(191, 123, 46, 0.14);
+        }
+
+        .value-card.cyan .value-icon {
+            color: #61d4f6;
+            background: rgba(28, 155, 192, 0.14);
+        }
+
+        .value-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .value-content {
+            position: relative;
+            z-index: 2;
+            padding-left: 10px;
+        }
+
+        .value-content strong {
+            display: block;
+            color: #e0f3fa;
+            font-size: 13.5px;
+        }
+
+        .value-content span {
+            display: block;
+            margin-top: 7px;
+            color: #82a6b7;
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+
+        .value-highlight {
+            margin-top: 7px;
+            color: #62ceff;
+            font-size: 9.7px;
+            font-weight: 700;
+        }
+
+        .value-card.purple .value-highlight {
+            color: #b8a9e4;
+        }
+
+        .value-card.orange .value-highlight {
+            color: #e2af6d;
+        }
+
+        .footer {
+            position: absolute;
+            left: 49px;
+            right: 49px;
+            bottom: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #557b91;
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-left i {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #57cfff;
+            box-shadow: 0 0 8px #57cfff;
+        }
+
+        .footer-right {
+            color: #45687d;
+        }
+
+        @media print {
+            html,
+            body {
+                width: 1600px;
+                height: 900px;
+            }
+
+            #stage {
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="stage">
+        <div class="content">
+            <svg class="background-svg" viewBox="0 0 1600 900" aria-hidden="true">
+                <defs>
+                    <linearGradient id="bgGradient" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#188fff" />
+                        <stop offset="52%" stop-color="#53cfff" />
+                        <stop offset="100%" stop-color="#8a67ff" />
+                    </linearGradient>
+                </defs>
+                <path class="bg-line" d="M0 730 C220 662 320 758 498 681 C684 600 727 423 910 358 C1098 292 1303 419 1600 232" />
+                <path class="bg-dash" d="M0 775 C247 713 386 799 570 724 C750 650 790 485 970 420 C1170 350 1370 421 1600 329" />
+                <circle class="bg-dot" cx="498" cy="681" r="3" />
+                <circle class="bg-dot" cx="910" cy="358" r="3" />
+                <circle class="bg-dot" cx="1303" cy="419" r="3" />
+            </svg>
+
+            <header class="header">
+                <div class="title-wrap">
+                    <div class="logo">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <rect x="6" y="3" width="12" height="18" rx="3" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M9 7h6M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            <path d="M10 11l2-2v3l2-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>车主小程序：停车、充电与长期服务一站式办理</h1>
+                        <div class="subtitle">OWNER MINI PROGRAM · CHARGE & PARK · MONTHLY PACKAGE · ORDERS · INVOICE · VISITOR</div>
+                    </div>
+                </div>
+                <div class="header-message">
+                    <strong>把高频停车服务装进一个入口，让车主<b>随时办、透明查、无感付</b></strong>
+                    <span>汽车充电 · 包月办理与变更 · 订单票据 · 访客授权 · 优惠权益 · 运营公告</span>
+                </div>
+            </header>
+
+            <section class="strategy-bar">
+                <div class="strategy left">
+                    <div class="strategy-content">
+                        <strong>车主端体验</strong>
+                        <span>少跑现场 · 少填资料 · 状态可查 · 费用清楚 · 服务可追踪</span>
+                    </div>
+                    <div class="strategy-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M4 15l2-6h12l2 6v4H4v-4z" stroke="currentColor" stroke-width="1.8" />
+                            <circle cx="7" cy="18" r="1.5" fill="currentColor" />
+                            <circle cx="17" cy="18" r="1.5" fill="currentColor" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="strategy-center">
+                    <strong>一个小程序 · 全周期服务</strong>
+                    <span>到场、办理、使用、支付、售后</span>
+                </div>
+                <div class="strategy right">
+                    <div class="strategy-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 20V8h5v12M14 20V4h5v16M3 20h18" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M7.5 11h.01M16.5 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="strategy-content">
+                        <strong>运营端价值</strong>
+                        <span>线上分流 · 套餐增收 · 自动续费 · 精准触达 · 服务闭环</span>
+                    </div>
+                </div>
+            </section>
+
+            <svg class="stage-lines" viewBox="0 0 1504 492" aria-hidden="true">
+                <path class="stage-arrow" d="M404 246 H426" />
+                <circle class="stage-node" cx="415" cy="246" r="3.2" />
+                <path class="stage-arrow orange" d="M1080 246 H1102" />
+                <circle class="stage-node orange" cx="1091" cy="246" r="3.2" />
+            </svg>
+
+            <main class="main-area">
+                <section class="panel charging-panel">
+                    <div class="section-head">
+                        <span class="section-index">01</span>
+                        <i class="section-line"></i>
+                        <h2>汽车充电：从找桩到结算</h2>
+                        <span class="section-en">CHARGING</span>
+                    </div>
+
+                    <div class="panel-summary">
+                        <strong>车主可查看空闲枪、价格、功率与排队情况，完成预约、导航、启动、监控和结算。</strong><br />
+                        <!-- 充电订单与停车订单关联，电费、服务费、停车减免和占位费一次看清。 -->
+                    </div>
+
+                    <div class="charge-journey">
+                        <div class="journey-title">充电服务旅程 <span>找桩—预约—充电—结算闭环</span></div>
+                        <div class="journey-line"></div>
+                        <div class="journey-steps">
+                            <div class="journey-step">
+                                <div class="journey-icon">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M16 16l4 4M8 11h6M11 8v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <strong>找站找枪</strong>
+                                <span>距离、价格、功率、空闲数</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-icon">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <rect x="4" y="5" width="16" height="15" rx="3" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M8 3v4M16 3v4M8 11h8" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </div>
+                                <strong>预约导航</strong>
+                                <span>保留车位、排队提醒、到场引导</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-icon">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M8 2v6M16 2v6M6 8h12v5a6 6 0 0 1-12 0V8z" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M10 13h4" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </div>
+                                <strong>启动监控</strong>
+                                <span>电量、功率、SOC、预计完成时间</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-icon">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </div>
+                                <strong>停充结算</strong>
+                                <span>费用拆分、余额支付、电子发票</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charge-service-grid">
+                        <div class="charge-service">
+                            <strong><i></i>智能充电地图</strong>
+                            <span>按车型接口、快慢充、价格、停车减免和营业时间筛选站点。</span>
+                        </div>
+                        <div class="charge-service blue">
+                            <strong><i></i>实时充电看板</strong>
+                            <span>展示功率、电量、SOC、费用、剩余时间及充满提醒。</span>
+                        </div>
+                        <div class="charge-service orange">
+                            <strong><i></i>排队与超时提醒</strong>
+                            <span>到号、预约即将失效、满电、宽限期结束等多节点通知。</span>
+                        </div>
+                        <div class="charge-service blue">
+                            <strong><i></i>车辆与支付管理</strong>
+                            <span>多车辆绑定、常用车切换、余额、免密支付和家庭共享。</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel app-panel">
+                    <div class="section-head">
+                        <span class="section-index">02</span>
+                        <i class="section-line"></i>
+                        <h2>车主小程序：高频服务统一入口</h2>
+                        <span class="section-en">MINI PROGRAM</span>
+                    </div>
+
+                    <div class="app-canvas">
+                        <!-- <div class="app-canvas-title"><span>围绕“车、位、桩、单、票、权益”组织服务</span></div> -->
+
+                        <svg class="app-svg" viewBox="0 0 624 428" aria-hidden="true">
+                            <path class="app-flow purple" d="M168 105 H208" />
+                            <path class="app-flow" d="M168 210 H208" />
+                            <path class="app-flow" d="M168 315 H208" />
+                            <path class="app-flow orange" d="M416 105 H456" />
+                            <path class="app-flow" d="M416 210 H456" />
+                            <path class="app-flow purple" d="M416 315 H456" />
+                            <circle class="app-node purple" cx="188" cy="105" r="3" />
+                            <circle class="app-node" cx="188" cy="210" r="3" />
+                            <circle class="app-node" cx="188" cy="315" r="3" />
+                            <circle class="app-node orange" cx="436" cy="105" r="3" />
+                            <circle class="app-node" cx="436" cy="210" r="3" />
+                            <circle class="app-node purple" cx="436" cy="315" r="3" />
+                        </svg>
+
+                        <div class="capability-stack left">
+                            <div class="capability-card purple">
+                                <div class="capability-head">
+                                    <div class="capability-icon">
+                                        <svg viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 20V8h6v12M13 20V4h6v16M3 20h18" stroke="currentColor" stroke-width="1.8" />
+                                        </svg>
+                                    </div>
+                                    <strong>停车服务</strong>
+                                </div>
+                                <p>场库搜索、导航、空位信息、无感入离场、临停缴费与停车记录。</p>
+                                <span class="capability-tag">停车全流程</span>
+                            </div>
+                            <div class="capability-card">
+                                <div class="capability-head">
+                                    <div class="capability-icon">
+                                        <svg viewBox="0 0 24 24" fill="none">
+                                            <path d="M8 2v6M16 2v6M6 8h12v5a6 6 0 0 1-12 0V8z" stroke="currentColor" stroke-width="1.8" />
+                                            <path d="M10 13h4" stroke="currentColor" stroke-width="1.8" />
+                                        </svg>
+                                    </div>
+                                    <strong>汽车充电</strong>
+                                </div>
+                                <p>找桩预约、扫码启动、实时监控、排队提醒、充电结束与占位提醒。</p>
+                                <span class="capability-tag">停充同单</span>
+                            </div>
+                            <div class="capability-card">
+                                <div class="capability-head">
+                                    <div class="capability-icon">
+                                        <svg viewBox="0 0 24 24" fill="none">
+                                            <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.8" />
+                                            <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" />
+                                        </svg>
+                                    </div>
+                                    <strong>订单与账单</strong>
+                                </div>
+                                <p>停车、充电、包月、优惠和退款订单统一查询，费用构成逐项说明。</p>
+                                <span class="capability-tag">账目清晰</span>
+                            </div>
+                        </div>
+
+                        <div class="phone">
+                            <div class="phone-screen">
+                                <div class="dynamic-island"></div>
+                                <div class="mini-header">
+                                    <div class="mini-location">
+                                        <span><i></i>中心广场停车场</span>
+                                        <b>消息 3</b>
+                                    </div>
+                                    <div class="mini-greeting">
+                                        <div>
+                                            <strong>早上好，张先生</strong>
+                                            <span>今日停车与充电服务已准备就绪</span>
+                                        </div>
+                                        <div class="car-chip">沪A·E5863</div>
+                                    </div>
+                                </div>
+                                <div class="mini-body">
+                                    <div class="charge-card">
+                                        <div class="charge-card-head">
+                                            <strong>附近可充</strong>
+                                            <span>空闲 18 枪</span>
+                                        </div>
+                                        <div class="charge-card-main">
+                                            <div class="charge-station">
+                                                <strong>中心广场快充站</strong>
+                                                <span>距您 860 m · 120 kW · ¥1.16/kWh 起</span>
+                                                <span>充电免停车 60 分钟 · 支持预约</span>
+                                            </div>
+                                            <div class="charge-action">立即充电</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mini-quick-grid">
+                                        <div class="mini-quick">
+                                            <i>
+                                                <svg viewBox="0 0 24 24" fill="none">
+                                                    <path d="M4 15l2-6h12l2 6v4H4v-4z" stroke="currentColor" stroke-width="1.8" />
+                                                </svg>
+                                            </i>
+                                            <span>停车缴费</span>
+                                        </div>
+                                        <div class="mini-quick">
+                                            <i>
+                                                <svg viewBox="0 0 24 24" fill="none">
+                                                    <rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.8" />
+                                                    <path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" />
+                                                </svg>
+                                            </i>
+                                            <span>包月套餐</span>
+                                        </div>
+                                        <div class="mini-quick">
+                                            <i>
+                                                <svg viewBox="0 0 24 24" fill="none">
+                                                    <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8" />
+                                                    <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" />
+                                                </svg>
+                                            </i>
+                                            <span>订单开票</span>
+                                        </div>
+                                        <div class="mini-quick">
+                                            <i>
+                                                <svg viewBox="0 0 24 24" fill="none">
+                                                    <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8" />
+                                                    <path d="M4 20v-2a5 5 0 0 1 10 0v2M17 10h4M19 8v4" stroke="currentColor" stroke-width="1.8" />
+                                                </svg>
+                                            </i>
+                                            <span>访客授权</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="monthly-card">
+                                        <div>
+                                            <strong>固定车位月租套餐</strong>
+                                            <span>B2-018 · 有效期至 2026-08-31<br />可续费、换车位、改车辆与调整生效日期</span>
+                                            <em>距离到期还有 12 天</em>
+                                        </div>
+                                        <div class="monthly-button">续费 / 变更</div>
+                                    </div>
+
+                                    <div class="notice-strip">
+                                        <i>
+                                            <svg viewBox="0 0 24 24" fill="none">
+                                                <path d="M5 10v4l10 4V6L5 10zM15 9h3a2 2 0 0 1 0 4h-3" stroke="currentColor" stroke-width="1.8" />
+                                            </svg>
+                                        </i>
+                                        <span>运营公告：本周六 B2 区设备检修，已为包月车主预留替代车位。</span>
+                                    </div>
+                                </div>
+                                <div class="mini-nav">
+                                    <div class="mini-nav-item active">
+                                        <i>
+                                            <svg viewBox="0 0 24 24" fill="none">
+                                                <path d="M4 11l8-7 8 7v9H4v-9z" stroke="currentColor" stroke-width="1.8" />
+                                            </svg>
+                                        </i>
+                                        首页
+                                    </div>
+                                    <div class="mini-nav-item">
+                                        <i>
+                                            <svg viewBox="0 0 24 24" fill="none">
+                                                <path d="M8 2v6M16 2v6M6 8h12v5a6 6 0 0 1-12 0V8z" stroke="currentColor" stroke-width="1.8" />
+                                            </svg>
+                                        </i>
+                                        充电
+                                    </div>
+                                    <div class="mini-nav-item">
+                                        <i>
+                                            <svg viewBox="0 0 24 24" fill="none">
+                                                <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8" />
+                                            </svg>
+                                        </i>
+                                        订单
+                                    </div>
+                                    <div class="mini-nav-item">
+                                        <i>
+                                            <svg viewBox="0 0 24 24" fill="none">
+                                                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" />
+                                                <path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.8" />
+                                            </svg>
+                                        </i>
+                                        我的
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="capability-stack right">
+                            <div class="capability-card orange">
+                                <div class="capability-head">
+                                    <div class="capability-icon">
+                                        <svg viewBox="0 0 24 24" fill="none">
+                                            <rect x="4" y="5" width="16" height="15" rx="3" stroke="currentColor" stroke-width="1.8" />
+                                            <path d="M8 3v4M16 3v4M8 11h8" stroke="currentColor" stroke-width="1.8" />
+                                        </svg>
+                                    </div>
+                                    <strong>包月套餐</strong>
+                                </div>
+                                <p>在线申请、资料审核、续费、暂停、退订及日期、车辆、车位、套餐变更。</p>
+                                <span class="capability-tag">全生命周期</span>
+                            </div>
+                            <div class="capability-card">
+                                <div class="capability-head">
+                                    <div class="capability-icon">
+                                        <svg viewBox="0 0 24 24" fill="none">
+                                            <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8" />
+                                            <path d="M4 20v-2a5 5 0 0 1 10 0v2M17 10h4M19 8v4" stroke="currentColor" stroke-width="1.8" />
+                                        </svg>
+                                    </div>
+                                    <strong>访客与家庭</strong>
+                                </div>
+                                <p>访客车牌预约、临时通行、优惠时长、家庭车辆共享及到访状态提醒。</p>
+                                <span class="capability-tag">授权可追踪</span>
+                            </div>
+                            <div class="capability-card purple">
+                                <div class="capability-head">
+                                    <div class="capability-icon">
+                                        <svg viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 10v4l10 4V6L5 10zM15 9h3a2 2 0 0 1 0 4h-3" stroke="currentColor" stroke-width="1.8" />
+                                        </svg>
+                                    </div>
+                                    <strong>公告与权益</strong>
+                                </div>
+                                <p>运营公告、设备检修、费用规则、优惠券、积分、会员日与服务通知统一触达。</p>
+                                <span class="capability-tag">精准消息</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel account-panel">
+                    <div class="section-head">
+                        <span class="section-index">03</span>
+                        <i class="section-line"></i>
+                        <h2>套餐、账户与增值服务</h2>
+                        <span class="section-en">SERVICE</span>
+                    </div>
+
+                    <div class="panel-summary">
+                        <strong>把原本依赖岗亭、客服和纸质表单的事项搬到线上办理。</strong><br />
+                        <!-- 申请进度、变更记录、支付结果、票据和服务通知全部留痕，减少线下反复沟通。 -->
+                    </div>
+
+                    <div class="package-lifecycle">
+                        <div class="package-title">包月套餐全生命周期 <span>在线办、在线改、在线续</span></div>
+                        <div class="package-track"></div>
+                        <div class="package-steps">
+                            <div class="package-step">
+                                <i>
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </i>
+                                <strong>在线办理</strong>
+                                <span>选择场库与套餐</span>
+                            </div>
+                            <div class="package-step">
+                                <i>
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 3l7 4v5c0 4.5-2.7 7.3-7 9-4.3-1.7-7-4.5-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </i>
+                                <strong>资料审核</strong>
+                                <span>车辆与资质校验</span>
+                            </div>
+                            <div class="package-step">
+                                <i>
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M4 12a8 8 0 1 0 2-5M4 4v5h5" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </i>
+                                <strong>续费变更</strong>
+                                <span>日期、车位、车辆</span>
+                            </div>
+                            <div class="package-step">
+                                <i>
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8" />
+                                        <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" />
+                                    </svg>
+                                </i>
+                                <strong>账单凭证</strong>
+                                <span>合同、订单、发票</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="account-grid">
+                        <div class="account-item orange">
+                            <strong><i></i>套餐办理与续费</strong>
+                            <span>月租、季租、年租、固定车位、共享车位及夜间套餐在线购买。</span>
+                        </div>
+                        <div class="account-item blue">
+                            <strong><i></i>套餐在线变更</strong>
+                            <span>调整生效日期、车牌、车位、套餐类型，自动计算补退差额。</span>
+                        </div>
+                        <div class="account-item blue">
+                            <strong><i></i>订单与退款管理</strong>
+                            <span>停车、充电、套餐、优惠、补缴、退款进度与售后工单统一查询。</span>
+                        </div>
+                        <div class="account-item purple">
+                            <strong><i></i>电子发票与凭证</strong>
+                            <span>按订单或月份合并开票，管理抬头、税号、邮箱与下载记录。</span>
+                        </div>
+                        <div class="account-item purple">
+                            <strong><i></i>访客通行管理</strong>
+                            <span>录入车牌、预约时段、授权区域、停车优惠并接收抵离通知。</span>
+                        </div>
+                        <div class="account-item orange">
+                            <strong><i></i>优惠与会员权益</strong>
+                            <span>优惠券、积分、会员等级、充电折扣、停车减免与活动权益领取。</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <section class="value-zone">
+                <div class="value-title">
+                    小程序不是功能堆叠，而是把车主每一次到场、办理、支付与售后连接成连续体验
+                    <span>统一身份 · 统一订单 · 统一账户 · 统一消息 · 统一票据</span>
+                </div>
+                <div class="value-grid">
+                    <article class="value-card purple">
+                        <div class="value-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <rect x="6" y="3" width="12" height="18" rx="3" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M9 7h6M8 17h8" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>高频服务一个入口</strong>
+                            <span>停车、充电、包月、访客、优惠、开票和售后不再分散。</span>
+                            <div class="value-highlight">减少寻找入口和线下跑动</div>
+                        </div>
+                    </article>
+
+                    <article class="value-card cyan">
+                        <div class="value-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>订单账单清晰透明</strong>
+                            <span>停车费、电费、服务费、套餐费、优惠和退款逐项说明。</span>
+                            <div class="value-highlight">车主看得懂，客服解释得清</div>
+                        </div>
+                    </article>
+
+                    <article class="value-card orange">
+                        <div class="value-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M4 12a8 8 0 1 0 2-5M4 4v5h5" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>套餐续费与增收</strong>
+                            <span>到期提醒、自动续费、套餐推荐和优惠触达提升续费率。</span>
+                            <div class="value-highlight">从一次停车转向长期用户经营</div>
+                        </div>
+                    </article>
+
+                    <article class="value-card">
+                        <div class="value-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 3l7 4v5c0 4.5-2.7 7.3-7 9-4.3-1.7-7-4.5-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                        </div>
+                        <div class="value-content">
+                            <strong>全过程可追踪</strong>
+                            <span>申请、审核、变更、支付、授权、通知和售后均有状态与记录。</span>
+                            <div class="value-highlight">减少争议，提升运营标准化</div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <div class="footer-left">
+                    <i></i>
+                    以车主账户为核心，把车辆、车位、充电枪、套餐、订单、票据和权益连接成持续服务体系
+                </div>
+                <div class="footer-right">OWNER SERVICE · CHARGE & PARK · MONTHLY PACKAGE · CLEAR BILLING · DIGITAL OPERATION</div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        function resizeStage() {
+            const stage = document.getElementById("stage");
+            const baseWidth = 1600;
+            const baseHeight = 900;
+            const scale = Math.min(
+                window.innerWidth / baseWidth,
+                window.innerHeight / baseHeight
+            );
+
+            stage.style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener("resize", resizeStage);
+        resizeStage();
+    </script>
+</body>
+</html>

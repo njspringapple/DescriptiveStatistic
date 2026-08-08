@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智慧车位管理｜管理员端·移动管理APP</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #35dfbf;
+      --green-dark: #07977e;
+      --blue: #4ca9ff;
+      --orange: #ffad4d;
+      --purple: #9e87ff;
+      --red: #ff7181;
+      --white: #f4fbfc;
+      --text: #c9d9dd;
+      --muted: #71888f;
+      --line: rgba(139, 181, 189, 0.16);
+      --phone-text: #203b42;
+    }
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #020709;
+      font-family: "PingFang SC","Microsoft YaHei","Noto Sans SC",Arial,sans-serif;
+    }
+    body { display: flex; align-items: center; justify-content: center; }
+
+    .slide {
+      position: relative;
+      width: 100vw; height: 56.25vw;
+      max-width: 177.7778vh; max-height: 100vh;
+      overflow: hidden; color: var(--white);
+      background:
+        radial-gradient(circle at 83% 24%, rgba(49,222,190,0.11), transparent 24%),
+        radial-gradient(circle at 12% 96%, rgba(52,142,190,0.12), transparent 30%),
+        linear-gradient(135deg, #071217 0%, #09191f 48%, #061015 100%);
+    }
+
+    .grid-bg {
+      position: absolute; inset: 0; opacity: 0.3; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(111,163,174,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(111,163,174,0.055) 1px, transparent 1px);
+      background-size: 3.5vw 3.5vw;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.25));
+    }
+
+    .top-line {
+      position: absolute; top: 0; left: 0; width: 100%; height: 0.38vw;
+      background: linear-gradient(90deg, var(--green) 0%, var(--green) 28%,
+        rgba(53,223,191,0.12) 28%, rgba(53,223,191,0.12) 100%);
+    }
+
+    .circle-decor {
+      position: absolute; top: 3%; right: 2.5%;
+      width: 18vw; aspect-ratio: 1;
+      border: 1px solid rgba(53,223,191,0.065); border-radius: 50%;
+      pointer-events: none;
+    }
+    .circle-decor::before, .circle-decor::after {
+      content: ""; position: absolute;
+      border: 1px solid rgba(53,223,191,0.06); border-radius: 50%;
+    }
+    .circle-decor::before { inset: 15%; }
+    .circle-decor::after { inset: 34%; }
+
+    /* 顶部品牌 */
+    .header {
+      position: absolute; top: 3.4%; left: 4.2%; right: 4.2%; z-index: 10;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75vw; }
+    .brand-icon {
+      position: relative; width: 2.65vw; height: 2.65vw;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--green); border: 1px solid rgba(53,223,191,0.72);
+      background: rgba(53,223,191,0.06); font-size: 1.3vw; font-weight: 900;
+      box-shadow: inset 0 0 1vw rgba(53,223,191,0.08), 0 0 1.6vw rgba(53,223,191,0.06);
+    }
+    .brand-icon::before, .brand-icon::after {
+      content: ""; position: absolute; width: 0.38vw; height: 0.38vw;
+    }
+    .brand-icon::before { top: -1px; left: -1px; border-top: 2px solid var(--green); border-left: 2px solid var(--green); }
+    .brand-icon::after { right: -1px; bottom: -1px; border-right: 2px solid var(--green); border-bottom: 2px solid var(--green); }
+    .brand-cn { font-size: 1.08vw; font-weight: 800; letter-spacing: 0.12em; }
+    .brand-en { margin-top: 0.14vw; color: var(--muted); font-size: 0.43vw; font-weight: 700; letter-spacing: 0.17em; }
+    .header-code { padding-top: 0.25vw; text-align: right; }
+    .code-line {
+      display: flex; align-items: center; justify-content: flex-end; gap: 0.6vw;
+      color: var(--green); font-size: 0.46vw; font-weight: 800; letter-spacing: 0.15em;
+    }
+    .code-line::before { content: ""; width: 2.5vw; height: 1px; background: var(--green); }
+    .code-desc { margin-top: 0.36vw; color: #6d858c; font-size: 0.44vw; letter-spacing: 0.08em; }
+
+    /* 主标题 */
+    .hero-title {
+      position: absolute; top: 9.6%; left: 4.2%; right: 4.2%; z-index: 8;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding-bottom: 0.72vw; border-bottom: 1px solid var(--line);
+    }
+    .title-left { display: flex; align-items: flex-end; gap: 1.15vw; }
+    .section-number { color: var(--green); font-size: 2vw; line-height: 1; font-weight: 900; }
+    .main-title { font-size: 1.72vw; line-height: 1.12; font-weight: 800; letter-spacing: -0.025em; }
+    .main-title span { color: var(--green); }
+    .title-en { margin-bottom: 0.13vw; color: #687f86; font-size: 0.5vw; font-weight: 700; letter-spacing: 0.15em; }
+    .hero-summary {
+      max-width: 31%; padding-bottom: 0.06vw; color: #8da2a8;
+      font-size: 0.56vw; line-height: 1.6; text-align: right;
+    }
+    .hero-summary strong { color: #e6f2f3; }
+
+    /* 4部手机横排 */
+    .phone-stage {
+      position: absolute; top: 17.6%; left: 4.2%; right: 4.2%; bottom: 8%; z-index: 6;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      column-gap: 1.4vw; align-items: start;
+    }
+    .feature-item { position: relative; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+
+    /* 手机占位框：整机放大1.8倍 */
+    .phone-frame {
+      position: relative; flex: none;
+      width: 14.5vw;   /* 8.05 × 1.8 */
+      height: 31.42vw; /* 8.05 × 19.5/9 × 1.8 */
+    }
+    .phone {
+      position: relative; width: 8.05vw; aspect-ratio: 9 / 19.5;
+      margin: 0 auto; padding: 0.31vw;
+      border: 1px solid rgba(166,202,210,0.28); border-radius: 1.3vw;
+      background: linear-gradient(145deg, #1a2a30, #03090c);
+      box-shadow: 0 1.25vw 2.1vw rgba(0,0,0,0.42), inset 0 0 0 1px rgba(255,255,255,0.035);
+      transform-origin: top center; transform: scale(1.8);
+    }
+    .phone::after {
+      content: ""; position: absolute; top: 18%; right: -0.13vw;
+      width: 0.12vw; height: 2.8vw; border-radius: 0 0.1vw 0.1vw 0; background: #3a4c51;
+    }
+
+    .screen {
+      position: relative; width: 100%; height: 100%; overflow: hidden;
+      border-radius: 1.02vw; color: var(--phone-text); background: #f2f6f5;
+    }
+    .notch {
+      position: absolute; top: 0.24vw; left: 50%; z-index: 30;
+      width: 31%; height: 0.66vw; border-radius: 1vw; background: #071013;
+      transform: translateX(-50%);
+    }
+    .status-bar {
+      height: 1.2vw; padding: 0.38vw 0.48vw 0;
+      display: flex; align-items: center; justify-content: space-between;
+      color: #18343a; font-size: 0.26vw; font-weight: 900; background: #fff;
+    }
+    .app-nav {
+      height: 1.42vw; padding: 0 0.47vw;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #e0e8e7; color: #64797e; background: #fff; font-size: 0.37vw;
+    }
+    .app-nav strong { color: #263f45; font-size: 0.43vw; }
+    .screen-content { padding: 0.44vw; }
+
+    /* 顶部彩色面板 */
+    .hero-panel {
+      margin: -0.44vw -0.44vw 0.42vw; padding: 0.64vw 0.52vw 0.55vw;
+      color: #fff; text-align: left;
+      background: radial-gradient(circle at 88% 10%, rgba(116,255,220,0.27), transparent 36%),
+        linear-gradient(135deg, #087360, #0baa8c);
+    }
+    .hero-panel.blue { background: radial-gradient(circle at 88% 10%, rgba(158,218,255,0.3), transparent 36%), linear-gradient(135deg, #1769a5, #389fdf); }
+    .hero-panel.orange { background: radial-gradient(circle at 88% 10%, rgba(255,232,183,0.3), transparent 36%), linear-gradient(135deg, #b56e20, #eb9b3a); }
+    .hero-panel.purple { background: radial-gradient(circle at 88% 10%, rgba(219,208,255,0.3), transparent 36%), linear-gradient(135deg, #6251bd, #9a7bf0); }
+    .mini-label { color: rgba(255,255,255,0.7); font-size: 0.27vw; }
+    .hero-value { margin-top: 0.16vw; font-size: 0.79vw; line-height: 1; font-weight: 900; }
+    .hero-value small { font-size: 0.4vw; margin-left: 0.1vw; opacity: 0.85; }
+    .hero-sub { margin-top: 0.18vw; color: rgba(255,255,255,0.72); font-size: 0.26vw; }
+
+    /* 面板内双数据 */
+    .panel-duo { display: flex; gap: 0.5vw; margin-top: 0.3vw; }
+    .panel-duo .du { flex: 1; }
+    .panel-duo .du b { display: block; font-size: 0.6vw; font-weight: 900; line-height: 1; }
+    .panel-duo .du span { color: rgba(255,255,255,0.66); font-size: 0.24vw; }
+
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin: 0.42vw 0 0.26vw; }
+    .section-head strong { color: #2c474d; font-size: 0.36vw; }
+    .section-head span { color: #899a9e; font-size: 0.25vw; }
+
+    .white-card {
+      padding: 0.43vw; border: 1px solid #dce6e5; border-radius: 0.37vw;
+      background: #fff; box-shadow: 0 0.2vw 0.5vw rgba(34,78,69,0.035);
+    }
+    .info-line {
+      display: flex; align-items: center; justify-content: space-between;
+      min-height: 0.77vw; color: #839499; font-size: 0.27vw;
+    }
+    .info-line + .info-line { border-top: 1px solid #edf2f1; }
+    .info-line strong { color: #29464c; font-size: 0.3vw; }
+    .green-text { color: #08967e !important; }
+    .orange-text { color: #df8527 !important; }
+    .red-text { color: #e0596a !important; }
+
+    /* 快捷入口 */
+    .quick-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.24vw; }
+    .quick-box { padding: 0.32vw 0.08vw; border: 1px solid #dfe8e7; border-radius: 0.32vw; text-align: center; background: #fff; }
+    .quick-symbol {
+      width: 0.92vw; height: 0.92vw; margin: 0 auto 0.19vw; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #098f79; background: #ddf7f1; font-size: 0.38vw; font-weight: 900;
+    }
+    .quick-symbol.b { color: #2f82cc; background: #e2f1ff; }
+    .quick-symbol.o { color: #d67f28; background: #fff0dc; }
+    .quick-symbol.r { color: #e0596a; background: #ffe4e7; }
+    .quick-name { color: #425d63; font-size: 0.25vw; font-weight: 800; }
+
+    /* 列表项 */
+    .list-item {
+      display: flex; align-items: center; gap: 0.34vw; padding: 0.36vw;
+      border: 1px solid #e0e8e7; border-radius: 0.33vw; background: #fff;
+    }
+    .list-item + .list-item { margin-top: 0.25vw; }
+    .list-icon {
+      flex: none; width: 0.92vw; height: 0.92vw; border-radius: 0.28vw;
+      display: flex; align-items: center; justify-content: center;
+      color: #078f78; background: #dff7f1; font-size: 0.34vw; font-weight: 900;
+    }
+    .list-icon.blue-icon { color: #3187ce; background: #e1f1ff; }
+    .list-icon.orange-icon { color: #dc8125; background: #fff0dc; }
+    .list-icon.red-icon { color: #e0596a; background: #ffe4e7; }
+    .list-copy { min-width: 0; flex: 1; text-align: left; }
+    .list-name { overflow: hidden; color: #355158; font-size: 0.28vw; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
+    .list-desc { margin-top: 0.07vw; overflow: hidden; color: #95a4a7; font-size: 0.22vw; text-overflow: ellipsis; white-space: nowrap; }
+    .arrow { color: #a2b0b3; font-size: 0.44vw; }
+    .tag { padding: 0.1vw 0.22vw; border-radius: 1vw; color: #078f78; background: #dff8f2; font-size: 0.21vw; font-weight: 900; }
+    .warning-tag { color: #d47c25; background: #fff0dc; }
+
+    /* 排行条 */
+    .rank-item { display: flex; align-items: center; gap: 0.34vw; padding: 0.3vw 0; }
+    .rank-item + .rank-item { border-top: 1px solid #edf2f1; }
+    .rank-no {
+      flex: none; width: 0.85vw; height: 0.85vw; border-radius: 0.2vw;
+      display: flex; align-items: center; justify-content: center;
+      background: #eef3f2; color: #7c9095; font-size: 0.28vw; font-weight: 900;
+    }
+    .rank-no.top { background: #dff7f1; color: #0a9078; }
+    .rank-copy { flex: 1; min-width: 0; }
+    .rank-name { color: #355158; font-size: 0.27vw; font-weight: 900; }
+    .rank-bar { margin-top: 0.14vw; height: 0.28vw; border-radius: 1vw; background: #edf3f2; overflow: hidden; }
+    .rank-bar i { display: block; height: 100%; border-radius: 1vw; background: linear-gradient(90deg,#3fd0ad,#0a9d83); }
+    .rank-val { flex: none; color: #29464c; font-size: 0.3vw; font-weight: 900; }
+
+    /* 车位状态网格 */
+    .lot-legend { display: flex; gap: 0.5vw; margin: 0.1vw 0 0.34vw; }
+    .lot-legend span { display: flex; align-items: center; gap: 0.18vw; color: #6d8288; font-size: 0.23vw; }
+    .lot-legend i { width: 0.34vw; height: 0.34vw; border-radius: 0.08vw; }
+    .lot-grid {
+      display: grid; grid-template-columns: repeat(7,1fr); gap: 0.2vw;
+      padding: 0.42vw; border: 1px solid #dce6e5; border-radius: 0.37vw; background: #fff;
+    }
+    .lot {
+      aspect-ratio: 1; border-radius: 0.14vw; background: #12b48f;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.9); font-size: 0.2vw; font-weight: 800;
+    }
+    .lot.free { background: #dfe8e6; color: #8a9a9e; }
+    .lot.share { background: #4ca9ff; }
+    .lot.warn { background: #ef5f6f; box-shadow: 0 0 0 1px #fff, 0 0 0.4vw rgba(239,95,111,0.6); }
+
+    /* 审批按钮 */
+    .approve { display: flex; gap: 0.24vw; flex: none; }
+    .btn-mini { padding: 0.24vw 0.36vw; border-radius: 0.26vw; font-size: 0.24vw; font-weight: 900; white-space: nowrap; }
+    .btn-mini.ok { color: #fff; background: linear-gradient(90deg,#078a74,#16b595); }
+    .btn-mini.no { color: #7c9095; background: #eef3f2; border: 1px solid #dde7e5; }
+
+    .main-btn {
+      margin-top: 0.4vw; padding: 0.4vw 0.2vw; border-radius: 0.33vw;
+      color: #fff; text-align: center; font-size: 0.31vw; font-weight: 900;
+      background: linear-gradient(90deg,#078a74,#16b595);
+    }
+    .main-btn.blue-btn { background: linear-gradient(90deg,#267dc1,#47a8e5); }
+    .main-btn.orange-btn { background: linear-gradient(90deg,#cf7922,#f0a13e); }
+    .main-btn.purple-btn { background: linear-gradient(90deg,#6952c6,#9d7cf2); }
+    .small-note { margin-top: 0.34vw; color: #91a0a4; font-size: 0.24vw; line-height: 1.5; text-align: left; }
+
+    /* 告警时间线 */
+    .alarm-item {
+      display: flex; align-items: center; gap: 0.34vw; padding: 0.36vw;
+      border: 1px solid #f0e2d4; border-radius: 0.33vw; background: #fff8ef;
+    }
+    .alarm-item + .alarm-item { margin-top: 0.25vw; }
+    .alarm-item.red { border-color: #f5d7db; background: #fff2f3; }
+    .alarm-ic {
+      flex: none; width: 0.92vw; height: 0.92vw; border-radius: 0.28vw;
+      display: flex; align-items: center; justify-content: center;
+      color: #d67f28; background: #ffeed7; font-size: 0.34vw; font-weight: 900;
+    }
+    .alarm-item.red .alarm-ic { color: #e0596a; background: #ffdfe3; }
+    .alarm-copy { flex: 1; min-width: 0; text-align: left; }
+    .alarm-name { color: #6a4a24; font-size: 0.28vw; font-weight: 900; }
+    .alarm-item.red .alarm-name { color: #a5384a; }
+    .alarm-desc { margin-top: 0.07vw; color: #a58a68; font-size: 0.22vw; }
+    .alarm-item.red .alarm-desc { color: #bd7079; }
+    .alarm-time { flex: none; color: #b39a78; font-size: 0.22vw; }
+    .alarm-item.red .alarm-time { color: #c98b92; }
+
+    /* 手机下方文案 */
+    .feature-copy {
+      position: relative; width: 100%; margin-top: 0.7vw; padding-top: 0.5vw;
+      border-top: 1px solid var(--line); text-align: left;
+    }
+    .feature-copy::before {
+      content: ""; position: absolute; top: -1px; left: 0; width: 24%; height: 2px; background: var(--green);
+    }
+    .feature-item:nth-child(2) .feature-copy::before { background: var(--blue); }
+    .feature-item:nth-child(3) .feature-copy::before { background: var(--orange); }
+    .feature-item:nth-child(4) .feature-copy::before { background: var(--purple); }
+
+    .feature-index { color: var(--green); font-size: 0.5vw; font-weight: 900; letter-spacing: 0.12em; }
+    .feature-item:nth-child(2) .feature-index { color: var(--blue); }
+    .feature-item:nth-child(3) .feature-index { color: var(--orange); }
+    .feature-item:nth-child(4) .feature-index { color: var(--purple); }
+
+    .feature-title { margin-top: 0.2vw; color: #eef7f8; font-size: 0.82vw; font-weight: 900; }
+    .feature-desc { margin-top: 0.24vw; color: #7f959b; font-size: 0.48vw; line-height: 1.5; }
+
+    .feature-points { margin-top: 0.4vw; list-style: none; display: flex; flex-direction: column; gap: 0.3vw; }
+    .feature-points li { position: relative; padding-left: 1vw; color: #a4b6bb; font-size: 0.44vw; line-height: 1.3; }
+    .feature-points li::before {
+      content: "✓"; position: absolute; top: 0.01vw; left: 0;
+      width: 0.7vw; height: 0.7vw; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; color: var(--green); background: rgba(53,223,191,0.13);
+      font-size: 0.38vw; font-weight: 900;
+    }
+    .feature-item:nth-child(2) .feature-points li::before { color: var(--blue); background: rgba(76,169,255,0.13); }
+    .feature-item:nth-child(3) .feature-points li::before { color: var(--orange); background: rgba(255,173,77,0.14); }
+    .feature-item:nth-child(4) .feature-points li::before { color: var(--purple); background: rgba(158,135,255,0.14); }
+
+    /* 底部价值条 */
+    .footer {
+      position: absolute; right: 4.2%; bottom: 2.6%; left: 4.2%; z-index: 12;
+      display: flex; align-items: center; padding-top: 0.6vw; border-top: 1px solid var(--line);
+    }
+    .footer-title { margin-right: 1.1vw; color: #edf6f7; font-size: 0.5vw; font-weight: 900; }
+    .footer-items { display: flex; align-items: center; gap: 0.75vw; color: #6f868d; font-size: 0.4vw; }
+    .footer-item { display: flex; align-items: center; gap: 0.26vw; white-space: nowrap; }
+    .footer-dot { width: 0.24vw; height: 0.24vw; background: var(--green); box-shadow: 0 0 0.4vw rgba(53,223,191,0.5); }
+    .footer-en { margin-left: auto; color: #415960; font-size: 0.34vw; letter-spacing: 0.15em; }
+  </style>
+</head>
+
+<body>
+  <main class="slide">
+    <div class="grid-bg"></div>
+    <div class="top-line"></div>
+    <div class="circle-decor"></div>
+
+    <!-- 顶部品牌 -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">P</div>
+        <div>
+          <div class="brand-cn">智慧车位管理</div>
+          <div class="brand-en">SMART PARKING SPACE MANAGEMENT</div>
+        </div>
+      </div>
+      <div class="header-code">
+        <div class="code-line">ADMIN MOBILE APP</div>
+        <div class="code-desc">随身管理 · 实时掌控 · 移动审批</div>
+      </div>
+    </header>
+
+    <!-- 主标题 -->
+    <section class="hero-title">
+      <div class="title-left">
+        <div class="section-number">02</div>
+        <div>
+          <div class="main-title">
+            管理员移动端，一部手机
+            <span>管好整个停车场</span>
+          </div>
+          <div class="title-en">
+            ADMIN MOBILE APP · MONITOR · APPROVE · HANDLE ANYWHERE
+          </div>
+        </div>
+      </div>
+      <div class="hero-summary">
+        车场运营、车位监控、审核与告警全部装进口袋，
+        <strong>管理员离场也能实时掌控、随时处理。</strong>
+      </div>
+    </section>
+
+    <!-- 4部管理手机 -->
+    <section class="phone-stage">
+
+      <!-- 01 运营总览 -->
+      <article class="feature-item">
+        <div class="phone-frame">
+          <div class="phone">
+            <div class="screen">
+              <div class="notch"></div>
+              <div class="status-bar"><span>11:42</span><span>5G ▮▮ 86%</span></div>
+              <div class="app-nav"><span>≡</span><strong>运营总览</strong><span>🔔</span></div>
+
+              <div class="screen-content">
+                <div class="hero-panel">
+                  <div class="mini-label">今日营业收入</div>
+                  <div class="hero-value">¥86,420</div>
+                  <div class="panel-duo">
+                    <div class="du"><b>1,046</b><span>在场车辆</span></div>
+                    <div class="du"><b>142</b><span>今日订单</span></div>
+                  </div>
+                </div>
+
+                <div class="quick-grid">
+                  <div class="quick-box"><div class="quick-symbol">审</div><div class="quick-name">审核 5</div></div>
+                  <div class="quick-box"><div class="quick-symbol r">警</div><div class="quick-name">告警 3</div></div>
+                  <div class="quick-box"><div class="quick-symbol b">账</div><div class="quick-name">对账</div></div>
+                </div>
+
+                <div class="section-head"><strong>全场概况</strong><span>6个车场</span></div>
+                <div class="white-card">
+                  <div class="info-line"><span>车位总数</span><strong>1,280 个</strong></div>
+                  <div class="info-line"><span>整体利用率</span><strong class="green-text">81.7%</strong></div>
+                  <div class="info-line"><span>共享车位</span><strong>184 个在享</strong></div>
+                </div>
+
+                <div class="section-head"><strong>车场利用率排行</strong><span>实时</span></div>
+                <div class="white-card">
+                  <div class="rank-item">
+                    <div class="rank-no top">1</div>
+                    <div class="rank-copy">
+                      <div class="rank-name">青年沟停车场</div>
+                      <div class="rank-bar"><i style="width:92%"></i></div>
+                    </div>
+                    <div class="rank-val">92%</div>
+                  </div>
+                  <div class="rank-item">
+                    <div class="rank-no">2</div>
+                    <div class="rank-copy">
+                      <div class="rank-name">东方广场</div>
+                      <div class="rank-bar"><i style="width:78%"></i></div>
+                    </div>
+                    <div class="rank-val">78%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-copy">
+          <div class="feature-index">01 / OVERVIEW</div>
+          <div class="feature-title">运营数据总览</div>
+          <div class="feature-desc">营收、车流与全场概况随身掌握。</div>
+          <ul class="feature-points">
+            <li>营收车流实时更新</li>
+            <li>多车场利用率排行</li>
+            <li>待办事项一屏直达</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 02 车位监控 -->
+      <article class="feature-item">
+        <div class="phone-frame">
+          <div class="phone">
+            <div class="screen">
+              <div class="notch"></div>
+              <div class="status-bar"><span>11:42</span><span>5G ▮▮ 86%</span></div>
+              <div class="app-nav"><span>‹</span><strong>车位实时监控</strong><span>⟳</span></div>
+
+              <div class="screen-content">
+                <div class="hero-panel blue">
+                  <div class="mini-label">青年沟停车场 · B2层</div>
+                  <div class="hero-value">在场 1,046 <small>/ 1,280</small></div>
+                  <div class="hero-sub">空闲 234 · 共享中 184</div>
+                </div>
+
+                <div class="section-head"><strong>车位状态图</strong><span>B2层</span></div>
+                <div class="lot-legend">
+                  <span><i style="background:#12b48f"></i>在用</span>
+                  <span><i style="background:#4ca9ff"></i>共享</span>
+                  <span><i style="background:#dfe8e6"></i>空闲</span>
+                  <span><i style="background:#ef5f6f"></i>异常</span>
+                </div>
+                <div class="lot-grid">
+                  <div class="lot"></div><div class="lot"></div><div class="lot share"></div>
+                  <div class="lot"></div><div class="lot free"></div><div class="lot"></div><div class="lot"></div>
+                  <div class="lot free"></div><div class="lot"></div><div class="lot"></div>
+                  <div class="lot warn"></div><div class="lot"></div><div class="lot share"></div><div class="lot"></div>
+                  <div class="lot"></div><div class="lot share"></div><div class="lot"></div>
+                  <div class="lot"></div><div class="lot free"></div><div class="lot"></div><div class="lot"></div>
+                </div>
+
+                <div class="section-head"><strong>车位详情</strong><span>B2-108</span></div>
+                <div class="white-card">
+                  <div class="info-line"><span>当前车辆</span><strong>京A·8F52K</strong></div>
+                  <div class="info-line"><span>车位状态</span><strong class="green-text">正常使用中</strong></div>
+                  <div class="info-line"><span>入场时间</span><strong>09:12</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-copy">
+          <div class="feature-index">02 / MONITOR</div>
+          <div class="feature-title">车位实时监控</div>
+          <div class="feature-desc">分层车位状态图，占用一目了然。</div>
+          <ul class="feature-points">
+            <li>可视化车位状态图</li>
+            <li>在用/共享/空闲分色</li>
+            <li>点选查看车位详情</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 03 移动审批 -->
+      <article class="feature-item">
+        <div class="phone-frame">
+          <div class="phone">
+            <div class="screen">
+              <div class="notch"></div>
+              <div class="status-bar"><span>11:42</span><span>5G ▮▮ 86%</span></div>
+              <div class="app-nav"><span>‹</span><strong>办理审批</strong><span>···</span></div>
+
+              <div class="screen-content">
+                <div class="hero-panel orange">
+                  <div class="mini-label">待处理审批</div>
+                  <div class="hero-value">5 笔</div>
+                  <div class="hero-sub">今日已批 32 笔 · 平均 1.6 分钟</div>
+                </div>
+
+                <div class="section-head"><strong>待审列表</strong><span>智能识别</span></div>
+
+                <div class="list-item">
+                  <div class="list-icon orange-icon">新</div>
+                  <div class="list-copy">
+                    <div class="list-name">京A·8F52K · 新办月卡</div>
+                    <div class="list-desc">资料已识别 · 青年沟</div>
+                  </div>
+                  <div class="approve">
+                    <span class="btn-mini ok">通过</span>
+                    <span class="btn-mini no">驳回</span>
+                  </div>
+                </div>
+
+                <div class="list-item">
+                  <div class="list-icon blue-icon">换</div>
+                  <div class="list-copy">
+                    <div class="list-name">京N·36K28 · 车辆换绑</div>
+                    <div class="list-desc">待复核 · 东方广场</div>
+                  </div>
+                  <div class="approve">
+                    <span class="btn-mini ok">通过</span>
+                    <span class="btn-mini no">驳回</span>
+                  </div>
+                </div>
+
+                <div class="list-item">
+                  <div class="list-icon">退</div>
+                  <div class="list-copy">
+                    <div class="list-name">京L·77A18 · 退租申请</div>
+                    <div class="list-desc">待审核 · 金融街B区</div>
+                  </div>
+                  <div class="approve">
+                    <span class="btn-mini ok">通过</span>
+                    <span class="btn-mini no">驳回</span>
+                  </div>
+                </div>
+
+                <div class="main-btn orange-btn">批量通过 · 已选 3 笔</div>
+                <div class="small-note">资料自动核验，异常项会高亮提示</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-copy">
+          <div class="feature-index">03 / APPROVE</div>
+          <div class="feature-title">随时随地审批</div>
+          <div class="feature-desc">办理、换绑、退租移动端秒批。</div>
+          <ul class="feature-points">
+            <li>资料智能核验预审</li>
+            <li>一键通过或批量处理</li>
+            <li>离场也能及时办结</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 04 异常告警 -->
+      <article class="feature-item">
+        <div class="phone-frame">
+          <div class="phone">
+            <div class="screen">
+              <div class="notch"></div>
+              <div class="status-bar"><span>11:42</span><span>5G ▮▮ 86%</span></div>
+              <div class="app-nav"><span>‹</span><strong>异常告警</strong><span>🔔</span></div>
+
+              <div class="screen-content">
+                <div class="hero-panel purple">
+                  <div class="mini-label">待处理告警</div>
+                  <div class="hero-value">3 条</div>
+                  <div class="hero-sub">占用 · 设备 · 到期主动推送</div>
+                </div>
+
+                <div class="section-head"><strong>实时告警</strong><span>按优先级</span></div>
+
+                <div class="alarm-item red">
+                  <div class="alarm-ic">占</div>
+                  <div class="alarm-copy">
+                    <div class="alarm-name">车位异常占用</div>
+                    <div class="alarm-desc">C3-006 · 金融街B区</div>
+                  </div>
+                  <div class="alarm-time">刚刚</div>
+                </div>
+
+                <div class="alarm-item">
+                  <div class="alarm-ic">备</div>
+                  <div class="alarm-copy">
+                    <div class="alarm-name">道闸设备离线</div>
+                    <div class="alarm-desc">东方广场 · 北入口</div>
+                  </div>
+                  <div class="alarm-time">08分钟</div>
+                </div>
+
+                <div class="alarm-item">
+                  <div class="alarm-ic">期</div>
+                  <div class="alarm-copy">
+                    <div class="alarm-name">车位即将到期</div>
+                    <div class="alarm-desc">本周 24 个待续费</div>
+                  </div>
+                  <div class="alarm-time">今日</div>
+                </div>
+
+                <div class="section-head"><strong>快捷处置</strong><span>一键触达</span></div>
+                <div class="quick-grid">
+                  <div class="quick-box"><div class="quick-symbol r">派</div><div class="quick-name">派单</div></div>
+                  <div class="quick-box"><div class="quick-symbol o">催</div><div class="quick-name">催缴</div></div>
+                  <div class="quick-box"><div class="quick-symbol b">记</div><div class="quick-name">记录</div></div>
+                </div>
+
+                <div class="main-btn purple-btn">处理异常占用</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-copy">
+          <div class="feature-index">04 / ALERTS</div>
+          <div class="feature-title">异常主动告警</div>
+          <div class="feature-desc">占用、设备与到期即时推送处置。</div>
+          <ul class="feature-points">
+            <li>异常事件实时推送</li>
+            <li>按优先级分级提醒</li>
+            <li>一键派单快速处置</li>
+          </ul>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- 底部价值条 -->
+    <footer class="footer">
+      <div class="footer-title">从“坐班管理”升级为“随身管控”</div>
+      <div class="footer-items">
+        <div class="footer-item"><span class="footer-dot"></span>实时监控</div>
+        <div class="footer-item"><span class="footer-dot"></span>移动审批</div>
+        <div class="footer-item"><span class="footer-dot"></span>异常预警</div>
+        <div class="footer-item"><span class="footer-dot"></span>数据决策</div>
+        <div class="footer-item"><span class="footer-dot"></span>随时随地</div>
+      </div>
+      <div class="footer-en">MONITOR · APPROVE · ALERT · ANYWHERE</div>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,4527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1724">
+<title>星途充电 · 智慧运营平台</title>
+<style>
+:root{
+  --primary:#18d6a4;
+  --primary-dark:#08ad82;
+  --primary-soft:#eafff8;
+  --blue:#4b7dff;
+  --blue-soft:#edf2ff;
+  --orange:#ff9c42;
+  --orange-soft:#fff4e9;
+  --red:#ff5f6d;
+  --red-soft:#fff0f2;
+  --purple:#8b6cff;
+  --purple-soft:#f3efff;
+  --cyan:#1bc9e8;
+  --ink:#142235;
+  --sub:#718096;
+  --line:#e8edf2;
+  --bg:#f4f7fa;
+  --card:#fff;
+  --dark:#0b1724;
+  --dark2:#10283a;
+  --shadow:0 10px 32px rgba(28,47,74,.08);
+  --shadow-lg:0 25px 70px rgba(11,23,36,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,"PingFang SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);background:var(--bg)}
+button,input,select,textarea{font:inherit}
+button{border:0;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.55}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#cad3dd;border-radius:99px}
+.hide{display:none!important}
+
+/* 登录 */
+.login{
+  position:fixed;z-index:2000;inset:0;display:grid;
+  grid-template-columns:minmax(440px,560px) 1fr;color:#fff;
+  background:
+    radial-gradient(circle at 83% 18%,rgba(24,214,164,.2),transparent 25%),
+    radial-gradient(circle at 65% 78%,rgba(75,125,255,.18),transparent 30%),
+    linear-gradient(145deg,#07111e,#0d2732 58%,#08765f)
+}
+.login.hide{display:none}
+.login-panel{
+  align-self:center;width:430px;margin-left:8vw;padding:28px;
+  color:var(--ink);border-radius:26px;background:rgba(255,255,255,.98);
+  box-shadow:0 30px 90px rgba(0,0,0,.28)
+}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:18px}
+.brand-logo{
+  width:42px;height:42px;display:grid;place-items:center;
+  border-radius:15px;color:#05261e;background:var(--primary);
+  box-shadow:0 10px 25px rgba(24,214,164,.28)
+}
+.login-panel h1{margin:25px 0 7px;font-size:29px}
+.login-panel>p{margin:0 0 22px;color:var(--sub);font-size:13px}
+.login-tabs{display:flex;padding:4px;border-radius:14px;background:#edf1f4}
+.login-tabs button{
+  flex:1;padding:10px;border-radius:11px;color:var(--sub);
+  background:transparent;font-weight:800
+}
+.login-tabs button.active{color:var(--ink);background:#fff;box-shadow:0 4px 12px rgba(25,43,68,.1)}
+.login-form{display:none;padding-top:8px}
+.login-form.active{display:block}
+.login-btn{
+  width:100%;height:49px;margin-top:18px;border-radius:14px;
+  color:#05261e;background:var(--primary);font-weight:900;
+  box-shadow:0 10px 24px rgba(24,214,164,.25)
+}
+.login-hero{align-self:center;padding:70px 8vw}
+.login-hero h2{margin:0 0 18px;font-size:52px;line-height:1.08}
+.login-hero p{max-width:700px;color:rgba(255,255,255,.68);font-size:17px;line-height:1.8}
+.login-points{display:grid;grid-template-columns:repeat(2,minmax(0,240px));gap:13px;margin-top:30px}
+.login-point{
+  padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:18px;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(10px)
+}
+
+/* 页面框架 */
+.app{min-height:100vh;display:grid;grid-template-columns:236px minmax(0,1fr)}
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow-y:auto;color:#aebdca;
+  background:
+    radial-gradient(circle at 40% 0,rgba(24,214,164,.11),transparent 22%),
+    linear-gradient(180deg,#0a1623,#0d1c2a);
+  border-right:1px solid rgba(255,255,255,.04)
+}
+.side-logo{
+  height:68px;padding:0 18px;display:flex;align-items:center;gap:10px;
+  color:#fff;border-bottom:1px solid rgba(255,255,255,.07);font-weight:900
+}
+.side-logo i{
+  width:37px;height:37px;display:grid;place-items:center;border-radius:13px;
+  color:#04251d;background:var(--primary);font-style:normal
+}
+.nav-group{padding:12px 10px 2px}
+.nav-title{padding:8px 10px;color:#546779;font-size:10px;font-weight:850;letter-spacing:1px}
+.nav-item{
+  position:relative;width:100%;padding:10px 11px;display:flex;align-items:center;
+  gap:10px;border-radius:11px;color:#aebdca;background:transparent;text-align:left;
+  font-size:12px;font-weight:720;transition:.16s
+}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#fff;background:rgba(24,214,164,.13)}
+.nav-item.active:before{
+  content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;
+  border-radius:99px;background:var(--primary)
+}
+.nav-icon{width:22px;text-align:center;font-size:16px}
+.nav-badge{
+  margin-left:auto;min-width:20px;height:20px;padding:0 5px;display:grid;
+  place-items:center;border-radius:99px;color:#fff;background:var(--red);
+  font-size:9px
+}
+.main{min-width:0}
+.topbar{
+  position:sticky;z-index:100;top:0;height:68px;padding:0 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(225,231,237,.9);
+  background:rgba(255,255,255,.9);backdrop-filter:blur(18px)
+}
+.crumb h1{margin:0;font-size:18px}
+.crumb p{margin:3px 0 0;color:var(--sub);font-size:10px}
+.top-actions{display:flex;align-items:center;gap:9px}
+.top-search{
+  width:240px;height:39px;padding:0 12px;display:flex;align-items:center;gap:8px;
+  border:1px solid var(--line);border-radius:13px;background:#f8fafb
+}
+.top-search input{width:100%;border:0;outline:0;background:transparent;font-size:12px}
+.top-button{
+  position:relative;height:39px;padding:0 12px;border:1px solid var(--line);
+  border-radius:12px;color:#526074;background:#fff;font-size:11px;font-weight:750
+}
+.top-button em{
+  position:absolute;right:-5px;top:-6px;min-width:18px;height:18px;padding:0 4px;
+  display:grid;place-items:center;border:2px solid #fff;border-radius:99px;
+  color:#fff;background:var(--red);font-size:8px;font-style:normal
+}
+.user-button{display:flex;align-items:center;gap:9px;background:transparent}
+.avatar{
+  width:36px;height:36px;display:grid;place-items:center;border-radius:13px;
+  color:#06251e;background:linear-gradient(135deg,#78edcb,#18c897);font-weight:900
+}
+.user-button b{display:block;font-size:11px;text-align:left}
+.user-button small{display:block;margin-top:2px;color:var(--sub);font-size:9px}
+.content{padding:20px 22px 40px;max-width:1680px;margin:auto}
+
+/* 公共 */
+.page-head{
+  margin-bottom:17px;display:flex;align-items:flex-start;
+  justify-content:space-between;gap:16px
+}
+.page-head h2{margin:0;font-size:23px}
+.page-head p{margin:7px 0 0;color:var(--sub);font-size:12px}
+.page-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  min-height:38px;padding:0 14px;display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;border-radius:12px;color:var(--ink);
+  background:#edf1f4;font-size:11px;font-weight:820;transition:.15s
+}
+.btn:active{transform:scale(.97)}
+.btn.primary{color:#05251e;background:var(--primary);box-shadow:0 7px 18px rgba(24,214,164,.22)}
+.btn.dark{color:#fff;background:var(--dark)}
+.btn.blue{color:#fff;background:var(--blue)}
+.btn.danger{color:#fff;background:var(--red)}
+.btn.warning{color:#a55e12;background:var(--orange-soft)}
+.btn.soft{color:#087c60;background:var(--primary-soft)}
+.btn.outline{color:#596679;background:#fff;border:1px solid var(--line)}
+.btn.sm{min-height:31px;padding:0 10px;border-radius:9px;font-size:10px}
+.btn.block{width:100%}
+.notice{
+  margin-bottom:15px;padding:12px 14px;display:flex;align-items:flex-start;gap:9px;
+  border:1px solid #d9f4eb;border-radius:15px;color:#3e7063;
+  background:linear-gradient(90deg,#effcf8,#f8fffd);font-size:11px;line-height:1.7
+}
+.grid{display:grid;gap:13px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.card{
+  min-width:0;padding:16px;border:1px solid rgba(229,234,239,.9);
+  border-radius:19px;background:#fff;box-shadow:var(--shadow)
+}
+.card-head{
+  margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.card-title{font-size:14px;font-weight:900}
+.card-sub{margin-top:4px;color:var(--sub);font-size:9px}
+.card-link{padding:3px;color:#078966;background:transparent;font-size:10px;font-weight:800}
+.kpi{
+  position:relative;min-height:126px;padding:17px;overflow:hidden;
+  border:1px solid rgba(228,234,239,.9);border-radius:19px;background:#fff;
+  box-shadow:var(--shadow)
+}
+.kpi:after{
+  content:"";position:absolute;right:-30px;bottom:-42px;width:100px;height:100px;
+  border:18px solid rgba(24,214,164,.06);border-radius:50%
+}
+.kpi-icon{
+  position:absolute;right:14px;top:14px;width:38px;height:38px;
+  display:grid;place-items:center;border-radius:13px;background:var(--primary-soft);
+  font-size:18px
+}
+.kpi.blue .kpi-icon{background:var(--blue-soft)}
+.kpi.orange .kpi-icon{background:var(--orange-soft)}
+.kpi.red .kpi-icon{background:var(--red-soft)}
+.kpi label{color:var(--sub);font-size:10px;font-weight:700}
+.kpi strong{display:block;margin:9px 0 5px;font-size:25px;letter-spacing:-.5px}
+.kpi small{color:var(--sub);font-size:9px}
+.up{color:#07956e!important}.down{color:#df5964!important}
+.toolbar{
+  margin-bottom:14px;padding:11px 12px;display:flex;align-items:center;
+  justify-content:space-between;gap:10px;border:1px solid var(--line);
+  border-radius:16px;background:#fff
+}
+.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.input{
+  width:100%;height:40px;padding:0 12px;border:1px solid var(--line);
+  border-radius:11px;outline:0;color:var(--ink);background:#fff;font-size:11px
+}
+textarea.input{height:92px;padding-top:11px;resize:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(24,214,164,.1)}
+.toolbar .input{width:170px}
+.field{margin-bottom:12px}
+.field label{display:block;margin-bottom:6px;color:var(--sub);font-size:10px;font-weight:750}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+.form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.form-full{grid-column:1/-1}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:800px;font-size:11px}
+th{padding:11px;background:#f7f9fb;color:#607083;text-align:left;font-size:10px;white-space:nowrap}
+td{padding:11px;border-top:1px solid #edf1f4;white-space:nowrap}
+tbody tr:hover{background:#fafcfb}
+.cell-main{font-weight:800}
+.cell-sub{display:block;margin-top:4px;color:var(--sub);font-size:9px}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 8px;
+  border-radius:99px;font-size:9px;font-weight:850
+}
+.tag:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.tag.green{color:#07825f;background:var(--primary-soft)}
+.tag.blue{color:#436ada;background:var(--blue-soft)}
+.tag.orange{color:#d1781c;background:var(--orange-soft)}
+.tag.red{color:#db4d59;background:var(--red-soft)}
+.tag.purple{color:#7457d7;background:var(--purple-soft)}
+.tag.gray{color:#798596;background:#f0f3f5}
+.actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.tabs{
+  display:flex;gap:5px;padding:4px;overflow-x:auto;border-radius:13px;background:#eaf0f3
+}
+.tabs button{
+  padding:8px 12px;flex:0 0 auto;border-radius:10px;color:var(--sub);
+  background:transparent;font-size:10px;font-weight:800
+}
+.tabs button.active{color:var(--ink);background:#fff;box-shadow:0 3px 10px rgba(25,43,68,.08)}
+.progress{height:7px;overflow:hidden;border-radius:99px;background:#e9edf0}
+.progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--primary-dark),var(--primary))}
+.workflow{display:flex;align-items:center;overflow-x:auto;padding-bottom:3px}
+.workflow-step{
+  position:relative;min-width:112px;padding:10px 18px;text-align:center;color:#8a96a5;
+  background:#f0f3f5;font-size:9px;font-weight:820
+}
+.workflow-step:first-child{border-radius:10px 0 0 10px}
+.workflow-step:last-child{border-radius:0 10px 10px 0}
+.workflow-step.done{color:#087d60;background:var(--primary-soft)}
+.workflow-step.current{color:#05251e;background:var(--primary)}
+.metric-row{display:grid;grid-template-columns:110px 1fr 55px;gap:9px;align-items:center;margin:11px 0;font-size:10px}
+.bar{height:8px;overflow:hidden;border-radius:99px;background:#e9edf0}
+.bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22c99b,#18d6a4)}
+.line{
+  padding:10px 0;display:flex;align-items:flex-start;justify-content:space-between;
+  gap:16px;border-bottom:1px dashed var(--line);color:var(--sub);font-size:10px
+}
+.line:last-child{border-bottom:0}
+.line b{color:var(--ink);text-align:right}
+.empty{padding:55px 20px;text-align:center;color:var(--sub);font-size:11px}
+
+/* 驾驶舱 */
+.hero-card{
+  position:relative;margin-bottom:15px;padding:22px;overflow:hidden;color:#fff;
+  border-radius:23px;background:
+    radial-gradient(circle at 85% 20%,rgba(255,255,255,.15),transparent 25%),
+    linear-gradient(130deg,#0b1724,#123c45 62%,#078b6b);
+  box-shadow:0 18px 40px rgba(9,33,43,.16)
+}
+.hero-card:after{
+  content:"";position:absolute;right:-70px;bottom:-140px;width:230px;height:230px;
+  border:35px solid rgba(255,255,255,.04);border-radius:50%
+}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.hero-card h2{margin:0 0 7px;font-size:22px}
+.hero-card p{margin:0;color:rgba(255,255,255,.62);font-size:10px}
+.hero-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.hero-metric{
+  padding:14px;border:1px solid rgba(255,255,255,.07);
+  border-radius:15px;background:rgba(255,255,255,.07)
+}
+.hero-metric span{display:block;color:rgba(255,255,255,.57);font-size:9px}
+.hero-metric b{display:block;margin-top:7px;font-size:20px}
+.task-list{display:grid;gap:8px}
+.task{
+  width:100%;padding:11px;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;border:1px solid var(--line);border-radius:13px;background:#fff;text-align:left
+}
+.task:hover{border-color:#b9efdf;background:#fbfffe}
+.task-icon{
+  width:37px;height:37px;display:grid;place-items:center;flex:0 0 auto;
+  border-radius:12px;background:var(--orange-soft)
+}
+.task-info{flex:1}
+.task-info b{display:block;font-size:11px}
+.task-info small{display:block;margin-top:4px;color:var(--sub);font-size:9px}
+.task-count{color:var(--red);font-weight:900}
+.chart{
+  position:relative;height:220px;padding:10px 0 25px;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent 42px,#edf1f4 43px)
+}
+.chart svg{width:100%;height:180px;overflow:visible}
+.chart-labels{display:flex;justify-content:space-between;color:#97a2af;font-size:8px}
+.legend{display:flex;gap:14px;justify-content:center;margin-top:6px;color:var(--sub);font-size:9px}
+.legend i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:50%}
+.station-rank{display:grid;gap:12px}
+.rank-row{display:grid;grid-template-columns:25px minmax(100px,1fr) 1fr 70px;gap:9px;align-items:center;font-size:10px}
+.rank-no{
+  width:25px;height:25px;display:grid;place-items:center;border-radius:8px;
+  color:#647184;background:#f0f3f5;font-weight:900
+}
+.rank-row:nth-child(1) .rank-no{color:#8f6100;background:#fff0b6}
+.rank-row:nth-child(2) .rank-no{background:#e7ebef}
+.rank-row:nth-child(3) .rank-no{color:#955b35;background:#ffe1cc}
+
+/* 监控 */
+.monitor-board{
+  padding:18px;color:#fff;border-radius:21px;
+  background:linear-gradient(135deg,#102036,#0a6f60)
+}
+.monitor-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:15px}
+.monitor-box{padding:12px;text-align:center;border-radius:13px;background:rgba(255,255,255,.08)}
+.monitor-box b{display:block;font-size:17px}
+.monitor-box span{display:block;margin-top:4px;color:rgba(255,255,255,.55);font-size:8px}
+.device-name{display:flex;align-items:center;gap:9px}
+.device-icon{
+  width:37px;height:37px;display:grid;place-items:center;border-radius:12px;
+  background:var(--primary-soft);font-size:17px
+}
+.device-icon.error{background:var(--red-soft)}
+.device-icon.busy{background:var(--blue-soft)}
+.device-icon.offline{background:#f0f3f5}
+.camera-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.camera{
+  position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:15px;color:#fff;
+  background:
+    linear-gradient(rgba(5,12,18,.1),rgba(5,12,18,.55)),
+    repeating-linear-gradient(90deg,#2c4949 0,#2c4949 38px,#385552 39px,#385552 76px)
+}
+.camera-label{position:absolute;left:10px;top:10px;padding:5px 8px;border-radius:7px;background:rgba(0,0,0,.45);font-size:9px}
+.camera-time{position:absolute;right:10px;top:10px;font-size:8px}
+.car{
+  position:absolute;left:50%;bottom:31px;width:115px;height:45px;
+  transform:translateX(-50%);border-radius:30px 30px 12px 12px;background:#cad5de
+}
+.ai-border{
+  position:absolute;left:25%;right:25%;top:35%;bottom:18%;
+  border:2px solid var(--primary)
+}
+.ai-border span{
+  position:absolute;left:-2px;top:-19px;padding:3px 5px;
+  color:#05251e;background:var(--primary);font-size:7px;font-weight:850
+}
+
+/* 地图 */
+.map{
+  position:relative;height:430px;overflow:hidden;border-radius:19px;
+  background:
+    linear-gradient(32deg,transparent 72%,rgba(255,255,255,.65) 73%,transparent 76%),
+    linear-gradient(120deg,transparent 69%,rgba(255,255,255,.7) 70%,transparent 74%),
+    linear-gradient(145deg,#dbe9df,#dce7ed)
+}
+.map-pin{
+  position:absolute;padding:9px 11px;transform:translate(-50%,-50%);
+  border:2px solid var(--primary);border-radius:13px;color:var(--ink);
+  background:#fff;box-shadow:var(--shadow);font-size:9px;font-weight:850
+}
+.map-pin.warning{border-color:var(--orange)}
+.map-pin.error{border-color:var(--red)}
+.map-panel{
+  position:absolute;right:15px;top:15px;width:260px;padding:14px;
+  border-radius:17px;background:rgba(255,255,255,.96);box-shadow:var(--shadow)
+}
+
+/* 抽屉和弹窗 */
+.mask{
+  position:fixed;z-index:1000;inset:0;display:none;
+  background:rgba(5,15,27,.5);backdrop-filter:blur(3px)
+}
+.mask.show{display:block}
+.drawer{
+  position:absolute;right:0;top:0;bottom:0;width:min(720px,92vw);
+  display:flex;flex-direction:column;background:var(--bg);
+  box-shadow:-25px 0 70px rgba(5,15,27,.2);
+  animation:drawerIn .25s ease
+}
+@keyframes drawerIn{from{transform:translateX(100%)}to{transform:none}}
+.drawer-head{
+  flex:0 0 auto;padding:18px 20px;display:flex;align-items:flex-start;
+  justify-content:space-between;gap:15px;border-bottom:1px solid var(--line);background:#fff
+}
+.drawer-head h3{margin:0;font-size:18px}
+.drawer-head p{margin:5px 0 0;color:var(--sub);font-size:10px}
+.close-btn{
+  width:35px;height:35px;display:grid;place-items:center;border-radius:11px;
+  color:#687589;background:#eef2f4;font-size:18px
+}
+.drawer-body{flex:1;padding:16px 18px 30px;overflow-y:auto}
+.drawer-footer{
+  flex:0 0 auto;padding:12px 18px;display:flex;justify-content:flex-end;
+  gap:8px;border-top:1px solid var(--line);background:#fff
+}
+.dialog-mask{
+  position:fixed;z-index:1100;inset:0;display:none;align-items:center;
+  justify-content:center;padding:25px;background:rgba(5,15,27,.52);backdrop-filter:blur(3px)
+}
+.dialog-mask.show{display:flex}
+.dialog{
+  width:min(680px,96vw);max-height:90vh;display:flex;flex-direction:column;
+  overflow:hidden;border-radius:22px;background:#fff;box-shadow:var(--shadow-lg);
+  animation:dialogIn .22s ease
+}
+.dialog.wide{width:min(920px,96vw)}
+@keyframes dialogIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+.dialog-head{padding:19px 20px 10px}
+.dialog-head h3{margin:0;font-size:17px}
+.dialog-head p{margin:6px 0 0;color:var(--sub);font-size:10px;line-height:1.7}
+.dialog-body{padding:10px 20px 18px;overflow-y:auto}
+.dialog-footer{
+  padding:13px 20px;display:flex;justify-content:flex-end;gap:8px;
+  border-top:1px solid var(--line)
+}
+.toast-wrap{position:fixed;z-index:3000;right:18px;top:80px;display:grid;gap:8px}
+.toast{
+  min-width:250px;max-width:360px;padding:12px 14px;color:#fff;
+  border-radius:13px;background:#0e1b2a;box-shadow:0 14px 32px rgba(0,0,0,.18);
+  font-size:11px;animation:toastIn .22s ease
+}
+.toast.success{background:#07845f}
+.toast.error{background:#c84250}
+.toast.warning{background:#bd6e1c}
+@keyframes toastIn{from{opacity:0;transform:translateX(25px)}to{opacity:1;transform:none}}
+
+/* 业务特殊 */
+.timeline{position:relative;padding-left:22px}
+.timeline:before{content:"";position:absolute;left:6px;top:5px;bottom:5px;width:2px;background:#e2e8ec}
+.timeline-item{position:relative;padding:0 0 17px}
+.timeline-item:before{
+  content:"";position:absolute;left:-20px;top:3px;width:9px;height:9px;
+  border:3px solid #fff;border-radius:50%;background:var(--primary);
+  box-shadow:0 0 0 2px #b8efdf
+}
+.timeline-item b{display:block;font-size:10px}
+.timeline-item span{display:block;margin-top:5px;color:var(--sub);font-size:9px}
+.price-line{display:flex;height:58px;overflow:hidden;border-radius:12px}
+.price-seg{min-width:70px;padding:8px;color:#fff;text-align:center}
+.price-seg b{display:block;font-size:10px}
+.price-seg span{display:block;margin-top:5px;font-size:8px;opacity:.8}
+.price-seg.low{background:#0ead82}
+.price-seg.flat{background:#4b7dff}
+.price-seg.peak{background:#ff9c42}
+.price-seg.top{background:#ff5f6d}
+.switch{
+  position:relative;width:42px;height:24px;flex:0 0 auto;border-radius:99px;
+  background:#d7dee4;transition:.2s
+}
+.switch:after{
+  content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;
+  border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.16);transition:.2s
+}
+.switch.on{background:var(--primary-dark)}
+.switch.on:after{left:21px}
+.switch-line{padding:11px 0;display:flex;align-items:center;justify-content:space-between;gap:15px;border-bottom:1px dashed var(--line)}
+.switch-line b{font-size:10px}
+.switch-line small{display:block;margin-top:4px;color:var(--sub);font-size:9px}
+.amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.amount{
+  padding:10px;border-radius:10px;color:#657285;background:#f0f3f5;
+  font-size:10px;font-weight:800
+}
+.amount.active{color:#087d60;background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+.check-card{
+  position:relative;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff
+}
+.check-card.active{border-color:var(--primary);background:var(--primary-soft)}
+.check-card b{display:block;font-size:10px}
+.check-card span{display:block;margin-top:5px;color:var(--sub);font-size:9px}
+.check-card i{
+  position:absolute;right:11px;top:50%;width:18px;height:18px;display:grid;
+  place-items:center;transform:translateY(-50%);border-radius:50%;
+  color:#fff;background:#d6dde3;font-style:normal;font-size:8px
+}
+.check-card.active i{background:var(--primary-dark)}
+
+@media(max-width:1180px){
+  .app{grid-template-columns:76px minmax(0,1fr)}
+  .side-logo span,.nav-title,.nav-item span,.nav-badge{display:none}
+  .nav-item{justify-content:center}
+  .nav-icon{font-size:18px}
+  .g5{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .camera-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:800px){
+  .login{grid-template-columns:1fr}.login-panel{margin:auto}.login-hero{display:none}
+  .app{grid-template-columns:1fr}.sidebar{display:none}
+  .top-search{display:none}.content{padding:14px}
+  .g2,.g3,.g4,.g5,.form-grid,.form-grid.three{grid-template-columns:1fr}
+  .hero-metrics,.monitor-grid{grid-template-columns:repeat(2,1fr)}
+  .camera-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- 登录 -->
+<section class="login" id="loginPage">
+  <div class="login-panel">
+    <div class="brand">
+      <div class="brand-logo">⚡</div>
+      星途充电运营平台
+    </div>
+
+    <h1>欢迎回来</h1>
+    <p>登录企业后台，管理场站、设备、用户与经营数据。</p>
+
+    <div class="login-tabs">
+      <button class="active" data-login-tab="account">账号密码</button>
+      <button data-login-tab="sms">短信验证码</button>
+    </div>
+
+    <div class="login-form active" id="accountLogin">
+      <div class="field">
+        <label>企业账号</label>
+        <input class="input" id="loginAccount" value="admin@xingtu">
+      </div>
+      <div class="field">
+        <label>登录密码</label>
+        <input class="input" id="loginPassword" type="password" value="123456">
+      </div>
+      <button class="login-btn" data-action="login-account">进入运营平台</button>
+    </div>
+
+    <div class="login-form" id="smsLogin">
+      <div class="field">
+        <label>手机号</label>
+        <input class="input" id="loginPhone" value="13888886628">
+      </div>
+      <div class="field">
+        <label>短信验证码</label>
+        <div style="display:flex;gap:8px">
+          <input class="input" id="loginCode" placeholder="请输入验证码">
+          <button class="btn soft" style="flex:0 0 110px" data-action="send-login-code">获取验证码</button>
+        </div>
+      </div>
+      <button class="login-btn" data-action="login-sms">验证并登录</button>
+    </div>
+
+    <div class="notice" style="margin:18px 0 0">
+      演示账号和密码已自动填充，可直接进入平台。短信演示验证码为 668826。
+    </div>
+  </div>
+
+  <div class="login-hero">
+    <h2>让每一座充电站，<br>持续产生价值。</h2>
+    <p>
+      从场站上线、电价发布、设备监控，到订单结算、用户运营和财务开票，
+      以真实业务闭环构建新能源充电运营中枢。
+    </p>
+    <div class="login-points">
+      <div class="login-point">📊 经营数据实时洞察</div>
+      <div class="login-point">⚡ 全量设备监控处置</div>
+      <div class="login-point">🎯 用户营销全链路运营</div>
+      <div class="login-point">🧾 财务结算与开票闭环</div>
+    </div>
+  </div>
+</section>
+
+<!-- 后台框架 -->
+<section class="app">
+  <aside class="sidebar">
+    <div class="side-logo">
+      <i>⚡</i><span>星途充电</span>
+    </div>
+    <div id="navigation"></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb">
+        <h1 id="pageTitle">运营驾驶舱1</h1>
+        <p id="pageDesc">企业经营概览与关键待办</p>
+      </div>
+
+      <div class="top-actions">
+        <div class="top-search">
+          <span>⌕</span>
+          <input id="globalSearchInput" placeholder="搜索订单、设备、用户或电站">
+        </div>
+
+        <button class="top-button" data-action="switch-company">深圳星途新能源⌄</button>
+        <button class="top-button" data-action="message-center">消息<em id="messageBadge">6</em></button>
+
+        <button class="user-button" data-action="account-menu">
+          <div class="avatar">陈</div>
+          <div>
+            <b>陈志远</b>
+            <small>企业管理员</small>
+          </div>
+        </button>
+      </div>
+    </header>
+
+    <div class="content" id="content"></div>
+  </main>
+</section>
+
+<!-- 右侧业务抽屉 -->
+<div class="mask" id="drawerMask">
+  <section class="drawer">
+    <header class="drawer-head">
+      <div>
+        <h3 id="drawerTitle">业务详情</h3>
+        <p id="drawerDesc"></p>
+      </div>
+      <button class="close-btn" data-action="close-drawer">×</button>
+    </header>
+    <div class="drawer-body" id="drawerBody"></div>
+    <footer class="drawer-footer" id="drawerFooter"></footer>
+  </section>
+</div>
+
+<!-- 确认与表单弹窗 -->
+<div class="dialog-mask" id="dialogMask">
+  <section class="dialog" id="dialog">
+    <header class="dialog-head">
+      <h3 id="dialogTitle">确认操作</h3>
+      <p id="dialogDesc"></p>
+    </header>
+    <div class="dialog-body" id="dialogBody"></div>
+    <footer class="dialog-footer">
+      <button class="btn outline" data-action="close-dialog">取消</button>
+      <button class="btn primary" id="dialogConfirm">确认</button>
+    </footer>
+  </section>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const $=(s,p=document)=>p.querySelector(s);
+const $$=(s,p=document)=>[...p.querySelectorAll(s)];
+
+const state={
+  currentPage:"dashboard",
+  company:"深圳星途新能源科技有限公司",
+  messages:6,
+  stationFilter:"全部",
+  deviceFilter:"全部",
+  orderFilter:"全部",
+  priceFilter:"全部",
+
+  stations:[
+    {
+      id:"ST001",name:"南山科技园超级充电站",
+      city:"深圳市南山区",address:"科技南十二路18号",
+      devices:28,free:18,status:"营业中",price:1.18,
+      channel:"已发布",manager:"李婷",phone:"0755-88886628"
+    },
+    {
+      id:"ST002",name:"深圳湾智慧能源充电站",
+      city:"深圳市南山区",address:"滨海大道3001号",
+      devices:16,free:8,status:"营业中",price:1.05,
+      channel:"已发布",manager:"周强",phone:"0755-88668820"
+    },
+    {
+      id:"ST003",name:"福田中心区公共充电站",
+      city:"深圳市福田区",address:"福华一路88号",
+      devices:22,free:3,status:"待验收",price:.98,
+      channel:"未发布",manager:"王海",phone:"0755-88991268"
+    }
+  ],
+
+  devices:[
+    {
+      id:"A08",station:"南山科技园超级充电站",
+      type:"液冷超充480kW",status:"充电中",power:"86.4kW",
+      soc:"68%",order:"2025061809180826",fault:""
+    },
+    {
+      id:"A11",station:"南山科技园超级充电站",
+      type:"直流快充180kW",status:"故障",power:"0kW",
+      soc:"-",order:"-",fault:"绝缘检测异常 E-204"
+    },
+    {
+      id:"B06",station:"深圳湾智慧能源充电站",
+      type:"直流快充180kW",status:"占用",power:"0kW",
+      soc:"100%",order:"2025061808360128",fault:"充电后占用38分钟"
+    },
+    {
+      id:"D03",station:"福田中心区公共充电站",
+      type:"交流慢充7kW",status:"离线",power:"0kW",
+      soc:"-",order:"-",fault:"最后在线 09:38"
+    }
+  ],
+
+  orders:[
+    {
+      id:"2025061809180826",user:"林先生",phone:"138****7628",
+      station:"南山科技园超级充电站",gun:"A08",
+      status:"充电中",kwh:31.68,amount:37.82,
+      plate:"粤B·A82Q6",pay:"个人余额",invoice:"未申请"
+    },
+    {
+      id:"2025061808360128",user:"周先生",phone:"136****9281",
+      station:"深圳湾智慧能源充电站",gun:"B06",
+      status:"已完成",kwh:42.35,amount:46.28,
+      plate:"粤B·8P3Q2",pay:"微信支付",invoice:"待开票"
+    },
+    {
+      id:"2025061709203681",user:"王女士",phone:"139****2168",
+      station:"福田中心区公共充电站",gun:"C12",
+      status:"待支付",kwh:18.2,amount:21.6,
+      plate:"粤B·6M82Q",pay:"未支付",invoice:"不可开票"
+    }
+  ],
+
+  workOrders:[
+    {
+      id:"WX20250618018",device:"A11",
+      station:"南山科技园超级充电站",
+      issue:"绝缘检测异常",status:"待派工",
+      worker:"未指派",sla:"2小时"
+    },
+    {
+      id:"WX20250618012",device:"D03",
+      station:"福田中心区公共充电站",
+      issue:"通信模块离线",status:"维修中",
+      worker:"王海",sla:"4小时"
+    }
+  ],
+
+  invoices:[
+    {
+      id:"FP202506180026",title:"深圳云途科技有限公司",
+      amount:286.8,type:"电子普通发票",status:"待开票",
+      orders:3,email:"finance@yuntu.example"
+    },
+    {
+      id:"FP202506180021",title:"深圳启航物流有限公司",
+      amount:1826.5,type:"增值税专用发票",status:"开票中",
+      orders:12,email:"cw@qihang.example"
+    },
+    {
+      id:"FP202506170018",title:"个人 · 林先生",
+      amount:68.2,type:"电子普通发票",status:"已完成",
+      orders:1,email:"lin@example.com"
+    }
+  ],
+
+  pricePlans:[
+    {
+      id:"P001",name:"深圳标准分时电价",version:4,
+      status:"已生效",stations:2,effect:"2025-06-18 00:00"
+    },
+    {
+      id:"P002",name:"夜间谷电引流方案",version:1,
+      status:"待审核",stations:3,effect:"2025-06-20 00:00"
+    },
+    {
+      id:"P003",name:"暑期液冷超充服务费",version:1,
+      status:"草稿",stations:1,effect:"待设置"
+    }
+  ],
+
+  campaigns:[
+    {
+      id:"MK001",name:"30天未充电用户召回",
+      type:"智慧发券",users:286,budget:5000,
+      used:1860,status:"进行中"
+    },
+    {
+      id:"MK002",name:"夜间谷电8折活动",
+      type:"电站折扣",users:1286,budget:12000,
+      used:0,status:"待审核"
+    },
+    {
+      id:"MK003",name:"新用户首充立减10元",
+      type:"扫码领券",users:3286,budget:30000,
+      used:26800,status:"已暂停"
+    }
+  ],
+
+  users:[
+    {
+      id:"U001",name:"林先生",phone:"138****7628",
+      type:"个人用户",balance:186.5,orders:32,
+      tag:"高价值用户",status:"正常"
+    },
+    {
+      id:"U002",name:"王明",phone:"137****6281",
+      type:"企业员工",balance:820,orders:18,
+      tag:"云途科技",status:"正常"
+    },
+    {
+      id:"U003",name:"赵先生",phone:"159****3308",
+      type:"个人用户",balance:0,orders:1,
+      tag:"低频用户",status:"待召回"
+    }
+  ],
+
+  employees:[
+    {
+      id:"E001",name:"李婷",phone:"138****8218",
+      dept:"运营部",role:"电站站长",status:"正常"
+    },
+    {
+      id:"E002",name:"王海",phone:"136****2096",
+      dept:"运维部",role:"运维工程师",status:"正常"
+    },
+    {
+      id:"E003",name:"陈敏",phone:"139****6128",
+      dept:"财务部",role:"开票专员",status:"正常"
+    }
+  ],
+
+  logs:[
+    {time:"10:26",actor:"陈志远",action:"查看经营驾驶舱",result:"成功"},
+    {time:"10:18",actor:"系统",action:"A11枪触发绝缘检测异常",result:"已生成工单"},
+    {time:"10:12",actor:"陈敏",action:"处理开票申请 FP202506180021",result:"开票中"}
+  ]
+};
+
+const navGroups=[
+  {
+    title:"经营总览",
+    items:[
+      ["dashboard","运营驾驶舱","⌂"],
+      ["data","经营数据","▥"],
+      ["map","电站地图","⌖"]
+    ]
+  },
+  {
+    title:"场站运营",
+    items:[
+      ["stations","电站管理","🏢"],
+      ["monitor","设备监控","◉"],
+      ["orders","订单中心","▤"],
+      ["pricing","电价管理","¥"],
+      ["operations","运维工单","🛠"]
+    ]
+  },
+  {
+    title:"用户经营",
+    items:[
+      ["users","用户管理","♙"],
+      ["marketing","营销中心","🎫"],
+      ["front","前端配置","📱"],
+      ["internal","内部充电","🚘"]
+    ]
+  },
+  {
+    title:"企业管理",
+    items:[
+      ["finance","财务开票","🧾"],
+      ["enterprise","组织权限","👥"],
+      ["settings","系统设置","⚙"]
+    ]
+  }
+];
+
+const pageMeta={
+  dashboard:["运营驾驶舱","企业经营概览与关键待办"],
+  data:["经营数据","充电交易、渠道、电站与用户趋势"],
+  map:["电站地图","场站状态、区域分布与异常定位"],
+  stations:["电站管理","从建站到上线发布的完整业务流程"],
+  monitor:["设备监控","实时状态、远程控制、占用与视频监控"],
+  orders:["订单中心","订单查询、结算、退款、开票与售后"],
+  pricing:["电价管理","分时定价、审批、生效与版本回滚"],
+  operations:["运维工单","故障报修、派工、维修与验收闭环"],
+  users:["用户管理","用户账户、车辆、余额与服务协同"],
+  marketing:["营销中心","活动创建、审核、投放和效果回流"],
+  front:["前端配置","车主小程序内容、协议、广告与发布"],
+  internal:["内部充电","企业员工、电卡、额度与内部结算"],
+  finance:["财务开票","发票、对账、账户与资金处理"],
+  enterprise:["组织权限","员工、部门、角色与操作审计"],
+  settings:["系统设置","消息、安全、企业信息与版本配置"]
+};
+
+let dialogCallback=null;
+
+function initNav(){
+  $("#navigation").innerHTML=navGroups.map(group=>`
+    <div class="nav-group">
+      <div class="nav-title">${group.title}</div>
+      ${group.items.map(item=>`
+        <button class="nav-item ${item[0]==="dashboard"?"active":""}" data-page="${item[0]}">
+          <b class="nav-icon">${item[2]}</b>
+          <span>${item[1]}</span>
+          ${item[0]==="operations"?'<i class="nav-badge">2</i>':""}
+        </button>
+      `).join("")}
+    </div>
+  `).join("");
+}
+
+function toast(text,type="success"){
+  const node=document.createElement("div");
+  node.className=`toast ${type}`;
+  node.textContent=text;
+  $("#toastWrap").appendChild(node);
+  setTimeout(()=>{
+    node.style.opacity="0";
+    node.style.transform="translateX(25px)";
+    setTimeout(()=>node.remove(),250);
+  },2600);
+}
+
+function statusTag(status){
+  const colors={
+    "营业中":"green","正常":"green","在线":"green","已完成":"green",
+    "已生效":"green","进行中":"green","已发布":"green",
+    "充电中":"blue","开票中":"blue","维修中":"blue",
+    "待验收":"orange","待支付":"orange","待开票":"orange",
+    "待审核":"orange","待派工":"orange","待召回":"orange",
+    "占用":"orange","草稿":"gray","未发布":"gray","离线":"gray",
+    "故障":"red","已驳回":"red","已暂停":"purple","已停用":"gray"
+  };
+  return `<span class="tag ${colors[status]||"gray"}">${status}</span>`;
+}
+
+function kpi(label,value,sub,icon,color=""){
+  return `
+    <article class="kpi ${color}">
+      <div class="kpi-icon">${icon}</div>
+      <label>${label}</label>
+      <strong>${value}</strong>
+      <small>${sub}</small>
+    </article>
+  `;
+}
+
+function pageHead(title,desc,actions=""){
+  return `
+    <div class="page-head">
+      <div><h2>${title}</h2><p>${desc}</p></div>
+      <div class="page-actions">${actions}</div>
+    </div>
+  `;
+}
+
+function table(columns,rows){
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>${columns.map(c=>`<th>${c}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${rows.length?rows.map(row=>`
+            <tr>${row.map(cell=>`<td>${cell}</td>`).join("")}</tr>
+          `).join(""):`<tr><td colspan="${columns.length}" class="empty">暂无符合条件的数据</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function showDrawer(title,desc,body,footer=""){
+  $("#drawerTitle").textContent=title;
+  $("#drawerDesc").textContent=desc||"";
+  $("#drawerBody").innerHTML=body;
+  $("#drawerFooter").innerHTML=footer;
+  $("#drawerMask").classList.add("show");
+}
+
+function closeDrawer(){
+  $("#drawerMask").classList.remove("show");
+}
+
+function showDialog(title,desc,body,confirmText="确认",callback=null,wide=false){
+  $("#dialogTitle").textContent=title;
+  $("#dialogDesc").textContent=desc||"";
+  $("#dialogBody").innerHTML=body||"";
+  $("#dialogConfirm").textContent=confirmText;
+  $("#dialog").classList.toggle("wide",wide);
+  dialogCallback=callback;
+  $("#dialogMask").classList.add("show");
+}
+
+function closeDialog(){
+  $("#dialogMask").classList.remove("show");
+  dialogCallback=null;
+}
+
+function addLog(action,result="成功"){
+  state.logs.unshift({
+    time:new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"}),
+    actor:"陈志远",action,result
+  });
+}
+
+function renderPage(id=state.currentPage){
+  state.currentPage=id;
+  const meta=pageMeta[id]||pageMeta.dashboard;
+  $("#pageTitle").textContent=meta[0];
+  $("#pageDesc").textContent=meta[1];
+
+  $$(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.page===id));
+
+  const renderers={
+    dashboard:renderDashboard,
+    data:renderData,
+    map:renderMap,
+    stations:renderStations,
+    monitor:renderMonitor,
+    orders:renderOrders,
+    pricing:renderPricing,
+    operations:renderOperations,
+    users:renderUsers,
+    marketing:renderMarketing,
+    front:renderFront,
+    internal:renderInternal,
+    finance:renderFinance,
+    enterprise:renderEnterprise,
+    settings:renderSettings
+  };
+
+  $("#content").innerHTML=(renderers[id]||renderDashboard)();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* 驾驶舱 */
+function renderDashboard(){
+  const faultCount=state.devices.filter(d=>["故障","离线"].includes(d.status)).length;
+  const pendingInvoices=state.invoices.filter(i=>i.status==="待开票").length;
+  const pendingWorks=state.workOrders.filter(w=>w.status==="待派工").length;
+
+  return `
+    <section class="hero-card">
+      <div class="hero-top">
+        <div>
+          <h2>上午好，陈经理</h2>
+          <p>12座电站正在运营，整体设备在线率96.6%，当前有${faultCount}个设备异常需要关注。</p>
+        </div>
+        <div class="tabs" style="background:rgba(255,255,255,.1)">
+          <button class="active" data-dashboard-period="today" style="color:#fff">今天</button>
+          <button data-dashboard-period="week" style="color:#fff">本周</button>
+          <button data-dashboard-period="month" style="color:#fff">本月</button>
+        </div>
+      </div>
+
+      <div class="hero-metrics">
+        <div class="hero-metric"><span>充电电量</span><b id="heroEnergy">18,620 kWh</b></div>
+        <div class="hero-metric"><span>订单金额</span><b id="heroAmount">¥23,846</b></div>
+        <div class="hero-metric"><span>订单数量</span><b id="heroOrders">628单</b></div>
+        <div class="hero-metric"><span>实时充电功率</span><b id="heroPower">2,864.5kW</b></div>
+      </div>
+    </section>
+
+    <div class="grid g4">
+      ${kpi("设备在线率","96.6%","304 / 316 个终端在线","⚡")}
+      ${kpi("订单启动成功率","98.6%","较上周期提升0.8%","✓","blue")}
+      ${kpi("设备利用率","36.8%","晚高峰利用率52.6%","◴","orange")}
+      ${kpi("异常待处理",faultCount+pendingWorks+pendingInvoices+"项","故障、工单和开票待办","!","red")}
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">关键待办</div>
+            <div class="card-sub">需要运营人员完成业务处理</div>
+          </div>
+          <button class="card-link" data-action="open-all-tasks">查看全部</button>
+        </div>
+        <div class="task-list">
+          <button class="task" data-page="operations">
+            <div class="task-icon">🛠</div>
+            <div class="task-info"><b>维修工单待派工</b><small>绝缘异常、设备离线</small></div>
+            <span class="task-count">${pendingWorks}</span>
+          </button>
+          <button class="task" data-page="finance">
+            <div class="task-icon">🧾</div>
+            <div class="task-info"><b>用户开票申请</b><small>最早申请时间10:12</small></div>
+            <span class="task-count">${pendingInvoices}</span>
+          </button>
+          <button class="task" data-page="monitor">
+            <div class="task-icon">⚠</div>
+            <div class="task-info"><b>设备故障与离线</b><small>建议优先处理核心场站</small></div>
+            <span class="task-count">${faultCount}</span>
+          </button>
+          <button class="task" data-page="marketing">
+            <div class="task-icon">🎯</div>
+            <div class="task-info"><b>营销活动待审核</b><small>夜间谷电8折活动</small></div>
+            <span class="task-count">1</span>
+          </button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">今日时段电量趋势</div>
+            <div class="card-sub">单位：kWh</div>
+          </div>
+          <button class="card-link" data-page="data">查看分析</button>
+        </div>
+        <div class="chart">
+          <svg viewBox="0 0 500 180" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="heroArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#18d6a4" stop-opacity=".35"/>
+                <stop offset="100%" stop-color="#18d6a4" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0 160 C40 156 60 145 95 148 S145 123 180 130 S230 83 270 92 S335 47 370 62 S430 22 500 35 L500 180 L0 180Z" fill="url(#heroArea)"/>
+            <path d="M0 160 C40 156 60 145 95 148 S145 123 180 130 S230 83 270 92 S335 47 370 62 S430 22 500 35" fill="none" stroke="#13bd90" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <div class="chart-labels"><span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>24:00</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">经营诊断</div>
+            <div class="card-sub">4项可提升建议</div>
+          </div>
+          <button class="card-link" data-action="diagnosis-detail">查看报告</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:18px">
+          <div style="width:100px;height:100px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(var(--primary) 0 86%,#edf1f3 86%)">
+            <div style="width:79px;height:79px;display:grid;place-items:center;border-radius:50%;background:#fff;text-align:center">
+              <div><b style="font-size:24px">86</b><small style="display:block;color:var(--sub);font-size:8px">经营评分</small></div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div class="metric-row"><span>场站运营</span><div class="bar"><i style="width:92%"></i></div><b>92</b></div>
+            <div class="metric-row"><span>用户运营</span><div class="bar"><i style="width:78%"></i></div><b>78</b></div>
+            <div class="metric-row"><span>设备稳定</span><div class="bar"><i style="width:88%"></i></div><b>88</b></div>
+          </div>
+        </div>
+
+        <div class="notice" style="margin:14px 0 0">
+          夜间设备利用率偏低，建议配置谷电活动并召回周边沉默用户。
+        </div>
+      </article>
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">电站经营排名</div><div class="card-sub">按今日充电电量排序</div></div>
+          <button class="card-link" data-page="data">全部排名</button>
+        </div>
+        <div class="station-rank">
+          ${[
+            ["南山科技园超级充电站",4286,95],
+            ["深圳湾智慧能源充电站",3890,82],
+            ["福田中心区公共充电站",3116,69],
+            ["宝安壹方城智慧站",2860,58]
+          ].map((r,i)=>`
+            <div class="rank-row">
+              <span class="rank-no">${i+1}</span>
+              <b>${r[0]}</b>
+              <div class="bar"><i style="width:${r[2]}%"></i></div>
+              <span>${r[1]}kWh</span>
+            </div>
+          `).join("")}
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">最近业务动态</div><div class="card-sub">所有关键操作均保留审计日志</div></div>
+          <button class="card-link" data-page="enterprise">审计日志</button>
+        </div>
+        <div class="timeline">
+          ${state.logs.slice(0,5).map(log=>`
+            <div class="timeline-item">
+              <b>${log.action}</b>
+              <span>${log.time} · ${log.actor} · ${log.result}</span>
+            </div>
+          `).join("")}
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+/* 数据 */
+function renderData(){
+  return `
+    ${pageHead(
+      "经营数据",
+      "将企业经营、场站效率、渠道表现和用户增长拆分展示，避免信息堆叠。",
+      `
+        <button class="btn outline" data-action="custom-period">自定义周期</button>
+        <button class="btn primary" data-action="export-data">导出经营报表</button>
+      `
+    )}
+
+    <div class="tabs" style="width:max-content;margin-bottom:14px">
+      <button class="active" data-data-period="today">今日</button>
+      <button data-data-period="yesterday">昨日</button>
+      <button data-data-period="week">近7日</button>
+      <button data-data-period="month">近30日</button>
+    </div>
+
+    <div class="grid g4">
+      ${kpi("充电交易金额","¥23,846.50","服务费收入 ¥8,286","¥")}
+      ${kpi("充电电量","18,620kWh","较昨日 +8.2%","⚡","blue")}
+      ${kpi("订单数量","628单","订单成功率98.6%","▤","orange")}
+      ${kpi("活跃用户","1,024人","今日新增143人","♙","red")}
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">充电金额与电量趋势</div><div class="card-sub">支持点击数据点查看小时明细</div></div>
+          <div class="tabs">
+            <button class="active">充电量</button>
+            <button>订单金额</button>
+          </div>
+        </div>
+        <div class="chart">
+          <svg viewBox="0 0 600 180" preserveAspectRatio="none">
+            <path d="M0 160 C50 154 70 142 110 146 S175 110 220 119 S285 72 335 85 S410 39 455 53 S530 22 600 28" fill="none" stroke="#18c998" stroke-width="4"/>
+            <path d="M0 168 C55 160 85 150 125 154 S190 130 245 134 S320 91 370 108 S445 67 500 76 S550 48 600 58" fill="none" stroke="#4b7dff" stroke-width="3" stroke-dasharray="6 5"/>
+          </svg>
+          <div class="chart-labels"><span>00</span><span>04</span><span>08</span><span>12</span><span>16</span><span>20</span><span>24</span></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:#18c998"></i>充电电量</span>
+          <span><i style="background:#4b7dff"></i>订单金额</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">经营效率</div><div class="card-sub">关键指标与运营目标对比</div></div>
+        </div>
+        ${[
+          ["设备利用率","36.8%","45%",82],
+          ["单枪日充","58.9kWh","70kWh",84],
+          ["订单成功率","98.6%","99%",99],
+          ["用户复购率","42.8%","50%",86],
+          ["夜间利用率","12.8%","25%",51]
+        ].map(item=>`
+          <div class="metric-row">
+            <span>${item[0]}</span>
+            <div>
+              <div class="bar"><i style="width:${item[3]}%"></i></div>
+              <small style="color:var(--sub)">当前${item[1]} / 目标${item[2]}</small>
+            </div>
+            <b>${item[1]}</b>
+          </div>
+        `).join("")}
+      </article>
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">渠道金额排名</div></div>
+        ${[
+          ["星途充电小程序",14682,92],
+          ["企业车队账户",5896,56],
+          ["第三方聚合平台",3268,34]
+        ].map(r=>`
+          <div class="metric-row">
+            <span>${r[0]}</span><div class="bar"><i style="width:${r[2]}%"></i></div><b>¥${r[1]}</b>
+          </div>
+        `).join("")}
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">用户结构</div></div>
+        ${[
+          ["个人用户",68],
+          ["企业员工",18],
+          ["车队用户",9],
+          ["内部员工",5]
+        ].map(r=>`
+          <div class="metric-row">
+            <span>${r[0]}</span><div class="bar"><i style="width:${r[1]}%"></i></div><b>${r[1]}%</b>
+          </div>
+        `).join("")}
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">本期异常分析</div></div>
+        <div class="line"><span>启动失败订单</span><b>9单</b></div>
+        <div class="line"><span>设备故障次数</span><b>12次</b></div>
+        <div class="line"><span>用户退款申请</span><b>7笔</b></div>
+        <div class="line"><span>占位费用申诉</span><b>5笔</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-page="operations">查看异常处理</button>
+      </article>
+    </div>
+  `;
+}
+
+/* 地图 */
+function renderMap(){
+  return `
+    ${pageHead(
+      "电站地图",
+      "按区域查看场站分布、设备规模、实时功率与异常状态。",
+      `<button class="btn primary" data-action="new-station">＋ 新建电站</button>`
+    )}
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <select class="input"><option>深圳市</option><option>广州市</option></select>
+        <select class="input"><option>全部状态</option><option>营业中</option><option>异常</option></select>
+        <button class="btn primary" data-action="map-filter">查询</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn outline" data-page="stations">切换列表管理</button>
+      </div>
+    </div>
+
+    <article class="card">
+      <div class="map">
+        <button class="map-pin" style="left:22%;top:28%" data-action="map-station" data-id="ST001">
+          南山科技园站 · 18空闲
+        </button>
+        <button class="map-pin warning" style="left:55%;top:37%" data-action="map-station" data-id="ST002">
+          深圳湾站 · 1占用
+        </button>
+        <button class="map-pin error" style="left:72%;top:65%" data-action="map-station" data-id="ST003">
+          福田中心站 · 1故障
+        </button>
+
+        <div class="map-panel">
+          <div class="card-title">区域监控概览</div>
+          <div class="line"><span>运营电站</span><b>12座</b></div>
+          <div class="line"><span>在线终端</span><b>304个</b></div>
+          <div class="line"><span>实时总功率</span><b>2,864.5kW</b></div>
+          <div class="line"><span>异常设备</span><b style="color:var(--red)">12个</b></div>
+          <button class="btn primary block" style="margin-top:12px" data-page="monitor">进入设备监控</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/* 电站 */
+function renderStations(){
+  const rows=state.stations
+    .filter(s=>state.stationFilter==="全部"||s.status===state.stationFilter)
+    .map(s=>[
+      `<span class="cell-main">${s.name}</span><span class="cell-sub">${s.id} · ${s.address}</span>`,
+      s.city,
+      `${s.free}/${s.devices} 空闲`,
+      `¥${s.price.toFixed(2)}/kWh`,
+      statusTag(s.status),
+      statusTag(s.channel),
+      `
+        <div class="actions">
+          <button class="btn sm outline" data-action="station-detail" data-id="${s.id}">详情</button>
+          <button class="btn sm soft" data-action="edit-station" data-id="${s.id}">编辑</button>
+          ${s.status==="待验收"
+            ?`<button class="btn sm primary" data-action="station-acceptance" data-id="${s.id}">上线验收</button>`
+            :`<button class="btn sm warning" data-action="station-offline" data-id="${s.id}">临时停业</button>`
+          }
+        </div>
+      `
+    ]);
+
+  return `
+    ${pageHead(
+      "电站管理",
+      "将建站、设备绑定、电价配置、资质审核、渠道发布和上线验收串成完整流程。",
+      `
+        <button class="btn outline" data-action="import-stations">批量导入</button>
+        <button class="btn primary" data-action="new-station">＋ 新建电站</button>
+      `
+    )}
+
+    <div class="notice">
+      新电站必须完成“基础资料 → 设备绑定 → 图片资质 → 电价配置 → 渠道发布 → 上线验收”，
+      未完成验收的电站不会出现在车主端。
+    </div>
+
+    <div class="grid g4">
+      ${kpi("运营电站","12座","本月新增2座","🏢")}
+      ${kpi("待上线验收","1座","福田中心区公共充电站","✓","orange")}
+      ${kpi("前端已发布","11座","小程序与聚合渠道","📱","blue")}
+      ${kpi("资料待完善","2项","图片资质和停车规则","!","red")}
+    </div>
+
+    <div class="toolbar" style="margin-top:14px">
+      <div class="toolbar-left">
+        <input class="input" id="stationKeyword" placeholder="搜索电站名称或地址">
+        <select class="input" id="stationStatus">
+          <option>全部</option>
+          <option ${state.stationFilter==="营业中"?"selected":""}>营业中</option>
+          <option ${state.stationFilter==="待验收"?"selected":""}>待验收</option>
+        </select>
+        <button class="btn primary" data-action="filter-stations">查询</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn outline" data-action="export-stations">导出电站档案</button>
+      </div>
+    </div>
+
+    <article class="card">
+      <div class="card-head">
+        <div><div class="card-title">电站档案</div><div class="card-sub">点击详情查看完整运营档案与发布记录</div></div>
+      </div>
+      ${table(["电站","区域","空闲/总枪","综合电价","运营状态","前端渠道","操作"],rows)}
+    </article>
+  `;
+}
+
+function stationDetail(id){
+  const s=state.stations.find(x=>x.id===id);
+  showDrawer(
+    s.name,
+    `${s.id} · ${s.city}`,
+    `
+      <div class="workflow">
+        <span class="workflow-step done">基础资料</span>
+        <span class="workflow-step done">设备绑定</span>
+        <span class="workflow-step done">图片资质</span>
+        <span class="workflow-step done">电价配置</span>
+        <span class="workflow-step ${s.channel==="已发布"?"done":"current"}">渠道发布</span>
+        <span class="workflow-step ${s.status==="营业中"?"done":"current"}">上线验收</span>
+      </div>
+
+      <div class="grid g2" style="margin-top:14px">
+        <article class="card">
+          <div class="card-head"><div class="card-title">基本信息</div></div>
+          <div class="line"><span>详细地址</span><b>${s.address}</b></div>
+          <div class="line"><span>营业状态</span><b>${s.status}</b></div>
+          <div class="line"><span>营业时间</span><b>24小时</b></div>
+          <div class="line"><span>电站负责人</span><b>${s.manager}</b></div>
+          <div class="line"><span>联系电话</span><b>${s.phone}</b></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div class="card-title">设备与经营</div></div>
+          <div class="line"><span>充电终端</span><b>${s.devices}个</b></div>
+          <div class="line"><span>当前空闲</span><b>${s.free}个</b></div>
+          <div class="line"><span>当前综合价</span><b>¥${s.price.toFixed(2)}/kWh</b></div>
+          <div class="line"><span>今日充电量</span><b>4,286kWh</b></div>
+          <div class="line"><span>设备利用率</span><b>52.6%</b></div>
+        </article>
+      </div>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">车主端展示内容</div></div>
+        <div class="line"><span>找桩指引</span><b>B2停车场C区，沿绿色指示牌直行</b></div>
+        <div class="line"><span>停车规则</span><b>充电首2小时免费</b></div>
+        <div class="line"><span>配套设施</span><b>休息室、卫生间、便利店、Wi-Fi</b></div>
+        <div class="line"><span>科技标签</span><b>液冷超充、480kW超充</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">渠道发布记录</div></div>
+        ${table(
+          ["渠道","状态","最近同步","操作"],
+          [
+            ["星途充电小程序",statusTag(s.channel),"今天 09:16",`<button class="btn sm soft" data-action="sync-channel" data-channel="小程序">重新同步</button>`],
+            ["腾讯地图",statusTag(s.channel),"昨天 18:32",`<button class="btn sm soft" data-action="sync-channel" data-channel="腾讯地图">重新同步</button>`],
+            ["聚合充电平台",statusTag(s.channel),"昨天 18:35",`<button class="btn sm soft" data-action="sync-channel" data-channel="聚合平台">重新同步</button>`]
+          ]
+        )}
+      </article>
+    `,
+    `
+      <button class="btn outline" data-action="edit-station" data-id="${s.id}">编辑资料</button>
+      <button class="btn primary" data-action="view-station-front" data-id="${s.id}">预览车主端</button>
+    `
+  );
+}
+
+/* 监控 */
+function renderMonitor(){
+  const filtered=state.devices.filter(d=>state.deviceFilter==="全部"||d.status===state.deviceFilter);
+
+  const rows=filtered.map(d=>[
+    `<div class="device-name">
+      <div class="device-icon ${d.status==="故障"?"error":d.status==="充电中"?"busy":d.status==="离线"?"offline":""}">⚡</div>
+      <div><span class="cell-main">${d.id}枪</span><span class="cell-sub">${d.station}</span></div>
+    </div>`,
+    d.type,
+    statusTag(d.status),
+    d.power,
+    d.soc,
+    d.order,
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="device-detail" data-id="${d.id}">详情</button>
+        ${d.status==="充电中"?`<button class="btn sm danger" data-action="stop-charge" data-id="${d.id}">停止充电</button>`:""}
+        ${d.status==="故障"?`<button class="btn sm primary" data-action="create-repair" data-id="${d.id}">一键报修</button>`:""}
+        ${d.status==="离线"?`<button class="btn sm soft" data-action="restart-device" data-id="${d.id}">远程重启</button>`:""}
+        ${d.status==="占用"?`<button class="btn sm warning" data-action="occupancy-process" data-id="${d.id}">催挪处理</button>`:""}
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "设备监控",
+      "实时监控、远程控制、占用处理、视频核实与故障报修均在同一业务链路中完成。",
+      `
+        <button class="btn outline" data-action="video-monitor">千里眼监控</button>
+        <button class="btn primary" data-action="batch-device-action">批量设备操作</button>
+      `
+    )}
+
+    <section class="monitor-board">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div>
+          <span style="font-size:9px;color:rgba(255,255,255,.57)">企业实时总功率</span>
+          <div style="margin-top:4px;font-size:29px;font-weight:900">2,864.5 <small style="font-size:11px;color:rgba(255,255,255,.55)">kW</small></div>
+        </div>
+        ${statusTag("在线")}
+      </div>
+
+      <div class="monitor-grid">
+        <div class="monitor-box"><b>316</b><span>全部终端</span></div>
+        <div class="monitor-box"><b>86</b><span>充电中</span></div>
+        <div class="monitor-box"><b>218</b><span>空闲</span></div>
+        <div class="monitor-box"><b style="color:#ffb15f">7</b><span>占用</span></div>
+        <div class="monitor-box"><b style="color:#ff7883">12</b><span>故障/离线</span></div>
+      </div>
+    </section>
+
+    <div class="toolbar" style="margin-top:14px">
+      <div class="toolbar-left">
+        <input class="input" id="deviceKeyword" placeholder="设备编号、电站或车位">
+        <select class="input" id="deviceStatus">
+          ${["全部","充电中","占用","故障","离线"].map(v=>`<option ${state.deviceFilter===v?"selected":""}>${v}</option>`).join("")}
+        </select>
+        <button class="btn primary" data-action="filter-devices">查询</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn outline" data-action="refresh-devices">刷新实时状态</button>
+      </div>
+    </div>
+
+    <article class="card">
+      <div class="card-head">
+        <div><div class="card-title">终端实时状态</div><div class="card-sub">远程操作前将校验设备状态、订单状态与操作权限</div></div>
+      </div>
+      ${table(["终端","设备类型","状态","实时功率","车辆SOC","关联订单","业务操作"],rows)}
+    </article>
+  `;
+}
+
+function deviceDetail(id){
+  const d=state.devices.find(x=>x.id===id);
+  showDrawer(
+    `${d.id}枪 · ${d.type}`,
+    d.station,
+    `
+      <div class="grid g3">
+        ${kpi("实时功率",d.power,"设备上报时间10:28:36","⚡")}
+        ${kpi("车辆SOC",d.soc,"仅直流订单展示","🔋","blue")}
+        ${kpi("设备状态",d.status,d.fault||"运行状态正常","◉",d.status==="故障"?"red":"")}
+      </div>
+
+      <article class="card" style="margin-top:14px">
+        <div class="card-head"><div class="card-title">设备档案</div></div>
+        <div class="line"><span>设备编号</span><b>${d.id}</b></div>
+        <div class="line"><span>所属电站</span><b>${d.station}</b></div>
+        <div class="line"><span>设备型号</span><b>${d.type}</b></div>
+        <div class="line"><span>固件版本</span><b>V3.6.2</b></div>
+        <div class="line"><span>绑定车位</span><b>B2-C108</b></div>
+        <div class="line"><span>地锁状态</span><b>已下降</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">最近事件日志</div></div>
+        <div class="timeline">
+          <div class="timeline-item"><b>设备状态上报：${d.status}</b><span>10:28:36 · 设备主动上报</span></div>
+          <div class="timeline-item"><b>订单关联：${d.order}</b><span>10:18:22 · 业务平台</span></div>
+          <div class="timeline-item"><b>设备心跳正常</b><span>10:17:58 · 通信服务</span></div>
+        </div>
+      </article>
+    `,
+    `
+      ${d.status==="充电中"?`<button class="btn danger" data-action="stop-charge" data-id="${d.id}">停止充电</button>`:""}
+      ${d.status==="故障"?`<button class="btn primary" data-action="create-repair" data-id="${d.id}">创建维修工单</button>`:""}
+      ${d.status==="离线"?`<button class="btn primary" data-action="restart-device" data-id="${d.id}">远程重启</button>`:""}
+      <button class="btn outline" data-action="device-logs" data-id="${d.id}">完整日志</button>
+    `
+  );
+}
+
+/* 订单 */
+function renderOrders(){
+  const filtered=state.orders.filter(o=>state.orderFilter==="全部"||o.status===state.orderFilter);
+  const rows=filtered.map(o=>[
+    `<span class="cell-main">${o.id}</span><span class="cell-sub">${o.user} · ${o.phone}</span>`,
+    `${o.station}<span class="cell-sub">${o.gun}枪 · ${o.plate}</span>`,
+    statusTag(o.status),
+    `${o.kwh.toFixed(2)}kWh`,
+    `¥${o.amount.toFixed(2)}`,
+    o.pay,
+    o.invoice,
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="order-detail" data-id="${o.id}">详情</button>
+        <button class="btn sm soft" data-action="contact-user" data-id="${o.id}">联系用户</button>
+        ${o.status==="已完成"?`
+          <button class="btn sm warning" data-action="order-refund" data-id="${o.id}">退款</button>
+          <button class="btn sm primary" data-action="order-invoice" data-id="${o.id}">开票</button>
+        `:""}
+        ${o.status==="待支付"?`<button class="btn sm primary" data-action="order-remind-pay" data-id="${o.id}">催付</button>`:""}
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "订单中心",
+      "以订单为中心串联充电曲线、费用、支付、退款、发票、用户联系与设备日志。",
+      `
+        <button class="btn outline" data-action="batch-order-export">导出订单</button>
+        <button class="btn primary" data-action="create-manual-order">创建应急订单</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("今日订单","628单","进行中86单","▤")}
+      ${kpi("待支付","8单","待支付金额¥286.50","¥","orange")}
+      ${kpi("退款待审核","7笔","申请金额¥368.20","↩","red")}
+      ${kpi("待开票订单","12笔","可开票金额¥3,682","🧾","blue")}
+    </div>
+
+    <div class="toolbar" style="margin-top:14px">
+      <div class="toolbar-left">
+        <input class="input" id="orderKeyword" placeholder="订单号、手机号或车牌">
+        <select class="input" id="orderStatus">
+          ${["全部","充电中","已完成","待支付"].map(v=>`<option ${state.orderFilter===v?"selected":""}>${v}</option>`).join("")}
+        </select>
+        <button class="btn primary" data-action="filter-orders">查询</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn outline" data-action="order-date-filter">选择时间周期</button>
+      </div>
+    </div>
+
+    <article class="card">
+      <div class="card-head">
+        <div><div class="card-title">充电订单</div><div class="card-sub">退款和开票均需基于真实订单状态校验</div></div>
+      </div>
+      ${table(["订单/用户","电站/车辆","状态","电量","金额","支付方式","发票","业务操作"],rows)}
+    </article>
+  `;
+}
+
+function orderDetail(id){
+  const o=state.orders.find(x=>x.id===id);
+  showDrawer(
+    `订单 ${o.id}`,
+    `${o.station} · ${o.gun}枪`,
+    `
+      <div class="grid g3">
+        ${kpi("充电电量",o.kwh.toFixed(2)+"kWh","充电时长24分18秒","⚡")}
+        ${kpi("订单金额","¥"+o.amount.toFixed(2),"优惠金额¥10.00","¥","blue")}
+        ${kpi("订单状态",o.status,"支付方式："+o.pay,"▤","orange")}
+      </div>
+
+      <article class="card" style="margin-top:14px">
+        <div class="card-head">
+          <div><div class="card-title">充电曲线</div><div class="card-sub">SOC、充电功率与电压变化</div></div>
+        </div>
+        <div class="chart">
+          <svg viewBox="0 0 600 180" preserveAspectRatio="none">
+            <path d="M0 160 C70 147 115 128 170 112 S270 78 350 58 S470 33 600 22" fill="none" stroke="#18c998" stroke-width="4"/>
+            <path d="M0 42 C90 33 150 40 225 48 S350 75 420 108 S525 145 600 158" fill="none" stroke="#4b7dff" stroke-width="4"/>
+            <path d="M0 110 C80 97 150 101 220 88 S350 94 420 75 S520 83 600 66" fill="none" stroke="#ff9c42" stroke-width="3"/>
+          </svg>
+          <div class="chart-labels"><span>09:18</span><span>09:26</span><span>09:34</span><span>09:42</span></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:#18c998"></i>SOC</span>
+          <span><i style="background:#4b7dff"></i>功率</span>
+          <span><i style="background:#ff9c42"></i>电流</span>
+        </div>
+      </article>
+
+      <div class="grid g2">
+        <article class="card">
+          <div class="card-head"><div class="card-title">用户与车辆</div></div>
+          <div class="line"><span>用户</span><b>${o.user}</b></div>
+          <div class="line"><span>联系电话</span><b>${o.phone}</b></div>
+          <div class="line"><span>车牌号</span><b>${o.plate}</b></div>
+          <div class="line"><span>车辆型号</span><b>特斯拉 Model Y</b></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div class="card-title">费用构成</div></div>
+          <div class="line"><span>电费</span><b>¥21.54</b></div>
+          <div class="line"><span>服务费</span><b>¥16.28</b></div>
+          <div class="line"><span>电站优惠</span><b style="color:#078966">-¥3.00</b></div>
+          <div class="line"><span>优惠券</span><b style="color:#078966">-¥7.00</b></div>
+          <div class="line"><span>实付金额</span><b style="font-size:17px">¥${o.amount.toFixed(2)}</b></div>
+        </article>
+      </div>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">业务处理记录</div></div>
+        <div class="timeline">
+          <div class="timeline-item"><b>订单创建</b><span>09:18:22 · 用户扫码启动</span></div>
+          <div class="timeline-item"><b>账户冻结成功</b><span>09:18:25 · 冻结金额¥30.00</span></div>
+          <div class="timeline-item"><b>设备启动成功</b><span>09:18:31 · ${o.gun}枪</span></div>
+          <div class="timeline-item"><b>${o.status}</b><span>当前业务状态</span></div>
+        </div>
+      </article>
+    `,
+    `
+      <button class="btn outline" data-action="contact-user" data-id="${o.id}">联系用户</button>
+      <button class="btn soft" data-action="send-user-coupon" data-id="${o.id}">发送关怀券</button>
+      ${o.status==="已完成"?`<button class="btn warning" data-action="order-refund" data-id="${o.id}">订单退款</button>`:""}
+      ${o.status==="充电中"?`<button class="btn danger" data-action="stop-charge" data-id="${o.gun}">停止充电</button>`:""}
+    `
+  );
+}
+
+/* 电价 */
+function renderPricing(){
+  const rows=state.pricePlans
+    .filter(p=>state.priceFilter==="全部"||p.status===state.priceFilter)
+    .map(p=>[
+      `<span class="cell-main">${p.name}</span><span class="cell-sub">${p.id}</span>`,
+      `V${p.version}`,
+      `${p.stations}座`,
+      statusTag(p.status),
+      p.effect,
+      `
+        <div class="actions">
+          <button class="btn sm outline" data-action="price-detail" data-id="${p.id}">详情</button>
+          ${["草稿","已驳回"].includes(p.status)?`
+            <button class="btn sm soft" data-action="edit-price" data-id="${p.id}">编辑</button>
+            <button class="btn sm primary" data-action="submit-price" data-id="${p.id}">提交审批</button>
+          `:""}
+          ${p.status==="待审核"?`
+            <button class="btn sm primary" data-action="approve-price" data-id="${p.id}">审批</button>
+            <button class="btn sm danger" data-action="reject-price" data-id="${p.id}">驳回</button>
+          `:""}
+          ${p.status==="已生效"?`
+            <button class="btn sm warning" data-action="rollback-price" data-id="${p.id}">版本回滚</button>
+            <button class="btn sm danger" data-action="disable-price" data-id="${p.id}">停用</button>
+          `:""}
+        </div>
+      `
+    ]);
+
+  return `
+    ${pageHead(
+      "电价管理",
+      "新建、编辑、审批、发布、渠道同步、版本回滚和停用均形成真实状态闭环。",
+      `
+        <button class="btn outline" data-action="copy-price">复制现有方案</button>
+        <button class="btn primary" data-action="new-price">＋ 新建电价方案</button>
+      `
+    )}
+
+    <div class="notice">
+      已生效方案不能直接覆盖修改。编辑已生效方案会生成新版本，重新审批通过后才会替换线上价格。
+    </div>
+
+    <div class="grid g4">
+      ${kpi("资费方案","3个","覆盖12座电站","¥")}
+      ${kpi("已生效","1个","深圳标准分时电价","✓","blue")}
+      ${kpi("待审核","1个","等待运营负责人审批","▤","orange")}
+      ${kpi("草稿","1个","尚未进入审批流程","✎","red")}
+    </div>
+
+    <div class="toolbar" style="margin-top:14px">
+      <div class="toolbar-left">
+        <input class="input" placeholder="搜索方案名称">
+        <select class="input" id="priceStatus">
+          ${["全部","已生效","待审核","草稿","已驳回","已停用"].map(v=>`<option ${state.priceFilter===v?"selected":""}>${v}</option>`).join("")}
+        </select>
+        <button class="btn primary" data-action="filter-prices">查询</button>
+      </div>
+    </div>
+
+    <article class="card">
+      <div class="card-head">
+        <div><div class="card-title">电价方案</div><div class="card-sub">业务状态随审批、发布和停用操作实时变化</div></div>
+      </div>
+      ${table(["方案名称","版本","适用范围","状态","生效时间","操作"],rows)}
+    </article>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">当前分时价格</div></div>
+        <div class="price-line">
+          <div class="price-seg low" style="flex:7"><b>谷 ¥0.82</b><span>00:00-07:00</span></div>
+          <div class="price-seg flat" style="flex:3"><b>平 ¥1.18</b><span>07:00-10:00</span></div>
+          <div class="price-seg peak" style="flex:8"><b>峰 ¥1.32</b><span>10:00-18:00</span></div>
+          <div class="price-seg top" style="flex:3"><b>尖 ¥1.58</b><span>18:00-21:00</span></div>
+          <div class="price-seg low" style="flex:3"><b>谷 ¥0.82</b><span>21:00-24:00</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">价格发布状态</div></div>
+        <div class="line"><span>车主充电小程序</span><b style="color:#078966">同步成功</b></div>
+        <div class="line"><span>运营管理端</span><b style="color:#078966">同步成功</b></div>
+        <div class="line"><span>第三方聚合渠道</span><b style="color:#078966">同步成功</b></div>
+        <div class="line"><span>设备本地计费缓存</span><b style="color:#078966">下发成功</b></div>
+      </article>
+    </div>
+  `;
+}
+
+function priceDetail(id){
+  const p=state.pricePlans.find(x=>x.id===id);
+  showDrawer(
+    p.name,
+    `${p.id} · V${p.version}`,
+    `
+      <div class="workflow">
+        <span class="workflow-step done">创建方案</span>
+        <span class="workflow-step done">配置价格</span>
+        <span class="workflow-step ${p.status==="草稿"?"current":"done"}">提交审批</span>
+        <span class="workflow-step ${p.status==="待审核"?"current":p.status==="已生效"?"done":""}">运营审批</span>
+        <span class="workflow-step ${p.status==="已生效"?"done":""}">发布生效</span>
+        <span class="workflow-step ${p.status==="已生效"?"done":""}">渠道同步</span>
+      </div>
+
+      <article class="card" style="margin-top:14px">
+        <div class="card-head"><div class="card-title">方案信息</div></div>
+        <div class="line"><span>当前状态</span><b>${p.status}</b></div>
+        <div class="line"><span>当前版本</span><b>V${p.version}</b></div>
+        <div class="line"><span>适用电站</span><b>${p.stations}座</b></div>
+        <div class="line"><span>生效时间</span><b>${p.effect}</b></div>
+        <div class="line"><span>审批人</span><b>运营总监 · 陈志远</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">分时电价</div></div>
+        <div class="price-line">
+          <div class="price-seg low" style="flex:7"><b>谷 ¥0.82</b><span>00-07</span></div>
+          <div class="price-seg flat" style="flex:3"><b>平 ¥1.18</b><span>07-10</span></div>
+          <div class="price-seg peak" style="flex:8"><b>峰 ¥1.32</b><span>10-18</span></div>
+          <div class="price-seg top" style="flex:3"><b>尖 ¥1.58</b><span>18-21</span></div>
+          <div class="price-seg low" style="flex:3"><b>谷 ¥0.82</b><span>21-24</span></div>
+        </div>
+        <div class="line"><span>液冷超充服务费</span><b>¥0.68/kWh</b></div>
+        <div class="line"><span>直流快充服务费</span><b>¥0.45/kWh</b></div>
+        <div class="line"><span>交流慢充服务费</span><b>¥0.20/kWh</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">版本记录</div></div>
+        <div class="timeline">
+          <div class="timeline-item"><b>V${p.version} · ${p.status}</b><span>当前版本</span></div>
+          <div class="timeline-item"><b>V${Math.max(1,p.version-1)} · 历史版本</b><span>2025-05-20 00:00生效</span></div>
+        </div>
+      </article>
+    `,
+    `
+      ${p.status==="草稿"?`<button class="btn primary" data-action="submit-price" data-id="${p.id}">提交审批</button>`:""}
+      ${p.status==="待审核"?`
+        <button class="btn danger" data-action="reject-price" data-id="${p.id}">驳回</button>
+        <button class="btn primary" data-action="approve-price" data-id="${p.id}">审批通过</button>
+      `:""}
+      ${p.status==="已生效"?`<button class="btn warning" data-action="rollback-price" data-id="${p.id}">回滚版本</button>`:""}
+    `
+  );
+}
+
+/* 运维工单 */
+function renderOperations(){
+  const rows=state.workOrders.map(w=>[
+    `<span class="cell-main">${w.id}</span><span class="cell-sub">${w.station}</span>`,
+    `${w.device}枪`,
+    w.issue,
+    statusTag(w.status),
+    w.worker,
+    w.sla,
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="work-detail" data-id="${w.id}">详情</button>
+        ${w.status==="待派工"?`<button class="btn sm primary" data-action="assign-work" data-id="${w.id}">派工</button>`:""}
+        ${w.status==="维修中"?`<button class="btn sm soft" data-action="finish-work" data-id="${w.id}">提交维修结果</button>`:""}
+        ${w.status==="待验收"?`<button class="btn sm primary" data-action="verify-work" data-id="${w.id}">验收关闭</button>`:""}
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "运维工单",
+      "从设备异常生成工单，经过派工、接单、维修、提交结果、运营验收后正式关闭。",
+      `
+        <button class="btn outline" data-action="inspection-report">巡检报告</button>
+        <button class="btn primary" data-action="new-work-order">＋ 新建工单</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("待派工","1单","建议30分钟内完成派工","🕒","orange")}
+      ${kpi("维修中","1单","运维人员已到场","🛠","blue")}
+      ${kpi("待验收","0单","维修完成后由运营验收","✓")}
+      ${kpi("本月完成","18单","平均处理时长1.6小时","▤","red")}
+    </div>
+
+    <article class="card" style="margin-top:14px">
+      <div class="card-head">
+        <div><div class="card-title">维修工单</div><div class="card-sub">关闭工单前必须上传维修结果并通过测试订单验收</div></div>
+      </div>
+      ${table(["工单","设备","故障问题","状态","运维人员","SLA","操作"],rows)}
+    </article>
+  `;
+}
+
+function workDetail(id){
+  const w=state.workOrders.find(x=>x.id===id);
+  const steps=["创建","待派工","维修中","待验收","已完成"];
+  const index=steps.indexOf(w.status);
+
+  showDrawer(
+    `维修工单 ${w.id}`,
+    `${w.station} · ${w.device}枪`,
+    `
+      <div class="workflow">
+        ${["工单创建","运维派工","现场维修","提交结果","运营验收"].map((step,i)=>`
+          <span class="workflow-step ${i<index?"done":i===index?"current":""}">${step}</span>
+        `).join("")}
+      </div>
+
+      <div class="grid g2" style="margin-top:14px">
+        <article class="card">
+          <div class="card-head"><div class="card-title">故障信息</div></div>
+          <div class="line"><span>设备编码</span><b>${w.device}</b></div>
+          <div class="line"><span>故障类型</span><b>${w.issue}</b></div>
+          <div class="line"><span>优先级</span><b style="color:var(--red)">高</b></div>
+          <div class="line"><span>要求时限</span><b>${w.sla}</b></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div class="card-title">执行信息</div></div>
+          <div class="line"><span>当前状态</span><b>${w.status}</b></div>
+          <div class="line"><span>运维人员</span><b>${w.worker}</b></div>
+          <div class="line"><span>联系电话</span><b>${w.worker==="未指派"?"-":"136****2096"}</b></div>
+          <div class="line"><span>备件需求</span><b>枪线绝缘套、检测工具</b></div>
+        </article>
+      </div>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">工单处理记录</div></div>
+        <div class="timeline">
+          <div class="timeline-item"><b>系统检测到设备异常</b><span>10:18 · 设备A11上报绝缘异常</span></div>
+          <div class="timeline-item"><b>自动生成维修工单</b><span>10:19 · 关联设备日志与故障代码</span></div>
+          ${w.worker!=="未指派"?`<div class="timeline-item"><b>已指派给${w.worker}</b><span>运维人员已接单</span></div>`:""}
+        </div>
+      </article>
+    `,
+    `
+      ${w.status==="待派工"?`<button class="btn primary" data-action="assign-work" data-id="${w.id}">立即派工</button>`:""}
+      ${w.status==="维修中"?`
+        <button class="btn outline" data-action="contact-worker" data-id="${w.id}">联系运维</button>
+        <button class="btn primary" data-action="finish-work" data-id="${w.id}">提交维修结果</button>
+      `:""}
+      ${w.status==="待验收"?`<button class="btn primary" data-action="verify-work" data-id="${w.id}">验收并关闭</button>`:""}
+    `
+  );
+}
+
+/* 用户 */
+function renderUsers(){
+  const rows=state.users.map(u=>[
+    `<span class="cell-main">${u.name}</span><span class="cell-sub">${u.id} · ${u.phone}</span>`,
+    u.type,
+    u.tag,
+    `¥${u.balance.toFixed(2)}`,
+    `${u.orders}次`,
+    statusTag(u.status),
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="user-detail" data-id="${u.id}">详情</button>
+        <button class="btn sm soft" data-action="adjust-balance" data-id="${u.id}">余额调整</button>
+        <button class="btn sm primary" data-action="send-user-coupon" data-id="${u.id}">发券</button>
+        <button class="btn sm danger" data-action="blacklist-user" data-id="${u.id}">黑名单</button>
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "用户管理",
+      "统一管理用户资料、车辆、钱包、订单、退款、优惠券与风险状态。",
+      `
+        <button class="btn outline" data-action="export-users">导出用户</button>
+        <button class="btn primary" data-action="create-user-tag">创建用户分组</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("累计用户","86,532人","付费转化率63.8%","♙")}
+      ${kpi("用户余额","¥328,640","个人与企业账户余额","¥","blue")}
+      ${kpi("退款待审核","7笔","申请金额¥368.20","↩","orange")}
+      ${kpi("高风险用户","42人","异常支付或恶意占位","!","red")}
+    </div>
+
+    <div class="toolbar" style="margin-top:14px">
+      <div class="toolbar-left">
+        <input class="input" placeholder="姓名、手机号或车牌">
+        <select class="input"><option>全部用户类型</option><option>个人用户</option><option>企业员工</option></select>
+        <button class="btn primary" data-action="filter-users">查询</button>
+      </div>
+    </div>
+
+    <article class="card">
+      <div class="card-head"><div><div class="card-title">用户列表</div><div class="card-sub">所有资金调整均需填写原因并保留操作日志</div></div></div>
+      ${table(["用户","类型","标签/企业","账户余额","充电次数","状态","操作"],rows)}
+    </article>
+  `;
+}
+
+function userDetail(id){
+  const u=state.users.find(x=>x.id===id);
+  showDrawer(
+    `${u.name} · ${u.phone}`,
+    `${u.type} · ${u.tag}`,
+    `
+      <div class="grid g3">
+        ${kpi("账户余额","¥"+u.balance.toFixed(2),"冻结金额¥37.82","¥")}
+        ${kpi("累计充电",u.orders+"次","累计电量1,286kWh","⚡","blue")}
+        ${kpi("优惠券","5张","2张将在7天内到期","🎫","orange")}
+      </div>
+
+      <div class="grid g2" style="margin-top:14px">
+        <article class="card">
+          <div class="card-head"><div class="card-title">车辆信息</div></div>
+          <div class="line"><span>默认车辆</span><b>粤B·A82Q6</b></div>
+          <div class="line"><span>车辆型号</span><b>特斯拉 Model Y</b></div>
+          <div class="line"><span>认证状态</span><b style="color:#078966">已认证</b></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div class="card-title">用户风险</div></div>
+          <div class="line"><span>退款次数</span><b>1次</b></div>
+          <div class="line"><span>占位次数</span><b>3次</b></div>
+          <div class="line"><span>当前状态</span><b>${u.status}</b></div>
+        </article>
+      </div>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">最近账户流水</div></div>
+        ${table(
+          ["时间","类型","关联订单","金额","状态"],
+          [
+            ["06-18 09:18","充电冻结","2025061809180826","-¥30.00",statusTag("已完成")],
+            ["06-12 10:28","充电消费","20250612082618","-¥46.28",statusTag("已完成")],
+            ["06-10 18:20","账户充值","微信支付","+¥100.00",statusTag("已完成")]
+          ]
+        )}
+      </article>
+    `,
+    `
+      <button class="btn outline" data-action="contact-user" data-id="${u.id}">联系用户</button>
+      <button class="btn soft" data-action="adjust-balance" data-id="${u.id}">调整余额</button>
+      <button class="btn primary" data-action="send-user-coupon" data-id="${u.id}">发送优惠券</button>
+    `
+  );
+}
+
+/* 营销 */
+function renderMarketing(){
+  const rows=state.campaigns.map(c=>[
+    `<span class="cell-main">${c.name}</span><span class="cell-sub">${c.id}</span>`,
+    c.type,
+    `${c.users}人`,
+    `¥${c.used.toLocaleString()} / ¥${c.budget.toLocaleString()}`,
+    statusTag(c.status),
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="campaign-detail" data-id="${c.id}">详情</button>
+        ${c.status==="待审核"?`<button class="btn sm primary" data-action="approve-campaign" data-id="${c.id}">审核发布</button>`:""}
+        ${c.status==="进行中"?`<button class="btn sm warning" data-action="pause-campaign" data-id="${c.id}">暂停</button>`:""}
+        ${c.status==="已暂停"?`<button class="btn sm primary" data-action="resume-campaign" data-id="${c.id}">恢复</button>`:""}
+        ${["进行中","已暂停"].includes(c.status)?`<button class="btn sm danger" data-action="end-campaign" data-id="${c.id}">结束</button>`:""}
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "营销中心",
+      "活动从人群选择、权益配置、预算审核、发布触达，到效果回流形成完整闭环。",
+      `
+        <button class="btn outline" data-action="new-coupon">创建优惠券</button>
+        <button class="btn primary" data-action="new-campaign">＋ 创建营销活动</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("进行中活动","1个","30天未充电用户召回","🎯")}
+      ${kpi("营销触达","4,572人","本月触达用户","📣","blue")}
+      ${kpi("预算使用","¥28,660","预算使用率60.9%","¥","orange")}
+      ${kpi("活动转化率","8.4%","较上月提升1.8%","↗","red")}
+    </div>
+
+    <article class="card" style="margin-top:14px">
+      <div class="card-head">
+        <div><div class="card-title">营销活动</div><div class="card-sub">暂停和结束操作会同步停止用户触达与奖品发放</div></div>
+      </div>
+      ${table(["活动","类型","目标用户","预算使用","状态","操作"],rows)}
+    </article>
+
+    <div class="grid g3" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">目标人群</div></div>
+        <div class="line"><span>30天未充电用户</span><b>286人</b></div>
+        <div class="line"><span>低频用户</span><b>3,420人</b></div>
+        <div class="line"><span>高价值用户</span><b>1,286人</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="create-user-tag">管理用户分组</button>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">权益库存</div></div>
+        <div class="line"><span>满30减5元券</span><b>2,860张</b></div>
+        <div class="line"><span>服务费8折券</span><b>1,280张</b></div>
+        <div class="line"><span>100kWh电量卡</span><b>300张</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="new-coupon">新增权益</button>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">效果回流</div></div>
+        <div class="line"><span>活动订单</span><b>386单</b></div>
+        <div class="line"><span>新增充电电量</span><b>4,860kWh</b></div>
+        <div class="line"><span>带动服务费收入</span><b>¥6,826</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="marketing-report">查看效果报告</button>
+      </article>
+    </div>
+  `;
+}
+
+/* 前端配置 */
+function renderFront(){
+  return `
+    ${pageHead(
+      "前端配置",
+      "统一管理车主端小程序的基础信息、首页广告、协议、支付与功能开关。",
+      `
+        <button class="btn outline" data-action="preview-front">实时预览</button>
+        <button class="btn primary" data-action="publish-front">发布新版本</button>
+      `
+    )}
+
+    <div class="notice">
+      所有配置先保存为草稿，预览确认后再发布。发布成功后车主端将在下一次进入小程序时加载新版本。
+    </div>
+
+    <div class="grid g3">
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">基础配置</div><div class="card-sub">当前版本 V3.6.0</div></div>
+          <button class="btn sm soft" data-action="edit-front-base">编辑</button>
+        </div>
+        <div class="line"><span>小程序名称</span><b>星途充电</b></div>
+        <div class="line"><span>默认城市</span><b>深圳市</b></div>
+        <div class="line"><span>最低起充金额</span><b>¥5.00</b></div>
+        <div class="line"><span>默认结算</span><b>自动结算</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">首页广告位</div><div class="card-sub">3个内容正在投放</div></div>
+          <button class="btn sm soft" data-action="manage-banners">管理</button>
+        </div>
+        <div class="line"><span>新用户首充立减</span><b style="color:#078966">投放中</b></div>
+        <div class="line"><span>夜间谷电活动</span><b style="color:#078966">投放中</b></div>
+        <div class="line"><span>V2G内测招募</span><b style="color:#078966">投放中</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">协议与隐私</div><div class="card-sub">协议变更需重新发布版本</div></div>
+          <button class="btn sm soft" data-action="manage-agreements">管理</button>
+        </div>
+        <div class="line"><span>用户服务协议</span><b>V4.2</b></div>
+        <div class="line"><span>隐私政策</span><b>V3.8</b></div>
+        <div class="line"><span>注销协议</span><b>V2.1</b></div>
+      </article>
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">功能开关</div></div>
+        ${[
+          ["个人余额支付","支持用户余额账户支付",true],
+          ["企业账户支付","支持企业与车队账户",true],
+          ["自动结算","按最优优惠自动结算",true],
+          ["V2G放电","当前仅向内测用户开放",false],
+          ["充电后占位计费","充满后超过免费时长计费",true]
+        ].map(i=>`
+          <div class="switch-line">
+            <div><b>${i[0]}</b><small>${i[1]}</small></div>
+            <button class="switch ${i[2]?"on":""}" data-action="toggle-switch"></button>
+          </div>
+        `).join("")}
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">发布记录</div></div>
+        <div class="timeline">
+          <div class="timeline-item"><b>V3.6.0 · 已发布</b><span>今天 08:30 · 新增优惠券优先级配置</span></div>
+          <div class="timeline-item"><b>V3.5.2 · 历史版本</b><span>2025-06-10 · 优化扫码异常提示</span></div>
+          <div class="timeline-item"><b>V3.5.0 · 历史版本</b><span>2025-05-28 · 新增V2G内测入口</span></div>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+/* 内部充电 */
+function renderInternal(){
+  return `
+    ${pageHead(
+      "内部充电",
+      "管理员工、车辆、电卡、额度、内部折扣、充电扣款和月度结算。",
+      `
+        <button class="btn outline" data-action="internal-rules">账户策略</button>
+        <button class="btn primary" data-action="allocate-internal">分配额度</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("内部账户","28个","覆盖3个部门","👥")}
+      ${kpi("账户余额","¥8,620","员工与电卡合计","¥","blue")}
+      ${kpi("本月充电","1,286kWh","内部费用¥1,460","⚡","orange")}
+      ${kpi("待补款","2笔","线下离线充电订单","!","red")}
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head">
+          <div><div class="card-title">员工内部账户</div><div class="card-sub">余额分配和回收均写入资金日志</div></div>
+        </div>
+        ${table(
+          ["员工","部门","车辆/电卡","余额","本月使用","操作"],
+          [
+            ["王明","运营部","粤B·A82Q6 / C008","¥820.00","¥48.20",`
+              <div class="actions">
+                <button class="btn sm soft" data-action="allocate-internal" data-name="王明">分配</button>
+                <button class="btn sm warning" data-action="recover-internal" data-name="王明">回收</button>
+              </div>
+            `],
+            ["李华","司机组","粤B·7Q28P / C012","¥560.00","¥39.50",`
+              <div class="actions">
+                <button class="btn sm soft" data-action="allocate-internal" data-name="李华">分配</button>
+                <button class="btn sm warning" data-action="recover-internal" data-name="李华">回收</button>
+              </div>
+            `]
+          ]
+        )}
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">内部账户策略</div></div>
+        <div class="line"><span>每月自动分配</span><b>每月1日 ¥500</b></div>
+        <div class="line"><span>一号多充</span><b>最多3笔同时订单</b></div>
+        <div class="line"><span>内部折扣</span><b>服务费8折</b></div>
+        <div class="line"><span>可用电站</span><b>全部自营电站</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="internal-rules">编辑策略</button>
+      </article>
+    </div>
+
+    <article class="card" style="margin-top:14px">
+      <div class="card-head"><div><div class="card-title">内部充电记录</div><div class="card-sub">用于部门成本分摊与月度结算</div></div></div>
+      ${table(
+        ["订单","员工/部门","车辆","电量","金额","结算状态","操作"],
+        [
+          ["IN20250618001","王明 / 运营部","粤B·A82Q6","42.6kWh","¥48.20",statusTag("已完成"),`<button class="btn sm outline" data-action="internal-order">详情</button>`],
+          ["IN20250618002","李华 / 司机组","粤B·7Q28P","36.8kWh","¥39.50",statusTag("已完成"),`<button class="btn sm outline" data-action="internal-order">详情</button>`],
+          ["IN20250618003","赵强 / 行政部","粤B·6M82Q","18.4kWh","¥21.00",statusTag("待支付"),`<button class="btn sm primary" data-action="internal-supplement">补款核销</button>`]
+        ]
+      )}
+    </article>
+  `;
+}
+
+/* 财务 */
+function renderFinance(){
+  const rows=state.invoices.map(i=>[
+    `<span class="cell-main">${i.id}</span><span class="cell-sub">${i.title}</span>`,
+    i.type,
+    `${i.orders}笔`,
+    `¥${i.amount.toFixed(2)}`,
+    statusTag(i.status),
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="invoice-detail" data-id="${i.id}">详情</button>
+        ${i.status==="待开票"?`
+          <button class="btn sm primary" data-action="issue-invoice" data-id="${i.id}">开具发票</button>
+          <button class="btn sm danger" data-action="reject-invoice" data-id="${i.id}">驳回</button>
+        `:""}
+        ${i.status==="开票中"?`<button class="btn sm soft" data-action="complete-invoice" data-id="${i.id}">完成开票</button>`:""}
+        ${i.status==="已完成"?`
+          <button class="btn sm soft" data-action="send-invoice" data-id="${i.id}">发送邮箱</button>
+          <button class="btn sm warning" data-action="replace-invoice" data-id="${i.id}">换开</button>
+        `:""}
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "财务开票",
+      "订单核验、开票审核、税务开具、发送用户、换开红冲与对账全部形成业务闭环。",
+      `
+        <button class="btn outline" data-action="reconciliation">财务对账</button>
+        <button class="btn primary" data-action="batch-invoice">批量开票</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("企业账户余额","¥286,420","可用资金余额","¥")}
+      ${kpi("本月交易金额","¥628,650","服务费收入¥218,620","▤","blue")}
+      ${kpi("本月已开票","¥68,214","共342张发票","🧾","orange")}
+      ${kpi("待开票申请","1笔","金额¥286.80","!","red")}
+    </div>
+
+    <article class="card" style="margin-top:14px">
+      <div class="card-head">
+        <div><div class="card-title">发票申请</div><div class="card-sub">换开发票会先完成原发票红冲，再开具新发票</div></div>
+      </div>
+      ${table(["申请单","发票类型","关联订单","金额","状态","操作"],rows)}
+    </article>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">资金账户</div></div>
+        <div class="line"><span>可用余额</span><b>¥286,420.00</b></div>
+        <div class="line"><span>待结算资金</span><b>¥38,620.50</b></div>
+        <div class="line"><span>退款冻结</span><b>¥368.20</b></div>
+        <div class="line"><span>昨日结算到账</span><b>¥21,586.20</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">对账状态</div></div>
+        <div class="line"><span>微信支付渠道</span><b style="color:#078966">账实一致</b></div>
+        <div class="line"><span>个人余额账户</span><b style="color:#078966">账实一致</b></div>
+        <div class="line"><span>企业账户</span><b style="color:#d1781c">1笔待确认</b></div>
+        <div class="line"><span>退款渠道</span><b style="color:#078966">账实一致</b></div>
+      </article>
+    </div>
+  `;
+}
+
+/* 企业 */
+function renderEnterprise(){
+  const rows=state.employees.map(e=>[
+    `<span class="cell-main">${e.name}</span><span class="cell-sub">${e.phone}</span>`,
+    e.dept,
+    e.role,
+    statusTag(e.status),
+    "今天 09:18",
+    `
+      <div class="actions">
+        <button class="btn sm outline" data-action="edit-employee" data-id="${e.id}">编辑</button>
+        <button class="btn sm soft" data-action="employee-permission" data-id="${e.id}">权限</button>
+        <button class="btn sm danger" data-action="disable-employee" data-id="${e.id}">停用</button>
+      </div>
+    `
+  ]);
+
+  return `
+    ${pageHead(
+      "组织权限",
+      "管理员工、部门、岗位权限、数据范围和敏感操作审批。",
+      `
+        <button class="btn outline" data-action="role-manage">角色管理</button>
+        <button class="btn primary" data-action="new-employee">＋ 新增员工</button>
+      `
+    )}
+
+    <div class="grid g4">
+      ${kpi("企业员工","28人","本月新增2人","👥")}
+      ${kpi("业务部门","5个","运营、运维、财务等","🏢","blue")}
+      ${kpi("系统角色","8个","按最小权限配置","🔐","orange")}
+      ${kpi("高风险操作","3次","均已完成审批","!","red")}
+    </div>
+
+    <article class="card" style="margin-top:14px">
+      <div class="card-head"><div><div class="card-title">员工账号</div><div class="card-sub">停用员工不会删除历史操作记录</div></div></div>
+      ${table(["员工","部门","角色","状态","最近登录","操作"],rows)}
+    </article>
+
+    <div class="grid g2" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">角色权限</div></div>
+        <div class="line"><span>企业管理员</span><b>全部数据与操作权限</b></div>
+        <div class="line"><span>电站站长</span><b>指定电站运营权限</b></div>
+        <div class="line"><span>运维工程师</span><b>设备与工单权限</b></div>
+        <div class="line"><span>财务专员</span><b>账户、开票与对账权限</b></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">最近操作日志</div></div>
+        ${state.logs.slice(0,5).map(l=>`
+          <div class="line"><span>${l.time} · ${l.actor}</span><b>${l.action}</b></div>
+        `).join("")}
+      </article>
+    </div>
+  `;
+}
+
+/* 设置 */
+function renderSettings(){
+  return `
+    ${pageHead(
+      "系统设置",
+      "管理企业信息、消息通知、安全策略、渠道配置与系统版本。",
+      `<button class="btn primary" data-action="save-settings">保存设置</button>`
+    )}
+
+    <div class="grid g2">
+      <article class="card">
+        <div class="card-head"><div class="card-title">消息通知</div></div>
+        ${[
+          ["设备故障预警","故障发生时通知站长和运维人员",true],
+          ["占用事件通知","车辆充满占用或无充电占用",true],
+          ["用户评价通知","收到中差评时通知运营人员",true],
+          ["开票申请通知","收到用户开票和换开申请",true],
+          ["经营日报","每日09:00推送昨日经营数据",false]
+        ].map(i=>`
+          <div class="switch-line">
+            <div><b>${i[0]}</b><small>${i[1]}</small></div>
+            <button class="switch ${i[2]?"on":""}" data-action="toggle-switch"></button>
+          </div>
+        `).join("")}
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">安全策略</div></div>
+        <div class="line"><span>登录二次验证</span><b>敏感操作开启</b></div>
+        <div class="line"><span>登录有效期</span><b>12小时</b></div>
+        <div class="line"><span>退款审批阈值</span><b>超过¥50需审批</b></div>
+        <div class="line"><span>设备停止充电</span><b>需要填写操作原因</b></div>
+        <div class="line"><span>操作日志保存</span><b>永久保存</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="edit-security">编辑安全策略</button>
+      </article>
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <article class="card">
+        <div class="card-head"><div class="card-title">企业信息</div></div>
+        <div class="line"><span>企业名称</span><b>深圳星途新能源科技有限公司</b></div>
+        <div class="line"><span>认证状态</span><b style="color:#078966">已认证</b></div>
+        <div class="line"><span>客服电话</span><b>400-888-6628</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="edit-company">编辑企业信息</button>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">渠道配置</div></div>
+        <div class="line"><span>微信支付</span><b style="color:#078966">已连接</b></div>
+        <div class="line"><span>电子开票</span><b style="color:#078966">已连接</b></div>
+        <div class="line"><span>腾讯地图</span><b style="color:#078966">已连接</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="channel-settings">管理渠道</button>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="card-title">系统版本</div></div>
+        <div class="line"><span>当前版本</span><b>V3.6.0</b></div>
+        <div class="line"><span>发布时间</span><b>2025-06-18</b></div>
+        <div class="line"><span>版本状态</span><b style="color:#078966">最新版本</b></div>
+        <button class="btn soft block" style="margin-top:12px" data-action="version-detail">查看更新内容</button>
+      </article>
+    </div>
+  `;
+}
+
+/* 通用表单 */
+function stationForm(station={}){
+  return `
+    <div class="form-grid">
+      <div class="field"><label>电站名称 *</label><input class="input" id="formStationName" value="${station.name||""}"></div>
+      <div class="field"><label>所属城市 *</label><select class="input" id="formStationCity"><option>深圳市南山区</option><option>深圳市福田区</option><option>深圳市宝安区</option></select></div>
+      <div class="field form-full"><label>详细地址 *</label><input class="input" id="formStationAddress" value="${station.address||""}"></div>
+      <div class="field"><label>负责人 *</label><input class="input" id="formStationManager" value="${station.manager||""}"></div>
+      <div class="field"><label>联系电话 *</label><input class="input" id="formStationPhone" value="${station.phone||""}"></div>
+      <div class="field"><label>营业时间</label><input class="input" value="00:00 - 24:00"></div>
+      <div class="field"><label>默认电价方案</label><select class="input"><option>深圳标准分时电价</option><option>夜间谷电引流方案</option></select></div>
+      <div class="field form-full"><label>找桩指引</label><textarea class="input">进入停车场后沿绿色充电标识前往B2停车场C区。</textarea></div>
+    </div>
+  `;
+}
+
+function priceForm(plan={}){
+  return `
+    <div class="workflow" style="margin-bottom:15px">
+      <span class="workflow-step done">基础信息</span>
+      <span class="workflow-step current">分时价格</span>
+      <span class="workflow-step">适用范围</span>
+      <span class="workflow-step">提交审批</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="field"><label>方案名称 *</label><input class="input" id="priceNameInput" value="${plan.name||""}"></div>
+      <div class="field"><label>生效时间 *</label><input class="input" id="priceEffectInput" value="2025-06-20 00:00"></div>
+      <div class="field"><label>适用电站</label><select class="input"><option>全部自营电站</option><option>指定电站</option></select></div>
+      <div class="field"><label>审批人</label><select class="input"><option>运营总监 · 陈志远</option><option>财务负责人 · 陈敏</option></select></div>
+    </div>
+
+    ${table(
+      ["开始","结束","类型","电费","服务费","综合价"],
+      [
+        [`<input class="input" value="00:00">`,`<input class="input" value="07:00">`,"谷",`<input class="input" value="0.32">`,`<input class="input" value="0.50">`,"¥0.82"],
+        [`<input class="input" value="07:00">`,`<input class="input" value="10:00">`,"平",`<input class="input" value="0.68">`,`<input class="input" value="0.50">`,"¥1.18"],
+        [`<input class="input" value="10:00">`,`<input class="input" value="18:00">`,"峰",`<input class="input" value="0.82">`,`<input class="input" value="0.50">`,"¥1.32"],
+        [`<input class="input" value="18:00">`,`<input class="input" value="21:00">`,"尖",`<input class="input" value="0.98">`,`<input class="input" value="0.60">`,"¥1.58"]
+      ]
+    )}
+  `;
+}
+
+/* 全局事件 */
+document.addEventListener("click",event=>{
+  const pageButton=event.target.closest("[data-page]");
+  if(pageButton){
+    closeDrawer();
+    renderPage(pageButton.dataset.page);
+    return;
+  }
+
+  const loginTab=event.target.closest("[data-login-tab]");
+  if(loginTab){
+    $$("[data-login-tab]").forEach(b=>b.classList.remove("active"));
+    loginTab.classList.add("active");
+    $("#accountLogin").classList.toggle("active",loginTab.dataset.loginTab==="account");
+    $("#smsLogin").classList.toggle("active",loginTab.dataset.loginTab==="sms");
+    return;
+  }
+
+  const periodButton=event.target.closest("[data-dashboard-period]");
+  if(periodButton){
+    $$("[data-dashboard-period]").forEach(b=>b.classList.remove("active"));
+    periodButton.classList.add("active");
+
+    const data={
+      today:["18,620 kWh","¥23,846","628单"],
+      week:["126,580 kWh","¥162,846","4,286单"],
+      month:["486,320 kWh","¥628,650","16,826单"]
+    }[periodButton.dataset.dashboardPeriod];
+
+    $("#heroEnergy").textContent=data[0];
+    $("#heroAmount").textContent=data[1];
+    $("#heroOrders").textContent=data[2];
+    toast("经营周期已切换");
+    return;
+  }
+
+  const actionElement=event.target.closest("[data-action]");
+  if(!actionElement) return;
+
+  const action=actionElement.dataset.action;
+  const id=actionElement.dataset.id;
+
+  switch(action){
+    case "login-account":{
+      if(!$("#loginAccount").value.trim()||!$("#loginPassword").value.trim()){
+        toast("请输入账号和密码","error");
+        return;
+      }
+      $("#loginPage").classList.add("hide");
+      toast("登录成功，欢迎进入星途充电运营平台");
+      break;
+    }
+
+    case "send-login-code":
+      $("#loginCode").value="668826";
+      toast("验证码已发送，演示验证码为668826");
+      break;
+
+    case "login-sms":
+      if($("#loginCode").value.trim()!=="668826"){
+        toast("验证码错误，请输入668826","error");
+        return;
+      }
+      $("#loginPage").classList.add("hide");
+      toast("手机号验证成功");
+      break;
+
+    case "close-drawer": closeDrawer(); break;
+    case "close-dialog": closeDialog(); break;
+
+    case "global-search":{
+      const keyword=$("#globalSearchInput").value.trim();
+      if(!keyword){
+        toast("请输入订单号、设备编号、用户或电站名称","warning");
+        return;
+      }
+
+      const matchedOrder=state.orders.find(o=>o.id.includes(keyword)||o.plate.includes(keyword)||o.user.includes(keyword));
+      const matchedDevice=state.devices.find(d=>d.id.includes(keyword)||d.station.includes(keyword));
+      const matchedStation=state.stations.find(s=>s.name.includes(keyword));
+
+      if(matchedOrder) orderDetail(matchedOrder.id);
+      else if(matchedDevice) deviceDetail(matchedDevice.id);
+      else if(matchedStation) stationDetail(matchedStation.id);
+      else toast("未找到匹配的业务数据","error");
+      break;
+    }
+
+    case "message-center":
+      showDrawer(
+        "消息中心",
+        `${state.messages}条未读业务消息`,
+        `
+          ${[
+            ["设备故障预警","A11枪发生绝缘检测异常","10分钟前","operations"],
+            ["用户开票申请","新增一笔¥286.80开票申请","18分钟前","finance"],
+            ["用户差评","深圳湾站停车减免未生效","25分钟前","orders"],
+            ["营销待审核","夜间谷电8折活动等待审批","42分钟前","marketing"]
+          ].map(m=>`
+            <button class="task" data-page="${m[3]}" style="margin-bottom:9px">
+              <div class="task-icon">🔔</div>
+              <div class="task-info"><b>${m[0]}</b><small>${m[1]} · ${m[2]}</small></div>
+              <span>›</span>
+            </button>
+          `).join("")}
+        `,
+        `<button class="btn primary" data-action="read-all-message">全部标记已读</button>`
+      );
+      break;
+
+    case "read-all-message":
+      state.messages=0;
+      $("#messageBadge").textContent="0";
+      closeDrawer();
+      toast("所有消息已标记为已读");
+      break;
+
+    case "switch-company":
+      showDialog(
+        "切换当前企业",
+        "切换后页面数据、场站范围和操作权限将同步变化。",
+        `
+          <div class="check-card active" data-company="深圳星途新能源科技有限公司">
+            <b>深圳星途新能源科技有限公司</b>
+            <span>12座电站 · 企业管理员</span><i>✓</i>
+          </div>
+          <div class="check-card" data-company="广州星途能源运营有限公司" style="margin-top:9px">
+            <b>广州星途能源运营有限公司</b>
+            <span>8座电站 · 企业管理员</span><i>✓</i>
+          </div>
+        `,
+        "确认切换",
+        ()=>{
+          const active=$(".check-card.active");
+          state.company=active.dataset.company;
+          toast("已切换至："+state.company);
+        }
+      );
+      break;
+
+    case "account-menu":
+      showDrawer(
+        "账号与安全",
+        "企业管理员 · admin@xingtu",
+        `
+          <article class="card">
+            <div class="line"><span>登录账号</span><b>admin@xingtu</b></div>
+            <div class="line"><span>绑定手机</span><b>138****6628</b></div>
+            <div class="line"><span>最近登录</span><b>深圳 · 当前设备</b></div>
+            <div class="line"><span>登录设备</span><b>2台</b></div>
+          </article>
+          <button class="btn soft block" data-action="change-password">修改登录密码</button>
+          <button class="btn danger block" style="margin-top:9px" data-action="logout">退出登录</button>
+        `
+      );
+      break;
+
+    case "change-password":
+      showDialog(
+        "修改登录密码",
+        "密码修改后其他已登录设备将退出。",
+        `
+          <div class="field"><label>当前密码</label><input class="input" type="password"></div>
+          <div class="field"><label>新密码</label><input class="input" type="password"></div>
+          <div class="field"><label>确认新密码</label><input class="input" type="password"></div>
+        `,
+        "确认修改",
+        ()=>toast("密码修改成功")
+      );
+      break;
+
+    case "logout":
+      closeDrawer();
+      $("#loginPage").classList.remove("hide");
+      toast("已安全退出");
+      break;
+
+    case "open-all-tasks":
+      showDrawer(
+        "全部待办",
+        "按处理优先级排列",
+        `
+          <button class="task" data-page="operations"><div class="task-icon">🛠</div><div class="task-info"><b>维修工单待派工</b><small>1笔高优先级工单</small></div><span>›</span></button>
+          <button class="task" data-page="finance" style="margin-top:9px"><div class="task-icon">🧾</div><div class="task-info"><b>开票申请待处理</b><small>1笔待开票申请</small></div><span>›</span></button>
+          <button class="task" data-page="marketing" style="margin-top:9px"><div class="task-icon">🎯</div><div class="task-info"><b>活动等待审批</b><small>夜间谷电8折活动</small></div><span>›</span></button>
+        `
+      );
+      break;
+
+    case "diagnosis-detail":
+      showDrawer(
+        "经营诊断报告",
+        "南山科技园超级充电站 · 本周",
+        `
+          <div class="grid g3">
+            ${kpi("综合评分","86分","超过82%同类电站","📈")}
+            ${kpi("可提升项","4项","预计提升电量8.6%","↗","orange")}
+            ${kpi("预计增收","¥12,680/月","基于近30天模型","¥","blue")}
+          </div>
+
+          <article class="card" style="margin-top:14px">
+            <div class="card-head"><div class="card-title">高优先级建议</div></div>
+            <div class="notice">夜间设备利用率仅12.8%，低于区域均值9.6个百分点。</div>
+            <div class="line"><span>建议价格</span><b>23:00-07:00 综合价¥0.82/kWh</b></div>
+            <div class="line"><span>目标用户</span><b>周边5公里夜间快充用户</b></div>
+            <div class="line"><span>预计提升</span><b style="color:#078966">电量 +8.6%</b></div>
+            <button class="btn primary block" style="margin-top:12px" data-action="create-diagnosis-plan">创建运营计划</button>
+          </article>
+        `
+      );
+      break;
+
+    case "create-diagnosis-plan":
+      closeDrawer();
+      renderPage("marketing");
+      setTimeout(()=>toast("已带入诊断建议，可创建夜间谷电活动"),200);
+      break;
+
+    case "custom-period":
+    case "order-date-filter":
+      showDialog(
+        "选择数据周期",
+        "设置开始和结束日期后重新统计数据。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>开始日期</label><input class="input" type="date" value="2025-06-01"></div>
+            <div class="field"><label>结束日期</label><input class="input" type="date" value="2025-06-18"></div>
+          </div>
+        `,
+        "应用周期",
+        ()=>toast("数据周期已更新")
+      );
+      break;
+
+    case "export-data":
+    case "export-stations":
+    case "batch-order-export":
+    case "export-users":
+      showDialog(
+        "导出业务数据",
+        "系统将根据当前筛选条件生成文件。",
+        `
+          <div class="field"><label>文件格式</label><select class="input"><option>Excel .xlsx</option><option>PDF报表</option><option>CSV明细</option></select></div>
+          <div class="field"><label>接收方式</label><select class="input"><option>保存到本地</option><option>发送到企业邮箱</option></select></div>
+        `,
+        "生成文件",
+        ()=>toast("文件已生成并开始下载")
+      );
+      break;
+
+    case "map-filter": toast("地图筛选条件已应用"); break;
+    case "map-station": stationDetail(id); break;
+
+    case "new-station":
+      showDialog(
+        "新建电站 · 第1步",
+        "先创建基础档案，保存后进入设备绑定与上线流程。",
+        stationForm(),
+        "保存并进入下一步",
+        ()=>{
+          const name=$("#formStationName").value.trim();
+          if(!name){
+            toast("请填写电站名称","error");
+            return false;
+          }
+
+          state.stations.push({
+            id:"ST00"+(state.stations.length+1),
+            name,
+            city:$("#formStationCity").value,
+            address:$("#formStationAddress").value||"待完善",
+            devices:0,free:0,status:"待验收",price:1.18,
+            channel:"未发布",
+            manager:$("#formStationManager").value||"未设置",
+            phone:$("#formStationPhone").value||"未设置"
+          });
+
+          addLog("创建电站档案："+name);
+          renderPage("stations");
+          toast("基础档案已创建，请继续完成设备绑定和上线验收");
+        },
+        true
+      );
+      break;
+
+    case "edit-station":{
+      const s=state.stations.find(x=>x.id===id);
+      closeDrawer();
+      showDialog(
+        "编辑电站资料",
+        "保存后生成变更记录，已发布渠道将自动同步。",
+        stationForm(s),
+        "保存并同步",
+        ()=>{
+          s.name=$("#formStationName").value.trim()||s.name;
+          s.address=$("#formStationAddress").value||s.address;
+          s.manager=$("#formStationManager").value||s.manager;
+          s.phone=$("#formStationPhone").value||s.phone;
+          addLog("编辑电站资料："+s.name);
+          renderPage("stations");
+          toast("电站资料已保存并同步前端渠道");
+        },
+        true
+      );
+      break;
+    }
+
+    case "station-detail": stationDetail(id); break;
+
+    case "station-acceptance":{
+      const s=state.stations.find(x=>x.id===id);
+      showDialog(
+        "电站上线验收",
+        "所有验收项通过后，电站将发布到车主端和聚合渠道。",
+        `
+          <div class="line"><span>基础资料完整</span><b style="color:#078966">通过</b></div>
+          <div class="line"><span>设备通信测试</span><b style="color:#078966">22/22通过</b></div>
+          <div class="line"><span>测试订单</span><b style="color:#078966">启动与结算成功</b></div>
+          <div class="line"><span>电价方案</span><b style="color:#078966">已审核</b></div>
+          <div class="line"><span>图片与资质</span><b style="color:#078966">已审核</b></div>
+          <div class="field" style="margin-top:12px"><label>验收说明</label><textarea class="input">现场设备、计费、支付和停车减免测试正常，同意上线。</textarea></div>
+        `,
+        "通过验收并发布",
+        ()=>{
+          s.status="营业中";
+          s.channel="已发布";
+          addLog("通过电站上线验收："+s.name);
+          renderPage("stations");
+          toast("电站已上线并发布到车主端");
+        }
+      );
+      break;
+    }
+
+    case "station-offline":{
+      const s=state.stations.find(x=>x.id===id);
+      showDialog(
+        "设置临时停业",
+        "停业期间车主端将保留电站详情，但无法发起新充电订单。",
+        `
+          <div class="field"><label>停业原因</label><select class="input"><option>场站维护</option><option>停电检修</option><option>停车场施工</option></select></div>
+          <div class="field"><label>预计恢复时间</label><input class="input" value="2025-06-19 08:00"></div>
+          <div class="field"><label>用户提示</label><textarea class="input">电站临时维护中，预计明日08:00恢复营业。</textarea></div>
+        `,
+        "确认停业",
+        ()=>{
+          s.status="临时停业";
+          addLog("设置电站临时停业："+s.name);
+          renderPage("stations");
+          toast("电站已暂停接单并同步车主端","warning");
+        }
+      );
+      break;
+    }
+
+    case "sync-channel":
+      actionElement.disabled=true;
+      actionElement.textContent="同步中";
+      setTimeout(()=>{
+        actionElement.disabled=false;
+        actionElement.textContent="重新同步";
+        toast(`${actionElement.dataset.channel}同步成功`);
+      },800);
+      break;
+
+    case "view-station-front":
+      showDrawer(
+        "车主端电站预览",
+        "模拟用户在车主小程序看到的电站详情",
+        `
+          <article class="card">
+            <div style="height:160px;border-radius:15px;background:linear-gradient(135deg,#0b1724,#0a8b6d);display:grid;place-items:center;color:#fff;font-size:24px">⚡ 超级充电站实景图</div>
+            <h3 style="margin:15px 0 6px">南山科技园超级充电站</h3>
+            <p style="color:var(--sub);font-size:10px">24小时营业 · 距离1.2km · 18个空闲枪</p>
+            <div class="line"><span>当前综合价</span><b>¥1.18/kWh</b></div>
+            <div class="line"><span>停车费用</span><b>充电首2小时免费</b></div>
+            <div class="line"><span>科技标签</span><b>液冷超充、480kW</b></div>
+            <button class="btn primary block" style="margin-top:12px">导航前往</button>
+          </article>
+        `
+      );
+      break;
+
+    case "import-stations":
+      showDialog(
+        "批量导入电站",
+        "下载模板后填写电站资料，上传后系统会进行字段校验。",
+        `
+          <div class="notice">模板包含电站名称、地址、经纬度、联系人、营业时间与默认电价方案。</div>
+          <button class="btn outline block" data-action="download-template">下载导入模板</button>
+          <div class="field" style="margin-top:12px"><label>上传文件</label><input class="input" type="file"></div>
+        `,
+        "校验并导入",
+        ()=>toast("文件校验通过，已导入3个电站草稿")
+      );
+      break;
+
+    case "download-template": toast("电站导入模板已下载"); break;
+    case "filter-stations":
+      state.stationFilter=$("#stationStatus").value;
+      renderPage("stations");
+      break;
+
+    case "filter-devices":
+      state.deviceFilter=$("#deviceStatus").value;
+      renderPage("monitor");
+      break;
+
+    case "refresh-devices": toast("实时设备状态已刷新"); break;
+    case "device-detail": deviceDetail(id); break;
+
+    case "stop-charge":{
+      const d=state.devices.find(x=>x.id===id);
+      const o=state.orders.find(x=>x.gun===id&&x.status==="充电中");
+      showDialog(
+        "确认停止充电",
+        "停止后设备将结束输出，订单按当前电量和金额自动结算。",
+        `
+          <div class="line"><span>充电终端</span><b>${id}枪</b></div>
+          <div class="line"><span>关联订单</span><b>${o?o.id:d?.order||"-"}</b></div>
+          <div class="line"><span>当前电量</span><b>${o?o.kwh.toFixed(2):"31.68"}kWh</b></div>
+          <div class="line"><span>当前金额</span><b>¥${o?o.amount.toFixed(2):"37.82"}</b></div>
+          <div class="field" style="margin-top:12px"><label>停止原因 *</label><select class="input" id="stopReason"><option>用户要求停止</option><option>设备异常</option><option>运营人员应急处理</option></select></div>
+        `,
+        "停止并结算",
+        ()=>{
+          if(d){d.status="空闲";d.power="0kW";d.soc="-";d.order="-"}
+          if(o){o.status="已完成";o.pay="个人余额"}
+          addLog(`远程停止${id}枪充电并完成订单结算`);
+          closeDrawer();
+          renderPage("monitor");
+          toast("停止指令执行成功，订单已结算");
+        }
+      );
+      break;
+    }
+
+    case "create-repair":
+      showDialog(
+        "创建设备维修工单",
+        "设备日志和故障代码已自动带入，可补充故障描述和处理要求。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>设备编号</label><input class="input" id="repairDevice" value="${id||"A11"}" disabled></div>
+            <div class="field"><label>优先级</label><select class="input"><option>高</option><option>中</option><option>低</option></select></div>
+            <div class="field"><label>故障类型</label><select class="input"><option>绝缘检测异常</option><option>设备离线</option><option>枪线损坏</option></select></div>
+            <div class="field"><label>SLA要求</label><select class="input"><option>2小时</option><option>4小时</option><option>24小时</option></select></div>
+            <div class="field form-full"><label>故障描述</label><textarea class="input">设备多次出现绝缘检测异常，远程复位后仍未恢复。</textarea></div>
+          </div>
+        `,
+        "提交维修工单",
+        ()=>{
+          const workId="WX"+Date.now().toString().slice(-8);
+          state.workOrders.unshift({
+            id:workId,device:id||"A11",
+            station:state.devices.find(d=>d.id===id)?.station||"南山科技园超级充电站",
+            issue:"绝缘检测异常",status:"待派工",
+            worker:"未指派",sla:"2小时"
+          });
+          addLog(`创建维修工单 ${workId}`);
+          renderPage("operations");
+          toast("维修工单已创建，等待派工");
+        }
+      );
+      break;
+
+    case "restart-device":{
+      const d=state.devices.find(x=>x.id===id);
+      showDialog(
+        "远程重启设备",
+        "重启约需1至3分钟，重启期间设备将暂时不可用。",
+        `
+          <div class="line"><span>设备</span><b>${id}枪</b></div>
+          <div class="line"><span>当前状态</span><b>${d?.status}</b></div>
+          <div class="line"><span>进行中订单</span><b>无</b></div>
+        `,
+        "确认重启",
+        ()=>{
+          if(d)d.status="在线";
+          addLog(`远程重启设备 ${id}`);
+          renderPage("monitor");
+          toast("设备已恢复在线");
+        }
+      );
+      break;
+    }
+
+    case "occupancy-process":
+      showDialog(
+        "充电后占用处理",
+        "可发送催挪短信或使用隐私号码联系用户。",
+        `
+          <div class="line"><span>占用设备</span><b>${id}枪</b></div>
+          <div class="line"><span>关联车牌</span><b>粤B·8P3Q2</b></div>
+          <div class="line"><span>占用时长</span><b style="color:var(--red)">38分钟</b></div>
+          <div class="line"><span>已产生占位费</span><b>¥19.00</b></div>
+          <div class="check-card active" style="margin-top:12px">
+            <b>发送催挪短信</b><span>提醒车主拔枪并驶离车位</span><i>✓</i>
+          </div>
+          <div class="check-card" style="margin-top:8px">
+            <b>虚拟号码拨号</b><span>不展示双方真实手机号</span><i>✓</i>
+          </div>
+        `,
+        "执行催挪",
+        ()=>{
+          addLog(`向${id}枪占用用户发送催挪提醒`);
+          toast("催挪短信已发送，操作已记录");
+        }
+      );
+      break;
+
+    case "video-monitor":
+      showDrawer(
+        "千里眼智慧监控",
+        "实时视频、占位识别、烟火检测与枪头掉地预警",
+        `
+          <div class="camera-grid">
+            ${["入口车道","B2-C区","液冷超充区","出口道闸","设备间","消防通道"].map((name,i)=>`
+              <button class="camera" data-action="camera-detail" data-camera="${name}">
+                <span class="camera-label">${name}</span>
+                <span class="camera-time">10:28:${30+i}</span>
+                <div class="car"></div>
+                ${i===1?`<div class="ai-border"><span>粤B·8P3Q2 · 占用38分钟</span></div>`:""}
+              </button>
+            `).join("")}
+          </div>
+
+          <article class="card" style="margin-top:14px">
+            <div class="card-head"><div class="card-title">AI识别能力</div></div>
+            <div class="switch-line"><div><b>占位消息</b><small>识别车辆占用充电车位</small></div><button class="switch on" data-action="toggle-switch"></button></div>
+            <div class="switch-line"><div><b>烟火检测</b><small>识别场站烟雾和明火</small></div><button class="switch on" data-action="toggle-switch"></button></div>
+            <div class="switch-line"><div><b>枪头掉地</b><small>识别充电枪未归位</small></div><button class="switch on" data-action="toggle-switch"></button></div>
+          </article>
+        `
+      );
+      break;
+
+    case "camera-detail":
+      showDialog(
+        actionElement.dataset.camera+" · 实时画面",
+        "支持抓拍、回放和生成AI事件记录。",
+        `
+          <div class="camera" style="height:360px;aspect-ratio:auto">
+            <span class="camera-label">${actionElement.dataset.camera}</span>
+            <span class="camera-time">实时 · 高清</span>
+            <div class="car" style="width:180px;height:70px"></div>
+            <div class="ai-border"><span>车辆识别正常</span></div>
+          </div>
+          <div class="actions" style="margin-top:12px">
+            <button class="btn outline" data-action="camera-snapshot">保存抓拍</button>
+            <button class="btn outline" data-action="camera-playback">查看回放</button>
+            <button class="btn warning" data-action="camera-broadcast">音柱播报</button>
+          </div>
+        `,
+        "关闭画面",
+        ()=>true,
+        true
+      );
+      break;
+
+    case "camera-snapshot": toast("抓拍图片已保存至事件记录"); break;
+    case "camera-playback": toast("已切换至视频回放时间轴"); break;
+
+    case "camera-broadcast":
+      showDialog(
+        "场站音柱播报",
+        "设置播报内容和次数。",
+        `
+          <div class="field"><label>播报文案</label><textarea class="input">粤B·8P3Q2车主您好，您的车辆已充电完成，请尽快驶离充电车位。</textarea></div>
+          <div class="field"><label>播报方式</label><select class="input"><option>立即播报1次</option><option>每隔1分钟播报3次</option></select></div>
+        `,
+        "开始播报",
+        ()=>toast("音柱播报任务已下发")
+      );
+      break;
+
+    case "batch-device-action":
+      showDialog(
+        "批量设备操作",
+        "仅支持对无进行中订单的设备执行批量操作。",
+        `
+          <div class="field"><label>设备范围</label><select class="input"><option>全部离线设备</option><option>指定电站空闲设备</option><option>待升级设备</option></select></div>
+          <div class="field"><label>执行操作</label><select class="input"><option>批量重启</option><option>批量升级固件</option><option>批量同步电价</option></select></div>
+          <div class="field"><label>执行时间</label><select class="input"><option>立即执行</option><option>今日02:00低峰执行</option></select></div>
+        `,
+        "创建批量任务",
+        ()=>toast("批量设备任务已创建")
+      );
+      break;
+
+    case "device-logs":
+      showDrawer(
+        `${id}枪完整日志`,
+        "通信、控制、告警与业务日志",
+        `
+          ${table(
+            ["时间","日志类型","内容","结果"],
+            [
+              ["10:28:36","状态上报","设备心跳与实时功率","成功"],
+              ["10:18:22","业务日志","关联订单2025061809180826","成功"],
+              ["10:18:20","控制日志","下发启动充电指令","成功"],
+              ["10:18:18","设备日志","车辆BMS握手","成功"]
+            ]
+          )}
+        `
+      );
+      break;
+
+    case "filter-orders":
+      state.orderFilter=$("#orderStatus").value;
+      renderPage("orders");
+      break;
+
+    case "order-detail": orderDetail(id); break;
+
+    case "contact-user":
+      showDialog(
+        "联系订单用户",
+        "平台通过虚拟中间号联系用户，不展示真实手机号。",
+        `
+          <div class="line"><span>用户号码</span><b>138****7628</b></div>
+          <div class="line"><span>隐私保护</span><b style="color:#078966">虚拟号码已启用</b></div>
+          <div class="check-card active" style="margin-top:12px"><b>虚拟电话</b><span>立即通过隐私号码拨打</span><i>✓</i></div>
+          <div class="check-card" style="margin-top:8px"><b>短信通知</b><span>向用户发送业务提醒</span><i>✓</i></div>
+        `,
+        "开始联系",
+        ()=>toast("正在通过虚拟号码联系用户")
+      );
+      break;
+
+    case "order-refund":{
+      const o=state.orders.find(x=>x.id===id);
+      closeDrawer();
+      showDialog(
+        "订单退款申请",
+        "提交后根据金额和发票状态进入自动或人工审核。",
+        `
+          <div class="line"><span>订单号</span><b>${o.id}</b></div>
+          <div class="line"><span>订单实付</span><b>¥${o.amount.toFixed(2)}</b></div>
+          <div class="line"><span>发票状态</span><b>${o.invoice}</b></div>
+          <div class="form-grid" style="margin-top:12px">
+            <div class="field"><label>退款金额 *</label><input class="input" id="refundAmount" value="13.59"></div>
+            <div class="field"><label>退款路径</label><select class="input"><option>原支付路径</option><option>用户余额账户</option></select></div>
+            <div class="field form-full"><label>退款原因 *</label><select class="input"><option>服务费补偿</option><option>设备异常</option><option>重复支付</option></select></div>
+            <div class="field form-full"><label>审核说明</label><textarea class="input">核对充电曲线与设备日志后，同意退还部分服务费。</textarea></div>
+          </div>
+        `,
+        "提交退款审核",
+        ()=>{
+          addLog(`提交订单退款审核：${o.id}`);
+          toast("退款申请已提交，金额低于¥50将自动审核");
+        }
+      );
+      break;
+    }
+
+    case "order-invoice":{
+      const o=state.orders.find(x=>x.id===id);
+      showDialog(
+        "为订单申请开票",
+        "确认发票抬头和接收邮箱后生成开票申请。",
+        `
+          <div class="line"><span>订单</span><b>${o.id}</b></div>
+          <div class="line"><span>可开票金额</span><b>¥${o.amount.toFixed(2)}</b></div>
+          <div class="field" style="margin-top:12px"><label>发票抬头</label><input class="input" value="个人 · ${o.user}"></div>
+          <div class="field"><label>接收邮箱</label><input class="input" value="user@example.com"></div>
+        `,
+        "生成开票申请",
+        ()=>{
+          const invoiceId="FP"+Date.now().toString().slice(-8);
+          state.invoices.unshift({
+            id:invoiceId,title:`个人 · ${o.user}`,
+            amount:o.amount,type:"电子普通发票",
+            status:"待开票",orders:1,email:"user@example.com"
+          });
+          o.invoice="待开票";
+          addLog(`生成开票申请 ${invoiceId}`);
+          toast("开票申请已生成，可在财务开票中处理");
+        }
+      );
+      break;
+    }
+
+    case "order-remind-pay":
+      showDialog(
+        "发送支付提醒",
+        "提醒将通过短信和小程序消息发送给用户。",
+        `
+          <div class="field"><label>提醒文案</label><textarea class="input">您有一笔充电订单尚未完成支付，请进入星途充电小程序及时处理。</textarea></div>
+        `,
+        "发送提醒",
+        ()=>toast("支付提醒已发送")
+      );
+      break;
+
+    case "send-user-coupon":
+      showDialog(
+        "向用户发送关怀券",
+        "优惠券将直接进入用户账户，并通过小程序消息通知。",
+        `
+          <div class="check-card active"><b>满30减5元券</b><span>7天有效 · 用户关怀券</span><i>✓</i></div>
+          <div class="check-card" style="margin-top:8px"><b>服务费8折券</b><span>最高优惠10元 · 14天有效</span><i>✓</i></div>
+          <div class="field" style="margin-top:12px"><label>发放原因</label><input class="input" value="订单用户关怀"></div>
+        `,
+        "确认发放",
+        ()=>toast("优惠券已发放至用户账户")
+      );
+      break;
+
+    case "create-manual-order":
+      showDialog(
+        "创建现场应急订单",
+        "适用于用户无法扫码、设备现场调试等场景。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>电站</label><select class="input"><option>南山科技园超级充电站</option></select></div>
+            <div class="field"><label>充电枪</label><select class="input"><option>A09 · 当前空闲</option></select></div>
+            <div class="field"><label>用户手机号</label><input class="input" value="13888887628"></div>
+            <div class="field"><label>车牌号</label><input class="input" value="粤B·A82Q6"></div>
+            <div class="field"><label>结算方式</label><select class="input"><option>用户余额</option><option>现场应急账户</option></select></div>
+            <div class="field"><label>操作原因</label><select class="input"><option>用户扫码异常</option><option>现场设备测试</option></select></div>
+          </div>
+        `,
+        "校验并启动",
+        ()=>{
+          addLog("创建现场应急充电订单");
+          toast("账户和设备校验通过，充电已启动");
+        }
+      );
+      break;
+
+    case "filter-prices":
+      state.priceFilter=$("#priceStatus").value;
+      renderPage("pricing");
+      break;
+
+    case "new-price":
+      showDialog(
+        "新建电价方案",
+        "保存后生成草稿，不会直接影响线上价格。",
+        priceForm(),
+        "保存草稿",
+        ()=>{
+          const name=$("#priceNameInput").value.trim();
+          if(!name){
+            toast("请填写方案名称","error");
+            return false;
+          }
+          state.pricePlans.unshift({
+            id:"P00"+(state.pricePlans.length+1),
+            name,version:1,status:"草稿",
+            stations:3,effect:$("#priceEffectInput").value
+          });
+          addLog("创建电价方案草稿："+name);
+          renderPage("pricing");
+          toast("电价方案草稿已保存");
+        },
+        true
+      );
+      break;
+
+    case "copy-price":
+      showDialog(
+        "复制电价方案",
+        "选择一个已存在的方案作为新草稿基础。",
+        `
+          <div class="field"><label>源方案</label><select class="input"><option>深圳标准分时电价 V4</option><option>夜间谷电引流方案 V1</option></select></div>
+          <div class="field"><label>新方案名称</label><input class="input" id="copyPriceName" value="深圳标准分时电价 副本"></div>
+        `,
+        "复制为草稿",
+        ()=>{
+          state.pricePlans.unshift({
+            id:"P00"+(state.pricePlans.length+1),
+            name:$("#copyPriceName").value,
+            version:1,status:"草稿",stations:2,effect:"待设置"
+          });
+          renderPage("pricing");
+          toast("方案已复制为新草稿");
+        }
+      );
+      break;
+
+    case "price-detail": priceDetail(id); break;
+
+    case "edit-price":{
+      const p=state.pricePlans.find(x=>x.id===id);
+      closeDrawer();
+      showDialog(
+        "编辑电价方案",
+        p.status==="已生效"?"保存后将生成新版本并重新进入审批流程。":"修改草稿配置。",
+        priceForm(p),
+        "保存新版本",
+        ()=>{
+          p.name=$("#priceNameInput").value||p.name;
+          p.version+=1;
+          p.status="草稿";
+          p.effect=$("#priceEffectInput").value;
+          addLog(`编辑电价方案 ${p.name}，生成V${p.version}`);
+          renderPage("pricing");
+          toast(`已保存为V${p.version}草稿`);
+        },
+        true
+      );
+      break;
+    }
+
+    case "submit-price":{
+      const p=state.pricePlans.find(x=>x.id===id);
+      showDialog(
+        "提交电价审批",
+        "提交后方案进入待审核状态，审批前仍不会影响线上价格。",
+        `
+          <div class="line"><span>方案</span><b>${p.name} V${p.version}</b></div>
+          <div class="line"><span>适用电站</span><b>${p.stations}座</b></div>
+          <div class="line"><span>生效时间</span><b>${p.effect}</b></div>
+          <div class="line"><span>审批人</span><b>运营总监 · 陈志远</b></div>
+        `,
+        "确认提交",
+        ()=>{
+          p.status="待审核";
+          addLog(`提交电价方案审批：${p.name}`);
+          closeDrawer();
+          renderPage("pricing");
+          toast("电价方案已提交审批");
+        }
+      );
+      break;
+    }
+
+    case "approve-price":{
+      const p=state.pricePlans.find(x=>x.id===id);
+      showDialog(
+        "审批并发布电价",
+        "审批通过后将按生效时间同步车主端、聚合渠道和设备本地缓存。",
+        `
+          <div class="line"><span>方案</span><b>${p.name} V${p.version}</b></div>
+          <div class="line"><span>预计订单变化</span><b style="color:#078966">+5.2%</b></div>
+          <div class="line"><span>预计服务费变化</span><b style="color:#078966">+3.8%</b></div>
+          <div class="line"><span>用户价格通知</span><b>生效前2小时</b></div>
+          <div class="field" style="margin-top:12px"><label>审批意见</label><textarea class="input">价格配置符合运营策略，同意发布。</textarea></div>
+        `,
+        "通过并发布",
+        ()=>{
+          p.status="已生效";
+          addLog(`审批发布电价方案：${p.name}`);
+          closeDrawer();
+          renderPage("pricing");
+          toast("方案已生效，所有渠道同步成功");
+        }
+      );
+      break;
+    }
+
+    case "reject-price":{
+      const p=state.pricePlans.find(x=>x.id===id);
+      showDialog(
+        "驳回电价方案",
+        "驳回后方案可根据原因修改并重新提交。",
+        `
+          <div class="field"><label>驳回原因 *</label><textarea class="input">尖峰服务费高于周边竞品，请调整后重新提交。</textarea></div>
+        `,
+        "确认驳回",
+        ()=>{
+          p.status="已驳回";
+          addLog(`驳回电价方案：${p.name}`);
+          closeDrawer();
+          renderPage("pricing");
+          toast("方案已驳回，可修改后重新提交","warning");
+        }
+      );
+      break;
+    }
+
+    case "rollback-price":{
+      const p=state.pricePlans.find(x=>x.id===id);
+      showDialog(
+        "回滚电价版本",
+        "回滚后将生成新的版本号，并重新同步所有渠道。",
+        `
+          <div class="line"><span>当前版本</span><b>V${p.version}</b></div>
+          <div class="line"><span>目标版本</span><b>V${Math.max(1,p.version-1)}</b></div>
+          <div class="line"><span>回滚原因</span><b>当前价格策略效果不符合预期</b></div>
+        `,
+        "确认回滚",
+        ()=>{
+          p.version+=1;
+          p.status="已生效";
+          addLog(`回滚电价方案并生成V${p.version}：${p.name}`);
+          closeDrawer();
+          renderPage("pricing");
+          toast(`已回滚并生成V${p.version}`);
+        }
+      );
+      break;
+    }
+
+    case "disable-price":{
+      const p=state.pricePlans.find(x=>x.id===id);
+      showDialog(
+        "停用电价方案",
+        "停用前系统将校验相关电站是否存在其他可用价格。",
+        `
+          <div class="line"><span>方案</span><b>${p.name}</b></div>
+          <div class="line"><span>适用电站</span><b>${p.stations}座</b></div>
+          <div class="line"><span>兜底方案</span><b style="color:#078966">深圳默认电价</b></div>
+        `,
+        "确认停用",
+        ()=>{
+          p.status="已停用";
+          addLog(`停用电价方案：${p.name}`);
+          renderPage("pricing");
+          toast("方案已停用，相关电站已切换兜底价格","warning");
+        }
+      );
+      break;
+    }
+
+    case "new-work-order":
+      actionElement.dataset.id="";
+      showDialog(
+        "新建维修工单",
+        "手动选择电站和设备创建运维任务。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>电站</label><select class="input"><option>南山科技园超级充电站</option></select></div>
+            <div class="field"><label>设备</label><select class="input"><option>A11枪</option><option>D03枪</option></select></div>
+            <div class="field"><label>故障类型</label><select class="input"><option>设备故障</option><option>枪线损坏</option><option>通信离线</option></select></div>
+            <div class="field"><label>优先级</label><select class="input"><option>高</option><option>中</option></select></div>
+            <div class="field form-full"><label>故障描述</label><textarea class="input"></textarea></div>
+          </div>
+        `,
+        "创建工单",
+        ()=>{
+          const workId="WX"+Date.now().toString().slice(-8);
+          state.workOrders.unshift({
+            id:workId,device:"A11",
+            station:"南山科技园超级充电站",
+            issue:"设备故障",status:"待派工",
+            worker:"未指派",sla:"2小时"
+          });
+          renderPage("operations");
+          toast("维修工单已创建");
+        }
+      );
+      break;
+
+    case "work-detail": workDetail(id); break;
+
+    case "assign-work":{
+      const w=state.workOrders.find(x=>x.id===id);
+      showDialog(
+        "指派运维人员",
+        "系统按距离、技能和当前工作量推荐运维人员。",
+        `
+          <div class="check-card active">
+            <b>王海 · 距离2.3km</b><span>高级运维工程师 · 当前无进行中工单</span><i>✓</i>
+          </div>
+          <div class="check-card" style="margin-top:8px">
+            <b>赵磊 · 距离4.8km</b><span>运维工程师 · 当前1个进行中工单</span><i>✓</i>
+          </div>
+          <div class="field" style="margin-top:12px"><label>要求到场时间</label><select class="input"><option>2小时内</option><option>4小时内</option></select></div>
+        `,
+        "确认派工",
+        ()=>{
+          w.worker="王海";
+          w.status="维修中";
+          addLog(`工单${w.id}派工给王海`);
+          closeDrawer();
+          renderPage("operations");
+          toast("派工成功，运维人员已收到任务");
+        }
+      );
+      break;
+    }
+
+    case "finish-work":{
+      const w=state.workOrders.find(x=>x.id===id);
+      showDialog(
+        "提交维修结果",
+        "提交后工单进入运营验收，运维人员不能自行关闭工单。",
+        `
+          <div class="field"><label>故障原因</label><textarea class="input">通信模块异常，现场重新插拔并更换备用模块后恢复。</textarea></div>
+          <div class="field"><label>处理方式</label><textarea class="input">更换通信模块，执行设备复位并完成测试充电。</textarea></div>
+          <div class="field"><label>维修照片</label><button class="btn outline block" data-action="upload-repair-photo">＋ 上传维修前后照片</button></div>
+          <div class="line"><span>设备在线测试</span><b style="color:#078966">通过</b></div>
+          <div class="line"><span>测试订单</span><b style="color:#078966">启动与停止成功</b></div>
+        `,
+        "提交运营验收",
+        ()=>{
+          w.status="待验收";
+          addLog(`工单${w.id}提交维修结果`);
+          closeDrawer();
+          renderPage("operations");
+          toast("维修结果已提交，等待运营验收");
+        }
+      );
+      break;
+    }
+
+    case "upload-repair-photo":
+      actionElement.textContent="✓ 已上传4张维修照片";
+      toast("维修照片上传成功");
+      break;
+
+    case "verify-work":{
+      const w=state.workOrders.find(x=>x.id===id);
+      showDialog(
+        "维修结果验收",
+        "验收通过后设备恢复运营，工单正式关闭。",
+        `
+          <div class="line"><span>维修报告</span><b style="color:#078966">完整</b></div>
+          <div class="line"><span>设备在线状态</span><b style="color:#078966">在线</b></div>
+          <div class="line"><span>测试充电订单</span><b style="color:#078966">成功</b></div>
+          <div class="line"><span>现场照片</span><b style="color:#078966">4张</b></div>
+          <div class="field" style="margin-top:12px"><label>验收意见</label><textarea class="input">设备通信、启动、计费与停止测试正常，同意关闭工单。</textarea></div>
+        `,
+        "通过验收并关闭",
+        ()=>{
+          w.status="已完成";
+          const device=state.devices.find(d=>d.id===w.device);
+          if(device)device.status="在线";
+          addLog(`验收并关闭工单${w.id}`);
+          closeDrawer();
+          renderPage("operations");
+          toast("工单已关闭，设备恢复运营");
+        }
+      );
+      break;
+    }
+
+    case "contact-worker": toast("正在呼叫运维人员王海"); break;
+
+    case "inspection-report":
+      showDrawer(
+        "场站巡检报告",
+        "南山科技园超级充电站 · 2025-06-17",
+        `
+          <div class="grid g3">
+            ${kpi("检查项目","32项","全部完成","✓")}
+            ${kpi("发现问题","2项","已生成整改任务","!","orange")}
+            ${kpi("场站评分","92分","总体运行良好","📈","blue")}
+          </div>
+          <article class="card" style="margin-top:14px">
+            <div class="line"><span>设备外观</span><b style="color:#078966">正常</b></div>
+            <div class="line"><span>消防设施</span><b style="color:#078966">正常</b></div>
+            <div class="line"><span>地锁响应</span><b style="color:#d1781c">2个响应延迟</b></div>
+            <div class="line"><span>枪头磨损</span><b style="color:#d1781c">A16枪需更换护套</b></div>
+          </article>
+        `,
+        `<button class="btn primary" data-action="inspection-create-work">根据问题生成工单</button>`
+      );
+      break;
+
+    case "inspection-create-work":
+      state.workOrders.unshift({
+        id:"WX"+Date.now().toString().slice(-8),
+        device:"A16",station:"南山科技园超级充电站",
+        issue:"枪头护套磨损",status:"待派工",
+        worker:"未指派",sla:"24小时"
+      });
+      closeDrawer();
+      renderPage("operations");
+      toast("已根据巡检问题生成维修工单");
+      break;
+
+    case "user-detail": userDetail(id); break;
+
+    case "adjust-balance":{
+      const u=state.users.find(x=>x.id===id)||state.users[0];
+      showDialog(
+        "调整用户账户余额",
+        "余额调整属于敏感资金操作，必须填写原因并记录操作日志。",
+        `
+          <div class="line"><span>用户</span><b>${u.name} · ${u.phone}</b></div>
+          <div class="line"><span>当前余额</span><b>¥${u.balance.toFixed(2)}</b></div>
+          <div class="form-grid" style="margin-top:12px">
+            <div class="field"><label>调整类型</label><select class="input" id="balanceType"><option>增加余额</option><option>扣减余额</option></select></div>
+            <div class="field"><label>调整金额</label><input class="input" id="balanceAmount" value="50"></div>
+            <div class="field form-full"><label>调整原因</label><textarea class="input">用户服务补偿，经客服核实后增加账户余额。</textarea></div>
+          </div>
+        `,
+        "提交余额调整",
+        ()=>{
+          const amount=Number($("#balanceAmount").value)||0;
+          if($("#balanceType").value==="增加余额")u.balance+=amount;
+          else u.balance=Math.max(0,u.balance-amount);
+          addLog(`调整用户${u.name}余额`);
+          closeDrawer();
+          renderPage("users");
+          toast("账户余额已调整并生成资金流水");
+        }
+      );
+      break;
+    }
+
+    case "blacklist-user":{
+      const u=state.users.find(x=>x.id===id)||state.users[0];
+      showDialog(
+        "加入风险黑名单",
+        "可限制用户充电、优惠活动或占位费用减免。",
+        `
+          <div class="field"><label>限制范围</label><select class="input"><option>禁止发起新充电订单</option><option>禁止参与营销活动</option><option>禁止占位费用减免</option></select></div>
+          <div class="field"><label>生效时间</label><select class="input"><option>立即生效</option><option>审核通过后生效</option></select></div>
+          <div class="field"><label>加入原因</label><textarea class="input">多次恶意占位或异常支付，需要进一步核实。</textarea></div>
+        `,
+        "加入黑名单",
+        ()=>{
+          u.status="高风险";
+          addLog(`将用户${u.name}加入风险黑名单`);
+          renderPage("users");
+          toast("用户限制已生效","warning");
+        }
+      );
+      break;
+    }
+
+    case "create-user-tag":
+      showDialog(
+        "创建用户分组",
+        "用户分组可用于智慧发券、活动触达和经营分析。",
+        `
+          <div class="field"><label>分组名称</label><input class="input" value="30天未充电用户"></div>
+          <div class="field"><label>用户条件</label><select class="input"><option>最近30天无充电订单</option><option>最近90天仅充电1次</option><option>月充电3次以上</option></select></div>
+          <div class="line"><span>预计用户数量</span><b>286人</b></div>
+        `,
+        "保存用户分组",
+        ()=>toast("用户分组已创建，可用于营销活动")
+      );
+      break;
+
+    case "filter-users": toast("用户筛选条件已应用"); break;
+
+    case "new-campaign":
+      showDialog(
+        "创建营销活动",
+        "活动保存为草稿后需经过预算审核才能正式发布。",
+        `
+          <div class="workflow" style="margin-bottom:15px">
+            <span class="workflow-step done">活动信息</span>
+            <span class="workflow-step current">人群权益</span>
+            <span class="workflow-step">预算审核</span>
+            <span class="workflow-step">发布触达</span>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>活动名称 *</label><input class="input" id="campaignName" value="夜间谷电召回活动"></div>
+            <div class="field"><label>活动类型</label><select class="input"><option>智慧发券</option><option>电站折扣</option><option>扫码领券</option></select></div>
+            <div class="field"><label>目标人群</label><select class="input"><option>30天未充电用户 · 286人</option><option>低频用户 · 3420人</option></select></div>
+            <div class="field"><label>奖品权益</label><select class="input"><option>满30减5元券</option><option>服务费8折券</option></select></div>
+            <div class="field"><label>活动预算</label><input class="input" id="campaignBudget" value="5000"></div>
+            <div class="field"><label>触达渠道</label><select class="input"><option>小程序消息+短信</option><option>首页弹窗</option></select></div>
+          </div>
+        `,
+        "保存并提交审核",
+        ()=>{
+          state.campaigns.unshift({
+            id:"MK00"+(state.campaigns.length+1),
+            name:$("#campaignName").value,
+            type:"智慧发券",users:286,
+            budget:Number($("#campaignBudget").value)||0,
+            used:0,status:"待审核"
+          });
+          addLog("创建营销活动并提交审核");
+          renderPage("marketing");
+          toast("活动已提交预算审核");
+        },
+        true
+      );
+      break;
+
+    case "campaign-detail":{
+      const c=state.campaigns.find(x=>x.id===id);
+      showDrawer(
+        c.name,
+        `${c.id} · ${c.type}`,
+        `
+          <div class="grid g4">
+            ${kpi("触达用户",c.users+"人","目标用户数量","♙")}
+            ${kpi("预算金额","¥"+c.budget.toLocaleString(),"已使用¥"+c.used.toLocaleString(),"¥","blue")}
+            ${kpi("活动订单","286单","转化率8.4%","▤","orange")}
+            ${kpi("新增电量","4,860kWh","预计服务费+12%","⚡","red")}
+          </div>
+
+          <article class="card" style="margin-top:14px">
+            <div class="card-head"><div class="card-title">活动流程</div></div>
+            <div class="workflow">
+              <span class="workflow-step done">创建活动</span>
+              <span class="workflow-step done">配置权益</span>
+              <span class="workflow-step ${c.status==="待审核"?"current":"done"}">预算审核</span>
+              <span class="workflow-step ${c.status==="进行中"?"current":c.status==="已暂停"?"done":""}">发布触达</span>
+              <span class="workflow-step">效果回流</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-head"><div class="card-title">转化漏斗</div></div>
+            <div class="metric-row"><span>触达用户</span><div class="bar"><i style="width:100%"></i></div><b>${c.users}</b></div>
+            <div class="metric-row"><span>打开活动</span><div class="bar"><i style="width:62%"></i></div><b>62%</b></div>
+            <div class="metric-row"><span>领取优惠</span><div class="bar"><i style="width:28%"></i></div><b>28%</b></div>
+            <div class="metric-row"><span>完成核销</span><div class="bar"><i style="width:8.4%"></i></div><b>8.4%</b></div>
+          </article>
+        `,
+        `
+          ${c.status==="待审核"?`<button class="btn primary" data-action="approve-campaign" data-id="${c.id}">审核发布</button>`:""}
+          ${c.status==="进行中"?`<button class="btn warning" data-action="pause-campaign" data-id="${c.id}">暂停活动</button>`:""}
+          ${c.status==="已暂停"?`<button class="btn primary" data-action="resume-campaign" data-id="${c.id}">恢复活动</button>`:""}
+        `
+      );
+      break;
+    }
+
+    case "approve-campaign":{
+      const c=state.campaigns.find(x=>x.id===id);
+      showDialog(
+        "审核并发布活动",
+        "发布后将开始占用预算和奖品库存，并按渠道触达目标用户。",
+        `
+          <div class="line"><span>活动名称</span><b>${c.name}</b></div>
+          <div class="line"><span>目标用户</span><b>${c.users}人</b></div>
+          <div class="line"><span>活动预算</span><b>¥${c.budget.toLocaleString()}</b></div>
+          <div class="line"><span>权益库存</span><b style="color:#078966">充足</b></div>
+          <div class="field" style="margin-top:12px"><label>审核意见</label><textarea class="input">目标用户和预算合理，同意发布。</textarea></div>
+        `,
+        "通过并发布",
+        ()=>{
+          c.status="进行中";
+          c.used=300;
+          addLog(`审核发布营销活动：${c.name}`);
+          closeDrawer();
+          renderPage("marketing");
+          toast("活动已发布并开始触达用户");
+        }
+      );
+      break;
+    }
+
+    case "pause-campaign":{
+      const c=state.campaigns.find(x=>x.id===id);
+      showDialog(
+        "暂停营销活动",
+        "暂停后停止新用户触达和奖品发放，已领取优惠券仍可使用。",
+        `<div class="field"><label>暂停原因</label><textarea class="input">活动预算使用过快，暂停后评估转化效果。</textarea></div>`,
+        "确认暂停",
+        ()=>{
+          c.status="已暂停";
+          addLog(`暂停营销活动：${c.name}`);
+          closeDrawer();
+          renderPage("marketing");
+          toast("活动已暂停","warning");
+        }
+      );
+      break;
+    }
+
+    case "resume-campaign":{
+      const c=state.campaigns.find(x=>x.id===id);
+      showDialog(
+        "恢复营销活动",
+        "恢复后将继续使用剩余预算和奖品库存。",
+        `
+          <div class="line"><span>剩余预算</span><b>¥${(c.budget-c.used).toLocaleString()}</b></div>
+          <div class="line"><span>剩余权益库存</span><b style="color:#078966">充足</b></div>
+        `,
+        "确认恢复",
+        ()=>{
+          c.status="进行中";
+          addLog(`恢复营销活动：${c.name}`);
+          closeDrawer();
+          renderPage("marketing");
+          toast("活动已恢复投放");
+        }
+      );
+      break;
+    }
+
+    case "end-campaign":{
+      const c=state.campaigns.find(x=>x.id===id);
+      showDialog(
+        "结束营销活动",
+        "结束后不可恢复，未发放奖品将释放回权益库存。",
+        `
+          <div class="line"><span>活动订单</span><b>286单</b></div>
+          <div class="line"><span>预算使用</span><b>¥${c.used.toLocaleString()}</b></div>
+          <div class="line"><span>待释放预算</span><b>¥${(c.budget-c.used).toLocaleString()}</b></div>
+        `,
+        "结束并生成报告",
+        ()=>{
+          c.status="已结束";
+          addLog(`结束营销活动：${c.name}`);
+          renderPage("marketing");
+          toast("活动已结束，效果报告已生成");
+        }
+      );
+      break;
+    }
+
+    case "new-coupon":
+      showDialog(
+        "创建优惠权益",
+        "创建后进入权益库存，可被营销活动引用。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>权益名称</label><input class="input" value="满30减5元券"></div>
+            <div class="field"><label>权益类型</label><select class="input"><option>满减券</option><option>折扣券</option><option>电量卡</option></select></div>
+            <div class="field"><label>库存数量</label><input class="input" value="1000"></div>
+            <div class="field"><label>有效期</label><select class="input"><option>领取后7天</option><option>领取后14天</option></select></div>
+            <div class="field"><label>使用门槛</label><input class="input" value="满30元可用"></div>
+            <div class="field"><label>单用户限领</label><input class="input" value="1张"></div>
+          </div>
+        `,
+        "保存权益",
+        ()=>toast("优惠权益已创建并加入库存")
+      );
+      break;
+
+    case "marketing-report":
+      showDrawer(
+        "营销效果报告",
+        "本月活动综合效果",
+        `
+          <div class="grid g4">
+            ${kpi("累计触达","4,572人","打开率36.8%","📣")}
+            ${kpi("活动订单","386单","转化率8.4%","▤","blue")}
+            ${kpi("带动收入","¥18,620","营销ROI 3.8","¥","orange")}
+            ${kpi("新增电量","12,860kWh","较基准+9.6%","⚡","red")}
+          </div>
+        `
+      );
+      break;
+
+    case "edit-front-base":
+      showDialog(
+        "编辑车主端基础配置",
+        "保存后进入待发布草稿，不会立即影响线上版本。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>小程序名称</label><input class="input" value="星途充电"></div>
+            <div class="field"><label>默认城市</label><select class="input"><option>深圳市</option></select></div>
+            <div class="field"><label>最低起充金额</label><input class="input" value="5.00"></div>
+            <div class="field"><label>默认结算方式</label><select class="input"><option>自动结算</option><option>手动结算</option></select></div>
+          </div>
+        `,
+        "保存为草稿",
+        ()=>toast("基础配置已保存为待发布草稿")
+      );
+      break;
+
+    case "manage-banners":
+      showDrawer(
+        "首页广告管理",
+        "拖动可调整广告展示顺序",
+        `
+          ${[
+            ["新用户首充立减10元","首页顶部轮播","投放中"],
+            ["夜间谷电低至0.82元/度","首页顶部轮播","投放中"],
+            ["V2G放电收益计划","首页顶部轮播","投放中"]
+          ].map((b,i)=>`
+            <article class="card">
+              <div style="height:110px;border-radius:14px;background:linear-gradient(120deg,${i===0?"#4b7dff,#8b6cff":i===1?"#08a77d,#18d6a4":"#ff8655,#ffb32e"});padding:18px;color:#fff">
+                <b style="font-size:17px">${b[0]}</b>
+                <span style="display:block;margin-top:7px;font-size:9px;opacity:.75">${b[1]}</span>
+              </div>
+              <div class="actions" style="margin-top:11px">
+                <button class="btn sm soft" data-action="edit-banner">编辑</button>
+                <button class="btn sm warning" data-action="pause-banner">暂停</button>
+              </div>
+            </article>
+          `).join("")}
+          <button class="btn primary block" data-action="new-banner">＋ 新增广告内容</button>
+        `
+      );
+      break;
+
+    case "edit-banner":
+    case "new-banner":
+      showDialog(
+        action==="new-banner"?"新增广告内容":"编辑广告内容",
+        "广告保存后需要随前端版本一起发布。",
+        `
+          <div class="field"><label>广告标题</label><input class="input" value="新用户首充立减10元"></div>
+          <div class="field"><label>跳转目标</label><select class="input"><option>优惠券领取页</option><option>指定电站</option><option>活动详情页</option></select></div>
+          <div class="field"><label>投放时间</label><input class="input" value="2025-06-18 至 2025-06-30"></div>
+          <div class="field"><label>广告图片</label><button class="btn outline block">上传图片</button></div>
+        `,
+        "保存广告",
+        ()=>toast("广告内容已保存为草稿")
+      );
+      break;
+
+    case "pause-banner": toast("广告已暂停投放","warning"); break;
+
+    case "manage-agreements":
+      showDrawer(
+        "协议版本管理",
+        "协议发布后用户首次进入会重新确认",
+        `
+          ${table(
+            ["协议","当前版本","生效时间","操作"],
+            [
+              ["用户服务协议","V4.2","2025-06-01",`<button class="btn sm soft" data-action="edit-agreement">编辑新版本</button>`],
+              ["隐私政策","V3.8","2025-05-20",`<button class="btn sm soft" data-action="edit-agreement">编辑新版本</button>`],
+              ["注销协议","V2.1","2025-03-18",`<button class="btn sm soft" data-action="edit-agreement">编辑新版本</button>`]
+            ]
+          )}
+        `
+      );
+      break;
+
+    case "edit-agreement":
+      showDialog(
+        "编辑协议新版本",
+        "新版本发布前可预览差异，发布后用户需重新确认。",
+        `
+          <div class="field"><label>协议标题</label><input class="input" value="星途充电用户服务协议"></div>
+          <div class="field"><label>版本号</label><input class="input" value="V4.3"></div>
+          <div class="field"><label>协议正文</label><textarea class="input" style="height:230px">本协议用于规范用户使用星途充电服务时的权利义务、计费规则、账户安全及争议处理方式……</textarea></div>
+        `,
+        "保存新版本",
+        ()=>toast("协议新版本已保存，等待前端发布")
+      );
+      break;
+
+    case "preview-front":
+      showDrawer(
+        "车主端实时预览",
+        "当前待发布草稿",
+        `
+          <div style="width:350px;margin:auto;padding:12px;border:7px solid #111a29;border-radius:35px;background:#f4f7fa;box-shadow:var(--shadow-lg)">
+            <div style="height:170px;padding:25px 17px;color:#fff;border-radius:23px;background:linear-gradient(140deg,#0b1724,#0b8068)">
+              <b style="font-size:20px">上午好，林先生</b>
+              <p style="font-size:10px;opacity:.65">附近有28个空闲充电枪</p>
+              <div style="margin-top:25px;padding:14px;border-radius:16px;color:var(--ink);background:#fff">
+                <b>南山科技园超级充电站</b>
+                <span style="display:block;margin-top:6px;color:var(--sub);font-size:9px">18枪空闲 · ¥1.18/度</span>
+              </div>
+            </div>
+            <div style="margin-top:10px;padding:15px;border-radius:18px;background:linear-gradient(120deg,#4b7dff,#8b6cff);color:#fff">
+              <b>新用户首充立减10元</b>
+            </div>
+          </div>
+        `,
+        `<button class="btn primary" data-action="publish-front">确认预览并发布</button>`
+      );
+      break;
+
+    case "publish-front":
+      showDialog(
+        "发布车主端新版本",
+        "发布前系统将校验广告、协议、功能开关和跳转链接。",
+        `
+          <div class="line"><span>基础配置校验</span><b style="color:#078966">通过</b></div>
+          <div class="line"><span>广告链接校验</span><b style="color:#078966">通过</b></div>
+          <div class="line"><span>协议版本校验</span><b style="color:#078966">通过</b></div>
+          <div class="line"><span>支付配置校验</span><b style="color:#078966">通过</b></div>
+          <div class="field" style="margin-top:12px"><label>版本说明</label><textarea class="input">优化首页活动展示与用户协议内容。</textarea></div>
+        `,
+        "发布V3.6.1",
+        ()=>{
+          closeDrawer();
+          addLog("发布车主端版本V3.6.1");
+          toast("车主端V3.6.1已发布")
+        }
+      );
+      break;
+
+    case "toggle-switch":
+      actionElement.classList.toggle("on");
+      toast(actionElement.classList.contains("on")?"功能已开启":"功能已关闭");
+      break;
+
+    case "allocate-internal":
+      showDialog(
+        "分配内部充电额度",
+        "额度将进入员工或电卡账户，并生成资金流水。",
+        `
+          <div class="field"><label>分配对象</label><select class="input"><option>${actionElement.dataset.name||"王明"} · 运营部</option><option>司机组全部员工</option><option>C012公用电卡</option></select></div>
+          <div class="amount-grid">
+            <button class="amount">¥100</button>
+            <button class="amount active">¥500</button>
+            <button class="amount">¥1000</button>
+            <button class="amount">自定义</button>
+          </div>
+          <div class="field" style="margin-top:12px"><label>分配说明</label><textarea class="input">月度员工充电额度。</textarea></div>
+        `,
+        "确认分配",
+        ()=>{
+          addLog("分配内部充电额度¥500");
+          toast("内部充电额度已分配")
+        }
+      );
+      break;
+
+    case "recover-internal":
+      showDialog(
+        "回收内部账户余额",
+        "回收后未使用余额返回企业内部账户。",
+        `
+          <div class="line"><span>回收对象</span><b>${actionElement.dataset.name}</b></div>
+          <div class="field" style="margin-top:12px"><label>回收金额</label><input class="input" value="100"></div>
+          <div class="field"><label>回收原因</label><select class="input"><option>额度调整</option><option>员工离职</option><option>车辆停用</option></select></div>
+        `,
+        "确认回收",
+        ()=>toast("余额已回收至企业内部账户")
+      );
+      break;
+
+    case "internal-rules":
+      showDialog(
+        "内部账户策略",
+        "配置自动分配、内部折扣、一号多充和可用场站。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>每月自动分配金额</label><input class="input" value="500"></div>
+            <div class="field"><label>自动分配日期</label><select class="input"><option>每月1日</option><option>每月15日</option></select></div>
+            <div class="field"><label>一号多充上限</label><input class="input" value="3"></div>
+            <div class="field"><label>内部服务费折扣</label><select class="input"><option>8折</option><option>9折</option><option>不打折</option></select></div>
+            <div class="field form-full"><label>可用电站</label><select class="input"><option>全部自营电站</option><option>指定电站</option></select></div>
+          </div>
+        `,
+        "保存策略",
+        ()=>toast("内部账户策略已保存")
+      );
+      break;
+
+    case "internal-order":
+      showDrawer(
+        "内部充电订单",
+        "IN20250618001",
+        `
+          <article class="card">
+            <div class="line"><span>员工</span><b>王明 · 运营部</b></div>
+            <div class="line"><span>车辆</span><b>粤B·A82Q6</b></div>
+            <div class="line"><span>充电电量</span><b>42.6kWh</b></div>
+            <div class="line"><span>原价金额</span><b>¥56.80</b></div>
+            <div class="line"><span>内部折扣</span><b style="color:#078966">-¥8.60</b></div>
+            <div class="line"><span>账户扣款</span><b>¥48.20</b></div>
+          </article>
+        `
+      );
+      break;
+
+    case "internal-supplement":
+      showDialog(
+        "内部订单补款核销",
+        "适用于离线充电或账户余额不足的内部订单。",
+        `
+          <div class="line"><span>待补款订单</span><b>IN20250618003</b></div>
+          <div class="line"><span>待补金额</span><b>¥21.00</b></div>
+          <div class="field" style="margin-top:12px"><label>补款账户</label><select class="input"><option>行政部内部账户</option><option>企业统一账户</option></select></div>
+        `,
+        "完成补款核销",
+        ()=>toast("补款完成，订单已核销")
+      );
+      break;
+
+    case "invoice-detail":{
+      const i=state.invoices.find(x=>x.id===id);
+      showDrawer(
+        `开票申请 ${i.id}`,
+        `${i.title} · ¥${i.amount.toFixed(2)}`,
+        `
+          <div class="workflow">
+            <span class="workflow-step done">用户申请</span>
+            <span class="workflow-step done">订单核验</span>
+            <span class="workflow-step ${i.status==="待开票"?"current":"done"}">税务开具</span>
+            <span class="workflow-step ${i.status==="开票中"?"current":i.status==="已完成"?"done":""}">发送用户</span>
+            <span class="workflow-step ${i.status==="已完成"?"done":""}">完成</span>
+          </div>
+
+          <div class="grid g2" style="margin-top:14px">
+            <article class="card">
+              <div class="card-head"><div class="card-title">发票信息</div></div>
+              <div class="line"><span>发票抬头</span><b>${i.title}</b></div>
+              <div class="line"><span>发票类型</span><b>${i.type}</b></div>
+              <div class="line"><span>开票金额</span><b>¥${i.amount.toFixed(2)}</b></div>
+              <div class="line"><span>接收邮箱</span><b>${i.email}</b></div>
+            </article>
+
+            <article class="card">
+              <div class="card-head"><div class="card-title">订单核验</div></div>
+              <div class="line"><span>关联订单</span><b>${i.orders}笔</b></div>
+              <div class="line"><span>订单状态</span><b style="color:#078966">全部已完成</b></div>
+              <div class="line"><span>重复开票</span><b style="color:#078966">无</b></div>
+              <div class="line"><span>退款订单</span><b style="color:#078966">无</b></div>
+            </article>
+          </div>
+        `,
+        `
+          ${i.status==="待开票"?`
+            <button class="btn danger" data-action="reject-invoice" data-id="${i.id}">驳回</button>
+            <button class="btn primary" data-action="issue-invoice" data-id="${i.id}">开具发票</button>
+          `:""}
+          ${i.status==="开票中"?`<button class="btn primary" data-action="complete-invoice" data-id="${i.id}">确认税务开具完成</button>`:""}
+          ${i.status==="已完成"?`<button class="btn soft" data-action="send-invoice" data-id="${i.id}">重新发送</button>`:""}
+        `
+      );
+      break;
+    }
+
+    case "issue-invoice":{
+      const i=state.invoices.find(x=>x.id===id);
+      showDialog(
+        "确认开具电子发票",
+        "确认后调用企业税务开票服务。",
+        `
+          <div class="line"><span>发票抬头</span><b>${i.title}</b></div>
+          <div class="line"><span>开票金额</span><b>¥${i.amount.toFixed(2)}</b></div>
+          <div class="line"><span>开票项目</span><b>充电服务费</b></div>
+          <div class="field" style="margin-top:12px"><label>发票备注</label><input class="input" value="新能源汽车充电服务"></div>
+        `,
+        "调用税务开票",
+        ()=>{
+          i.status="开票中";
+          addLog(`调用税务平台开具发票${i.id}`);
+          closeDrawer();
+          renderPage("finance");
+          toast("开票申请已提交税务平台");
+        }
+      );
+      break;
+    }
+
+    case "complete-invoice":{
+      const i=state.invoices.find(x=>x.id===id);
+      showDialog(
+        "确认发票开具完成",
+        "完成后系统将发送PDF和发票信息至用户邮箱。",
+        `
+          <div class="line"><span>税务发票号码</span><b>044002500111826</b></div>
+          <div class="line"><span>发票金额</span><b>¥${i.amount.toFixed(2)}</b></div>
+          <div class="line"><span>发送邮箱</span><b>${i.email}</b></div>
+        `,
+        "完成并发送用户",
+        ()=>{
+          i.status="已完成";
+          addLog(`完成开票并发送用户：${i.id}`);
+          closeDrawer();
+          renderPage("finance");
+          toast("发票已开具并发送至用户邮箱");
+        }
+      );
+      break;
+    }
+
+    case "reject-invoice":{
+      const i=state.invoices.find(x=>x.id===id);
+      showDialog(
+        "驳回开票申请",
+        "用户将在小程序中看到驳回原因，可修改资料后重新申请。",
+        `<div class="field"><label>驳回原因</label><textarea class="input">发票抬头信息与纳税人识别号不一致，请修改后重新提交。</textarea></div>`,
+        "确认驳回",
+        ()=>{
+          i.status="已驳回";
+          addLog(`驳回开票申请：${i.id}`);
+          closeDrawer();
+          renderPage("finance");
+          toast("开票申请已驳回","warning");
+        }
+      );
+      break;
+    }
+
+    case "send-invoice":
+      toast("发票PDF已重新发送至用户邮箱");
+      break;
+
+    case "replace-invoice":{
+      const i=state.invoices.find(x=>x.id===id);
+      showDialog(
+        "发票换开",
+        "系统将先对原发票进行红冲，红冲成功后开具新发票。",
+        `
+          <div class="line"><span>原发票</span><b>${i.id}</b></div>
+          <div class="line"><span>原开票金额</span><b>¥${i.amount.toFixed(2)}</b></div>
+          <div class="field" style="margin-top:12px"><label>新发票抬头</label><input class="input" value="${i.title}"></div>
+          <div class="field"><label>换开原因</label><select class="input"><option>抬头信息错误</option><option>发票类型变更</option></select></div>
+        `,
+        "红冲并换开",
+        ()=>{
+          i.status="换开中";
+          addLog(`发票红冲并换开：${i.id}`);
+          renderPage("finance");
+          toast("原发票红冲成功，新发票正在开具");
+        }
+      );
+      break;
+    }
+
+    case "batch-invoice":
+      showDialog(
+        "批量开票",
+        "系统将合并处理通过订单校验的待开票申请。",
+        `
+          <div class="line"><span>待处理申请</span><b>1笔</b></div>
+          <div class="line"><span>开票总金额</span><b>¥286.80</b></div>
+          <div class="line"><span>订单核验</span><b style="color:#078966">全部通过</b></div>
+        `,
+        "开始批量开票",
+        ()=>{
+          state.invoices.filter(i=>i.status==="待开票").forEach(i=>i.status="开票中");
+          renderPage("finance");
+          toast("批量开票任务已提交税务平台");
+        }
+      );
+      break;
+
+    case "reconciliation":
+      showDrawer(
+        "财务对账",
+        "2025-06-18 · 支付渠道与业务订单核对",
+        `
+          <div class="grid g4">
+            ${kpi("业务订单金额","¥23,846.50","628笔订单","▤")}
+            ${kpi("支付渠道金额","¥23,846.50","渠道流水628笔","¥","blue")}
+            ${kpi("差异金额","¥0.00","账实一致","✓","orange")}
+            ${kpi("退款金额","¥368.20","7笔退款","↩","red")}
+          </div>
+
+          <article class="card" style="margin-top:14px">
+            ${table(
+              ["渠道","业务金额","渠道金额","差异","状态"],
+              [
+                ["微信支付","¥12,682.50","¥12,682.50","¥0.00",statusTag("已完成")],
+                ["个人余额","¥6,286.00","¥6,286.00","¥0.00",statusTag("已完成")],
+                ["企业账户","¥4,878.00","¥4,878.00","¥0.00",statusTag("已完成")]
+              ]
+            )}
+          </article>
+        `,
+        `<button class="btn primary" data-action="close-reconciliation">确认对账完成</button>`
+      );
+      break;
+
+    case "close-reconciliation":
+      closeDrawer();
+      addLog("完成2025-06-18财务对账");
+      toast("对账结果已确认并归档");
+      break;
+
+    case "new-employee":
+    case "edit-employee":{
+      const e=state.employees.find(x=>x.id===id)||{};
+      showDialog(
+        action==="new-employee"?"新增员工账号":"编辑员工账号",
+        "员工账号保存后根据角色获得对应菜单和数据范围。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>员工姓名</label><input class="input" id="employeeName" value="${e.name||""}"></div>
+            <div class="field"><label>手机号</label><input class="input" id="employeePhone" value="${e.phone||""}"></div>
+            <div class="field"><label>所属部门</label><select class="input" id="employeeDept"><option>运营部</option><option>运维部</option><option>财务部</option></select></div>
+            <div class="field"><label>员工角色</label><select class="input" id="employeeRole"><option>电站站长</option><option>运维工程师</option><option>开票专员</option></select></div>
+          </div>
+        `,
+        "保存员工账号",
+        ()=>{
+          if(action==="new-employee"){
+            state.employees.push({
+              id:"E00"+(state.employees.length+1),
+              name:$("#employeeName").value||"新员工",
+              phone:$("#employeePhone").value||"未设置",
+              dept:$("#employeeDept").value,
+              role:$("#employeeRole").value,
+              status:"正常"
+            });
+          }else{
+            e.name=$("#employeeName").value||e.name;
+            e.dept=$("#employeeDept").value;
+            e.role=$("#employeeRole").value;
+          }
+          addLog(`${action==="new-employee"?"新增":"编辑"}员工账号`);
+          renderPage("enterprise");
+          toast("员工账号已保存");
+        }
+      );
+      break;
+    }
+
+    case "employee-permission":
+      showDialog(
+        "配置员工权限",
+        "按照最小权限原则配置菜单权限和数据范围。",
+        `
+          <div class="line"><span>电站管理</span><button class="switch on" data-action="toggle-switch"></button></div>
+          <div class="line"><span>设备监控</span><button class="switch on" data-action="toggle-switch"></button></div>
+          <div class="line"><span>订单查看</span><button class="switch on" data-action="toggle-switch"></button></div>
+          <div class="line"><span>退款审批</span><button class="switch" data-action="toggle-switch"></button></div>
+          <div class="line"><span>财务开票</span><button class="switch" data-action="toggle-switch"></button></div>
+          <div class="field" style="margin-top:12px"><label>数据范围</label><select class="input"><option>指定负责电站</option><option>企业全部电站</option></select></div>
+        `,
+        "保存权限",
+        ()=>toast("员工权限已更新")
+      );
+      break;
+
+    case "disable-employee":{
+      const e=state.employees.find(x=>x.id===id);
+      showDialog(
+        "停用员工账号",
+        "停用后员工无法登录，历史操作日志继续保留。",
+        `
+          <div class="line"><span>员工</span><b>${e.name}</b></div>
+          <div class="line"><span>角色</span><b>${e.role}</b></div>
+          <div class="field" style="margin-top:12px"><label>停用原因</label><select class="input"><option>离职</option><option>岗位调整</option><option>临时冻结</option></select></div>
+        `,
+        "确认停用",
+        ()=>{
+          e.status="已停用";
+          addLog(`停用员工账号：${e.name}`);
+          renderPage("enterprise");
+          toast("员工账号已停用","warning");
+        }
+      );
+      break;
+    }
+
+    case "role-manage":
+      showDrawer(
+        "角色权限管理",
+        "角色决定员工可见菜单、操作权限与数据范围",
+        `
+          ${table(
+            ["角色","人数","数据范围","操作"],
+            [
+              ["企业管理员","2人","全部企业数据",`<button class="btn sm soft" data-action="edit-role">编辑权限</button>`],
+              ["电站站长","8人","负责电站",`<button class="btn sm soft" data-action="edit-role">编辑权限</button>`],
+              ["运维工程师","12人","设备与工单",`<button class="btn sm soft" data-action="edit-role">编辑权限</button>`],
+              ["财务专员","6人","账户与发票",`<button class="btn sm soft" data-action="edit-role">编辑权限</button>`]
+            ]
+          )}
+          <button class="btn primary block" style="margin-top:12px" data-action="new-role">＋ 新建角色</button>
+        `
+      );
+      break;
+
+    case "edit-role":
+    case "new-role":
+      showDialog(
+        action==="new-role"?"新建角色":"编辑角色权限",
+        "配置角色名称、菜单权限和敏感操作范围。",
+        `
+          <div class="field"><label>角色名称</label><input class="input" value="${action==="new-role"?"区域运营经理":"电站站长"}"></div>
+          <div class="line"><span>电站管理</span><button class="switch on" data-action="toggle-switch"></button></div>
+          <div class="line"><span>设备监控</span><button class="switch on" data-action="toggle-switch"></button></div>
+          <div class="line"><span>订单退款</span><button class="switch" data-action="toggle-switch"></button></div>
+          <div class="line"><span>财务开票</span><button class="switch" data-action="toggle-switch"></button></div>
+        `,
+        "保存角色",
+        ()=>toast("角色权限已保存")
+      );
+      break;
+
+    case "save-settings":
+      addLog("保存系统设置");
+      toast("系统设置已保存");
+      break;
+
+    case "edit-security":
+      showDialog(
+        "编辑安全策略",
+        "敏感操作策略变更将记录审计日志。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>登录有效期</label><select class="input"><option>12小时</option><option>8小时</option></select></div>
+            <div class="field"><label>退款审批阈值</label><input class="input" value="50"></div>
+            <div class="field"><label>设备停止验证</label><select class="input"><option>填写原因并二次确认</option></select></div>
+            <div class="field"><label>异常登录提醒</label><select class="input"><option>短信+消息中心</option></select></div>
+          </div>
+        `,
+        "保存安全策略",
+        ()=>toast("安全策略已更新")
+      );
+      break;
+
+    case "edit-company":
+      showDialog(
+        "编辑企业信息",
+        "企业认证主体变更需要重新提交资质审核。",
+        `
+          <div class="form-grid">
+            <div class="field"><label>企业名称</label><input class="input" value="深圳星途新能源科技有限公司"></div>
+            <div class="field"><label>统一社会信用代码</label><input class="input" value="91440300MA5F8XXXX"></div>
+            <div class="field"><label>客服电话</label><input class="input" value="400-888-6628"></div>
+            <div class="field"><label>企业邮箱</label><input class="input" value="service@xingtu.example"></div>
+          </div>
+        `,
+        "保存企业信息",
+        ()=>toast("企业信息已保存")
+      );
+      break;
+
+    case "channel-settings":
+      showDrawer(
+        "第三方渠道配置",
+        "支付、地图、开票和消息渠道连接状态",
+        `
+          ${[
+            ["微信支付","商户号 1900****826","已连接"],
+            ["电子开票平台","企业税号 9144****","已连接"],
+            ["腾讯地图","Key TXM****628","已连接"],
+            ["短信服务","签名：星途充电","已连接"]
+          ].map(c=>`
+            <article class="card">
+              <div class="card-head">
+                <div><div class="card-title">${c[0]}</div><div class="card-sub">${c[1]}</div></div>
+                ${statusTag("在线")}
+              </div>
+              <button class="btn soft block" data-action="test-channel" data-channel="${c[0]}">测试连接</button>
+            </article>
+          `).join("")}
+        `
+      );
+      break;
+
+    case "test-channel":
+      toast(`${actionElement.dataset.channel}连接测试成功`);
+      break;
+
+    case "version-detail":
+      showDrawer(
+        "版本更新记录",
+        "当前版本 V3.6.0",
+        `
+          <article class="card">
+            <div class="card-head"><div class="card-title">V3.6.0</div>${statusTag("已生效")}</div>
+            <div class="line"><span>发布时间</span><b>2025-06-18</b></div>
+            <div style="margin-top:12px;color:var(--sub);font-size:10px;line-height:1.9">
+              1. 新增完整的电价版本回滚能力；<br>
+              2. 新增千里眼枪头掉地识别；<br>
+              3. 优化设备故障报修与验收流程；<br>
+              4. 新增营销活动预算审批；<br>
+              5. 优化财务对账和换开发票流程。
+            </div>
+          </article>
+        `
+      );
+      break;
+  }
+});
+
+/* 选择卡片 */
+document.addEventListener("click",event=>{
+  const card=event.target.closest(".check-card");
+  if(card){
+    const parent=card.parentElement;
+    $$(".check-card",parent).forEach(c=>c.classList.remove("active"));
+    card.classList.add("active");
+  }
+
+  const amount=event.target.closest(".amount");
+  if(amount){
+    $$(".amount",amount.parentElement).forEach(a=>a.classList.remove("active"));
+    amount.classList.add("active");
+  }
+});
+
+/* 弹窗确认 */
+$("#dialogConfirm").addEventListener("click",()=>{
+  if(dialogCallback){
+    const result=dialogCallback();
+    if(result===false)return;
+  }
+  closeDialog();
+});
+
+/* 点击遮罩关闭 */
+$("#drawerMask").addEventListener("click",event=>{
+  if(event.target.id==="drawerMask")closeDrawer();
+});
+$("#dialogMask").addEventListener("click",event=>{
+  if(event.target.id==="dialogMask")closeDialog();
+});
+
+/* 数据周期 */
+document.addEventListener("click",event=>{
+  const period=event.target.closest("[data-data-period]");
+  if(!period)return;
+  $$("[data-data-period]").forEach(b=>b.classList.remove("active"));
+  period.classList.add("active");
+  toast("经营数据周期已切换");
+});
+
+/* 实时功率 */
+setInterval(()=>{
+  const power=$("#heroPower");
+  if(power){
+    const value=2864.5+Math.sin(Date.now()/1500)*32;
+    power.textContent=value.toFixed(1)+"kW";
+  }
+},1200);
+
+initNav();
+renderPage("dashboard");
+</script>
+</body>
+</html>

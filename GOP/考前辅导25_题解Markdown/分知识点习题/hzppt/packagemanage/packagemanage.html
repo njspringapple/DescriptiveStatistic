@@ -1,0 +1,6364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧车位灵活套餐运营管理平台</title>
+
+<style>
+:root {
+  --primary: #2576d3;
+  --primary-dark: #185ba8;
+  --primary-soft: #edf5ff;
+  --success: #168d61;
+  --success-soft: #eaf8f2;
+  --warning: #db8616;
+  --warning-soft: #fff5e5;
+  --danger: #d94e4e;
+  --danger-soft: #fff0f0;
+  --purple: #7058bd;
+  --purple-soft: #f3efff;
+  --cyan: #12899e;
+  --cyan-soft: #e9f9fb;
+  --text: #253348;
+  --text-2: #59687a;
+  --muted: #8793a4;
+  --border: #dbe4ed;
+  --background: #f3f6f9;
+  --card: #ffffff;
+  --sidebar: #1f3c60;
+  --sidebar-active: #2d5f95;
+  --shadow: 0 7px 24px rgba(31, 52, 79, .07);
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--background);
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.layout {
+  min-height: 100vh;
+}
+
+/* ==============================
+   左侧导航
+============================== */
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 40;
+  width: 260px;
+  overflow-y: auto;
+  color: #fff;
+  background:
+    radial-gradient(circle at 20% 0, rgba(75, 133, 199, .28), transparent 23%),
+    var(--sidebar);
+}
+
+.brand {
+  padding: 21px 19px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border-radius: 13px;
+  color: #fff;
+  background: linear-gradient(135deg, #268cff, #26c8dc);
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(21, 121, 214, .25);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  color: rgba(255,255,255,.63);
+  font-size: 12px;
+}
+
+.brand-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 13px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  color: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.08);
+  font-size: 12px;
+}
+
+.online-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #48df9a;
+  box-shadow: 0 0 0 4px rgba(72,223,154,.12);
+}
+
+.nav {
+  padding: 14px 12px 30px;
+}
+
+.nav-title {
+  margin: 18px 11px 8px;
+  color: rgba(255,255,255,.44);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 11px 13px;
+  border: 0;
+  border-radius: 10px;
+  color: rgba(255,255,255,.82);
+  background: transparent;
+  text-align: left;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #fff;
+  background: var(--sidebar-active);
+}
+
+.nav-icon {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(255,255,255,.1);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.nav-badge {
+  min-width: 24px;
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: #fff;
+  background: #df5b5b;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ==============================
+   主区域
+============================== */
+
+.main {
+  min-height: 100vh;
+  margin-left: 260px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  padding: 10px 26px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(10px);
+}
+
+.page-info h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.page-info p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-left: auto;
+}
+
+.top-select {
+  padding: 9px 34px 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text);
+  background: #fff;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+
+.avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-weight: 900;
+}
+
+.user strong,
+.user span {
+  display: block;
+}
+
+.user strong {
+  font-size: 14px;
+}
+
+.user span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.content {
+  padding: 23px 27px 50px;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* ==============================
+   公共组件
+============================== */
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 19px 21px 0;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.card-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.card-body {
+  padding: 19px 21px 21px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 17px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.section-heading p {
+  max-width: 940px;
+  margin: 5px 0 0;
+  color: var(--text-2);
+}
+
+.section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.role-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 17px;
+  padding: 13px 16px;
+  border: 1px solid #d7e4f0;
+  border-radius: 11px;
+  background: #f8fbfe;
+}
+
+.role-strip strong {
+  color: var(--primary-dark);
+}
+
+.role-strip span {
+  color: var(--text-2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 39px;
+  padding: 8px 15px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+.btn-primary {
+  color: #fff;
+  background: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  border-color: var(--border);
+  color: var(--text);
+  background: #fff;
+}
+
+.btn-success {
+  color: #fff;
+  background: var(--success);
+}
+
+.btn-warning {
+  color: #fff;
+  background: var(--warning);
+}
+
+.btn-danger {
+  color: #fff;
+  background: var(--danger);
+}
+
+.btn-purple {
+  color: #fff;
+  background: var(--purple);
+}
+
+.btn-sm {
+  min-height: 33px;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tag-blue {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.tag-green {
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+.tag-orange {
+  color: #ac6708;
+  background: var(--warning-soft);
+}
+
+.tag-red {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.tag-purple {
+  color: var(--purple);
+  background: var(--purple-soft);
+}
+
+.tag-cyan {
+  color: var(--cyan);
+  background: var(--cyan-soft);
+}
+
+.tag-gray {
+  color: #667587;
+  background: #eef2f5;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.metric-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.metric-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.metric-value {
+  margin: 10px 0 4px;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.metric-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.info-banner,
+.warning-banner,
+.success-banner,
+.danger-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 17px;
+  border-radius: 11px;
+}
+
+.info-banner {
+  border: 1px solid #c9dff5;
+  color: #315f91;
+  background: var(--primary-soft);
+}
+
+.warning-banner {
+  border: 1px solid #eed099;
+  color: #815710;
+  background: var(--warning-soft);
+}
+
+.success-banner {
+  border: 1px solid #c2e3d4;
+  color: #226b50;
+  background: var(--success-soft);
+}
+
+.danger-banner {
+  border: 1px solid #efc7c7;
+  color: #8f3535;
+  background: var(--danger-soft);
+}
+
+.banner-icon {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.banner-content strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ==============================
+   表格、工具栏
+============================== */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  min-width: 280px;
+  max-width: 450px;
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.search-box span {
+  padding-left: 12px;
+  color: var(--muted);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+
+.toolbar select {
+  padding: 9px 34px 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+
+table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #e9eef3;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: var(--text-2);
+  background: #f8fafc;
+  font-size: 14px;
+}
+
+td {
+  font-size: 14px;
+}
+
+tbody tr:hover {
+  background: #fbfdff;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ==============================
+   表单
+============================== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.required::after {
+  content: "*";
+  margin-left: 3px;
+  color: var(--danger);
+}
+
+.form-control {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  color: var(--text);
+  background: #fff;
+}
+
+.form-control:focus {
+  border-color: #83b0e0;
+  box-shadow: 0 0 0 3px rgba(40,120,208,.1);
+}
+
+textarea.form-control {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.help {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.readonly-box {
+  padding: 12px 13px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.readonly-box p {
+  margin: 3px 0;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-item {
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f9fbfd;
+}
+
+.detail-item > span:first-child {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.detail-section {
+  margin-top: 18px;
+}
+
+.detail-section h4 {
+  margin: 0 0 9px;
+  font-size: 16px;
+}
+
+/* ==============================
+   驾驶舱
+============================== */
+
+.todo-list {
+  display: grid;
+  gap: 10px;
+}
+
+.todo-item {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #fff;
+}
+
+.todo-level {
+  width: 8px;
+  height: 56px;
+  border-radius: 99px;
+  background: var(--primary);
+}
+
+.todo-level.warning {
+  background: var(--warning);
+}
+
+.todo-level.danger {
+  background: var(--danger);
+}
+
+.todo-level.success {
+  background: var(--success);
+}
+
+.todo-content strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.todo-content p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.todo-meta {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.progress {
+  overflow: hidden;
+  height: 10px;
+  border-radius: 99px;
+  background: #edf1f5;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--primary);
+}
+
+.progress-bar.success {
+  background: var(--success);
+}
+
+.progress-bar.warning {
+  background: var(--warning);
+}
+
+.progress-bar.danger {
+  background: var(--danger);
+}
+
+/* ==============================
+   车位地图
+============================== */
+
+.space-layout {
+  display: grid;
+  grid-template-columns: minmax(650px, 1fr) 390px;
+  gap: 17px;
+}
+
+.space-map {
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #eef2f6;
+}
+
+.space-map-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.space-map-head h3 {
+  margin: 0;
+}
+
+.space-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(74px, 1fr));
+  gap: 9px;
+}
+
+.space {
+  position: relative;
+  min-height: 90px;
+  padding: 10px 6px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+
+.space:hover,
+.space.selected {
+  border-color: var(--primary);
+}
+
+.space.checked {
+  box-shadow: 0 0 0 3px rgba(37,118,211,.16);
+}
+
+.space input {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 16px;
+  height: 16px;
+}
+
+.space strong {
+  display: block;
+  font-size: 14px;
+}
+
+.space span {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.space.available {
+  background: var(--success-soft);
+}
+
+.space.used {
+  background: var(--primary-soft);
+}
+
+.space.shared {
+  background: var(--purple-soft);
+}
+
+.space.reserved {
+  background: var(--warning-soft);
+}
+
+.space.closed {
+  color: var(--muted);
+  background: #e8edf1;
+}
+
+.space-panel {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.space-panel h3 {
+  margin: 0 0 4px;
+}
+
+.space-panel > p {
+  margin: 0 0 15px;
+  color: var(--text-2);
+}
+
+.price-box {
+  display: grid;
+  gap: 8px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f7f9fb;
+}
+
+.price-row.total {
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  font-weight: 900;
+}
+
+/* ==============================
+   套餐产品卡
+============================== */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.product-cover {
+  position: relative;
+  min-height: 112px;
+  padding: 18px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 0, rgba(255,255,255,.18), transparent 30%),
+    linear-gradient(135deg, var(--cover-a), var(--cover-b));
+}
+
+.product-cover h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.product-cover p {
+  margin: 5px 0 0;
+  color: rgba(255,255,255,.8);
+  font-size: 13px;
+}
+
+.product-price {
+  position: absolute;
+  right: 17px;
+  bottom: 13px;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.product-price small {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.product-body {
+  padding: 16px 18px 18px;
+}
+
+.product-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.product-info div {
+  padding: 8px 4px;
+  border-radius: 8px;
+  background: #f7f9fb;
+  text-align: center;
+}
+
+.product-info strong {
+  display: block;
+  font-size: 15px;
+}
+
+.product-info span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.product-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 13px 0;
+}
+
+/* ==============================
+   套餐向导
+============================== */
+
+.wizard-steps {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+.wizard-step {
+  position: relative;
+  padding: 10px 6px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--muted);
+  background: #fff;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wizard-step.active {
+  border-color: #95bce4;
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.wizard-step.done {
+  border-color: #a9d7c4;
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+.wizard-page {
+  display: none;
+}
+
+.wizard-page.active {
+  display: block;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+}
+
+.option-card {
+  position: relative;
+  padding: 14px;
+  border: 2px solid var(--border);
+  border-radius: 11px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.option-card:hover,
+.option-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.option-card input {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.option-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.option-card span {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.rule-builder {
+  display: grid;
+  gap: 10px;
+}
+
+.rule-line {
+  display: grid;
+  grid-template-columns: 140px 160px minmax(160px, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f9fbfd;
+}
+
+/* ==============================
+   客户、合同
+============================== */
+
+.customer-layout,
+.contract-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(390px, .85fr);
+  gap: 17px;
+}
+
+.profile-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  place-items: center;
+  border-radius: 15px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.profile-head h3 {
+  margin: 0;
+}
+
+.profile-head p {
+  margin: 3px 0 0;
+  color: var(--text-2);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 22px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 7px;
+  bottom: 7px;
+  width: 2px;
+  background: #d9e4ef;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0 0 16px 13px;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 2px #c1d7ed;
+}
+
+.timeline-item strong {
+  font-size: 14px;
+}
+
+.timeline-item p {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+/* ==============================
+   候补看板
+============================== */
+
+.waitlist-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
+  gap: 14px;
+  overflow-x: auto;
+}
+
+.wait-column {
+  min-width: 250px;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #eef2f6;
+}
+
+.wait-column-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.wait-column-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.wait-card {
+  margin-bottom: 9px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.wait-card h4 {
+  margin: 0 0 4px;
+}
+
+.wait-card p {
+  margin: 3px 0;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+/* ==============================
+   分账
+============================== */
+
+.settlement-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 430px;
+  gap: 17px;
+}
+
+.waterfall {
+  display: grid;
+  gap: 10px;
+}
+
+.waterfall-row {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr) 130px;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.waterfall-bar {
+  height: 16px;
+  border-radius: 99px;
+  background: var(--primary);
+}
+
+.waterfall-bar.green {
+  background: var(--success);
+}
+
+.waterfall-bar.orange {
+  background: var(--warning);
+}
+
+.waterfall-bar.purple {
+  background: var(--purple);
+}
+
+/* ==============================
+   渠道营销
+============================== */
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.channel-card {
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.channel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.channel-head h3 {
+  margin: 0;
+}
+
+.channel-card p {
+  color: var(--text-2);
+}
+
+/* ==============================
+   AI运营机会
+============================== */
+
+.opportunity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.opportunity-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--color);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.opportunity-card h3 {
+  margin: 0 0 6px;
+}
+
+.opportunity-card p {
+  color: var(--text-2);
+}
+
+.opportunity-impact {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin: 14px 0;
+}
+
+.opportunity-impact div {
+  padding: 9px;
+  border-radius: 8px;
+  background: #f7f9fb;
+  text-align: center;
+}
+
+.opportunity-impact strong {
+  display: block;
+  font-size: 18px;
+}
+
+.opportunity-impact span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* ==============================
+   模态框
+============================== */
+
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(24,36,52,.5);
+  backdrop-filter: blur(3px);
+}
+
+.modal-mask.show {
+  display: flex;
+}
+
+.modal {
+  overflow: hidden;
+  width: min(920px, 100%);
+  max-height: 93vh;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 28px 85px rgba(16,31,50,.3);
+}
+
+.modal.large {
+  width: min(1180px, 100%);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 19px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-header p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.modal-close {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--text-2);
+  background: #eef2f5;
+  font-size: 21px;
+}
+
+.modal-body {
+  overflow-y: auto;
+  max-height: calc(93vh - 150px);
+  padding: 21px 22px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding: 15px 22px;
+  border-top: 1px solid var(--border);
+  background: #fafbfd;
+}
+
+/* ==============================
+   Toast
+============================== */
+
+.toast-wrap {
+  position: fixed;
+  right: 23px;
+  top: 84px;
+  z-index: 200;
+  display: grid;
+  gap: 9px;
+}
+
+.toast {
+  width: min(420px, calc(100vw - 35px));
+  padding: 13px 15px;
+  border: 1px solid #bfe0d2;
+  border-radius: 10px;
+  color: #21694f;
+  background: #effaf5;
+  box-shadow: var(--shadow);
+}
+
+.toast.error {
+  border-color: #efc8c8;
+  color: #983939;
+  background: #fff3f3;
+}
+
+/* ==============================
+   响应式
+============================== */
+
+@media (max-width: 1350px) {
+  .grid-5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-4,
+  .product-grid,
+  .channel-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .space-layout,
+  .customer-layout,
+  .contract-layout,
+  .settlement-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1050px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  .nav-title {
+    display: none;
+  }
+
+  .nav-item {
+    min-width: 175px;
+  }
+
+  .topbar {
+    position: static;
+  }
+
+  .space-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .waitlist-board {
+    grid-template-columns: repeat(4, 270px);
+  }
+}
+
+@media (max-width: 680px) {
+  body {
+    font-size: 15px;
+  }
+
+  .content {
+    padding: 17px 13px 35px;
+  }
+
+  .topbar {
+    padding: 11px 14px;
+  }
+
+  .top-select,
+  .user {
+    display: none;
+  }
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .grid-5,
+  .form-grid,
+  .detail-grid,
+  .product-grid,
+  .channel-grid,
+  .opportunity-grid,
+  .option-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full {
+    grid-column: auto;
+  }
+
+  .space-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .wizard-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rule-line,
+  .waterfall-row {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-item {
+    grid-template-columns: 7px 1fr;
+  }
+
+  .todo-item .btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- 左侧导航 -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-row">
+        <div class="brand-logo">位</div>
+
+        <div>
+          <h1>智慧车位运营平台</h1>
+          <p>套餐 · 合同 · 计费 · 分账 · AI运营</p>
+        </div>
+      </div>
+
+      <div class="brand-status">
+        <span class="online-dot"></span>
+        车位运营引擎运行正常
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-title">运营总览</div>
+
+      <button class="nav-item active" data-view="dashboard">
+        <span class="nav-icon">首</span>
+        经营驾驶舱
+        <span class="nav-badge">7</span>
+      </button>
+
+      <button class="nav-item" data-view="spaces">
+        <span class="nav-icon">位</span>
+        车位资源中心
+        <span class="nav-badge">3</span>
+      </button>
+
+      <button class="nav-item" data-view="packages">
+        <span class="nav-icon">产</span>
+        套餐产品中心
+        <span class="nav-badge">2</span>
+      </button>
+
+      <button class="nav-item" data-view="pricing">
+        <span class="nav-icon">价</span>
+        定价与计费规则
+      </button>
+
+      <div class="nav-title">客户与履约</div>
+
+      <button class="nav-item" data-view="customers">
+        <span class="nav-icon">客</span>
+        客户与停车权益
+      </button>
+
+      <button class="nav-item" data-view="contracts">
+        <span class="nav-icon">约</span>
+        合同履约中心
+        <span class="nav-badge">5</span>
+      </button>
+
+      <button class="nav-item" data-view="waitlist">
+        <span class="nav-icon">候</span>
+        候补排队与分配
+        <span class="nav-badge" id="waitBadge">8</span>
+      </button>
+
+      <div class="nav-title">财务与营销</div>
+
+      <button class="nav-item" data-view="billing">
+        <span class="nav-icon">账</span>
+        订单与多科目账单
+        <span class="nav-badge">4</span>
+      </button>
+
+      <button class="nav-item" data-view="settlement">
+        <span class="nav-icon">分</span>
+        分账与结算中心
+        <span class="nav-badge">3</span>
+      </button>
+
+      <button class="nav-item" data-view="channels">
+        <span class="nav-icon">渠</span>
+        渠道营销管理
+      </button>
+
+      <div class="nav-title">智能运营</div>
+
+      <button class="nav-item" data-view="insight">
+        <span class="nav-icon">AI</span>
+        AI运营策略
+        <span class="nav-badge">4</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- 主区域 -->
+  <main class="main">
+    <header class="topbar">
+      <div class="page-info">
+        <h2 id="pageTitle">车位经营驾驶舱</h2>
+        <p id="pageDesc">从资源库存、产品销售、合同履约到收益优化统一运营</p>
+      </div>
+
+      <div class="top-actions">
+        <select class="top-select">
+          <option>华南区域全部项目</option>
+          <option>智谷办公园区</option>
+          <option>阳光雅苑住宅</option>
+          <option>星汇商业中心</option>
+        </select>
+
+        <select class="top-select" onchange="changeRole(this.value)">
+          <option>停车运营总监</option>
+          <option>车位产品经理</option>
+          <option>项目运营经理</option>
+          <option>客户服务人员</option>
+          <option>财务结算人员</option>
+        </select>
+
+        <div class="user">
+          <div class="avatar">王</div>
+          <div>
+            <strong id="userName">王总监</strong>
+            <span id="userRole">停车运营管理中心</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ==============================
+           经营驾驶舱
+      =============================== -->
+      <section class="view active" id="view-dashboard">
+        <div class="role-strip">
+          <strong>当前使用人：停车运营总监</strong>
+          <span>
+            关注车位库存、出租率、套餐销售、到期续费、候补需求、收入结构和闲置资源机会。
+          </span>
+        </div>
+
+        <div class="grid-5 mb-16">
+          <div class="metric-card">
+            <div class="metric-label">运营车位总量</div>
+            <div class="metric-value">12,860</div>
+            <div class="metric-note">覆盖18个停车项目</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">当前出租率</div>
+            <div class="metric-value">82.6%</div>
+            <div class="metric-note">较上月提升2.3%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">本月套餐收入</div>
+            <div class="metric-value">¥386万</div>
+            <div class="metric-note">月租及分时套餐</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">30天内到期合同</div>
+            <div class="metric-value">286份</div>
+            <div class="metric-note">预计可续费218份</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">候补需求</div>
+            <div class="metric-value">168人</div>
+            <div class="metric-note">高需求区域3个</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>今日优先处理</h3>
+                <p>按收入影响、客户数量和履约风险排序</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="todo-list">
+                <div class="todo-item">
+                  <div class="todo-level danger"></div>
+
+                  <div class="todo-content">
+                    <strong>智谷园区白天通勤套餐库存即将售罄</strong>
+                    <p>剩余6个名额，候补队列已有38人，5号停车场仍有可释放车位。</p>
+                    <div class="todo-meta">预计新增月收入18,600元</div>
+                  </div>
+
+                  <button class="btn btn-primary btn-sm"
+                          onclick="openOpportunityPackage()">
+                    扩充套餐
+                  </button>
+                </div>
+
+                <div class="todo-item">
+                  <div class="todo-level warning"></div>
+
+                  <div class="todo-content">
+                    <strong>86份合同将在14天内到期</strong>
+                    <p>其中62名客户满足自动续签条件，18名客户存在车辆或价格变更。</p>
+                    <div class="todo-meta">预计续费收入286,000元</div>
+                  </div>
+
+                  <button class="btn btn-secondary btn-sm"
+                          onclick="navigateTo('contracts')">
+                    发起续费
+                  </button>
+                </div>
+
+                <div class="todo-item">
+                  <div class="todo-level warning"></div>
+
+                  <div class="todo-content">
+                    <strong>住宅夜间空闲车位利用率偏低</strong>
+                    <p>阳光雅苑工作日白天空闲146个车位，周边办公需求旺盛。</p>
+                    <div class="todo-meta">建议推出工作日08:00—18:30共享套餐</div>
+                  </div>
+
+                  <button class="btn btn-secondary btn-sm"
+                          onclick="createDaySharingPackage()">
+                    设计套餐
+                  </button>
+                </div>
+
+                <div class="todo-item">
+                  <div class="todo-level warning"></div>
+
+                  <div class="todo-content">
+                    <strong>多车家庭频繁产生附加车辆费用</strong>
+                    <p>近30天有126户产生3次以上附加车辆临停费用。</p>
+                    <div class="todo-meta">建议推荐“一位两车轮停”升级产品</div>
+                  </div>
+
+                  <button class="btn btn-secondary btn-sm"
+                          onclick="navigateTo('insight')">
+                    查看机会
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>经营结构与履约质量</h3>
+                <p>不只看销售额，还要看库存、续费和违约情况</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span>固定车位收入</span>
+                  <strong>¥2,160,000</strong>
+                </div>
+                <div class="detail-item">
+                  <span>共享名额收入</span>
+                  <strong>¥986,000</strong>
+                </div>
+                <div class="detail-item">
+                  <span>分时套餐收入</span>
+                  <strong>¥428,000</strong>
+                </div>
+                <div class="detail-item">
+                  <span>管理费收入</span>
+                  <strong>¥216,000</strong>
+                </div>
+                <div class="detail-item">
+                  <span>附加车辆费</span>
+                  <strong>¥58,600</strong>
+                </div>
+                <div class="detail-item">
+                  <span>超时及超容费</span>
+                  <strong>¥32,800</strong>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <h4>关键履约指标</h4>
+
+                <div style="display:grid;gap:14px">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                      <span>合同续费率</span>
+                      <strong>78.6%</strong>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar success" style="width:78.6%"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                      <span>车位有效利用率</span>
+                      <strong>82.6%</strong>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" style="width:82.6%"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                      <span>自动分账完成率</span>
+                      <strong>96.8%</strong>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar success" style="width:96.8%"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                      <span>规则异常订单率</span>
+                      <strong>1.2%</strong>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar warning" style="width:12%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           车位资源中心
+      =============================== -->
+      <section class="view" id="view-spaces">
+        <div class="section-heading">
+          <div>
+            <h2>车位资源中心</h2>
+            <p>
+              一位一档、一位一价，统一管理产权、区域、车位类型、当前状态和可销售能力。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="batchReleaseSpaces()">
+              批量释放共享
+            </button>
+            <button class="btn btn-primary"
+                    onclick="openSpaceCreate()">
+              新增车位资源
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-4 mb-16">
+          <div class="metric-card">
+            <div class="metric-label">当前车位库存</div>
+            <div class="metric-value">12,860</div>
+            <div class="metric-note">一位一档完成率100%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">可租赁车位</div>
+            <div class="metric-value">1,286</div>
+            <div class="metric-note">含共享及固定车位</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">分时共享中</div>
+            <div class="metric-value">860</div>
+            <div class="metric-note">工作日及夜间释放</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">异常占用</div>
+            <div class="metric-value">23</div>
+            <div class="metric-note">待运营人员处理</div>
+          </div>
+        </div>
+
+        <div class="space-layout">
+          <div class="space-map">
+            <div class="space-map-head">
+              <div>
+                <h3>智谷办公园区 · 5号停车场B2</h3>
+                <p class="muted" style="margin:3px 0 0">
+                  点击查看车位；勾选后可批量调整销售及共享状态
+                </p>
+              </div>
+
+              <div class="section-actions">
+                <select class="top-select" id="spaceStatusFilter"
+                        onchange="renderSpaces()">
+                  <option value="">全部状态</option>
+                  <option value="available">可租赁</option>
+                  <option value="used">已使用</option>
+                  <option value="shared">分时共享</option>
+                  <option value="reserved">保留</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-grid" id="spaceGrid"></div>
+
+            <div class="toolbar" style="margin-top:15px;margin-bottom:0">
+              <span class="tag tag-green">可租赁</span>
+              <span class="tag tag-blue">已使用</span>
+              <span class="tag tag-purple">分时共享</span>
+              <span class="tag tag-orange">运营保留</span>
+              <span class="tag tag-gray">关闭/维修</span>
+            </div>
+          </div>
+
+          <div class="space-panel" id="spacePanel"></div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           套餐产品中心
+      =============================== -->
+      <section class="view" id="view-packages">
+        <div class="section-heading">
+          <div>
+            <h2>套餐产品中心</h2>
+            <p>
+              将车位、时间、客户身份、计费规则、合同与服务权益组合成可销售产品。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="openPackageCopy()">
+              复制现有套餐
+            </button>
+            <button class="btn btn-primary"
+                    onclick="openPackageWizard()">
+              创建新套餐
+            </button>
+          </div>
+        </div>
+
+        <div class="warning-banner mb-16">
+          <div class="banner-icon">!</div>
+          <div class="banner-content">
+            <strong>2个套餐需要运营关注</strong>
+            智谷通勤月卡库存仅剩6个；阳光雅苑夜间套餐续费率下降至62%。
+          </div>
+        </div>
+
+        <div class="product-grid" id="packageGrid"></div>
+      </section>
+
+      <!-- ==============================
+           定价规则
+      =============================== -->
+      <section class="view" id="view-pricing">
+        <div class="section-heading">
+          <div>
+            <h2>差异化定价与计费规则</h2>
+            <p>
+              按客户身份、时间、区域、车位类型、产权主体和供需状态灵活定价。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-primary"
+                    onclick="openPricingRuleCreate()">
+              新建计费规则
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-4 mb-16">
+          <div class="metric-card">
+            <div class="metric-label">运行中规则</div>
+            <div class="metric-value">38条</div>
+            <div class="metric-note">覆盖18个停车项目</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">身份差异价</div>
+            <div class="metric-value">12条</div>
+            <div class="metric-note">业主、员工、商户、访客</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">分时定价</div>
+            <div class="metric-value">16条</div>
+            <div class="metric-note">白天、夜间、周末</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">待发布版本</div>
+            <div class="metric-value">3条</div>
+            <div class="metric-note">需要运营审批</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>当前生效的核心规则</h3>
+              <p>查看条件、价格、优先级、版本及适用范围</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>规则名称</th>
+                    <th>适用客户</th>
+                    <th>时间/区域</th>
+                    <th>计费方式</th>
+                    <th>费用科目</th>
+                    <th>优先级</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="pricingTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           客户权益
+      =============================== -->
+      <section class="view" id="view-customers">
+        <div class="section-heading">
+          <div>
+            <h2>客户与停车权益</h2>
+            <p>
+              统一管理业主、租户、员工、企业、商户和访客的车辆、套餐和停车权限。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="openCustomerImport()">
+              批量导入客户
+            </button>
+            <button class="btn btn-primary"
+                    onclick="openCustomerCreate()">
+              新建客户
+            </button>
+          </div>
+        </div>
+
+        <div class="customer-layout">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>客户权益列表</h3>
+                <p>客户身份决定可购买产品、价格和服务规则</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="toolbar">
+                <div class="search-box">
+                  <span>查</span>
+                  <input id="customerSearch"
+                         placeholder="客户、企业、手机号、车牌"
+                         oninput="renderCustomerTable()">
+                </div>
+
+                <select id="customerTypeFilter"
+                        onchange="renderCustomerTable()">
+                  <option value="">全部客户类型</option>
+                  <option>业主</option>
+                  <option>企业员工</option>
+                  <option>企业客户</option>
+                  <option>商户</option>
+                  <option>访客</option>
+                </select>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>客户</th>
+                      <th>身份</th>
+                      <th>车辆</th>
+                      <th>当前套餐</th>
+                      <th>有效期</th>
+                      <th>权益状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="customerTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-card" id="customerDetail"></div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           合同履约
+      =============================== -->
+      <section class="view" id="view-contracts">
+        <div class="section-heading">
+          <div>
+            <h2>合同履约中心</h2>
+            <p>
+              在线签约、生效授权、续期、暂停、恢复、车位转让和车辆变更全过程管理。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-primary"
+                    onclick="openContractCreate()">
+              新建停车合同
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-5 mb-16">
+          <div class="metric-card">
+            <div class="metric-label">有效合同</div>
+            <div class="metric-value">8,628</div>
+            <div class="metric-note">个人及企业合同</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">30天内到期</div>
+            <div class="metric-value">286</div>
+            <div class="metric-note">已触达客户218名</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">待续签</div>
+            <div class="metric-value">86</div>
+            <div class="metric-note">续签金额286,000元</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">暂停中</div>
+            <div class="metric-value">32</div>
+            <div class="metric-note">长期出差及车位维修</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">履约异常</div>
+            <div class="metric-value">5</div>
+            <div class="metric-note">欠费、超容及重复授权</div>
+          </div>
+        </div>
+
+        <div class="contract-layout">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>合同列表</h3>
+                <p>点击合同查看权益、账单和履约过程</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>合同/客户</th>
+                      <th>套餐产品</th>
+                      <th>车位/额度</th>
+                      <th>开始日期</th>
+                      <th>到期日期</th>
+                      <th>本期费用</th>
+                      <th>状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contractTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-card" id="contractDetail"></div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           候补排队
+      =============================== -->
+      <section class="view" id="view-waitlist">
+        <div class="section-heading">
+          <div>
+            <h2>候补排队与车位分配</h2>
+            <p>
+              车位释放后按客户资格、等待顺序、价格接受度和区域匹配自动推荐候补客户。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="runWaitlistMatching()">
+              重新智能匹配
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-4 mb-16">
+          <div class="metric-card">
+            <div class="metric-label">候补客户</div>
+            <div class="metric-value">168人</div>
+            <div class="metric-note">涉及7个套餐产品</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">今日释放车位</div>
+            <div class="metric-value">18个</div>
+            <div class="metric-note">系统已匹配12人</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">待客户确认</div>
+            <div class="metric-value">8人</div>
+            <div class="metric-note">确认时限24小时</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">本月转化率</div>
+            <div class="metric-value">68.2%</div>
+            <div class="metric-note">候补转正式合同</div>
+          </div>
+        </div>
+
+        <div class="waitlist-board" id="waitlistBoard"></div>
+      </section>
+
+      <!-- ==============================
+           订单账单
+      =============================== -->
+      <section class="view" id="view-billing">
+        <div class="section-heading">
+          <div>
+            <h2>订单与多科目账单</h2>
+            <p>
+              一张订单可拆分租赁费、管理费、附加车辆费、超时费和服务费。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="generatePeriodicBills()">
+              生成下期周期账单
+            </button>
+            <button class="btn btn-primary"
+                    onclick="openManualBillCreate()">
+              新建调整账单
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-5 mb-16">
+          <div class="metric-card">
+            <div class="metric-label">本期应收</div>
+            <div class="metric-value">¥4.06M</div>
+            <div class="metric-note">8,628份有效合同</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">已收金额</div>
+            <div class="metric-value">¥3.62M</div>
+            <div class="metric-note">综合收缴率89.2%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">待确认账单</div>
+            <div class="metric-value">48份</div>
+            <div class="metric-note">企业及产权方账单</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">争议金额</div>
+            <div class="metric-value">¥18,620</div>
+            <div class="metric-note">涉及23笔明细</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">逾期金额</div>
+            <div class="metric-value">¥86,200</div>
+            <div class="metric-note">需要催收处理</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>本期重点账单</h3>
+              <p>查看费用科目、支付、争议和分账状态</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>账单/客户</th>
+                    <th>结算周期</th>
+                    <th>租赁费</th>
+                    <th>管理费</th>
+                    <th>附加及超时</th>
+                    <th>应付合计</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="billTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           分账结算
+      =============================== -->
+      <section class="view" id="view-settlement">
+        <div class="section-heading">
+          <div>
+            <h2>多方分账与财务结算</h2>
+            <p>
+              根据车位产权、运营合同、管理服务和渠道规则，将收入自动分配给各参与方。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="openSettlementRule()">
+              查看分账规则
+            </button>
+            <button class="btn btn-primary"
+                    onclick="confirmSettlementBatch()">
+              确认7月结算批次
+            </button>
+          </div>
+        </div>
+
+        <div class="settlement-layout">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>7月车位套餐资金拆分</h3>
+                <p>按实际支付、退款和费用科目计算</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="waterfall">
+                <div class="waterfall-row">
+                  <strong>套餐业务总收款</strong>
+                  <div class="waterfall-bar" style="width:100%"></div>
+                  <strong>¥4,126,800</strong>
+                </div>
+
+                <div class="waterfall-row">
+                  <strong>退款及渠道手续费</strong>
+                  <div class="waterfall-bar orange" style="width:7%"></div>
+                  <strong>-¥86,200</strong>
+                </div>
+
+                <div class="waterfall-row">
+                  <strong>产权方车位租赁收益</strong>
+                  <div class="waterfall-bar purple" style="width:54%"></div>
+                  <strong>¥2,186,000</strong>
+                </div>
+
+                <div class="waterfall-row">
+                  <strong>物业车位管理费</strong>
+                  <div class="waterfall-bar green" style="width:22%"></div>
+                  <strong>¥886,000</strong>
+                </div>
+
+                <div class="waterfall-row">
+                  <strong>停车运营服务收入</strong>
+                  <div class="waterfall-bar" style="width:18%"></div>
+                  <strong>¥728,600</strong>
+                </div>
+
+                <div class="waterfall-row">
+                  <strong>渠道营销佣金</strong>
+                  <div class="waterfall-bar orange" style="width:6%"></div>
+                  <strong>¥240,000</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>待执行结算</h3>
+                <p>结算前检查账单、退款和收款账户</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="price-box">
+                <div class="price-row">
+                  <span>应付产权方</span>
+                  <strong>¥2,186,000</strong>
+                </div>
+
+                <div class="price-row">
+                  <span>应付物业管理方</span>
+                  <strong>¥886,000</strong>
+                </div>
+
+                <div class="price-row">
+                  <span>应付渠道平台</span>
+                  <strong>¥240,000</strong>
+                </div>
+
+                <div class="price-row">
+                  <span>运营方留存</span>
+                  <strong>¥728,600</strong>
+                </div>
+
+                <div class="price-row total">
+                  <span>对外待结算</span>
+                  <strong>¥3,312,000</strong>
+                </div>
+              </div>
+
+              <div class="warning-banner mt-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                  3个产权方收款账户需要重新核验，涉及金额28,600元。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           渠道营销
+      =============================== -->
+      <section class="view" id="view-channels">
+        <div class="section-heading">
+          <div>
+            <h2>渠道营销与套餐推广</h2>
+            <p>
+              支持抖音、美团、企业福利、私域和线下渠道销售停车套餐及团购券。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-primary"
+                    onclick="openCampaignCreate()">
+              创建营销活动
+            </button>
+          </div>
+        </div>
+
+        <div class="channel-grid" id="channelGrid"></div>
+      </section>
+
+      <!-- ==============================
+           AI运营策略
+      =============================== -->
+      <section class="view" id="view-insight">
+        <div class="section-heading">
+          <div>
+            <h2>AI运营机会与策略中心</h2>
+            <p>
+              从供需、闲置、续费、超时、价格和客户行为中发现可执行的经营机会。
+            </p>
+          </div>
+
+          <div class="section-actions">
+            <button class="btn btn-secondary"
+                    onclick="refreshInsights()">
+              重新分析
+            </button>
+          </div>
+        </div>
+
+        <div class="opportunity-grid" id="opportunityGrid"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- 通用模态框 -->
+<div class="modal-mask" id="modalMask" onclick="maskClose(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalTitle">业务处理</h3>
+        <p id="modalSubtitle"></p>
+      </div>
+
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* =========================================================
+   基础页面配置
+========================================================= */
+
+const pageMeta = {
+  dashboard: ["车位经营驾驶舱", "从资源库存、产品销售、合同履约到收益优化统一运营"],
+  spaces: ["车位资源中心", "一位一档、一位一价和车位全生命周期状态管理"],
+  packages: ["套餐产品中心", "将车位、时间、客户、价格和服务组合成可销售产品"],
+  pricing: ["定价与计费规则", "按身份、区域、时间、车型和供需灵活配置价格"],
+  customers: ["客户与停车权益", "管理客户认证、车辆、套餐及动态停车授权"],
+  contracts: ["合同履约中心", "签约、生效、变更、暂停、续期和退租全过程管理"],
+  waitlist: ["候补排队与分配", "车位释放后按规则匹配客户并完成转化"],
+  billing: ["订单与多科目账单", "租赁费、管理费、附加费及超时费分类核算"],
+  settlement: ["分账与结算中心", "按产权、运营、管理及渠道规则自动分账"],
+  channels: ["渠道营销管理", "团购、私域、企业福利和多渠道销售核销"],
+  insight: ["AI运营策略", "识别闲置、续费、价格和客户升级机会"]
+};
+
+document.querySelectorAll(".nav-item").forEach(button => {
+  button.addEventListener("click", () => {
+    navigateTo(button.dataset.view);
+  });
+});
+
+function navigateTo(view) {
+  document.querySelectorAll(".view").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  document.querySelectorAll(".nav-item").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  document.getElementById("view-" + view).classList.add("active");
+  document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+
+  document.getElementById("pageTitle").textContent = pageMeta[view][0];
+  document.getElementById("pageDesc").textContent = pageMeta[view][1];
+
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function changeRole(role) {
+  const roles = {
+    "停车运营总监": ["王总监", "停车运营管理中心", "dashboard"],
+    "车位产品经理": ["李经理", "车位产品与定价中心", "packages"],
+    "项目运营经理": ["陈经理", "智谷园区停车运营", "spaces"],
+    "客户服务人员": ["刘客服", "客户履约服务中心", "customers"],
+    "财务结算人员": ["赵会计", "停车财务结算中心", "billing"]
+  };
+
+  const selected = roles[role];
+
+  document.getElementById("userName").textContent = selected[0];
+  document.getElementById("userRole").textContent = selected[1];
+
+  navigateTo(selected[2]);
+  showToast(`已切换至“${role}”工作视角。`);
+}
+
+/* =========================================================
+   示例数据
+========================================================= */
+
+let spaces = [
+  {id:"A01", area:"A区", type:"标准车位", owner:"园区资产公司", status:"available", price:600, package:"无", vehicle:""},
+  {id:"A02", area:"A区", type:"标准车位", owner:"园区资产公司", status:"used", price:600, package:"通勤月卡", vehicle:"粤A·36M8K"},
+  {id:"A03", area:"A区", type:"充电车位", owner:"园区资产公司", status:"reserved", price:780, package:"新能源专享", vehicle:""},
+  {id:"A04", area:"A区", type:"标准车位", owner:"华星科技", status:"used", price:650, package:"企业固定车位", vehicle:"粤A·62K7P"},
+  {id:"A05", area:"A区", type:"标准车位", owner:"园区资产公司", status:"shared", price:420, package:"工作日白天共享", vehicle:"粤B·18T3Q"},
+  {id:"A06", area:"A区", type:"微型车位", owner:"园区资产公司", status:"available", price:480, package:"无", vehicle:""},
+  {id:"A07", area:"A区", type:"标准车位", owner:"园区资产公司", status:"used", price:600, package:"个人月租", vehicle:"粤A·82Q6P"},
+  {id:"A08", area:"A区", type:"标准车位", owner:"园区资产公司", status:"shared", price:420, package:"夜间共享", vehicle:""},
+  {id:"B01", area:"B区", type:"标准车位", owner:"园区资产公司", status:"available", price:560, package:"无", vehicle:""},
+  {id:"B02", area:"B区", type:"标准车位", owner:"园区资产公司", status:"used", price:560, package:"通勤月卡", vehicle:"粤A·75T2P"},
+  {id:"B03", area:"B区", type:"机械车位", owner:"园区资产公司", status:"available", price:460, package:"无", vehicle:""},
+  {id:"B04", area:"B区", type:"标准车位", owner:"园区资产公司", status:"shared", price:380, package:"周末共享", vehicle:""},
+  {id:"B05", area:"B区", type:"标准车位", owner:"云创网络", status:"used", price:580, package:"企业停车", vehicle:"粤A·19D6K"},
+  {id:"B06", area:"B区", type:"标准车位", owner:"园区资产公司", status:"reserved", price:560, package:"访客保障位", vehicle:""},
+  {id:"B07", area:"B区", type:"充电车位", owner:"园区资产公司", status:"available", price:720, package:"无", vehicle:""},
+  {id:"B08", area:"B区", type:"标准车位", owner:"园区资产公司", status:"closed", price:0, package:"维修关闭", vehicle:""}
+];
+
+let selectedSpaceId = "A01";
+
+let packages = [
+  {
+    id:"PK001",
+    name:"智谷工作日通勤月卡",
+    type:"分时月卡",
+    customer:"园区企业员工",
+    scope:"5号停车场B1/B2共享区",
+    price:520,
+    period:"月",
+    stock:120,
+    sold:114,
+    renew:86,
+    status:"销售中",
+    colorA:"#2576d3",
+    colorB:"#24a7c1",
+    tags:["工作日","07:00—20:00","一人两车轮停"],
+    billing:["套餐租赁费520元","超时按员工优惠价","管理费已包含"]
+  },
+  {
+    id:"PK002",
+    name:"阳光雅苑夜间共享包月",
+    type:"错峰共享",
+    customer:"周边住宅住户",
+    scope:"智谷2号停车场夜间共享区",
+    price:380,
+    period:"月",
+    stock:260,
+    sold:186,
+    renew:62,
+    status:"销售中",
+    colorA:"#7058bd",
+    colorB:"#9876da",
+    tags:["18:30—次日07:30","工作日","超时占位费"],
+    billing:["共享租赁费380元","超时20元/小时","物业服务费已包含"]
+  },
+  {
+    id:"PK003",
+    name:"业主一位两车轮停套餐",
+    type:"家庭套餐",
+    customer:"产权业主",
+    scope:"产权车位及业主共享区",
+    price:120,
+    period:"月附加",
+    stock:500,
+    sold:286,
+    renew:92,
+    status:"销售中",
+    colorA:"#168d61",
+    colorB:"#35b98a",
+    tags:["一位两车","同时仅一车","附加车辆权益"],
+    billing:["基础车位费用不变","附加车辆服务费120元","第二辆同时在场按临停"]
+  },
+  {
+    id:"PK004",
+    name:"商户访客停车时长包",
+    type:"时长套餐",
+    customer:"园区商户",
+    scope:"公共访客停车区",
+    price:1800,
+    period:"500小时",
+    stock:50,
+    sold:36,
+    renew:74,
+    status:"销售中",
+    colorA:"#db8616",
+    colorB:"#efb347",
+    tags:["商户账户","员工发券","按实际核销"],
+    billing:["500小时预购","超额时长2.8元/小时","支持商户月结"]
+  },
+  {
+    id:"PK005",
+    name:"企业100辆共享停车账户",
+    type:"企业套餐",
+    customer:"大中型企业",
+    scope:"园区1/2/5号共享停车场",
+    price:50000,
+    period:"月",
+    stock:12,
+    sold:9,
+    renew:95,
+    status:"销售中",
+    colorA:"#12899e",
+    colorB:"#27b8c8",
+    tags:["100辆同时在场","企业自主管理","超额企业挂账"],
+    billing:["基础额度50,000元","超额按订单月结","访客费用单独列示"]
+  },
+  {
+    id:"PK006",
+    name:"周末两日停车套餐",
+    type:"周期套餐",
+    customer:"游客及周边居民",
+    scope:"商业中心P3停车场",
+    price:36,
+    period:"周末",
+    stock:300,
+    sold:168,
+    renew:0,
+    status:"待优化",
+    colorA:"#d94e4e",
+    colorB:"#ef796f",
+    tags:["周六周日","不限次进出","渠道销售"],
+    billing:["套餐费36元","周一00:00自动失效","超时恢复临停"]
+  }
+];
+
+let pricingRules = [
+  {id:"R001", name:"业主产权车位管理费", customer:"产权业主", time:"全天/产权车位", method:"80元/月", subject:"车位管理费", priority:100, status:"运行中"},
+  {id:"R002", name:"工作日白天共享价", customer:"企业员工", time:"工作日08:00—18:30", method:"420元/月", subject:"共享车位租赁费", priority:80, status:"运行中"},
+  {id:"R003", name:"夜间共享超时规则", customer:"住宅住户", time:"07:30后仍未离场", method:"20元/小时", subject:"超时占用费", priority:120, status:"运行中"},
+  {id:"R004", name:"一位多车附加规则", customer:"产权业主", time:"第二辆同时在场", method:"按临停优惠价", subject:"附加车辆费", priority:110, status:"运行中"},
+  {id:"R005", name:"企业超额停车规则", customer:"企业账户", time:"超过合同同时在场额度", method:"按实际订单月结", subject:"企业超额停车费", priority:130, status:"运行中"},
+  {id:"R006", name:"核心区域稀缺加价", customer:"全部认证客户", time:"核心区工作日高峰", method:"+15%", subject:"车位租赁费", priority:60, status:"待发布"}
+];
+
+let customers = [
+  {
+    id:"C001",
+    name:"张敏",
+    type:"业主",
+    phone:"138****5268",
+    vehicles:["粤A·82K6Q","粤B·36M8P"],
+    package:"业主一位两车轮停套餐",
+    valid:"2026-01-01 至 2026-12-31",
+    status:"有效",
+    space:"阳光雅苑B2-216",
+    balance:0,
+    history:[
+      ["2026-07-01","套餐自动续费成功"],
+      ["2026-06-12","备用车辆变更为粤B·36M8P"],
+      ["2026-01-01","一位两车套餐生效"]
+    ]
+  },
+  {
+    id:"C002",
+    name:"陈明",
+    type:"企业员工",
+    phone:"139****3271",
+    vehicles:["粤A·36M8K"],
+    package:"智谷工作日通勤月卡",
+    valid:"2026-07-01 至 2026-07-31",
+    status:"有效",
+    space:"5号停车场共享区",
+    balance:0,
+    history:[
+      ["2026-07-01","企业管理员分配停车名额"],
+      ["2026-07-01","工作日通勤月卡生效"]
+    ]
+  },
+  {
+    id:"C003",
+    name:"华星科技有限公司",
+    type:"企业客户",
+    phone:"企业账户",
+    vehicles:["已登记268辆"],
+    package:"企业100辆共享停车账户",
+    valid:"2026-01-01 至 2026-12-31",
+    status:"额度超额",
+    space:"园区共享停车资源池",
+    balance:72860,
+    history:[
+      ["2026-07-19","当前同时在场112辆，超额12辆"],
+      ["2026-07-01","7月企业停车额度生效"],
+      ["2026-06-30","6月账单已确认"]
+    ]
+  },
+  {
+    id:"C004",
+    name:"星巴克A106店",
+    type:"商户",
+    phone:"商户账户",
+    vehicles:["员工车辆3辆"],
+    package:"商户访客停车时长包",
+    valid:"剩余186小时",
+    status:"有效",
+    space:"商业访客停车区",
+    balance:186,
+    history:[
+      ["2026-07-18","核销访客停车优惠3小时"],
+      ["2026-07-01","购买500小时停车时长包"]
+    ]
+  }
+];
+
+let selectedCustomerId = "C001";
+
+let contracts = [
+  {id:"HT001", customer:"张敏", package:"业主一位两车轮停套餐", resource:"B2-216", start:"2026-01-01", end:"2026-12-31", amount:1440, status:"履约中"},
+  {id:"HT002", customer:"陈明", package:"智谷工作日通勤月卡", resource:"共享名额1个", start:"2026-07-01", end:"2026-07-31", amount:520, status:"待续签"},
+  {id:"HT003", customer:"华星科技有限公司", package:"企业100辆共享停车账户", resource:"100辆同时在场", start:"2026-01-01", end:"2026-12-31", amount:600000, status:"履约中"},
+  {id:"HT004", customer:"王晓梅", package:"阳光雅苑夜间共享包月", resource:"夜间共享名额1个", start:"2026-07-01", end:"2026-07-31", amount:380, status:"暂停中"},
+  {id:"HT005", customer:"云创网络有限公司", package:"企业50辆共享账户", resource:"50辆同时在场", start:"2026-03-01", end:"2026-07-31", amount:180000, status:"即将到期"}
+];
+
+let selectedContractId = "HT002";
+
+let waitlist = [
+  {id:"W001", stage:"等待资源", customer:"李先生", target:"智谷通勤月卡", since:"等待18天", score:96, price:"接受520元/月"},
+  {id:"W002", stage:"等待资源", customer:"陈女士", target:"智谷通勤月卡", since:"等待15天", score:92, price:"接受550元/月"},
+  {id:"W003", stage:"已匹配", customer:"周先生", target:"工作日白天共享", since:"匹配A01", score:94, price:"420元/月"},
+  {id:"W004", stage:"已匹配", customer:"刘女士", target:"夜间共享包月", since:"匹配A08", score:91, price:"380元/月"},
+  {id:"W005", stage:"待客户确认", customer:"王先生", target:"智谷通勤月卡", since:"剩余18小时", score:98, price:"520元/月"},
+  {id:"W006", stage:"待客户确认", customer:"赵女士", target:"周末两日套餐", since:"剩余22小时", score:86, price:"36元/周末"},
+  {id:"W007", stage:"已转合同", customer:"孙先生", target:"夜间共享包月", since:"合同HT0862", score:90, price:"380元/月"}
+];
+
+const waitStages = ["等待资源","已匹配","待客户确认","已转合同"];
+
+let bills = [
+  {id:"B001", customer:"华星科技有限公司", period:"2026年7月", rent:50000, manage:0, extra:5680, total:55680, status:"待企业确认"},
+  {id:"B002", customer:"张敏", period:"2026年7月", rent:120, manage:80, extra:0, total:200, status:"已支付"},
+  {id:"B003", customer:"星巴克A106店", period:"2026年7月", rent:1800, manage:300, extra:186, total:2286, status:"部分支付"},
+  {id:"B004", customer:"云创网络有限公司", period:"2026年7月", rent:28600, manage:3200, extra:2400, total:34200, status:"存在争议"}
+];
+
+let channels = [
+  {id:"CH001", name:"美团团购", product:"周末两日停车套餐", sold:286, used:218, revenue:10296, status:"运行中", color:"#f0a020"},
+  {id:"CH002", name:"抖音本地生活", product:"商业夜间停车券", sold:468, used:302, revenue:16848, status:"运行中", color:"#22252c"},
+  {id:"CH003", name:"企业福利平台", product:"通勤停车储值包", sold:126, used:118, revenue:75600, status:"运行中", color:"#2576d3"},
+  {id:"CH004", name:"项目私域小程序", product:"夜间共享月卡", sold:186, used:186, revenue:70680, status:"运行中", color:"#168d61"},
+  {id:"CH005", name:"线下物业中心", product:"产权车位及家庭套餐", sold:82, used:82, revenue:118000, status:"运行中", color:"#7058bd"},
+  {id:"CH006", name:"招商企业渠道", product:"企业批量停车账户", sold:9, used:9, revenue:450000, status:"重点渠道", color:"#12899e"}
+];
+
+let opportunities = [
+  {
+    id:"OP001",
+    title:"住宅白天闲置车位可转办公共享",
+    description:"阳光雅苑工作日08:00—18:30平均空闲146个车位，周边办公园区候补需求达到86人。",
+    impact:["可释放120位","预计收入50,400元/月","利用率提升18%"],
+    action:"创建工作日白天共享套餐",
+    color:"#2576d3"
+  },
+  {
+    id:"OP002",
+    title:"高频附加车辆客户适合升级家庭套餐",
+    description:"126户近30天产生3次以上第二辆车临停费用，平均每户支付附加费用168元。",
+    impact:["目标客户126户","建议价格120元/月","预计转化42%"],
+    action:"向客户推送一位两车套餐",
+    color:"#7058bd"
+  },
+  {
+    id:"OP003",
+    title:"通勤套餐供不应求，建议扩容",
+    description:"智谷工作日通勤月卡仅剩6个名额，候补38人，5号停车场B区有32个可释放车位。",
+    impact:["建议扩容30位","新增收入15,600元/月","候补转化79%"],
+    action:"释放B区车位并扩充库存",
+    color:"#168d61"
+  },
+  {
+    id:"OP004",
+    title:"夜间套餐续费率下降，需要调整产品",
+    description:"阳光雅苑夜间共享套餐续费率由78%下降至62%，主要流失原因是07:30离场时间过早。",
+    impact:["流失客户68人","建议延长至08:00","预计续费提升11%"],
+    action:"创建新版本并A/B测试",
+    color:"#db8616"
+  }
+];
+
+/* =========================================================
+   车位资源
+========================================================= */
+
+function renderSpaces() {
+  const filter = document.getElementById("spaceStatusFilter")?.value || "";
+
+  const list = spaces.filter(space => !filter || space.status === filter);
+
+  document.getElementById("spaceGrid").innerHTML = list.map(space => `
+    <div class="space ${space.status} ${space.id === selectedSpaceId ? "selected" : ""}"
+         onclick="selectSpace('${space.id}')">
+      <input type="checkbox"
+             onclick="event.stopPropagation();toggleSpaceCheck('${space.id}',this.checked)">
+      <strong>${space.id}</strong>
+      <span>${space.type}</span>
+      <span>${spaceStatusText(space.status)}</span>
+    </div>
+  `).join("");
+
+  renderSpacePanel();
+}
+
+function selectSpace(id) {
+  selectedSpaceId = id;
+  renderSpaces();
+}
+
+function toggleSpaceCheck(id, checked) {
+  const space = spaces.find(item => item.id === id);
+  space.checked = checked;
+
+  const element = [...document.querySelectorAll(".space")]
+    .find(item => item.querySelector("strong")?.textContent === id);
+
+  if (element) {
+    element.classList.toggle("checked", checked);
+  }
+}
+
+function renderSpacePanel() {
+  const space = spaces.find(item => item.id === selectedSpaceId);
+
+  document.getElementById("spacePanel").innerHTML = `
+    <h3>车位 ${space.id}</h3>
+    <p>${space.area} · ${space.type}</p>
+
+    <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+      <div class="detail-item">
+        <span>产权主体</span>
+        <strong>${space.owner}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>当前状态</span>
+        ${statusTag(spaceStatusText(space.status))}
+      </div>
+
+      <div class="detail-item">
+        <span>当前套餐</span>
+        <strong>${space.package}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>当前车辆</span>
+        <strong>${space.vehicle || "无"}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>标准月价</span>
+        <strong>${space.price ? space.price + "元" : "暂不销售"}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>价格等级</span>
+        <strong>${space.type.includes("充电") ? "稀缺资源价" : "标准区域价"}</strong>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>资源经营建议</h4>
+      <div class="readonly-box">
+        ${space.status === "available"
+          ? "当前车位空闲，可加入固定月租、通勤共享或候补分配库存。"
+          : space.status === "shared"
+            ? "当前作为分时共享资源，非共享时间自动恢复原车位属性。"
+            : space.status === "used"
+              ? "当前已有有效合同，变更前需要检查客户、车辆和合同状态。"
+              : "当前不建议直接销售，需要先完成资源状态核验。"}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>可执行操作</h4>
+
+      <div class="section-actions">
+        ${space.status === "available" ? `
+          <button class="btn btn-primary" onclick="allocateSpace('${space.id}')">
+            分配给套餐
+          </button>
+
+          <button class="btn btn-purple" onclick="releaseSingleSpace('${space.id}')">
+            发布分时共享
+          </button>
+        ` : ""}
+
+        ${space.status === "shared" ? `
+          <button class="btn btn-warning" onclick="recoverSharedSpace('${space.id}')">
+            收回共享资源
+          </button>
+        ` : ""}
+
+        <button class="btn btn-secondary" onclick="editSpace('${space.id}')">
+          编辑车位档案
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function batchReleaseSpaces() {
+  const selected = spaces.filter(item => item.checked);
+
+  if (!selected.length) {
+    showToast("请先勾选需要释放的车位。", true);
+    return;
+  }
+
+  const body = `
+    <div class="success-banner">
+      <div class="banner-icon">位</div>
+      <div class="banner-content">
+        <strong>已选择${selected.length}个车位</strong>
+        系统将检查有效合同、预约和产权限制后再发布共享。
+      </div>
+    </div>
+
+    <form id="batchShareForm" onsubmit="submitBatchShare(event)">
+      <div class="form-grid mt-16">
+        <div class="form-group">
+          <label class="required">共享时段</label>
+          <select class="form-control" name="period">
+            <option>工作日08:00—18:30</option>
+            <option>工作日18:30—次日07:30</option>
+            <option>周六、周日全天</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">目标产品</label>
+          <select class="form-control" name="product">
+            <option>工作日白天共享套餐</option>
+            <option>夜间共享包月</option>
+            <option>周末两日停车套餐</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">生效日期</label>
+          <input class="form-control" type="date" value="2026-07-20">
+        </div>
+
+        <div class="form-group">
+          <label>自动收回条件</label>
+          <select class="form-control">
+            <option>原产权方或合同方申请收回</option>
+            <option>达到指定日期自动收回</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "批量发布车位共享",
+    "从闲置资源转为可销售的分时库存",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('batchShareForm').requestSubmit()">
+        确认发布
+      </button>
+    `
+  );
+}
+
+function submitBatchShare(event) {
+  event.preventDefault();
+
+  const selected = spaces.filter(item => item.checked);
+
+  selected.forEach(space => {
+    space.status = "shared";
+    space.package = "工作日白天共享";
+    space.checked = false;
+  });
+
+  renderSpaces();
+  closeModal();
+
+  showToast(`${selected.length}个车位已发布为分时共享资源。`);
+}
+
+function releaseSingleSpace(id) {
+  const space = spaces.find(item => item.id === id);
+  space.status = "shared";
+  space.package = "工作日白天共享";
+
+  renderSpaces();
+  showToast(`${id}已加入工作日白天共享库存。`);
+}
+
+function recoverSharedSpace(id) {
+  const space = spaces.find(item => item.id === id);
+  space.status = "available";
+  space.package = "无";
+
+  renderSpaces();
+  showToast(`${id}已从共享库存收回并恢复为可租赁状态。`);
+}
+
+function allocateSpace(id) {
+  const space = spaces.find(item => item.id === id);
+
+  const body = `
+    <form id="allocateForm" onsubmit="submitSpaceAllocation(event,'${id}')">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>待分配车位</label>
+          <div class="readonly-box">${id} · ${space.type}</div>
+        </div>
+
+        <div class="form-group">
+          <label class="required">目标套餐库存</label>
+          <select class="form-control" name="package">
+            ${packages.map(item => `
+              <option>${item.name}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">资源使用方式</label>
+          <select class="form-control" name="mode">
+            <option>固定车位库存</option>
+            <option>共享名额资源池</option>
+            <option>分时共享资源</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>内部结算价格</label>
+          <input class="form-control" type="number" value="${space.price}">
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "分配车位至套餐",
+    "分配后将影响套餐可售库存",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('allocateForm').requestSubmit()">
+        确认分配
+      </button>
+    `
+  );
+}
+
+function submitSpaceAllocation(event, id) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+  const space = spaces.find(item => item.id === id);
+
+  space.package = data.package;
+  space.status = data.mode.includes("共享") ? "shared" : "reserved";
+
+  renderSpaces();
+  closeModal();
+
+  showToast(`${id}已分配至“${data.package}”库存。`);
+}
+
+function editSpace(id) {
+  const space = spaces.find(item => item.id === id);
+
+  const body = `
+    <form id="editSpaceForm" onsubmit="submitSpaceEdit(event,'${id}')">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>车位编号</label>
+          <input class="form-control" value="${space.id}" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="required">所在区域</label>
+          <input class="form-control" name="area" value="${space.area}">
+        </div>
+
+        <div class="form-group">
+          <label class="required">车位类型</label>
+          <select class="form-control" name="type">
+            <option ${space.type === "标准车位" ? "selected" : ""}>标准车位</option>
+            <option ${space.type === "充电车位" ? "selected" : ""}>充电车位</option>
+            <option ${space.type === "微型车位" ? "selected" : ""}>微型车位</option>
+            <option ${space.type === "机械车位" ? "selected" : ""}>机械车位</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">产权主体</label>
+          <input class="form-control" name="owner" value="${space.owner}">
+        </div>
+
+        <div class="form-group">
+          <label class="required">标准月价</label>
+          <input class="form-control" type="number" name="price" value="${space.price}">
+        </div>
+
+        <div class="form-group">
+          <label>稀缺度等级</label>
+          <select class="form-control">
+            <option>标准资源</option>
+            <option>核心稀缺资源</option>
+            <option>一般共享资源</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "编辑车位档案",
+    `${id} · 修改将保留历史版本`,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('editSpaceForm').requestSubmit()">
+        保存档案
+      </button>
+    `
+  );
+}
+
+function submitSpaceEdit(event, id) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+  const space = spaces.find(item => item.id === id);
+
+  space.area = data.area;
+  space.type = data.type;
+  space.owner = data.owner;
+  space.price = Number(data.price);
+
+  renderSpaces();
+  closeModal();
+
+  showToast(`${id}车位档案已更新。`);
+}
+
+function openSpaceCreate() {
+  const body = `
+    <form id="spaceCreateForm" onsubmit="submitSpaceCreate(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">项目</label>
+          <select class="form-control" name="project">
+            <option>智谷办公园区</option>
+            <option>阳光雅苑住宅</option>
+            <option>星汇商业中心</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">车位编号</label>
+          <input class="form-control" name="id" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">停车场/楼层/区域</label>
+          <input class="form-control" name="area" placeholder="例如：5号停车场B2-A区" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">车位类型</label>
+          <select class="form-control" name="type">
+            <option>标准车位</option>
+            <option>充电车位</option>
+            <option>机械车位</option>
+            <option>微型车位</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">产权主体</label>
+          <input class="form-control" name="owner" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">经营管理主体</label>
+          <input class="form-control" value="惠泊停车运营公司">
+        </div>
+
+        <div class="form-group">
+          <label class="required">标准月价</label>
+          <input class="form-control" type="number" name="price" required>
+        </div>
+
+        <div class="form-group">
+          <label>是否允许分时共享</label>
+          <select class="form-control">
+            <option>允许</option>
+            <option>不允许</option>
+            <option>需产权方审批</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "新增车位资源",
+    "建立车位属性、产权、价格和经营规则",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('spaceCreateForm').requestSubmit()">
+        创建车位档案
+      </button>
+    `
+  );
+}
+
+function submitSpaceCreate(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+
+  if (spaces.some(item => item.id === data.id)) {
+    showToast("车位编号已经存在。", true);
+    return;
+  }
+
+  spaces.push({
+    id:data.id,
+    area:data.area,
+    type:data.type,
+    owner:data.owner,
+    status:"available",
+    price:Number(data.price),
+    package:"无",
+    vehicle:""
+  });
+
+  selectedSpaceId = data.id;
+  renderSpaces();
+  closeModal();
+
+  showToast(`车位${data.id}已建立数字档案。`);
+}
+
+/* =========================================================
+   套餐产品
+========================================================= */
+
+function renderPackages() {
+  document.getElementById("packageGrid").innerHTML = packages.map(item => `
+    <article class="product-card">
+      <div class="product-cover"
+           style="--cover-a:${item.colorA};--cover-b:${item.colorB}">
+        <h3>${item.name}</h3>
+        <p>${item.type} · ${item.customer}</p>
+
+        <div class="product-price">
+          ¥${item.price.toLocaleString()}
+          <small>/${item.period}</small>
+        </div>
+      </div>
+
+      <div class="product-body">
+        <div class="product-info">
+          <div>
+            <strong>${item.stock}</strong>
+            <span>总库存</span>
+          </div>
+
+          <div>
+            <strong>${item.sold}</strong>
+            <span>已销售</span>
+          </div>
+
+          <div>
+            <strong>${item.renew}%</strong>
+            <span>续费率</span>
+          </div>
+        </div>
+
+        <div class="product-tags">
+          ${item.tags.map(tag => `
+            <span class="tag tag-blue">${tag}</span>
+          `).join("")}
+        </div>
+
+        <p class="muted" style="min-height:44px">
+          适用范围：${item.scope}
+        </p>
+
+        <div class="section-actions">
+          <button class="btn btn-secondary btn-sm"
+                  onclick="openPackageDetail('${item.id}')">
+            查看产品
+          </button>
+
+          <button class="btn btn-primary btn-sm"
+                  onclick="openPackageEdit('${item.id}')">
+            编辑版本
+          </button>
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
+function openPackageDetail(id) {
+  const item = packages.find(product => product.id === id);
+
+  const body = `
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span>产品类型</span>
+        <strong>${item.type}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>目标客户</span>
+        <strong>${item.customer}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>销售状态</span>
+        ${statusTag(item.status)}
+      </div>
+
+      <div class="detail-item">
+        <span>资源范围</span>
+        <strong>${item.scope}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>销售价格</span>
+        <strong>${item.price.toLocaleString()}元/${item.period}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>可售库存</span>
+        <strong>${item.stock - item.sold}</strong>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>产品权益</h4>
+      <div class="readonly-box">
+        ${item.tags.map(tag => `• ${tag}`).join("<br>")}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>账单科目</h4>
+      <div class="readonly-box">
+        ${item.billing.map(line => `• ${line}`).join("<br>")}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>销售与履约表现</h4>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span>库存使用率</span>
+          <strong>${Math.round(item.sold / item.stock * 100)}%</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>续费率</span>
+          <strong>${item.renew}%</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>预计月收入</span>
+          <strong>${(item.price * item.sold).toLocaleString()}元</strong>
+        </div>
+      </div>
+    </div>
+  `;
+
+  openModal(
+    item.name,
+    `${item.id} · 产品经营详情`,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+      <button class="btn btn-primary"
+              onclick="closeModal();openPackageEdit('${item.id}')">
+        编辑新版本
+      </button>
+    `,
+    true
+  );
+}
+
+function openPackageCopy() {
+  const body = `
+    <form id="packageCopyForm" onsubmit="submitPackageCopy(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">复制来源</label>
+          <select class="form-control" name="source">
+            ${packages.map(item => `
+              <option value="${item.id}">${item.name}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">新套餐名称</label>
+          <input class="form-control" name="name" required>
+        </div>
+
+        <div class="form-group full">
+          <label>复制内容</label>
+          <div class="readonly-box">
+            复制资源范围、客户条件、价格规则、账单科目和履约策略。
+            销售库存、合同和历史订单不会复制。
+          </div>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "复制现有套餐",
+    "基于成熟产品快速创建新版本",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('packageCopyForm').requestSubmit()">
+        复制并编辑
+      </button>
+    `
+  );
+}
+
+function submitPackageCopy(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+  const source = packages.find(item => item.id === data.source);
+
+  const clone = {
+    ...source,
+    id:"PK" + Date.now().toString().slice(-5),
+    name:data.name,
+    sold:0,
+    status:"草稿"
+  };
+
+  packages.unshift(clone);
+  renderPackages();
+  closeModal();
+
+  showToast(`已复制“${source.name}”，新产品进入草稿状态。`);
+}
+
+let wizardStep = 1;
+let wizardDraft = {};
+let wizardEditId = "";
+
+function openPackageWizard(prefill = {}) {
+  wizardStep = 1;
+  wizardEditId = "";
+  wizardDraft = {
+    name:prefill.name || "",
+    type:prefill.type || "分时月卡",
+    customer:prefill.customer || "企业员工",
+    period:prefill.period || "月",
+    startTime:prefill.startTime || "08:00",
+    endTime:prefill.endTime || "18:30",
+    days:prefill.days || "工作日",
+    scope:prefill.scope || "智谷办公园区5号停车场",
+    resourceMode:prefill.resourceMode || "共享名额资源池",
+    stock:prefill.stock || 100,
+    price:prefill.price || 420,
+    managementFee:prefill.managementFee || 0,
+    extraRule:prefill.extraRule || "超出有效时段恢复临停计费",
+    vehicles:prefill.vehicles || 1,
+    simultaneous:prefill.simultaneous || 1,
+    autoRenew:true,
+    pauseAllowed:true,
+    transferAllowed:false
+  };
+
+  const body = `
+    <div class="wizard-steps">
+      ${["基本信息","资源范围","客户权益","价格账单","履约服务","发布确认"].map((name,index) => `
+        <div class="wizard-step ${index === 0 ? "active" : ""}" id="wizardStep${index + 1}">
+          ${index + 1}. ${name}
+        </div>
+      `).join("")}
+    </div>
+
+    <div id="wizardContent"></div>
+  `;
+
+  openModal(
+    "创建停车套餐产品",
+    "将资源、时间、客户、价格和履约服务组合成可销售产品",
+    body,
+    `
+      <button class="btn btn-secondary"
+              id="wizardPrevBtn"
+              onclick="wizardPrev()"
+              disabled>
+        上一步
+      </button>
+
+      <button class="btn btn-primary"
+              id="wizardNextBtn"
+              onclick="wizardNext()">
+        下一步
+      </button>
+    `,
+    true
+  );
+
+  renderWizardPage();
+}
+
+function openPackageEdit(id) {
+  const item = packages.find(product => product.id === id);
+
+  wizardEditId = id;
+  wizardStep = 1;
+  wizardDraft = {
+    name:item.name + " V2",
+    type:item.type,
+    customer:item.customer,
+    period:item.period,
+    startTime:"07:00",
+    endTime:"20:00",
+    days:"工作日",
+    scope:item.scope,
+    resourceMode:item.type.includes("固定") ? "固定车位库存" : "共享名额资源池",
+    stock:item.stock,
+    price:item.price,
+    managementFee:0,
+    extraRule:item.billing[1] || "超出时段恢复临停",
+    vehicles:item.tags.some(tag => tag.includes("两车")) ? 2 : 1,
+    simultaneous:1,
+    autoRenew:true,
+    pauseAllowed:true,
+    transferAllowed:false
+  };
+
+  const body = `
+    <div class="warning-banner">
+      <div class="banner-icon">版</div>
+      <div class="banner-content">
+        <strong>正在基于${item.name}创建新版本</strong>
+        已生效合同继续使用原版本，新客户将在新版本发布后执行新规则。
+      </div>
+    </div>
+
+    <div class="wizard-steps mt-16">
+      ${["基本信息","资源范围","客户权益","价格账单","履约服务","发布确认"].map((name,index) => `
+        <div class="wizard-step ${index === 0 ? "active" : ""}" id="wizardStep${index + 1}">
+          ${index + 1}. ${name}
+        </div>
+      `).join("")}
+    </div>
+
+    <div id="wizardContent"></div>
+  `;
+
+  openModal(
+    "编辑套餐新版本",
+    `${item.id} · 原版本继续保障存量合同`,
+    body,
+    `
+      <button class="btn btn-secondary"
+              id="wizardPrevBtn"
+              onclick="wizardPrev()"
+              disabled>
+        上一步
+      </button>
+
+      <button class="btn btn-primary"
+              id="wizardNextBtn"
+              onclick="wizardNext()">
+        下一步
+      </button>
+    `,
+    true
+  );
+
+  renderWizardPage();
+}
+
+function renderWizardPage() {
+  document.querySelectorAll(".wizard-step").forEach((item,index) => {
+    item.classList.toggle("active", index + 1 === wizardStep);
+    item.classList.toggle("done", index + 1 < wizardStep);
+  });
+
+  const content = document.getElementById("wizardContent");
+
+  if (wizardStep === 1) {
+    content.innerHTML = `
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">套餐名称</label>
+          <input class="form-control"
+                 id="wName"
+                 value="${wizardDraft.name}"
+                 placeholder="例如：工作日白天共享月卡">
+        </div>
+
+        <div class="form-group">
+          <label class="required">套餐类型</label>
+          <select class="form-control" id="wType">
+            ${["固定月租","共享月卡","分时月卡","家庭套餐","企业套餐","时长套餐","储值套餐","周期套餐"].map(value => `
+              <option ${wizardDraft.type === value ? "selected" : ""}>${value}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">产品编码</label>
+          <input class="form-control"
+                 value="${wizardEditId || "PK-" + new Date().getFullYear() + "-AUTO"}"
+                 readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="required">结算周期</label>
+          <select class="form-control" id="wPeriod">
+            ${["月","季度","半年","年","周末","按时长"].map(value => `
+              <option ${wizardDraft.period === value ? "selected" : ""}>${value}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>产品说明</label>
+          <textarea class="form-control"
+                    id="wDescription"
+                    placeholder="向运营、销售和客户说明套餐适用场景"></textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  if (wizardStep === 2) {
+    content.innerHTML = `
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">适用项目</label>
+          <select class="form-control" id="wProject">
+            <option>智谷办公园区</option>
+            <option>阳光雅苑住宅</option>
+            <option>星汇商业中心</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">资源范围</label>
+          <input class="form-control"
+                 id="wScope"
+                 value="${wizardDraft.scope}">
+        </div>
+
+        <div class="form-group">
+          <label class="required">资源使用模式</label>
+          <select class="form-control" id="wResourceMode">
+            ${["固定车位库存","共享名额资源池","分时共享资源","多停车场通停"].map(value => `
+              <option ${wizardDraft.resourceMode === value ? "selected" : ""}>${value}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">初始销售库存</label>
+          <input class="form-control"
+                 id="wStock"
+                 type="number"
+                 value="${wizardDraft.stock}">
+        </div>
+
+        <div class="form-group">
+          <label>有效日期开始</label>
+          <input class="form-control"
+                 type="date"
+                 value="2026-07-20">
+        </div>
+
+        <div class="form-group">
+          <label>有效日期结束</label>
+          <input class="form-control"
+                 type="date"
+                 value="2027-07-19">
+        </div>
+      </div>
+
+      <div class="info-banner mt-16">
+        <div class="banner-icon">位</div>
+        <div class="banner-content">
+          当前资源范围可提供146个空闲车位。建议保留15%的运营缓冲，不要一次性全部销售。
+        </div>
+      </div>
+    `;
+  }
+
+  if (wizardStep === 3) {
+    content.innerHTML = `
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">目标客户身份</label>
+          <select class="form-control" id="wCustomer">
+            ${["产权业主","住宅租户","企业员工","企业客户","商户","访客","普通社会用户"].map(value => `
+              <option ${wizardDraft.customer === value ? "selected" : ""}>${value}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">可登记车辆数</label>
+          <input class="form-control"
+                 id="wVehicles"
+                 type="number"
+                 min="1"
+                 value="${wizardDraft.vehicles}">
+        </div>
+
+        <div class="form-group">
+          <label class="required">允许同时在场车辆数</label>
+          <input class="form-control"
+                 id="wSimultaneous"
+                 type="number"
+                 min="1"
+                 value="${wizardDraft.simultaneous}">
+        </div>
+
+        <div class="form-group">
+          <label class="required">有效星期</label>
+          <select class="form-control" id="wDays">
+            ${["每天","工作日","周六周日","法定节假日除外"].map(value => `
+              <option ${wizardDraft.days === value ? "selected" : ""}>${value}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">每日开始时间</label>
+          <input class="form-control"
+                 id="wStartTime"
+                 type="time"
+                 value="${wizardDraft.startTime}">
+        </div>
+
+        <div class="form-group">
+          <label class="required">每日结束时间</label>
+          <input class="form-control"
+                 id="wEndTime"
+                 type="time"
+                 value="${wizardDraft.endTime}">
+        </div>
+
+        <div class="form-group full">
+          <label>客户认证条件</label>
+          <div class="option-grid">
+            <label class="option-card selected">
+              <input type="checkbox" checked>
+              <strong>实名认证</strong>
+              <span>手机号和证件完成核验</span>
+            </label>
+
+            <label class="option-card selected">
+              <input type="checkbox" checked>
+              <strong>身份关系认证</strong>
+              <span>企业员工、住户或商户关系有效</span>
+            </label>
+
+            <label class="option-card">
+              <input type="checkbox">
+              <strong>车辆所有权核验</strong>
+              <span>适用于产权和高价值套餐</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (wizardStep === 4) {
+    content.innerHTML = `
+      <div class="grid-2">
+        <div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">套餐销售价格</label>
+              <input class="form-control"
+                     id="wPrice"
+                     type="number"
+                     value="${wizardDraft.price}"
+                     oninput="updateWizardPricePreview()">
+            </div>
+
+            <div class="form-group">
+              <label>车位管理费</label>
+              <input class="form-control"
+                     id="wManagementFee"
+                     type="number"
+                     value="${wizardDraft.managementFee}"
+                     oninput="updateWizardPricePreview()">
+            </div>
+
+            <div class="form-group">
+              <label>押金</label>
+              <input class="form-control"
+                     id="wDeposit"
+                     type="number"
+                     value="0">
+            </div>
+
+            <div class="form-group">
+              <label>优惠方式</label>
+              <select class="form-control">
+                <option>无优惠</option>
+                <option>连续购买3个月95折</option>
+                <option>年付减免1个月</option>
+                <option>首月体验价</option>
+              </select>
+            </div>
+
+            <div class="form-group full">
+              <label class="required">超时/超容规则</label>
+              <textarea class="form-control"
+                        id="wExtraRule">${wizardDraft.extraRule}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="margin-top:0">客户账单预览</h4>
+
+          <div class="price-box" id="wizardPricePreview"></div>
+
+          <div class="info-banner mt-16">
+            <div class="banner-icon">账</div>
+            <div class="banner-content">
+              各费用科目将分别入账，方便后续产权方、物业和运营方分账。
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    updateWizardPricePreview();
+  }
+
+  if (wizardStep === 5) {
+    content.innerHTML = `
+      <div class="option-grid">
+        <label class="option-card ${wizardDraft.autoRenew ? "selected" : ""}">
+          <input type="checkbox"
+                 id="wAutoRenew"
+                 ${wizardDraft.autoRenew ? "checked" : ""}>
+          <strong>支持自动续费</strong>
+          <span>到期前按客户授权自动扣费续期</span>
+        </label>
+
+        <label class="option-card ${wizardDraft.pauseAllowed ? "selected" : ""}">
+          <input type="checkbox"
+                 id="wPause"
+                 ${wizardDraft.pauseAllowed ? "checked" : ""}>
+          <strong>允许暂停套餐</strong>
+          <span>出差、维修等场景可暂停并顺延</span>
+        </label>
+
+        <label class="option-card ${wizardDraft.transferAllowed ? "selected" : ""}">
+          <input type="checkbox"
+                 id="wTransfer"
+                 ${wizardDraft.transferAllowed ? "checked" : ""}>
+          <strong>允许权益转让</strong>
+          <span>需要实名认证和运营审核</span>
+        </label>
+      </div>
+
+      <div class="form-grid mt-16">
+        <div class="form-group">
+          <label>到期前首次提醒</label>
+          <select class="form-control">
+            <option>提前30天</option>
+            <option>提前15天</option>
+            <option>提前7天</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>库存不足处理</label>
+          <select class="form-control">
+            <option>进入候补排队</option>
+            <option>推荐替代套餐</option>
+            <option>停止销售</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>车辆变更次数</label>
+          <select class="form-control">
+            <option>每月允许1次</option>
+            <option>每季度允许2次</option>
+            <option>不限制但需审核</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>合同签署方式</label>
+          <select class="form-control">
+            <option>在线电子合同</option>
+            <option>先审核后电子签署</option>
+            <option>线下签署后上传</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  if (wizardStep === 6) {
+    content.innerHTML = `
+      <div class="success-banner">
+        <div class="banner-icon">✓</div>
+        <div class="banner-content">
+          <strong>产品配置完整，可以提交发布审批</strong>
+          发布后将生成销售页、合同模板、计费规则和套餐库存。
+        </div>
+      </div>
+
+      <div class="detail-grid mt-16">
+        <div class="detail-item">
+          <span>套餐名称</span>
+          <strong>${wizardDraft.name}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>套餐类型</span>
+          <strong>${wizardDraft.type}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>目标客户</span>
+          <strong>${wizardDraft.customer}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>资源范围</span>
+          <strong>${wizardDraft.scope}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>有效时段</span>
+          <strong>${wizardDraft.days} ${wizardDraft.startTime}—${wizardDraft.endTime}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>初始库存</span>
+          <strong>${wizardDraft.stock}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>销售价格</span>
+          <strong>${wizardDraft.price}元/${wizardDraft.period}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>管理费</span>
+          <strong>${wizardDraft.managementFee}元</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>车辆规则</span>
+          <strong>${wizardDraft.vehicles}车登记 / ${wizardDraft.simultaneous}车同时在场</strong>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>发布后自动生成</h4>
+        <div class="readonly-box">
+          • 套餐销售库存<br>
+          • 客户认证及购买页面<br>
+          • 电子合同模板<br>
+          • 入场权限与有效时段<br>
+          • 周期账单及费用科目<br>
+          • 到期续费与候补规则
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById("wizardPrevBtn").disabled = wizardStep === 1;
+  document.getElementById("wizardNextBtn").textContent =
+    wizardStep === 6 ? "提交发布审批" : "下一步";
+}
+
+function saveWizardPage() {
+  if (wizardStep === 1) {
+    wizardDraft.name = document.getElementById("wName").value.trim();
+    wizardDraft.type = document.getElementById("wType").value;
+    wizardDraft.period = document.getElementById("wPeriod").value;
+
+    if (!wizardDraft.name) {
+      showToast("请输入套餐名称。", true);
+      return false;
+    }
+  }
+
+  if (wizardStep === 2) {
+    wizardDraft.scope = document.getElementById("wScope").value.trim();
+    wizardDraft.resourceMode = document.getElementById("wResourceMode").value;
+    wizardDraft.stock = Number(document.getElementById("wStock").value);
+
+    if (!wizardDraft.scope || wizardDraft.stock <= 0) {
+      showToast("请完整填写资源范围和销售库存。", true);
+      return false;
+    }
+  }
+
+  if (wizardStep === 3) {
+    wizardDraft.customer = document.getElementById("wCustomer").value;
+    wizardDraft.vehicles = Number(document.getElementById("wVehicles").value);
+    wizardDraft.simultaneous = Number(document.getElementById("wSimultaneous").value);
+    wizardDraft.days = document.getElementById("wDays").value;
+    wizardDraft.startTime = document.getElementById("wStartTime").value;
+    wizardDraft.endTime = document.getElementById("wEndTime").value;
+
+    if (wizardDraft.simultaneous > wizardDraft.vehicles) {
+      showToast("同时在场车辆数不能大于可登记车辆数。", true);
+      return false;
+    }
+  }
+
+  if (wizardStep === 4) {
+    wizardDraft.price = Number(document.getElementById("wPrice").value);
+    wizardDraft.managementFee = Number(document.getElementById("wManagementFee").value);
+    wizardDraft.extraRule = document.getElementById("wExtraRule").value;
+
+    if (wizardDraft.price < 0 || wizardDraft.managementFee < 0) {
+      showToast("价格不能为负数。", true);
+      return false;
+    }
+  }
+
+  if (wizardStep === 5) {
+    wizardDraft.autoRenew = document.getElementById("wAutoRenew").checked;
+    wizardDraft.pauseAllowed = document.getElementById("wPause").checked;
+    wizardDraft.transferAllowed = document.getElementById("wTransfer").checked;
+  }
+
+  return true;
+}
+
+function wizardNext() {
+  if (!saveWizardPage()) return;
+
+  if (wizardStep < 6) {
+    wizardStep++;
+    renderWizardPage();
+    return;
+  }
+
+  submitPackageWizard();
+}
+
+function wizardPrev() {
+  if (wizardStep > 1) {
+    wizardStep--;
+    renderWizardPage();
+  }
+}
+
+function updateWizardPricePreview() {
+  const price = Number(document.getElementById("wPrice")?.value || wizardDraft.price);
+  const management = Number(document.getElementById("wManagementFee")?.value || wizardDraft.managementFee);
+  const total = price + management;
+
+  const box = document.getElementById("wizardPricePreview");
+
+  if (!box) return;
+
+  box.innerHTML = `
+    <div class="price-row">
+      <span>套餐租赁费</span>
+      <strong>${price.toLocaleString()}元</strong>
+    </div>
+
+    <div class="price-row">
+      <span>车位管理费</span>
+      <strong>${management.toLocaleString()}元</strong>
+    </div>
+
+    <div class="price-row">
+      <span>押金</span>
+      <strong>0元</strong>
+    </div>
+
+    <div class="price-row total">
+      <span>首期应付</span>
+      <strong>${total.toLocaleString()}元</strong>
+    </div>
+  `;
+}
+
+function submitPackageWizard() {
+  const packageItem = {
+    id:wizardEditId
+      ? wizardEditId + "-V" + Date.now().toString().slice(-2)
+      : "PK" + Date.now().toString().slice(-5),
+    name:wizardDraft.name,
+    type:wizardDraft.type,
+    customer:wizardDraft.customer,
+    scope:wizardDraft.scope,
+    price:wizardDraft.price,
+    period:wizardDraft.period,
+    stock:wizardDraft.stock,
+    sold:0,
+    renew:0,
+    status:"待审批",
+    colorA:"#2576d3",
+    colorB:"#26a9c2",
+    tags:[
+      wizardDraft.days,
+      `${wizardDraft.startTime}—${wizardDraft.endTime}`,
+      `${wizardDraft.vehicles}车登记/${wizardDraft.simultaneous}车在场`
+    ],
+    billing:[
+      `套餐租赁费${wizardDraft.price}元`,
+      `管理费${wizardDraft.managementFee}元`,
+      wizardDraft.extraRule
+    ]
+  };
+
+  packages.unshift(packageItem);
+  renderPackages();
+  closeModal();
+
+  showToast(`“${packageItem.name}”已提交产品发布审批。`);
+}
+
+function createDaySharingPackage() {
+  openPackageWizard({
+    name:"阳光雅苑工作日白天共享月卡",
+    type:"分时月卡",
+    customer:"企业员工",
+    period:"月",
+    startTime:"08:00",
+    endTime:"18:30",
+    days:"工作日",
+    scope:"阳光雅苑住宅白天空闲车位池",
+    resourceMode:"分时共享资源",
+    stock:120,
+    price:420,
+    managementFee:0,
+    extraRule:"18:30后未离场按20元/小时计收超时占用费",
+    vehicles:1,
+    simultaneous:1
+  });
+}
+
+function openOpportunityPackage() {
+  openPackageWizard({
+    name:"智谷通勤月卡扩容版",
+    type:"分时月卡",
+    customer:"企业员工",
+    period:"月",
+    startTime:"07:00",
+    endTime:"20:00",
+    days:"工作日",
+    scope:"智谷5号停车场B区",
+    resourceMode:"共享名额资源池",
+    stock:30,
+    price:520,
+    managementFee:0,
+    extraRule:"非有效时段按员工优惠临停价格计费",
+    vehicles:2,
+    simultaneous:1
+  });
+}
+
+/* =========================================================
+   定价规则
+========================================================= */
+
+function renderPricingRules() {
+  document.getElementById("pricingTableBody").innerHTML = pricingRules.map(rule => `
+    <tr>
+      <td><strong>${rule.name}</strong><br><span class="muted">${rule.id}</span></td>
+      <td>${rule.customer}</td>
+      <td>${rule.time}</td>
+      <td>${rule.method}</td>
+      <td>${rule.subject}</td>
+      <td>${rule.priority}</td>
+      <td>${statusTag(rule.status)}</td>
+      <td>
+        <button class="btn btn-secondary btn-sm"
+                onclick="openPricingRuleDetail('${rule.id}')">
+          查看规则
+        </button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function openPricingRuleCreate() {
+  const body = `
+    <form id="pricingRuleForm" onsubmit="submitPricingRule(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">规则名称</label>
+          <input class="form-control" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">费用科目</label>
+          <select class="form-control" name="subject">
+            <option>车位租赁费</option>
+            <option>车位管理费</option>
+            <option>附加车辆费</option>
+            <option>超时占用费</option>
+            <option>超额停车费</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">适用客户身份</label>
+          <select class="form-control" name="customer">
+            <option>产权业主</option>
+            <option>住宅租户</option>
+            <option>企业员工</option>
+            <option>企业账户</option>
+            <option>商户</option>
+            <option>全部认证客户</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">规则优先级</label>
+          <input class="form-control" type="number" name="priority" value="100">
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>条件组合</h4>
+
+        <div class="rule-builder">
+          <div class="rule-line">
+            <select class="form-control">
+              <option>时间条件</option>
+            </select>
+
+            <select class="form-control">
+              <option>属于</option>
+            </select>
+
+            <input class="form-control" name="time" value="工作日08:00—18:30">
+
+            <button type="button" class="btn btn-secondary btn-sm">删除</button>
+          </div>
+
+          <div class="rule-line">
+            <select class="form-control">
+              <option>车位区域</option>
+            </select>
+
+            <select class="form-control">
+              <option>属于</option>
+            </select>
+
+            <input class="form-control" value="5号停车场B区">
+
+            <button type="button" class="btn btn-secondary btn-sm">删除</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid mt-16">
+        <div class="form-group">
+          <label class="required">计费方式</label>
+          <select class="form-control" name="methodType">
+            <option>固定周期价格</option>
+            <option>原价加减固定金额</option>
+            <option>原价乘以比例</option>
+            <option>按小时计费</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">价格或表达式</label>
+          <input class="form-control" name="method" value="420元/月">
+        </div>
+
+        <div class="form-group full">
+          <label>冲突处理</label>
+          <select class="form-control">
+            <option>按最高优先级规则执行</option>
+            <option>取客户最优惠价格</option>
+            <option>禁止与其他优惠叠加</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "新建差异化计费规则",
+    "使用条件组合定义客户、时间、区域和价格",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('pricingRuleForm').requestSubmit()">
+        保存并提交发布
+      </button>
+    `,
+    true
+  );
+}
+
+function submitPricingRule(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+
+  pricingRules.push({
+    id:"R" + Date.now().toString().slice(-4),
+    name:data.name,
+    customer:data.customer,
+    time:data.time,
+    method:data.method,
+    subject:data.subject,
+    priority:Number(data.priority),
+    status:"待发布"
+  });
+
+  renderPricingRules();
+  closeModal();
+
+  showToast(`计费规则“${data.name}”已提交发布审批。`);
+}
+
+function openPricingRuleDetail(id) {
+  const rule = pricingRules.find(item => item.id === id);
+
+  const body = `
+    <div class="detail-grid">
+      <div class="detail-item"><span>规则名称</span><strong>${rule.name}</strong></div>
+      <div class="detail-item"><span>适用客户</span><strong>${rule.customer}</strong></div>
+      <div class="detail-item"><span>规则状态</span>${statusTag(rule.status)}</div>
+      <div class="detail-item"><span>适用范围</span><strong>${rule.time}</strong></div>
+      <div class="detail-item"><span>计费方式</span><strong>${rule.method}</strong></div>
+      <div class="detail-item"><span>规则优先级</span><strong>${rule.priority}</strong></div>
+    </div>
+
+    <div class="detail-section">
+      <h4>执行结果</h4>
+      <div class="readonly-box">
+        符合条件的停车权益和订单将自动使用该规则，并将费用计入“${rule.subject}”科目。
+      </div>
+    </div>
+  `;
+
+  openModal(
+    `计费规则 ${rule.id}`,
+    "查看规则条件、价格和执行结果",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+      ${rule.status === "待发布" ? `
+        <button class="btn btn-success" onclick="publishPricingRule('${id}')">
+          批准发布
+        </button>
+      ` : ""}
+    `
+  );
+}
+
+function publishPricingRule(id) {
+  const rule = pricingRules.find(item => item.id === id);
+  rule.status = "运行中";
+
+  renderPricingRules();
+  closeModal();
+
+  showToast(`规则“${rule.name}”已发布运行。`);
+}
+
+/* =========================================================
+   客户权益
+========================================================= */
+
+function renderCustomerTable() {
+  const keyword = (document.getElementById("customerSearch")?.value || "").toLowerCase();
+  const type = document.getElementById("customerTypeFilter")?.value || "";
+
+  const list = customers.filter(customer => {
+    const text = [
+      customer.name,
+      customer.phone,
+      customer.type,
+      customer.package,
+      ...customer.vehicles
+    ].join("").toLowerCase();
+
+    return (!keyword || text.includes(keyword)) &&
+      (!type || customer.type === type);
+  });
+
+  document.getElementById("customerTableBody").innerHTML = list.map(customer => `
+    <tr onclick="selectCustomer('${customer.id}')" style="cursor:pointer">
+      <td><strong>${customer.name}</strong><br><span class="muted">${customer.phone}</span></td>
+      <td>${customer.type}</td>
+      <td>${customer.vehicles.join("<br>")}</td>
+      <td>${customer.package}</td>
+      <td>${customer.valid}</td>
+      <td>${statusTag(customer.status)}</td>
+      <td><button class="btn btn-secondary btn-sm">管理权益</button></td>
+    </tr>
+  `).join("");
+}
+
+function selectCustomer(id) {
+  selectedCustomerId = id;
+  renderCustomerDetail();
+}
+
+function renderCustomerDetail() {
+  const customer = customers.find(item => item.id === selectedCustomerId);
+
+  document.getElementById("customerDetail").innerHTML = `
+    <div class="profile-head">
+      <div class="profile-avatar">${customer.name.substring(0,1)}</div>
+
+      <div>
+        <h3>${customer.name}</h3>
+        <p>${customer.type} · ${customer.phone}</p>
+      </div>
+
+      <div style="margin-left:auto">${statusTag(customer.status)}</div>
+    </div>
+
+    <div class="detail-grid mt-16" style="grid-template-columns:1fr 1fr">
+      <div class="detail-item">
+        <span>当前套餐</span>
+        <strong>${customer.package}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>资源范围</span>
+        <strong>${customer.space}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>有效期</span>
+        <strong>${customer.valid}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>账户余额/占用</span>
+        <strong>${customer.balance}</strong>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>登记车辆</h4>
+
+      ${customer.vehicles.map(vehicle => `
+        <div class="price-row">
+          <span>${vehicle}</span>
+          <button class="btn btn-secondary btn-sm"
+                  onclick="openVehicleChange('${customer.id}','${vehicle}')">
+            变更
+          </button>
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="detail-section">
+      <h4>权益操作</h4>
+
+      <div class="section-actions">
+        <button class="btn btn-primary"
+                onclick="openCustomerPackageChange('${customer.id}')">
+          变更套餐
+        </button>
+
+        <button class="btn btn-secondary"
+                onclick="openCustomerRenew('${customer.id}')">
+          续费
+        </button>
+
+        <button class="btn btn-warning"
+                onclick="pauseCustomerRight('${customer.id}')">
+          暂停权益
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>最近记录</h4>
+
+      <div class="timeline">
+        ${customer.history.map(item => `
+          <div class="timeline-item">
+            <strong>${item[0]}</strong>
+            <p>${item[1]}</p>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function openVehicleChange(customerId, oldVehicle) {
+  const customer = customers.find(item => item.id === customerId);
+
+  const body = `
+    <form id="vehicleChangeForm" onsubmit="submitVehicleChange(event,'${customerId}','${oldVehicle}')">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>原车辆</label>
+          <div class="readonly-box">${oldVehicle}</div>
+        </div>
+
+        <div class="form-group">
+          <label class="required">新车辆</label>
+          <input class="form-control" name="newVehicle" required>
+        </div>
+
+        <div class="form-group">
+          <label>原车辆当前状态</label>
+          <div class="readonly-box">场外，可正常更换</div>
+        </div>
+
+        <div class="form-group">
+          <label class="required">生效时间</label>
+          <select class="form-control">
+            <option>立即生效</option>
+            <option>指定日期生效</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label class="required">变更原因</label>
+          <select class="form-control">
+            <option>购买新车</option>
+            <option>车辆维修临时换车</option>
+            <option>企业员工换车</option>
+            <option>车牌变更</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <div class="info-banner mt-16">
+      <div class="banner-icon">车</div>
+      <div class="banner-content">
+        新车辆将继承未使用的停车权益，原车辆权限同步停止，操作过程保留审计记录。
+      </div>
+    </div>
+  `;
+
+  openModal(
+    "变更套餐绑定车辆",
+    `${customer.name} · ${customer.package}`,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('vehicleChangeForm').requestSubmit()">
+        核验并变更
+      </button>
+    `
+  );
+}
+
+function submitVehicleChange(event, customerId, oldVehicle) {
+  event.preventDefault();
+
+  const newVehicle = new FormData(event.target).get("newVehicle");
+  const customer = customers.find(item => item.id === customerId);
+  const index = customer.vehicles.indexOf(oldVehicle);
+
+  if (customers.some(item => item.vehicles.includes(newVehicle))) {
+    showToast("该车辆已绑定其他客户或企业账户。", true);
+    return;
+  }
+
+  customer.vehicles[index] = newVehicle;
+  customer.history.unshift(["2026-07-19", `车辆由${oldVehicle}变更为${newVehicle}`]);
+
+  renderCustomerTable();
+  renderCustomerDetail();
+  closeModal();
+
+  showToast(`车辆已变更为${newVehicle}。`);
+}
+
+function openCustomerPackageChange(id) {
+  const customer = customers.find(item => item.id === id);
+
+  const body = `
+    <form id="packageChangeForm" onsubmit="submitCustomerPackageChange(event,'${id}')">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>当前套餐</label>
+          <div class="readonly-box">${customer.package}</div>
+        </div>
+
+        <div class="form-group">
+          <label class="required">目标套餐</label>
+          <select class="form-control" name="package">
+            ${packages.map(item => `
+              <option>${item.name}</option>
+            `).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">变更方式</label>
+          <select class="form-control">
+            <option>立即升级，按剩余天数补差</option>
+            <option>当前周期结束后切换</option>
+            <option>退订原套餐后重新购买</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>费用处理</label>
+          <div class="readonly-box">系统按未使用周期自动计算应补或应退金额</div>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "客户套餐变更",
+    customer.name,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('packageChangeForm').requestSubmit()">
+        计算差额并变更
+      </button>
+    `
+  );
+}
+
+function submitCustomerPackageChange(event, id) {
+  event.preventDefault();
+
+  const packageName = new FormData(event.target).get("package");
+  const customer = customers.find(item => item.id === id);
+
+  customer.package = packageName;
+  customer.history.unshift(["2026-07-19", `套餐变更为${packageName}`]);
+
+  renderCustomerTable();
+  renderCustomerDetail();
+  closeModal();
+
+  showToast(`客户套餐已变更为“${packageName}”。`);
+}
+
+function openCustomerRenew(id) {
+  const customer = customers.find(item => item.id === id);
+
+  const body = `
+    <div class="detail-grid">
+      <div class="detail-item"><span>客户</span><strong>${customer.name}</strong></div>
+      <div class="detail-item"><span>当前套餐</span><strong>${customer.package}</strong></div>
+      <div class="detail-item"><span>当前有效期</span><strong>${customer.valid}</strong></div>
+    </div>
+
+    <form id="customerRenewForm" onsubmit="submitCustomerRenew(event,'${id}')">
+      <div class="form-grid mt-16">
+        <div class="form-group">
+          <label class="required">续费周期</label>
+          <select class="form-control" name="period">
+            <option value="1">续费1个月</option>
+            <option value="3">续费3个月</option>
+            <option value="12">续费12个月</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>续费优惠</label>
+          <select class="form-control">
+            <option>按当前合同价格</option>
+            <option>连续续费3个月95折</option>
+            <option>年付减免1个月</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "客户套餐续费",
+    "续费后自动延长合同和停车权限",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-success"
+              onclick="document.getElementById('customerRenewForm').requestSubmit()">
+        生成续费订单
+      </button>
+    `
+  );
+}
+
+function submitCustomerRenew(event, id) {
+  event.preventDefault();
+
+  const period = new FormData(event.target).get("period");
+  const customer = customers.find(item => item.id === id);
+
+  customer.history.unshift(["2026-07-19", `已生成${period}个月续费订单`]);
+
+  renderCustomerDetail();
+  closeModal();
+
+  showToast(`已生成${period}个月续费订单并发送客户支付。`);
+}
+
+function pauseCustomerRight(id) {
+  const customer = customers.find(item => item.id === id);
+
+  if (customer.status === "暂停中") {
+    customer.status = "有效";
+    customer.history.unshift(["2026-07-19","停车权益已恢复"]);
+    showToast("客户停车权益已恢复。");
+  } else {
+    customer.status = "暂停中";
+    customer.history.unshift(["2026-07-19","停车权益已暂停"]);
+    showToast("客户停车权益已暂停，车辆保留一次离场权限。");
+  }
+
+  renderCustomerTable();
+  renderCustomerDetail();
+}
+
+function openCustomerCreate() {
+  const body = `
+    <form id="customerCreateForm" onsubmit="submitCustomerCreate(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">客户名称</label>
+          <input class="form-control" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">客户类型</label>
+          <select class="form-control" name="type">
+            <option>业主</option>
+            <option>住宅租户</option>
+            <option>企业员工</option>
+            <option>企业客户</option>
+            <option>商户</option>
+            <option>普通用户</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">手机号/企业联系人</label>
+          <input class="form-control" name="phone" required>
+        </div>
+
+        <div class="form-group">
+          <label>初始车辆</label>
+          <input class="form-control" name="vehicle">
+        </div>
+
+        <div class="form-group full">
+          <label>身份认证材料</label>
+          <input class="form-control" type="file">
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "新建客户档案",
+    "客户认证后才能购买身份限定套餐",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('customerCreateForm').requestSubmit()">
+        创建客户
+      </button>
+    `
+  );
+}
+
+function submitCustomerCreate(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+
+  const customer = {
+    id:"C" + Date.now().toString().slice(-5),
+    name:data.name,
+    type:data.type,
+    phone:data.phone,
+    vehicles:data.vehicle ? [data.vehicle] : [],
+    package:"尚未购买",
+    valid:"—",
+    status:"待认证",
+    space:"尚未分配",
+    balance:0,
+    history:[["2026-07-19","客户档案已建立"]]
+  };
+
+  customers.unshift(customer);
+  selectedCustomerId = customer.id;
+
+  renderCustomerTable();
+  renderCustomerDetail();
+  closeModal();
+
+  showToast(`客户“${customer.name}”档案已建立。`);
+}
+
+function openCustomerImport() {
+  const body = `
+    <div class="info-banner">
+      <div class="banner-icon">表</div>
+      <div class="banner-content">
+        支持企业员工、住宅住户、商户和历史月卡用户批量导入。
+      </div>
+    </div>
+
+    <div class="form-grid mt-16">
+      <div class="form-group">
+        <label class="required">客户类型</label>
+        <select class="form-control">
+          <option>企业员工</option>
+          <option>产权业主</option>
+          <option>住宅租户</option>
+          <option>商户</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="required">导入文件</label>
+        <input class="form-control" type="file">
+      </div>
+    </div>
+  `;
+
+  openModal(
+    "批量导入客户",
+    "导入后先执行身份、手机号和车牌重复检查",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="finishCustomerImport()">
+        上传并校验
+      </button>
+    `
+  );
+}
+
+function finishCustomerImport() {
+  closeModal();
+  showToast("文件校验完成：成功268条，重复车辆6条，身份关系异常3条。");
+}
+
+/* =========================================================
+   合同履约
+========================================================= */
+
+function renderContracts() {
+  document.getElementById("contractTableBody").innerHTML = contracts.map(contract => `
+    <tr onclick="selectContract('${contract.id}')" style="cursor:pointer">
+      <td><strong>${contract.id}</strong><br><span class="muted">${contract.customer}</span></td>
+      <td>${contract.package}</td>
+      <td>${contract.resource}</td>
+      <td>${contract.start}</td>
+      <td>${contract.end}</td>
+      <td>${contract.amount.toLocaleString()}元</td>
+      <td>${statusTag(contract.status)}</td>
+      <td><button class="btn btn-secondary btn-sm">查看履约</button></td>
+    </tr>
+  `).join("");
+}
+
+function selectContract(id) {
+  selectedContractId = id;
+  renderContractDetail();
+}
+
+function renderContractDetail() {
+  const contract = contracts.find(item => item.id === selectedContractId);
+
+  document.getElementById("contractDetail").innerHTML = `
+    <div class="profile-head">
+      <div class="profile-avatar">约</div>
+
+      <div>
+        <h3>${contract.id}</h3>
+        <p>${contract.customer}</p>
+      </div>
+
+      <div style="margin-left:auto">${statusTag(contract.status)}</div>
+    </div>
+
+    <div class="detail-grid mt-16" style="grid-template-columns:1fr 1fr">
+      <div class="detail-item">
+        <span>套餐产品</span>
+        <strong>${contract.package}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>资源权益</span>
+        <strong>${contract.resource}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>合同开始</span>
+        <strong>${contract.start}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>合同到期</span>
+        <strong>${contract.end}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>合同金额</span>
+        <strong>${contract.amount.toLocaleString()}元</strong>
+      </div>
+
+      <div class="detail-item">
+        <span>签署方式</span>
+        <strong>电子合同</strong>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>合同操作</h4>
+
+      <div class="section-actions">
+        <button class="btn btn-success" onclick="renewContract('${contract.id}')">
+          续签合同
+        </button>
+
+        <button class="btn btn-secondary" onclick="changeContractVehicle('${contract.id}')">
+          车辆变更
+        </button>
+
+        <button class="btn btn-warning" onclick="toggleContractPause('${contract.id}')">
+          ${contract.status === "暂停中" ? "恢复履约" : "暂停合同"}
+        </button>
+
+        <button class="btn btn-secondary" onclick="transferContract('${contract.id}')">
+          权益转让
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>履约记录</h4>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <strong>${contract.start}</strong>
+          <p>合同生效，停车权限自动下发。</p>
+        </div>
+
+        <div class="timeline-item">
+          <strong>2026-07-01</strong>
+          <p>本期账单已生成。</p>
+        </div>
+
+        <div class="timeline-item">
+          <strong>2026-07-19</strong>
+          <p>当前合同状态：${contract.status}。</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renewContract(id) {
+  const contract = contracts.find(item => item.id === id);
+
+  const body = `
+    <form id="renewContractForm" onsubmit="submitContractRenew(event,'${id}')">
+      <div class="detail-grid">
+        <div class="detail-item"><span>客户</span><strong>${contract.customer}</strong></div>
+        <div class="detail-item"><span>原到期日</span><strong>${contract.end}</strong></div>
+        <div class="detail-item"><span>原合同金额</span><strong>${contract.amount.toLocaleString()}元</strong></div>
+      </div>
+
+      <div class="form-grid mt-16">
+        <div class="form-group">
+          <label class="required">续签周期</label>
+          <select class="form-control" name="period">
+            <option value="1">1个月</option>
+            <option value="3">3个月</option>
+            <option value="12">12个月</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">续签价格</label>
+          <input class="form-control" type="number" name="amount" value="${contract.amount}">
+        </div>
+
+        <div class="form-group">
+          <label>价格版本</label>
+          <select class="form-control">
+            <option>沿用原合同价格</option>
+            <option>使用套餐最新价格</option>
+            <option>客户专属续费价</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>签署方式</label>
+          <select class="form-control">
+            <option>客户一键续签</option>
+            <option>自动续费后补签</option>
+            <option>运营人员代办</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "合同续签",
+    `${contract.id} · 续签后自动延长停车权益`,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-success"
+              onclick="document.getElementById('renewContractForm').requestSubmit()">
+        生成续签订单
+      </button>
+    `
+  );
+}
+
+function submitContractRenew(event, id) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+  const contract = contracts.find(item => item.id === id);
+
+  contract.amount = Number(data.amount);
+  contract.status = "待客户签署";
+
+  renderContracts();
+  renderContractDetail();
+  closeModal();
+
+  showToast(`合同${id}续签订单已生成并发送客户。`);
+}
+
+function toggleContractPause(id) {
+  const contract = contracts.find(item => item.id === id);
+
+  if (contract.status === "暂停中") {
+    contract.status = "履约中";
+    showToast(`合同${id}已恢复履约。`);
+  } else {
+    contract.status = "暂停中";
+    showToast(`合同${id}已暂停，停车权限保留一次离场。`);
+  }
+
+  renderContracts();
+  renderContractDetail();
+}
+
+function changeContractVehicle(id) {
+  const contract = contracts.find(item => item.id === id);
+  const customer = customers.find(item => item.name === contract.customer);
+
+  if (!customer || !customer.vehicles.length) {
+    showToast("未找到可变更的客户车辆。", true);
+    return;
+  }
+
+  openVehicleChange(customer.id, customer.vehicles[0]);
+}
+
+function transferContract(id) {
+  const contract = contracts.find(item => item.id === id);
+
+  const body = `
+    <form id="transferForm" onsubmit="submitContractTransfer(event,'${id}')">
+      <div class="warning-banner">
+        <div class="banner-icon">!</div>
+        <div class="banner-content">
+          权益转让需要核验套餐是否允许转让、目标客户身份和当前费用状态。
+        </div>
+      </div>
+
+      <div class="form-grid mt-16">
+        <div class="form-group">
+          <label>原客户</label>
+          <div class="readonly-box">${contract.customer}</div>
+        </div>
+
+        <div class="form-group">
+          <label class="required">目标客户</label>
+          <input class="form-control" name="target" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">转让生效日期</label>
+          <input class="form-control" type="date" value="2026-07-20">
+        </div>
+
+        <div class="form-group">
+          <label>剩余费用处理</label>
+          <select class="form-control">
+            <option>剩余权益全部转让</option>
+            <option>原客户退费，目标客户重新购买</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "停车权益转让",
+    contract.id,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('transferForm').requestSubmit()">
+        提交转让审核
+      </button>
+    `
+  );
+}
+
+function submitContractTransfer(event, id) {
+  event.preventDefault();
+
+  const target = new FormData(event.target).get("target");
+  const contract = contracts.find(item => item.id === id);
+
+  contract.status = "转让审核中";
+
+  renderContracts();
+  renderContractDetail();
+  closeModal();
+
+  showToast(`合同${id}已提交转让给${target}的审核。`);
+}
+
+function openContractCreate() {
+  const body = `
+    <form id="contractCreateForm" onsubmit="submitContractCreate(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">签约客户</label>
+          <select class="form-control" name="customer">
+            ${customers.map(item => `<option>${item.name}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">套餐产品</label>
+          <select class="form-control" name="package">
+            ${packages.map(item => `<option>${item.name}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">资源/车位</label>
+          <input class="form-control" name="resource" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">合同金额</label>
+          <input class="form-control" type="number" name="amount" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">开始日期</label>
+          <input class="form-control" type="date" name="start" value="2026-07-20">
+        </div>
+
+        <div class="form-group">
+          <label class="required">结束日期</label>
+          <input class="form-control" type="date" name="end" value="2027-07-19">
+        </div>
+
+        <div class="form-group full">
+          <label>合同附件及认证材料</label>
+          <input class="form-control" type="file">
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "新建停车合同",
+    "签署完成后自动下发车位及车辆权限",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('contractCreateForm').requestSubmit()">
+        生成电子合同
+      </button>
+    `
+  );
+}
+
+function submitContractCreate(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+
+  const contract = {
+    id:"HT" + Date.now().toString().slice(-5),
+    customer:data.customer,
+    package:data.package,
+    resource:data.resource,
+    start:data.start,
+    end:data.end,
+    amount:Number(data.amount),
+    status:"待客户签署"
+  };
+
+  contracts.unshift(contract);
+  selectedContractId = contract.id;
+
+  renderContracts();
+  renderContractDetail();
+  closeModal();
+
+  showToast(`合同${contract.id}已生成并发送客户签署。`);
+}
+
+/* =========================================================
+   候补排队
+========================================================= */
+
+function renderWaitlist() {
+  document.getElementById("waitlistBoard").innerHTML = waitStages.map(stage => {
+    const items = waitlist.filter(item => item.stage === stage);
+
+    return `
+      <div class="wait-column">
+        <div class="wait-column-head">
+          <h3>${stage}</h3>
+          <span class="tag tag-gray">${items.length}人</span>
+        </div>
+
+        ${items.map(item => `
+          <div class="wait-card">
+            <h4>${item.customer}</h4>
+            <p>目标：${item.target}</p>
+            <p>${item.since}</p>
+            <p>匹配评分：<strong>${item.score}</strong></p>
+            <p>价格：${item.price}</p>
+
+            <button class="btn btn-secondary btn-sm"
+                    onclick="handleWaitlist('${item.id}')">
+              处理
+            </button>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("waitBadge").textContent =
+    waitlist.filter(item => item.stage !== "已转合同").length;
+}
+
+function handleWaitlist(id) {
+  const item = waitlist.find(record => record.id === id);
+
+  let footer = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+  if (item.stage === "等待资源") {
+    footer += `
+      <button class="btn btn-primary" onclick="matchWaitlistSpace('${id}')">
+        匹配可用车位
+      </button>
+    `;
+  }
+
+  if (item.stage === "已匹配") {
+    footer += `
+      <button class="btn btn-primary" onclick="sendWaitlistOffer('${id}')">
+        发送确认通知
+      </button>
+    `;
+  }
+
+  if (item.stage === "待客户确认") {
+    footer += `
+      <button class="btn btn-success" onclick="confirmWaitlistCustomer('${id}')">
+        模拟客户确认并签约
+      </button>
+    `;
+  }
+
+  const body = `
+    <div class="detail-grid">
+      <div class="detail-item"><span>客户</span><strong>${item.customer}</strong></div>
+      <div class="detail-item"><span>目标套餐</span><strong>${item.target}</strong></div>
+      <div class="detail-item"><span>当前阶段</span><strong>${item.stage}</strong></div>
+      <div class="detail-item"><span>排队/匹配情况</span><strong>${item.since}</strong></div>
+      <div class="detail-item"><span>匹配评分</span><strong>${item.score}</strong></div>
+      <div class="detail-item"><span>价格接受度</span><strong>${item.price}</strong></div>
+    </div>
+  `;
+
+  openModal(
+    "候补客户处理",
+    item.id,
+    body,
+    footer
+  );
+}
+
+function matchWaitlistSpace(id) {
+  const item = waitlist.find(record => record.id === id);
+  const available = spaces.find(space => space.status === "available");
+
+  if (!available) {
+    showToast("当前没有可分配车位。", true);
+    return;
+  }
+
+  item.stage = "已匹配";
+  item.since = `匹配${available.id}`;
+
+  available.status = "reserved";
+  available.package = item.target;
+
+  renderWaitlist();
+  renderSpaces();
+  closeModal();
+
+  showToast(`${item.customer}已匹配车位${available.id}。`);
+}
+
+function sendWaitlistOffer(id) {
+  const item = waitlist.find(record => record.id === id);
+  item.stage = "待客户确认";
+  item.since = "剩余24小时";
+
+  renderWaitlist();
+  closeModal();
+
+  showToast(`已向${item.customer}发送车位确认和支付通知。`);
+}
+
+function confirmWaitlistCustomer(id) {
+  const item = waitlist.find(record => record.id === id);
+
+  item.stage = "已转合同";
+  item.since = "合同已生成";
+
+  const contract = {
+    id:"HT" + Date.now().toString().slice(-5),
+    customer:item.customer,
+    package:item.target,
+    resource:"候补匹配资源",
+    start:"2026-07-20",
+    end:"2026-08-19",
+    amount:Number(item.price.match(/\d+/)?.[0] || 0),
+    status:"待客户签署"
+  };
+
+  contracts.unshift(contract);
+
+  renderWaitlist();
+  renderContracts();
+  closeModal();
+
+  showToast(`${item.customer}已确认，合同${contract.id}已生成。`);
+}
+
+function runWaitlistMatching() {
+  const waiting = waitlist.filter(item => item.stage === "等待资源");
+  const available = spaces.filter(item => item.status === "available");
+
+  const count = Math.min(waiting.length, available.length);
+
+  for (let i = 0; i < count; i++) {
+    waiting[i].stage = "已匹配";
+    waiting[i].since = `匹配${available[i].id}`;
+    available[i].status = "reserved";
+    available[i].package = waiting[i].target;
+  }
+
+  renderWaitlist();
+  renderSpaces();
+
+  showToast(`智能匹配完成，共匹配${count}名候补客户。`);
+}
+
+/* =========================================================
+   账单
+========================================================= */
+
+function renderBills() {
+  document.getElementById("billTableBody").innerHTML = bills.map(bill => `
+    <tr>
+      <td><strong>${bill.id}</strong><br><span class="muted">${bill.customer}</span></td>
+      <td>${bill.period}</td>
+      <td>${bill.rent.toLocaleString()}元</td>
+      <td>${bill.manage.toLocaleString()}元</td>
+      <td>${bill.extra.toLocaleString()}元</td>
+      <td><strong>${bill.total.toLocaleString()}元</strong></td>
+      <td>${statusTag(bill.status)}</td>
+      <td>
+        <button class="btn btn-secondary btn-sm"
+                onclick="openBillDetail('${bill.id}')">
+          查看账单
+        </button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function openBillDetail(id) {
+  const bill = bills.find(item => item.id === id);
+
+  const body = `
+    <div class="detail-grid">
+      <div class="detail-item"><span>客户</span><strong>${bill.customer}</strong></div>
+      <div class="detail-item"><span>账单周期</span><strong>${bill.period}</strong></div>
+      <div class="detail-item"><span>账单状态</span>${statusTag(bill.status)}</div>
+    </div>
+
+    <div class="detail-section">
+      <h4>费用科目</h4>
+
+      <div class="price-box">
+        <div class="price-row">
+          <span>车位/套餐租赁费</span>
+          <strong>${bill.rent.toLocaleString()}元</strong>
+        </div>
+
+        <div class="price-row">
+          <span>车位管理费</span>
+          <strong>${bill.manage.toLocaleString()}元</strong>
+        </div>
+
+        <div class="price-row">
+          <span>附加车辆、超时及超容</span>
+          <strong>${bill.extra.toLocaleString()}元</strong>
+        </div>
+
+        <div class="price-row total">
+          <span>应付合计</span>
+          <strong>${bill.total.toLocaleString()}元</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>费用依据</h4>
+      <div class="readonly-box">
+        套餐合同、车位资源、车辆进出订单、附加车辆记录和超时记录均已关联。
+      </div>
+    </div>
+  `;
+
+  let footer = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+  if (bill.status === "待企业确认") {
+    footer += `
+      <button class="btn btn-success" onclick="confirmBill('${id}')">
+        确认账单
+      </button>
+    `;
+  }
+
+  if (bill.status === "存在争议") {
+    footer += `
+      <button class="btn btn-warning" onclick="adjustBill('${id}')">
+        处理争议
+      </button>
+    `;
+  }
+
+  openModal(
+    `账单 ${bill.id}`,
+    bill.customer,
+    body,
+    footer
+  );
+}
+
+function confirmBill(id) {
+  const bill = bills.find(item => item.id === id);
+  bill.status = "待支付";
+
+  renderBills();
+  closeModal();
+
+  showToast(`账单${id}已确认，进入支付或对公付款流程。`);
+}
+
+function adjustBill(id) {
+  const bill = bills.find(item => item.id === id);
+
+  const body = `
+    <form id="billAdjustForm" onsubmit="submitBillAdjust(event,'${id}')">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>原账单金额</label>
+          <div class="readonly-box">${bill.total.toLocaleString()}元</div>
+        </div>
+
+        <div class="form-group">
+          <label class="required">调整金额</label>
+          <input class="form-control" type="number" name="adjustment" value="-2400">
+        </div>
+
+        <div class="form-group full">
+          <label class="required">调整原因</label>
+          <textarea class="form-control" name="reason">临时增租活动取消，冲减未使用额度费用。</textarea>
+        </div>
+
+        <div class="form-group full">
+          <label>费用凭证</label>
+          <input class="form-control" type="file">
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "处理账单争议",
+    `${bill.id} · 调整后将生成审计记录`,
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('billAdjustForm').requestSubmit()">
+        确认调整
+      </button>
+    `
+  );
+}
+
+function submitBillAdjust(event, id) {
+  event.preventDefault();
+
+  const adjustment = Number(new FormData(event.target).get("adjustment"));
+  const bill = bills.find(item => item.id === id);
+
+  bill.extra += adjustment;
+  bill.total += adjustment;
+  bill.status = "待客户确认";
+
+  renderBills();
+  closeModal();
+
+  showToast(`账单${id}已调整${adjustment}元，并重新发送客户确认。`);
+}
+
+function generatePeriodicBills() {
+  showToast("下期周期账单已生成：8,628份成功，18份因合同变更进入复核。");
+}
+
+function openManualBillCreate() {
+  const body = `
+    <form id="manualBillForm" onsubmit="submitManualBill(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">客户</label>
+          <select class="form-control" name="customer">
+            ${customers.map(item => `<option>${item.name}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">账单周期</label>
+          <input class="form-control" name="period" value="2026年7月">
+        </div>
+
+        <div class="form-group">
+          <label>租赁费</label>
+          <input class="form-control" type="number" name="rent" value="0">
+        </div>
+
+        <div class="form-group">
+          <label>管理费</label>
+          <input class="form-control" type="number" name="manage" value="0">
+        </div>
+
+        <div class="form-group">
+          <label>附加/调整费用</label>
+          <input class="form-control" type="number" name="extra" value="0">
+        </div>
+
+        <div class="form-group">
+          <label class="required">调整依据</label>
+          <input class="form-control" name="reason" required>
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "新建调整账单",
+    "适用于补收、退款冲减和特殊服务费用",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('manualBillForm').requestSubmit()">
+        创建账单
+      </button>
+    `
+  );
+}
+
+function submitManualBill(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+  const rent = Number(data.rent);
+  const manage = Number(data.manage);
+  const extra = Number(data.extra);
+
+  bills.unshift({
+    id:"B" + Date.now().toString().slice(-5),
+    customer:data.customer,
+    period:data.period,
+    rent,
+    manage,
+    extra,
+    total:rent + manage + extra,
+    status:"待审核"
+  });
+
+  renderBills();
+  closeModal();
+
+  showToast("调整账单已创建并进入财务审核。");
+}
+
+/* =========================================================
+   分账
+========================================================= */
+
+function openSettlementRule() {
+  const body = `
+    <div class="readonly-box">
+      <p><strong>租赁费：</strong>按照车位产权和运营合同分配给产权方及运营方。</p>
+      <p><strong>管理费：</strong>归提供车库秩序、保洁、照明和设备服务的物业管理方。</p>
+      <p><strong>附加及超时费：</strong>按照产品合同约定归运营方或与产权方分成。</p>
+      <p><strong>渠道佣金：</strong>按照实际核销订单和渠道协议结算。</p>
+      <p><strong>退款：</strong>按照原订单收入关系反向冲减各主体收入。</p>
+    </div>
+  `;
+
+  openModal(
+    "车位套餐多方分账规则",
+    "不同费用科目分别进入对应收益主体",
+    body,
+    `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+  );
+}
+
+function confirmSettlementBatch() {
+  const body = `
+    <div class="warning-banner">
+      <div class="banner-icon">!</div>
+      <div class="banner-content">
+        <strong>确认后将生成产权方、物业管理方和渠道平台结算单</strong>
+        收款账户异常的28,600元将暂时冻结，不进入本次付款。
+      </div>
+    </div>
+
+    <div class="detail-grid mt-16">
+      <div class="detail-item"><span>产权方结算</span><strong>2,157,400元</strong></div>
+      <div class="detail-item"><span>物业管理方结算</span><strong>886,000元</strong></div>
+      <div class="detail-item"><span>渠道平台结算</span><strong>240,000元</strong></div>
+    </div>
+  `;
+
+  openModal(
+    "确认7月结算批次",
+    "结算单生成后进入付款和银行流水核销",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-success" onclick="executeSettlementBatch()">
+        确认生成结算单
+      </button>
+    `
+  );
+}
+
+function executeSettlementBatch() {
+  closeModal();
+  showToast("7月结算批次已生成，异常账户金额已自动冻结。");
+}
+
+/* =========================================================
+   渠道营销
+========================================================= */
+
+function renderChannels() {
+  document.getElementById("channelGrid").innerHTML = channels.map(item => `
+    <div class="channel-card">
+      <div class="channel-head">
+        <div>
+          <h3>${item.name}</h3>
+          <p>${item.product}</p>
+        </div>
+
+        ${statusTag(item.status)}
+      </div>
+
+      <div class="detail-grid mt-16">
+        <div class="detail-item">
+          <span>销售数量</span>
+          <strong>${item.sold}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>核销数量</span>
+          <strong>${item.used}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>渠道收入</span>
+          <strong>${item.revenue.toLocaleString()}元</strong>
+        </div>
+      </div>
+
+      <div class="progress mt-16">
+        <div class="progress-bar"
+             style="width:${Math.round(item.used / item.sold * 100)}%;background:${item.color}">
+        </div>
+      </div>
+
+      <p class="muted">
+        核销率 ${Math.round(item.used / item.sold * 100)}%
+      </p>
+
+      <div class="section-actions">
+        <button class="btn btn-secondary btn-sm"
+                onclick="openChannelDetail('${item.id}')">
+          查看对账
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function openChannelDetail(id) {
+  const item = channels.find(channel => channel.id === id);
+
+  const body = `
+    <div class="detail-grid">
+      <div class="detail-item"><span>渠道</span><strong>${item.name}</strong></div>
+      <div class="detail-item"><span>产品</span><strong>${item.product}</strong></div>
+      <div class="detail-item"><span>状态</span>${statusTag(item.status)}</div>
+      <div class="detail-item"><span>销售数量</span><strong>${item.sold}</strong></div>
+      <div class="detail-item"><span>核销数量</span><strong>${item.used}</strong></div>
+      <div class="detail-item"><span>销售收入</span><strong>${item.revenue.toLocaleString()}元</strong></div>
+    </div>
+
+    <div class="detail-section">
+      <h4>渠道对账</h4>
+      <div class="price-box">
+        <div class="price-row"><span>渠道销售收入</span><strong>${item.revenue.toLocaleString()}元</strong></div>
+        <div class="price-row"><span>渠道服务费</span><strong>${Math.round(item.revenue * .08).toLocaleString()}元</strong></div>
+        <div class="price-row"><span>退款及未核销</span><strong>${Math.round((item.sold - item.used) * item.revenue / item.sold).toLocaleString()}元</strong></div>
+        <div class="price-row total"><span>运营方预计收入</span><strong>${Math.round(item.revenue * .92).toLocaleString()}元</strong></div>
+      </div>
+    </div>
+  `;
+
+  openModal(
+    `${item.name}渠道经营`,
+    item.product,
+    body,
+    `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+  );
+}
+
+function openCampaignCreate() {
+  const body = `
+    <form id="campaignForm" onsubmit="submitCampaign(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="required">活动名称</label>
+          <input class="form-control" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">销售渠道</label>
+          <select class="form-control" name="channel">
+            <option>美团团购</option>
+            <option>抖音本地生活</option>
+            <option>项目私域小程序</option>
+            <option>企业福利平台</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">关联套餐</label>
+          <select class="form-control" name="package">
+            ${packages.map(item => `<option>${item.name}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required">渠道销售价</label>
+          <input class="form-control" type="number" name="price" required>
+        </div>
+
+        <div class="form-group">
+          <label class="required">销售库存</label>
+          <input class="form-control" type="number" name="stock" value="100">
+        </div>
+
+        <div class="form-group">
+          <label>渠道佣金比例</label>
+          <input class="form-control" type="number" value="8">
+        </div>
+
+        <div class="form-group">
+          <label class="required">活动开始</label>
+          <input class="form-control" type="date" value="2026-07-20">
+        </div>
+
+        <div class="form-group">
+          <label class="required">活动结束</label>
+          <input class="form-control" type="date" value="2026-08-31">
+        </div>
+      </div>
+    </form>
+  `;
+
+  openModal(
+    "创建渠道营销活动",
+    "活动发布后同步库存、券码和核销规则",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary"
+              onclick="document.getElementById('campaignForm').requestSubmit()">
+        创建并提交发布
+      </button>
+    `
+  );
+}
+
+function submitCampaign(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target).entries());
+
+  channels.unshift({
+    id:"CH" + Date.now().toString().slice(-4),
+    name:data.channel,
+    product:data.package,
+    sold:0,
+    used:0,
+    revenue:0,
+    status:"待发布",
+    color:"#2576d3"
+  });
+
+  renderChannels();
+  closeModal();
+
+  showToast(`营销活动“${data.name}”已提交渠道发布。`);
+}
+
+/* =========================================================
+   AI机会
+========================================================= */
+
+function renderOpportunities() {
+  document.getElementById("opportunityGrid").innerHTML = opportunities.map(item => `
+    <article class="opportunity-card" style="--color:${item.color}">
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+
+      <div class="opportunity-impact">
+        ${item.impact.map(value => `
+          <div>
+            <strong>${value.split(/(?=[^\d,.%元月人位])/)[0] || value}</strong>
+            <span>${value}</span>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="section-actions">
+        <button class="btn btn-primary"
+                onclick="executeOpportunity('${item.id}')">
+          ${item.action}
+        </button>
+
+        <button class="btn btn-secondary"
+                onclick="ignoreOpportunity('${item.id}')">
+          暂不处理
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function executeOpportunity(id) {
+  if (id === "OP001") {
+    createDaySharingPackage();
+    return;
+  }
+
+  if (id === "OP002") {
+    openCustomerCampaign();
+    return;
+  }
+
+  if (id === "OP003") {
+    openOpportunityPackage();
+    return;
+  }
+
+  if (id === "OP004") {
+    const source = packages.find(item => item.id === "PK002");
+    openPackageEdit(source.id);
+  }
+}
+
+function openCustomerCampaign() {
+  const body = `
+    <div class="success-banner">
+      <div class="banner-icon">AI</div>
+      <div class="banner-content">
+        <strong>已筛选126名高频附加车辆客户</strong>
+        系统建议推送“一位两车轮停套餐”，目标转化率42%。
+      </div>
+    </div>
+
+    <div class="form-grid mt-16">
+      <div class="form-group">
+        <label class="required">目标套餐</label>
+        <select class="form-control">
+          <option>业主一位两车轮停套餐</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>营销优惠</label>
+        <select class="form-control">
+          <option>首月99元，次月恢复120元</option>
+          <option>连续购买3个月赠送1个月</option>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label>推送内容</label>
+        <textarea class="form-control">您近期第二辆车停车次数较多，升级一位两车轮停套餐可降低停车费用。</textarea>
+      </div>
+    </div>
+  `;
+
+  openModal(
+    "创建客户升级营销任务",
+    "基于真实停车行为精准推荐套餐",
+    body,
+    `
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="sendCustomerCampaign()">
+        向126名客户推送
+      </button>
+    `
+  );
+}
+
+function sendCustomerCampaign() {
+  closeModal();
+  showToast("套餐升级推荐已发送给126名目标客户。");
+}
+
+function ignoreOpportunity(id) {
+  opportunities = opportunities.filter(item => item.id !== id);
+  renderOpportunities();
+  showToast("该运营机会已标记为暂不处理。");
+}
+
+function refreshInsights() {
+  showToast("AI运营分析已重新执行，当前仍发现4项高价值机会。");
+}
+
+/* =========================================================
+   通用状态与弹窗
+========================================================= */
+
+function statusTag(status) {
+  const map = {
+    "有效":"tag-green",
+    "运行中":"tag-green",
+    "销售中":"tag-green",
+    "履约中":"tag-green",
+    "已支付":"tag-green",
+    "已转合同":"tag-green",
+    "重点渠道":"tag-purple",
+    "待发布":"tag-orange",
+    "待审批":"tag-orange",
+    "待优化":"tag-orange",
+    "待续签":"tag-orange",
+    "即将到期":"tag-orange",
+    "待企业确认":"tag-orange",
+    "待客户确认":"tag-orange",
+    "待客户签署":"tag-purple",
+    "待支付":"tag-blue",
+    "部分支付":"tag-orange",
+    "存在争议":"tag-red",
+    "额度超额":"tag-red",
+    "暂停中":"tag-gray",
+    "草稿":"tag-gray",
+    "待认证":"tag-orange",
+    "待审核":"tag-orange",
+    "转让审核中":"tag-purple"
+  };
+
+  return `<span class="tag ${map[status] || "tag-gray"}">${status}</span>`;
+}
+
+function spaceStatusText(status) {
+  const map = {
+    available:"可租赁",
+    used:"已使用",
+    shared:"分时共享",
+    reserved:"运营保留",
+    closed:"关闭维修"
+  };
+
+  return map[status] || status;
+}
+
+function openModal(title, subtitle, body, footer, large = false) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalSubtitle").textContent = subtitle || "";
+  document.getElementById("modalBody").innerHTML = body;
+  document.getElementById("modalFooter").innerHTML =
+    footer || `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`;
+
+  document.getElementById("modalBox").classList.toggle("large", large);
+  document.getElementById("modalMask").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  document.getElementById("modalMask").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function maskClose(event) {
+  if (event.target.id === "modalMask") {
+    closeModal();
+  }
+}
+
+function showToast(message, error = false) {
+  const toast = document.createElement("div");
+
+  toast.className = "toast" + (error ? " error" : "");
+  toast.innerHTML = `
+    <strong>${error ? "暂不能处理" : "处理完成"}</strong><br>
+    ${message}
+  `;
+
+  document.getElementById("toastWrap").appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+});
+
+/* =========================================================
+   初始化
+========================================================= */
+
+function init() {
+  renderSpaces();
+  renderPackages();
+  renderPricingRules();
+
+  renderCustomerTable();
+  renderCustomerDetail();
+
+  renderContracts();
+  renderContractDetail();
+
+  renderWaitlist();
+  renderBills();
+
+  renderChannels();
+  renderOpportunities();
+}
+
+init();
+</script>
+</body>
+</html>

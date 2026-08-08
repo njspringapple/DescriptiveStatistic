@@ -1,0 +1,2500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>无人值守停车系统组网与设备改造方案</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  color: #fff;
+  transform-origin: center center;
+  background:
+    radial-gradient(circle at 58% 45%, rgba(0, 198, 255, .16), transparent 31%),
+    radial-gradient(circle at 82% 20%, rgba(110, 73, 255, .12), transparent 27%),
+    radial-gradient(circle at 8% 73%, rgba(255, 73, 97, .05), transparent 25%),
+    linear-gradient(135deg, #061224 0%, #08192f 50%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 17%,
+    #000 90%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  width: 760px;
+  height: 760px;
+  left: 540px;
+  top: 90px;
+  border: 1px solid rgba(70, 180, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 120px rgba(0, 175, 255, .05),
+    inset 0 0 120px rgba(0, 175, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==============================
+   顶部标题
+============================== */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 23px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 51px;
+  height: 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .3),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3.5px;
+}
+
+.header-message {
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #d8f7ff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.header-message span {
+  color: #6195b5;
+  font-size: 11px;
+}
+
+.header-message b {
+  color: #4ae4ef;
+  font-weight: 600;
+}
+
+/* ==============================
+   通用标题和卡片
+============================== */
+
+.section-head {
+  height: 37px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 23px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #28bdff, #45ebd3);
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #dff7ff;
+  font-size: 17px;
+}
+
+.section-head span {
+  margin-left: auto;
+  color: #718da0;
+  font-size: 9px;
+}
+
+.card {
+  border: 1px solid rgba(66, 169, 237, .24);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .91)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+/* ==============================
+   主区域
+============================== */
+
+.main-area {
+  position: absolute;
+  left: 46px;
+  right: 46px;
+  top: 112px;
+  height: 655px;
+}
+
+.site-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 475px;
+  height: 655px;
+}
+
+.edge-area {
+  position: absolute;
+  left: 505px;
+  top: 0;
+  width: 500px;
+  height: 655px;
+}
+
+.cloud-area {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 505px;
+  height: 655px;
+}
+
+/* ==============================
+   左侧：停车场现场
+============================== */
+
+.site-panel {
+  position: relative;
+  width: 100%;
+  height: 598px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid rgba(65, 177, 233, .20);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 48, 79, .83),
+      rgba(6, 23, 44, .92)
+    );
+  box-shadow: 0 16px 40px rgba(0, 4, 16, .27);
+}
+
+.site-panel::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #54ddf5, transparent);
+}
+
+.site-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+  padding: 0 10px;
+  border: 1px solid rgba(68, 179, 224, .13);
+  border-radius: 11px;
+  background: rgba(5, 24, 44, .55);
+}
+
+.site-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #d8f3fb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-light {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #46e8c5;
+  box-shadow: 0 0 9px #46e8c5;
+}
+
+.site-summary span {
+  color: #68a5bd;
+  font-size: 9px;
+}
+
+/* 出入口车道 */
+
+.lane-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+  margin-top: 12px;
+}
+
+.lane {
+  position: relative;
+  height: 275px;
+  overflow: hidden;
+  border: 1px solid rgba(68, 174, 218, .17);
+  border-radius: 13px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(25, 105, 138, .12), transparent 48%),
+    rgba(4, 20, 37, .72);
+}
+
+.lane-title {
+  position: absolute;
+  z-index: 7;
+  left: 10px;
+  right: 10px;
+  top: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lane-title strong {
+  color: #daf4fb;
+  font-size: 11px;
+}
+
+.reuse-tag,
+.new-tag {
+  padding: 3px 7px;
+  border-radius: 8px;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.reuse-tag {
+  color: #6ed8ff;
+  border: 1px solid rgba(64, 189, 241, .22);
+  background: rgba(33, 143, 190, .12);
+}
+
+.new-tag {
+  color: #5be6c8;
+  border: 1px solid rgba(65, 226, 193, .21);
+  background: rgba(26, 184, 148, .10);
+}
+
+/* 车道仿真 */
+
+.lane-road {
+  position: absolute;
+  left: -16%;
+  right: -16%;
+  top: 42px;
+  bottom: 0;
+  clip-path: polygon(24% 0, 76% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 49%,
+      rgba(255,255,255,.22) 50%,
+      transparent 51%
+    ),
+    #253039;
+}
+
+.lane-car {
+  position: absolute;
+  z-index: 4;
+  left: 31%;
+  top: 126px;
+  width: 80px;
+  height: 38px;
+  border-radius: 15px 17px 5px 5px;
+  background: linear-gradient(#d0d7db, #64737c);
+}
+
+.lane-car::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: -15px;
+  width: 44px;
+  height: 23px;
+  border-radius: 16px 16px 2px 2px;
+  background: #687780;
+}
+
+.lane-car::after {
+  content: "";
+  position: absolute;
+  left: 27px;
+  top: -10px;
+  width: 28px;
+  height: 12px;
+  border-radius: 9px 9px 1px 1px;
+  background: #1b303b;
+}
+
+.car-box {
+  position: absolute;
+  z-index: 6;
+  left: 27%;
+  top: 104px;
+  width: 100px;
+  height: 70px;
+  border: 1px solid #47e9a3;
+}
+
+.car-box::before {
+  content: "粤A·8K36Q";
+  position: absolute;
+  left: -1px;
+  top: -13px;
+  padding: 1px 4px;
+  color: #06150e;
+  background: #47e9a3;
+  font-family: Consolas, monospace;
+  font-size: 6px;
+  font-weight: 900;
+}
+
+.lane-barrier {
+  position: absolute;
+  z-index: 5;
+  right: 11px;
+  top: 126px;
+  width: 91px;
+  height: 7px;
+  transform: rotate(67deg);
+  transform-origin: right center;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #f1f1f1 0,
+      #f1f1f1 13px,
+      #d84949 13px,
+      #d84949 26px
+    );
+}
+
+.device-label {
+  position: absolute;
+  z-index: 8;
+  padding: 3px 6px;
+  border: 1px solid rgba(74, 192, 231, .18);
+  border-radius: 7px;
+  color: #7dcce4;
+  background: rgba(6, 28, 50, .86);
+  font-size: 7px;
+}
+
+.camera-label {
+  left: 11px;
+  top: 53px;
+}
+
+.display-label {
+  right: 10px;
+  top: 54px;
+}
+
+.intercom-label {
+  left: 10px;
+  bottom: 14px;
+  color: #62e4c9;
+  border-color: rgba(77, 225, 195, .18);
+}
+
+.radar-label {
+  right: 10px;
+  bottom: 14px;
+}
+
+.lane-footer {
+  position: absolute;
+  z-index: 8;
+  left: 9px;
+  right: 9px;
+  bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  color: #587f94;
+  font-size: 6.8px;
+}
+
+/* 现场设备清单 */
+
+.device-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.device-item {
+  min-height: 73px;
+  padding: 9px 8px;
+  border: 1px solid rgba(64, 178, 221, .14);
+  border-radius: 10px;
+  background: rgba(7, 29, 52, .65);
+}
+
+.device-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.device-icon {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  place-items: center;
+  border-radius: 8px;
+  color: #55dff2;
+  background: rgba(27, 144, 187, .13);
+}
+
+.device-icon.new {
+  color: #55e4c4;
+  background: rgba(30, 181, 145, .12);
+}
+
+.device-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.device-name {
+  color: #d0eaf3;
+  font-size: 8.5px;
+  font-weight: 700;
+}
+
+.device-type {
+  margin-top: 2px;
+  color: #557e93;
+  font-size: 6.8px;
+}
+
+.device-desc {
+  margin-top: 7px;
+  color: #60889d;
+  font-size: 7px;
+  line-height: 1.4;
+}
+
+/* 改造说明 */
+
+.retrofit-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border: 1px solid rgba(73, 221, 197, .15);
+  border-radius: 10px;
+  color: #73caba;
+  background: rgba(21, 139, 121, .08);
+  font-size: 8px;
+}
+
+.retrofit-note b {
+  color: #51e5c6;
+}
+
+/* ==============================
+   中间场端控制柜
+============================== */
+
+.edge-panel {
+  position: relative;
+  width: 100%;
+  height: 598px;
+  margin-top: 12px;
+}
+
+.cabinet-glow {
+  position: absolute;
+  left: 42px;
+  right: 42px;
+  bottom: 10px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(0, 205, 255, .16);
+  filter: blur(30px);
+}
+
+.cabinet-top {
+  position: absolute;
+  left: 22px;
+  top: 0;
+  width: 456px;
+  height: 57px;
+  clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
+  border: 1px solid rgba(92, 228, 255, .3);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(31, 103, 142, .94),
+      rgba(10, 55, 87, .96)
+    );
+}
+
+.cabinet-brand {
+  position: absolute;
+  left: 28px;
+  top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cabinet-logo {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #188eff, #39e0db);
+  box-shadow: 0 0 15px rgba(35, 213, 235, .28);
+}
+
+.cabinet-brand strong {
+  display: block;
+  color: #e7fbff;
+  font-size: 13px;
+}
+
+.cabinet-brand span {
+  display: block;
+  margin-top: 2px;
+  color: #72b5cc;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.edge-online {
+  position: absolute;
+  right: 29px;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #58eed2;
+  font-size: 8px;
+}
+
+.edge-online i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #45e8c6;
+  box-shadow: 0 0 8px #45e8c6;
+}
+
+.cabinet-body {
+  position: absolute;
+  left: 0;
+  top: 51px;
+  width: 500px;
+  height: 506px;
+  overflow: hidden;
+  border: 1px solid rgba(70, 217, 241, .40);
+  border-radius: 9px 9px 20px 20px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 196, 229, .10), transparent 51%),
+    linear-gradient(
+      150deg,
+      rgba(15, 65, 96, .98),
+      rgba(5, 24, 46, .99)
+    );
+  box-shadow:
+    0 27px 65px rgba(0, 5, 18, .55),
+    0 0 46px rgba(0, 185, 223, .09),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.cabinet-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .08;
+  background-image:
+    linear-gradient(rgba(73, 199, 239, .4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 199, 239, .4) 1px, transparent 1px);
+  background-size: 25px 25px;
+}
+
+.cabinet-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 70px;
+  padding: 15px 18px 10px;
+}
+
+.edge-title-icon {
+  position: relative;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #148cff, #2bded4);
+  box-shadow:
+    0 0 22px rgba(30, 205, 229, .31),
+    inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.edge-title-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.edge-title {
+  margin-left: 12px;
+}
+
+.edge-title strong {
+  display: block;
+  color: #effcff;
+  font-size: 19px;
+}
+
+.edge-title span {
+  display: block;
+  margin-top: 4px;
+  color: #63abc1;
+  font-size: 8px;
+  letter-spacing: .7px;
+}
+
+.offline-badge {
+  margin-left: auto;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(54, 228, 193, .20);
+  border-radius: 14px;
+  color: #72f0d2;
+  background: rgba(35, 205, 168, .09);
+  font-size: 8px;
+}
+
+.offline-badge i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #46e8c5;
+  box-shadow: 0 0 8px #46e8c5;
+}
+
+/* 柜内模块 */
+
+.cabinet-modules {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  padding: 3px 17px 10px;
+}
+
+.cabinet-module {
+  position: relative;
+  min-height: 93px;
+  padding: 11px;
+  border: 1px solid rgba(62, 183, 222, .17);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 62, 92, .76),
+      rgba(6, 32, 57, .79)
+    );
+}
+
+.cabinet-module.highlight {
+  border-color: rgba(159, 127, 255, .34);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(68, 51, 125, .57),
+      rgba(8, 39, 65, .78)
+    );
+}
+
+.module-tag {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  color: #bca6ff;
+  background: rgba(137, 96, 239, .12);
+  font-size: 6.5px;
+}
+
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.module-icon {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  place-items: center;
+  border: 1px solid rgba(62, 204, 232, .14);
+  border-radius: 8px;
+  color: #55def4;
+  background: rgba(25, 150, 191, .13);
+}
+
+.highlight .module-icon {
+  color: #c8b6ff;
+  border-color: rgba(165, 134, 244, .18);
+  background: rgba(124, 86, 218, .17);
+}
+
+.module-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.module-name {
+  color: #d9f1f8;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.highlight .module-name {
+  color: #eee8ff;
+}
+
+.module-desc {
+  margin-top: 8px;
+  color: #668fa4;
+  font-size: 7.5px;
+  line-height: 1.45;
+}
+
+.highlight .module-desc {
+  color: #8f87ae;
+}
+
+/* 网络层 */
+
+.network-layer {
+  position: relative;
+  z-index: 2;
+  margin: 1px 17px 0;
+  padding: 10px;
+  border: 1px solid rgba(61, 176, 211, .14);
+  border-radius: 10px;
+  background: rgba(3, 20, 38, .57);
+}
+
+.network-title {
+  display: flex;
+  justify-content: space-between;
+  color: #6da4ba;
+  font-size: 8px;
+}
+
+.network-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.network-link {
+  padding: 7px 5px;
+  border: 1px solid rgba(67, 177, 214, .15);
+  border-radius: 8px;
+  color: #75a9bd;
+  background: rgba(13, 48, 71, .55);
+  font-size: 7px;
+  text-align: center;
+}
+
+.network-link.active {
+  color: #59e1c6;
+  border-color: rgba(63, 225, 194, .22);
+  background: rgba(22, 134, 115, .10);
+}
+
+.network-link.warning {
+  color: #f0b36d;
+  border-color: rgba(236, 158, 72, .22);
+  background: rgba(170, 103, 38, .10);
+}
+
+/* 工作模式 */
+
+.mode-strip {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin: 10px 17px 0;
+}
+
+.mode {
+  min-height: 49px;
+  padding: 7px;
+  border: 1px solid rgba(55, 173, 211, .13);
+  border-radius: 9px;
+  background: rgba(5, 27, 50, .58);
+  text-align: center;
+}
+
+.mode strong {
+  display: block;
+  color: #cde9f3;
+  font-size: 8px;
+}
+
+.mode span {
+  display: block;
+  margin-top: 3px;
+  color: #587f94;
+  font-size: 6.5px;
+  line-height: 1.35;
+}
+
+.mode.local strong {
+  color: #59e5c8;
+}
+
+.mode.backup strong {
+  color: #e4b270;
+}
+
+/* ==============================
+   右侧云端中心
+============================== */
+
+.cloud-panel {
+  position: relative;
+  width: 100%;
+  height: 598px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid rgba(65, 177, 233, .20);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 48, 79, .83),
+      rgba(6, 23, 44, .92)
+    );
+  box-shadow: 0 16px 40px rgba(0, 4, 16, .27);
+}
+
+.cloud-panel::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #54ddf5, transparent);
+}
+
+.cloud-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+  padding: 0 10px;
+  border: 1px solid rgba(68, 179, 224, .13);
+  border-radius: 11px;
+  background: rgba(5, 24, 44, .55);
+}
+
+.cloud-summary strong {
+  color: #d8f3fb;
+  font-size: 12px;
+}
+
+.cloud-summary span {
+  color: #59dfc5;
+  font-size: 8px;
+}
+
+/* 黑色仿真远程视频 */
+
+.remote-workspace {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 10px;
+  margin-top: 11px;
+  height: 255px;
+}
+
+.video-window {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #254451;
+  border-radius: 11px;
+  background:
+    radial-gradient(circle at 65% 20%, rgba(43, 91, 108, .20), transparent 28%),
+    #03090d;
+  box-shadow: inset 0 0 34px rgba(0,0,0,.75);
+}
+
+.video-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: .16;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(255,255,255,.09) 4px
+    );
+}
+
+.video-top {
+  position: absolute;
+  z-index: 12;
+  left: 8px;
+  right: 8px;
+  top: 6px;
+  display: flex;
+  justify-content: space-between;
+  color: #c1dfe7;
+  font-family: Consolas, monospace;
+  font-size: 6px;
+}
+
+.video-rec {
+  color: #ff5e68;
+}
+
+.remote-road {
+  position: absolute;
+  left: -13%;
+  right: -13%;
+  bottom: 0;
+  height: 62%;
+  clip-path: polygon(23% 0, 77% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 49%,
+      rgba(255,255,255,.4) 50%,
+      transparent 51%
+    ),
+    #263139;
+}
+
+.remote-car {
+  position: absolute;
+  z-index: 4;
+  left: 34%;
+  bottom: 31px;
+  width: 82px;
+  height: 40px;
+  border-radius: 15px 17px 5px 5px;
+  background: linear-gradient(#d0d7db, #64737c);
+}
+
+.remote-car::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: -16px;
+  width: 45px;
+  height: 24px;
+  border-radius: 16px 16px 2px 2px;
+  background: #687780;
+}
+
+.remote-car::after {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: -11px;
+  width: 29px;
+  height: 13px;
+  border-radius: 9px 9px 1px 1px;
+  background: #1b303b;
+}
+
+.remote-detect {
+  position: absolute;
+  z-index: 10;
+  left: 30%;
+  bottom: 24px;
+  width: 106px;
+  height: 65px;
+  border: 1.5px solid #47e9a3;
+}
+
+.remote-detect::before {
+  content: "粤A·8K36Q 98.6%";
+  position: absolute;
+  left: -1px;
+  top: -13px;
+  padding: 1px 4px;
+  color: #06150e;
+  background: #47e9a3;
+  font-family: Consolas, monospace;
+  font-size: 6px;
+  font-weight: 900;
+}
+
+.remote-barrier {
+  position: absolute;
+  z-index: 5;
+  right: 10%;
+  bottom: 83px;
+  width: 100px;
+  height: 7px;
+  transform: rotate(67deg);
+  transform-origin: right center;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #f1f1f1 0,
+      #f1f1f1 14px,
+      #d84949 14px,
+      #d84949 28px
+    );
+}
+
+.video-bottom {
+  position: absolute;
+  z-index: 12;
+  left: 8px;
+  right: 8px;
+  bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  color: #779eaa;
+  font-family: Consolas, monospace;
+  font-size: 5.8px;
+}
+
+/* 远程事件面板 */
+
+.event-panel {
+  padding: 10px;
+  border: 1px solid rgba(70, 178, 220, .15);
+  border-radius: 11px;
+  background: rgba(7, 29, 52, .72);
+}
+
+.event-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.event-title strong {
+  color: #d9f1f8;
+  font-size: 10px;
+}
+
+.event-title span {
+  padding: 2px 6px;
+  border-radius: 7px;
+  color: #ff8995;
+  background: rgba(255, 80, 100, .10);
+  font-size: 6px;
+}
+
+.event-plate {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 7px;
+  border: 1px solid rgba(78, 178, 230, .28);
+  border-radius: 6px;
+  color: #71cbf1;
+  background: rgba(22, 111, 167, .13);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.event-panel p {
+  margin: 8px 0 0;
+  color: #638ca0;
+  font-size: 7px;
+  line-height: 1.5;
+}
+
+.ai-result {
+  margin-top: 8px;
+  padding: 7px;
+  border-left: 3px solid #39bdf4;
+  border-radius: 6px;
+  color: #75bcd8;
+  background: rgba(29, 126, 180, .10);
+  font-size: 6.8px;
+  line-height: 1.45;
+}
+
+.event-buttons {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.event-button {
+  flex: 1;
+  padding: 6px 3px;
+  border-radius: 6px;
+  color: #fff;
+  background: #187ed5;
+  font-size: 6.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.event-button.secondary {
+  color: #9fc3d4;
+  background: rgba(67, 111, 143, .28);
+}
+
+/* 云端模块 */
+
+.remote-functions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.remote-function {
+  min-height: 69px;
+  padding: 8px;
+  border: 1px solid rgba(65, 177, 219, .13);
+  border-radius: 9px;
+  background: rgba(7, 29, 52, .63);
+}
+
+.remote-function strong {
+  display: block;
+  color: #cce8f2;
+  font-size: 8px;
+}
+
+.remote-function span {
+  display: block;
+  margin-top: 5px;
+  color: #60889d;
+  font-size: 6.5px;
+  line-height: 1.4;
+}
+
+.remote-function b {
+  color: #56dec5;
+  font-weight: 600;
+}
+
+/* 协同终端 */
+
+.terminals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.terminal {
+  min-height: 72px;
+  padding: 8px;
+  border: 1px solid rgba(61, 188, 211, .14);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(9, 55, 76, .65),
+      rgba(6, 27, 48, .74)
+    );
+}
+
+.terminal-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.terminal-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 7px;
+  color: #4ee2cf;
+  background: rgba(26, 170, 145, .12);
+}
+
+.terminal-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.terminal strong {
+  color: #d2eff0;
+  font-size: 7.5px;
+}
+
+.terminal p {
+  margin: 6px 0 0;
+  color: #60889b;
+  font-size: 6.3px;
+  line-height: 1.4;
+}
+
+/* ==============================
+   连接箭头
+============================== */
+
+.link-arrow-one,
+.link-arrow-two {
+  position: absolute;
+  z-index: 8;
+  top: 337px;
+  width: 41px;
+  height: 46px;
+}
+
+.link-arrow-one {
+  left: 473px;
+}
+
+.link-arrow-two {
+  left: 1004px;
+}
+
+.link-arrow-one::before,
+.link-arrow-two::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20px;
+  width: 29px;
+  height: 3px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #23769e, #49e2f0);
+  box-shadow: 0 0 12px rgba(46, 218, 240, .3);
+}
+
+.link-arrow-one::after,
+.link-arrow-two::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 13px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 13px solid #49e2f0;
+}
+
+.link-label-one,
+.link-label-two {
+  position: absolute;
+  z-index: 8;
+  top: 311px;
+  color: #62b6d3;
+  font-size: 7px;
+  text-align: center;
+}
+
+.link-label-one {
+  left: 463px;
+  width: 60px;
+}
+
+.link-label-two {
+  left: 991px;
+  width: 68px;
+}
+
+/* ==============================
+   底部改造结果
+============================== */
+
+.result-zone {
+  position: absolute;
+  left: 46px;
+  right: 46px;
+  bottom: 49px;
+  height: 94px;
+}
+
+.result-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 20px;
+  color: #8eb5c8;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.result-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dbfff, #43e7ce);
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 9px;
+  margin-top: 6px;
+}
+
+.result-card {
+  position: relative;
+  height: 67px;
+  padding: 10px 8px 7px 42px;
+  overflow: hidden;
+  border: 1px solid rgba(54, 192, 222, .18);
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 56, 82, .72),
+      rgba(6, 26, 47, .8)
+    );
+}
+
+.result-number {
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  color: rgba(76, 223, 238, .22);
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.result-name {
+  color: #d3eff6;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.result-desc {
+  margin-top: 5px;
+  color: #688fa3;
+  font-size: 7.3px;
+  line-height: 1.4;
+}
+
+.result-desc b {
+  color: #55dbc9;
+  font-weight: 600;
+}
+
+/* ==============================
+   页脚
+============================== */
+
+.legend {
+  position: absolute;
+  left: 49px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  color: #557c94;
+  font-size: 9px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-line {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: #4eddf0;
+}
+
+.legend-line.control {
+  height: 0;
+  background: none;
+  border-top: 2px dashed #9b85ff;
+}
+
+.legend-line.backup {
+  height: 0;
+  background: none;
+  border-top: 2px dashed #44dec0;
+}
+
+.footer {
+  position: absolute;
+  right: 49px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #50758c;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.footer i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 8px #3ee3c3;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 20V8l8-5 8 5v12H4z"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M8 20v-6h8v6M8 10h8"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M2 16h3M19 16h3"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>无人值守停车系统组网：停车场改造后是什么样？</h1>
+          <div class="subtitle">
+            UNATTENDED PARKING · NETWORK & DEVICE ARCHITECTURE
+          </div>
+        </div>
+      </div>
+
+      <div class="header-message">
+        <strong>原有设备充分利旧，关键能力按需增配</strong>
+        <span>
+          本地运行 · 双网保障 · 云端客服 · 手机协同 · 全程取证
+        </span>
+      </div>
+    </header>
+
+    <!-- 主体 -->
+    <main class="main-area">
+
+      <!-- 左：停车场现场 -->
+      <section class="site-area">
+        <div class="section-head">
+          <span class="section-number">01</span>
+          <i class="section-line"></i>
+          <h2>停车场出入口改造</h2>
+          <span>FIELD DEVICE DEPLOYMENT</span>
+        </div>
+
+        <div class="site-panel">
+
+          <div class="site-summary">
+            <div class="site-summary-title">
+              <i class="status-light"></i>
+              原车道设备利旧＋新增无人值守设备
+            </div>
+
+            <span>入口 / 出口设备统一接入</span>
+          </div>
+
+          <!-- 入口、出口 -->
+          <div class="lane-group">
+
+            <div class="lane">
+              <div class="lane-title">
+                <strong>入口车道</strong>
+                <span class="reuse-tag">原设备利旧</span>
+              </div>
+
+              <div class="lane-road"></div>
+              <div class="lane-car"></div>
+              <div class="car-box"></div>
+              <div class="lane-barrier"></div>
+
+              <span class="device-label camera-label">车牌识别相机</span>
+              <span class="device-label display-label">入口显示屏</span>
+              <span class="device-label intercom-label">新增可视对讲</span>
+              <span class="device-label radar-label">地感／雷达</span>
+
+              <div class="lane-footer">
+                <span>自动识别车辆</span>
+                <span>异常一键求助</span>
+              </div>
+            </div>
+
+            <div class="lane">
+              <div class="lane-title">
+                <strong>出口车道</strong>
+                <span class="new-tag">强化无人值守</span>
+              </div>
+
+              <div class="lane-road"></div>
+              <div class="lane-car" style="left:34%;top:130px"></div>
+              <div class="car-box" style="left:30%;top:108px"></div>
+              <div class="lane-barrier"></div>
+
+              <span class="device-label camera-label">车牌识别相机</span>
+              <span class="device-label display-label">费用显示屏</span>
+              <span class="device-label intercom-label">新增可视对讲</span>
+              <span class="device-label radar-label">防砸雷达</span>
+
+              <div class="lane-footer">
+                <span>自动计费离场</span>
+                <span>支付异常远程处理</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 设备清单 -->
+          <div class="device-list">
+
+            <div class="device-item">
+              <div class="device-head">
+                <div class="device-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="3"
+                      y="6"
+                      width="18"
+                      height="12"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="device-name">车牌相机</div>
+                  <div class="device-type">原设备可利旧</div>
+                </div>
+              </div>
+
+              <div class="device-desc">
+                车辆识别、进出图片及车牌特写
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-head">
+                <div class="device-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 20V7M5 9h14"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                    <circle cx="5" cy="5" r="2" fill="currentColor"/>
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="device-name">道闸设备</div>
+                  <div class="device-type">兼容原有控制</div>
+                </div>
+              </div>
+
+              <div class="device-desc">
+                自动通行、远程控制及异常开闸
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-head">
+                <div class="device-icon new">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="6"
+                      y="3"
+                      width="12"
+                      height="18"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="2"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                    />
+                    <path
+                      d="M9 15h6"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="device-name">可视对讲</div>
+                  <div class="device-type">建议新增</div>
+                </div>
+              </div>
+
+              <div class="device-desc">
+                一键连接云客服，视频语音双向沟通
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-head">
+                <div class="device-icon new">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M3 12h18M12 3v18"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="7"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="device-name">防砸雷达</div>
+                  <div class="device-type">按车道增配</div>
+                </div>
+              </div>
+
+              <div class="device-desc">
+                车辆检测、防砸杆及跟车安全识别
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-head">
+                <div class="device-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="3"
+                      y="5"
+                      width="18"
+                      height="14"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M7 10h10M7 14h6"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="device-name">车道显示屏</div>
+                  <div class="device-type">兼容或升级</div>
+                </div>
+              </div>
+
+              <div class="device-desc">
+                显示车牌、费用、余位和操作提示
+              </div>
+            </div>
+
+            <div class="device-item">
+              <div class="device-head">
+                <div class="device-icon new">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="4"
+                      y="3"
+                      width="16"
+                      height="18"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 8h8M8 12h8M8 16h5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="device-name">扫码支付牌</div>
+                  <div class="device-type">按需新增</div>
+                </div>
+              </div>
+
+              <div class="device-desc">
+                支持无牌车、临停缴费与故障降级
+              </div>
+            </div>
+
+          </div>
+
+          <div class="retrofit-note">
+            <b>改造原则：</b>
+            相机、道闸、显示屏可兼容利旧；重点增加可视对讲、场端网关、网络备链及UPS。
+          </div>
+        </div>
+      </section>
+
+      <!-- 场端到网关 -->
+      <div class="link-label-one">车道设备局域网</div>
+      <div class="link-arrow-one"></div>
+
+      <!-- 中：场端控制柜 -->
+      <section class="edge-area">
+        <div class="section-head">
+          <span class="section-number">02</span>
+          <i class="section-line"></i>
+          <h2>场端控制柜与本地运行</h2>
+          <span>EDGE CONTROL CABINET</span>
+        </div>
+
+        <div class="edge-panel">
+          <div class="cabinet-glow"></div>
+
+          <div class="cabinet-top">
+            <div class="cabinet-brand">
+              <div class="cabinet-logo">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 9h8M8 13h8M8 17h5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <strong>PARKING EDGE CONTROL</strong>
+                <span>LOCAL BUSINESS & DEVICE CONTROL</span>
+              </div>
+            </div>
+
+            <div class="edge-online">
+              <i></i>
+              EDGE ONLINE
+            </div>
+          </div>
+
+          <div class="cabinet-body">
+
+            <div class="cabinet-header">
+              <div class="edge-title-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 5h16v14H4V5z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 9h8M8 13h8M8 17h5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                </svg>
+              </div>
+
+              <div class="edge-title">
+                <strong>无人值守停车场场端控制柜</strong>
+                <span>停车业务、本地存储、视频取证、网络与供电统一部署</span>
+              </div>
+
+              <div class="offline-badge">
+                <i></i>
+                断网本地照常运行
+              </div>
+            </div>
+
+            <div class="cabinet-modules">
+
+              <div class="cabinet-module highlight">
+                <span class="module-tag">CORE</span>
+
+                <div class="module-head">
+                  <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 3l2.2 4.5L19 9l-3.5 3.4.8 4.8L12 15l-4.3 2.2.8-4.8L5 9l4.8-1.5L12 3z"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="module-name">停车智能网关</div>
+                </div>
+
+                <div class="module-desc">
+                  本地计费 · 订单 · 权限<br>
+                  设备控制 · 云端加密协同
+                </div>
+              </div>
+
+              <div class="cabinet-module">
+                <div class="module-head">
+                  <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 6h16v12H4V6z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M7 10h2M11 10h2M15 10h2M7 14h10"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="module-name">工业网络交换机</div>
+                </div>
+
+                <div class="module-desc">
+                  相机、道闸、对讲统一接入<br>
+                  VLAN隔离与设备状态监控
+                </div>
+              </div>
+
+              <div class="cabinet-module">
+                <div class="module-head">
+                  <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <ellipse
+                        cx="12"
+                        cy="6"
+                        rx="7"
+                        ry="3"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="module-name">本地数据库</div>
+                </div>
+
+                <div class="module-desc">
+                  订单、进出、配置和权限<br>
+                  网络中断仍能查询与计费
+                </div>
+              </div>
+
+              <div class="cabinet-module">
+                <div class="module-head">
+                  <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="14"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M8 9l6 3-6 3V9z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="module-name">视频存储与取证</div>
+                </div>
+
+                <div class="module-desc">
+                  进出图片及前后15秒视频<br>
+                  支持碰杆、跟车、争议回放
+                </div>
+              </div>
+
+              <div class="cabinet-module">
+                <div class="module-head">
+                  <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 8h16v10H4V8z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M8 5v3M16 5v3M8 13h8"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="module-name">UPS不间断电源</div>
+                </div>
+
+                <div class="module-desc">
+                  停电后保障网关、交换机<br>
+                  对讲及关键车道短时运行
+                </div>
+              </div>
+
+              <div class="cabinet-module">
+                <div class="module-head">
+                  <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 18a12 12 0 0 1 16 0M7 14a8 8 0 0 1 10 0M10 10a4 4 0 0 1 4 0"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                      <circle cx="12" cy="20" r="1.2" fill="currentColor"/>
+                    </svg>
+                  </div>
+
+                  <div class="module-name">4G／5G备用链路</div>
+                </div>
+
+                <div class="module-desc">
+                  主宽带中断自动切换备链<br>
+                  保证远程对讲和应急控制
+                </div>
+              </div>
+
+            </div>
+
+            <div class="network-layer">
+              <div class="network-title">
+                <span>停车场网络与外部通信</span>
+                <span>主备链路自动切换</span>
+              </div>
+
+              <div class="network-links">
+                <div class="network-link active">
+                  主宽带／专线<br>PRIMARY
+                </div>
+
+                <div class="network-link active">
+                  IPsec／TLS加密<br>SECURE
+                </div>
+
+                <div class="network-link warning">
+                  4G／5G备链<br>BACKUP
+                </div>
+              </div>
+            </div>
+
+            <div class="mode-strip">
+              <div class="mode local">
+                <strong>本地自治模式</strong>
+                <span>云端断开仍可识别、计费、开闸</span>
+              </div>
+
+              <div class="mode">
+                <strong>边云协同模式</strong>
+                <span>正常联网时接入云客服和管理平台</span>
+              </div>
+
+              <div class="mode backup">
+                <strong>应急降级模式</strong>
+                <span>断电、断网时保留关键通行能力</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 网关到云端 -->
+      <div class="link-label-two">加密专网／互联网＋备链</div>
+      <div class="link-arrow-two"></div>
+
+      <!-- 右：云客服与协同终端 -->
+      <section class="cloud-area">
+        <div class="section-head">
+          <span class="section-number">03</span>
+          <i class="section-line"></i>
+          <h2>云客服中心与移动协同</h2>
+          <span>CLOUD SERVICE & REMOTE OPERATION</span>
+        </div>
+
+        <div class="cloud-panel">
+
+          <div class="cloud-summary">
+            <strong>一个云客服中心集中服务多个停车场</strong>
+            <span>7×24 ONLINE</span>
+          </div>
+
+          <div class="remote-workspace">
+
+            <!-- 监控视频 -->
+            <div class="video-window">
+              <div class="video-top">
+                <span>CAM-HOSP-ER-OUT-02</span>
+                <span class="video-rec">● REC</span>
+                <span id="videoClock">11:42:18</span>
+              </div>
+
+              <div class="remote-road"></div>
+              <div class="remote-car"></div>
+              <div class="remote-detect"></div>
+              <div class="remote-barrier"></div>
+
+              <div class="video-bottom">
+                <span>医院急诊出口2号车道</span>
+                <span>1080P · LIVE</span>
+              </div>
+            </div>
+
+            <!-- 当前求助 -->
+            <div class="event-panel">
+              <div class="event-title">
+                <strong>当前车主求助</strong>
+                <span>出口阻塞</span>
+              </div>
+
+              <div class="event-plate">粤A·8K36Q</div>
+
+              <p>
+                求助：已支付但出口未放行<br>
+                微信支付：已成功<br>
+                场端状态：同步超时<br>
+                后方排队：8辆
+              </p>
+
+              <div class="ai-result">
+                AI诊断：支付流水完整，建议重新同步订单，无需费用减免。
+              </div>
+
+              <div class="event-buttons">
+                <div class="event-button">同步并放行</div>
+                <div class="event-button secondary">现场派单</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 云端能力 -->
+          <div class="remote-functions">
+            <div class="remote-function">
+              <strong>可视对讲云坐席</strong>
+              <span>
+                视频、语音、车牌、订单<br>
+                <b>车主一按立即接入</b>
+              </span>
+            </div>
+
+            <div class="remote-function">
+              <strong>远程业务处理</strong>
+              <span>
+                查支付、重算费用、权益补核<br>
+                <b>异常不再一律免费放行</b>
+              </span>
+            </div>
+
+            <div class="remote-function">
+              <strong>远程设备控制</strong>
+              <span>
+                开闸、重启、停用车道<br>
+                <b>操作分级审批和留痕</b>
+              </span>
+            </div>
+
+            <div class="remote-function">
+              <strong>设备运维监控</strong>
+              <span>
+                相机、道闸、对讲在线监测<br>
+                <b>自动告警与远程诊断</b>
+              </span>
+            </div>
+
+            <div class="remote-function">
+              <strong>现场协同工单</strong>
+              <span>
+                秩序、安保、运维精准派发<br>
+                <b>接单到复核完整闭环</b>
+              </span>
+            </div>
+
+            <div class="remote-function">
+              <strong>运营与费用审计</strong>
+              <span>
+                对讲、视频、开闸、减免<br>
+                <b>收入损失均可追溯</b>
+              </span>
+            </div>
+          </div>
+
+          <!-- 终端 -->
+          <div class="terminals">
+            <div class="terminal">
+              <div class="terminal-head">
+                <div class="terminal-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 14v-2a6 6 0 0 1 12 0v2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <rect
+                      x="3"
+                      y="13"
+                      width="4"
+                      height="6"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <rect
+                      x="17"
+                      y="13"
+                      width="4"
+                      height="6"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <strong>远程坐席电脑</strong>
+              </div>
+
+              <p>集中接听、业务诊断、远程控制和服务记录</p>
+            </div>
+
+            <div class="terminal">
+              <div class="terminal-head">
+                <div class="terminal-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="6"
+                      y="2"
+                      width="12"
+                      height="20"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 6h6M10 18h4"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <strong>现场人员手机</strong>
+              </div>
+
+              <p>接单、导航、到场签到、拍照和结果反馈</p>
+            </div>
+
+            <div class="terminal">
+              <div class="terminal-head">
+                <div class="terminal-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 5h16v14H4V5z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M7 15l3-3 3 2 4-5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <strong>管理人员平台</strong>
+              </div>
+
+              <p>查看运行状态、工单效率、开闸率和收入风险</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 改造后的五项结果 -->
+    <section class="result-zone">
+      <div class="result-title">
+        改造完成后的五项结果：原设备利旧、场端自治、网络可靠、服务集中、运营可审计
+      </div>
+
+      <div class="result-grid">
+
+        <div class="result-card">
+          <div class="result-number">01</div>
+          <div class="result-name">原有设备充分利旧</div>
+          <div class="result-desc">
+            相机、道闸、显示屏兼容接入<br>
+            <b>降低停车场改造投入</b>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-number">02</div>
+          <div class="result-name">本地业务自主运行</div>
+          <div class="result-desc">
+            场端识别、计费、订单与控制<br>
+            <b>云端或网络异常不停服</b>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-number">03</div>
+          <div class="result-name">主备网络与供电保障</div>
+          <div class="result-desc">
+            专线／宽带＋4G备链＋UPS<br>
+            <b>保证求助和关键通行在线</b>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-number">04</div>
+          <div class="result-name">一个中心集中值守</div>
+          <div class="result-desc">
+            可视对讲、订单处理、设备控制<br>
+            <b>多个停车场共享坐席服务</b>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-number">05</div>
+          <div class="result-name">远程现场审计闭环</div>
+          <div class="result-desc">
+            开闸、派单、维修、减免有记录<br>
+            <b>服务质量与收入风险可监管</b>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 图例 -->
+    <div class="legend">
+      <div class="legend-item">
+        <i class="legend-line"></i>
+        设备局域网／业务数据
+      </div>
+
+      <div class="legend-item">
+        <i class="legend-line control"></i>
+        云端控制与管理通道
+      </div>
+
+      <div class="legend-item">
+        <i class="legend-line backup"></i>
+        备用网络与现场回传
+      </div>
+    </div>
+
+    <footer class="footer">
+      <i></i>
+      DEVICE REUSE · EDGE AUTONOMY · DUAL NETWORK · CLOUD SERVICE · CLOSED LOOP
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+function updateClock() {
+  const clock = document.getElementById("videoClock");
+
+  if (!clock) {
+    return;
+  }
+
+  clock.textContent = new Date().toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+}
+
+window.addEventListener("resize", resizeStage);
+
+resizeStage();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>

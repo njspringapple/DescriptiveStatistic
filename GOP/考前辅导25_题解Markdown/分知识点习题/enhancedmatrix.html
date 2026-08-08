@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>粉笔板书 · 线性代数：增广矩阵</title>
+<style>
+:root{
+  --chalk:#f2f5ef; --chalk-dim:rgba(242,245,239,.72);
+  --y:#ffe9a3; --p:#ffb6cd; --c:#a9e5ff; --g:#b9f5ae;
+  --board:#1e4335;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:#2b2118;
+  font-family:"LXGW WenKai","霞鹜文楷","KaiTi","STKaiti","楷体",
+              "Comic Sans MS",cursive,"PingFang SC","Microsoft YaHei",sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px;
+  overflow:hidden;
+}
+/* ============ 黑板 ============ */
+.frame{
+  width:min(1180px,100%);flex:1;min-height:0;
+  border:16px solid #6d4a2a;border-radius:10px;
+  box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 4px #543619;
+  background:#5b3d21;position:relative;
+}
+.board{
+  position:absolute;inset:0;overflow:hidden;border-radius:2px;
+  background:
+    radial-gradient(120% 90% at 20% 10%,rgba(255,255,255,.06),transparent 60%),
+    radial-gradient(80% 70% at 85% 80%,rgba(255,255,255,.05),transparent 60%),
+    var(--board);
+}
+.board::after{ /* 擦不干净的粉笔痕 */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;
+  background:
+    radial-gradient(60% 22% at 30% 30%,#fff,transparent 70%),
+    radial-gradient(50% 18% at 70% 55%,#fff,transparent 70%),
+    radial-gradient(45% 14% at 45% 78%,#fff,transparent 70%);
+  filter:blur(6px);
+}
+.head{
+  position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+  padding:10px 22px 6px;color:var(--chalk-dim);font-size:14px;letter-spacing:1px;z-index:3;
+  border-bottom:1px dashed rgba(255,255,255,.16);
+}
+.content{
+  position:absolute;inset:44px 26px 44px 30px;overflow-y:auto;overflow-x:auto;
+  color:var(--chalk);font-size:clamp(15px,2.05vw,21px);line-height:1.85;z-index:2;
+  transition:opacity .35s,filter .35s;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent;
+}
+.content::-webkit-scrollbar{width:8px;height:8px}
+.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:8px}
+.content.fading{opacity:0;filter:blur(4px)}
+.tray{
+  position:absolute;left:0;right:0;bottom:0;height:14px;background:linear-gradient(#7a5530,#4d3319);
+  box-shadow:0 -3px 6px rgba(0,0,0,.35);z-index:4;
+}
+/* ============ 粉笔字 ============ */
+.atom{opacity:0;display:inline-block}
+.atom.shown{animation:chalkIn .2s ease-out forwards}
+@keyframes chalkIn{from{opacity:0;filter:blur(3px);transform:translateY(2px)}to{opacity:1;filter:blur(0);transform:none}}
+.line,.box,.matlabel,.cell,.sysline,.alab{
+  text-shadow:0 0 1px rgba(255,255,255,.55),0 0 7px rgba(255,255,255,.16);
+}
+.line{margin:4px 0;white-space:pre-wrap}
+.ctitle{font-size:1.35em;color:var(--y);margin:0 0 12px;letter-spacing:2px;
+        border-bottom:2px dashed rgba(255,233,163,.5);display:inline-block;padding-bottom:4px}
+.hl{color:var(--y)}
+.note{color:var(--c);font-size:.86em;opacity:.95}
+.gap{height:8px}
+.box{
+  display:inline-block;margin:10px 0;padding:6px 16px;color:var(--g);
+  border:2px dashed rgba(185,245,174,.65);border-radius:14px;
+}
+/* 矩阵 */
+.rowwrap{display:flex;align-items:center;flex-wrap:wrap;gap:6px 4px;margin:10px 0}
+.matwrap{display:flex;align-items:center;gap:8px;margin:6px 10px 6px 0}
+.matlabel{white-space:pre}
+.matrix{display:flex;align-items:stretch}
+.brk{width:11px;border-top:3px solid var(--chalk);border-bottom:3px solid var(--chalk)}
+.brk.left{border-left:3px solid var(--chalk);border-radius:8px 0 0 8px}
+.brk.right{border-right:3px solid var(--chalk);border-radius:0 8px 8px 0}
+.matbody{display:flex;align-items:center;padding:5px 8px}
+.mgrid{display:grid;gap:2px 16px}
+.cell{min-width:1.7em;text-align:right;font-variant-numeric:tabular-nums}
+.vline{width:0;border-left:2px dashed rgba(255,255,255,.8);margin:0 12px;align-self:stretch}
+/* 箭头 */
+.arrowwrap{display:flex;flex-direction:column;align-items:center;margin:0 8px;min-width:120px}
+.alab{font-size:.74em;color:var(--p);white-space:nowrap;line-height:1.5}
+.aline{position:relative;width:110px;height:0;border-top:2px solid var(--chalk);margin:5px 0}
+.aline::after{content:"";position:absolute;right:-2px;top:-6px;border:6px solid transparent;border-left-color:var(--chalk)}
+/* 方程组 */
+.sys{display:flex;align-items:center;gap:10px;margin:10px 0 10px 14px}
+.brace{color:var(--chalk);line-height:.82;transform:translateY(-2px)}
+.sysline{white-space:pre;line-height:1.7}
+/* 粉笔与板擦 */
+.chalk{
+  position:absolute;width:12px;height:30px;border-radius:3px;z-index:6;pointer-events:none;
+  background:linear-gradient(#fff,#dfe6dc);box-shadow:0 2px 6px rgba(0,0,0,.4);
+  transform:translate(-9999px,-9999px) rotate(28deg);transition:transform .09s linear;opacity:0;
+}
+.chalk.on{opacity:1}
+.dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.85;z-index:5;pointer-events:none;animation:fall .8s ease-in forwards}
+@keyframes fall{to{transform:translate(4px,42px);opacity:0}}
+.eraser{
+  position:absolute;top:0;left:-160px;width:120px;height:100%;z-index:7;pointer-events:none;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.13),rgba(255,255,255,.02));
+  border-left:2px solid rgba(255,255,255,.15);border-right:2px solid rgba(255,255,255,.15);
+}
+.eraser.sweep{animation:sweep .55s linear}
+@keyframes sweep{0%{opacity:1;left:-160px}100%{opacity:1;left:100%}}
+/* ============ 控制条 ============ */
+.bar{width:min(1180px,100%);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+button{
+  font-family:inherit;font-size:14px;padding:7px 14px;border-radius:20px;cursor:pointer;
+  color:#f6efe2;background:#3d2b1a;border:1px solid #7a5530;transition:.15s;
+}
+button:hover{background:#57391f;transform:translateY(-1px)}
+button.act{background:#1e4335;border-color:#8fd6b6;color:#d9ffe9}
+.toc{width:min(1180px,100%);display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.toc button{font-size:12px;padding:5px 10px;white-space:nowrap;border-radius:14px;opacity:.7}
+.toc button.cur{opacity:1;background:#1e4335;border-color:#a9e5ff;color:#e7f7ff}
+input[type=range]{width:110px;accent-color:#8fd6b6}
+.lbl{color:#d9c9ae;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="board" id="board">
+    <div class="head"><span id="hleft">线性代数 · 第 3 章</span><span id="hright"></span></div>
+    <div class="content" id="content"></div>
+    <div class="chalk" id="chalk"></div>
+    <div class="eraser" id="eraser"></div>
+    <div class="tray"></div>
+  </div>
+</div>
+
+<div class="bar">
+  <button id="btnFirst">⏮ 从头</button>
+  <button id="btnPrev">◀ 上一页</button>
+  <button id="btnPlay">▶ 自动讲课</button>
+  <button id="btnNext">下一页 ▶</button>
+  <button id="btnRe">↻ 重写本页</button>
+  <span class="lbl">语速</span><input id="spd" type="range" min="0.5" max="2.5" step="0.1" value="1.2">
+  <button id="btnSnd">🔇 粉笔声</button>
+</div>
+<div class="toc" id="toc"></div>
+
+<script>
+/* ---------- 内容构造器 ---------- */
+const txt =(t,cls='')=>({type:'text',text:t,cls});
+const note=(t)=>({type:'text',text:t,cls:'note'});
+const title=(t)=>({type:'text',text:t,cls:'ctitle'});
+const box =(t)=>({type:'box',text:t});
+const sys =(lines)=>({type:'sys',lines});
+const mat =(rows,o={})=>({type:'matrix',rows,aug:o.aug??null,label:o.label||'',after:o.after||''});
+const arw =(top='',bot='')=>({type:'arrow',top,bot});
+const row =(...items)=>({type:'row',items});
+const gap =()=>({type:'gap'});
+
+/* ---------- 板书内容（14 页） ---------- */
+const slides=[
+{nav:'引子',items:[
+  title('引子 · 从方程组到矩阵'),
+  txt('解一个线性方程组时，我们到底在“搬运”什么？'),
+  sys(['  x + 2y -  z =  2',' 2x -  y + 3z =  9',' 3x + 3y + 2z = 15']),
+  txt('消元时，未知数 x, y, z 只是“占位符”，'),
+  txt('真正参与运算的只有 [[系数]] 与 [[常数项]]。'),
+  box('把它们抽出来排成表格 ⇒ 矩阵')
+]},
+{nav:'A 与 b',items:[
+  title('一 · 系数矩阵 A 与常数列 b'),
+  row(mat([['1','2','-1'],['2','-1','3'],['3','3','2']],{label:'A ='}),
+      mat([['2'],['9'],['15']],{label:'b ='})),
+  txt('未知量列向量 x = ( x, y, z )ᵀ，方程组就写成 [[Ax = b]]'),
+  note('A 为 m×n（m 个方程、n 个未知量）， x 为 n×1， b 为 m×1')
+]},
+{nav:'定义',items:[
+  title('二 · 增广矩阵的定义'),
+  txt('把常数列 b 直接“拼”到系数矩阵 A 的右边：'),
+  mat([['1','2','-1','2'],['2','-1','3','9'],['3','3','2','15']],{aug:3,label:'Ā = ( A ¦ b ) ='}),
+  note('竖线只是分隔提示，不参与任何运算：左边系数区，右边常数区'),
+  txt('A 为 m×n ⇒ 增广矩阵为 [[m×(n+1)]] 型'),
+  box('方程组 ⟺ 增广矩阵：信息完全等价')
+]},
+{nav:'行变换',items:[
+  title('三 · 三种初等行变换'),
+  txt('①  交换两行            rᵢ ↔ rⱼ        ← 交换两个方程'),
+  txt('②  某行乘非零数        k·rᵢ (k≠0)     ← 方程两边同乘 k'),
+  txt('③  某行加另一行的 k 倍  rᵢ + k·rⱼ      ← 消元的核心动作'),
+  box('三种变换都可逆 ⇒ 变换前后方程组 [[同解]]'),
+  note('解方程组时只做“行”变换；列变换会打乱未知量的对应关系')
+]},
+{nav:'消元①',items:[
+  title('四 · 高斯消元 第 ① 步'),
+  txt('目标：把第 1 列主元下方全部“打成 0”'),
+  row(mat([['1','2','-1','2'],['2','-1','3','9'],['3','3','2','15']],{aug:3}),
+      arw('r₂ - 2r₁','r₃ - 3r₁'),
+      mat([['1','2','-1','2'],['0','-5','5','5'],['0','-3','5','9']],{aug:3})),
+  note('每行第一个非零元称为 [[主元 (pivot)]]，第 1 行主元是 1')
+]},
+{nav:'消元②',items:[
+  title('四 · 高斯消元 第 ② 步'),
+  row(mat([['1','2','-1','2'],['0','-5','5','5'],['0','-3','5','9']],{aug:3}),
+      arw('r₂ ÷ (-5)',''),
+      mat([['1','2','-1','2'],['0','1','-1','-1'],['0','-3','5','9']],{aug:3})),
+  row(mat([['1','2','-1','2'],['0','1','-1','-1'],['0','-3','5','9']],{aug:3}),
+      arw('r₃ + 3r₂',''),
+      mat([['1','2','-1','2'],['0','1','-1','-1'],['0','0','2','6']],{aug:3})),
+  box('得到 [[行阶梯形]]：主元逐行右移，主元下方全为 0')
+]},
+{nav:'回代',items:[
+  title('五 · 翻译回方程组 · 回代'),
+  sys([' x + 2y -  z =  2','      y -  z = -1','          2z =  6']),
+  txt('自下而上回代：'),
+  txt('z = 3  ⇒  y = z - 1 = 2  ⇒  x = 2 - 2y + z = 1'),
+  box('唯一解： ( x, y, z ) = ( 1, 2, 3 )')
+]},
+{nav:'行最简形',items:[
+  title('六 · 行最简形 · 高斯-若尔当消元'),
+  txt('继续向上消元，把主元上方也化为 0：'),
+  row(mat([['1','2','-1','2'],['0','1','-1','-1'],['0','0','2','6']],{aug:3}),
+      arw('r₃ ÷ 2 ; r₂ + r₃','r₁ + r₃'),
+      mat([['1','2','0','5'],['0','1','0','2'],['0','0','1','3']],{aug:3})),
+  row(mat([['1','2','0','5'],['0','1','0','2'],['0','0','1','3']],{aug:3}),
+      arw('r₁ - 2r₂',''),
+      mat([['1','0','0','1'],['0','1','0','2'],['0','0','1','3']],{aug:3})),
+  box('右列直接读出解： x=1, y=2, z=3'),
+  note('行最简形：主元为 1，且主元所在列其余元素全为 0（唯一确定）')
+]},
+{nav:'秩与判定',items:[
+  title('七 · 秩 · 解的判别定理'),
+  txt('记 r(A)=系数矩阵的秩， r(Ā)=增广矩阵的秩， n=未知量个数'),
+  txt('①  r(A) < r(Ā)          ⇒ [[无解]]（出现 0 = d ≠ 0）'),
+  txt('②  r(A) = r(Ā) = n      ⇒ [[唯一解]]'),
+  txt('③  r(A) = r(Ā) = r < n  ⇒ [[无穷多解]]，含 n - r 个自由未知量'),
+  note('秩 = 行阶梯形中非零行的行数 = 主元的个数'),
+  box('永远有： r(A) ≤ r(Ā) ≤ r(A) + 1')
+]},
+{nav:'无解',items:[
+  title('八 · 无解长什么样'),
+  sys(['  x +  y +  z = 1',' 2x + 2y + 2z = 3']),
+  row(mat([['1','1','1','1'],['2','2','2','3']],{aug:3}),
+      arw('r₂ - 2r₁',''),
+      mat([['1','1','1','1'],['0','0','0','1']],{aug:3})),
+  txt('末行的含义： 0·x + 0·y + 0·z = 1 ，矛盾！'),
+  box('r(A)=1 < r(Ā)=2  ⇒  方程组无解')
+]},
+{nav:'无穷多解',items:[
+  title('九 · 无穷多解 · 通解结构'),
+  sys(['  x₁ -  x₂ +  x₃ = 1',' 2x₁ +  x₂ -  x₃ = 2']),
+  row(mat([['1','-1','1','1'],['2','1','-1','2']],{aug:3}),
+      arw('r₂ - 2r₁','r₂ ÷ 3'),
+      mat([['1','-1','1','1'],['0','1','-1','0']],{aug:3}),
+      arw('r₁ + r₂',''),
+      mat([['1','0','0','1'],['0','1','-1','0']],{aug:3})),
+  txt('r(A) = r(Ā) = 2 < 3 = n ⇒ 1 个自由未知量，令 x₃ = t'),
+  txt('得 x₁ = 1 ,  x₂ = t ,  x₃ = t'),
+  box('通解： ( x₁,x₂,x₃ )ᵀ = ( 1,0,0 )ᵀ + t( 0,1,1 )ᵀ ,  t ∈ ℝ'),
+  note('特解 + 导出组通解 —— 这就是解的结构定理')
+]},
+{nav:'齐次组',items:[
+  title('十 · 齐次线性方程组 Ax = 0'),
+  txt('此时增广矩阵为 ( A ¦ 0 )，最后一列恒为 0，行变换后仍是 0'),
+  box('所以齐次组只需对 [[系数矩阵 A]] 作行变换'),
+  txt('• 恒有零解，故永不无解'),
+  txt('• r(A) = n  ⇒ 只有零解'),
+  txt('• r(A) = r < n ⇒ 有非零解，基础解系含 [[n - r]] 个向量'),
+  note('n 元 n 式时： 有非零解 ⟺ |A| = 0')
+]},
+{nav:'求逆',items:[
+  title('十一 · 关联应用： ( A ¦ E ) 求逆矩阵'),
+  row(mat([['2','1','1','0'],['1','1','0','1']],{aug:2,label:'( A ¦ E ) ='}),
+      arw('r₁ ↔ r₂',''),
+      mat([['1','1','0','1'],['2','1','1','0']],{aug:2})),
+  row(mat([['1','1','0','1'],['2','1','1','0']],{aug:2}),
+      arw('r₂ - 2r₁','r₂ × (-1)'),
+      mat([['1','1','0','1'],['0','1','-1','2']],{aug:2}),
+      arw('r₁ - r₂',''),
+      mat([['1','0','1','-1'],['0','1','-1','2']],{aug:2})),
+  box('( A ¦ E )  ⟶  ( E ¦ A⁻¹ )'),
+  mat([['1','-1'],['-1','2']],{label:'A⁻¹ ='}),
+  note('同理 ( A ¦ B ) 行变换可解矩阵方程 AX = B')
+]},
+{nav:'知识网络',items:[
+  title('十二 · 知识网络 · 小结'),
+  txt('线性方程组  ⇄  增广矩阵 ( A ¦ b )'),
+  txt('        ↓ 初等行变换（同解变形）'),
+  txt('行阶梯形 → 秩 r(A), r(Ā) → 解的判定 → 行最简形 → 通解'),
+  gap(),
+  txt('横向关联：'),
+  txt('• 向量视角： Ax=b 有解 ⟺ b 可由 A 的列向量线性表示 ⟺ r(A)=r(Ā)'),
+  txt('• 矩阵视角： ( A ¦ E ) 求 A⁻¹ ；( A ¦ B ) 解 AX=B'),
+  txt('• 行列式视角： n 元 n 式且 |A|≠0 ⇒ 克拉默法则（理论强、计算笨）'),
+  box('增广矩阵 = 把“解方程”变成“表格化机械运算”的桥梁')
+]}
+];
+
+/* ---------- 渲染 ---------- */
+const $=id=>document.getElementById(id);
+const contentEl=$('content'),boardEl=$('board'),chalkEl=$('chalk'),eraserEl=$('eraser');
+const el=(t,c)=>{const d=document.createElement(t);if(c)d.className=c;return d;};
+function pushChars(parent,text,atoms,extra=''){
+  const parts=String(text).split(/(\[\[.*?\]\])/g);
+  for(const p of parts){ if(!p)continue;
+    let hl=false,s=p;
+    if(p.startsWith('[[')&&p.endsWith(']]')){hl=true;s=p.slice(2,-2);}
+    for(const ch of s){
+      const sp=el('span','atom ch'+(hl?' hl':'')+(extra?' '+extra:''));
+      sp.textContent=(ch===' ')?'\u00A0':ch;
+      if(ch===' ')sp.dataset.fast=1;
+      parent.appendChild(sp);atoms.push(sp);
+    }
+  }
+}
+function build(item){
+  const atoms=[];
+  if(item.type==='gap'){const d=el('div','gap');return{el:d,atoms:[]};}
+  if(item.type==='text'){const d=el('div','line '+(item.cls||''));pushChars(d,item.text,atoms);return{el:d,atoms};}
+  if(item.type==='box'){const d=el('div','box');pushChars(d,item.text,atoms);return{el:d,atoms};}
+  if(item.type==='sys'){
+    const d=el('div','sys');const b=el('div','brace atom');b.textContent='{';
+    b.style.fontSize=(1.0+0.95*item.lines.length)+'em';
+    const ls=el('div','syslines');
+    const cells=[];
+    for(const L of item.lines){const r=el('div','sysline');const a=[];pushChars(r,L,a);ls.appendChild(r);cells.push(...a);}
+    d.append(b,ls);atoms.push(b,...cells);return{el:d,atoms};
+  }
+  if(item.type==='arrow'){
+    const d=el('div','arrowwrap');
+    const t=el('div','alab'),ln=el('div','aline atom'),bt=el('div','alab');
+    const at=[],ab=[];pushChars(t,item.top||'\u00A0',at);pushChars(bt,item.bot||'\u00A0',ab);
+    d.append(t,ln,bt);atoms.push(...at,ln,...ab);return{el:d,atoms};
+  }
+  if(item.type==='matrix'){
+    const wrap=el('div','matwrap');
+    if(item.label){const lab=el('div','matlabel');pushChars(lab,item.label,atoms);wrap.appendChild(lab);}
+    const mx=el('div','matrix'),lb=el('div','brk left atom'),rb=el('div','brk right atom'),body=el('div','matbody');
+    const rows=item.rows,R=rows.length,C=rows[0].length,aug=(item.aug==null?C:item.aug);
+    const grid=[],g1=el('div','mgrid');g1.style.gridTemplateColumns=`repeat(${aug},auto)`;
+    for(let i=0;i<R;i++)grid.push([]);
+    for(let i=0;i<R;i++)for(let j=0;j<aug;j++){const c=el('div','cell atom');c.textContent=rows[i][j];g1.appendChild(c);grid[i][j]=c;}
+    body.appendChild(g1);let vl=null;
+    if(aug<C){
+      vl=el('div','vline atom');body.appendChild(vl);
+      const g2=el('div','mgrid');g2.style.gridTemplateColumns=`repeat(${C-aug},auto)`;
+      for(let i=0;i<R;i++)for(let j=aug;j<C;j++){const c=el('div','cell atom');c.textContent=rows[i][j];g2.appendChild(c);grid[i][j]=c;}
+      body.appendChild(g2);
+    }
+    mx.append(lb,body,rb);wrap.appendChild(mx);
+    atoms.push(lb,rb);if(vl)atoms.push(vl);
+    for(let i=0;i<R;i++)for(let j=0;j<C;j++)atoms.push(grid[i][j]);
+    if(item.after){const af=el('div','matlabel');pushChars(af,item.after,atoms);wrap.appendChild(af);}
+    return{el:wrap,atoms};
+  }
+  if(item.type==='row'){
+    const d=el('div','rowwrap');
+    for(const it of item.items){const r=build(it);d.appendChild(r.el);atoms.push(...r.atoms);}
+    return{el:d,atoms};
+  }
+  return{el:el('div'),atoms:[]};
+}
+
+/* ---------- 动画引擎 ---------- */
+let idx=0,token=0,animating=false,playing=false,sound=false,speed=1.2,actx=null;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function tick(){
+  if(!sound)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const n=0.03,buf=actx.createBuffer(1,actx.sampleRate*n,actx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3)*0.25;
+    const s=actx.createBufferSource();s.buffer=buf;
+    const f=actx.createBiquadFilter();f.type='bandpass';f.frequency.value=2600+Math.random()*900;
+    const g=actx.createGain();g.gain.value=0.35;
+    s.connect(f);f.connect(g);g.connect(actx.destination);s.start();
+  }catch(e){}
+}
+function moveChalk(a){
+  const r=a.getBoundingClientRect(),b=boardEl.getBoundingClientRect();
+  if(!r.width&&!r.height)return;
+  const x=r.right-b.left,y=r.bottom-b.top;
+  chalkEl.style.transform=`translate(${x}px,${y-26}px) rotate(28deg)`;
+  if(Math.random()<0.16){
+    const d=el('div','dust');d.style.left=x+'px';d.style.top=y+'px';
+    boardEl.appendChild(d);setTimeout(()=>d.remove(),850);
+  }
+}
+function delayOf(a){
+  if(a.dataset.fast)return 10/speed;
+  if(a.classList.contains('ch'))return 33/speed;
+  return 55/speed;
+}
+async function erase(){
+  eraserEl.classList.remove('sweep');void eraserEl.offsetWidth;eraserEl.classList.add('sweep');
+  contentEl.classList.add('fading');
+  await sleep(500);
+  contentEl.innerHTML='';contentEl.classList.remove('fading');
+  eraserEl.classList.remove('sweep');
+}
+function renderStatic(i){
+  contentEl.innerHTML='';
+  for(const it of slides[i].items){const r=build(it);contentEl.appendChild(r.el);r.atoms.forEach(a=>{a.classList.add('shown');a.style.animation='none';a.style.opacity=1;});}
+}
+async function show(i,animate=true,doErase=true){
+  token++;const my=token;idx=(i+slides.length)%slides.length;
+  updateUI();
+  if(doErase)await erase(); else contentEl.innerHTML='';
+  if(my!==token)return;
+  if(!animate){renderStatic(idx);return;}
+  const groups=[];
+  for(const it of slides[idx].items){const r=build(it);contentEl.appendChild(r.el);groups.push(r);}
+  animating=true;chalkEl.classList.add('on');
+  for(const g of groups){
+    if(my!==token)return;
+    g.el.scrollIntoView({block:'nearest',behavior:'smooth'});
+    for(const a of g.atoms){
+      if(my!==token)return;
+      a.classList.add('shown');moveChalk(a);
+      if(!a.dataset.fast&&Math.random()<0.35)tick();
+      await sleep(delayOf(a));
+    }
+    await sleep(240/speed);
+  }
+  animating=false;chalkEl.classList.remove('on');
+  if(playing&&my===token){
+    await sleep(1500/speed);
+    if(my!==token)return;
+    if(idx<slides.length-1)show(idx+1);else setPlay(false);
+  }
+}
+function skip(){ token++;animating=false;chalkEl.classList.remove('on');renderStatic(idx); }
+function next(){ if(animating){skip();if(playing)setTimeout(()=>show(idx+1),600);return;} if(idx<slides.length-1)show(idx+1); else setPlay(false); }
+function prev(){ if(idx>0)show(idx-1); }
+function setPlay(v){ playing=v;$('btnPlay').textContent=v?'⏸ 暂停':'▶ 自动讲课';$('btnPlay').classList.toggle('act',v);
+  if(v&&!animating)show(idx); }
+
+/* ---------- UI ---------- */
+const toc=$('toc');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'.'+s.nav;b.onclick=()=>{setPlay(false);show(i);};toc.appendChild(b);});
+function updateUI(){
+  $('hright').textContent=`第 ${idx+1} / ${slides.length} 页　—　增广矩阵专题`;
+  [...toc.children].forEach((b,i)=>b.classList.toggle('cur',i===idx));
+  toc.children[idx].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+}
+$('btnNext').onclick=next;
+$('btnPrev').onclick=()=>{setPlay(false);prev();};
+$('btnFirst').onclick=()=>{setPlay(false);show(0);};
+$('btnRe').onclick=()=>{show(idx,true,true);};
+$('btnPlay').onclick=()=>setPlay(!playing);
+$('btnSnd').onclick=e=>{sound=!sound;e.target.textContent=(sound?'🔊':'🔇')+' 粉笔声';e.target.classList.toggle('act',sound);};
+$('spd').oninput=e=>speed=parseFloat(e.target.value);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+  if(e.key==='ArrowLeft'){setPlay(false);prev();}
+});
+show(0,true,false);
+</script>
+</body>
+</html>

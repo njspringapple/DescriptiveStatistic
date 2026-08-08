@@ -1,0 +1,3450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>星途充电 - 车主端充电服务</title>
+  <style>
+    :root {
+      --primary: #16d6a4;
+      --primary-dark: #08b788;
+      --primary-soft: #e9fff8;
+      --blue: #4b7dff;
+      --orange: #ff9d42;
+      --red: #ff5f6d;
+      --purple: #8f6cff;
+      --ink: #152235;
+      --sub: #738096;
+      --line: #edf0f4;
+      --bg: #f5f7fa;
+      --white: #fff;
+      --dark: #0b1220;
+      --shadow: 0 12px 34px rgba(30, 48, 76, .10);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family:
+        Inter, "PingFang SC", "Microsoft YaHei",
+        -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(22,214,164,.15), transparent 32%),
+        radial-gradient(circle at 80% 90%, rgba(75,125,255,.15), transparent 30%),
+        #eaf0f5;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .desktop {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 438px minmax(0, 1fr);
+      align-items: center;
+      padding: 30px 16px;
+      gap: 42px;
+    }
+
+    .desktop-copy {
+      justify-self: end;
+      width: min(430px, 100%);
+    }
+
+    .desktop-copy h1 {
+      margin: 12px 0 16px;
+      font-size: clamp(34px, 4vw, 58px);
+      line-height: 1.08;
+      color: #0c1728;
+    }
+
+    .desktop-copy p {
+      margin: 0;
+      color: #607087;
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .desktop-copy .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      color: #087e61;
+      font-weight: 800;
+      background: rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .desktop-copy .points {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .desktop-copy .point {
+      padding: 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.65);
+      color: #405067;
+      box-shadow: 0 8px 24px rgba(27,45,73,.06);
+    }
+
+    .desktop-tip {
+      align-self: end;
+      max-width: 320px;
+      margin-bottom: 80px;
+      color: #7c899c;
+      line-height: 1.7;
+    }
+
+    .phone {
+      position: relative;
+      width: 438px;
+      height: min(900px, calc(100vh - 40px));
+      overflow: hidden;
+      border: 8px solid #111a29;
+      /* border-radius: 42px; */
+      background: var(--bg);
+      box-shadow:
+        0 40px 90px rgba(20,36,58,.28),
+        inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      z-index: 80;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 116px;
+      height: 28px;
+      border-radius: 18px;
+      background: #111a29;
+    }
+
+    .app {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .statusbar {
+      position: absolute;
+      z-index: 70;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 46px;
+      padding: 13px 20px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .status-icons {
+      letter-spacing: 2px;
+    }
+
+    .page-wrap {
+      position: absolute;
+      inset: 0;
+      padding-bottom: calc(76px + var(--safe-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
+    }
+
+    .page-wrap::-webkit-scrollbar,
+    .sheet-body::-webkit-scrollbar {
+      width: 0;
+    }
+
+    .page {
+      display: none;
+      min-height: 100%;
+    }
+
+    .page.active {
+      display: block;
+      animation: pageIn .28s ease;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .hero {
+      position: relative;
+      min-height: 286px;
+      padding: 55px 20px 20px;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,.20), transparent 23%),
+        linear-gradient(145deg, #091424 0%, #103c44 56%, #0a8e71 100%);
+      border-radius: 0 0 30px 30px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -90px;
+      bottom: -140px;
+      border-radius: 50%;
+      border: 40px solid rgba(255,255,255,.06);
+    }
+
+    .top-row,
+    .section-head,
+    .station-top,
+    .order-top,
+    .sheet-head,
+    .summary-row,
+    .metric-line,
+    .account-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .location {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: white;
+      background: rgba(255,255,255,.10);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 750;
+      backdrop-filter: blur(8px);
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: inherit;
+      background: rgba(255,255,255,.11);
+      transition: .2s;
+    }
+
+    .icon-btn:active,
+    .nav-item:active,
+    .action-card:active,
+    .station-card:active {
+      transform: scale(.96);
+    }
+
+    .greeting {
+      margin: 26px 0 5px;
+      font-size: 23px;
+      font-weight: 850;
+      letter-spacing: -.4px;
+    }
+
+    .greeting-sub {
+      color: rgba(255,255,255,.70);
+      font-size: 13px;
+    }
+
+    .active-charge {
+      position: relative;
+      z-index: 2;
+      margin-top: 20px;
+      padding: 17px;
+      border-radius: 22px;
+      color: var(--ink);
+      background: rgba(255,255,255,.97);
+      box-shadow: 0 15px 35px rgba(0,0,0,.16);
+      overflow: hidden;
+    }
+
+    .active-charge::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--primary);
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #008a67;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 6px rgba(22,214,164,.15);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      50% { box-shadow: 0 0 0 10px rgba(22,214,164,0); }
+    }
+
+    .charge-title {
+      margin-top: 11px;
+      font-weight: 850;
+      font-size: 16px;
+    }
+
+    .charge-station {
+      margin-top: 5px;
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .charge-data {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 16px;
+      gap: 8px;
+    }
+
+    .charge-data div {
+      padding: 9px;
+      text-align: center;
+      border-radius: 13px;
+      background: #f6f8fa;
+    }
+
+    .charge-data b {
+      display: block;
+      font-size: 17px;
+    }
+
+    .charge-data span {
+      margin-top: 3px;
+      display: block;
+      color: var(--sub);
+      font-size: 10px;
+    }
+
+    .progress {
+      height: 7px;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e8ecef;
+    }
+
+    .progress span {
+      display: block;
+      width: 68%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #71edca);
+      transition: width .4s;
+    }
+
+    .charge-foot {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--sub);
+      font-size: 11px;
+    }
+
+    .content {
+      padding: 18px 16px 28px;
+    }
+
+    .banner {
+      position: relative;
+      height: 118px;
+      overflow: hidden;
+      border-radius: 22px;
+      color: white;
+      background:
+        radial-gradient(circle at 78% 30%, rgba(255,255,255,.25), transparent 28%),
+        linear-gradient(125deg, #4b7dff, #845df2);
+      box-shadow: 0 14px 28px rgba(75,125,255,.22);
+    }
+
+    .banner-slide {
+      position: absolute;
+      inset: 0;
+      padding: 20px;
+      opacity: 0;
+      transform: translateX(15px);
+      transition: .35s;
+      pointer-events: none;
+    }
+
+    .banner-slide.active {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .banner-slide:nth-child(2) {
+      background: linear-gradient(125deg, #0ba579, #19d7a5);
+    }
+
+    .banner-slide:nth-child(3) {
+      background: linear-gradient(125deg, #ff8655, #ffb32e);
+    }
+
+    .banner-title {
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .banner-desc {
+      margin-top: 7px;
+      font-size: 12px;
+      color: rgba(255,255,255,.84);
+    }
+
+    .banner-btn {
+      margin-top: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      color: #303b4f;
+      background: white;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .dots {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      z-index: 3;
+      display: flex;
+      gap: 5px;
+    }
+
+    .dots i {
+      width: 5px;
+      height: 5px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.5);
+      transition: .2s;
+    }
+
+    .dots i.active {
+      width: 16px;
+      background: white;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .action-card {
+      padding: 13px 5px 11px;
+      text-align: center;
+      border-radius: 17px;
+      background: white;
+      box-shadow: 0 7px 20px rgba(30,48,76,.05);
+      transition: .15s;
+    }
+
+    .action-icon {
+      width: 40px;
+      height: 40px;
+      margin: auto;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      font-size: 20px;
+      background: var(--primary-soft);
+    }
+
+    .action-card:nth-child(2) .action-icon { background: #edf2ff; }
+    .action-card:nth-child(3) .action-icon { background: #fff3e6; }
+    .action-card:nth-child(4) .action-icon { background: #f3efff; }
+
+    .action-card span {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .section-head {
+      margin: 22px 2px 12px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .section-head button {
+      color: var(--sub);
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .station-card {
+      margin-bottom: 12px;
+      padding: 16px;
+      border: 1px solid rgba(230,234,240,.8);
+      border-radius: 21px;
+      background: white;
+      box-shadow: 0 8px 24px rgba(30,48,76,.05);
+      transition: .16s;
+    }
+
+    .station-name {
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .station-name small {
+      display: block;
+      margin-top: 5px;
+      color: var(--sub);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .distance {
+      flex: 0 0 auto;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      padding: 4px 7px;
+      border-radius: 7px;
+      color: #547086;
+      background: #f3f6f8;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .tag.tech {
+      color: #76500a;
+      background: linear-gradient(90deg, #fff2c9, #ffe8a0);
+    }
+
+    .tag.green {
+      color: #058361;
+      background: #e9fff7;
+    }
+
+    .station-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      margin-top: 13px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+      gap: 6px;
+    }
+
+    .station-info b {
+      display: block;
+      font-size: 14px;
+    }
+
+    .station-info span {
+      color: var(--sub);
+      font-size: 10px;
+    }
+
+    .station-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .btn {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 13px;
+      color: var(--ink);
+      background: #f2f5f7;
+      font-size: 13px;
+      font-weight: 800;
+      transition: .15s;
+    }
+
+    .btn:active {
+      transform: scale(.97);
+    }
+
+    .btn.primary {
+      color: #04251e;
+      background: var(--primary);
+      box-shadow: 0 8px 20px rgba(22,214,164,.23);
+    }
+
+    .btn.dark {
+      color: white;
+      background: var(--dark);
+    }
+
+    .btn.light {
+      color: #087b60;
+      background: var(--primary-soft);
+    }
+
+    .btn.danger {
+      color: white;
+      background: var(--red);
+    }
+
+    .btn.block {
+      width: 100%;
+    }
+
+    .btn.flex {
+      flex: 1;
+    }
+
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      padding: 52px 16px 12px;
+      background: rgba(245,247,250,.92);
+      backdrop-filter: blur(18px);
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-title h2 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 44px;
+      margin-top: 14px;
+      padding: 0 14px;
+      border-radius: 15px;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 0 7px 20px rgba(30,48,76,.04);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+    }
+
+    .mode-switch {
+      display: flex;
+      padding: 3px;
+      border-radius: 12px;
+      background: #e8ecf0;
+    }
+
+    .mode-switch button {
+      padding: 7px 11px;
+      border-radius: 9px;
+      color: #778398;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .mode-switch button.active {
+      color: var(--ink);
+      background: white;
+      box-shadow: 0 3px 10px rgba(30,48,76,.10);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 13px;
+      overflow-x: auto;
+    }
+
+    .filters::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      flex: 0 0 auto;
+      min-width: 72px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      color: #5e6a7c;
+      background: white;
+      border: 1px solid var(--line);
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .filter-chip.active {
+      color: #087b60;
+      border-color: rgba(22,214,164,.45);
+      background: var(--primary-soft);
+    }
+
+    .station-list {
+      padding: 0 16px 20px;
+    }
+
+    .map-area {
+      position: relative;
+      height: 535px;
+      margin: 0 12px;
+      overflow: hidden;
+      border-radius: 25px;
+      background:
+        linear-gradient(35deg, transparent 75%, rgba(255,255,255,.65) 76%, transparent 78%),
+        linear-gradient(125deg, transparent 73%, rgba(255,255,255,.8) 74%, transparent 77%),
+        linear-gradient(20deg, #dfeadf, #d8e3ea);
+      background-size: 90px 90px, 130px 130px, auto;
+    }
+
+    .map-area::before,
+    .map-area::after {
+      content: "";
+      position: absolute;
+      height: 700px;
+      width: 28px;
+      background: rgba(255,255,255,.72);
+      transform: rotate(34deg);
+      left: 43%;
+      top: -100px;
+      box-shadow: inset 0 0 0 1px rgba(160,174,183,.18);
+    }
+
+    .map-area::after {
+      transform: rotate(-24deg);
+      left: 70%;
+    }
+
+    .map-pin {
+      position: absolute;
+      z-index: 2;
+      min-width: 62px;
+      padding: 8px 9px;
+      border-radius: 14px 14px 14px 3px;
+      color: white;
+      background: var(--dark);
+      box-shadow: 0 8px 20px rgba(15,26,42,.22);
+      font-size: 10px;
+      font-weight: 850;
+      transform: translate(-50%, -50%);
+    }
+
+    .map-pin.available {
+      color: #04241b;
+      background: var(--primary);
+    }
+
+    .map-pin.selected {
+      transform: translate(-50%, -50%) scale(1.12);
+      box-shadow: 0 0 0 7px rgba(22,214,164,.18);
+    }
+
+    .map-location {
+      position: absolute;
+      z-index: 3;
+      left: 48%;
+      top: 46%;
+      width: 16px;
+      height: 16px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 0 8px rgba(75,125,255,.18);
+    }
+
+    .map-card {
+      position: absolute;
+      z-index: 5;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      padding: 15px;
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 14px 34px rgba(30,48,76,.18);
+    }
+
+    .bottom-nav {
+      position: absolute;
+      z-index: 60;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: calc(70px + var(--safe-bottom));
+      padding: 8px 12px var(--safe-bottom);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid rgba(230,234,240,.9);
+      backdrop-filter: blur(20px);
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: #8994a4;
+      background: transparent;
+      font-size: 10px;
+      font-weight: 700;
+      transition: .15s;
+    }
+
+    .nav-item b {
+      font-size: 20px;
+      line-height: 1;
+      font-weight: normal;
+    }
+
+    .nav-item.active {
+      color: #079a75;
+    }
+
+    .nav-item.scan b {
+      position: absolute;
+      top: -30px;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border: 5px solid white;
+      border-radius: 19px;
+      color: #06251e;
+      background: var(--primary);
+      box-shadow: 0 10px 25px rgba(22,214,164,.33);
+    }
+
+    .nav-item.scan span {
+      margin-top: 31px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 4px;
+      border-radius: 14px;
+      background: #e9edf1;
+    }
+
+    .tabs button {
+      flex: 1;
+      padding: 9px 5px;
+      border-radius: 11px;
+      color: var(--sub);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tabs button.active {
+      color: var(--ink);
+      background: white;
+      box-shadow: 0 4px 12px rgba(30,48,76,.09);
+    }
+
+    .order-list {
+      padding: 6px 16px 25px;
+    }
+
+    .order-card {
+      margin-bottom: 12px;
+      padding: 16px;
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 8px 24px rgba(30,48,76,.05);
+    }
+
+    .order-status {
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .order-status.orange { color: #e98218; }
+    .order-status.gray { color: #8b96a5; }
+
+    .order-card h4 {
+      margin: 13px 0 6px;
+      font-size: 15px;
+    }
+
+    .order-card p {
+      margin: 4px 0;
+      color: var(--sub);
+      font-size: 11px;
+    }
+
+    .order-amount {
+      margin-top: 13px;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+    }
+
+    .order-amount b {
+      font-size: 18px;
+    }
+
+    .profile-head {
+      position: relative;
+      padding: 62px 18px 82px;
+      color: white;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,.18), transparent 25%),
+        linear-gradient(135deg, #0d1728, #174c4d);
+      border-radius: 0 0 30px 30px;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .avatar {
+      width: 55px;
+      height: 55px;
+      display: grid;
+      place-items: center;
+      border: 3px solid rgba(255,255,255,.35);
+      border-radius: 19px;
+      background: linear-gradient(135deg, #7df0ce, #20c69a);
+      font-size: 27px;
+    }
+
+    .user h3 {
+      margin: 0 0 5px;
+      font-size: 19px;
+    }
+
+    .user p {
+      margin: 0;
+      color: rgba(255,255,255,.65);
+      font-size: 11px;
+    }
+
+    .balance-card {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: -54px;
+      padding: 18px;
+      border-radius: 23px;
+      color: var(--ink);
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .balance-num {
+      margin: 7px 0 3px;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .balance-num small {
+      font-size: 13px;
+    }
+
+    .balance-card .subline {
+      color: var(--sub);
+      font-size: 10px;
+    }
+
+    .profile-content {
+      padding: 72px 16px 25px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 13px 5px;
+      border-radius: 22px;
+      background: white;
+      box-shadow: 0 8px 24px rgba(30,48,76,.05);
+    }
+
+    .menu-item {
+      padding: 10px 2px;
+      text-align: center;
+      color: var(--ink);
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .menu-item b {
+      width: 39px;
+      height: 39px;
+      margin: 0 auto 7px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #f1f8f6;
+      font-size: 19px;
+      font-weight: normal;
+    }
+
+    .menu-list {
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 22px;
+      background: white;
+      box-shadow: 0 8px 24px rgba(30,48,76,.05);
+    }
+
+    .menu-row {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--ink);
+      background: white;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .menu-row:last-child { border-bottom: 0; }
+
+    .menu-row span:last-child {
+      color: #a0a9b6;
+      font-weight: 500;
+    }
+
+    .overlay {
+      position: absolute;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      background: rgba(4,12,24,.54);
+      backdrop-filter: blur(3px);
+    }
+
+    .overlay.show {
+      display: flex;
+      animation: fade .2s ease;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .sheet {
+      width: 100%;
+      max-height: 91%;
+      overflow: hidden;
+      border-radius: 28px 28px 0 0;
+      background: var(--bg);
+      animation: sheetUp .28s cubic-bezier(.2,.9,.25,1);
+    }
+
+    .sheet.full {
+      height: 96%;
+      max-height: 96%;
+    }
+
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: none; }
+    }
+
+    .sheet-head {
+      padding: 18px 18px 14px;
+      background: white;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sheet-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .close {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      color: #5e6878;
+      background: #f0f3f5;
+      font-size: 18px;
+    }
+
+    .sheet-body {
+      max-height: calc(91vh - 68px);
+      padding: 15px 16px calc(24px + var(--safe-bottom));
+      overflow-y: auto;
+    }
+
+    .sheet.full .sheet-body {
+      height: calc(100% - 68px);
+      max-height: none;
+    }
+
+    .info-card {
+      margin-bottom: 12px;
+      padding: 16px;
+      border-radius: 19px;
+      background: white;
+      box-shadow: 0 7px 20px rgba(30,48,76,.04);
+    }
+
+    .info-card h4 {
+      margin: 0 0 13px;
+      font-size: 14px;
+    }
+
+    .info-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 8px 0;
+      color: var(--sub);
+      border-bottom: 1px dashed var(--line);
+      font-size: 12px;
+    }
+
+    .info-line:last-child {
+      border-bottom: 0;
+    }
+
+    .info-line b {
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .terminal-card {
+      position: relative;
+      margin-bottom: 10px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+    }
+
+    .terminal-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(22,214,164,.10);
+    }
+
+    .terminal-card.disabled {
+      opacity: .6;
+    }
+
+    .terminal-card h4 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .terminal-card p {
+      margin: 7px 0 0;
+      color: var(--sub);
+      font-size: 11px;
+    }
+
+    .terminal-status {
+      position: absolute;
+      right: 13px;
+      top: 13px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      color: #06815f;
+      background: var(--primary-soft);
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .terminal-status.busy {
+      color: #d87818;
+      background: #fff3e6;
+    }
+
+    .terminal-status.error {
+      color: #d64855;
+      background: #fff0f2;
+    }
+
+    .price-big {
+      font-size: 27px;
+      font-weight: 900;
+      color: #0b9c75;
+    }
+
+    .price-big small {
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .option-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .option {
+      position: relative;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .option.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 3px rgba(22,214,164,.09);
+    }
+
+    .option b {
+      display: block;
+      font-size: 13px;
+    }
+
+    .option span {
+      display: block;
+      margin-top: 5px;
+      color: var(--sub);
+      font-size: 10px;
+    }
+
+    .option .check {
+      position: absolute;
+      top: 50%;
+      right: 13px;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      color: white;
+      background: #dce2e7;
+      font-size: 11px;
+    }
+
+    .option.active .check {
+      background: var(--primary-dark);
+    }
+
+    .field {
+      margin-top: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--sub);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .input {
+      width: 100%;
+      height: 45px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      outline: 0;
+      color: var(--ink);
+      background: white;
+    }
+
+    .input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(22,214,164,.11);
+    }
+
+    .amounts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .amount {
+      padding: 10px 4px;
+      border-radius: 11px;
+      color: #5e6878;
+      background: #f1f4f6;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .amount.active {
+      color: #087b60;
+      background: var(--primary-soft);
+      box-shadow: inset 0 0 0 1px var(--primary);
+    }
+
+    .pay-footer {
+      position: sticky;
+      bottom: 0;
+      margin: 14px -16px -24px;
+      padding: 12px 16px calc(14px + var(--safe-bottom));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+    }
+
+    .pay-footer .total span {
+      display: block;
+      color: var(--sub);
+      font-size: 10px;
+    }
+
+    .pay-footer .total b {
+      font-size: 21px;
+    }
+
+    .scan-sheet {
+      height: 100%;
+      max-height: 100%;
+      border-radius: 0;
+      color: white;
+      background: #070c13;
+    }
+
+    .scanner {
+      position: relative;
+      height: 100%;
+      padding: 54px 20px 26px;
+      text-align: center;
+      background:
+        radial-gradient(circle at center, rgba(16,214,165,.10), transparent 35%),
+        linear-gradient(rgba(8,15,24,.55), rgba(3,7,12,.9));
+    }
+
+    .scanner h3 {
+      margin: 20px 0 8px;
+    }
+
+    .scanner p {
+      margin: 0;
+      color: rgba(255,255,255,.58);
+      font-size: 12px;
+    }
+
+    .scan-box {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      margin: 64px auto 0;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 26px;
+      box-shadow: 0 0 0 2000px rgba(0,0,0,.24);
+      overflow: hidden;
+    }
+
+    .scan-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 3px solid transparent;
+      border-top-color: var(--primary);
+      border-bottom-color: var(--primary);
+      border-radius: 26px;
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 10px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      box-shadow: 0 0 14px var(--primary);
+      animation: scan 2.2s infinite ease-in-out;
+    }
+
+    @keyframes scan {
+      0%, 100% { top: 12px; }
+      50% { top: 232px; }
+    }
+
+    .scan-controls {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 34px;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr 1fr;
+      gap: 10px;
+    }
+
+    .scanner .close-scan {
+      position: absolute;
+      top: 56px;
+      left: 18px;
+      color: white;
+      background: rgba(255,255,255,.10);
+    }
+
+    .charge-screen {
+      min-height: 100%;
+      padding: 62px 18px 25px;
+      color: white;
+      background:
+        radial-gradient(circle at 50% 27%, rgba(22,214,164,.20), transparent 24%),
+        linear-gradient(150deg, #08111e, #0b2028 60%, #0a5c4e);
+    }
+
+    .charge-screen .sheet-title {
+      text-align: center;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .energy-ring {
+      position: relative;
+      width: 230px;
+      height: 230px;
+      margin: 30px auto 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 0 68%, rgba(255,255,255,.10) 68%);
+      box-shadow: 0 0 70px rgba(22,214,164,.13);
+    }
+
+    .energy-ring::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: #0c1c25;
+    }
+
+    .energy-center {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .energy-center strong {
+      display: block;
+      font-size: 46px;
+    }
+
+    .energy-center span {
+      color: rgba(255,255,255,.58);
+      font-size: 12px;
+    }
+
+    .charge-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .charge-metric {
+      padding: 15px 8px;
+      text-align: center;
+      border-radius: 17px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .charge-metric b {
+      display: block;
+      font-size: 17px;
+    }
+
+    .charge-metric span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,.54);
+      font-size: 10px;
+    }
+
+    .notice {
+      margin-top: 15px;
+      padding: 13px;
+      border-radius: 15px;
+      color: #ffe2a5;
+      background: rgba(255,190,74,.10);
+      border: 1px solid rgba(255,190,74,.16);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .charge-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .charge-actions .btn {
+      min-height: 50px;
+    }
+
+    .complete {
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      margin: 4px auto 15px;
+      display: grid;
+      place-items: center;
+      border-radius: 25px;
+      color: #043027;
+      background: var(--primary);
+      font-size: 35px;
+      box-shadow: 0 15px 32px rgba(22,214,164,.25);
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .star {
+      padding: 0;
+      color: #d8dde3;
+      background: transparent;
+      font-size: 30px;
+    }
+
+    .star.active {
+      color: #ffb134;
+    }
+
+    textarea.input {
+      height: 90px;
+      padding-top: 12px;
+      resize: none;
+    }
+
+    .toast {
+      position: absolute;
+      z-index: 300;
+      left: 50%;
+      top: 78px;
+      width: max-content;
+      max-width: 86%;
+      padding: 11px 15px;
+      opacity: 0;
+      color: white;
+      background: rgba(13,23,38,.94);
+      border-radius: 13px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.22);
+      transform: translate(-50%, -15px);
+      transition: .25s;
+      pointer-events: none;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .modal-center {
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .dialog {
+      width: 100%;
+      padding: 20px;
+      border-radius: 24px;
+      background: white;
+      box-shadow: 0 25px 60px rgba(0,0,0,.25);
+      animation: dialogIn .22s ease;
+    }
+
+    @keyframes dialogIn {
+      from { opacity: 0; transform: scale(.92); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .dialog h3 {
+      margin: 0 0 8px;
+    }
+
+    .dialog p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .coupon {
+      position: relative;
+      margin-bottom: 10px;
+      padding: 16px 16px 16px 105px;
+      min-height: 92px;
+      overflow: hidden;
+      border-radius: 17px;
+      background: linear-gradient(135deg, #fff, #f9fffd);
+      border: 1px solid #dff6ef;
+    }
+
+    .coupon-value {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 92px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, #09a77d, #25d6a5);
+      font-size: 13px;
+    }
+
+    .coupon-value b {
+      font-size: 28px;
+    }
+
+    .coupon h4 {
+      margin: 3px 0 7px;
+    }
+
+    .coupon p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 10px;
+    }
+
+    .v2g-card {
+      padding: 20px;
+      color: white;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(255,255,255,.22), transparent 30%),
+        linear-gradient(135deg, #744eff, #4b7dff);
+    }
+
+    .v2g-card b {
+      display: block;
+      margin: 8px 0 3px;
+      font-size: 31px;
+    }
+
+    .hide { display: none !important; }
+
+    @media (max-width: 980px) {
+      body { background: var(--bg); }
+      .desktop {
+        display: block;
+        min-height: 100vh;
+        padding: 0;
+      }
+      .desktop-copy, .desktop-tip { display: none; }
+      .phone {
+        width: 100%;
+        height: 100vh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .phone::before { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="desktop">
+    <section class="desktop-copy">
+      <div class="brand-pill">⚡ 星途充电 · 车主端</div>
+      <h1>每一次充电，<br />都简单而安心。</h1>
+      <p>
+        覆盖找站、扫码、支付、充电、开票、优惠与售后的完整服务闭环，
+        让新能源车主获得更直观、更高效的充电体验。
+      </p>
+      <div class="points">
+        <div class="point">📍 地图与列表智能找站</div>
+        <div class="point">⚡ 实时终端与充电数据</div>
+        <div class="point">🎫 最优折扣自动结算</div>
+        <div class="point">🧾 订单发票统一管理</div>
+      </div>
+    </section>
+
+    <section class="phone">
+      <div class="app">
+        <div class="statusbar">
+          <span id="clock">09:41</span>
+          <span class="status-icons">● ▮ 5G ▰</span>
+        </div>
+
+        <div class="page-wrap" id="pageWrap">
+          <!-- 首页 -->
+          <section class="page active" id="homePage">
+            <div class="hero">
+              <div class="top-row">
+                <button class="location" data-action="city">
+                  📍 深圳市 <span>⌄</span>
+                </button>
+                <button class="icon-btn" data-action="messages">🔔</button>
+              </div>
+
+              <div class="greeting">上午好，林先生</div>
+              <div class="greeting-sub">附近有 28 个空闲充电枪，出发即充</div>
+
+              <article class="active-charge" data-action="charging-detail">
+                <div class="top-row">
+                  <div class="live-badge">
+                    <span class="live-dot"></span> 充电进行中
+                  </div>
+                  <span style="font-size:12px;color:#8894a5">详情 ›</span>
+                </div>
+                <div class="charge-title">南山科技园超级充电站 · A08枪</div>
+                <div class="charge-station">直流液冷超充 · 粤B·A82Q6</div>
+
+                <div class="charge-data">
+                  <div><b id="homeKwh">31.68</b><span>已充电 / kWh</span></div>
+                  <div><b id="homeFee">37.82</b><span>当前费用 / 元</span></div>
+                  <div><b id="homeSoc">68%</b><span>车辆 SOC</span></div>
+                </div>
+
+                <div class="progress"><span id="homeProgress"></span></div>
+                <div class="charge-foot">
+                  <span>已充 24 分钟</span>
+                  <span>预计 18 分钟充满</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="content">
+              <div class="banner">
+                <div class="banner-slide active">
+                  <div class="banner-title">新用户首充立减 10 元</div>
+                  <div class="banner-desc">领取后支付自动使用，限本月有效</div>
+                  <button class="banner-btn" data-action="claim-coupon">立即领取</button>
+                </div>
+                <div class="banner-slide">
+                  <div class="banner-title">夜间充电低至 0.82 元/度</div>
+                  <div class="banner-desc">每日 23:00 至次日 07:00，错峰更优惠</div>
+                  <button class="banner-btn" data-action="view-stations">查看电站</button>
+                </div>
+                <div class="banner-slide">
+                  <div class="banner-title">V2G 放电收益计划</div>
+                  <div class="banner-desc">闲置电量参与调峰，获取绿色收益</div>
+                  <button class="banner-btn" data-action="v2g">申请内测</button>
+                </div>
+                <div class="dots">
+                  <i class="active"></i><i></i><i></i>
+                </div>
+              </div>
+
+              <div class="quick-grid">
+                <button class="action-card" data-action="view-stations">
+                  <div class="action-icon">📍</div><span>附近电站</span>
+                </button>
+                <button class="action-card" data-action="manual-gun">
+                  <div class="action-icon">⌨️</div><span>输入枪号</span>
+                </button>
+                <button class="action-card" data-action="coupons">
+                  <div class="action-icon">🎫</div><span>优惠券</span>
+                </button>
+                <button class="action-card" data-action="v2g">
+                  <div class="action-icon">🔋</div><span>V2G放电</span>
+                </button>
+              </div>
+
+              <div class="section-head">
+                <h3>附近优选电站</h3>
+                <button data-action="view-stations">查看全部 ›</button>
+              </div>
+
+              <div id="homeStationList"></div>
+            </div>
+          </section>
+
+          <!-- 找站 -->
+          <section class="page" id="stationPage">
+            <header class="page-header">
+              <div class="page-title">
+                <h2>找充电站</h2>
+                <div class="mode-switch">
+                  <button class="active" data-mode="list">列表</button>
+                  <button data-mode="map">地图</button>
+                </div>
+              </div>
+
+              <div class="search">
+                <span>⌕</span>
+                <input id="stationSearch" placeholder="搜索电站名称、商圈或地址" />
+                <button style="background:none;color:#09a47a" data-action="search">搜索</button>
+              </div>
+            </header>
+
+            <div class="filters">
+              <button class="filter-chip" data-action="city">深圳市⌄</button>
+              <button class="filter-chip" data-filter="fast">快充</button>
+              <button class="filter-chip" data-filter="super">超充</button>
+              <button class="filter-chip" data-filter="parking">免停车费</button>
+              <button class="filter-chip" data-action="more-filter">更多筛选⌄</button>
+            </div>
+
+            <div id="listMode" class="station-list"></div>
+
+            <div id="mapMode" class="map-area hide">
+              <button class="map-pin available selected" style="left:24%;top:24%" data-action="map-station">
+                18空闲
+              </button>
+              <button class="map-pin available" style="left:72%;top:21%" data-action="map-station">
+                8空闲
+              </button>
+              <button class="map-pin" style="left:76%;top:52%" data-action="map-station">
+                3空闲
+              </button>
+              <button class="map-pin available" style="left:30%;top:63%" data-action="map-station">
+                12空闲
+              </button>
+              <div class="map-location"></div>
+
+              <article class="map-card">
+                <div class="station-top">
+                  <div class="station-name">
+                    南山科技园超级充电站
+                    <small>营业中 · 距离 1.2km</small>
+                  </div>
+                  <div class="distance">18枪空闲</div>
+                </div>
+                <div class="tags">
+                  <span class="tag tech">液冷超充</span>
+                  <span class="tag green">首小时免停车</span>
+                  <span class="tag">24小时</span>
+                </div>
+                <div class="station-actions">
+                  <button class="btn flex" data-action="navigate">导航</button>
+                  <button class="btn primary flex" data-action="station-detail">查看终端</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- 订单 -->
+          <section class="page" id="orderPage">
+            <header class="page-header">
+              <div class="page-title"><h2>我的订单</h2></div>
+              <div class="tabs order-tabs">
+                <button class="active" data-order="all">全部</button>
+                <button data-order="charging">进行中</button>
+                <button data-order="pending">待支付</button>
+                <button data-order="finished">已完成</button>
+              </div>
+            </header>
+
+            <div class="order-list">
+              <article class="order-card" data-order-type="charging">
+                <div class="order-top">
+                  <span style="font-size:11px;color:#8b96a5">2025-06-18 09:18</span>
+                  <span class="order-status">进行中</span>
+                </div>
+                <h4>南山科技园超级充电站</h4>
+                <p>A08枪 · 液冷超充 · 粤B·A82Q6</p>
+                <p>已充 31.68kWh · 已充 24分钟</p>
+                <div class="order-amount">
+                  <span style="font-size:12px;color:#738096">当前费用</span>
+                  <b>¥37.82</b>
+                </div>
+                <div class="station-actions">
+                  <button class="btn primary flex" data-action="charging-detail">查看充电进程</button>
+                </div>
+              </article>
+
+              <article class="order-card" data-order-type="pending">
+                <div class="order-top">
+                  <span style="font-size:11px;color:#8b96a5">2025-06-16 18:36</span>
+                  <span class="order-status orange">待支付</span>
+                </div>
+                <h4>福田中心区公共充电站</h4>
+                <p>C12枪 · 快充 · 订单号 2025061628301</p>
+                <div class="order-amount">
+                  <span style="font-size:12px;color:#738096">待支付</span>
+                  <b>¥18.60</b>
+                </div>
+                <div class="station-actions">
+                  <button class="btn flex" data-action="order-detail">订单详情</button>
+                  <button class="btn primary flex" data-action="pay-order">立即支付</button>
+                </div>
+              </article>
+
+              <article class="order-card" data-order-type="finished">
+                <div class="order-top">
+                  <span style="font-size:11px;color:#8b96a5">2025-06-12 21:40</span>
+                  <span class="order-status gray">已完成</span>
+                </div>
+                <h4>宝安壹方城智慧充电站</h4>
+                <p>B06枪 · 快充 · 42.35kWh</p>
+                <p>优惠 ¥6.00 · 实付 ¥46.28</p>
+                <div class="station-actions">
+                  <button class="btn flex" data-action="invoice">申请开票</button>
+                  <button class="btn flex" data-action="review">评价</button>
+                  <button class="btn primary flex" data-action="station-detail">再次充电</button>
+                </div>
+              </article>
+
+              <article class="order-card" data-order-type="finished">
+                <div class="order-top">
+                  <span style="font-size:11px;color:#8b96a5">2025-06-08 10:21</span>
+                  <span class="order-status gray">占位费订单</span>
+                </div>
+                <h4>深圳湾口岸充电站</h4>
+                <p>超时占位 26 分钟 · 占位费用 ¥13.00</p>
+                <div class="station-actions">
+                  <button class="btn flex" data-action="appeal">申请申诉退款</button>
+                  <button class="btn flex" data-action="invoice">占位费开票</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- 我的 -->
+          <section class="page" id="profilePage">
+            <div class="profile-head">
+              <div class="user">
+                <div class="avatar">🚙</div>
+                <div>
+                  <h3>林先生</h3>
+                  <p>手机号 138****7628 · 绿能会员</p>
+                </div>
+                <button class="icon-btn" style="margin-left:auto" data-action="account">⚙</button>
+              </div>
+
+              <div class="balance-card">
+                <div class="summary-row">
+                  <div>
+                    <div style="font-size:11px;color:#738096">个人账户余额</div>
+                    <div class="balance-num"><small>¥</small> 186.50</div>
+                    <div class="subline">冻结金额 ¥37.82 · 退款中 ¥0.00</div>
+                  </div>
+                  <button class="btn primary" data-action="recharge">充值</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-content">
+              <div class="menu-grid">
+                <button class="menu-item" data-action="balance">
+                  <b>💰</b>余额明细
+                </button>
+                <button class="menu-item" data-action="invoice">
+                  <b>🧾</b>发票管理
+                </button>
+                <button class="menu-item" data-action="vehicles">
+                  <b>🚘</b>我的车辆
+                </button>
+                <button class="menu-item" data-action="favorites">
+                  <b>⭐</b>收藏电站
+                </button>
+              </div>
+
+              <div class="section-head"><h3>企业与车队账户</h3></div>
+              <article class="info-card">
+                <div class="account-row">
+                  <div>
+                    <b style="font-size:14px">云途科技有限公司</b>
+                    <div style="margin-top:5px;color:#738096;font-size:10px">
+                      企业账户 · 可同时充电 3 单
+                    </div>
+                  </div>
+                  <div style="text-align:right">
+                    <b>¥2,580.00</b>
+                    <div style="font-size:10px;color:#09a47a">可用</div>
+                  </div>
+                </div>
+              </article>
+
+              <div class="menu-list">
+                <button class="menu-row" data-action="coupons">
+                  <span>🎫 我的优惠券</span><span>5张 ›</span>
+                </button>
+                <button class="menu-row" data-action="activities">
+                  <span>🎯 充电任务与奖励</span><span>2项待领取 ›</span>
+                </button>
+                <button class="menu-row" data-action="v2g">
+                  <span>🔋 V2G 放电服务</span><span>内测中 ›</span>
+                </button>
+                <button class="menu-row" data-action="customer-service">
+                  <span>🎧 客服与售后</span><span>7×24小时 ›</span>
+                </button>
+                <button class="menu-row" data-action="find-owner">
+                  <span>📣 车牌找人</span><span>›</span>
+                </button>
+                <button class="menu-row" data-action="agreements">
+                  <span>🛡 隐私与用户协议</span><span>›</span>
+                </button>
+                <button class="menu-row" data-action="switch-account">
+                  <span>⇄ 切换账号</span><span>›</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+          <button class="nav-item active" data-page="homePage">
+            <b>⌂</b><span>首页</span>
+          </button>
+          <button class="nav-item" data-page="stationPage">
+            <b>⌖</b><span>找站</span>
+          </button>
+          <button class="nav-item scan" data-action="scan">
+            <b>▣</b><span>扫码充电</span>
+          </button>
+          <button class="nav-item" data-page="orderPage">
+            <b>▤</b><span>订单</span>
+          </button>
+          <button class="nav-item" data-page="profilePage">
+            <b>♙</b><span>我的</span>
+          </button>
+        </nav>
+
+        <!-- 通用抽屉 -->
+        <div class="overlay" id="sheetOverlay">
+          <section class="sheet full">
+            <header class="sheet-head">
+              <h3 id="sheetTitle">详情</h3>
+              <button class="close" data-action="close-sheet">×</button>
+            </header>
+            <div class="sheet-body" id="sheetBody"></div>
+          </section>
+        </div>
+
+        <!-- 扫码 -->
+        <div class="overlay" id="scanOverlay">
+          <section class="sheet scan-sheet">
+            <div class="scanner">
+              <button class="icon-btn close-scan" data-action="close-scan">×</button>
+              <h3>扫描充电桩二维码</h3>
+              <p>请将二维码放入取景框内，即可自动识别</p>
+
+              <div class="scan-box">
+                <div class="scan-line"></div>
+              </div>
+
+              <div style="margin-top:25px;color:rgba(255,255,255,.5);font-size:11px">
+                请确认二维码完整、光线充足
+              </div>
+
+              <div class="scan-controls">
+                <button class="btn" data-action="scan-error">模拟异常</button>
+                <button class="btn primary" data-action="scan-success">模拟扫码成功</button>
+                <button class="btn" data-action="manual-gun">输入枪号</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 充电中 -->
+        <div class="overlay" id="chargingOverlay">
+          <section class="sheet scan-sheet">
+            <div class="charge-screen">
+              <div class="top-row">
+                <button class="icon-btn" data-action="close-charging">‹</button>
+                <div class="sheet-title">正在充电</div>
+                <button class="icon-btn" data-action="customer-service">☎</button>
+              </div>
+
+              <div class="energy-ring" id="energyRing">
+                <div class="energy-center">
+                  <strong id="socValue">68%</strong>
+                  <span>车辆 SOC</span>
+                  <div style="margin-top:8px;font-size:11px;color:#5ee7c0">
+                    预计 18 分钟充满
+                  </div>
+                </div>
+              </div>
+
+              <div style="text-align:center;margin-bottom:18px">
+                <b>南山科技园超级充电站 · A08枪</b>
+                <div style="margin-top:6px;color:rgba(255,255,255,.55);font-size:11px">
+                  液冷超充 · 粤B·A82Q6
+                </div>
+              </div>
+
+              <div class="charge-metrics">
+                <div class="charge-metric">
+                  <b id="powerValue">86.4</b><span>充电功率 / kW</span>
+                </div>
+                <div class="charge-metric">
+                  <b>624</b><span>充电电压 / V</span>
+                </div>
+                <div class="charge-metric">
+                  <b>138.5</b><span>充电电流 / A</span>
+                </div>
+                <div class="charge-metric">
+                  <b id="kwhValue">31.68</b><span>已充电 / kWh</span>
+                </div>
+                <div class="charge-metric">
+                  <b id="feeValue">37.82</b><span>当前费用 / 元</span>
+                </div>
+                <div class="charge-metric">
+                  <b id="durationValue">24:18</b><span>充电时长</span>
+                </div>
+              </div>
+
+              <div class="notice">
+                🚧 本站充电可享 2 小时停车减免。当前登记车牌：
+                <b>粤B·A82Q6</b>，请确保车牌信息正确。
+              </div>
+
+              <div class="charge-actions">
+                <button class="btn flex" data-action="edit-plate">修改车牌</button>
+                <button class="btn danger flex" data-action="stop-charge">结束充电</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 对话框 -->
+        <div class="overlay modal-center" id="dialogOverlay">
+          <div class="dialog" id="dialogContent"></div>
+        </div>
+
+        <div class="toast" id="toast">操作成功</div>
+      </div>
+    </section>
+
+    <div class="desktop-tip">
+      提示：该页面为可交互的高保真前端原型。可点击底部导航、扫码充电、
+      电站卡片、支付、订单、发票、优惠券及 V2G 等功能体验完整流程。
+    </div>
+  </main>
+
+  <script>
+    const stations = [
+      {
+        id: 1,
+        name: "南山科技园超级充电站",
+        address: "深圳市南山区科技南十二路18号",
+        distance: "1.2km",
+        time: "24小时营业",
+        price: "1.18",
+        parking: "充电首2小时免费",
+        free: 18,
+        total: 28,
+        fast: 20,
+        slow: 8,
+        tags: ["液冷超充", "休息室", "卫生间"],
+        tech: true
+      },
+      {
+        id: 2,
+        name: "深圳湾智慧能源充电站",
+        address: "深圳市南山区滨海大道3001号",
+        distance: "2.6km",
+        time: "06:00-24:00",
+        price: "1.05",
+        parking: "首小时免费",
+        free: 8,
+        total: 16,
+        fast: 12,
+        slow: 4,
+        tags: ["超充", "便利店", "停车优惠"],
+        tech: true
+      },
+      {
+        id: 3,
+        name: "福田中心区公共充电站",
+        address: "深圳市福田区福华一路88号",
+        distance: "4.8km",
+        time: "24小时营业",
+        price: "0.98",
+        parking: "5元/小时",
+        free: 3,
+        total: 22,
+        fast: 16,
+        slow: 6,
+        tags: ["快充", "商场", "餐饮"],
+        tech: false
+      }
+    ];
+
+    const $ = (selector, parent = document) => parent.querySelector(selector);
+    const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
+
+    const sheetOverlay = $("#sheetOverlay");
+    const sheetTitle = $("#sheetTitle");
+    const sheetBody = $("#sheetBody");
+    const scanOverlay = $("#scanOverlay");
+    const chargingOverlay = $("#chargingOverlay");
+    const dialogOverlay = $("#dialogOverlay");
+    const dialogContent = $("#dialogContent");
+    const toastEl = $("#toast");
+
+    let selectedStation = stations[0];
+    let favorite = false;
+    let selectedGun = "A08";
+    let bannerIndex = 0;
+    let chargingSeconds = 24 * 60 + 18;
+    let chargeRunning = true;
+    let toastTimer;
+
+    function toast(message) {
+      clearTimeout(toastTimer);
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+    }
+
+    function closeAll() {
+      sheetOverlay.classList.remove("show");
+      scanOverlay.classList.remove("show");
+      dialogOverlay.classList.remove("show");
+    }
+
+    function showSheet(title, html) {
+      sheetTitle.textContent = title;
+      sheetBody.innerHTML = html;
+      sheetOverlay.classList.add("show");
+      sheetBody.scrollTop = 0;
+    }
+
+    function showDialog(html) {
+      dialogContent.innerHTML = html;
+      dialogOverlay.classList.add("show");
+    }
+
+    function stationCard(station) {
+      return `
+        <article class="station-card" data-station="${station.id}">
+          <div class="station-top">
+            <div class="station-name">
+              ${station.name}
+              <small>${station.time} · ${station.address}</small>
+            </div>
+            <div class="distance">${station.distance}</div>
+          </div>
+
+          <div class="tags">
+            ${station.tech ? '<span class="tag tech">液冷超充</span>' : ''}
+            <span class="tag green">${station.parking}</span>
+            ${station.tags.slice(0, 2).map(t => `<span class="tag">${t}</span>`).join("")}
+          </div>
+
+          <div class="station-info">
+            <div><b>¥${station.price}</b><span>当前综合价/度</span></div>
+            <div><b style="color:#079a75">${station.free}/${station.total}</b><span>空闲/总枪数</span></div>
+            <div><b>${station.fast}快 ${station.slow}慢</b><span>设备类型</span></div>
+          </div>
+
+          <div class="station-actions">
+            <button class="btn flex" data-action="favorite-station">☆ 收藏</button>
+            <button class="btn flex" data-action="navigate">导航</button>
+            <button class="btn primary flex" data-action="station-detail">查看详情</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderStations(list = stations) {
+      $("#homeStationList").innerHTML = list.slice(0, 2).map(stationCard).join("");
+      $("#listMode").innerHTML = list.map(stationCard).join("");
+    }
+
+    renderStations();
+
+    function switchPage(pageId) {
+      $$(".page").forEach(p => p.classList.remove("active"));
+      $("#" + pageId).classList.add("active");
+
+      $$(".nav-item[data-page]").forEach(n => {
+        n.classList.toggle("active", n.dataset.page === pageId);
+      });
+
+      $("#pageWrap").scrollTop = 0;
+    }
+
+    function stationDetail(station = selectedStation) {
+      selectedStation = station;
+      showSheet("电站详情", `
+        <article class="info-card">
+          <div class="station-top">
+            <div class="station-name">
+              ${station.name}
+              <small>${station.address}</small>
+            </div>
+            <button class="icon-btn" style="background:#f2f5f7"
+              data-action="toggle-favorite">${favorite ? "★" : "☆"}</button>
+          </div>
+
+          <div class="tags">
+            <span class="tag tech">480kW 液冷超充</span>
+            <span class="tag green">营业中</span>
+            <span class="tag">评分 4.9</span>
+          </div>
+
+          <div class="station-actions">
+            <button class="btn flex" data-action="navigate">⌖ 一键导航</button>
+            <button class="btn flex" data-action="call-station">☎ 联系电站</button>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h4>充电与停车价格</h4>
+          <div class="info-line">
+            <span>当前充电综合价</span>
+            <b style="color:#079a75">¥${station.price}/度</b>
+          </div>
+          <div class="info-line">
+            <span>电费</span><b>¥0.68/度</b>
+          </div>
+          <div class="info-line">
+            <span>服务费</span><b>¥0.50/度</b>
+          </div>
+          <div class="info-line">
+            <span>23:00-07:00 谷时段</span><b>¥0.82/度</b>
+          </div>
+          <div class="info-line">
+            <span>停车费用</span><b>${station.parking}</b>
+          </div>
+          <div class="info-line">
+            <span>超时占位费</span><b>充满后30分钟起 ¥0.5/分钟</b>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h4>找桩与服务设施</h4>
+          <div style="font-size:12px;color:#738096;line-height:1.8">
+            从科技南十二路进入园区，沿绿色充电指示牌直行约 80 米，
+            充电站位于 B2 停车场 C 区。
+          </div>
+          <div class="tags">
+            <span class="tag">🚻 卫生间</span>
+            <span class="tag">☕ 休息室</span>
+            <span class="tag">🛒 便利店</span>
+            <span class="tag">📶 免费Wi-Fi</span>
+          </div>
+        </article>
+
+        <div class="section-head">
+          <h3>可用终端 ${station.free}</h3>
+          <button data-action="refresh-terminals">刷新状态</button>
+        </div>
+
+        <article class="terminal-card selected" data-gun="A08">
+          <span class="terminal-status">空闲</span>
+          <h4>A08枪 · 车位 B2-C108</h4>
+          <p>液冷超充 · 480kW · 750V · 地锁已下降</p>
+          <div class="station-actions">
+            <button class="btn light flex" data-action="lower-lock">下降地锁</button>
+            <button class="btn primary flex" data-action="select-gun">选择此枪</button>
+          </div>
+        </article>
+
+        <article class="terminal-card" data-gun="A09">
+          <span class="terminal-status">空闲</span>
+          <h4>A09枪 · 车位 B2-C109</h4>
+          <p>直流快充 · 180kW · 750V · 地锁已下降</p>
+          <div class="station-actions">
+            <button class="btn light flex" data-action="lower-lock">下降地锁</button>
+            <button class="btn primary flex" data-action="select-gun">选择此枪</button>
+          </div>
+        </article>
+
+        <article class="terminal-card disabled">
+          <span class="terminal-status busy">占用</span>
+          <h4>A10枪 · 车位 B2-C110</h4>
+          <p>车辆 SOC 76% · 预计 12 分钟充满</p>
+        </article>
+
+        <article class="terminal-card disabled">
+          <span class="terminal-status error">故障</span>
+          <h4>A11枪 · 车位 B2-C111</h4>
+          <p>设备维护中，请选择其他充电枪</p>
+        </article>
+
+        <article class="info-card">
+          <h4>用户评价 · 4.9分</h4>
+          <p style="font-size:12px;line-height:1.8;color:#738096">
+            “位置好找，液冷超充速度很快，休息区也比较干净。”
+          </p>
+          <div style="font-size:10px;color:#a0a9b6">李** · 2025-06-15</div>
+        </article>
+      `);
+    }
+
+    function paymentPage() {
+      showSheet("确认启动充电", `
+        <article class="info-card">
+          <div class="summary-row">
+            <div>
+              <b>${selectedStation.name}</b>
+              <div style="margin-top:6px;font-size:11px;color:#738096">
+                ${selectedGun}枪 · 液冷超充 · 480kW
+              </div>
+            </div>
+            <span class="tag green">设备空闲</span>
+          </div>
+
+          <div style="margin-top:16px">
+            <span class="price-big">¥1.06<small>/度 折后价</small></span>
+            <div style="margin-top:5px;font-size:11px;color:#738096">
+              原价 ¥1.18/度 · 已匹配会员 9 折最优优惠
+            </div>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h4>支付账户</h4>
+          <div class="option-list" data-option-group="account">
+            <div class="option active" data-option="personal">
+              <b>个人账户余额 ¥186.50</b>
+              <span>冻结金额 ¥37.82，当前余额满足起充条件</span>
+              <i class="check">✓</i>
+            </div>
+            <div class="option" data-option="company">
+              <b>云途科技企业账户 ¥2,580.00</b>
+              <span>企业账户 · 当前同时充电订单 1/3</span>
+              <i class="check">✓</i>
+            </div>
+            <div class="option" data-option="prepay">
+              <b>微信预付费</b>
+              <span>充电结束后按实际金额原路退回剩余预付款</span>
+              <i class="check">✓</i>
+            </div>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h4>充电策略</h4>
+          <div class="option-list" data-option-group="strategy">
+            <div class="option active" data-option="full">
+              <b>自动充满</b>
+              <span>车辆充满后自动停止充电</span>
+              <i class="check">✓</i>
+            </div>
+            <div class="option" data-option="limit">
+              <b>限定金额</b>
+              <span>达到设定金额后自动停止</span>
+              <i class="check">✓</i>
+            </div>
+          </div>
+
+          <div class="amounts" style="margin-top:12px">
+            <button class="amount active">¥30</button>
+            <button class="amount">¥50</button>
+            <button class="amount">¥80</button>
+            <button class="amount">自定义</button>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h4>车辆与优惠</h4>
+          <div class="field">
+            <label>充电车辆</label>
+            <select class="input">
+              <option>粤B·A82Q6 · 特斯拉 Model Y</option>
+              <option>粤B·7Q28P · 比亚迪 汉EV</option>
+            </select>
+          </div>
+          <div class="info-line">
+            <span>优惠券</span><b style="color:#079a75">10元首充券 · 自动使用</b>
+          </div>
+          <div class="info-line">
+            <span>结算方式</span><b>自动结算 · 优惠金额优先</b>
+          </div>
+        </article>
+
+        <div class="notice" style="color:#8b651b;background:#fff8e8">
+          启动即表示同意充电服务协议。充满后请及时驶离车位，
+          超过免费停留时间可能产生占位费用。
+        </div>
+
+        <div class="pay-footer">
+          <div class="total">
+            <span>预计起充冻结</span>
+            <b>¥30.00</b>
+          </div>
+          <button class="btn primary" style="min-width:160px" data-action="start-charge">
+            确认并启动充电
+          </button>
+        </div>
+      `);
+    }
+
+    function manualGun() {
+      showDialog(`
+        <h3>输入充电枪编号</h3>
+        <p>请输入充电桩屏幕或枪体上显示的设备编号。</p>
+        <div class="field">
+          <input class="input" id="gunInput" value="A08" maxlength="12"
+            placeholder="例如：A08、SZ100862" />
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="confirm-gun">确认枪号</button>
+        </div>
+      `);
+    }
+
+    function cityPicker() {
+      showSheet("选择城市", `
+        <div class="search" style="margin:0 0 14px">
+          <span>⌕</span><input placeholder="搜索城市" />
+        </div>
+        <article class="info-card">
+          <h4>当前定位</h4>
+          <button class="btn light block" data-action="relocate">📍 深圳市 · 重新定位</button>
+        </article>
+        <article class="info-card">
+          <h4>热门城市</h4>
+          <div class="amounts">
+            <button class="amount active" data-action="choose-city">深圳市</button>
+            <button class="amount" data-action="choose-city">广州市</button>
+            <button class="amount" data-action="choose-city">上海市</button>
+            <button class="amount" data-action="choose-city">北京市</button>
+            <button class="amount" data-action="choose-city">杭州市</button>
+            <button class="amount" data-action="choose-city">成都市</button>
+            <button class="amount" data-action="choose-city">武汉市</button>
+            <button class="amount" data-action="choose-city">南京市</button>
+          </div>
+        </article>
+        <div style="padding:5px 3px;color:#738096;font-size:11px;line-height:1.7">
+          定位失败或拒绝定位权限时，将默认展示商家电站所属城市。
+        </div>
+      `);
+    }
+
+    function couponPage() {
+      showSheet("我的优惠券", `
+        <div class="tabs" style="margin:0 0 14px">
+          <button class="active">可使用 5</button>
+          <button>已使用</button>
+          <button>已过期</button>
+        </div>
+
+        <div class="coupon">
+          <div class="coupon-value"><span><b>10</b>元</span></div>
+          <h4>新用户首充券</h4>
+          <p>满20元可用 · 2025-06-30到期</p>
+          <button class="btn light" style="margin-top:10px;height:32px;min-height:32px"
+            data-action="view-stations">去充电</button>
+        </div>
+
+        <div class="coupon">
+          <div class="coupon-value"><span><b>8</b>折</span></div>
+          <h4>超级会员折扣券</h4>
+          <p>最高优惠15元 · 指定液冷超充站可用</p>
+        </div>
+
+        <div class="coupon">
+          <div class="coupon-value"><span><b>5</b>元</span></div>
+          <h4>充电返券奖励</h4>
+          <p>满30元可用 · 完成阶梯任务自动获得</p>
+        </div>
+
+        <article class="info-card">
+          <h4>优惠券使用优先级</h4>
+          <div class="option active">
+            <b>优惠金额最大优先</b>
+            <span>系统自动选择预计优惠金额最高的优惠券</span>
+            <i class="check">✓</i>
+          </div>
+          <div class="option" style="margin-top:9px">
+            <b>到期时间优先</b>
+            <span>优先使用即将到期的优惠券</span>
+            <i class="check">✓</i>
+          </div>
+        </article>
+
+        <button class="btn primary block" data-action="scan-coupon">扫码领券</button>
+      `);
+    }
+
+    function invoicePage() {
+      showSheet("发票管理", `
+        <article class="info-card">
+          <div class="summary-row">
+            <div>
+              <b>本月可开票金额</b>
+              <div class="balance-num"><small>¥</small> 164.76</div>
+            </div>
+            <button class="btn primary" data-action="apply-invoice">申请开票</button>
+          </div>
+        </article>
+
+        <div class="quick-grid" style="margin:0 0 14px">
+          <button class="action-card" data-action="apply-invoice">
+            <div class="action-icon">🧾</div><span>充电开票</span>
+          </button>
+          <button class="action-card" data-action="apply-invoice">
+            <div class="action-icon">🅿️</div><span>占位开票</span>
+          </button>
+          <button class="action-card" data-action="invoice-title">
+            <div class="action-icon">🏢</div><span>发票抬头</span>
+          </button>
+          <button class="action-card" data-action="invoice-record">
+            <div class="action-icon">📑</div><span>开票记录</span>
+          </button>
+        </div>
+
+        <div class="tabs" style="margin:0 0 12px">
+          <button class="active">全部</button>
+          <button>开票中</button>
+          <button>已开票</button>
+        </div>
+
+        <article class="order-card">
+          <div class="order-top">
+            <span style="font-size:11px;color:#8b96a5">2025-06-12</span>
+            <span class="order-status">已开票</span>
+          </div>
+          <h4>深圳云途科技有限公司</h4>
+          <p>电子普通发票 · 充电服务费</p>
+          <div class="order-amount"><span>开票金额</span><b>¥46.28</b></div>
+          <div class="station-actions">
+            <button class="btn flex" data-action="send-email">发送邮箱</button>
+            <button class="btn flex" data-action="replace-invoice">申请换开</button>
+          </div>
+        </article>
+      `);
+    }
+
+    function v2gPage() {
+      showSheet("V2G 放电服务", `
+        <div class="v2g-card">
+          <span style="font-size:12px;opacity:.8">累计放电收益</span>
+          <b>¥128.60</b>
+          <span style="font-size:11px;opacity:.7">累计放电 96.8kWh · 内测用户</span>
+        </div>
+
+        <article class="info-card" style="margin-top:14px">
+          <h4>附近放电电站</h4>
+          <div class="station-top">
+            <div class="station-name">
+              南山虚拟电厂 V2G 示范站
+              <small>距离 3.8km · 当前收益 ¥1.32/kWh</small>
+            </div>
+            <span class="tag green">可放电</span>
+          </div>
+          <div class="station-actions">
+            <button class="btn flex" data-action="navigate">导航</button>
+            <button class="btn primary flex" data-action="start-v2g">开启放电</button>
+          </div>
+        </article>
+
+        <article class="info-card">
+          <h4>今日调峰时段</h4>
+          <div class="info-line"><span>推荐放电时间</span><b>18:30-21:30</b></div>
+          <div class="info-line"><span>预计收益单价</span><b>¥1.20-1.45/kWh</b></div>
+          <div class="info-line"><span>建议保留电量</span><b>不低于 40%</b></div>
+        </article>
+
+        <article class="info-card">
+          <h4>收益说明</h4>
+          <p style="font-size:11px;color:#738096;line-height:1.8">
+            放电收益由运营商根据实际放电量和调峰规则核算。
+            当前收益支持联系运营商进行线下提现。
+          </p>
+          <button class="btn light block" style="margin-top:12px"
+            data-action="customer-service">联系运营商提现</button>
+        </article>
+
+        <div class="notice" style="color:#6d5ac8;background:#f2efff">
+          V2G 功能目前处于内测阶段，仅支持已认证车辆与指定双向充放电设备。
+        </div>
+      `);
+    }
+
+    function completeCharge() {
+      chargingOverlay.classList.remove("show");
+      chargeRunning = false;
+
+      showSheet("充电完成", `
+        <div class="complete">
+          <div class="success-icon">✓</div>
+          <h2 style="margin:0 0 7px">充电已完成</h2>
+          <p style="margin:0;color:#738096;font-size:12px">
+            已为您自动使用最优优惠并完成结算
+          </p>
+        </div>
+
+        <article class="info-card" style="margin-top:20px">
+          <div class="info-line"><span>订单号</span><b>2025061809180826</b></div>
+          <div class="info-line"><span>订单原价</span><b>¥47.82</b></div>
+          <div class="info-line"><span>电费</span><b>¥21.54</b></div>
+          <div class="info-line"><span>服务费原价</span><b>¥16.28</b></div>
+          <div class="info-line"><span>电站优惠</span><b style="color:#079a75">-¥3.00</b></div>
+          <div class="info-line"><span>优惠券</span><b style="color:#079a75">-¥7.00</b></div>
+          <div class="info-line"><span>实付金额</span><b class="price-big">¥37.82</b></div>
+        </article>
+
+        <article class="info-card">
+          <h4>充电信息</h4>
+          <div class="info-line"><span>充电终端</span><b>A08枪 · 液冷超充</b></div>
+          <div class="info-line"><span>结束原因</span><b>用户主动结束</b></div>
+          <div class="info-line"><span>充电时长</span><b>24分42秒</b></div>
+          <div class="info-line"><span>充电度数</span><b>31.84kWh</b></div>
+          <div class="info-line"><span>充电时间</span><b>09:18 - 09:43</b></div>
+          <div class="info-line"><span>车牌号</span><b>粤B·A82Q6</b></div>
+        </article>
+
+        <article class="info-card">
+          <h4>本次充电体验如何？</h4>
+          <div class="stars">
+            ${[1,2,3,4,5].map(i =>
+              `<button class="star active" data-star="${i}">★</button>`
+            ).join("")}
+          </div>
+          <textarea class="input" placeholder="分享您的充电体验，帮助我们做得更好"></textarea>
+          <button class="btn light block" style="margin-top:10px"
+            data-action="upload-image">＋ 上传图片</button>
+        </article>
+
+        <div class="station-actions">
+          <button class="btn flex" data-action="invoice">申请开票</button>
+          <button class="btn primary flex" data-action="submit-review">提交评价</button>
+        </div>
+      `);
+    }
+
+    document.addEventListener("click", e => {
+      const pageBtn = e.target.closest("[data-page]");
+      if (pageBtn) {
+        switchPage(pageBtn.dataset.page);
+        return;
+      }
+
+      const stationNode = e.target.closest("[data-station]");
+      if (stationNode) {
+        selectedStation = stations.find(s => s.id == stationNode.dataset.station) || stations[0];
+      }
+
+      const actionNode = e.target.closest("[data-action]");
+      if (!actionNode) {
+        const option = e.target.closest(".option");
+        if (option) {
+          const group = option.closest("[data-option-group]") || option.parentElement;
+          $$(".option", group).forEach(o => o.classList.remove("active"));
+          option.classList.add("active");
+        }
+
+        const amount = e.target.closest(".amount");
+        if (amount) {
+          $$(".amount", amount.parentElement).forEach(a => a.classList.remove("active"));
+          amount.classList.add("active");
+        }
+        return;
+      }
+
+      const action = actionNode.dataset.action;
+
+      switch (action) {
+        case "city":
+          cityPicker();
+          break;
+
+        case "messages":
+          showSheet("消息通知", `
+            <article class="info-card">
+              <h4>充电即将完成</h4>
+              <p style="font-size:12px;color:#738096;line-height:1.7">
+                您的车辆当前 SOC 为 68%，预计 18 分钟后充满。
+              </p>
+            </article>
+            <article class="info-card">
+              <h4>获得一张充电返券</h4>
+              <p style="font-size:12px;color:#738096">满30元可减5元，7天内有效。</p>
+            </article>
+          `);
+          break;
+
+        case "view-stations":
+          closeAll();
+          switchPage("stationPage");
+          break;
+
+        case "station-detail":
+          stationDetail(selectedStation);
+          break;
+
+        case "favorite-station":
+        case "toggle-favorite":
+          favorite = !favorite;
+          toast(favorite ? "已收藏该电站" : "已取消收藏");
+          if (action === "toggle-favorite") stationDetail(selectedStation);
+          break;
+
+        case "navigate":
+          showDialog(`
+            <h3>选择导航应用</h3>
+            <p>将为您导航至：${selectedStation.name}</p>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="nav-confirm">腾讯地图</button>
+              <button class="btn flex" data-action="nav-confirm">高德地图</button>
+              <button class="btn primary flex" data-action="nav-confirm">系统地图</button>
+            </div>
+          `);
+          break;
+
+        case "nav-confirm":
+          dialogOverlay.classList.remove("show");
+          toast("正在拉起地图应用…");
+          break;
+
+        case "scan":
+          scanOverlay.classList.add("show");
+          break;
+
+        case "close-scan":
+          scanOverlay.classList.remove("show");
+          break;
+
+        case "scan-success":
+          scanOverlay.classList.remove("show");
+          selectedGun = "A08";
+          toast("识别成功：A08 液冷超充枪");
+          setTimeout(paymentPage, 400);
+          break;
+
+        case "scan-error":
+          showDialog(`
+            <h3>暂时无法启动该设备</h3>
+            <p>
+              A11枪当前处于故障维护状态，请重新扫描或选择附近其他空闲终端。
+            </p>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">重新扫描</button>
+              <button class="btn primary flex" data-action="station-detail">选择其他终端</button>
+            </div>
+          `);
+          break;
+
+        case "manual-gun":
+          scanOverlay.classList.remove("show");
+          manualGun();
+          break;
+
+        case "confirm-gun":
+          const gunInput = $("#gunInput");
+          const value = gunInput ? gunInput.value.trim().toUpperCase() : "";
+          if (!value) {
+            toast("请输入充电枪编号");
+            return;
+          }
+          if (value === "A11") {
+            toast("该设备故障，请选择其他充电枪");
+            return;
+          }
+          selectedGun = value;
+          dialogOverlay.classList.remove("show");
+          toast(`已找到 ${value} 充电枪`);
+          setTimeout(paymentPage, 350);
+          break;
+
+        case "select-gun":
+          const terminal = actionNode.closest(".terminal-card");
+          selectedGun = terminal?.dataset.gun || "A08";
+          paymentPage();
+          break;
+
+        case "lower-lock":
+          actionNode.textContent = "地锁已下降";
+          actionNode.disabled = true;
+          toast("地锁下降成功，请在 15 分钟内驶入车位");
+          break;
+
+        case "refresh-terminals":
+          toast("终端状态已更新");
+          break;
+
+        case "start-charge":
+          sheetOverlay.classList.remove("show");
+          toast("身份与账户校验通过，正在启动充电…");
+          setTimeout(() => {
+            chargingOverlay.classList.add("show");
+            chargeRunning = true;
+          }, 850);
+          break;
+
+        case "charging-detail":
+          chargingOverlay.classList.add("show");
+          break;
+
+        case "close-charging":
+          chargingOverlay.classList.remove("show");
+          break;
+
+        case "stop-charge":
+          showDialog(`
+            <h3>确认结束充电？</h3>
+            <p>
+              结束后系统将自动结算本次充电费用。请确认车辆已满足您的续航需求。
+            </p>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">继续充电</button>
+              <button class="btn danger flex" data-action="confirm-stop">结束充电</button>
+            </div>
+          `);
+          break;
+
+        case "confirm-stop":
+          dialogOverlay.classList.remove("show");
+          setTimeout(completeCharge, 250);
+          break;
+
+        case "close-sheet":
+          sheetOverlay.classList.remove("show");
+          break;
+
+        case "close-dialog":
+          dialogOverlay.classList.remove("show");
+          break;
+
+        case "call-station":
+          showDialog(`
+            <h3>联系电站</h3>
+            <p>南山科技园超级充电站<br>联系电话：0755-8888 6628</p>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="call-confirm">立即拨打</button>
+            </div>
+          `);
+          break;
+
+        case "call-confirm":
+          dialogOverlay.classList.remove("show");
+          toast("正在呼叫 0755-8888 6628");
+          break;
+
+        case "coupons":
+          couponPage();
+          break;
+
+        case "claim-coupon":
+          actionNode.textContent = "已领取";
+          actionNode.disabled = true;
+          toast("10元首充券已放入您的账户");
+          break;
+
+        case "scan-coupon":
+          sheetOverlay.classList.remove("show");
+          scanOverlay.classList.add("show");
+          toast("请扫描活动二维码领券");
+          break;
+
+        case "invoice":
+          invoicePage();
+          break;
+
+        case "apply-invoice":
+          showDialog(`
+            <h3>申请电子发票</h3>
+            <p>已选择 3 笔订单，可开票金额 ¥164.76。</p>
+            <div class="field">
+              <label>发票抬头</label>
+              <select class="input">
+                <option>深圳云途科技有限公司</option>
+                <option>个人</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>接收邮箱</label>
+              <input class="input" value="lin***@example.com" />
+            </div>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="invoice-success">提交申请</button>
+            </div>
+          `);
+          break;
+
+        case "invoice-success":
+          dialogOverlay.classList.remove("show");
+          toast("开票申请已提交，预计 1 个工作日内完成");
+          break;
+
+        case "recharge":
+          showDialog(`
+            <h3>账户充值</h3>
+            <p>充值金额将存入个人充电账户。</p>
+            <div class="amounts" style="margin-top:15px">
+              <button class="amount">¥50</button>
+              <button class="amount active">¥100</button>
+              <button class="amount">¥200</button>
+              <button class="amount">¥500</button>
+            </div>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="recharge-success">微信支付 ¥100</button>
+            </div>
+          `);
+          break;
+
+        case "recharge-success":
+          dialogOverlay.classList.remove("show");
+          toast("充值成功，账户余额增加 ¥100.00");
+          break;
+
+        case "v2g":
+          v2gPage();
+          break;
+
+        case "start-v2g":
+          showDialog(`
+            <h3>开启 V2G 放电</h3>
+            <p>
+              系统将检测车辆、电池状态及双向充放电设备。
+              建议设置最低保留电量为 40%。
+            </p>
+            <div class="field">
+              <label>最低保留电量</label>
+              <select class="input">
+                <option>40%</option>
+                <option>50%</option>
+                <option>60%</option>
+              </select>
+            </div>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="v2g-success">确认开启</button>
+            </div>
+          `);
+          break;
+
+        case "v2g-success":
+          dialogOverlay.classList.remove("show");
+          toast("设备检测通过，V2G 放电已开启");
+          break;
+
+        case "customer-service":
+          showSheet("客服与售后", `
+            <article class="info-card">
+              <h4>7×24小时客户服务</h4>
+              <p style="font-size:12px;color:#738096;line-height:1.8">
+                如遇设备故障、启动失败、支付异常等问题，请联系在线客服。
+              </p>
+              <div class="station-actions">
+                <button class="btn primary flex" data-action="online-service">在线客服</button>
+                <button class="btn flex" data-action="call-confirm">电话客服</button>
+              </div>
+            </article>
+            <div class="menu-list">
+              <button class="menu-row" data-action="appeal">
+                <span>占位费用申诉</span><span>›</span>
+              </button>
+              <button class="menu-row" data-action="refund">
+                <span>账户退款申请</span><span>›</span>
+              </button>
+              <button class="menu-row" data-action="find-owner">
+                <span>车牌找人</span><span>›</span>
+              </button>
+              <button class="menu-row" data-action="generic-success">
+                <span>设备故障报修</span><span>›</span>
+              </button>
+            </div>
+          `);
+          break;
+
+        case "appeal":
+          showDialog(`
+            <h3>占位费用申诉</h3>
+            <p>订单占位费用 ¥13.00，目前仍在 72 小时可申诉时限内。</p>
+            <div class="field">
+              <textarea class="input" placeholder="请输入申诉原因"></textarea>
+            </div>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="appeal-success">提交申诉</button>
+            </div>
+          `);
+          break;
+
+        case "appeal-success":
+          dialogOverlay.classList.remove("show");
+          toast("申诉已提交，预计 1-3 个工作日内审核");
+          break;
+
+        case "find-owner":
+          showDialog(`
+            <h3>车牌找人</h3>
+            <p>平台将通过隐私号码或消息通知联系车主，不会泄露双方真实手机号。</p>
+            <div class="field">
+              <input class="input" placeholder="请输入需要联系的车牌号" />
+            </div>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="find-owner-success">通知车主</button>
+            </div>
+          `);
+          break;
+
+        case "find-owner-success":
+          dialogOverlay.classList.remove("show");
+          toast("已向车主发送挪车提醒");
+          break;
+
+        case "vehicles":
+          showSheet("我的车辆", `
+            <article class="info-card">
+              <div class="summary-row">
+                <div>
+                  <b>粤B·A82Q6</b>
+                  <div style="margin-top:6px;color:#738096;font-size:11px">
+                    特斯拉 Model Y · 默认车辆
+                  </div>
+                </div>
+                <span class="tag green">已认证</span>
+              </div>
+            </article>
+            <article class="info-card">
+              <div class="summary-row">
+                <div>
+                  <b>粤B·7Q28P</b>
+                  <div style="margin-top:6px;color:#738096;font-size:11px">
+                    比亚迪 汉EV
+                  </div>
+                </div>
+                <button class="btn" data-action="generic-success">编辑</button>
+              </div>
+            </article>
+            <button class="btn primary block" data-action="generic-success">＋ 添加车辆</button>
+          `);
+          break;
+
+        case "favorites":
+          showSheet("收藏电站", stations.slice(0, 2).map(stationCard).join(""));
+          break;
+
+        case "balance":
+          showSheet("余额与明细", `
+            <article class="info-card">
+              <div class="summary-row">
+                <div>
+                  <span style="font-size:11px;color:#738096">可用余额</span>
+                  <div class="balance-num"><small>¥</small> 186.50</div>
+                </div>
+                <button class="btn primary" data-action="recharge">充值</button>
+              </div>
+              <div class="info-line"><span>未完成订单冻结</span><b>¥37.82</b></div>
+              <div class="info-line"><span>退款中金额</span><b>¥0.00</b></div>
+            </article>
+            <article class="info-card">
+              <h4>最近记录</h4>
+              <div class="info-line"><span>充电消费 · 06-12</span><b>-¥46.28</b></div>
+              <div class="info-line"><span>账户充值 · 06-10</span><b style="color:#079a75">+¥100.00</b></div>
+              <div class="info-line"><span>退款到账 · 06-03</span><b style="color:#079a75">+¥13.00</b></div>
+            </article>
+            <button class="btn light block" data-action="refund">申请余额退款</button>
+          `);
+          break;
+
+        case "activities":
+          showSheet("充电任务与奖励", `
+            <article class="info-card">
+              <div class="summary-row">
+                <div>
+                  <b>本月累计充电 3 次</b>
+                  <div style="margin-top:6px;color:#738096;font-size:11px">
+                    再充 1 次可获得 10 元优惠券
+                  </div>
+                </div>
+                <span class="tag green">3/4</span>
+              </div>
+              <div class="progress"><span style="width:75%"></span></div>
+            </article>
+            <article class="info-card">
+              <div class="summary-row">
+                <div>
+                  <b>累计充电满 100kWh</b>
+                  <div style="margin-top:6px;color:#738096;font-size:11px">
+                    当前 126.8kWh，奖励待领取
+                  </div>
+                </div>
+                <button class="btn primary" data-action="claim-reward">领取</button>
+              </div>
+            </article>
+          `);
+          break;
+
+        case "claim-reward":
+          actionNode.textContent = "已领取";
+          actionNode.disabled = true;
+          toast("5元充电奖励券已到账");
+          break;
+
+        case "pay-order":
+          showDialog(`
+            <h3>支付充电订单</h3>
+            <p>福田中心区公共充电站 · 应付金额 ¥18.60</p>
+            <div class="dialog-actions">
+              <button class="btn flex" data-action="close-dialog">取消</button>
+              <button class="btn primary flex" data-action="payment-success">确认支付</button>
+            </div>
+          `);
+          break;
+
+        case "payment-success":
+          dialogOverlay.classList.remove("show");
+          toast("支付成功");
+          break;
+
+        case "review":
+          completeCharge();
+          break;
+
+        case "submit-review":
+          toast("感谢您的评价，已获得 10 积分");
+          setTimeout(() => sheetOverlay.classList.remove("show"), 800);
+          break;
+
+        case "upload-image":
+          toast("已模拟上传 1 张充电现场图片");
+          actionNode.textContent = "✓ 已上传 1 张图片";
+          break;
+
+        case "edit-plate":
+          toast("已打开车辆管理，可修改本次充电车牌");
+          break;
+
+        case "more-filter":
+          showSheet("筛选电站", `
+            <article class="info-card">
+              <h4>充电类型</h4>
+              <div class="amounts">
+                <button class="amount active">不限</button>
+                <button class="amount">慢充</button>
+                <button class="amount">快充</button>
+                <button class="amount">超充</button>
+              </div>
+            </article>
+            <article class="info-card">
+              <h4>停车费用</h4>
+              <div class="amounts">
+                <button class="amount active">不限</button>
+                <button class="amount">免费</button>
+                <button class="amount">有减免</button>
+                <button class="amount">收费</button>
+              </div>
+            </article>
+            <article class="info-card">
+              <h4>配套设施</h4>
+              <div class="tags">
+                <span class="tag">卫生间</span>
+                <span class="tag">休息室</span>
+                <span class="tag">便利店</span>
+                <span class="tag">餐饮</span>
+              </div>
+            </article>
+            <button class="btn primary block" data-action="apply-filter">查看 18 个电站</button>
+          `);
+          break;
+
+        case "apply-filter":
+          sheetOverlay.classList.remove("show");
+          toast("筛选条件已应用");
+          break;
+
+        case "choose-city":
+          sheetOverlay.classList.remove("show");
+          toast(`已切换至${actionNode.textContent}`);
+          break;
+
+        case "relocate":
+          toast("定位成功：深圳市南山区");
+          break;
+
+        case "search":
+          const keyword = $("#stationSearch").value.trim();
+          const filtered = keyword
+            ? stations.filter(s => s.name.includes(keyword) || s.address.includes(keyword))
+            : stations;
+          $("#listMode").innerHTML = filtered.length
+            ? filtered.map(stationCard).join("")
+            : `<div style="text-align:center;padding:70px 20px;color:#8b96a5">
+                 未找到匹配电站，请尝试其他关键词
+               </div>`;
+          toast(`找到 ${filtered.length} 个相关电站`);
+          break;
+
+        case "map-station":
+          $$(".map-pin").forEach(p => p.classList.remove("selected"));
+          actionNode.classList.add("selected");
+          toast("已切换地图站点");
+          break;
+
+        case "generic-success":
+        case "online-service":
+        case "refund":
+        case "invoice-title":
+        case "invoice-record":
+        case "send-email":
+        case "replace-invoice":
+        case "account":
+        case "agreements":
+        case "switch-account":
+        case "order-detail":
+          toast("功能入口已打开，模拟操作成功");
+          break;
+      }
+    });
+
+    // 列表/地图切换
+    $$(".mode-switch button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        $$(".mode-switch button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const isMap = btn.dataset.mode === "map";
+        $("#mapMode").classList.toggle("hide", !isMap);
+        $("#listMode").classList.toggle("hide", isMap);
+      });
+    });
+
+    // 筛选按钮
+    $$(".filter-chip[data-filter]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.classList.toggle("active");
+        toast(btn.classList.contains("active") ? `已选择：${btn.textContent}` : `已取消：${btn.textContent}`);
+      });
+    });
+
+    // 订单筛选
+    $$(".order-tabs button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        $$(".order-tabs button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const type = btn.dataset.order;
+        $$(".order-card[data-order-type]").forEach(card => {
+          card.classList.toggle("hide", type !== "all" && card.dataset.orderType !== type);
+        });
+      });
+    });
+
+    // 星级评价
+    document.addEventListener("click", e => {
+      const star = e.target.closest("[data-star]");
+      if (!star) return;
+
+      const value = Number(star.dataset.star);
+      $$(".star").forEach(s => {
+        s.classList.toggle("active", Number(s.dataset.star) <= value);
+      });
+      toast(`已选择 ${value} 星评价`);
+    });
+
+    // 点击遮罩关闭
+    [sheetOverlay, dialogOverlay].forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) overlay.classList.remove("show");
+      });
+    });
+
+    // 广告轮播
+    setInterval(() => {
+      bannerIndex = (bannerIndex + 1) % 3;
+      $$(".banner-slide").forEach((slide, i) => slide.classList.toggle("active", i === bannerIndex));
+      $$(".dots i").forEach((dot, i) => dot.classList.toggle("active", i === bannerIndex));
+    }, 3800);
+
+    // 充电实时数据模拟
+    setInterval(() => {
+      if (!chargeRunning) return;
+
+      chargingSeconds++;
+      const min = Math.floor(chargingSeconds / 60);
+      const sec = chargingSeconds % 60;
+      const kwh = 31.68 + (chargingSeconds - 1458) * 0.00045;
+      const fee = 37.82 + (chargingSeconds - 1458) * 0.00053;
+      const soc = Math.min(99, 68 + Math.floor((chargingSeconds - 1458) / 75));
+      const power = 86.4 + Math.sin(chargingSeconds / 7) * 2.2;
+
+      $("#durationValue").textContent =
+        String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+      $("#kwhValue").textContent = kwh.toFixed(2);
+      $("#feeValue").textContent = fee.toFixed(2);
+      $("#powerValue").textContent = power.toFixed(1);
+      $("#socValue").textContent = soc + "%";
+      $("#homeKwh").textContent = kwh.toFixed(2);
+      $("#homeFee").textContent = fee.toFixed(2);
+      $("#homeSoc").textContent = soc + "%";
+      $("#homeProgress").style.width = soc + "%";
+      $("#energyRing").style.background =
+        `conic-gradient(var(--primary) 0 ${soc}%, rgba(255,255,255,.10) ${soc}%)`;
+    }, 1000);
+
+    // 时间
+    function updateClock() {
+      const now = new Date();
+      $("#clock").textContent =
+        String(now.getHours()).padStart(2, "0") + ":" +
+        String(now.getMinutes()).padStart(2, "0");
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+  </script>
+</body>
+</html>

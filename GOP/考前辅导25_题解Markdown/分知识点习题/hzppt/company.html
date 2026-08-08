@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>惠泊云企业介绍</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 190, 255, .16), transparent 34%),
+    radial-gradient(circle at 88% 20%, rgba(112, 76, 255, .13), transparent 25%),
+    radial-gradient(circle at 10% 80%, rgba(0, 220, 188, .07), transparent 27%),
+    linear-gradient(135deg, #040c19 0%, #07172b 48%, #061327 73%, #040c19 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .32) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 16%,
+    #000 91%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 390px;
+  top: 70px;
+  width: 820px;
+  height: 820px;
+  border: 1px solid rgba(64, 191, 255, .06);
+  border-radius: 50%;
+  box-shadow:
+    0 0 130px rgba(0, 184, 255, .05),
+    inset 0 0 130px rgba(0, 184, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   背景装饰
+======================================== */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.1;
+  opacity: .18;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #48ddea;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .13;
+  animation: lineFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5ce8f4;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* ========================================
+   标题区域
+======================================== */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 23px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 216, 240, .13);
+  border-radius: 18px;
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3.5px;
+}
+
+.header-message {
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #dff8ff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.header-message strong b {
+  color: #54e7d0;
+}
+
+.header-message span {
+  color: #6694af;
+  font-size: 10.5px;
+}
+
+/* ========================================
+   通用卡片
+======================================== */
+
+.card {
+  position: absolute;
+  border: 1px solid rgba(66, 169, 237, .22);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .91)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  opacity: .62;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.section-title {
+  height: 37px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #27baff, #45e8d3);
+}
+
+.section-title h2 {
+  margin: 0;
+  color: #dff6ff;
+  font-size: 16px;
+}
+
+.section-en {
+  margin-left: auto;
+  color: #617f94;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* ========================================
+   顶部企业数据
+======================================== */
+
+.metrics {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 112px;
+  height: 116px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(62, 183, 226, .19);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(7, 31, 56, .84),
+      rgba(15, 49, 81, .82),
+      rgba(8, 33, 60, .86)
+    );
+  box-shadow:
+    0 18px 43px rgba(0, 4, 17, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+.metrics::before {
+  content: "";
+  position: absolute;
+  left: 50px;
+  right: 50px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #55dff0,
+    #9e88ff,
+    #4be2c3,
+    transparent
+  );
+}
+
+.metric {
+  position: relative;
+  padding: 19px 23px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-right: 1px solid rgba(76, 166, 203, .12);
+}
+
+.metric:last-child {
+  border-right: 0;
+}
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(68, 209, 238, .18);
+  border-radius: 14px;
+  color: #55e1f1;
+  background: rgba(24, 145, 187, .13);
+}
+
+.metric:nth-child(3) .metric-icon {
+  color: #c5b4ff;
+  border-color: rgba(158, 130, 244, .19);
+  background: rgba(125, 88, 215, .14);
+}
+
+.metric:nth-child(4) .metric-icon,
+.metric:nth-child(5) .metric-icon {
+  color: #59e4c6;
+  border-color: rgba(61, 215, 180, .18);
+  background: rgba(31, 176, 141, .13);
+}
+
+.metric-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.metric-content strong {
+  display: block;
+  color: #effcff;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.metric-content strong b {
+  color: #54e6d0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.metric-content span {
+  display: block;
+  margin-top: 7px;
+  color: #7fa8bb;
+  font-size: 9.5px;
+}
+
+.metric-content small {
+  display: block;
+  margin-top: 5px;
+  color: #4f768c;
+  font-size: 7.5px;
+}
+
+/* ========================================
+   左侧公司定位
+======================================== */
+
+.profile-zone {
+  position: absolute;
+  left: 48px;
+  top: 250px;
+  width: 345px;
+  height: 478px;
+}
+
+.profile-card {
+  position: relative;
+  margin-top: 7px;
+  padding: 19px;
+  border-color: rgba(54, 207, 228, .28);
+  background:
+    radial-gradient(circle at 50% 5%, rgba(0, 191, 225, .11), transparent 30%),
+    linear-gradient(
+      145deg,
+      rgba(12, 64, 94, .90),
+      rgba(6, 27, 50, .94)
+    );
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-logo {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #2cddd7);
+  box-shadow:
+    0 0 21px rgba(35, 211, 231, .22),
+    inset 0 1px 0 rgba(255,255,255,.22);
+}
+
+.profile-logo svg {
+  width: 29px;
+  height: 29px;
+}
+
+.profile-company {
+  color: #e7f9ff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.profile-position {
+  margin-top: 5px;
+  color: #66a7bd;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.profile-slogan {
+  margin-top: 20px;
+  padding: 14px 15px;
+  border-left: 3px solid #42dce7;
+  border-radius: 0 10px 10px 0;
+  color: #cceaf3;
+  font-size: 12px;
+  line-height: 1.8;
+  background: rgba(17, 78, 105, .28);
+}
+
+.profile-slogan strong {
+  color: #56e5d0;
+}
+
+.profile-description {
+  margin-top: 17px;
+  color: #789dad;
+  font-size: 9.5px;
+  line-height: 1.8;
+}
+
+.capability-list {
+  margin-top: 17px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.capability-item {
+  height: 61px;
+  padding: 10px;
+  border: 1px solid rgba(60, 179, 219, .15);
+  border-radius: 10px;
+  background: rgba(6, 33, 57, .62);
+}
+
+.capability-item strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b9dbe7;
+  font-size: 9px;
+}
+
+.capability-item strong i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4de2ee;
+  box-shadow: 0 0 7px #4de2ee;
+}
+
+.capability-item span {
+  display: block;
+  margin-top: 7px;
+  color: #587f93;
+  font-size: 7.5px;
+  line-height: 1.4;
+}
+
+.service-mode {
+  margin-top: 14px;
+  height: 52px;
+  padding: 9px 11px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(52, 216, 181, .17);
+  border-radius: 10px;
+  background: rgba(22, 103, 89, .20);
+}
+
+.service-mode b {
+  color: #55e0c4;
+  font-size: 9px;
+}
+
+.service-mode span {
+  margin-left: auto;
+  color: #78a69d;
+  font-size: 8px;
+}
+
+/* ========================================
+   中间项目版图
+======================================== */
+
+.map-zone {
+  position: absolute;
+  left: 416px;
+  top: 250px;
+  width: 704px;
+  height: 478px;
+}
+
+.map-card {
+  position: relative;
+  height: 430px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-color: rgba(66, 211, 232, .34);
+  background:
+    radial-gradient(circle at 50% 48%, rgba(0, 196, 229, .15), transparent 43%),
+    linear-gradient(
+      145deg,
+      rgba(11, 62, 94, .94),
+      rgba(5, 25, 49, .96)
+    );
+  box-shadow:
+    0 22px 58px rgba(0, 5, 20, .42),
+    0 0 43px rgba(0, 190, 230, .07),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.map-head {
+  position: relative;
+  z-index: 4;
+  height: 59px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+}
+
+.map-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-title-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #188eff, #2edfd5);
+  box-shadow: 0 0 17px rgba(37, 211, 230, .21);
+}
+
+.map-title-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.map-title strong {
+  color: #eafaff;
+  font-size: 14px;
+}
+
+.map-title span {
+  display: block;
+  margin-top: 4px;
+  color: #5b91a9;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.map-status {
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(51, 218, 181, .19);
+  border-radius: 13px;
+  color: #64e5c9;
+  font-size: 8px;
+  background: rgba(32, 176, 146, .08);
+}
+
+/* 抽象中国地图区域 */
+.map-canvas {
+  position: absolute;
+  left: 65px;
+  top: 67px;
+  width: 565px;
+  height: 270px;
+}
+
+.map-shape {
+  position: absolute;
+  left: 35px;
+  top: 12px;
+  width: 485px;
+  height: 240px;
+  opacity: .56;
+  filter: drop-shadow(0 0 22px rgba(0, 183, 225, .09));
+}
+
+.map-shape path {
+  fill: rgba(19, 99, 137, .22);
+  stroke: rgba(72, 205, 231, .35);
+  stroke-width: 1.5;
+}
+
+.map-route {
+  fill: none;
+  stroke: #42d8eb;
+  stroke-width: 1.3;
+  stroke-dasharray: 5 6;
+  opacity: .43;
+  animation: routeFlow 10s linear infinite;
+}
+
+@keyframes routeFlow {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+.city-node {
+  position: absolute;
+  z-index: 4;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(184, 248, 255, .78);
+  border-radius: 50%;
+  background: #39d9ec;
+  box-shadow:
+    0 0 7px #39d9ec,
+    0 0 17px rgba(39, 211, 232, .45);
+}
+
+.city-node::after {
+  content: attr(data-city);
+  position: absolute;
+  left: 12px;
+  top: -5px;
+  color: #8ec4d6;
+  font-size: 7.5px;
+  white-space: nowrap;
+}
+
+.city-node.main {
+  width: 13px;
+  height: 13px;
+  background: #54e7cd;
+  box-shadow:
+    0 0 8px #54e7cd,
+    0 0 20px rgba(50, 220, 190, .45);
+}
+
+.city-1 {
+  left: 381px;
+  top: 57px;
+}
+
+.city-2 {
+  left: 427px;
+  top: 109px;
+}
+
+.city-3 {
+  left: 390px;
+  top: 155px;
+}
+
+.city-4 {
+  left: 342px;
+  top: 184px;
+}
+
+.city-5 {
+  left: 290px;
+  top: 146px;
+}
+
+.city-6 {
+  left: 234px;
+  top: 107px;
+}
+
+.city-7 {
+  left: 184px;
+  top: 162px;
+}
+
+.city-8 {
+  left: 127px;
+  top: 113px;
+}
+
+.city-9 {
+  left: 452px;
+  top: 196px;
+}
+
+.city-10 {
+  left: 326px;
+  top: 80px;
+}
+
+/* 地图中心脉冲 */
+.map-center {
+  position: absolute;
+  left: 329px;
+  top: 130px;
+  z-index: 3;
+  width: 70px;
+  height: 70px;
+  border: 1px solid rgba(68, 227, 235, .31);
+  border-radius: 50%;
+  animation: mapPulse 2.8s ease-in-out infinite;
+}
+
+.map-center::before,
+.map-center::after {
+  content: "";
+  position: absolute;
+  border: 1px solid rgba(68, 227, 235, .21);
+  border-radius: 50%;
+}
+
+.map-center::before {
+  inset: 9px;
+}
+
+.map-center::after {
+  inset: 20px;
+  background: rgba(34, 197, 217, .14);
+  box-shadow: 0 0 15px rgba(51, 216, 229, .17);
+}
+
+@keyframes mapPulse {
+  50% {
+    transform: scale(1.08);
+    opacity: .67;
+  }
+}
+
+.map-bottom {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 17px;
+  z-index: 4;
+  height: 66px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(59, 180, 214, .14);
+  border-radius: 11px;
+  background: rgba(2, 20, 39, .61);
+}
+
+.map-data {
+  padding: 12px 13px;
+  border-right: 1px solid rgba(65, 170, 207, .12);
+}
+
+.map-data:last-child {
+  border-right: 0;
+}
+
+.map-data strong {
+  display: block;
+  color: #c8eaf3;
+  font-size: 10px;
+}
+
+.map-data span {
+  display: block;
+  margin-top: 6px;
+  color: #5c8295;
+  font-size: 7.5px;
+}
+
+.map-data b {
+  color: #50e0c6;
+  font-weight: 600;
+}
+
+/* ========================================
+   右侧价值与能力
+======================================== */
+
+.value-zone {
+  position: absolute;
+  right: 48px;
+  top: 250px;
+  width: 408px;
+  height: 478px;
+}
+
+.value-card {
+  position: relative;
+  margin-top: 7px;
+  padding: 16px;
+  border-color: rgba(138, 116, 255, .27);
+  background:
+    radial-gradient(circle at 50% 5%, rgba(108, 77, 231, .11), transparent 31%),
+    linear-gradient(
+      145deg,
+      rgba(35, 42, 91, .84),
+      rgba(7, 27, 51, .94)
+    );
+}
+
+.value-card::before {
+  background: linear-gradient(90deg, transparent, #9e89ff, transparent);
+}
+
+.value-head {
+  display: flex;
+  align-items: center;
+}
+
+.value-head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e9e5ff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.value-icon {
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #cbbcff;
+  background: rgba(126, 91, 219, .16);
+  border: 1px solid rgba(166, 138, 246, .16);
+}
+
+.value-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.value-tag {
+  margin-left: auto;
+  padding: 4px 8px;
+  border-radius: 9px;
+  color: #62e5cd;
+  font-size: 8px;
+  background: rgba(34, 187, 155, .09);
+}
+
+/* 价值指标 */
+.value-metrics {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.value-metric {
+  height: 82px;
+  padding: 11px 12px;
+  border: 1px solid rgba(136, 117, 227, .15);
+  border-radius: 10px;
+  background: rgba(13, 32, 63, .64);
+}
+
+.value-metric-label {
+  color: #777e9e;
+  font-size: 8px;
+}
+
+.value-metric-number {
+  margin-top: 7px;
+  color: #ebe7ff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.value-metric-number b {
+  color: #58dfc8;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.value-metric-desc {
+  margin-top: 6px;
+  color: #646d8d;
+  font-size: 7.5px;
+}
+
+/* 核心价值列表 */
+.value-list {
+  margin-top: 11px;
+}
+
+.value-item {
+  height: 54px;
+  margin-bottom: 7px;
+  padding: 9px 11px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(124, 112, 212, .13);
+  border-radius: 9px;
+  background: rgba(11, 30, 58, .58);
+}
+
+.value-item-icon {
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #61dff0;
+  background: rgba(25, 143, 183, .13);
+}
+
+.value-item:nth-child(2) .value-item-icon {
+  color: #c2b1ff;
+  background: rgba(125, 89, 215, .14);
+}
+
+.value-item:nth-child(3) .value-item-icon {
+  color: #59e1c4;
+  background: rgba(31, 175, 140, .13);
+}
+
+.value-item-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.value-item strong {
+  display: block;
+  color: #c8ddea;
+  font-size: 9px;
+}
+
+.value-item span {
+  display: block;
+  margin-top: 5px;
+  color: #626e8b;
+  font-size: 7.5px;
+}
+
+.value-conclusion {
+  height: 52px;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1px solid rgba(50, 214, 179, .16);
+  border-radius: 10px;
+  color: #7eb2aa;
+  font-size: 8px;
+  line-height: 1.5;
+  background: rgba(21, 101, 86, .20);
+}
+
+.value-conclusion b {
+  color: #6ce7ce;
+}
+
+/* ========================================
+   底部多业态案例
+======================================== */
+
+.case-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 0px;
+  height: 136px;
+}
+
+.case-title {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8ab2c6;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+}
+
+.case-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #29bdff, #45e6ce);
+}
+
+.case-title span {
+  margin-left: auto;
+  color: #58788d;
+  font-size: 8px;
+}
+
+.case-grid {
+  height: 104px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 9px;
+}
+
+.case-item {
+  position: relative;
+  padding: 14px 12px 10px;
+  overflow: hidden;
+  border: 1px solid rgba(58, 178, 217, .16);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 49, 78, .78),
+      rgba(6, 26, 48, .82)
+    );
+}
+
+.case-item:nth-child(3),
+.case-item:nth-child(6) {
+  border-color: rgba(146, 120, 237, .18);
+}
+
+.case-item:nth-child(4),
+.case-item:nth-child(7) {
+  border-color: rgba(49, 210, 177, .18);
+}
+
+.case-item::after {
+  content: "";
+  position: absolute;
+  right: -24px;
+  bottom: -31px;
+  width: 73px;
+  height: 73px;
+  border-radius: 50%;
+  background: rgba(49, 202, 228, .035);
+}
+
+.case-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.case-icon {
+  width: 33px;
+  height: 33px;
+  flex: 0 0 33px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #55e0f0;
+  background: rgba(23, 143, 184, .14);
+}
+
+.case-item:nth-child(3) .case-icon,
+.case-item:nth-child(6) .case-icon {
+  color: #c0afff;
+  background: rgba(123, 87, 210, .14);
+}
+
+.case-item:nth-child(4) .case-icon,
+.case-item:nth-child(7) .case-icon {
+  color: #58dfc2;
+  background: rgba(31, 173, 138, .13);
+}
+
+.case-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.case-name {
+  color: #d2eaf3;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.case-desc {
+  margin-top: 11px;
+  color: #5e8599;
+  font-size: 7.5px;
+  line-height: 1.5;
+}
+
+.case-feature {
+  margin-top: 7px;
+  color: #7eb7c8;
+  font-size: 7px;
+}
+
+/* ========================================
+   页脚
+======================================== */
+
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #486f87;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+/* 占位数字提示样式 */
+.placeholder {
+  color: #9eeeff !important;
+  text-shadow: 0 0 12px rgba(80, 220, 240, .18);
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景曲线 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="backgroundGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 730 C221 659 318 762 496 682 C682 599 724 421 908 357 C1096 292 1303 417 1600 231"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 774 C247 711 386 800 568 723 C746 648 789 484 969 419 C1170 348 1372 421 1600 327"
+      />
+
+      <circle class="bg-dot" cx="496" cy="682" r="3"/>
+      <circle class="bg-dot" cx="908" cy="357" r="3"/>
+      <circle class="bg-dot" cx="1303" cy="417" r="3"/>
+    </svg>
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M9 20V14M5 17h4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18 14l-2 3h2l-1 3 3-4h-2l1-2h-1z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>惠泊云：以长期实践构建智慧停车核心能力</h1>
+          <div class="subtitle">
+            COMPANY PROFILE · TECHNOLOGY · EXPERIENCE · VALUE
+          </div>
+        </div>
+      </div>
+
+      <div class="header-message">
+        <strong>十年深耕，服务多城市、多客户、<b>多业态复杂场景</b></strong>
+        <span>自主研发 · 稳定交付 · 深度定制 · 持续运营</span>
+      </div>
+    </header>
+
+    <!-- ==================================================
+         顶部实力数据
+         请将 XX 替换为企业真实数据
+    =================================================== -->
+
+    <section class="metrics">
+
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle
+              cx="12"
+              cy="12"
+              r="8"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M12 7v5l3 2"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div class="metric-content">
+          <strong>10<b>年+</b></strong>
+          <span>系统稳定运行经验</span>
+          <small>持续升级与长期运营保障</small>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <circle
+              cx="12"
+              cy="9"
+              r="2.5"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+          </svg>
+        </div>
+
+        <div class="metric-content">
+          <strong class="placeholder">XX<b>座+</b></strong>
+          <span>业务覆盖城市</span>
+          <small>跨区域、多城市统一运营</small>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V8h6v12M13 20V4h6v16M3 20h18"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7.5 11h1M15.5 8h1"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div class="metric-content">
+          <strong class="placeholder">XX<b>家+</b></strong>
+          <span>政企及集团客户</span>
+          <small>城市、物业、医院、园区等</small>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect
+              x="3"
+              y="4"
+              width="18"
+              height="16"
+              rx="2"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M8 17V7h4a3 3 0 0 1 0 6H8"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div class="metric-content">
+          <strong class="placeholder">XX<b>个+</b></strong>
+          <span>智慧停车运营项目</span>
+          <small>覆盖路内、场库与充电站</small>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M5 7l5-4 6 5 5-4"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div class="metric-content">
+          <strong>持续<b>增效</b></strong>
+          <span>客户运营价值提升</span>
+          <small>降成本、提效率、促增收</small>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================================================
+         左侧：公司定位
+    =================================================== -->
+
+    <section class="profile-zone">
+      <div class="section-title">
+        <span class="section-number">01</span>
+        <i class="section-line"></i>
+        <h2>我们是谁</h2>
+        <span class="section-en">WHO WE ARE</span>
+      </div>
+
+      <div class="card profile-card">
+
+        <div class="profile-head">
+          <div class="profile-logo">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9 20V14M5 17h4"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M18 14l-2 3h2l-1 3 3-4h-2l1-2h-1z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+
+          <div>
+            <div class="profile-company">惠泊云智慧停车</div>
+            <div class="profile-position">
+              停充一体化数字运营解决方案提供商
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-slogan">
+          不仅交付一套停车系统，<br>
+          更帮助客户建立<strong>长期可运营的数字能力</strong>
+        </div>
+
+        <div class="profile-description">
+          惠泊云长期专注智慧停车、道路停车、充电运营及车位经营，
+          形成从自主设备、AI 边缘网关、平台软件、移动应用到运营服务的
+          全栈产品体系，并可根据不同客户的管理模式和业务场景进行深度定制。
+        </div>
+
+        <div class="capability-list">
+
+          <div class="capability-item">
+            <strong><i></i>全栈自主研发</strong>
+            <span>设备、网关、平台与应用统一演进</span>
+          </div>
+
+          <div class="capability-item">
+            <strong><i></i>复杂项目交付</strong>
+            <span>多城市、多业态、多厂家统一接入</span>
+          </div>
+
+          <div class="capability-item">
+            <strong><i></i>客户化定制</strong>
+            <span>业务流程、计费规则、接口深度适配</span>
+          </div>
+
+          <div class="capability-item">
+            <strong><i></i>长期运营保障</strong>
+            <span>持续升级、远程运维与服务响应</span>
+          </div>
+
+        </div>
+
+        <div class="service-mode">
+          <b>产品＋交付＋运营</b>
+          <span>从项目上线到持续增效</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================
+         中间：服务版图
+    =================================================== -->
+
+    <section class="map-zone">
+      <div class="section-title">
+        <span class="section-number">02</span>
+        <i class="section-line"></i>
+        <h2>多城市、多业态项目实践</h2>
+        <span class="section-en">SERVICE NETWORK</span>
+      </div>
+
+      <div class="card map-card">
+
+        <div class="map-head">
+          <div class="map-title">
+            <div class="map-title-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <circle
+                  cx="12"
+                  cy="9"
+                  r="2.5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <strong>惠泊云项目服务版图</strong>
+              <span>CROSS-CITY · MULTI-SCENARIO · UNIFIED OPERATION</span>
+            </div>
+          </div>
+
+          <div class="map-status">持续拓展中</div>
+        </div>
+
+        <div class="map-canvas">
+
+          <!-- 抽象地图，非精确地理边界 -->
+          <svg class="map-shape" viewBox="0 0 500 250">
+            <path
+              d="M52 92
+                 L83 58 L132 48 L171 29 L214 35
+                 L245 22 L287 33 L326 22 L363 46
+                 L405 48 L438 71 L458 105 L442 134
+                 L462 164 L426 186 L390 182 L368 211
+                 L326 218 L295 201 L263 220 L226 207
+                 L190 220 L161 195 L119 202 L93 176
+                 L54 169 L38 134 Z"
+            />
+
+            <path class="map-route" d="M102 105 C177 67 258 76 354 116"/>
+            <path class="map-route" d="M178 166 C249 137 319 145 415 184"/>
+            <path class="map-route" d="M239 91 C258 128 305 158 356 176"/>
+            <path class="map-route" d="M354 116 C381 142 390 162 415 184"/>
+          </svg>
+
+          <i class="city-node main city-1" data-city="城市项目"></i>
+          <i class="city-node city-2" data-city="物业集团"></i>
+          <i class="city-node city-3" data-city="医院项目"></i>
+          <i class="city-node city-4" data-city="产业园区"></i>
+          <i class="city-node city-5" data-city="商业综合体"></i>
+          <i class="city-node city-6" data-city="住宅社区"></i>
+          <i class="city-node city-7" data-city="交通枢纽"></i>
+          <i class="city-node city-8" data-city="道路停车"></i>
+          <i class="city-node city-9" data-city="充电运营"></i>
+          <i class="city-node city-10" data-city="政企客户"></i>
+
+          <div class="map-center"></div>
+        </div>
+
+        <div class="map-bottom">
+
+          <div class="map-data">
+            <strong>多城市统一平台</strong>
+            <span><b>统一监管</b> · 分级运营</span>
+          </div>
+
+          <div class="map-data">
+            <strong>多厂家设备兼容</strong>
+            <span><b>标准接口</b> · 快速集成</span>
+          </div>
+
+          <div class="map-data">
+            <strong>多业态业务适配</strong>
+            <span><b>规则配置</b> · 灵活定制</span>
+          </div>
+
+          <div class="map-data">
+            <strong>多角色协同管理</strong>
+            <span><b>集团</b> · 区域 · 项目 · 商户</span>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================
+         右侧：客户价值
+    =================================================== -->
+
+    <section class="value-zone">
+      <div class="section-title">
+        <span class="section-number">03</span>
+        <i class="section-line"></i>
+        <h2>为客户创造运营价值</h2>
+        <span class="section-en">CUSTOMER VALUE</span>
+      </div>
+
+      <div class="card value-card">
+
+        <div class="value-head">
+          <div class="value-head-title">
+            <div class="value-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M5 7l5-4 6 5 5-4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            运营价值提升模型
+          </div>
+
+          <span class="value-tag">效果可量化</span>
+        </div>
+
+        <!-- 建议根据真实案例替换为具体数据 -->
+        <div class="value-metrics">
+
+          <div class="value-metric">
+            <div class="value-metric-label">人工运营成本</div>
+            <div class="value-metric-number">
+              持续下降 <b>无人值守</b>
+            </div>
+            <div class="value-metric-desc">远程值守、移动处置、自动对账</div>
+          </div>
+
+          <div class="value-metric">
+            <div class="value-metric-label">车场通行效率</div>
+            <div class="value-metric-number">
+              持续提升 <b>快速通行</b>
+            </div>
+            <div class="value-metric-desc">本地计费、异常识别、快速放行</div>
+          </div>
+
+          <div class="value-metric">
+            <div class="value-metric-label">财务透明度</div>
+            <div class="value-metric-number">
+              全程在线 <b>可追溯</b>
+            </div>
+            <div class="value-metric-desc">订单、渠道、发票、分账统一管理</div>
+          </div>
+
+          <div class="value-metric">
+            <div class="value-metric-label">车位经营收益</div>
+            <div class="value-metric-number">
+              持续增长 <b>智能运营</b>
+            </div>
+            <div class="value-metric-desc">套餐创新、车位共享、渠道营销</div>
+          </div>
+
+        </div>
+
+        <div class="value-list">
+
+          <div class="value-item">
+            <div class="value-item-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 18h16M6 18V9h5v9M13 18V5h5v13"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M5 7l5-4 5 3 5-4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <strong>管理效率提升</strong>
+              <span>集团驾驶舱、远程值守、工单闭环与设备在线运维</span>
+            </div>
+          </div>
+
+          <div class="value-item">
+            <div class="value-item-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 20V8h6v12M13 20V4h6v16M3 20h18"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <strong>客户业务深度适配</strong>
+              <span>组织、流程、计费、结算和第三方系统按需定制</span>
+            </div>
+          </div>
+
+          <div class="value-item">
+            <div class="value-item-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 3l2.2 4.5L19 9l-3.5 3.4.8 4.8L12 15l-4.3 2.2.8-4.8L5 9l4.8-1.5L12 3z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+                <path
+                  d="M18 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <strong>数据驱动持续增收</strong>
+              <span>识别闲置资源、运营短板和套餐优化机会</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- <div class="value-conclusion">
+          <b>惠泊云的价值：</b>
+          将项目建设能力转化为客户长期的运营能力，
+          让系统稳定运行，更让停车资源持续创造价值。
+        </div> -->
+
+      </div>
+    </section>
+
+    <!-- ==================================================
+         底部：多业态案例
+    =================================================== -->
+
+    <section class="case-zone">
+      <!-- <div class="case-title">
+        经过多业态场景验证的智慧停车能力
+        <span>每一种业态，都有不同的业务逻辑与人性化解决方案</span>
+      </div> -->
+
+      <div class="case-grid">
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 20V9l8-5 8 5v11"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M8 20v-6h8v6M8 9h8"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+            <div class="case-name">城市级停车</div>
+          </div>
+          <div class="case-desc">路内、路外、充电资源统一监管和运营</div>
+          <div class="case-feature">城市停车一张网</div>
+        </div>
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 20V8h6v12M13 20V4h6v16M3 20h18"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+            <div class="case-name">大型物业集团</div>
+          </div>
+          <div class="case-desc">集团、区域、项目多层级运营和财务管控</div>
+          <div class="case-feature">集团化集中管理</div>
+        </div>
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 20V5h14v15M3 20h18"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M12 8v7M8.5 11.5h7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <div class="case-name">医院停车</div>
+          </div>
+          <div class="case-desc">职工、患者、急救及探视车辆差异化管理</div>
+          <div class="case-feature">高峰治理与绿色通道</div>
+        </div>
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 20V9h6v11M10 20V5h6v15M16 20v-8h4v8"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+            <div class="case-name">产业园区</div>
+          </div>
+          <div class="case-desc">企业、员工、访客和物流车辆协同管理</div>
+          <div class="case-feature">企业门户与统一结算</div>
+        </div>
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 9l2-5h12l2 5M5 9v10h14V9"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M3 9h18M9 19v-5h6v5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+            <div class="case-name">商业综合体</div>
+          </div>
+          <div class="case-desc">会员、商户、消费积分和停车优惠联动</div>
+          <div class="case-feature">停车促进商业消费</div>
+        </div>
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 20V9l8-5 8 5v11"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M8 20v-6h8v6"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+            <div class="case-name">住宅社区</div>
+          </div>
+          <div class="case-desc">产权车位、租赁车位和访客车位精细运营</div>
+          <div class="case-feature">人性化车位服务</div>
+        </div>
+
+        <div class="case-item">
+          <div class="case-head">
+            <div class="case-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="5"
+                  y="3"
+                  width="11"
+                  height="18"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M16 7h2l2 2v7a2 2 0 0 1-4 0v-3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M11 9l-2 4h2l-1 3 3-5h-2l1-2h-1z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+            <div class="case-name">停车＋充电</div>
+          </div>
+          <div class="case-desc">停车、充电、账户、订单和发票统一服务</div>
+          <div class="case-feature">停充业务一体化</div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

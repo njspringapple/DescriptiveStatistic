@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>粉笔板书 · 线性代数：矩阵的四个基本子空间</title>
+<style>
+:root{
+  --chalk:#f2f5ef; --chalk-dim:rgba(242,245,239,.72);
+  --y:#ffe9a3; --p:#ffb6cd; --c:#a9e5ff; --g:#b9f5ae;
+  --board:#1e4335;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:#2b2118;
+  font-family:"LXGW WenKai","霞鹜文楷","KaiTi","STKaiti","楷体",
+              "Comic Sans MS",cursive,"PingFang SC","Microsoft YaHei",sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px;
+  overflow:hidden;
+}
+.frame{
+  width:min(1180px,100%);flex:1;min-height:0;
+  border:16px solid #6d4a2a;border-radius:10px;
+  box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 4px #543619;
+  background:#5b3d21;position:relative;
+}
+.board{
+  position:absolute;inset:0;overflow:hidden;border-radius:2px;
+  background:
+    radial-gradient(120% 90% at 20% 10%,rgba(255,255,255,.06),transparent 60%),
+    radial-gradient(80% 70% at 85% 80%,rgba(255,255,255,.05),transparent 60%),
+    var(--board);
+}
+.board::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;
+  background:
+    radial-gradient(60% 22% at 30% 30%,#fff,transparent 70%),
+    radial-gradient(50% 18% at 70% 55%,#fff,transparent 70%),
+    radial-gradient(45% 14% at 45% 78%,#fff,transparent 70%);
+  filter:blur(6px);
+}
+.head{
+  position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+  padding:10px 22px 6px;color:var(--chalk-dim);font-size:14px;letter-spacing:1px;z-index:3;
+  border-bottom:1px dashed rgba(255,255,255,.16);
+}
+.content{
+  position:absolute;inset:44px 26px 44px 30px;overflow-y:auto;overflow-x:auto;
+  color:var(--chalk);font-size:clamp(15px,2.05vw,21px);line-height:1.85;z-index:2;
+  transition:opacity .35s,filter .35s;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent;
+}
+.content::-webkit-scrollbar{width:8px;height:8px}
+.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:8px}
+.content.fading{opacity:0;filter:blur(4px)}
+.tray{
+  position:absolute;left:0;right:0;bottom:0;height:14px;background:linear-gradient(#7a5530,#4d3319);
+  box-shadow:0 -3px 6px rgba(0,0,0,.35);z-index:4;
+}
+.atom{opacity:0;display:inline-block}
+.atom.shown{animation:chalkIn .2s ease-out forwards}
+@keyframes chalkIn{from{opacity:0;filter:blur(3px);transform:translateY(2px)}to{opacity:1;filter:blur(0);transform:none}}
+.line,.box,.matlabel,.cell,.sysline,.alab,.preline{
+  text-shadow:0 0 1px rgba(255,255,255,.55),0 0 7px rgba(255,255,255,.16);
+}
+.line{margin:4px 0;white-space:pre-wrap}
+.ctitle{font-size:1.35em;color:var(--y);margin:0 0 12px;letter-spacing:2px;
+        border-bottom:2px dashed rgba(255,233,163,.5);display:inline-block;padding-bottom:4px}
+.hl{color:var(--y)}
+.note{color:var(--c);font-size:.86em;opacity:.95}
+.cp{color:var(--p)} .cg{color:var(--g)} .cc{color:var(--c)} .cy{color:var(--y)}
+.gap{height:8px}
+.box{
+  display:inline-block;margin:10px 0;padding:6px 16px;color:var(--g);
+  border:2px dashed rgba(185,245,174,.65);border-radius:14px;
+}
+/* 等宽区块（画大图 / 表格） */
+.preblk{margin:10px 0;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+        font-size:.80em;line-height:1.55;white-space:pre;color:var(--chalk)}
+.preline{white-space:pre}
+/* 矩阵 */
+.rowwrap{display:flex;align-items:center;flex-wrap:wrap;gap:6px 4px;margin:10px 0}
+.matwrap{display:flex;align-items:center;gap:8px;margin:6px 10px 6px 0}
+.matlabel{white-space:pre}
+.matrix{display:flex;align-items:stretch}
+.brk{width:11px;border-top:3px solid var(--chalk);border-bottom:3px solid var(--chalk)}
+.brk.left{border-left:3px solid var(--chalk);border-radius:8px 0 0 8px}
+.brk.right{border-right:3px solid var(--chalk);border-radius:0 8px 8px 0}
+.matbody{display:flex;align-items:center;padding:5px 8px}
+.mgrid{display:grid;gap:2px 14px}
+.cell{min-width:1.7em;text-align:right;font-variant-numeric:tabular-nums}
+.vline{width:0;border-left:2px dashed rgba(255,255,255,.8);margin:0 12px;align-self:stretch}
+/* 箭头 */
+.arrowwrap{display:flex;flex-direction:column;align-items:center;margin:0 8px;min-width:110px}
+.alab{font-size:.74em;color:var(--p);white-space:nowrap;line-height:1.5}
+.aline{position:relative;width:100px;height:0;border-top:2px solid var(--chalk);margin:5px 0}
+.aline::after{content:"";position:absolute;right:-2px;top:-6px;border:6px solid transparent;border-left-color:var(--chalk)}
+/* 方程组 */
+.sys{display:flex;align-items:center;gap:10px;margin:10px 0 10px 14px}
+.brace{color:var(--chalk);line-height:.82;transform:translateY(-2px)}
+.sysline{white-space:pre;line-height:1.7}
+/* 粉笔与板擦 */
+.chalk{
+  position:absolute;width:12px;height:30px;border-radius:3px;z-index:6;pointer-events:none;
+  background:linear-gradient(#fff,#dfe6dc);box-shadow:0 2px 6px rgba(0,0,0,.4);
+  transform:translate(-9999px,-9999px) rotate(28deg);transition:transform .09s linear;opacity:0;
+}
+.chalk.on{opacity:1}
+.dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.85;z-index:5;pointer-events:none;animation:fall .8s ease-in forwards}
+@keyframes fall{to{transform:translate(4px,42px);opacity:0}}
+.eraser{
+  position:absolute;top:0;left:-160px;width:120px;height:100%;z-index:7;pointer-events:none;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.13),rgba(255,255,255,.02));
+  border-left:2px solid rgba(255,255,255,.15);border-right:2px solid rgba(255,255,255,.15);
+}
+.eraser.sweep{animation:sweep .55s linear}
+@keyframes sweep{0%{opacity:1;left:-160px}100%{opacity:1;left:100%}}
+.bar{width:min(1180px,100%);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+button{
+  font-family:inherit;font-size:14px;padding:7px 14px;border-radius:20px;cursor:pointer;
+  color:#f6efe2;background:#3d2b1a;border:1px solid #7a5530;transition:.15s;
+}
+button:hover{background:#57391f;transform:translateY(-1px)}
+button.act{background:#1e4335;border-color:#8fd6b6;color:#d9ffe9}
+.toc{width:min(1180px,100%);display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.toc button{font-size:12px;padding:5px 10px;white-space:nowrap;border-radius:14px;opacity:.7}
+.toc button.cur{opacity:1;background:#1e4335;border-color:#a9e5ff;color:#e7f7ff}
+input[type=range]{width:110px;accent-color:#8fd6b6}
+.lbl{color:#d9c9ae;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="board" id="board">
+    <div class="head"><span id="hleft">线性代数 · 四个基本子空间</span><span id="hright"></span></div>
+    <div class="content" id="content"></div>
+    <div class="chalk" id="chalk"></div>
+    <div class="eraser" id="eraser"></div>
+    <div class="tray"></div>
+  </div>
+</div>
+
+<div class="bar">
+  <button id="btnFirst">⏮ 从头</button>
+  <button id="btnPrev">◀ 上一页</button>
+  <button id="btnPlay">▶ 自动讲课</button>
+  <button id="btnNext">下一页 ▶</button>
+  <button id="btnRe">↻ 重写本页</button>
+  <span class="lbl">语速</span><input id="spd" type="range" min="0.5" max="2.5" step="0.1" value="1.2">
+  <button id="btnSnd">🔇 粉笔声</button>
+</div>
+<div class="toc" id="toc"></div>
+
+<script>
+/* ---------- 内容构造器 ---------- */
+const txt =(t,cls='')=>({type:'text',text:t,cls});
+const note=(t)=>({type:'text',text:t,cls:'note'});
+const title=(t)=>({type:'text',text:t,cls:'ctitle'});
+const box =(t)=>({type:'box',text:t});
+const sys =(lines)=>({type:'sys',lines});
+const pre =(lines)=>({type:'pre',lines});
+const mat =(rows,o={})=>({type:'matrix',rows,aug:o.aug??null,label:o.label||'',after:o.after||''});
+const arw =(top='',bot='')=>({type:'arrow',top,bot});
+const row =(...items)=>({type:'row',items});
+const gap =()=>({type:'gap'});
+
+/* ---------- 等宽排版小工具（CJK 记 2 格） ---------- */
+const CJK=/[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6\u3000-\u303F]/;
+function W(s){let n=0;for(const c of s)n+=CJK.test(c)?2:1;return n;}
+function padTo(s,w){return s+' '.repeat(Math.max(0,w-W(s)));}
+const HR='+'+'-'.repeat(21)+'+';
+const GAP=' '.repeat(18);
+const bxl=s=>'|'+padTo(' '+s,21)+'|';
+const mid=s=>padTo(s,18);
+const col4=(a,b,c,d)=>padTo(a,18)+padTo(b,14)+padTo(c,12)+d;
+
+/* ---------- 例矩阵 ---------- */
+const A =[['1','2','1','3','1'],['2','4','3','8','4'],['1','2','2','5','4']];
+const U1=[['1','2','1','3','1'],['0','0','1','2','2'],['0','0','1','2','3']];
+const U =[['1','2','1','3','1'],['0','0','1','2','2'],['0','0','0','0','1']];
+const R =[['1','2','0','1','0'],['0','0','1','2','0'],['0','0','0','0','1']];
+
+/* ---------- 板书内容（14 页） ---------- */
+const slides=[
+{nav:'引子',items:[
+  title('引子 · 矩阵 = 一次“降维坍缩”'),
+  txt('把一个 3×5 矩阵 A 看成一台机器：'),
+  box('输入 x ∈ ℝ⁵　⟶　输出 Ax ∈ ℝ³'),
+  txt('输入端 ℝ⁵ 里：有些方向被 [[压成 0]]，有些方向 [[原汁原味地干活]]；'),
+  txt('输出端 ℝ³ 里：有些位置 [[能被到达]]，有些位置 [[永远够不着]]。'),
+  gap(),
+  txt('把这四类方向各自收集成集合 ⇒'),
+  box('矩阵的 [[四个基本子空间]] （Four Fundamental Subspaces）'),
+  note('Gilbert Strang 最推崇的框架：理解线性代数的“一张大图”')
+]},
+
+{nav:'主角A',items:[
+  title('一 · 主角登场：A 是 3 行 5 列'),
+  mat(A,{label:'A ='}),
+  txt('[[列数 n = 5]] 决定输入维度　　[[行数 m = 3]] 决定输出维度'),
+  box('A : ℝ⁵ ⟶ ℝ³ ，  x ↦ Ax'),
+  note('Ax 其实是 A 的 5 个列向量、以 x 的 5 个分量为权重的线性组合'),
+  txt('要拆出四个子空间，第一步永远是：[[求秩 r]]。')
+]},
+
+{nav:'消元求秩',items:[
+  title('二 · 消元：把秩 r 揪出来'),
+  row(mat(A),arw('r₂ - 2r₁','r₃ - r₁'),mat(U1)),
+  row(mat(U1),arw('r₃ - r₂',''),mat(U,{after:'← 行阶梯形'})),
+  row(mat(U),arw('r₂-2r₃ ; r₁-r₃','r₁-r₂'),mat(R,{after:'← 行最简形 R'})),
+  box('非零行 3 个 ⇒ [[r(A) = 3]]，主元在第 [[1、3、5]] 列'),
+  note('自由列（非主元列）：第 2、4 列 —— 它们对应零空间的自由变量')
+]},
+
+{nav:'①列空间',items:[
+  title('三 · ① 列空间 C(A)　“能到达的地方”'),
+  txt('定义： C(A) = { Ax : x ∈ ℝ⁵ } = A 各列的一切线性组合','cg'),
+  txt('住在 [[输出空间 ℝ³]] 里　，　维数 = [[r = 3]]'),
+  txt('基：取 A 中 [[主元列]]（第 1、3、5 列）的 [[原始]] 列向量：'),
+  row(mat([['1'],['2'],['1']]),mat([['1'],['3'],['2']]),mat([['1'],['4'],['4']])),
+  box('dim C(A) = 3 = m ⇒ C(A) 就是整个 ℝ³'),
+  note('切记取 A 的原列，不要取 R 的列 —— 行变换会改变列空间！')
+]},
+
+{nav:'②零空间',items:[
+  title('四 · ② 零空间 N(A)　“被压成 0 的方向”'),
+  txt('定义： N(A) = { x ∈ ℝ⁵ : Ax = 0 }','cg'),
+  txt('住在 [[输入空间 ℝ⁵]] 里　，　维数 = [[n - r = 5 - 3 = 2]]'),
+  txt('由 R 读出：自由变量 x₂、x₄ 各取一次 1，回代得基础解系：'),
+  row(mat([['-2'],['1'],['0'],['0'],['0']],{label:'ξ₁ ='}),
+      mat([['-1'],['0'],['-2'],['1'],['0']],{label:'ξ₂ ='})),
+  box('N(A) 是 ℝ⁵ 中一整张 [[2 维平面]]，被 A 碾成一个原点'),
+  note('验算： A ξ₁ = -2·col₁ + 1·col₂ = 0 ✓')
+]},
+
+{nav:'③行空间',items:[
+  title('五 · ③ 行空间 C(Aᵀ)　“真正干活的方向”'),
+  txt('定义：A 各行的一切线性组合，记 C(Aᵀ) 或 R(A)','cg'),
+  txt('住在 [[输入空间 ℝ⁵]] 里　，　维数 = [[r = 3]]'),
+  txt('基：直接取行最简形 R 的 3 个非零行（行变换 [[不改变]] 行空间）：'),
+  mat(R,{label:'R ='}),
+  box('行空间 (3维) + 零空间 (2维) = 5 = n　【秩-零化度定理】'),
+  note('行空间的维数 = 列空间的维数 = r，这就是“行秩 = 列秩”')
+]},
+
+{nav:'④左零空间',items:[
+  title('六 · ④ 左零空间 N(Aᵀ)　输出端的盲区'),
+  txt('定义： N(Aᵀ) = { y ∈ ℝ³ : Aᵀy = 0 }','cg'),
+  txt('两边转置： [[yᵀA = 0ᵀ]] —— y 是乘在 A [[左边]] 的，故名“左零空间”'),
+  note('不是“左邻空间”，是 Left Nullspace（左·零·空间）'),
+  txt('住在 [[输出空间 ℝ³]] 里　，　维数 = [[m - r = 3 - 3 = 0]]'),
+  box('本例行满秩 ⇒ N(Aᵀ) = { 0 }，输出空间一点没浪费'),
+  txt('它的含义：y 是“对方程组做加权求和后恒等于 0”的那些组合系数。')
+]},
+
+{nav:'维度表',items:[
+  title('七 · 四个空间的“身份证”'),
+  pre([
+    col4('子空间','所在空间','维数','本例'),
+    '-'.repeat(50),
+    col4('列空间 C(A)','R^3 (输出)','r','3'),
+    col4('零空间 N(A)','R^5 (输入)','n - r','2'),
+    col4('行空间 C(A^T)','R^5 (输入)','r','3'),
+    col4('左零空间 N(A^T)','R^3 (输出)','m - r','0')
+  ]),
+  box('四个维数只由两个数字决定： [[m、n 和秩 r]]'),
+  note('输入端两块相加 = n ；输出端两块相加 = m')
+]},
+
+{nav:'正交',items:[
+  title('八 · 两对“垂直搭档”'),
+  txt('输入空间 ℝ⁵ 被劈成互相垂直的两半：'),
+  box('行空间(3维)  ⊥  零空间(2维)　，　3 + 2 = 5'),
+  txt('为什么垂直？ Ax = 0 逐行写开就是：'),
+  txt('　（A 的第 i 行）· x = 0　⇒　x 与每一行都垂直','cc'),
+  gap(),
+  txt('输出空间 ℝ³ 同样被劈成两半：'),
+  box('列空间(3维)  ⊥  左零空间(0维)　，　3 + 0 = 3'),
+  note('术语：它们互为 [[正交补]]，任一向量可唯一分解成两部分之和')
+]},
+
+{nav:'大图',items:[
+  title('九 · 斯特朗大图（一张图记住全部）'),
+  pre([
+    padTo('输入空间 R^5',41)+'输出空间 R^3',
+    HR+GAP+HR,
+    bxl('行空间   dim = 3')+mid('  一一对应 --->')+bxl('列空间   dim = 3'),
+    bxl('(真正干活的部分)')+GAP+bxl('(实际能到达)'),
+    HR+GAP+HR,
+    bxl('零空间   dim = 2')+mid('  全部归零 --> 0')+bxl('左零空间 dim = 0'),
+    bxl('(被压成 0)')+GAP+bxl('(够不着的盲区)'),
+    HR+GAP+HR
+  ]),
+  box('左右两个大盒子内部都是 [[正交切分]]，中间由 A 连接'),
+  note('本例左零空间只有零向量，所以右下格是空的')
+]},
+
+{nav:'向量命运',items:[
+  title('十 · 一个输入向量的命运'),
+  txt('任取 x ∈ ℝ⁵，它可唯一分解为：'),
+  box('x = x_行 + x_零　（前者在行空间，后者在零空间）'),
+  txt('作用一次： A x = A x_行 + A x_零 = A x_行 + [[0]]'),
+  gap(),
+  txt('结论：'),
+  txt('• 零空间那一份 —— 被 [[彻底删除]]，信息永久丢失','cp'),
+  txt('• 行空间那一份 —— 与列空间 [[一一对应]]（可逆！）','cp'),
+  note('正因为“行空间 → 列空间”可逆，才有伪逆 A⁺、最小二乘、SVD')
+]},
+
+{nav:'例B',items:[
+  title('十一 · 左零空间不为 0 长什么样'),
+  mat([['1','2'],['2','4'],['3','6']],{label:'B ='}),
+  txt('m = 3, n = 2，第 2 列 = 2×第 1 列 ⇒ [[r = 1]]'),
+  txt('列空间：ℝ³ 中的一条 [[直线]] span{ (1,2,3)ᵀ }，维数 1'),
+  txt('左零空间：解 Bᵀy = 0 ⇒ [[y₁ + 2y₂ + 3y₃ = 0]]，维数 m - r = 2'),
+  row(mat([['-2'],['1'],['0']],{label:'η₁ ='}),mat([['-3'],['0'],['1']],{label:'η₂ ='})),
+  box('ℝ³ = 直线(列空间) ⊕ 平面(左零空间)，两者垂直'),
+  note('左零空间 ≠ {0} ⇒ 一定存在 b 使 Bx = b 无解')
+]},
+
+{nav:'解方程',items:[
+  title('十二 · 四空间怎样回答“解方程”'),
+  txt('① Ax = b 有解 ⟺ b ∈ [[列空间]] ⟺ r(A) = r(A|b)'),
+  txt('② 解唯一 ⟺ [[零空间]] = {0} ⟺ r = n（列满秩）'),
+  txt('③ 通解 = 一个特解 + [[零空间]]中任意向量（解的结构定理）'),
+  txt('④ 对一切 b 都有解 ⟺ [[左零空间]] = {0} ⟺ r = m（行满秩）'),
+  box('本例 r = m = 3 < n = 5 ⇒ 任意 b 都有解，且解有 [[2 维自由度]]'),
+  note('回到上一讲：增广矩阵消元，其实就是在同时勘测这四个空间')
+]},
+
+{nav:'总结',items:[
+  title('十三 · 一句话记住'),
+  box('行空间 ⊕ 零空间 = 输入空间 ℝⁿ'),
+  box('列空间 ⊕ 左零空间 = 输出空间 ℝᵐ'),
+  txt('维数账本： r + (n - r) = n　；　r + (m - r) = m'),
+  txt('四个空间共用同一个数字 —— [[秩 r]]，它是矩阵的灵魂。'),
+  gap(),
+  txt('口诀：','cy'),
+  txt('　输入端：一半干活（行空间），一半躺平（零空间）'),
+  txt('　输出端：一半可达（列空间），一半盲区（左零空间）'),
+  note('下一步可以问：SVD 如何一次性给出这四个空间的标准正交基 😊')
+]}
+];
+
+/* ---------- 渲染 ---------- */
+const $=id=>document.getElementById(id);
+const contentEl=$('content'),boardEl=$('board'),chalkEl=$('chalk'),eraserEl=$('eraser');
+const el=(t,c)=>{const d=document.createElement(t);if(c)d.className=c;return d;};
+function pushChars(parent,text,atoms,extra=''){
+  const parts=String(text).split(/(\[\[.*?\]\])/g);
+  for(const p of parts){ if(!p)continue;
+    let hl=false,s=p;
+    if(p.startsWith('[[')&&p.endsWith(']]')){hl=true;s=p.slice(2,-2);}
+    for(const ch of s){
+      const sp=el('span','atom ch'+(hl?' hl':'')+(extra?' '+extra:''));
+      sp.textContent=(ch===' ')?'\u00A0':ch;
+      if(ch===' ')sp.dataset.fast=1;
+      parent.appendChild(sp);atoms.push(sp);
+    }
+  }
+}
+function build(item){
+  const atoms=[];
+  if(item.type==='gap'){return{el:el('div','gap'),atoms:[]};}
+  if(item.type==='text'){const d=el('div','line '+(item.cls||''));pushChars(d,item.text,atoms);return{el:d,atoms};}
+  if(item.type==='box'){const d=el('div','box');pushChars(d,item.text,atoms);return{el:d,atoms};}
+  if(item.type==='pre'){
+    const d=el('div','preblk');
+    for(const L of item.lines){const r=el('div','preline');pushChars(r,L,atoms);d.appendChild(r);}
+    return{el:d,atoms};
+  }
+  if(item.type==='sys'){
+    const d=el('div','sys');const b=el('div','brace atom');b.textContent='{';
+    b.style.fontSize=(1.0+0.95*item.lines.length)+'em';
+    const ls=el('div','syslines');const cells=[];
+    for(const L of item.lines){const r=el('div','sysline');const a=[];pushChars(r,L,a);ls.appendChild(r);cells.push(...a);}
+    d.append(b,ls);atoms.push(b,...cells);return{el:d,atoms};
+  }
+  if(item.type==='arrow'){
+    const d=el('div','arrowwrap');
+    const t=el('div','alab'),ln=el('div','aline atom'),bt=el('div','alab');
+    const at=[],ab=[];pushChars(t,item.top||'\u00A0',at);pushChars(bt,item.bot||'\u00A0',ab);
+    d.append(t,ln,bt);atoms.push(...at,ln,...ab);return{el:d,atoms};
+  }
+  if(item.type==='matrix'){
+    const wrap=el('div','matwrap');
+    if(item.label){const lab=el('div','matlabel');pushChars(lab,item.label,atoms);wrap.appendChild(lab);}
+    const mx=el('div','matrix'),lb=el('div','brk left atom'),rb=el('div','brk right atom'),body=el('div','matbody');
+    const rows=item.rows,Rn=rows.length,C=rows[0].length,aug=(item.aug==null?C:item.aug);
+    const grid=[],g1=el('div','mgrid');g1.style.gridTemplateColumns=`repeat(${aug},auto)`;
+    for(let i=0;i<Rn;i++)grid.push([]);
+    for(let i=0;i<Rn;i++)for(let j=0;j<aug;j++){const c=el('div','cell atom');c.textContent=rows[i][j];g1.appendChild(c);grid[i][j]=c;}
+    body.appendChild(g1);let vl=null;
+    if(aug<C){
+      vl=el('div','vline atom');body.appendChild(vl);
+      const g2=el('div','mgrid');g2.style.gridTemplateColumns=`repeat(${C-aug},auto)`;
+      for(let i=0;i<Rn;i++)for(let j=aug;j<C;j++){const c=el('div','cell atom');c.textContent=rows[i][j];g2.appendChild(c);grid[i][j]=c;}
+      body.appendChild(g2);
+    }
+    mx.append(lb,body,rb);wrap.appendChild(mx);
+    atoms.push(lb,rb);if(vl)atoms.push(vl);
+    for(let i=0;i<Rn;i++)for(let j=0;j<C;j++)atoms.push(grid[i][j]);
+    if(item.after){const af=el('div','matlabel');pushChars(af,item.after,atoms);wrap.appendChild(af);}
+    return{el:wrap,atoms};
+  }
+  if(item.type==='row'){
+    const d=el('div','rowwrap');
+    for(const it of item.items){const r=build(it);d.appendChild(r.el);atoms.push(...r.atoms);}
+    return{el:d,atoms};
+  }
+  return{el:el('div'),atoms:[]};
+}
+
+/* ---------- 动画引擎 ---------- */
+let idx=0,token=0,animating=false,playing=false,sound=false,speed=1.2,actx=null;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function tick(){
+  if(!sound)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const n=0.03,buf=actx.createBuffer(1,actx.sampleRate*n,actx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3)*0.25;
+    const s=actx.createBufferSource();s.buffer=buf;
+    const f=actx.createBiquadFilter();f.type='bandpass';f.frequency.value=2600+Math.random()*900;
+    const g=actx.createGain();g.gain.value=0.35;
+    s.connect(f);f.connect(g);g.connect(actx.destination);s.start();
+  }catch(e){}
+}
+function moveChalk(a){
+  const r=a.getBoundingClientRect(),b=boardEl.getBoundingClientRect();
+  if(!r.width&&!r.height)return;
+  const x=r.right-b.left,y=r.bottom-b.top;
+  chalkEl.style.transform=`translate(${x}px,${y-26}px) rotate(28deg)`;
+  if(Math.random()<0.16){
+    const d=el('div','dust');d.style.left=x+'px';d.style.top=y+'px';
+    boardEl.appendChild(d);setTimeout(()=>d.remove(),850);
+  }
+}
+function delayOf(a){
+  if(a.dataset.fast)return 8/speed;
+  if(a.classList.contains('ch'))return 30/speed;
+  return 50/speed;
+}
+async function erase(){
+  eraserEl.classList.remove('sweep');void eraserEl.offsetWidth;eraserEl.classList.add('sweep');
+  contentEl.classList.add('fading');
+  await sleep(500);
+  contentEl.innerHTML='';contentEl.classList.remove('fading');
+  eraserEl.classList.remove('sweep');
+}
+function renderStatic(i){
+  contentEl.innerHTML='';
+  for(const it of slides[i].items){const r=build(it);contentEl.appendChild(r.el);
+    r.atoms.forEach(a=>{a.classList.add('shown');a.style.animation='none';a.style.opacity=1;});}
+}
+async function show(i,animate=true,doErase=true){
+  token++;const my=token;idx=(i+slides.length)%slides.length;
+  updateUI();
+  if(doErase)await erase(); else contentEl.innerHTML='';
+  if(my!==token)return;
+  if(!animate){renderStatic(idx);return;}
+  const groups=[];
+  for(const it of slides[idx].items){const r=build(it);contentEl.appendChild(r.el);groups.push(r);}
+  animating=true;chalkEl.classList.add('on');
+  for(const g of groups){
+    if(my!==token)return;
+    g.el.scrollIntoView({block:'nearest',behavior:'smooth'});
+    for(const a of g.atoms){
+      if(my!==token)return;
+      a.classList.add('shown');moveChalk(a);
+      if(!a.dataset.fast&&Math.random()<0.35)tick();
+      await sleep(delayOf(a));
+    }
+    await sleep(230/speed);
+  }
+  animating=false;chalkEl.classList.remove('on');
+  if(playing&&my===token){
+    await sleep(1500/speed);
+    if(my!==token)return;
+    if(idx<slides.length-1)show(idx+1);else setPlay(false);
+  }
+}
+function skip(){token++;animating=false;chalkEl.classList.remove('on');renderStatic(idx);}
+function next(){if(animating){skip();if(playing)setTimeout(()=>show(idx+1),600);return;}
+  if(idx<slides.length-1)show(idx+1);else setPlay(false);}
+function prev(){if(idx>0)show(idx-1);}
+function setPlay(v){playing=v;$('btnPlay').textContent=v?'⏸ 暂停':'▶ 自动讲课';
+  $('btnPlay').classList.toggle('act',v);if(v&&!animating)show(idx);}
+
+/* ---------- UI ---------- */
+const toc=$('toc');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'.'+s.nav;
+  b.onclick=()=>{setPlay(false);show(i);};toc.appendChild(b);});
+function updateUI(){
+  $('hright').textContent=`第 ${idx+1} / ${slides.length} 页　—　四个基本子空间`;
+  [...toc.children].forEach((b,i)=>b.classList.toggle('cur',i===idx));
+  toc.children[idx].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+}
+$('btnNext').onclick=next;
+$('btnPrev').onclick=()=>{setPlay(false);prev();};
+$('btnFirst').onclick=()=>{setPlay(false);show(0);};
+$('btnRe').onclick=()=>{show(idx,true,true);};
+$('btnPlay').onclick=()=>setPlay(!playing);
+$('btnSnd').onclick=e=>{sound=!sound;e.target.textContent=(sound?'🔊':'🔇')+' 粉笔声';e.target.classList.toggle('act',sound);};
+$('spd').oninput=e=>speed=parseFloat(e.target.value);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+  if(e.key==='ArrowLeft'){setPlay(false);prev();}
+});
+show(0,true,false);
+</script>
+</body>
+</html>

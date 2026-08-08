@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧车位运营管理 · 千人千面</title>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 20% 25%, rgba(24, 112, 255, .14), transparent 36%),
+    radial-gradient(circle at 82% 20%, rgba(126, 72, 255, .12), transparent 30%),
+    radial-gradient(circle at 60% 85%, rgba(0, 200, 190, .08), transparent 32%),
+    linear-gradient(135deg, #061224 0%, #08182e 48%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, transparent 2%, #000 17%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 2%, #000 17%, #000 90%, transparent);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ================================
+   标题
+================================ */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #22cfa6);
+  box-shadow: 0 8px 28px rgba(30, 180, 190, .28);
+}
+
+.logo svg { width: 30px; height: 30px; }
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 2px;
+  background: linear-gradient(180deg, #ffffff 30%, #bfe4ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #64a8d1;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.feature-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature {
+  padding: 8px 13px;
+  border: 1px solid rgba(63, 177, 246, .24);
+  border-radius: 18px;
+  color: #a9d8ef;
+  font-size: 11px;
+  white-space: nowrap;
+  background: rgba(10, 46, 79, .55);
+}
+
+.feature b { color: #4be4ff; margin-right: 5px; }
+
+/* ================================
+   分区标签
+================================ */
+
+.section-label {
+  position: absolute;
+  z-index: 5;
+  color: #77a8c7;
+  font-size: 11px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.section-label::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 2px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #28b6ff, #42e8ee);
+}
+
+.section-label i {
+  margin-left: 10px;
+  font-style: normal;
+  color: #4d7893;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+}
+
+.label-persona { left: 48px; top: 112px; }
+.label-engine { left: 48px; top: 370px; }
+.label-loop { left: 48px; top: 628px; }
+
+/* ================================
+   客群方案卡
+================================ */
+
+.persona-grid {
+  position: absolute;
+  z-index: 3;
+  left: 48px;
+  top: 140px;
+  width: 1504px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+}
+
+.persona {
+  position: relative;
+  height: 208px;
+  padding: 13px 15px 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(67, 169, 239, .25);
+  background: linear-gradient(150deg, rgba(16, 50, 85, .90), rgba(7, 25, 48, .92));
+  box-shadow: 0 16px 40px rgba(0, 4, 16, .26), inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+.persona::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 0;
+  height: 1px;
+  opacity: .65;
+  background: linear-gradient(90deg, transparent, var(--ac, #55dafa), transparent);
+}
+
+.persona-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.persona-avatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--grad, linear-gradient(135deg, #198dff, #22cfe3));
+  box-shadow: 0 5px 14px rgba(0, 90, 200, .25);
+}
+
+.persona-avatar svg { width: 19px; height: 19px; }
+
+.persona-name {
+  color: #ecf8ff;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.persona-scene {
+  margin-top: 3px;
+  color: #6f9cb8;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.persona-tag {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 9px;
+  font-size: 9px;
+  white-space: nowrap;
+  color: var(--ac, #6be1ff);
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .09);
+}
+
+.persona ul {
+  list-style: none;
+  margin: 11px 0 0;
+  padding: 0;
+}
+
+.persona li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #9fb7ca;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.persona li b { color: #dceefa; font-weight: 700; }
+
+.mk {
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--ac, #3be3c2);
+  background: rgba(255, 255, 255, .06);
+}
+
+.mk-star {
+  color: #ffcf6e;
+  background: rgba(255, 184, 66, .14);
+}
+
+.innov {
+  margin-left: 5px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  color: #ffcf6e;
+  font-size: 8px;
+  background: rgba(255, 184, 66, .12);
+  border: 1px solid rgba(255, 194, 92, .28);
+  white-space: nowrap;
+}
+
+.p-owner { --ac: #4fa8ff; --grad: linear-gradient(135deg, #2f8bff, #2b5be0); }
+.p-white { --ac: #3fe0d8; --grad: linear-gradient(135deg, #17b8c9, #22dfa6); }
+.p-shop  { --ac: #ffb35c; --grad: linear-gradient(135deg, #ff9a3d, #ff6d5a); }
+.p-corp  { --ac: #b48cff; --grad: linear-gradient(135deg, #8a5cff, #c46bff); }
+
+/* ================================
+   能力引擎
+================================ */
+
+.engine-grid {
+  position: absolute;
+  z-index: 3;
+  left: 48px;
+  top: 398px;
+  width: 1504px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+.engine {
+  position: relative;
+  height: 208px;
+  padding: 14px 12px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(52, 170, 210, .22);
+  background: linear-gradient(160deg, rgba(11, 52, 82, .68), rgba(8, 27, 52, .93));
+  box-shadow: 0 14px 34px rgba(0, 4, 16, .24);
+}
+
+.engine::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 0;
+  height: 1px;
+  opacity: .55;
+  background: linear-gradient(90deg, transparent, #46c8f0, transparent);
+}
+
+.engine-icon {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 9px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #5fd8ff;
+  background: rgba(38, 158, 224, .13);
+}
+
+.engine-icon svg { width: 21px; height: 21px; }
+
+.engine-name {
+  color: #e2f4ff;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.engine-en {
+  margin-top: 3px;
+  color: #4d7893;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.engine ul {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.engine li {
+  position: relative;
+  padding-left: 12px;
+  margin-bottom: 7px;
+  color: #8aa8bd;
+  font-size: 9.5px;
+  line-height: 1.45;
+}
+
+.engine li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #2fb7ff, #3ee6c5);
+}
+
+.engine li b { color: #c8e6f5; font-weight: 700; }
+
+.engine li .innov { margin-left: 3px; }
+
+.engine-ai {
+  border-color: rgba(62, 230, 197, .38);
+  background:
+    radial-gradient(circle at 70% 20%, rgba(46, 224, 184, .13), transparent 55%),
+    linear-gradient(160deg, rgba(12, 66, 74, .70), rgba(8, 27, 52, .93));
+}
+
+.engine-ai .engine-icon {
+  color: #4beec9;
+  background: rgba(34, 191, 156, .14);
+}
+
+/* ================================
+   收益闭环
+================================ */
+
+.loop-wrap {
+  position: absolute;
+  z-index: 3;
+  left: 48px;
+  top: 656px;
+  width: 1090px;
+  height: 176px;
+  padding: 40px 20px 0;
+  border-radius: 14px;
+  border: 1px solid rgba(67, 169, 239, .22);
+  background: rgba(6, 22, 43, .80);
+  box-shadow: 0 16px 40px rgba(0, 4, 16, .26);
+}
+
+.loop-flow {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0;
+}
+
+.loop-node {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 148px;
+  height: 92px;
+  padding: 12px 8px 0;
+  text-align: center;
+  border-radius: 11px;
+  border: 1px solid rgba(63, 181, 226, .28);
+  background: linear-gradient(160deg, rgba(14, 60, 96, .85), rgba(8, 27, 52, .95));
+}
+
+.loop-num {
+  position: absolute;
+  left: 50%;
+  top: -11px;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 900;
+  color: #06202f;
+  background: linear-gradient(135deg, #38cdfa, #3ee6c5);
+  box-shadow: 0 0 12px rgba(62, 214, 236, .45);
+}
+
+.loop-name {
+  margin-top: 6px;
+  color: #dff3ff;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.loop-desc {
+  margin-top: 6px;
+  color: #6d95ad;
+  font-size: 8.5px;
+  line-height: 1.5;
+}
+
+.loop-arrow {
+  flex: 1;
+  align-self: center;
+  height: 2px;
+  position: relative;
+  margin: 0 2px;
+  background: linear-gradient(90deg, rgba(56, 205, 250, .15), rgba(62, 230, 197, .75));
+}
+
+.loop-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -3.5px;
+  border-left: 7px solid #3ee6c5;
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+}
+
+.loop-return {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  bottom: 14px;
+  height: 18px;
+  border: 1px dashed rgba(62, 230, 197, .45);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.loop-return::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -7px;
+  border-bottom: 8px solid rgba(62, 230, 197, .85);
+  border-left: 4.5px solid transparent;
+  border-right: 4.5px solid transparent;
+}
+
+.loop-return-label {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  padding: 2px 12px;
+  border-radius: 9px;
+  color: #46e0c0;
+  font-size: 8.5px;
+  letter-spacing: 2px;
+  background: #071e33;
+  border: 1px solid rgba(62, 230, 197, .35);
+  white-space: nowrap;
+}
+
+/* ================================
+   价值看板
+================================ */
+
+.roi-card {
+  position: absolute;
+  z-index: 3;
+  left: 1152px;
+  top: 656px;
+  width: 400px;
+  height: 176px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(62, 230, 197, .35);
+  background:
+    radial-gradient(circle at 80% 15%, rgba(46, 224, 184, .12), transparent 55%),
+    linear-gradient(150deg, rgba(12, 66, 74, .72), rgba(8, 27, 52, .95));
+  box-shadow: 0 16px 40px rgba(0, 4, 16, .28), 0 0 34px rgba(46, 210, 178, .08);
+}
+
+.roi-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d9fbf1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.roi-title .icon-s {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #06202f;
+  background: linear-gradient(135deg, #38cdfa, #3ee6c5);
+}
+
+.roi-title .icon-s svg { width: 15px; height: 15px; }
+
+.roi-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.roi-item {
+  height: 50px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(63, 181, 226, .18);
+  background: rgba(7, 36, 60, .65);
+}
+
+.roi-k {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cdeff8;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.roi-up { color: #3ee6c5; font-weight: 900; font-size: 12px; }
+.roi-down { color: #5fb6ff; font-weight: 900; font-size: 12px; }
+
+.roi-v {
+  margin-top: 4px;
+  color: #6d9aa8;
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+/* ================================
+   页脚
+================================ */
+
+.footer {
+  position: absolute;
+  right: 49px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #557d98;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.footer-left {
+  position: absolute;
+  left: 50px;
+  bottom: 20px;
+  color: #557d98;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.footer-left b { color: #ffcf6e; font-weight: 700; }
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3be3c2;
+  box-shadow: 0 0 8px #3be3c2;
+  animation: dotPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+@media print {
+  html, body { width: 1600px; height: 900px; }
+  #stage { transform: none !important; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.9"/>
+            <path d="M9 16V8h3.2a2.6 2.6 0 1 1 0 5.2H9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <h1>智慧车位运营管理 · 千人千面的人性化方案</h1>
+          <div class="subtitle">SMART PARKING SPACE OPERATION · PERSONA-BASED SOLUTIONS</div>
+        </div>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature"><b>01</b>客群分层</div>
+        <div class="feature"><b>02</b>套餐引擎</div>
+        <div class="feature"><b>03</b>全渠道营销</div>
+        <div class="feature"><b>04</b>自动分账</div>
+        <div class="feature"><b>05</b>智能增收</div>
+      </div>
+    </header>
+
+    <!-- 分区标签 -->
+    <div class="section-label label-persona">以人为本 · 四类客群 四套方案<i>同一个车位，读懂每一种停车需求</i></div>
+    <div class="section-label label-engine">运营能力引擎 · 六大功能模块<i>支撑所有方案灵活组合的数字化底座</i></div>
+    <div class="section-label label-loop">数据驱动 · 收益提升闭环<i>从数字化建档到动态调优的运营飞轮</i></div>
+
+    <!-- ==================================================
+         四类客群
+    =================================================== -->
+
+    <div class="persona-grid">
+
+      <!-- 业主·长租家庭 -->
+      <section class="persona p-owner">
+        <div class="persona-head">
+          <div class="persona-avatar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9.5 20v-5h5v5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="persona-name">业主 · 长租家庭</div>
+            <div class="persona-scene">产权车位 / 住宅长租</div>
+          </div>
+          <span class="persona-tag">稳定省心</span>
+        </div>
+
+        <ul>
+          <li><i class="mk">✓</i><div><b>包年包月</b> · 时间阶梯优惠，租期越长越省</div></li>
+          <li><i class="mk">✓</i><div><b>一位多车 / 多位多车</b>精准计费，多车附加费透明</div></li>
+          <li><i class="mk">✓</i><div>车位<b>转让 / 临时暂停</b>，手机自助一键办理</div></li>
+          <li><i class="mk mk-star">★</i><div>闲时<b>委托租赁·共享</b>，车位躺着增收<span class="innov">创新</span></div></li>
+        </ul>
+      </section>
+
+      <!-- 白领·上班族 -->
+      <section class="persona p-white">
+        <div class="persona-head">
+          <div class="persona-avatar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="4" y="7" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="persona-name">白领 · 上班族</div>
+            <div class="persona-scene">错峰通勤 / 弹性停放</div>
+          </div>
+          <span class="persona-tag">灵活实惠</span>
+        </div>
+
+        <ul>
+          <li><i class="mk">✓</i><div><b>分时共享</b>：白天办公 / 夜间回家 / 周末停放</div></li>
+          <li><i class="mk">✓</i><div><b>储值 / 时长套餐</b>：一次性 或 周期自动恢复</div></li>
+          <li><i class="mk">✓</i><div><b>优惠认证</b>：同一套餐，不同人群差异化价格</div></li>
+          <li><i class="mk mk-star">★</i><div><b>AI 错峰撮合</b>：闲置时段智能匹配需求<span class="innov">创新</span></div></li>
+        </ul>
+      </section>
+
+      <!-- 商户·访客 -->
+      <section class="persona p-shop">
+        <div class="persona-head">
+          <div class="persona-avatar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 9l1.5-5h13L20 9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M4 9a2.6 2.6 0 0 0 5.3 0A2.6 2.6 0 0 0 14.7 9 2.6 2.6 0 0 0 20 9M5.5 12v8h13v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="persona-name">商户 · 访客</div>
+            <div class="persona-scene">商铺经营 / 临停到访</div>
+          </div>
+          <span class="persona-tag">体验引流</span>
+        </div>
+
+        <ul>
+          <li><i class="mk">✓</i><div><b>商铺车位 / 访客车位</b>人性化预约与管理</div></li>
+          <li><i class="mk">✓</i><div><b>抖音 / 美团团购券</b>销售·到场核销，为车场引流</div></li>
+          <li><i class="mk">✓</i><div><b>超时 / 超容</b>独立计费，账单分科目清晰无争议</div></li>
+          <li><i class="mk mk-star">★</i><div><b>商家停车券·消费减免</b>联动经营<span class="innov">创新</span></div></li>
+        </ul>
+      </section>
+
+      <!-- 企业客户 -->
+      <section class="persona p-corp">
+        <div class="persona-head">
+          <div class="persona-avatar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 20V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v15M14 9h5a1 1 0 0 1 1 1v10M3 20h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 8h2M7 12h2M7 16h2M17 13h1M17 16.5h1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="persona-name">企业客户</div>
+            <div class="persona-scene">批量租赁 / 单位车队</div>
+          </div>
+          <span class="persona-tag">对公结算</span>
+        </div>
+
+        <ul>
+          <li><i class="mk">✓</i><div><b>批量租赁 / 产权车位</b>精细化管理</div></li>
+          <li><i class="mk">✓</i><div><b>企业管理端口</b>：管理员自主分配企业车辆</div></li>
+          <li><i class="mk">✓</i><div>额外停车费<b>企业统一结算</b>，员工零垫付</div></li>
+          <li><i class="mk mk-star">★</i><div><b>在线电子合同＋电子发票</b>全程无纸化<span class="innov">创新</span></div></li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- ==================================================
+         六大能力引擎
+    =================================================== -->
+
+    <div class="engine-grid">
+
+      <section class="engine">
+        <div class="engine-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M17 14v6M14 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="engine-name">车位数字底座</div>
+        <div class="engine-en">Digital Asset Base</div>
+        <ul>
+          <li><b>一位一档</b>：自走 / 机械、产权 / 公共分类建档</li>
+          <li>电子地图<b>可视化</b>管理，一位一价</li>
+          <li><b>在线电子合同</b>，签约留痕可追溯</li>
+        </ul>
+      </section>
+
+      <section class="engine">
+        <div class="engine-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M20 7L12 3 4 7v10l8 4 8-4V7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="engine-name">多元套餐引擎</div>
+        <div class="engine-en">Plan Engine</div>
+        <ul>
+          <li>包年包月 · <b>时间阶梯优惠</b></li>
+          <li><b>分时共享</b> / 储值时长（周期恢复）</li>
+          <li><b>优惠认证</b>：一套餐·多人群·多价格</li>
+        </ul>
+      </section>
+
+      <section class="engine">
+        <div class="engine-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 7v1.2m0 7.6V17m2.6-7.2c-.5-.8-1.5-1.3-2.6-1.3-1.5 0-2.7.9-2.7 2.1 0 2.8 5.4 1.5 5.4 4.2 0 1.2-1.2 2.1-2.7 2.1-1.1 0-2.1-.5-2.6-1.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="engine-name">精准计费中心</div>
+        <div class="engine-en">Billing Center</div>
+        <ul>
+          <li><b>区域差异化</b>定价 · 一位一价</li>
+          <li>一位 / 多位多车 · <b>多车附加费</b></li>
+          <li><b>超时超容</b>独立计费，账单分科目</li>
+        </ul>
+      </section>
+
+      <section class="engine">
+        <div class="engine-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3v18M12 12L4.5 7.5M12 12l7.5-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="3.5" r="1.6" fill="currentColor"/>
+            <circle cx="4.5" cy="7.5" r="1.6" fill="currentColor"/>
+            <circle cx="19.5" cy="7.5" r="1.6" fill="currentColor"/>
+            <circle cx="12" cy="20.5" r="1.6" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="engine-name">财务分账体系</div>
+        <div class="engine-en">Auto Settlement</div>
+        <ul>
+          <li><b>产权方＋管理方</b>自动分账</li>
+          <li>租赁费 / 管理费<b>分科目</b>核算</li>
+          <li><b>电子发票</b>自动开具<span class="innov">创新</span></li>
+        </ul>
+      </section>
+
+      <section class="engine">
+        <div class="engine-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 11l18-7-7 18-2.5-8L3 11z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="engine-name">全渠道营销增收</div>
+        <div class="engine-en">Marketing Channels</div>
+        <ul>
+          <li><b>抖音 / 美团</b>团购券销售·核销</li>
+          <li><b>委托租赁</b> · 闲时共享一键上架</li>
+          <li>转让 / 暂停<b>用户自助</b>办理</li>
+        </ul>
+      </section>
+
+      <section class="engine engine-ai">
+        <div class="engine-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 20V10M10 20V4M16 20v-8M21 20H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M15 6l3-3 3 3M18 3v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="engine-name">智能运营分析 <span class="innov">AI</span></div>
+        <div class="engine-en">AI Ops Insight</div>
+        <ul>
+          <li><b>空置率预警</b>，长期闲置推荐转共享</li>
+          <li>分时热力 · <b>AI 动态定价建议</b></li>
+          <li>收益<b>坪效看板</b>，指导增收决策</li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- ==================================================
+         收益闭环
+    =================================================== -->
+
+    <div class="loop-wrap">
+      <div class="loop-flow">
+        <div class="loop-node">
+          <div class="loop-num">1</div>
+          <div class="loop-name">车位数字建档</div>
+          <div class="loop-desc">类型·产权·价格<br>全要素电子化</div>
+        </div>
+        <div class="loop-arrow"></div>
+
+        <div class="loop-node">
+          <div class="loop-num">2</div>
+          <div class="loop-name">套餐组合上架</div>
+          <div class="loop-desc">按客群灵活配置<br>包月·共享·储值</div>
+        </div>
+        <div class="loop-arrow"></div>
+
+        <div class="loop-node">
+          <div class="loop-num">3</div>
+          <div class="loop-name">全渠道获客</div>
+          <div class="loop-desc">团购引流·委托租赁<br>自助线上办理</div>
+        </div>
+        <div class="loop-arrow"></div>
+
+        <div class="loop-node">
+          <div class="loop-num">4</div>
+          <div class="loop-name">计费·自动分账</div>
+          <div class="loop-desc">精准计费分科目<br>多方自动结算</div>
+        </div>
+        <div class="loop-arrow"></div>
+
+        <div class="loop-node">
+          <div class="loop-num">5</div>
+          <div class="loop-name">智能分析洞察</div>
+          <div class="loop-desc">空置预警·热力分析<br>收益坪效看板</div>
+        </div>
+        <div class="loop-arrow"></div>
+
+        <div class="loop-node">
+          <div class="loop-num">6</div>
+          <div class="loop-name">动态调优增收</div>
+          <div class="loop-desc">AI 定价建议<br>套餐持续优化</div>
+        </div>
+      </div>
+
+      <div class="loop-return"></div>
+      <div class="loop-return-label">收益持续提升 · 运营飞轮闭环</div>
+    </div>
+
+    <!-- 价值看板 -->
+    <div class="roi-card">
+      <div class="roi-title">
+        <span class="icon-s">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 8h5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        运营提升 · 看得见的价值
+      </div>
+
+      <div class="roi-grid">
+        <div class="roi-item">
+          <div class="roi-k"><span class="roi-up">↑</span>车位利用率</div>
+          <div class="roi-v">分时共享盘活闲置时段</div>
+        </div>
+        <div class="roi-item">
+          <div class="roi-k"><span class="roi-down">↓</span>长期空置率</div>
+          <div class="roi-v">空置预警 + 委托租赁转化</div>
+        </div>
+        <div class="roi-item">
+          <div class="roi-k"><span class="roi-up">↑</span>续费与满意度</div>
+          <div class="roi-v">自助办理 · 账单清晰透明</div>
+        </div>
+        <div class="roi-item">
+          <div class="roi-k"><span class="roi-down">↓</span>财务对账工时</div>
+          <div class="roi-v">自动分账 · 分科目核算</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-left"><b>★</b> 标记为本方案创新功能点</div>
+
+    <footer class="footer">
+      <i class="status-dot"></i>
+      PERSONA DRIVEN · REVENUE FLYWHEEL · AI PRICING INSIGHT
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const scale = Math.min(
+    window.innerWidth / 1600,
+    window.innerHeight / 900
+  );
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

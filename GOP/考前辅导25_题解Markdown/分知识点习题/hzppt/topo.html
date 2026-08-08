@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧停车停充一体化系统总体架构</title>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(24, 112, 255, .16), transparent 38%),
+    radial-gradient(circle at 8% 18%, rgba(0, 220, 255, .08), transparent 23%),
+    radial-gradient(circle at 94% 76%, rgba(96, 72, 255, .12), transparent 27%),
+    linear-gradient(135deg, #061224 0%, #08182e 48%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, transparent 2%, #000 17%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 2%, #000 17%, #000 90%, transparent);
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  width: 720px;
+  height: 720px;
+  left: 440px;
+  top: 90px;
+  border-radius: 50%;
+  border: 1px solid rgba(67, 168, 255, .07);
+  box-shadow:
+    0 0 100px rgba(0, 166, 255, .05),
+    inset 0 0 100px rgba(0, 166, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ================================
+   标题
+================================ */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #20d5e8);
+  box-shadow: 0 8px 28px rgba(0, 178, 255, .28);
+}
+
+.logo svg { width: 31px; height: 31px; }
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 2px;
+  background: linear-gradient(180deg, #ffffff 30%, #bfe4ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #64a8d1;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.feature-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature {
+  padding: 8px 13px;
+  border: 1px solid rgba(63, 177, 246, .24);
+  border-radius: 18px;
+  color: #a9d8ef;
+  font-size: 11px;
+  white-space: nowrap;
+  background: rgba(10, 46, 79, .55);
+}
+
+.feature b { color: #4be4ff; margin-right: 5px; }
+
+/* ================================
+   层级标签
+================================ */
+
+.layer-label {
+  position: absolute;
+  left: 48px;
+  z-index: 5;
+  color: #77a8c7;
+  font-size: 11px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.layer-label::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 2px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #28b6ff, #42e8ee);
+}
+
+.layer-external { top: 128px; }
+.layer-application { top: 222px; }
+.layer-device { top: 548px; }
+
+/* 应用分组标签 */
+.group-label {
+  position: absolute;
+  z-index: 5;
+  color: #4fc4e8;
+  font-size: 10px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+.group-left { left: 52px; top: 228px; width: 230px; text-align: center; }
+.group-right { left: 1318px; top: 262px; width: 230px; text-align: center; }
+
+.group-label::before,
+.group-label::after {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 1px;
+  margin: 0 8px;
+  vertical-align: middle;
+  background: linear-gradient(90deg, transparent, rgba(79, 196, 232, .6));
+}
+
+.group-label::after {
+  background: linear-gradient(90deg, rgba(79, 196, 232, .6), transparent);
+}
+
+/* ================================
+   拓扑连线
+================================ */
+
+.topology-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.line-api {
+  fill: none;
+  stroke: #7998ff;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 7;
+  opacity: .68;
+}
+
+.line-platform {
+  fill: none;
+  stroke: url(#platformGradient);
+  stroke-width: 2;
+  opacity: .84;
+}
+
+.line-flow-overlay {
+  fill: none;
+  stroke: rgba(140, 240, 255, .55);
+  stroke-width: 2;
+  stroke-dasharray: 3 22;
+  stroke-linecap: round;
+  animation: lineFlow 4s linear infinite;
+}
+
+.flow-line {
+  animation: lineFlow 10s linear infinite;
+}
+
+@keyframes lineFlow {
+  to { stroke-dashoffset: -160; }
+}
+
+.line-node {
+  fill: #59eaff;
+  filter: drop-shadow(0 0 6px #26d8ff);
+}
+
+.line-node-purple {
+  fill: #b59bff;
+  filter: drop-shadow(0 0 6px #8b6cff);
+}
+
+/* ================================
+   通用卡片
+================================ */
+
+.card {
+  position: absolute;
+  z-index: 3;
+  border: 1px solid rgba(67, 169, 239, .25);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(16, 50, 85, .91), rgba(7, 25, 48, .91));
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .26),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  opacity: .6;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #e7f7ff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.icon {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #fff;
+  background: linear-gradient(135deg, #198dff, #22cfe3);
+  box-shadow: 0 5px 13px rgba(0, 154, 255, .22);
+}
+
+.icon svg { width: 17px; height: 17px; }
+
+.tag {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 9px;
+  color: #6be1ff;
+  font-size: 9px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: rgba(45, 183, 255, .10);
+}
+
+/* ================================
+   第一层：外部生态
+================================ */
+
+.external-card {
+  top: 116px;
+  width: 260px;
+  height: 98px;
+  padding: 14px 16px;
+  border-color: rgba(126, 124, 255, .27);
+  background: linear-gradient(145deg, rgba(39, 47, 102, .81), rgba(12, 28, 58, .90));
+}
+
+.external-card::before {
+  background: linear-gradient(90deg, transparent, #9b8cff, transparent);
+}
+
+.external-1 { left: 160px; }
+.external-2 { left: 500px; }
+.external-3 { left: 840px; }
+.external-4 { left: 1180px; }
+
+.external-card .icon {
+  background: linear-gradient(135deg, #6a78ff, #9c72ed);
+}
+
+.external-desc {
+  margin-top: 11px;
+  color: #8faec5;
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+
+.external-desc span { color: #c5d9e8; }
+
+/* ================================
+   第二层：应用端（平台左右两翼）
+================================ */
+
+.app-card {
+  width: 230px;
+  height: 76px;
+  padding: 13px 14px;
+}
+
+.app-card .desc {
+  margin-top: 8px;
+  color: #83a9c0;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* 左翼：运营管理端 */
+.operation-app { left: 52px; top: 250px; }
+.road-pda      { left: 52px; top: 342px; }
+.merchant-pda  { left: 52px; top: 434px; }
+
+/* 右翼：车主服务端 */
+.owner-app { left: 1318px; top: 284px; }
+.scan-app  { left: 1318px; top: 400px; }
+
+/* ================================
+   统一管理平台
+================================ */
+
+.platform {
+  left: 534px;
+  top: 267px;
+  width: 532px;
+  height: 225px;
+  border-color: rgba(42, 214, 234, .49);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(0, 196, 234, .12), transparent 50%),
+    linear-gradient(145deg, rgba(12, 68, 101, .97), rgba(6, 29, 54, .97));
+  box-shadow:
+    0 22px 60px rgba(0, 7, 25, .43),
+    0 0 45px rgba(0, 190, 232, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+  animation: platformGlow 5s ease-in-out infinite;
+}
+
+@keyframes platformGlow {
+  0%, 100% {
+    box-shadow:
+      0 22px 60px rgba(0, 7, 25, .43),
+      0 0 45px rgba(0, 190, 232, .08),
+      inset 0 1px 0 rgba(255, 255, 255, .07);
+  }
+  50% {
+    box-shadow:
+      0 22px 60px rgba(0, 7, 25, .43),
+      0 0 70px rgba(0, 190, 232, .18),
+      inset 0 1px 0 rgba(255, 255, 255, .07);
+  }
+}
+
+.corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(84, 226, 255, .85);
+  border-style: solid;
+  border-width: 0;
+}
+
+.corner-tl { left: -2px; top: -2px; border-top-width: 2px; border-left-width: 2px; border-top-left-radius: 14px; }
+.corner-tr { right: -2px; top: -2px; border-top-width: 2px; border-right-width: 2px; border-top-right-radius: 14px; }
+.corner-bl { left: -2px; bottom: -2px; border-bottom-width: 2px; border-left-width: 2px; border-bottom-left-radius: 14px; }
+.corner-br { right: -2px; bottom: -2px; border-bottom-width: 2px; border-right-width: 2px; border-bottom-right-radius: 14px; }
+
+.platform-header {
+  height: 59px;
+  padding: 15px 20px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.platform-header .card-title { font-size: 19px; }
+
+.platform-header .icon {
+  width: 34px;
+  height: 34px;
+  flex-basis: 34px;
+  border-radius: 11px;
+}
+
+.platform-header .icon svg { width: 20px; height: 20px; }
+
+.platform-subtitle {
+  margin-left: 12px;
+  padding-left: 12px;
+  color: #63a9c6;
+  font-size: 10px;
+  font-weight: 400;
+  border-left: 1px solid rgba(77, 183, 223, .23);
+}
+
+.platform-grid {
+  padding: 4px 19px 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.platform-module {
+  height: 40px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(62, 181, 226, .16);
+  border-radius: 8px;
+  color: #b8d9e9;
+  font-size: 10.5px;
+  text-align: center;
+  background: rgba(7, 36, 64, .65);
+}
+
+.platform-module.important {
+  color: #c8f9ff;
+  border-color: rgba(39, 219, 232, .28);
+  background: linear-gradient(90deg, rgba(16, 111, 137, .31), rgba(13, 65, 105, .34));
+}
+
+.platform-bottom {
+  margin: 12px 19px 0;
+  height: 38px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(56, 185, 220, .15);
+  border-radius: 9px;
+  overflow: hidden;
+  background: rgba(4, 24, 45, .58);
+}
+
+.platform-capability {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #79a6bd;
+  font-size: 9.5px;
+  border-right: 1px solid rgba(63, 169, 211, .14);
+}
+
+.platform-capability:last-child { border-right: 0; }
+
+.platform-capability b {
+  margin-right: 5px;
+  color: #41dff3;
+  font-size: 10px;
+}
+
+/* ================================
+   第三层：场站设备
+================================ */
+
+.site-card {
+  top: 576px;
+  height: 238px;
+}
+
+/* 封闭停车场 */
+.parking-site {
+  width: 355px;
+  border-color: rgba(157, 119, 255, .28);
+  background: linear-gradient(145deg, rgba(37, 39, 92, .85), rgba(9, 27, 53, .92));
+}
+
+.parking-site::before {
+  background: linear-gradient(90deg, transparent, #ad8cff, transparent);
+}
+
+.parking-a { left: 49px; }
+.parking-b { left: 421px; }
+
+.site-header {
+  height: 49px;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+}
+
+.site-header .card-title { width: 100%; }
+
+.site-number {
+  margin-left: auto;
+  color: #8d9fbd;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+/* AI 网关 */
+.gateway-box {
+  position: relative;
+  width: 235px;
+  height: 53px;
+  margin: 4px auto 0;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid rgba(167, 128, 255, .42);
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(89, 57, 150, .38), rgba(24, 67, 105, .55));
+  box-shadow: 0 0 24px rgba(134, 91, 255, .08);
+}
+
+.gateway-symbol {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 35px;
+  border-radius: 10px;
+  color: #d8caff;
+  background: rgba(128, 86, 223, .24);
+  border: 1px solid rgba(181, 151, 255, .26);
+}
+
+.gateway-symbol svg { width: 21px; height: 21px; }
+
+.gateway-name {
+  color: #ebdeff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gateway-desc {
+  margin-top: 4px;
+  color: #988cb6;
+  font-size: 9px;
+}
+
+/* 卡片内部：网关-设备 总线连接（精确对齐 4 列设备中心） */
+.device-bus {
+  position: relative;
+  height: 26px;
+  margin: 0 14px;
+}
+
+.device-bus::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 13px;
+  transform: translateX(-50%);
+  background: rgba(167, 133, 255, .75);
+  box-shadow: 0 0 6px rgba(167, 133, 255, .5);
+}
+
+.device-bus::after {
+  content: "";
+  position: absolute;
+  left: 11.7%;
+  right: 11.7%;
+  top: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(167, 133, 255, .55);
+}
+
+.device-bus i {
+  position: absolute;
+  top: 12px;
+  width: 2px;
+  height: 14px;
+  transform: translateX(-50%);
+  background: rgba(167, 133, 255, .55);
+}
+
+.device-bus i:nth-child(1) { left: 11.7%; }
+.device-bus i:nth-child(2) { left: 37.2%; }
+.device-bus i:nth-child(3) { left: 62.8%; }
+.device-bus i:nth-child(4) { left: 88.3%; }
+
+.device-grid {
+  position: relative;
+  padding: 0 14px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.device {
+  height: 80px;
+  padding: 12px 4px;
+  border: 1px solid rgba(117, 137, 203, .18);
+  border-radius: 9px;
+  color: #aebdd2;
+  font-size: 9.5px;
+  text-align: center;
+  background: rgba(9, 31, 57, .67);
+}
+
+.device-icon {
+  width: 26px;
+  height: 26px;
+  margin: 0 auto 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #bdadff;
+  background: rgba(126, 97, 204, .14);
+}
+
+.device-icon svg { width: 16px; height: 16px; }
+
+/* 充电站 */
+.charging-site {
+  left: 793px;
+  width: 326px;
+  border-color: rgba(40, 213, 177, .28);
+  background: linear-gradient(145deg, rgba(11, 74, 77, .77), rgba(7, 28, 50, .93));
+}
+
+.charging-site::before {
+  background: linear-gradient(90deg, transparent, #39e2bc, transparent);
+}
+
+.direct-badge {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 8px;
+  color: #55e6c4;
+  font-size: 8.5px;
+  white-space: nowrap;
+  background: rgba(42, 211, 170, .10);
+}
+
+.station-list { padding: 6px 14px 0; }
+
+.station-row {
+  height: 58px;
+  margin-bottom: 8px;
+  padding: 8px 11px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(51, 199, 174, .17);
+  border-radius: 10px;
+  background: rgba(8, 45, 63, .58);
+}
+
+.station-icon {
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #56e9c3;
+  background: rgba(34, 191, 156, .13);
+}
+
+.station-icon svg { width: 20px; height: 20px; }
+
+.station-name {
+  color: #cef9ec;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.station-desc {
+  margin-top: 4px;
+  color: #6ea99e;
+  font-size: 9px;
+}
+
+.site-note {
+  margin: 8px 14px 0;
+  padding-top: 8px;
+  color: #5d8ea8;
+  font-size: 9px;
+  text-align: center;
+  border-top: 1px solid rgba(62, 166, 216, .13);
+}
+
+.charging-site .site-note {
+  color: #5aa495;
+  border-top-color: rgba(51, 199, 174, .14);
+}
+
+/* 道路停车 */
+.road-site {
+  left: 1136px;
+  width: 415px;
+  border-color: rgba(46, 177, 255, .30);
+}
+
+.road-devices {
+  padding: 6px 14px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.road-device {
+  height: 130px;
+  padding: 14px 7px 8px;
+  border: 1px solid rgba(59, 175, 235, .17);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(8, 37, 66, .67);
+}
+
+.road-device .device-icon {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 10px;
+  color: #55dfff;
+  background: rgba(27, 152, 196, .13);
+}
+
+.road-device .device-icon svg { width: 22px; height: 22px; }
+
+.road-device-name {
+  color: #d0edf8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.road-device-desc {
+  margin-top: 7px;
+  color: #709cb3;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+/* ================================
+   图例与页脚
+================================ */
+
+.legend {
+  position: absolute;
+  left: 55px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  color: #678da6;
+  font-size: 9.5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend-line {
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.legend-platform { background: #35d5f3; }
+.legend-gateway { background: #a785ff; }
+
+.legend-api {
+  height: 0;
+  border-top: 2px dashed #7d8eff;
+}
+
+.footer {
+  position: absolute;
+  right: 49px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #557d98;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3be3c2;
+  box-shadow: 0 0 8px #3be3c2;
+  animation: dotPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+@media print {
+  html, body {
+    width: 1600px;
+    height: 900px;
+  }
+  #stage { transform: none !important; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 20V14M5 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M18 14l-2 3h2l-1 3 3-4h-2l1-2h-1z" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div>
+          <h1>智慧停车停充一体化系统总体架构</h1>
+          <div class="subtitle">SMART PARKING &amp; CHARGING UNIFIED ARCHITECTURE</div>
+        </div>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature"><b>01</b>停充一体</div>
+        <div class="feature"><b>02</b>路内路外</div>
+        <div class="feature"><b>03</b>无人值守</div>
+        <div class="feature"><b>04</b>开放集成</div>
+        <div class="feature"><b>05</b>数字运营</div>
+      </div>
+    </header>
+
+    <!-- 层级名称 -->
+    <div class="layer-label layer-external">外部生态层</div>
+    <div class="layer-label layer-application">平台应用层</div>
+    <div class="layer-label layer-device">场站设备层</div>
+
+    <!-- 应用分组标签 -->
+    <div class="group-label group-left">运 营 管 理 端</div>
+    <div class="group-label group-right">车 主 服 务 端</div>
+
+    <!-- 拓扑连线（坐标与卡片几何中心严格对齐） -->
+    <svg class="topology-lines" viewBox="0 0 1600 900">
+      <defs>
+        <!-- 关键修复：userSpaceOnUse，避免水平/垂直直线因零面积包围盒导致渐变描边不渲染 -->
+        <linearGradient id="platformGradient" gradientUnits="userSpaceOnUse"
+          x1="0" y1="240" x2="1600" y2="620">
+          <stop offset="0%" stop-color="#218dff"/>
+          <stop offset="52%" stop-color="#45e5f4"/>
+          <stop offset="100%" stop-color="#37c8da"/>
+        </linearGradient>
+
+        <marker id="arrowCyan" markerWidth="10" markerHeight="10" refX="9" refY="5"
+          orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#4adff1"/>
+        </marker>
+
+        <marker id="arrowCyanStart" markerWidth="10" markerHeight="10" refX="9" refY="5"
+          orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#4adff1"/>
+        </marker>
+
+        <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="5"
+          orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#a98aff"/>
+        </marker>
+      </defs>
+
+      <!-- ===== 外部生态总线（y=240，卡片底边 214，中心 x：290/630/970/1310） ===== -->
+      <path class="line-api" d="M290 240 V220" marker-end="url(#arrowPurple)"/>
+      <path class="line-api" d="M630 240 V220" marker-end="url(#arrowPurple)"/>
+      <path class="line-api" d="M970 240 V220" marker-end="url(#arrowPurple)"/>
+      <path class="line-api" d="M1310 240 V220" marker-end="url(#arrowPurple)"/>
+
+      <path class="line-api flow-line" d="M290 240 H1310"/>
+
+      <!-- 平台与生态总线：双向数据交换 -->
+      <path class="line-api" d="M806 240 V262" marker-end="url(#arrowCyan)"/>
+      <path class="line-api" d="M794 262 V244" marker-end="url(#arrowPurple)"/>
+
+      <circle class="line-node-purple" cx="290" cy="240" r="3.5"/>
+      <circle class="line-node-purple" cx="630" cy="240" r="3.5"/>
+      <circle class="line-node-purple" cx="970" cy="240" r="3.5"/>
+      <circle class="line-node-purple" cx="1310" cy="240" r="3.5"/>
+
+      <!-- ===== 左翼应用 ↔ 平台（卡片右边缘 282 → 平台左边缘 534，双向箭头） ===== -->
+      <path class="line-platform" d="M286 288 H530"
+        marker-start="url(#arrowCyanStart)" marker-end="url(#arrowCyan)"/>
+      <path class="line-platform" d="M286 380 H530"
+        marker-start="url(#arrowCyanStart)" marker-end="url(#arrowCyan)"/>
+      <path class="line-platform" d="M286 472 H530"
+        marker-start="url(#arrowCyanStart)" marker-end="url(#arrowCyan)"/>
+
+      <!-- ===== 右翼应用 ↔ 平台（卡片左边缘 1318 → 平台右边缘 1066，双向箭头） ===== -->
+      <path class="line-platform" d="M1314 322 H1070"
+        marker-start="url(#arrowCyanStart)" marker-end="url(#arrowCyan)"/>
+      <path class="line-platform" d="M1314 438 H1070"
+        marker-start="url(#arrowCyanStart)" marker-end="url(#arrowCyan)"/>
+
+      <!-- ===== 设备接入总线（y=538，站点中心 x：226/598/956/1343） ===== -->
+      <path class="line-api" d="M806 496 V534" marker-end="url(#arrowCyan)"/>
+      <path class="line-api" d="M794 534 V498" marker-end="url(#arrowCyan)"/>
+
+      <path class="line-platform" d="M226 538 H1343"/>
+      <path class="line-flow-overlay" d="M226 538 H1343"/>
+
+      <path class="line-platform" d="M226 538 V570" marker-end="url(#arrowCyan)"/>
+      <path class="line-platform" d="M598 538 V570" marker-end="url(#arrowCyan)"/>
+      <path class="line-platform" d="M956 538 V570" marker-end="url(#arrowCyan)"/>
+      <path class="line-platform" d="M1343 538 V570" marker-end="url(#arrowCyan)"/>
+
+      <circle class="line-node" cx="800" cy="538" r="4"/>
+      <circle class="line-node" cx="226" cy="538" r="4"/>
+      <circle class="line-node" cx="598" cy="538" r="4"/>
+      <circle class="line-node" cx="956" cy="538" r="4"/>
+      <circle class="line-node" cx="1343" cy="538" r="4"/>
+    </svg>
+
+    <!-- ==================================================
+         第一层：外部生态
+    =================================================== -->
+
+    <section class="card external-card external-1">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 20h16M6 20V9l6-5 6 5v11" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 20v-5h6v5M9 10h.01M12 10h.01M15 10h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        政府数据平台
+        <span class="tag">政务监管</span>
+      </div>
+      <div class="external-desc">
+        泊位、订单、车辆、收费等<span>监管数据实时上报</span>
+      </div>
+    </section>
+
+    <section class="card external-card external-2">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 20V8h6v12M13 20V4h6v16M3 20h18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M7.5 11h1M7.5 14h1M15.5 8h1M15.5 11h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        园区／物业平台
+        <span class="tag">业务协同</span>
+      </div>
+      <div class="external-desc">
+        访客车辆、人员权限与<span>商户停车权益联动</span>
+      </div>
+    </section>
+
+    <section class="card external-card external-3">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M3 9h18M7 15h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        电子支付通道
+        <span class="tag">聚合支付</span>
+      </div>
+      <div class="external-desc">
+        微信、支付宝、银联及<span>银行通道聚合接入</span>
+      </div>
+    </section>
+
+    <section class="card external-card external-4">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M6 3h9l3 3v15H6V3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M14 3v4h4M9 11h6M9 15h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        电子发票平台
+        <span class="tag">票税服务</span>
+      </div>
+      <div class="external-desc">
+        停充业务<span>开票、冲红、查验</span>一站式服务
+      </div>
+    </section>
+
+    <!-- ==================================================
+         第二层：左翼 · 运营管理端
+    =================================================== -->
+
+    <section class="card app-card operation-app">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="6" y="2.5" width="12" height="19" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M9 6h6M10 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        运营小程序
+        <span class="tag">移动运营</span>
+      </div>
+      <div class="desc">值守 · 收费 · 工单 · 遥控 · 报表</div>
+    </section>
+
+    <section class="card app-card road-pda">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="5" y="3" width="14" height="18" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 7h8M8 11h8M8 15h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </span>
+        道路收费 PDA
+        <span class="tag">路内收费</span>
+      </div>
+      <div class="desc">巡检 · 开单 · 收费 · 欠费追缴</div>
+    </section>
+
+    <section class="card app-card merchant-pda">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 9l2-5h12l2 5M5 9v10h14V9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M3 9h18M9 19v-5h6v5" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </span>
+        商户专用 PDA
+        <span class="tag">商户服务</span>
+      </div>
+      <div class="desc">优惠发放 · 订单核销 · 对账管理</div>
+    </section>
+
+    <!-- ==================================================
+         第二层：右翼 · 车主服务端
+    =================================================== -->
+
+    <section class="card app-card owner-app">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 16l1.5-5h13l1.5 5v3H4v-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M7 11l2-4h6l2 4M7 19v2M17 19v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        车主小程序
+        <span class="tag">停充服务</span>
+      </div>
+      <div class="desc">找车位 · 缴费 · 充电 · 套餐 · 发票</div>
+    </section>
+
+    <section class="card app-card scan-app">
+      <div class="card-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 4h6v6H4V4zM14 4h6v6h-6V4zM4 14h6v6H4v-6z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M14 14h2v2h-2zM18 14h2v6h-2zM14 18h2v2h-2z" fill="currentColor"/>
+          </svg>
+        </span>
+        扫码应用
+        <span class="tag">H5 免装即用</span>
+      </div>
+      <div class="desc">临停支付 · 包月续费 · 优惠领取</div>
+    </section>
+
+    <!-- ==================================================
+         中枢：统一管理平台
+    =================================================== -->
+
+    <section class="card platform">
+      <i class="corner corner-tl"></i>
+      <i class="corner corner-tr"></i>
+      <i class="corner corner-bl"></i>
+      <i class="corner corner-br"></i>
+
+      <div class="platform-header">
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 19V9l8-5 8 5v10H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M8 19v-6h8v6M8 9h.01M12 9h.01M16 9h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          停充一体化平台
+        </div>
+
+        <div class="platform-subtitle">
+          统一账户 · 统一订单 · 统一结算 · 统一运营
+        </div>
+
+        <span class="tag">运营中枢</span>
+      </div>
+
+      <div class="platform-grid">
+        <div class="platform-module important">封闭车场</div>
+        <div class="platform-module important">道路停车</div>
+        <div class="platform-module important">充电运营</div>
+        <div class="platform-module">流程工单</div>
+        <div class="platform-module">资产设备</div>
+
+        <div class="platform-module">支付／发票</div>
+        <div class="platform-module">客服 CRM</div>
+        <div class="platform-module">财务清结算</div>
+        <div class="platform-module">运营大数据</div>
+        <div class="platform-module important">数据开放平台</div>
+      </div>
+
+      <div class="platform-bottom">
+        <div class="platform-capability">
+          <b>开放接口</b> API · MQTT · WebSocket
+        </div>
+        <div class="platform-capability">
+          <b>数字运营</b> 工单 · 审批 · 资产
+        </div>
+        <div class="platform-capability">
+          <b>远程管理</b> 视频 · 对讲 · 遥控
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================
+         第三层：封闭停车场 A
+    =================================================== -->
+
+    <section class="card site-card parking-site parking-a">
+      <div class="site-header">
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 20V6h16v14M4 10h16M8 20v-6h8v6" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M7 7h.01M10 7h.01M13 7h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          封闭停车场 A
+          <span class="site-number">AI 边缘接入</span>
+        </div>
+      </div>
+
+      <div class="gateway-box">
+        <div class="gateway-symbol">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="5" width="16" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+            <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+            <path d="M9 16h6M12 2v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <div class="gateway-name">AI 智能边缘网关</div>
+          <div class="gateway-desc">设备接入 · 本地计费 · 离线脱机 · 流媒体</div>
+        </div>
+      </div>
+
+      <div class="device-bus"><i></i><i></i><i></i><i></i></div>
+
+      <div class="device-grid">
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          车牌识别
+        </div>
+
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 20V7M5 9h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="5" cy="5" r="2" fill="currentColor"/>
+            </svg>
+          </div>
+          道闸设备
+        </div>
+
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="6" y="3" width="12" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="12" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M9 15h6" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          出入口对讲
+        </div>
+
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M17 10l4-2v8l-4-2v-4z" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          视频设备
+        </div>
+      </div>
+    </section>
+
+    <!-- 封闭停车场 B -->
+    <section class="card site-card parking-site parking-b">
+      <div class="site-header">
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 20V6h16v14M4 10h16M8 20v-6h8v6" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M7 7h.01M10 7h.01M13 7h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          封闭停车场 B
+          <span class="site-number">可横向扩展 N 个车场</span>
+        </div>
+      </div>
+
+      <div class="gateway-box">
+        <div class="gateway-symbol">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="5" width="16" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+            <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+            <path d="M9 16h6M12 2v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <div class="gateway-name">AI 智能边缘网关</div>
+          <div class="gateway-desc">设备接入 · 本地计费 · 离线脱机 · 流媒体</div>
+        </div>
+      </div>
+
+      <div class="device-bus"><i></i><i></i><i></i><i></i></div>
+
+      <div class="device-grid">
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          车牌识别
+        </div>
+
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 20V7M5 9h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="5" cy="5" r="2" fill="currentColor"/>
+            </svg>
+          </div>
+          道闸设备
+        </div>
+
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="6" y="3" width="12" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="12" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M9 15h6" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          出入口对讲
+        </div>
+
+        <div class="device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M17 10l4-2v8l-4-2v-4z" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          视频设备
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================
+         充电站集群
+    =================================================== -->
+
+    <section class="card site-card charging-site">
+      <div class="site-header">
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="5" y="3" width="11" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M8 7h5M16 7h2l2 2v7a2 2 0 0 1-4 0v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M11 10l-2 4h2l-1 3 3-5h-2l1-2h-1z" fill="currentColor"/>
+            </svg>
+          </span>
+          充电站集群
+          <span class="direct-badge">直连管理平台</span>
+        </div>
+      </div>
+
+      <div class="station-list">
+        <div class="station-row">
+          <div class="station-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="6" y="3" width="10" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M9 7h4M11 10l-2 4h2l-1 3 3-5h-2l1-2" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="station-name">充电站 A</div>
+            <div class="station-desc">充电桩 · 计量计费 · 状态监控 · 订单数据</div>
+          </div>
+        </div>
+
+        <div class="station-row">
+          <div class="station-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="6" y="3" width="10" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M9 7h4M11 10l-2 4h2l-1 3 3-5h-2l1-2" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="station-name">充电站 B ··· N</div>
+            <div class="station-desc">多品牌、多协议充电设备统一接入管理</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-note">
+        兼容 OCPP／云快充等主流协议 · 即插即充 · 有序充电
+      </div>
+    </section>
+
+    <!-- ==================================================
+         道路停车设备
+    =================================================== -->
+
+    <section class="card site-card road-site">
+      <div class="site-header">
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 21l2-18M16 21L14 3M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M11.5 7h1M11 11h2M10.5 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          道路停车设备
+          <span class="direct-badge">直连管理平台</span>
+        </div>
+      </div>
+
+      <div class="road-devices">
+        <div class="road-device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <ellipse cx="12" cy="14" rx="7" ry="4" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M7 10c1-3 9-3 10 0M9 7c1-2 5-2 6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="road-device-name">道路地磁</div>
+          <div class="road-device-desc">泊位占用感知<br>驶入／驶出事件</div>
+        </div>
+
+        <div class="road-device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="15" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="10.5" cy="11.5" r="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M18 9l3-2v9l-3-2V9z" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <div class="road-device-name">高位视频</div>
+          <div class="road-device-desc">车牌自动识别<br>泊位事件取证</div>
+        </div>
+
+        <div class="road-device">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 20V5h14v15M5 9h14" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M9 13h6M9 16h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="road-device-name">路侧终端</div>
+          <div class="road-device-desc">巡检车联动<br>停车诱导发布</div>
+        </div>
+      </div>
+
+      <div class="site-note">z
+        全量设备经标准协议加密直连统一管理平台
+      </div>
+    </section>
+
+    <!-- 图例 -->
+    <div class="legend">
+      <div class="legend-item">
+        <i class="legend-line legend-platform"></i>
+        平台级直连（双向数据）
+      </div>
+
+      <div class="legend-item">
+        <i class="legend-line legend-gateway"></i>
+        AI 网关场内设备连接
+      </div>
+
+      <div class="legend-item">
+        <i class="legend-line legend-api"></i>
+        第三方标准接口（API）
+      </div>
+    </div>
+
+    <footer class="footer">
+      <i class="status-dot"></i>
+      PARKING · CHARGING · ROAD · OPERATION · OPEN DATA
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const scale = Math.min(
+    window.innerWidth / 1600,
+    window.innerHeight / 900
+  );
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

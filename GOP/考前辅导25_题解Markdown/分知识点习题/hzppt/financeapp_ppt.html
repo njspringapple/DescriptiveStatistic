@@ -1,0 +1,2901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>智慧财务管理小程序｜四大特色功能</title>
+
+<style>
+/* =========================================================
+   全局基础
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  border: 0;
+  outline: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  color: #fff;
+  transform-origin: center center;
+  background:
+    radial-gradient(circle at 51% 44%, rgba(0, 198, 255, .17), transparent 33%),
+    radial-gradient(circle at 85% 18%, rgba(110, 73, 255, .13), transparent 26%),
+    radial-gradient(circle at 7% 78%, rgba(39, 226, 197, .07), transparent 24%),
+    linear-gradient(135deg, #061224 0%, #08192f 50%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 16%,
+    #000 91%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 320px;
+  top: 44px;
+  width: 1040px;
+  height: 790px;
+  border: 1px solid rgba(70, 180, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 175, 255, .05),
+    inset 0 0 130px rgba(0, 175, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   背景曲线
+========================================================= */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#bgGradient);
+  stroke-width: 1.1;
+  opacity: .18;
+}
+
+.bg-dash {
+  fill: none;
+  stroke: #44d0ff;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .13;
+  animation: bgFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #62dcff;
+  filter: drop-shadow(0 0 6px #29c7ff);
+}
+
+@keyframes bgFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* =========================================================
+   顶部标题
+========================================================= */
+
+.header {
+  position: absolute;
+  z-index: 10;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  flex: 0 0 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .30);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(80, 213, 238, .15);
+  border-radius: 19px;
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  color: #f2fbff;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.header-message {
+  max-width: 640px;
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #d8f7ff;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.header-message strong b {
+  color: #4ae4ef;
+}
+
+.header-message span {
+  color: #6195b5;
+  font-size: 11px;
+}
+
+/* =========================================================
+   场景标题
+========================================================= */
+
+.process-title {
+  position: absolute;
+  z-index: 8;
+  left: 48px;
+  right: 48px;
+  top: 112px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.process-index {
+  color: #426d8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.process-line {
+  width: 23px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #28bdff, #45ebd3);
+}
+
+.process-title h2 {
+  margin: 0;
+  color: #dff7ff;
+  font-size: 17px;
+}
+
+.process-title span {
+  margin-left: auto;
+  color: #718da0;
+  font-size: 10px;
+  letter-spacing: .5px;
+}
+
+/* =========================================================
+   四台手机区域
+========================================================= */
+
+.phone-stage {
+  position: absolute;
+  z-index: 5;
+  left: 42px;
+  right: 42px;
+  top: 151px;
+  height: 578px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 21px;
+}
+
+.phone-group {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  padding: 0 10px;
+  border: 1px solid rgba(63, 173, 229, .13);
+  border-radius: 19px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 185, 239, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(11, 42, 72, .47),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group.purple {
+  border-color: rgba(141, 116, 233, .14);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(129, 91, 232, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(36, 35, 83, .43),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group.orange {
+  border-color: rgba(231, 153, 56, .14);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(220, 130, 31, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(70, 45, 26, .38),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group.green {
+  border-color: rgba(49, 207, 176, .14);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(30, 199, 166, .07), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(12, 68, 67, .39),
+      rgba(5, 22, 42, .26)
+    );
+}
+
+.phone-group::before {
+  content: "";
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.phone-group.purple::before {
+  background: linear-gradient(90deg, transparent, #a48dff, transparent);
+}
+
+.phone-group.orange::before {
+  background: linear-gradient(90deg, transparent, #ffb150, transparent);
+}
+
+.phone-group.green::before {
+  background: linear-gradient(90deg, transparent, #48dfbf, transparent);
+}
+
+/* =========================================================
+   手机上方标签
+========================================================= */
+
+.phone-label {
+  position: relative;
+  height: 51px;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.phone-step {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid rgba(77, 214, 239, .24);
+  border-radius: 8px;
+  color: #54dfef;
+  background: rgba(29, 146, 188, .12);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.purple .phone-step {
+  color: #b7a6ff;
+  border-color: rgba(164, 141, 255, .24);
+  background: rgba(109, 78, 200, .13);
+}
+
+.orange .phone-step {
+  color: #ffc069;
+  border-color: rgba(255, 177, 80, .24);
+  background: rgba(191, 111, 28, .13);
+}
+
+.green .phone-step {
+  color: #55e2c3;
+  border-color: rgba(72, 223, 191, .24);
+  background: rgba(26, 158, 130, .13);
+}
+
+.phone-label-text {
+  min-width: 0;
+}
+
+.phone-label-text strong {
+  display: block;
+  color: #d8f2fa;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.phone-label-text span {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  color: #668fa5;
+  font-size: 8px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.phone-role {
+  padding: 4px 7px;
+  border-radius: 8px;
+  color: #5ccde5;
+  background: rgba(16, 105, 139, .18);
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.purple .phone-role {
+  color: #b7a8eb;
+  background: rgba(84, 63, 145, .22);
+}
+
+.orange .phone-role {
+  color: #d9a96d;
+  background: rgba(111, 68, 26, .22);
+}
+
+.green .phone-role {
+  color: #75c9b7;
+  background: rgba(19, 111, 92, .22);
+}
+
+/* =========================================================
+   手机外壳
+========================================================= */
+
+.phone {
+  position: relative;
+  width: 286px;
+  height: 516px;
+  margin: 0 auto;
+  padding: 10px;
+  border: 1px solid rgba(99, 215, 239, .33);
+  border-radius: 35px;
+  background:
+    linear-gradient(145deg, #1b3c58, #07182a 48%, #132e46);
+  box-shadow:
+    0 22px 55px rgba(0, 4, 17, .55),
+    0 0 35px rgba(0, 185, 225, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+
+.purple .phone {
+  border-color: rgba(170, 149, 255, .34);
+  background:
+    linear-gradient(145deg, #35365e, #0d1429 48%, #272d4f);
+}
+
+.orange .phone {
+  border-color: rgba(255, 185, 91, .34);
+  background:
+    linear-gradient(145deg, #5a4431, #1e1715 48%, #453326);
+}
+
+.green .phone {
+  border-color: rgba(82, 226, 194, .34);
+  background:
+    linear-gradient(145deg, #26574f, #081c20 48%, #1e433e);
+}
+
+.phone::before {
+  content: "";
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  top: 7px;
+  width: 83px;
+  height: 22px;
+  transform: translateX(-50%);
+  border-radius: 0 0 14px 14px;
+  background: #020913;
+}
+
+.phone::after {
+  content: "";
+  position: absolute;
+  z-index: 21;
+  left: 50%;
+  top: 13px;
+  width: 29px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: #243746;
+}
+
+.phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 26px;
+  color: #18283a;
+  background: #f3f6fa;
+}
+
+.mobile-status {
+  position: relative;
+  z-index: 12;
+  height: 28px;
+  padding: 7px 14px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  color: #183149;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.mobile-icons {
+  letter-spacing: .4px;
+}
+
+/* =========================================================
+   小程序标题栏
+========================================================= */
+
+.mini-header {
+  position: relative;
+  z-index: 5;
+  height: 48px;
+  padding: 6px 10px;
+  display: grid;
+  grid-template-columns: 25px 1fr 42px;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(103, 222, 255, .24), transparent 32%),
+    linear-gradient(135deg, #1769d6, #168fae);
+}
+
+.purple .mini-header {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(205, 190, 255, .24), transparent 32%),
+    linear-gradient(135deg, #6049c1, #7368d1);
+}
+
+.orange .mini-header {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(255, 224, 173, .22), transparent 32%),
+    linear-gradient(135deg, #c86e21, #d99b3e);
+}
+
+.green .mini-header {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(185, 255, 233, .22), transparent 32%),
+    linear-gradient(135deg, #168a77, #20a99a);
+}
+
+.mini-back {
+  font-size: 18px;
+}
+
+.mini-title {
+  min-width: 0;
+  text-align: center;
+}
+
+.mini-title strong {
+  display: block;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mini-title span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(255,255,255,.70);
+  font-size: 7px;
+}
+
+.mini-more {
+  text-align: right;
+  font-size: 13px;
+}
+
+.mobile-content {
+  position: relative;
+  height: calc(100% - 76px);
+  padding: 8px 9px 40px;
+  overflow: hidden;
+}
+
+/* =========================================================
+   手机通用组件
+========================================================= */
+
+.mobile-card {
+  margin-bottom: 7px;
+  padding: 9px;
+  border: 1px solid #e0e8ef;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(37, 66, 91, .055);
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.card-head strong {
+  display: block;
+  color: #2c4356;
+  font-size: 10px;
+}
+
+.card-head span {
+  display: block;
+  margin-top: 3px;
+  color: #80909d;
+  font-size: 7.5px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 2px 6px;
+  color: #526579;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.section-title i {
+  width: 3px;
+  height: 11px;
+  border-radius: 3px;
+  background: #287cd9;
+}
+
+.purple .section-title i {
+  background: #765dda;
+}
+
+.orange .section-title i {
+  background: #e48a31;
+}
+
+.green .section-title i {
+  background: #1eaa91;
+}
+
+.small-badge {
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: #14785d !important;
+  background: #e2f7f0;
+  font-size: 7px !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.small-badge.orange {
+  color: #a9601d !important;
+  background: #fff0dd;
+}
+
+.small-badge.red {
+  color: #b84444 !important;
+  background: #ffe8e8;
+}
+
+.small-badge.purple {
+  color: #6952bc !important;
+  background: #efebff;
+}
+
+.primary-button {
+  width: 100%;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #1769e8, #16a6bd);
+  box-shadow: 0 5px 13px rgba(23, 105, 232, .18);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.purple .primary-button {
+  background: linear-gradient(135deg, #6d4ed2, #8376de);
+}
+
+.orange .primary-button {
+  background: linear-gradient(135deg, #d87924, #e9a540);
+}
+
+.green .primary-button {
+  background: linear-gradient(135deg, #168e79, #25b09d);
+}
+
+.secondary-button {
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d8e2e9;
+  border-radius: 8px;
+  color: #52697a;
+  background: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   底部模拟导航
+========================================================= */
+
+.mini-tabbar {
+  position: absolute;
+  z-index: 15;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 39px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid #e0e6eb;
+  background: rgba(255,255,255,.97);
+}
+
+.mini-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8a98a5;
+  font-size: 6px;
+}
+
+.mini-tab b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.mini-tab.active {
+  color: #176dd0;
+}
+
+.purple .mini-tab.active {
+  color: #6b53c8;
+}
+
+.orange .mini-tab.active {
+  color: #d37d28;
+}
+
+.green .mini-tab.active {
+  color: #168c76;
+}
+
+/* =========================================================
+   01 财务驾驶舱
+========================================================= */
+
+.scope-bar {
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  padding: 0 8px;
+  border: 1px solid #dce5ed;
+  border-radius: 9px;
+  color: #607384;
+  background: #fff;
+  font-size: 7.5px;
+}
+
+.scope-bar strong {
+  color: #334c5e;
+}
+
+.scope-bar span {
+  color: #8795a0;
+}
+
+.income-hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 7px;
+  padding: 11px;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(255,255,255,.22), transparent 31%),
+    linear-gradient(135deg, #1769dc, #248bc8 60%, #28a4ac);
+}
+
+.income-hero::after {
+  content: "¥";
+  position: absolute;
+  right: 8px;
+  bottom: -28px;
+  color: rgba(255,255,255,.09);
+  font-size: 76px;
+  font-weight: 900;
+}
+
+.hero-label,
+.hero-amount,
+.hero-meta,
+.hero-progress {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-label {
+  color: rgba(255,255,255,.77);
+  font-size: 8px;
+}
+
+.hero-amount {
+  margin-top: 6px;
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 11px;
+  margin-top: 5px;
+  color: rgba(255,255,255,.76);
+  font-size: 7px;
+}
+
+.hero-meta b {
+  color: #dfffe9;
+}
+
+.hero-progress {
+  height: 4px;
+  margin-top: 9px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(255,255,255,.20);
+}
+
+.hero-progress i {
+  display: block;
+  width: 72%;
+  height: 100%;
+  border-radius: 4px;
+  background: #65efd0;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.metric-card {
+  position: relative;
+  min-height: 57px;
+  padding: 8px;
+  border: 1px solid #e0e7ed;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.metric-card span {
+  display: block;
+  color: #82909b;
+  font-size: 7px;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 5px;
+  color: #354c5d;
+  font-size: 11px;
+}
+
+.metric-card em {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  color: #178c70;
+  font-size: 6.5px;
+  font-style: normal;
+}
+
+.metric-card.warning em {
+  color: #d65c55;
+}
+
+.trend-card {
+  padding-bottom: 6px;
+}
+
+.trend-chart {
+  position: relative;
+  height: 81px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 6px;
+  background:
+    linear-gradient(#eef2f5 1px, transparent 1px);
+  background-size: 100% 20px;
+}
+
+.trend-area {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 12px;
+  height: 57px;
+  clip-path: polygon(
+    0 78%,
+    14% 62%,
+    28% 70%,
+    43% 35%,
+    57% 49%,
+    72% 18%,
+    86% 35%,
+    100% 12%,
+    100% 100%,
+    0 100%
+  );
+  background:
+    linear-gradient(
+      180deg,
+      rgba(31, 124, 222, .38),
+      rgba(31, 124, 222, .03)
+    );
+}
+
+.rank-row {
+  min-height: 27px;
+  display: grid;
+  grid-template-columns: 19px 1fr auto;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 1px solid #edf1f4;
+}
+
+.rank-row:last-child {
+  border-bottom: 0;
+}
+
+.rank-no {
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: #8c6209;
+  background: #fff0c9;
+  font-size: 6px;
+  font-weight: 800;
+}
+
+.rank-name {
+  overflow: hidden;
+  color: #526575;
+  font-size: 7px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rank-row strong {
+  color: #344c5d;
+  font-size: 7.5px;
+}
+
+/* =========================================================
+   02 欠费催缴
+========================================================= */
+
+.debt-summary {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 7px;
+  padding: 11px;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(255,255,255,.19), transparent 31%),
+    linear-gradient(135deg, #6551c4, #7967d3);
+}
+
+.debt-summary::after {
+  content: "欠";
+  position: absolute;
+  right: 7px;
+  bottom: -28px;
+  color: rgba(255,255,255,.08);
+  font-size: 65px;
+  font-weight: 900;
+}
+
+.debt-summary-label,
+.debt-summary-value,
+.debt-summary-grid {
+  position: relative;
+  z-index: 2;
+}
+
+.debt-summary-label {
+  color: rgba(255,255,255,.76);
+  font-size: 8px;
+}
+
+.debt-summary-value {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.debt-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 9px;
+}
+
+.debt-summary-cell {
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.20);
+}
+
+.debt-summary-cell:last-child {
+  border-right: 0;
+}
+
+.debt-summary-cell strong {
+  display: block;
+  font-size: 8px;
+}
+
+.debt-summary-cell span {
+  display: block;
+  margin-top: 3px;
+  color: rgba(255,255,255,.65);
+  font-size: 6px;
+}
+
+.aging-row {
+  margin-bottom: 7px;
+}
+
+.aging-row:last-child {
+  margin-bottom: 0;
+}
+
+.aging-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #7a8995;
+  font-size: 7px;
+}
+
+.aging-head strong {
+  color: #4c6170;
+}
+
+.aging-bar {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #edf1f4;
+}
+
+.aging-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.debt-customer {
+  margin-bottom: 6px;
+  padding: 8px;
+  border: 1px solid #e1e3ec;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.debt-customer.active {
+  border-color: #8e7ade;
+  background: #faf9ff;
+}
+
+.customer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.customer-top strong {
+  display: block;
+  overflow: hidden;
+  color: #4a5269;
+  font-size: 8.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.customer-top b {
+  color: #dc5e58;
+  font-size: 9px;
+}
+
+.customer-meta {
+  margin-top: 4px;
+  color: #8a8f9d;
+  font-size: 6.5px;
+}
+
+.customer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.customer-footer span {
+  color: #a15d28;
+  font-size: 6.5px;
+}
+
+.customer-footer button {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  color: #fff;
+  background: #715acb;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.collection-panel {
+  padding: 8px;
+  border: 1px solid #dcd7ef;
+  border-radius: 9px;
+  background: #f8f6ff;
+}
+
+.collection-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #5d5770;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.collection-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.collection-option {
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ded9ec;
+  border-radius: 7px;
+  color: #756f83;
+  background: #fff;
+  font-size: 7px;
+}
+
+.collection-option.active {
+  color: #6852ba;
+  border-color: #8f79df;
+  background: #eeebff;
+}
+
+.collection-next {
+  margin-top: 7px;
+  color: #817a8f;
+  font-size: 7px;
+}
+
+/* =========================================================
+   03 风控审批
+========================================================= */
+
+.approval-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  margin-bottom: 7px;
+  padding: 3px;
+  border-radius: 9px;
+  background: #ebeef2;
+}
+
+.approval-tab {
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: #818b94;
+  font-size: 6.8px;
+}
+
+.approval-tab.active {
+  color: #cb7426;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(60,50,30,.08);
+  font-weight: 800;
+}
+
+.approval-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 7px;
+}
+
+.approval-count {
+  padding: 8px 4px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  background: #fffaf3;
+  text-align: center;
+}
+
+.approval-count strong {
+  display: block;
+  color: #d17728;
+  font-size: 12px;
+}
+
+.approval-count span {
+  display: block;
+  margin-top: 3px;
+  color: #9a8c7d;
+  font-size: 6.5px;
+}
+
+.approval-card {
+  margin-bottom: 7px;
+  padding: 9px;
+  border: 1px solid #eadfce;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 5px 14px rgba(91, 65, 31, .05);
+}
+
+.approval-card.highlight {
+  border-color: #e5a15d;
+  background: #fffaf4;
+}
+
+.approval-type-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.approval-type {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.approval-type i {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: #fff;
+  background: #dc7c28;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.approval-type strong {
+  color: #5a4f44;
+  font-size: 9px;
+}
+
+.approval-time {
+  color: #9c9389;
+  font-size: 6.5px;
+}
+
+.approval-title {
+  margin-top: 7px;
+  color: #51483f;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.approval-data {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  margin-top: 7px;
+  padding: 7px;
+  border-radius: 8px;
+  background: #f8f5f1;
+}
+
+.approval-data span {
+  display: block;
+  color: #9b9187;
+  font-size: 6.5px;
+}
+
+.approval-data strong {
+  display: block;
+  margin-top: 3px;
+  color: #5b5148;
+  font-size: 7.5px;
+}
+
+.approval-data strong.money {
+  color: #dc662f;
+}
+
+.risk-tip {
+  margin-top: 7px;
+  padding: 7px;
+  border-left: 3px solid #df782d;
+  border-radius: 6px;
+  color: #a25c28;
+  background: #fff0df;
+  font-size: 6.8px;
+  line-height: 1.45;
+}
+
+.risk-tip b {
+  color: #c95738;
+}
+
+.approval-flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 7px;
+}
+
+.flow-node {
+  position: relative;
+  color: #9b938b;
+  font-size: 6px;
+  text-align: center;
+}
+
+.flow-node::before {
+  content: "";
+  display: block;
+  width: 13px;
+  height: 13px;
+  margin: 0 auto 3px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #d8dadd;
+  box-shadow: 0 0 0 1px #d2d2d2;
+}
+
+.flow-node:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(50% + 8px);
+  top: 6px;
+  width: calc(100% - 16px);
+  height: 1px;
+  background: #ddd8d3;
+}
+
+.flow-node.done::before {
+  background: #25a384;
+  box-shadow: 0 0 0 1px #8ed1bf;
+}
+
+.flow-node.current::before {
+  background: #e18331;
+  box-shadow: 0 0 0 1px #e9bc8e;
+}
+
+.approval-actions {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.reject-button {
+  height: 31px;
+  border: 1px solid #e4b694;
+  border-radius: 8px;
+  color: #c66831;
+  background: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.approve-button {
+  height: 31px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #d57827, #e9a444);
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.permission-tip {
+  margin-top: 7px;
+  color: #9a8c7e;
+  font-size: 6.5px;
+  text-align: center;
+}
+
+/* =========================================================
+   04 对账差异
+========================================================= */
+
+.reconcile-hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 7px;
+  padding: 10px;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 0, rgba(255,255,255,.20), transparent 34%),
+    linear-gradient(135deg, #168a76, #24aa98);
+}
+
+.reconcile-hero::after {
+  content: "⇄";
+  position: absolute;
+  right: 5px;
+  bottom: -19px;
+  color: rgba(255,255,255,.09);
+  font-size: 60px;
+  font-weight: 900;
+}
+
+.reconcile-label,
+.reconcile-amount,
+.reconcile-meta {
+  position: relative;
+  z-index: 2;
+}
+
+.reconcile-label {
+  color: rgba(255,255,255,.77);
+  font-size: 8px;
+}
+
+.reconcile-amount {
+  margin-top: 5px;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.reconcile-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 8px;
+}
+
+.reconcile-meta-cell {
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.20);
+}
+
+.reconcile-meta-cell:last-child {
+  border-right: 0;
+}
+
+.reconcile-meta-cell strong {
+  display: block;
+  font-size: 8px;
+}
+
+.reconcile-meta-cell span {
+  display: block;
+  margin-top: 3px;
+  color: rgba(255,255,255,.65);
+  font-size: 6px;
+}
+
+.channel-row {
+  min-height: 28px;
+  display: grid;
+  grid-template-columns: 21px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #edf1ef;
+}
+
+.channel-row:last-child {
+  border-bottom: 0;
+}
+
+.channel-icon {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: #188a74;
+  background: #e6f6f1;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.channel-name {
+  color: #557068;
+  font-size: 7.5px;
+}
+
+.channel-status {
+  color: #1a9279;
+  font-size: 7px;
+}
+
+.channel-status.danger {
+  color: #d35e59;
+}
+
+.difference-card {
+  margin-bottom: 7px;
+  padding: 9px;
+  border: 1px solid #d7e7e2;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.difference-card.active {
+  border-color: #2baa91;
+  background: #f2fbf8;
+}
+
+.difference-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.difference-head strong {
+  color: #47655c;
+  font-size: 9px;
+}
+
+.difference-head b {
+  color: #d85f59;
+  font-size: 9px;
+}
+
+.difference-desc {
+  margin-top: 5px;
+  color: #84948f;
+  font-size: 6.8px;
+  line-height: 1.45;
+}
+
+.difference-tags {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.process-recommend {
+  margin-bottom: 7px;
+  padding: 8px;
+  border-left: 3px solid #20a88d;
+  border-radius: 7px;
+  color: #4f766b;
+  background: #eaf8f3;
+  font-size: 7px;
+  line-height: 1.5;
+}
+
+.process-recommend b {
+  color: #18866f;
+}
+
+.upload-box {
+  height: 40px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 7px;
+  border: 1px dashed #9fcfc1;
+  border-radius: 9px;
+  color: #5f887d;
+  background: #f7fcfa;
+  font-size: 7px;
+}
+
+.process-flow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  margin-bottom: 7px;
+}
+
+.process-step {
+  position: relative;
+  padding: 6px 2px;
+  border-radius: 6px;
+  color: #768d87;
+  background: #edf4f2;
+  font-size: 6px;
+  text-align: center;
+}
+
+.process-step.active {
+  color: #147d67;
+  background: #dff4ed;
+  font-weight: 800;
+}
+
+.process-step:not(:last-child)::after {
+  content: "›";
+  position: absolute;
+  right: -4px;
+  top: 5px;
+  z-index: 3;
+  color: #58a996;
+  font-size: 10px;
+}
+
+/* =========================================================
+   底部价值卡
+========================================================= */
+
+.value-zone {
+  position: absolute;
+  z-index: 8;
+  left: 48px;
+  right: 48px;
+  bottom: 47px;
+  height: 101px;
+}
+
+.value-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 21px;
+  color: #8eb5c8;
+  font-size: 10px;
+  letter-spacing: .5px;
+}
+
+.value-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dbfff, #43e7ce);
+}
+
+.value-title span {
+  margin-left: auto;
+  color: #587b90;
+  font-size: 9px;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin-top: 6px;
+}
+
+.value-card {
+  position: relative;
+  height: 70px;
+  padding: 10px 10px 8px 49px;
+  overflow: hidden;
+  border: 1px solid rgba(54, 192, 222, .18);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 56, 82, .72),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-card.purple {
+  border-color: rgba(151, 125, 240, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(49, 43, 95, .60),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-card.orange {
+  border-color: rgba(235, 158, 60, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(85, 55, 27, .55),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-card.green {
+  border-color: rgba(47, 210, 178, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 75, 69, .54),
+      rgba(6, 26, 47, .80)
+    );
+}
+
+.value-number {
+  position: absolute;
+  left: 11px;
+  top: 11px;
+  color: rgba(76, 223, 238, .22);
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.value-card.purple .value-number {
+  color: rgba(176, 153, 255, .22);
+}
+
+.value-card.orange .value-number {
+  color: rgba(255, 184, 88, .22);
+}
+
+.value-card.green .value-number {
+  color: rgba(74, 225, 193, .22);
+}
+
+.value-name {
+  color: #d3eff6;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.value-desc {
+  margin-top: 5px;
+  color: #688fa3;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.value-desc b {
+  color: #55dbc9;
+}
+
+.value-card.purple .value-desc b {
+  color: #b6a6ed;
+}
+
+.value-card.orange .value-desc b {
+  color: #ddb077;
+}
+
+.value-card.green .value-desc b {
+  color: #67cfb7;
+}
+
+/* =========================================================
+   页脚和Toast
+========================================================= */
+
+.footer {
+  position: absolute;
+  z-index: 9;
+  left: 49px;
+  right: 49px;
+  bottom: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #50758c;
+  font-size: 8px;
+  letter-spacing: .8px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 8px #3ee3c3;
+}
+
+.footer-right {
+  color: #3e637a;
+}
+
+.toast {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 105px;
+  min-width: 350px;
+  max-width: 600px;
+  display: none;
+  padding: 12px 17px;
+  transform: translateX(-50%);
+  color: #dcfaff;
+  border: 1px solid rgba(87, 220, 239, .28);
+  border-radius: 12px;
+  background: rgba(6, 35, 55, .95);
+  box-shadow: 0 12px 35px rgba(0,0,0,.35);
+  backdrop-filter: blur(12px);
+  font-size: 12px;
+  text-align: center;
+  transition: opacity .25s;
+}
+
+.phone button,
+.collection-option,
+.difference-card {
+  transition:
+    transform .15s ease,
+    filter .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.phone button:hover {
+  filter: brightness(1.05);
+}
+
+.phone button:active {
+  transform: scale(.97);
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+
+  @page {
+    size: 1600px 900px;
+    margin: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景科技曲线 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#53cfff"/>
+          <stop offset="100%" stop-color="#8a67ff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 730 C220 662 320 758 498 681 C684 600 727 423 910 358 C1098 292 1303 419 1600 232"
+      />
+
+      <path
+        class="bg-dash"
+        d="M0 775 C247 713 386 799 570 724 C750 650 790 485 970 420 C1170 350 1370 421 1600 329"
+      />
+
+      <circle class="bg-dot" cx="498" cy="681" r="3"/>
+      <circle class="bg-dot" cx="910" cy="358" r="3"/>
+      <circle class="bg-dot" cx="1303" cy="419" r="3"/>
+    </svg>
+
+    <!-- 顶部标题 -->
+    <header class="header">
+      <!-- <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 4h14v16H5V4z"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M8 8h8M8 12h5M8 16h8"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M15 11l2 2 3-4"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>智慧财务管理小程序：四大典型移动财务场景</h1>
+
+          <div class="subtitle">
+            MOBILE FINANCE · DASHBOARD · COLLECTION · APPROVAL · RECONCILIATION
+          </div>
+        </div> -->
+      </div>
+
+      <!-- <div class="header-message">
+        <strong>
+          不把Web后台搬进手机，而是突出<b>看数、审批、预警、跟进</b>
+        </strong>
+
+        <span>
+          随时看经营 · 随时催欠费 · 随时批事项 · 随时处理异常
+        </span>
+      </div> -->
+    </header>
+
+    <!-- 场景标题 -->
+    <!-- <div class="process-title">
+      <span class="process-index">01</span>
+      <i class="process-line"></i>
+
+      <h2>围绕管理人员高频任务，形成四个可随时处理的移动业务闭环</h2>
+
+      <span>
+        VIEW DATA · FOLLOW UP · RISK APPROVAL · EXCEPTION HANDLING
+      </span>
+    </div> -->
+
+    <!-- 四台手机 -->
+    <main class="phone-stage">
+
+      <!-- =================================================
+           01 财务驾驶舱
+      ================================================== -->
+      <section class="phone-group">
+
+        <div class="phone-label">
+          <i class="phone-step">01</i>
+
+          <div class="phone-label-text">
+            <strong>移动财务驾驶舱</strong>
+            <span>收入 · 欠费 · 审批 · 异常 · 项目排行</span>
+          </div>
+
+          <div class="phone-role">管理者看数</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">14:32</span>
+              <span class="mobile-icons">5G ▮▮▮ 86%</span>
+            </div>
+
+            <div class="mini-header">
+              <span class="mini-back">‹</span>
+
+              <div class="mini-title">
+                <strong>智慧财务</strong>
+                <span>华城智慧交通集团</span>
+              </div>
+
+              <span class="mini-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="scope-bar">
+                <strong>全部项目</strong>
+                <span>今日⌄</span>
+              </div>
+
+              <div class="income-hero">
+                <div class="hero-label">今日实收</div>
+
+                <div class="hero-amount">¥86,420.50</div>
+
+                <div class="hero-meta">
+                  <span>订单 <b>3,268</b> 笔</span>
+                  <span>较昨日 <b>+12.6%</b></span>
+                </div>
+
+                <div class="hero-progress">
+                  <i></i>
+                </div>
+              </div>
+
+              <div class="metric-grid">
+                <div class="metric-card">
+                  <span>本月收入</span>
+                  <strong>¥128.63万</strong>
+                  <em>目标72%</em>
+                </div>
+
+                <div class="metric-card warning">
+                  <span>应收未收</span>
+                  <strong>¥32.68万</strong>
+                  <em>收缴率84.5%</em>
+                </div>
+
+                <div class="metric-card warning">
+                  <span>待我审批</span>
+                  <strong>18条</strong>
+                  <em>2条即将超时</em>
+                </div>
+
+                <div class="metric-card warning">
+                  <span>异常预警</span>
+                  <strong>9条</strong>
+                  <em>高风险3条</em>
+                </div>
+              </div>
+
+              <div class="mobile-card trend-card">
+                <div class="card-head">
+                  <div>
+                    <strong>近7日收入趋势</strong>
+                    <span>全部项目收入金额</span>
+                  </div>
+
+                  <span class="small-badge">持续增长</span>
+                </div>
+
+                <div class="trend-chart">
+                  <div class="trend-area"></div>
+                </div>
+              </div>
+
+              <div class="section-title">
+                <i></i>
+                今日项目收入排行
+              </div>
+
+              <div class="mobile-card">
+                <div class="rank-row">
+                  <i class="rank-no">1</i>
+                  <span class="rank-name">市民中心停车场</span>
+                  <strong>¥28,620</strong>
+                </div>
+
+                <div class="rank-row">
+                  <i class="rank-no">2</i>
+                  <span class="rank-name">云湖花园停车场</span>
+                  <strong>¥18,360</strong>
+                </div>
+
+                <div class="rank-row">
+                  <i class="rank-no">3</i>
+                  <span class="rank-name">东站超级充电站</span>
+                  <strong>¥16,820</strong>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mini-tabbar">
+              <div class="mini-tab"><b>⌂</b>首页</div>
+              <div class="mini-tab"><b>▦</b>项目</div>
+              <div class="mini-tab active"><b>¥</b>财务</div>
+              <div class="mini-tab"><b>✓</b>审批</div>
+              <div class="mini-tab"><b>♙</b>我的</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           02 欠费催缴
+      ================================================== -->
+      <section class="phone-group purple">
+
+        <div class="phone-label">
+          <i class="phone-step">02</i>
+
+          <div class="phone-label-text">
+            <strong>欠费催缴与回款跟进</strong>
+            <span>自动识别逾期 · 多渠道催缴 · 记录跟进</span>
+          </div>
+
+          <div class="phone-role">应收闭环</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">14:32</span>
+              <span class="mobile-icons">5G ▮▮▮ 90%</span>
+            </div>
+
+            <div class="mini-header">
+              <span class="mini-back">‹</span>
+
+              <div class="mini-title">
+                <strong>应收欠费</strong>
+                <span>账龄分析与催缴跟进</span>
+              </div>
+
+              <span class="mini-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="debt-summary">
+                <div class="debt-summary-label">应收未收</div>
+                <div class="debt-summary-value">¥326,800</div>
+
+                <div class="debt-summary-grid">
+                  <div class="debt-summary-cell">
+                    <strong>26个</strong>
+                    <span>欠费客户</span>
+                  </div>
+
+                  <div class="debt-summary-cell">
+                    <strong>¥86,200</strong>
+                    <span>逾期金额</span>
+                  </div>
+
+                  <div class="debt-summary-cell">
+                    <strong>96天</strong>
+                    <span>最长逾期</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mobile-card">
+                <div class="card-head">
+                  <div>
+                    <strong>欠费账龄分析</strong>
+                    <span>按逾期天数分组</span>
+                  </div>
+                </div>
+
+                <div style="margin-top:7px">
+                  <div class="aging-row">
+                    <div class="aging-head">
+                      <span>0－30天</span>
+                      <strong>¥16.82万 · 51%</strong>
+                    </div>
+                    <div class="aging-bar">
+                      <i style="width:51%;background:#7660d2"></i>
+                    </div>
+                  </div>
+
+                  <div class="aging-row">
+                    <div class="aging-head">
+                      <span>31－90天</span>
+                      <strong>¥11.94万 · 37%</strong>
+                    </div>
+                    <div class="aging-bar">
+                      <i style="width:37%;background:#a38ce8"></i>
+                    </div>
+                  </div>
+
+                  <div class="aging-row">
+                    <div class="aging-head">
+                      <span>90天以上</span>
+                      <strong>¥3.92万 · 12%</strong>
+                    </div>
+                    <div class="aging-bar">
+                      <i style="width:12%;background:#df6b62"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-title">
+                <i></i>
+                重点欠费客户
+              </div>
+
+              <div class="debt-customer active">
+                <div class="customer-top">
+                  <strong>深圳远航科技有限公司</strong>
+                  <b>¥56,200</b>
+                </div>
+
+                <div class="customer-meta">
+                  企业停车月结 · 逾期19天
+                </div>
+
+                <div class="customer-footer">
+                  <span id="collectionStatus">上次催缴：7月8日</span>
+
+                  <button id="collectionButton">
+                    发起催缴
+                  </button>
+                </div>
+              </div>
+
+              <div class="debt-customer">
+                <div class="customer-top">
+                  <strong>优车洗护服务中心</strong>
+                  <b>¥18,000</b>
+                </div>
+
+                <div class="customer-meta">
+                  场地租金 · 逾期48天
+                </div>
+
+                <div class="customer-footer">
+                  <span>负责人：王经理</span>
+                  <span class="small-badge orange">待跟进</span>
+                </div>
+              </div>
+
+              <div class="collection-panel">
+                <div class="collection-title">
+                  <span>选择催缴方式</span>
+                  <span class="small-badge purple">生成跟进任务</span>
+                </div>
+
+                <div class="collection-options">
+                  <div class="collection-option active">微信消息</div>
+                  <div class="collection-option active">短信通知</div>
+                  <div class="collection-option">电话联系</div>
+                </div>
+
+                <div class="collection-next">
+                  下次跟进：2026-07-22 · 责任人：李伟
+                </div>
+              </div>
+
+              <button
+                class="primary-button"
+                id="sendCollection"
+                style="margin-top:7px"
+              >
+                发送催缴并生成跟进记录
+              </button>
+
+            </div>
+
+            <div class="mini-tabbar">
+              <div class="mini-tab"><b>⌂</b>首页</div>
+              <div class="mini-tab"><b>▦</b>项目</div>
+              <div class="mini-tab active"><b>¥</b>财务</div>
+              <div class="mini-tab"><b>✓</b>审批</div>
+              <div class="mini-tab"><b>♙</b>我的</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           03 风控审批
+      ================================================== -->
+      <section class="phone-group orange">
+
+        <div class="phone-label">
+          <i class="phone-step">03</i>
+
+          <div class="phone-label-text">
+            <strong>财务审批与智能风控</strong>
+            <span>退款 · 减免 · 结算 · 风险提示 · 金额权限</span>
+          </div>
+
+          <div class="phone-role">移动审批</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">14:32</span>
+              <span class="mobile-icons">5G ▮▮▮ 92%</span>
+            </div>
+
+            <div class="mini-header">
+              <span class="mini-back">‹</span>
+
+              <div class="mini-title">
+                <strong>审批中心</strong>
+                <span>财务总监 · 待我审批18条</span>
+              </div>
+
+              <span class="mini-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="approval-tabs">
+                <div class="approval-tab active">待我审批</div>
+                <div class="approval-tab">我发起的</div>
+                <div class="approval-tab">已审批</div>
+                <div class="approval-tab">抄送我的</div>
+              </div>
+
+              <div class="approval-summary">
+                <div class="approval-count">
+                  <strong>6</strong>
+                  <span>退款审批</span>
+                </div>
+
+                <div class="approval-count">
+                  <strong>4</strong>
+                  <span>减免审批</span>
+                </div>
+
+                <div class="approval-count">
+                  <strong>8</strong>
+                  <span>结算审批</span>
+                </div>
+              </div>
+
+              <div class="approval-card highlight" id="approvalCard">
+                <div class="approval-type-row">
+                  <div class="approval-type">
+                    <i>退</i>
+                    <strong>大额退款审批</strong>
+                  </div>
+
+                  <span class="approval-time">13:26</span>
+                </div>
+
+                <div class="approval-title">
+                  充电设备异常中断退款
+                </div>
+
+                <div class="approval-data">
+                  <div>
+                    <span>申请项目</span>
+                    <strong>东站超级充电站</strong>
+                  </div>
+
+                  <div>
+                    <span>申请金额</span>
+                    <strong class="money">¥18,000</strong>
+                  </div>
+
+                  <div>
+                    <span>申请人</span>
+                    <strong>张敏</strong>
+                  </div>
+
+                  <div>
+                    <span>原支付渠道</span>
+                    <strong>微信支付</strong>
+                  </div>
+                </div>
+
+                <div class="risk-tip">
+                  <b>系统风控提示：</b><br>
+                  该用户近30天已退款3次；订单已开具发票；
+                  金额超过项目经理审批权限。
+                </div>
+
+                <div class="approval-flow">
+                  <div class="flow-node done">申请提交</div>
+                  <div class="flow-node done">项目初审</div>
+                  <div class="flow-node current">财务复核</div>
+                  <div class="flow-node">渠道退款</div>
+                </div>
+
+                <div class="approval-actions">
+                  <button class="reject-button" id="rejectApproval">
+                    驳回
+                  </button>
+
+                  <button class="approve-button" id="approveApproval">
+                    同意并进入退款
+                  </button>
+                </div>
+
+                <div class="permission-tip">
+                  当前审批额度：¥200,000 · 本申请在权限范围内
+                </div>
+              </div>
+
+              <div class="approval-card">
+                <div class="approval-type-row">
+                  <div class="approval-type">
+                    <i style="background:#6d56c6">结</i>
+                    <strong>合作方结算审批</strong>
+                  </div>
+
+                  <span class="small-badge orange">待审批</span>
+                </div>
+
+                <div class="approval-title">
+                  云湖花园业委会6月结算
+                </div>
+
+                <div class="approval-data">
+                  <div>
+                    <span>结算金额</span>
+                    <strong class="money">¥36,827.70</strong>
+                  </div>
+
+                  <div>
+                    <span>分账规则</span>
+                    <strong>业委会70%</strong>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mini-tabbar">
+              <div class="mini-tab"><b>⌂</b>首页</div>
+              <div class="mini-tab"><b>▦</b>项目</div>
+              <div class="mini-tab"><b>¥</b>财务</div>
+              <div class="mini-tab active"><b>✓</b>审批</div>
+              <div class="mini-tab"><b>♙</b>我的</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           04 对账差异处理
+      ================================================== -->
+      <section class="phone-group green">
+
+        <div class="phone-label">
+          <i class="phone-step">04</i>
+
+          <div class="phone-label-text">
+            <strong>对账差异移动处置</strong>
+            <span>差异发现 · 核实 · 凭证 · 处理审批 · 复核</span>
+          </div>
+
+          <div class="phone-role">异常闭环</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+
+            <div class="mobile-status">
+              <span class="app-clock">14:32</span>
+              <span class="mobile-icons">5G ▮▮▮ 89%</span>
+            </div>
+
+            <div class="mini-header">
+              <span class="mini-back">‹</span>
+
+              <div class="mini-title">
+                <strong>自动对账</strong>
+                <span>订单 × 支付渠道 × 银行流水</span>
+              </div>
+
+              <span class="mini-more">···</span>
+            </div>
+
+            <div class="mobile-content">
+
+              <div class="reconcile-hero">
+                <div class="reconcile-label">今日应对账金额</div>
+
+                <div class="reconcile-amount">¥86,420.50</div>
+
+                <div class="reconcile-meta">
+                  <div class="reconcile-meta-cell">
+                    <strong>98.63%</strong>
+                    <span>自动匹配率</span>
+                  </div>
+
+                  <div class="reconcile-meta-cell">
+                    <strong>5笔</strong>
+                    <span>差异笔数</span>
+                  </div>
+
+                  <div class="reconcile-meta-cell">
+                    <strong>¥2,360</strong>
+                    <span>差异金额</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mobile-card">
+                <div class="card-head">
+                  <div>
+                    <strong>渠道对账状态</strong>
+                    <span>今日账单自动核对结果</span>
+                  </div>
+                </div>
+
+                <div style="margin-top:6px">
+                  <div class="channel-row">
+                    <i class="channel-icon">微</i>
+                    <span class="channel-name">微信支付 ¥42,680</span>
+                    <span class="channel-status">已对平</span>
+                  </div>
+
+                  <div class="channel-row">
+                    <i class="channel-icon">支</i>
+                    <span class="channel-name">支付宝 ¥18,620</span>
+                    <span class="channel-status">已对平</span>
+                  </div>
+
+                  <div class="channel-row">
+                    <i class="channel-icon">ETC</i>
+                    <span class="channel-name">ETC ¥12,860</span>
+                    <span class="channel-status danger">差异3笔</span>
+                  </div>
+
+                  <div class="channel-row">
+                    <i class="channel-icon">现</i>
+                    <span class="channel-name">现金 ¥3,640</span>
+                    <span class="channel-status danger">短款¥230</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-title">
+                <i></i>
+                当前差异单
+              </div>
+
+              <div class="difference-card active" id="differenceCard">
+                <div class="difference-head">
+                  <strong>支付成功但系统无订单</strong>
+                  <b>¥68.00</b>
+                </div>
+
+                <div class="difference-desc">
+                  市民中心停车场 · 微信支付<br>
+                  渠道流水 WX9836200172
+                </div>
+
+                <div class="difference-tags">
+                  <span class="small-badge red">高风险</span>
+                  <span class="small-badge">银行已到账</span>
+                </div>
+              </div>
+
+              <div class="process-recommend">
+                <b>系统建议：</b>
+                支付流水真实存在，建议生成异常收入单，
+                补充业务归属后提交财务复核。
+              </div>
+
+              <div class="upload-box" id="uploadProof">
+                ＋ 上传支付凭证或银行电子回单
+              </div>
+
+              <div class="process-flow">
+                <div class="process-step active">发现差异</div>
+                <div class="process-step active">责任人核实</div>
+                <div class="process-step">发起处理</div>
+                <div class="process-step">财务复核</div>
+                <div class="process-step">完成归档</div>
+              </div>
+
+              <button
+                class="primary-button"
+                id="submitDifference"
+              >
+                发起异常收入处理审批
+              </button>
+
+              <div style="
+                margin-top:6px;
+                color:#83938e;
+                font-size:6.5px;
+                line-height:1.45;
+                text-align:center;
+              ">
+                移动端完成核实与审批发起，复杂调账仍在Web后台执行
+              </div>
+
+            </div>
+
+            <div class="mini-tabbar">
+              <div class="mini-tab"><b>⌂</b>首页</div>
+              <div class="mini-tab"><b>▦</b>项目</div>
+              <div class="mini-tab active"><b>¥</b>财务</div>
+              <div class="mini-tab"><b>✓</b>审批</div>
+              <div class="mini-tab"><b>♙</b>我的</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 底部价值 -->
+    <section class="value-zone">
+      <div class="value-title">
+        四个移动场景分别解决管理者“看不到、催不动、批不快、异常处理慢”的问题
+
+        <span>
+          看数 · 跟进 · 风控 · 处置
+        </span>
+      </div>
+
+      <div class="value-grid">
+
+        <div class="value-card">
+          <div class="value-number">01</div>
+
+          <div class="value-name">随时看数：经营状态一屏掌握</div>
+
+          <div class="value-desc">
+            集团、区域、项目收入和欠费实时查看，<b>问题项目快速识别</b>
+          </div>
+        </div>
+
+        <div class="value-card purple">
+          <div class="value-number">02</div>
+
+          <div class="value-name">欠费跟进：从提醒走向回款闭环</div>
+
+          <div class="value-desc">
+            微信、短信、电话统一催缴，<b>过程有记录、责任有归属</b>
+          </div>
+        </div>
+
+        <div class="value-card orange">
+          <div class="value-number">03</div>
+
+          <div class="value-name">风险审批：先提示风险再做决策</div>
+
+          <div class="value-desc">
+            联动历史退款、发票及审批额度，<b>降低异常退款与减免风险</b>
+          </div>
+        </div>
+
+        <div class="value-card green">
+          <div class="value-number">04</div>
+
+          <div class="value-name">异常处置：差异发现后立即跟进</div>
+
+          <div class="value-desc">
+            移动核实、上传凭证并发起审批，<b>缩短对账差异处理周期</b>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <!-- <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        移动端负责看数、审批、预警和跟进；Web后台负责复杂制单、调账、凭证与批量处理
+      </div>
+
+      <div class="footer-right">
+        MOBILE DASHBOARD · COLLECTION · APPROVAL · RECONCILIATION
+      </div>
+    </footer> -->
+
+    <div class="toast" id="toast"></div>
+
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   舞台缩放
+========================================================= */
+
+function resizeStage() {
+  const stage = document.getElementById("stage");
+
+  const scale = Math.min(
+    window.innerWidth / 1600,
+    window.innerHeight / 900
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+
+/* =========================================================
+   手机时间
+========================================================= */
+
+function updateClocks() {
+  const time = new Date().toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+
+  document.querySelectorAll(".app-clock").forEach(function(item) {
+    item.textContent = time;
+  });
+}
+
+updateClocks();
+setInterval(updateClocks, 30000);
+
+/* =========================================================
+   Toast
+========================================================= */
+
+let toastTimer;
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+
+  toast.textContent = "✓ " + message;
+  toast.style.display = "block";
+  toast.style.opacity = "1";
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(function() {
+    toast.style.opacity = "0";
+
+    setTimeout(function() {
+      toast.style.display = "none";
+    }, 250);
+  }, 2300);
+}
+
+/* =========================================================
+   欠费催缴交互
+========================================================= */
+
+document
+  .querySelectorAll(".collection-option")
+  .forEach(function(option) {
+    option.addEventListener("click", function() {
+      option.classList.toggle("active");
+    });
+  });
+
+document
+  .getElementById("collectionButton")
+  .addEventListener("click", function() {
+    showToast("已打开深圳远航科技有限公司催缴任务");
+  });
+
+document
+  .getElementById("sendCollection")
+  .addEventListener("click", function() {
+    const selectedChannels =
+      document.querySelectorAll(".collection-option.active").length;
+
+    if (!selectedChannels) {
+      showToast("请至少选择一种催缴方式");
+      return;
+    }
+
+    document.getElementById("collectionStatus").textContent =
+      "今日已催缴 · 等待客户反馈";
+
+    document.getElementById("collectionButton").textContent =
+      "查看记录";
+
+    showToast(
+      "催缴消息已发送，系统已生成2026年7月22日跟进任务"
+    );
+  });
+
+/* =========================================================
+   审批交互
+========================================================= */
+
+document
+  .getElementById("approveApproval")
+  .addEventListener("click", function() {
+    const card = document.getElementById("approvalCard");
+
+    card.style.borderColor = "#65c9ad";
+    card.style.background = "#f4fcf9";
+
+    this.textContent = "已同意 · 等待渠道退款";
+    this.style.background =
+      "linear-gradient(135deg,#188e76,#29af98)";
+
+    document.getElementById("rejectApproval").style.display = "none";
+
+    showToast(
+      "退款审批已通过，流程已进入发票红冲及支付渠道退款节点"
+    );
+  });
+
+document
+  .getElementById("rejectApproval")
+  .addEventListener("click", function() {
+    const card = document.getElementById("approvalCard");
+
+    card.style.opacity = ".58";
+
+    document.getElementById("approveApproval").textContent =
+      "已驳回 · 等待申请人补充材料";
+
+    this.style.display = "none";
+
+    showToast(
+      "申请已驳回，系统已通知申请人补充退款依据和相关附件"
+    );
+  });
+
+/* =========================================================
+   对账差异交互
+========================================================= */
+
+let proofUploaded = false;
+let differenceSubmitted = false;
+
+document
+  .getElementById("uploadProof")
+  .addEventListener("click", function() {
+    proofUploaded = true;
+
+    this.textContent = "✓ 微信支付凭证已上传";
+    this.style.borderStyle = "solid";
+    this.style.borderColor = "#56baa2";
+    this.style.background = "#e8f7f2";
+    this.style.color = "#177a65";
+
+    showToast("支付凭证上传成功");
+  });
+
+document
+  .getElementById("submitDifference")
+  .addEventListener("click", function() {
+    if (differenceSubmitted) {
+      showToast("该差异单已提交，请勿重复处理");
+      return;
+    }
+
+    if (!proofUploaded) {
+      showToast("请先上传支付凭证或银行电子回单");
+      return;
+    }
+
+    differenceSubmitted = true;
+
+    const steps = document.querySelectorAll(
+      ".green .process-step"
+    );
+
+    if (steps[2]) {
+      steps[2].classList.add("active");
+    }
+
+    this.textContent = "处理申请已提交 · 等待财务复核";
+    this.style.background =
+      "linear-gradient(135deg,#4d7e73,#60968a)";
+
+    document.getElementById("differenceCard").style.opacity = ".72";
+
+    showToast(
+      "异常收入处理申请已提交，等待财务复核后补录收入归属"
+    );
+  });
+</script>
+
+</body>
+</html>

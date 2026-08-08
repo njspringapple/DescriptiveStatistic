@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧车位运营管理</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 49% 44%, rgba(0, 190, 255, .17), transparent 32%),
+    radial-gradient(circle at 83% 25%, rgba(117, 77, 255, .12), transparent 25%),
+    radial-gradient(circle at 12% 72%, rgba(0, 221, 190, .08), transparent 26%),
+    linear-gradient(135deg, #061224 0%, #08192f 50%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 16%,
+    #000 90%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 390px;
+  top: 100px;
+  width: 820px;
+  height: 720px;
+  border: 1px solid rgba(67, 175, 255, .06);
+  border-radius: 50%;
+  box-shadow:
+    0 0 110px rgba(0, 176, 255, .05),
+    inset 0 0 110px rgba(0, 176, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==============================
+   标题
+============================== */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 23px;
+  height: 77px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 216, 240, .13);
+  border-radius: 18px;
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3.5px;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.header-right strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #dff8ff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.header-right strong b {
+  color: #55e7d2;
+}
+
+.header-right span {
+  color: #6796b1;
+  font-size: 10.5px;
+}
+
+/* ==============================
+   顶部核心理念
+============================== */
+
+.concepts {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 108px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+}
+
+.concept {
+  height: 36px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(66, 185, 235, .22);
+  border-radius: 18px;
+  color: #a8d4e7;
+  font-size: 11px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 72, 108, .52),
+      rgba(7, 33, 60, .52)
+    );
+}
+
+.concept i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4be1ec;
+  box-shadow: 0 0 8px #4be1ec;
+}
+
+.concept strong {
+  color: #d7f7ff;
+  font-weight: 700;
+}
+
+/* ==============================
+   通用卡片
+============================== */
+
+.card {
+  position: absolute;
+  border: 1px solid rgba(66, 169, 237, .24);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .91)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  opacity: .62;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.section-head {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #27baff, #45e8d3);
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #dff6ff;
+  font-size: 17px;
+}
+
+.section-en {
+  margin-left: auto;
+  color: #617f94;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* ==============================
+   左侧：客户群体
+============================== */
+
+.customer-zone {
+  position: absolute;
+  left: 48px;
+  top: 163px;
+  width: 355px;
+  height: 575px;
+}
+
+.customer-list {
+  margin-top: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.customer-card {
+  position: relative;
+  height: 94px;
+  padding: 12px 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(60, 170, 230, .18);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 52, 82, .82),
+      rgba(7, 27, 50, .88)
+    );
+  box-shadow: 0 10px 25px rgba(0, 5, 18, .18);
+}
+
+.customer-card::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  bottom: -37px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(38, 199, 224, .04);
+}
+
+.customer-card.enterprise {
+  border-color: rgba(144, 119, 255, .22);
+}
+
+.customer-card.merchant {
+  border-color: rgba(50, 219, 179, .21);
+}
+
+.customer-icon {
+  width: 51px;
+  height: 51px;
+  flex: 0 0 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  color: #54e1f5;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(27, 150, 196, .20),
+      rgba(18, 79, 117, .14)
+    );
+  border: 1px solid rgba(69, 211, 238, .18);
+}
+
+.customer-card.enterprise .customer-icon {
+  color: #c1afff;
+  background: rgba(124, 86, 218, .15);
+  border-color: rgba(165, 134, 244, .18);
+}
+
+.customer-card.merchant .customer-icon {
+  color: #55e7c6;
+  background: rgba(31, 180, 145, .13);
+  border-color: rgba(61, 218, 179, .17);
+}
+
+.customer-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.customer-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.customer-name {
+  display: flex;
+  align-items: center;
+  color: #d9eff8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.customer-tag {
+  margin-left: auto;
+  padding: 3px 7px;
+  border-radius: 8px;
+  color: #65dff0;
+  font-size: 8px;
+  font-weight: 500;
+  background: rgba(31, 171, 207, .10);
+}
+
+.customer-card.enterprise .customer-tag {
+  color: #bca7ff;
+  background: rgba(129, 91, 220, .11);
+}
+
+.customer-card.merchant .customer-tag {
+  color: #5de2c4;
+  background: rgba(35, 187, 150, .10);
+}
+
+.customer-demand {
+  margin-top: 6px;
+  color: #668da3;
+  font-size: 9px;
+}
+
+.customer-plan {
+  margin-top: 7px;
+  color: #a9cbd9;
+  font-size: 9.5px;
+  line-height: 1.35;
+}
+
+.customer-plan b {
+  color: #52dded;
+  font-weight: 600;
+}
+
+.customer-card.enterprise .customer-plan b {
+  color: #bba9ff;
+}
+
+.customer-card.merchant .customer-plan b {
+  color: #58e0c2;
+}
+
+/* ==============================
+   中间：运营引擎
+============================== */
+
+.engine-zone {
+  position: absolute;
+  left: 425px;
+  top: 163px;
+  width: 725px;
+  height: 575px;
+}
+
+.engine-card {
+  position: absolute;
+  left: 0;
+  top: 49px;
+  width: 725px;
+  height: 519px;
+  border-color: rgba(50, 216, 233, .42);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(0, 200, 231, .16), transparent 42%),
+    linear-gradient(
+      145deg,
+      rgba(11, 66, 98, .96),
+      rgba(5, 26, 50, .97)
+    );
+  box-shadow:
+    0 24px 65px rgba(0, 5, 20, .46),
+    0 0 50px rgba(0, 189, 229, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.engine-card::before {
+  background: linear-gradient(90deg, transparent, #55e4f0, transparent);
+}
+
+.engine-card::after {
+  content: "";
+  position: absolute;
+  left: 242px;
+  top: 102px;
+  width: 240px;
+  height: 240px;
+  border: 1px solid rgba(70, 222, 239, .12);
+  border-radius: 50%;
+  box-shadow:
+    0 0 55px rgba(25, 207, 230, .09),
+    inset 0 0 55px rgba(25, 207, 230, .05);
+}
+
+.engine-top {
+  position: relative;
+  z-index: 3;
+  height: 68px;
+  padding: 15px 20px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.engine-logo {
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #188eff, #2dded4);
+  box-shadow:
+    0 0 20px rgba(30, 205, 229, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .20);
+}
+
+.engine-logo svg {
+  width: 23px;
+  height: 23px;
+}
+
+.engine-title {
+  margin-left: 12px;
+}
+
+.engine-title strong {
+  display: block;
+  color: #effcff;
+  font-size: 18px;
+}
+
+.engine-title span {
+  display: block;
+  margin-top: 4px;
+  color: #68abc1;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.engine-badge {
+  margin-left: auto;
+  padding: 7px 11px;
+  border: 1px solid rgba(62, 228, 199, .20);
+  border-radius: 15px;
+  color: #65ebce;
+  font-size: 9px;
+  background: rgba(34, 195, 161, .08);
+}
+
+.engine-main {
+  position: relative;
+  z-index: 3;
+  height: 348px;
+}
+
+/* 中央核心 */
+.engine-core {
+  position: absolute;
+  left: 261px;
+  top: 68px;
+  width: 202px;
+  height: 202px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(70, 231, 239, .36);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(20, 124, 154, .53), rgba(6, 37, 65, .94) 65%);
+  box-shadow:
+    0 0 38px rgba(0, 207, 231, .15),
+    inset 0 0 36px rgba(0, 210, 230, .08);
+}
+
+.engine-core::before,
+.engine-core::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.engine-core::before {
+  inset: 12px;
+  border: 1px dashed rgba(82, 225, 237, .24);
+  animation: rotate 24s linear infinite;
+}
+
+.engine-core::after {
+  inset: 26px;
+  border: 1px solid rgba(82, 225, 237, .10);
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.core-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.core-icon {
+  width: 53px;
+  height: 53px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #188fff, #30dfd4);
+  box-shadow: 0 0 23px rgba(37, 217, 231, .30);
+}
+
+.core-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.core-name {
+  color: #effcff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.core-desc {
+  margin-top: 7px;
+  color: #72b2c5;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.core-ai {
+  margin-top: 9px;
+  padding: 4px 9px;
+  display: inline-block;
+  border-radius: 10px;
+  color: #64e5cf;
+  font-size: 8px;
+  background: rgba(33, 196, 163, .09);
+}
+
+/* 功能节点 */
+.engine-node {
+  position: absolute;
+  width: 178px;
+  height: 86px;
+  padding: 11px 12px;
+  border: 1px solid rgba(60, 181, 222, .18);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 61, 91, .83),
+      rgba(6, 31, 56, .87)
+    );
+  box-shadow: 0 10px 25px rgba(0, 5, 16, .18);
+}
+
+.engine-node.purple {
+  border-color: rgba(153, 123, 255, .25);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(56, 47, 112, .57),
+      rgba(7, 33, 58, .88)
+    );
+}
+
+.engine-node.green {
+  border-color: rgba(47, 215, 177, .23);
+}
+
+.node-1 {
+  left: 25px;
+  top: 11px;
+}
+
+.node-2 {
+  right: 25px;
+  top: 11px;
+}
+
+.node-3 {
+  left: 13px;
+  top: 130px;
+}
+
+.node-4 {
+  right: 13px;
+  top: 130px;
+}
+
+.node-5 {
+  left: 54px;
+  top: 250px;
+}
+
+.node-6 {
+  right: 54px;
+  top: 250px;
+}
+
+.node-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.node-icon {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #54def3;
+  background: rgba(23, 148, 189, .14);
+}
+
+.engine-node.purple .node-icon {
+  color: #c4b2ff;
+  background: rgba(129, 91, 220, .15);
+}
+
+.engine-node.green .node-icon {
+  color: #58e4c5;
+  background: rgba(32, 180, 145, .13);
+}
+
+.node-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.node-name {
+  color: #d7eff7;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.node-desc {
+  margin-top: 8px;
+  color: #668da2;
+  font-size: 8.5px;
+  line-height: 1.45;
+}
+
+/* 引擎连接线 */
+.engine-lines {
+  position: absolute;
+  inset: 0;
+  width: 725px;
+  height: 348px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.engine-line {
+  fill: none;
+  stroke: #42cee8;
+  stroke-width: 1.3;
+  stroke-dasharray: 5 6;
+  opacity: .48;
+  animation: flow 10s linear infinite;
+}
+
+.engine-line-purple {
+  stroke: #9c88ff;
+}
+
+.engine-line-green {
+  stroke: #47dcb9;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+.engine-dot {
+  fill: #57e9f6;
+  filter: drop-shadow(0 0 5px #24d9f0);
+}
+
+/* 引擎底部能力条 */
+.engine-footer {
+  position: relative;
+  z-index: 3;
+  height: 83px;
+  margin: 5px 18px 0;
+  padding: 11px;
+  border: 1px solid rgba(58, 181, 216, .15);
+  border-radius: 12px;
+  background: rgba(3, 22, 41, .57);
+}
+
+.engine-footer-title {
+  margin-bottom: 8px;
+  color: #63a4ba;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+}
+
+.engine-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.engine-tag {
+  padding: 6px 9px;
+  border: 1px solid rgba(54, 178, 214, .15);
+  border-radius: 8px;
+  color: #94bdcd;
+  font-size: 8.5px;
+  background: rgba(12, 51, 76, .51);
+}
+
+.engine-tag.highlight {
+  color: #65e3cf;
+  border-color: rgba(51, 216, 179, .19);
+  background: rgba(27, 151, 126, .09);
+}
+
+/* ==============================
+   右侧：运营提升
+============================== */
+
+.operation-zone {
+  position: absolute;
+  right: 48px;
+  top: 163px;
+  width: 375px;
+  height: 575px;
+}
+
+.cockpit {
+  position: relative;
+  height: 522px;
+  margin-top: 7px;
+  padding: 15px;
+  border: 1px solid rgba(123, 104, 255, .27);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(103, 74, 226, .12), transparent 36%),
+    linear-gradient(
+      145deg,
+      rgba(34, 42, 93, .82),
+      rgba(7, 27, 50, .94)
+    );
+  box-shadow:
+    0 18px 42px rgba(0, 5, 18, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+.cockpit::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #9d87ff, transparent);
+}
+
+.cockpit-head {
+  display: flex;
+  align-items: center;
+}
+
+.cockpit-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ece9ff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cockpit-icon {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #d1c4ff;
+  background: rgba(121, 91, 218, .16);
+  border: 1px solid rgba(166, 139, 246, .17);
+}
+
+.cockpit-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ai-badge {
+  margin-left: auto;
+  padding: 4px 8px;
+  border-radius: 9px;
+  color: #64e4cd;
+  font-size: 8px;
+  background: rgba(34, 190, 159, .09);
+}
+
+/* 指标卡 */
+.metrics {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.metric {
+  height: 72px;
+  padding: 11px 12px;
+  border: 1px solid rgba(137, 121, 232, .15);
+  border-radius: 10px;
+  background: rgba(13, 33, 65, .63);
+}
+
+.metric-label {
+  color: #787f9f;
+  font-size: 8.5px;
+}
+
+.metric-value {
+  margin-top: 6px;
+  color: #e5e1ff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.metric-value span {
+  margin-left: 4px;
+  color: #5edbc6;
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.metric-desc {
+  margin-top: 5px;
+  color: #626c8c;
+  font-size: 8px;
+}
+
+/* 车位数字底图 */
+.resource-panel {
+  margin-top: 10px;
+  height: 110px;
+  padding: 11px 12px;
+  border: 1px solid rgba(123, 111, 218, .14);
+  border-radius: 11px;
+  background: rgba(7, 26, 50, .67);
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  color: #bbb7dc;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.panel-title span {
+  margin-left: auto;
+  color: #65698a;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.space-map {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 5px;
+}
+
+.space {
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(73, 185, 217, .19);
+  border-radius: 4px;
+  color: #4e8da6;
+  font-size: 6.5px;
+  background: rgba(18, 67, 91, .46);
+}
+
+.space.used {
+  color: #9b8ecf;
+  border-color: rgba(135, 109, 214, .20);
+  background: rgba(83, 63, 143, .26);
+}
+
+.space.share {
+  color: #4fd4ba;
+  border-color: rgba(48, 210, 175, .21);
+  background: rgba(25, 137, 115, .21);
+}
+
+.map-legend {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  color: #58687f;
+  font-size: 7.5px;
+}
+
+.map-legend i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 4px;
+  border-radius: 2px;
+  background: #205e78;
+}
+
+.map-legend .used-dot {
+  background: #59448d;
+}
+
+.map-legend .share-dot {
+  background: #218b76;
+}
+
+/* AI建议 */
+.ai-advice {
+  margin-top: 10px;
+  height: 111px;
+  padding: 11px 12px;
+  border: 1px solid rgba(49, 217, 181, .18);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 78, 78, .38),
+      rgba(7, 30, 51, .68)
+    );
+}
+
+.advice-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #77e4cf;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.advice-head i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #48e3c5;
+  box-shadow: 0 0 8px #48e3c5;
+}
+
+.advice-list {
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.advice-list li {
+  position: relative;
+  min-height: 23px;
+  padding-left: 14px;
+  color: #719d9a;
+  font-size: 8.5px;
+  line-height: 1.45;
+}
+
+.advice-list li::before {
+  content: "›";
+  position: absolute;
+  left: 1px;
+  color: #51d6bd;
+  font-weight: 700;
+}
+
+.advice-list b {
+  color: #bfeee4;
+  font-weight: 600;
+}
+
+/* 自动运营 */
+.auto-operation {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.auto-item {
+  height: 47px;
+  padding: 8px 9px;
+  border: 1px solid rgba(129, 111, 218, .13);
+  border-radius: 9px;
+  color: #9996b8;
+  font-size: 8px;
+  line-height: 1.4;
+  background: rgba(14, 31, 59, .58);
+}
+
+.auto-item b {
+  display: block;
+  margin-bottom: 3px;
+  color: #d1ccea;
+  font-size: 8.5px;
+}
+
+/* ==============================
+   底部闭环
+============================== */
+
+.lifecycle-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 43px;
+  height: 107px;
+}
+
+.lifecycle-title {
+  height: 25px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8ab2c6;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+}
+
+.lifecycle-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #29bdff, #45e6ce);
+}
+
+.lifecycle {
+  height: 76px;
+  display: grid;
+  grid-template-columns:
+    1fr 31px 1fr 31px 1fr 31px
+    1fr 31px 1fr 31px 1fr;
+  align-items: center;
+  padding: 0 15px;
+  border: 1px solid rgba(58, 180, 218, .16);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(9, 39, 66, .75),
+      rgba(18, 40, 80, .66),
+      rgba(8, 38, 63, .75)
+    );
+}
+
+.life-step {
+  text-align: center;
+}
+
+.life-number {
+  display: block;
+  margin-bottom: 4px;
+  color: rgba(73, 217, 235, .31);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.life-name {
+  color: #d0eaf3;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.life-desc {
+  margin-top: 4px;
+  color: #63899e;
+  font-size: 7.5px;
+}
+
+.life-arrow {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, #237fa2, #45d9e7);
+}
+
+.life-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  border-left: 7px solid #45d9e7;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+/* ==============================
+   主拓扑连线
+============================== */
+
+.main-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.customer-line {
+  fill: none;
+  stroke: #42cfe8;
+  stroke-width: 1.3;
+  opacity: .43;
+  stroke-dasharray: 5 6;
+}
+
+.operation-line {
+  fill: none;
+  stroke: #9b88ff;
+  stroke-width: 1.4;
+  opacity: .50;
+  stroke-dasharray: 6 6;
+}
+
+.flow-line {
+  animation: mainFlow 10s linear infinite;
+}
+
+@keyframes mainFlow {
+  to {
+    stroke-dashoffset: -130;
+  }
+}
+
+.main-dot {
+  fill: #54e7f3;
+  filter: drop-shadow(0 0 5px #27d7ee);
+}
+
+.main-dot-purple {
+  fill: #b09cff;
+  filter: drop-shadow(0 0 5px #9176ff);
+}
+
+/* ==============================
+   页脚
+============================== */
+
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #50778f;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+}
+
+.footer-left,
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.footer i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 8px #3ee3c3;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect
+              x="3"
+              y="4"
+              width="18"
+              height="16"
+              rx="3"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M8 17V7h4a3 3 0 0 1 0 6H8"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M16.5 16.5l1.2 1.2 2.3-2.5"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>智慧车位运营管理：从“车位收费”到“车位经营”</h1>
+          <div class="subtitle">
+            INTELLIGENT PARKING SPACE OPERATION
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <strong>面对不同客户，提供更懂需求的<b>人性化方案</b></strong>
+        <span>资源数字化 · 产品灵活化 · 服务差异化 · 运营智能化</span>
+      </div>
+    </header>
+
+    <!-- 核心理念 -->
+    <section class="concepts">
+      <div class="concept">
+        <i></i>
+        <strong>一人一策</strong>
+        根据身份、时段与需求匹配套餐
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一位一价</strong>
+        按区域、类型、产权与稀缺度定价
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一企一账</strong>
+        企业用车统一授权、统一账单、统一结算
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>一单多科目</strong>
+        租赁费、管理费、超时费清晰可查
+      </div>
+    </section>
+
+    <!-- 主连接线 -->
+    <svg class="main-lines" viewBox="0 0 1600 900">
+      <!-- 客户群体到运营引擎 -->
+      <path class="customer-line flow-line" d="M403 257 H425"/>
+      <path class="customer-line flow-line" d="M403 360 H425"/>
+      <path class="customer-line flow-line" d="M403 463 H425"/>
+      <path class="customer-line flow-line" d="M403 566 H425"/>
+      <path class="customer-line flow-line" d="M403 669 H425"/>
+
+      <circle class="main-dot" cx="414" cy="257" r="3"/>
+      <circle class="main-dot" cx="414" cy="360" r="3"/>
+      <circle class="main-dot" cx="414" cy="463" r="3"/>
+      <circle class="main-dot" cx="414" cy="566" r="3"/>
+      <circle class="main-dot" cx="414" cy="669" r="3"/>
+
+      <!-- 运营引擎到运营驾驶舱 -->
+      <path class="operation-line flow-line" d="M1150 300 H1177"/>
+      <path class="operation-line flow-line" d="M1150 447 H1177"/>
+      <path class="operation-line flow-line" d="M1150 594 H1177"/>
+
+      <circle class="main-dot-purple" cx="1164" cy="300" r="3"/>
+      <circle class="main-dot-purple" cx="1164" cy="447" r="3"/>
+      <circle class="main-dot-purple" cx="1164" cy="594" r="3"/>
+    </svg>
+
+    <!-- ==================================================
+         左侧：客户群体
+    =================================================== -->
+
+    <section class="customer-zone">
+      <div class="section-head">
+        <span class="section-number">01</span>
+        <i class="section-line"></i>
+        <h2>不同客户，不同车位方案</h2>
+        <span class="section-en">CUSTOMER</span>
+      </div>
+
+      <div class="customer-list">
+
+        <!-- 业主住户 -->
+        <div class="customer-card">
+          <div class="customer-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 20V9l8-5 8 5v11"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8 20v-6h8v6M9 10h.01M15 10h.01"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="customer-content">
+            <div class="customer-name">
+              业主／住户
+              <span class="customer-tag">长期稳定</span>
+            </div>
+            <div class="customer-demand">产权车位、租赁车位、多车家庭</div>
+            <div class="customer-plan">
+              <b>包年包月＋阶梯优惠</b> · 一位多车 · 管理费独立
+            </div>
+          </div>
+        </div>
+
+        <!-- 白领通勤 -->
+        <div class="customer-card">
+          <div class="customer-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="5"
+                y="8"
+                width="14"
+                height="11"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M9 8V5h6v3M5 12h14M10 12v2h4v-2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+
+          <div class="customer-content">
+            <div class="customer-name">
+              白领／通勤人群
+              <span class="customer-tag">分时需求</span>
+            </div>
+            <div class="customer-demand">工作日白天、夜间或周末错峰停车</div>
+            <div class="customer-plan">
+              <b>分时共享＋周期时套餐</b> · 到期自动恢复
+            </div>
+          </div>
+        </div>
+
+        <!-- 企业客户 -->
+        <div class="customer-card enterprise">
+          <div class="customer-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 20V8h6v12M13 20V4h6v16M3 20h18"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M7.5 11h1M7.5 14h1M15.5 8h1M15.5 11h1"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="customer-content">
+            <div class="customer-name">
+              企业客户
+              <span class="customer-tag">统一管理</span>
+            </div>
+            <div class="customer-demand">批量租位、员工车辆、企业费用结算</div>
+            <div class="customer-plan">
+              <b>企业管理员门户</b> · 动态授权 · 超额费用企业结算
+            </div>
+          </div>
+        </div>
+
+        <!-- 商铺访客 -->
+        <div class="customer-card merchant">
+          <div class="customer-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 9l2-5h12l2 5M5 9v10h14V9"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M3 9h18M9 19v-5h6v5"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+
+          <div class="customer-content">
+            <div class="customer-name">
+              商铺／访客
+              <span class="customer-tag">灵活权益</span>
+            </div>
+            <div class="customer-demand">消费优惠、预约到访、临时车位保障</div>
+            <div class="customer-plan">
+              <b>商户优惠＋访客预约</b> · 认证后差异化价格
+            </div>
+          </div>
+        </div>
+
+        <!-- 产权方 -->
+        <div class="customer-card">
+          <div class="customer-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 20V6h14v14M8 9h8M8 13h8M8 17h5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+              <path
+                d="M16 16l1.4 1.4L20 15"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="customer-content">
+            <div class="customer-name">
+              产权方／管理方
+              <span class="customer-tag">资产增值</span>
+            </div>
+            <div class="customer-demand">空闲车位出租、收益分账、资产监管</div>
+            <div class="customer-plan">
+              <b>委托租赁＋自动分账</b> · 合同、账单全程可追溯
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================
+         中间：智慧运营引擎
+    =================================================== -->
+
+    <section class="engine-zone">
+      <div class="section-head">
+        <span class="section-number">02</span>
+        <i class="section-line"></i>
+        <h2>智慧车位产品与运营引擎</h2>
+        <span class="section-en">OPERATION ENGINE</span>
+      </div>
+
+      <div class="card engine-card">
+
+        <div class="engine-top">
+          <div class="engine-logo">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 17V7h16v10H4z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M8 16V8h4a2.5 2.5 0 0 1 0 5H8"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+              <path
+                d="M16 9h2M16 12h2M16 15h2"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="engine-title">
+            <strong>车位全生命周期运营中枢</strong>
+            <span>SPACE · PRODUCT · CONTRACT · BILLING · SETTLEMENT</span>
+          </div>
+
+          <div class="engine-badge">规则可配置 · 方案可组合</div>
+        </div>
+
+        <div class="engine-main">
+
+          <!-- 连接线 -->
+          <svg class="engine-lines" viewBox="0 0 725 348">
+            <path class="engine-line" d="M203 54 C242 54 238 105 278 126"/>
+            <path class="engine-line engine-line-purple" d="M522 54 C483 54 487 105 447 126"/>
+
+            <path class="engine-line" d="M191 173 H261"/>
+            <path class="engine-line engine-line-green" d="M534 173 H463"/>
+
+            <path class="engine-line engine-line-green" d="M232 293 C273 293 272 258 293 245"/>
+            <path class="engine-line engine-line-purple" d="M493 293 C452 293 453 258 432 245"/>
+
+            <circle class="engine-dot" cx="239" cy="81" r="3"/>
+            <circle class="engine-dot" cx="486" cy="81" r="3"/>
+            <circle class="engine-dot" cx="226" cy="173" r="3"/>
+            <circle class="engine-dot" cx="499" cy="173" r="3"/>
+            <circle class="engine-dot" cx="267" cy="276" r="3"/>
+            <circle class="engine-dot" cx="458" cy="276" r="3"/>
+          </svg>
+
+          <!-- 套餐与定价 -->
+          <div class="engine-node node-1">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 6h16v12H4V6z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 10h8M8 14h5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">套餐与差异化定价</div>
+            </div>
+            <div class="node-desc">
+              包年包月 · 分时共享 · 储值／时套餐<br>
+              时间阶梯、区域、身份、车位类型定价
+            </div>
+          </div>
+
+          <!-- 权益认证 -->
+          <div class="engine-node node-2 purple">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="9"
+                    cy="8"
+                    r="3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M4 19c.5-4 2.3-6 5-6s4.5 2 5 6"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M16 12l1.5 1.5L21 10"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">客户身份与权益</div>
+            </div>
+            <div class="node-desc">
+              业主、租户、员工、商户、访客认证<br>
+              同一套餐按认证身份执行不同价格
+            </div>
+          </div>
+
+          <!-- 精准计费 -->
+          <div class="engine-node node-3">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="8"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M9 9.5h4a2 2 0 0 1 0 4H9M12 7.5v9"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">精准计费规则</div>
+            </div>
+            <div class="node-desc">
+              一位／多位多车 · 多车附加费<br>
+              超时、超容占用独立计费与分科目账单
+            </div>
+          </div>
+
+          <!-- 车位资源 -->
+          <div class="engine-node node-4 green">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 17V7h4a3 3 0 0 1 0 6H8"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">车位资源数字化</div>
+            </div>
+            <div class="node-desc">
+              一位一档、一位一价、地图可视化<br>
+              产权／公共、自走／机械、区域属性管理
+            </div>
+          </div>
+
+          <!-- 合同履约 -->
+          <div class="engine-node node-5 green">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6 3h9l3 3v15H6V3z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M14 3v4h4M9 11h6M9 15h6"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">合同与履约服务</div>
+            </div>
+            <div class="node-desc">
+              在线电子合同 · 委托租赁 · 自动续费<br>
+              用户自助转让、暂停、恢复与车辆变更
+            </div>
+          </div>
+
+          <!-- 渠道和结算 -->
+          <div class="engine-node node-6 purple">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 17V7h16v10H4z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M7 12h3M14 10h3M14 14h3"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">渠道营销与财务分账</div>
+            </div>
+            <div class="node-desc">
+              抖音／美团团购券销售核销<br>
+              产权方、运营方、管理方自动分账结算
+            </div>
+          </div>
+
+          <!-- 核心 -->
+          <div class="engine-core">
+            <div class="core-content">
+              <div class="core-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 3l2.2 4.5L19 9l-3.5 3.4.8 4.8L12 15l-4.3 2.2.8-4.8L5 9l4.8-1.5L12 3z"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M18 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+
+              <div class="core-name">智慧运营策略中心</div>
+              <div class="core-desc">
+                将车位资源转化为可配置、可销售、<br>
+                可履约、可结算的数字化产品
+              </div>
+              <div class="core-ai">AI 套餐推荐 · 收益策略分析</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 底部创新功能 -->
+        <div class="engine-footer">
+          <div class="engine-footer-title">
+            创新运营能力｜让电子化不仅“替代人工”，更帮助客户提升收益
+          </div>
+
+          <div class="engine-tags">
+            <span class="engine-tag highlight">空闲车位自动释放</span>
+            <span class="engine-tag highlight">候补排队与到位通知</span>
+            <span class="engine-tag">续费提醒与一键续签</span>
+            <span class="engine-tag">闲置产权车位委托招租</span>
+            <span class="engine-tag">套餐适配智能推荐</span>
+            <span class="engine-tag">异常占用与规则风控</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================
+         右侧：数字运营
+    =================================================== -->
+
+    <section class="operation-zone">
+      <div class="section-head">
+        <span class="section-number">03</span>
+        <i class="section-line"></i>
+        <h2>数字化运营能力提升</h2>
+        <span class="section-en">AI INSIGHT</span>
+      </div>
+
+      <div class="cockpit">
+
+        <div class="cockpit-head">
+          <div class="cockpit-title">
+            <div class="cockpit-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 19V9M10 19V5M16 19v-7M22 19H2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M5 7l5-4 6 5 5-4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            车位运营驾驶舱
+          </div>
+
+          <span class="ai-badge">AI 辅助决策</span>
+        </div>
+
+        <!-- 指标 -->
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">车位库存</div>
+            <div class="metric-value">
+              实时可见
+              <span>统一台账</span>
+            </div>
+            <div class="metric-desc">产权、租赁、公共、共享状态清晰</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-label">套餐履约</div>
+            <div class="metric-value">
+              全程在线
+              <span>自动执行</span>
+            </div>
+            <div class="metric-desc">合同、授权、计费、续期形成闭环</div>
+          </div>
+        </div>
+
+        <!-- 资源地图 -->
+        <div class="resource-panel">
+          <div class="panel-title">
+            车位数字底图
+            <span>一位一档 · 一位一价</span>
+          </div>
+
+          <div class="space-map">
+            <i class="space used">A01</i>
+            <i class="space used">A02</i>
+            <i class="space">A03</i>
+            <i class="space share">A04</i>
+            <i class="space">A05</i>
+            <i class="space used">A06</i>
+            <i class="space share">A07</i>
+            <i class="space">A08</i>
+
+            <i class="space">B01</i>
+            <i class="space share">B02</i>
+            <i class="space used">B03</i>
+            <i class="space used">B04</i>
+            <i class="space">B05</i>
+            <i class="space share">B06</i>
+            <i class="space">B07</i>
+            <i class="space used">B08</i>
+          </div>
+
+          <div class="map-legend">
+            <span><i></i>可租赁</span>
+            <span><i class="used-dot"></i>已使用</span>
+            <span><i class="share-dot"></i>分时共享</span>
+          </div>
+        </div>
+
+        <!-- AI 建议 -->
+        <div class="ai-advice">
+          <div class="advice-head">
+            <i></i>
+            AI 运营机会发现
+          </div>
+
+          <ul class="advice-list">
+            <li>
+              识别夜间空闲住宅车位，建议推出
+              <b>工作日白天共享套餐</b>
+            </li>
+            <li>
+              分析区域供需和续费表现，辅助调整
+              <b>套餐结构与阶梯优惠</b>
+            </li>
+            <li>
+              发现高频超容、超时车辆，推荐
+              <b>升级套餐或附加车辆方案</b>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 自动运营 -->
+        <div class="auto-operation">
+          <div class="auto-item">
+            <b>智能续费运营</b>
+            到期预警、自动触达、一键续签
+          </div>
+
+          <div class="auto-item">
+            <b>渠道推广运营</b>
+            团购券、限时套餐、渠道核销分析
+          </div>
+
+          <div class="auto-item">
+            <b>财务自动核算</b>
+            租赁费、管理费、附加费分类入账
+          </div>
+
+          <div class="auto-item">
+            <b>资产收益分析</b>
+            闲置率、出租率、套餐收益多维评估
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================
+         底部：生命周期闭环
+    =================================================== -->
+
+    <section class="lifecycle-zone">
+      <div class="lifecycle-title">
+        车位运营全生命周期电子化闭环
+      </div>
+
+      <div class="lifecycle">
+
+        <div class="life-step">
+          <span class="life-number">01</span>
+          <div class="life-name">资源建档</div>
+          <div class="life-desc">车位属性、产权与价格数字化</div>
+        </div>
+
+        <i class="life-arrow"></i>
+
+        <div class="life-step">
+          <span class="life-number">02</span>
+          <div class="life-name">产品设计</div>
+          <div class="life-desc">组合套餐、权益与计费规则</div>
+        </div>
+
+        <i class="life-arrow"></i>
+
+        <div class="life-step">
+          <span class="life-number">03</span>
+          <div class="life-name">销售签约</div>
+          <div class="life-desc">线上购买、认证与电子合同</div>
+        </div>
+
+        <i class="life-arrow"></i>
+
+        <div class="life-step">
+          <span class="life-number">04</span>
+          <div class="life-name">履约服务</div>
+          <div class="life-desc">授权、变更、暂停及共享释放</div>
+        </div>
+
+        <i class="life-arrow"></i>
+
+        <div class="life-step">
+          <span class="life-number">05</span>
+          <div class="life-name">计费分账</div>
+          <div class="life-desc">多科目账单与多方自动分账</div>
+        </div>
+
+        <i class="life-arrow"></i>
+
+        <div class="life-step">
+          <span class="life-number">06</span>
+          <div class="life-name">分析优化</div>
+          <div class="life-desc">运营诊断、收益预测与策略调整</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        让车位资源可看、可配、可售、可管、可结算、可优化
+      </div>
+
+      <div class="footer-right">
+        SPACE DIGITALIZATION · FLEXIBLE PRODUCT · PRECISE BILLING · AI OPERATION
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

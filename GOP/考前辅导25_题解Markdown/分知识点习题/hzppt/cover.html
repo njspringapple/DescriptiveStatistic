@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>惠泊云智慧停车解决方案</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 73% 46%, rgba(0, 195, 255, .20), transparent 30%),
+    radial-gradient(circle at 86% 20%, rgba(116, 76, 255, .16), transparent 25%),
+    radial-gradient(circle at 12% 80%, rgba(0, 224, 190, .08), transparent 30%),
+    linear-gradient(135deg, #040c19 0%, #07172b 47%, #061327 72%, #040c19 100%);
+}
+
+/* 背景网格 */
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .14;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .32) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 2%,
+    #000 22%,
+    #000 88%,
+    transparent
+  );
+}
+
+/* 大范围光晕 */
+#stage::after {
+  content: "";
+  position: absolute;
+  right: -150px;
+  top: 10px;
+  width: 930px;
+  height: 930px;
+  border-radius: 50%;
+  border: 1px solid rgba(64, 191, 255, .07);
+  box-shadow:
+    0 0 130px rgba(0, 184, 255, .06),
+    inset 0 0 130px rgba(0, 184, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   装饰背景
+======================================== */
+
+.decor-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#bgGradient);
+  stroke-width: 1.2;
+  opacity: .22;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #45dcec;
+  stroke-width: 1;
+  stroke-dasharray: 6 9;
+  opacity: .15;
+  animation: lineFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5eeaff;
+  opacity: .55;
+  filter: drop-shadow(0 0 6px #24dfff);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -180;
+  }
+}
+
+/* 顶部品牌栏 */
+.top-bar {
+  position: absolute;
+  left: 55px;
+  right: 55px;
+  top: 34px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  position: relative;
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #23d7df);
+  box-shadow:
+    0 7px 22px rgba(0, 181, 255, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.brand-logo::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(53, 214, 238, .15);
+  border-radius: 14px;
+}
+
+.brand-logo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-cn {
+  color: #dff7ff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-en {
+  margin-top: 3px;
+  color: #4f7e9b;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+}
+
+.top-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #638ca5;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.top-tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #49e6cb;
+  box-shadow: 0 0 9px #49e6cb;
+}
+
+/* ========================================
+   左侧主标题
+======================================== */
+
+.hero-copy {
+  position: absolute;
+  left: 105px;
+  top: 190px;
+  z-index: 5;
+  width: 655px;
+}
+
+.pre-title {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #55cbe6;
+  font-size: 12px;
+  letter-spacing: 4px;
+}
+
+.pre-title::before {
+  content: "";
+  width: 42px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #188fff, #39e6dc);
+  box-shadow: 0 0 10px rgba(53, 219, 239, .28);
+}
+
+.main-title {
+  margin-top: 28px;
+}
+
+.main-title h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 65px;
+  line-height: 1.08;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-shadow: 0 8px 30px rgba(0, 10, 30, .5);
+}
+
+.main-title h1 strong {
+  position: relative;
+  color: transparent;
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #97edff 38%,
+    #4edee7 72%,
+    #76f0d4 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.main-title h1 strong::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 0;
+  bottom: -12px;
+  height: 2px;
+  opacity: .5;
+  background: linear-gradient(
+    90deg,
+    #259eff,
+    #42e7e5,
+    transparent 82%
+  );
+}
+
+.title-en {
+  margin-top: 28px;
+  color: #4c7895;
+  font-size: 12px;
+  letter-spacing: 5.5px;
+  text-transform: uppercase;
+}
+
+.solution-name {
+  margin-top: 46px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.solution-name span {
+  color: #a4c9db;
+  font-size: 20px;
+  letter-spacing: 3px;
+}
+
+.solution-name b {
+  padding: 6px 11px;
+  border: 1px solid rgba(65, 222, 217, .20);
+  border-radius: 12px;
+  color: #5ae5d1;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  background: rgba(34, 183, 163, .08);
+}
+
+.value-slogan {
+  margin-top: 17px;
+  color: #749bb1;
+  font-size: 13px;
+  line-height: 1.8;
+  letter-spacing: 1px;
+}
+
+.value-slogan strong {
+  color: #c4e9f5;
+  font-weight: 600;
+}
+
+/* ========================================
+   右侧智慧停车中枢
+======================================== */
+
+.visual-area {
+  position: absolute;
+  right: 52px;
+  top: 115px;
+  z-index: 4;
+  width: 790px;
+  height: 650px;
+}
+
+/* 底部光晕 */
+.visual-glow {
+  position: absolute;
+  left: 120px;
+  bottom: 35px;
+  width: 570px;
+  height: 115px;
+  border-radius: 50%;
+  background: rgba(0, 196, 255, .15);
+  filter: blur(35px);
+}
+
+/* 轨道圆环 */
+.orbit {
+  position: absolute;
+  left: 95px;
+  top: 20px;
+  width: 610px;
+  height: 610px;
+  border: 1px solid rgba(68, 202, 239, .12);
+  border-radius: 50%;
+}
+
+.orbit::before {
+  content: "";
+  position: absolute;
+  inset: 36px;
+  border: 1px dashed rgba(70, 220, 235, .14);
+  border-radius: 50%;
+  animation: rotate 35s linear infinite;
+}
+
+.orbit::after {
+  content: "";
+  position: absolute;
+  inset: 88px;
+  border: 1px solid rgba(105, 105, 255, .10);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #56e8f3;
+  box-shadow:
+    0 0 9px #56e8f3,
+    0 0 20px rgba(45, 220, 240, .42);
+}
+
+.dot-1 {
+  left: 135px;
+  top: 116px;
+}
+
+.dot-2 {
+  right: 111px;
+  top: 163px;
+  background: #a98cff;
+  box-shadow:
+    0 0 9px #a98cff,
+    0 0 20px rgba(143, 110, 255, .4);
+}
+
+.dot-3 {
+  right: 83px;
+  bottom: 171px;
+  background: #4be6c6;
+  box-shadow:
+    0 0 9px #4be6c6,
+    0 0 20px rgba(56, 219, 186, .4);
+}
+
+/* 中央停车中枢拟物 */
+.core-platform {
+  position: absolute;
+  left: 194px;
+  top: 128px;
+  width: 420px;
+  height: 376px;
+}
+
+/* 上盖 */
+.core-top {
+  position: absolute;
+  left: 28px;
+  top: 0;
+  width: 364px;
+  height: 82px;
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+  border: 1px solid rgba(73, 224, 242, .32);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(29, 103, 142, .96),
+      rgba(8, 55, 88, .97)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    0 -8px 30px rgba(0, 178, 255, .06);
+}
+
+/* 正面盒体 */
+.core-body {
+  position: absolute;
+  left: 0;
+  top: 71px;
+  width: 420px;
+  height: 282px;
+  overflow: hidden;
+  border: 1px solid rgba(65, 220, 239, .42);
+  border-radius: 12px 12px 31px 31px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(0, 199, 229, .18), transparent 46%),
+    linear-gradient(
+      150deg,
+      rgba(13, 68, 101, .99),
+      rgba(4, 22, 43, .99)
+    );
+  box-shadow:
+    0 36px 70px rgba(0, 5, 20, .58),
+    0 0 60px rgba(0, 191, 231, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .09);
+}
+
+.core-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .09;
+  background-image:
+    linear-gradient(rgba(80, 214, 243, .4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 214, 243, .4) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* 顶部品牌 */
+.core-brand {
+  position: absolute;
+  left: 56px;
+  top: 23px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.core-brand-icon {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #148cff, #2edfd5);
+  box-shadow:
+    0 0 19px rgba(38, 215, 232, .33),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.core-brand-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.core-brand-name {
+  color: #e9fbff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.core-brand-en {
+  margin-top: 4px;
+  color: #66abc2;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+}
+
+.core-online {
+  position: absolute;
+  right: 48px;
+  top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #59e8cc;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.core-online i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #48ebc9;
+  box-shadow: 0 0 10px #48ebc9;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .42;
+    box-shadow: 0 0 3px #48ebc9;
+  }
+}
+
+/* 中央P标志 */
+.parking-symbol {
+  position: absolute;
+  left: 125px;
+  top: 37px;
+  z-index: 2;
+  width: 170px;
+  height: 170px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(63, 230, 239, .38);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(20, 132, 163, .70),
+      rgba(5, 42, 70, .93) 68%
+    );
+  box-shadow:
+    0 0 45px rgba(0, 213, 235, .20),
+    inset 0 0 38px rgba(0, 218, 234, .12);
+}
+
+.parking-symbol::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed rgba(85, 232, 239, .28);
+  border-radius: 50%;
+  animation: rotate 18s linear infinite;
+}
+
+.parking-symbol::after {
+  content: "";
+  position: absolute;
+  inset: 27px;
+  border: 1px solid rgba(96, 225, 238, .13);
+  border-radius: 50%;
+}
+
+.parking-p {
+  position: relative;
+  z-index: 3;
+  width: 75px;
+  height: 94px;
+}
+
+.parking-p::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 1px;
+  width: 52px;
+  height: 21px;
+  border: 13px solid #dffcff;
+  border-left-width: 15px;
+  border-radius: 7px 24px 24px 7px;
+  box-shadow: 0 0 19px rgba(94, 235, 249, .42);
+}
+
+.parking-p::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 15px;
+  height: 86px;
+  border-radius: 5px;
+  background: #dffcff;
+  box-shadow: 0 0 19px rgba(94, 235, 249, .42);
+}
+
+.lightning {
+  position: absolute;
+  right: 34px;
+  bottom: 25px;
+  z-index: 4;
+  width: 35px;
+  height: 50px;
+  clip-path: polygon(
+    56% 0,
+    13% 55%,
+    43% 55%,
+    29% 100%,
+    88% 40%,
+    56% 40%
+  );
+  background: linear-gradient(180deg, #87ffe4, #29d8be);
+  filter: drop-shadow(0 0 10px rgba(61, 235, 204, .8));
+}
+
+/* 盒体内部底部状态 */
+.core-data {
+  position: absolute;
+  left: 34px;
+  right: 34px;
+  bottom: 20px;
+  height: 47px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(71, 190, 222, .17);
+  border-radius: 11px;
+  background: rgba(2, 19, 37, .58);
+}
+
+.data-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 14px;
+  border-right: 1px solid rgba(65, 176, 211, .14);
+}
+
+.data-item:last-child {
+  border-right: 0;
+}
+
+.data-item strong {
+  color: #aee9f5;
+  font-size: 9px;
+}
+
+.data-item span {
+  margin-top: 4px;
+  color: #4e829b;
+  font-size: 7px;
+}
+
+.data-item b {
+  color: #4be1c7;
+}
+
+/* ========================================
+   卫星功能节点
+======================================== */
+
+.feature-node {
+  position: absolute;
+  z-index: 6;
+  width: 168px;
+  height: 76px;
+  padding: 12px 13px;
+  border: 1px solid rgba(64, 182, 230, .20);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 57, 89, .86),
+      rgba(6, 27, 51, .91)
+    );
+  box-shadow:
+    0 13px 28px rgba(0, 5, 18, .23),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  backdrop-filter: blur(9px);
+}
+
+.feature-node::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #58dff2, transparent);
+}
+
+.feature-node.ai {
+  border-color: rgba(151, 121, 255, .27);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(57, 47, 115, .68),
+      rgba(7, 30, 55, .92)
+    );
+}
+
+.feature-node.ai::before {
+  background: linear-gradient(90deg, transparent, #aa91ff, transparent);
+}
+
+.feature-node.green {
+  border-color: rgba(47, 218, 178, .23);
+}
+
+.feature-node.green::before {
+  background: linear-gradient(90deg, transparent, #50e5c5, transparent);
+}
+
+.node-cloud {
+  left: 5px;
+  top: 142px;
+}
+
+.node-road {
+  left: 15px;
+  bottom: 113px;
+}
+
+.node-ai {
+  right: 2px;
+  top: 139px;
+}
+
+.node-operation {
+  right: 5px;
+  bottom: 107px;
+}
+
+.node-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.node-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #54e2f3;
+  background: rgba(24, 151, 191, .14);
+}
+
+.feature-node.ai .node-icon {
+  color: #c7b6ff;
+  background: rgba(127, 90, 218, .16);
+}
+
+.feature-node.green .node-icon {
+  color: #55e4c5;
+  background: rgba(31, 179, 144, .14);
+}
+
+.node-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.node-name {
+  color: #dbf3f9;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.node-desc {
+  margin-top: 8px;
+  color: #638ba2;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+/* 节点连接线 */
+.visual-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 790px;
+  height: 650px;
+  pointer-events: none;
+}
+
+.visual-line {
+  fill: none;
+  stroke: #4bd8ed;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 7;
+  opacity: .6;
+  animation: dataFlow 10s linear infinite;
+}
+
+.visual-line-purple {
+  stroke: #a18aff;
+}
+
+.visual-line-green {
+  stroke: #48dfbe;
+}
+
+.visual-node {
+  fill: #58e8f4;
+  filter: drop-shadow(0 0 6px #25d8ee);
+}
+
+.visual-node-purple {
+  fill: #b49cff;
+  filter: drop-shadow(0 0 6px #9275ff);
+}
+
+.visual-node-green {
+  fill: #55e9ca;
+  filter: drop-shadow(0 0 6px #38dbb8);
+}
+
+@keyframes dataFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+/* ========================================
+   底部核心特点
+======================================== */
+
+.capability-bar {
+  position: absolute;
+  left: 104px;
+  right: 104px;
+  bottom: 76px;
+  z-index: 7;
+  height: 102px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(64, 183, 227, .18);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(7, 31, 56, .86),
+      rgba(16, 48, 81, .80),
+      rgba(11, 35, 65, .87)
+    );
+  box-shadow:
+    0 20px 50px rgba(0, 4, 17, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  backdrop-filter: blur(12px);
+}
+
+.capability-bar::before {
+  content: "";
+  position: absolute;
+  left: 50px;
+  right: 50px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #56dff0,
+    #9c87ff,
+    #4be0bd,
+    transparent
+  );
+}
+
+.capability {
+  position: relative;
+  padding: 21px 26px 17px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-right: 1px solid rgba(80, 169, 207, .12);
+}
+
+.capability:last-child {
+  border-right: 0;
+}
+
+.capability::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  bottom: -42px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(41, 198, 229, .035);
+}
+
+.capability-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(74, 211, 238, .19);
+  border-radius: 14px;
+  color: #56e0f1;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(25, 145, 190, .17),
+      rgba(11, 71, 108, .13)
+    );
+}
+
+.capability:nth-child(3) .capability-icon {
+  color: #c4b2ff;
+  border-color: rgba(158, 130, 244, .19);
+  background: rgba(125, 88, 215, .14);
+}
+
+.capability:nth-child(4) .capability-icon {
+  color: #59e4c6;
+  border-color: rgba(61, 215, 180, .18);
+  background: rgba(31, 176, 141, .13);
+}
+
+.capability-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.capability-text {
+  position: relative;
+  z-index: 2;
+}
+
+.capability-text strong {
+  display: block;
+  color: #dff5fb;
+  font-size: 14px;
+  letter-spacing: .5px;
+}
+
+.capability-text span {
+  display: block;
+  margin-top: 7px;
+  color: #638ba2;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+/* ========================================
+   页脚
+======================================== */
+
+.footer {
+  position: absolute;
+  left: 55px;
+  right: 55px;
+  bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #496f87;
+  font-size: 8.5px;
+  letter-spacing: 1.3px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3f6077;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景装饰连线 -->
+    <svg class="decor-line" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="50%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 725 C240 655 290 770 493 683 C690 599 692 418 889 351 C1090 283 1282 424 1600 230"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 768 C261 711 389 803 572 725 C754 647 775 470 959 414 C1172 349 1348 423 1600 325"
+      />
+
+      <path
+        class="bg-line"
+        d="M256 0 C342 161 277 276 416 386"
+      />
+
+      <circle class="bg-dot" cx="493" cy="683" r="3"/>
+      <circle class="bg-dot" cx="889" cy="351" r="3"/>
+      <circle class="bg-dot" cx="1282" cy="424" r="3"/>
+    </svg>
+
+    <!-- 顶部品牌 -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M9 20V14M5 17h4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18 14l-2 3h2l-1 3 3-4h-2l1-2h-1z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <div class="brand-cn">惠泊云</div>
+          <div class="brand-en">HUIBO CLOUD</div>
+        </div>
+      </div>
+
+      <div class="top-tag">
+        <i></i>
+        SMART PARKING INTEGRATED SOLUTION
+      </div>
+    </header>
+
+    <!-- 左侧主文案 -->
+    <section class="hero-copy">
+      <div class="pre-title">
+        智慧停车一体化解决方案
+      </div>
+
+      <div class="main-title">
+        <h1>
+          <strong>惠泊云智慧停车</strong>
+        </h1>
+
+        <div class="title-en">
+          HUIBO CLOUD SMART PARKING
+        </div>
+      </div>
+
+      <div class="solution-name">
+        <span>AI 驱动的停充运营管理平台</span>
+        <b>2025 SOLUTION</b>
+      </div>
+
+      <div class="value-slogan">
+        融合停车、充电、道路与场库资源，构建<br>
+        <strong>感知互联、边缘智能、统一运营、数据驱动</strong>
+        的智慧停车新生态
+      </div>
+    </section>
+
+    <!-- 右侧视觉 -->
+    <section class="visual-area">
+
+      <div class="visual-glow"></div>
+
+      <div class="orbit">
+        <i class="orbit-dot dot-1"></i>
+        <i class="orbit-dot dot-2"></i>
+        <i class="orbit-dot dot-3"></i>
+      </div>
+
+      <!-- 节点连接线 -->
+      <svg class="visual-lines" viewBox="0 0 790 650">
+        <!-- 云平台 -->
+        <path
+          class="visual-line"
+          d="M173 180 C224 180 216 244 256 260"
+        />
+        <circle class="visual-node" cx="215" cy="206" r="3.5"/>
+
+        <!-- 路内停车 -->
+        <path
+          class="visual-line"
+          d="M183 502 C236 502 224 436 265 420"
+        />
+        <circle class="visual-node" cx="224" cy="479" r="3.5"/>
+
+        <!-- AI智能 -->
+        <path
+          class="visual-line visual-line-purple"
+          d="M619 180 C576 180 579 239 544 259"
+        />
+        <circle class="visual-node-purple" cx="583" cy="204" r="3.5"/>
+
+        <!-- 数字运营 -->
+        <path
+          class="visual-line visual-line-green"
+          d="M618 507 C573 507 578 449 540 424"
+        />
+        <circle class="visual-node-green" cx="582" cy="484" r="3.5"/>
+      </svg>
+
+      <!-- 云平台节点 -->
+      <div class="feature-node node-cloud">
+        <div class="node-head">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7 18h10a4 4 0 0 0 .7-7.9A6 6 0 0 0 6.2 9.4 4.3 4.3 0 0 0 7 18z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M9 14h6"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="node-name">停充一体化</div>
+        </div>
+        <div class="node-desc">
+          停车、充电、支付、账户统一运营
+        </div>
+      </div>
+
+      <!-- 路内外节点 -->
+      <div class="feature-node node-road">
+        <div class="node-head">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M8 21l2-18M16 21L14 3M5 17h14"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+              <path
+                d="M11.5 7h1M11 11h2M10.5 15h3"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="node-name">路内路外一体化</div>
+        </div>
+        <div class="node-desc">
+          道路泊位与封闭车场统一管理
+        </div>
+      </div>
+
+      <!-- AI节点 -->
+      <div class="feature-node ai node-ai">
+        <div class="node-head">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="4"
+                y="5"
+                width="16"
+                height="14"
+                rx="3"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+              <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+              <path
+                d="M9 16h6M12 2v3M2 10h2M20 10h2"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="node-name">AI 停车新时代</div>
+        </div>
+        <div class="node-desc">
+          AI 网关、智能体与边云协同
+        </div>
+      </div>
+
+      <!-- 运营节点 -->
+      <div class="feature-node green node-operation">
+        <div class="node-head">
+          <div class="node-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+              <path
+                d="M5 7l5-4 6 5 5-4"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="node-name">数字化运营管理</div>
+        </div>
+        <div class="node-desc">
+          工单、资产、财务与经营分析
+        </div>
+      </div>
+
+      <!-- 中央科技设备 -->
+      <div class="core-platform">
+
+        <div class="core-top">
+          <div class="core-brand">
+            <div class="core-brand-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M9 20V14M5 17h4"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="core-brand-name">惠泊云智慧停车</div>
+              <div class="core-brand-en">
+                HUIBO SMART PARKING CLOUD
+              </div>
+            </div>
+          </div>
+
+          <div class="core-online">
+            <i></i>
+            SYSTEM ONLINE
+          </div>
+        </div>
+
+        <div class="core-body">
+
+          <div class="parking-symbol">
+            <div class="parking-p"></div>
+            <div class="lightning"></div>
+          </div>
+
+          <div class="core-data">
+            <div class="data-item">
+              <strong>停车＋充电</strong>
+              <span><b>●</b> UNIFIED SERVICE</span>
+            </div>
+
+            <div class="data-item">
+              <strong>路内＋路外</strong>
+              <span><b>●</b> UNIFIED SPACE</span>
+            </div>
+
+            <div class="data-item">
+              <strong>AI＋运营</strong>
+              <span><b>●</b> UNIFIED DATA</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 底部四大能力 -->
+    <section class="capability-bar">
+
+      <div class="capability">
+        <div class="capability-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 16l1.5-5h11l1.5 5v3H4v-3z"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7 11l2-4h4l2 4M7 19v2M15 19v2"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M20 5l-2 4h2l-1 4 3-5h-2l1-3h-1z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div class="capability-text">
+          <strong>停充一体化</strong>
+          <span>统一账户、订单、支付与运营</span>
+        </div>
+      </div>
+
+      <div class="capability">
+        <div class="capability-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M8 21l2-18M16 21L14 3M5 17h14"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M4 8h4M16 8h4"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div class="capability-text">
+          <strong>路内路外一体化</strong>
+          <span>道路、场库、园区资源统一管理</span>
+        </div>
+      </div>
+
+      <div class="capability">
+        <div class="capability-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect
+              x="4"
+              y="5"
+              width="16"
+              height="14"
+              rx="3"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+            <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+            <path
+              d="M9 16h6M12 2v3M2 10h2M20 10h2"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div class="capability-text">
+          <strong>AI 停车新时代</strong>
+          <span>智能网关、智能体与边缘计算</span>
+        </div>
+      </div>
+
+      <div class="capability">
+        <div class="capability-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M5 7l5-4 6 5 5-4"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div class="capability-text">
+          <strong>数字化运营管理</strong>
+          <span>业务在线、数据驱动、持续增效</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        惠泊云智慧停车停充一体化解决方案
+      </div>
+
+      <div class="footer-right">
+        SMART PARKING · SMART CHARGING · EDGE AI · DIGITAL OPERATION
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

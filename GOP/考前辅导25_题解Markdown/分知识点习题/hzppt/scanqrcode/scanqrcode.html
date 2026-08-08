@@ -1,0 +1,3946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#1769d6">
+    <title>惠泊停车缴费</title>
+
+    <style>
+        :root {
+            --primary: #1769e8;
+            --primary-dark: #0e57c6;
+            --primary-soft: #eaf3ff;
+            --cyan: #16a6bd;
+
+            --green: #15966f;
+            --green-soft: #e8f8f2;
+
+            --orange: #e77c28;
+            --orange-soft: #fff3e7;
+
+            --red: #d84e4e;
+            --red-soft: #fff0f0;
+
+            --purple: #7257ce;
+            --purple-soft: #f1edff;
+
+            --text: #1e3142;
+            --text-2: #536779;
+            --text-3: #85939f;
+
+            --line: #e2e9ef;
+            --line-dark: #d4dfe7;
+            --page: #f2f5f8;
+            --card: #fff;
+
+            --shadow: 0 7px 22px rgba(35, 61, 83, .08);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            background:
+                radial-gradient(circle at 20% 12%, rgba(35, 146, 255, .13), transparent 27%),
+                radial-gradient(circle at 86% 76%, rgba(39, 211, 173, .10), transparent 26%),
+                linear-gradient(145deg, #071426, #0b2037 55%, #06101e);
+            font-family:
+                "Microsoft YaHei",
+                "PingFang SC",
+                "Noto Sans SC",
+                Arial,
+                sans-serif;
+            color: var(--text);
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        input,
+        select,
+        textarea {
+            outline: none;
+        }
+
+        @media (min-width: 700px) {
+            body {
+                align-items: center;
+                padding: 22px;
+            }
+        }
+
+        .app {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            background: var(--page);
+        }
+
+        /* ========================================
+   顶部状态栏
+======================================== */
+
+        .status-bar {
+            position: absolute;
+            z-index: 60;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 25px;
+            padding: 6px 15px 0;
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+            background: #1769d6;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .app-header {
+            position: absolute;
+            z-index: 55;
+            left: 0;
+            right: 0;
+            top: 25px;
+            height: 63px;
+            padding: 0 14px;
+            display: grid;
+            grid-template-columns: 40px 1fr 40px;
+            align-items: center;
+            color: #fff;
+            background:
+                radial-gradient(circle at 85% 0%, rgba(112, 230, 255, .26), transparent 36%),
+                linear-gradient(135deg, #1769e8, #118fa9);
+            box-shadow: 0 4px 16px rgba(20, 100, 185, .18);
+        }
+
+        .header-back,
+        .header-more {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            color: #fff;
+            background: transparent;
+        }
+
+        .header-back {
+            font-size: 27px;
+        }
+
+        .header-back.hidden {
+            visibility: hidden;
+        }
+
+        .header-more {
+            font-size: 18px;
+        }
+
+        .header-title {
+            min-width: 0;
+            text-align: center;
+        }
+
+        .header-title strong {
+            display: block;
+            overflow: hidden;
+            font-size: 16px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .header-title span {
+            display: block;
+            margin-top: 4px;
+            overflow: hidden;
+            color: rgba(255, 255, 255, .74);
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ========================================
+   页面
+======================================== */
+
+        .page-container {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 88px;
+            bottom: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: none;
+        }
+
+        .page-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .page {
+            min-height: 100%;
+            padding: 13px 13px calc(28px + var(--safe-bottom));
+        }
+
+        .page.with-payment-bar {
+            padding-bottom: calc(96px + var(--safe-bottom));
+        }
+
+        /* ========================================
+   通用组件
+======================================== */
+
+        .card {
+            margin-bottom: 11px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: var(--card);
+            box-shadow: 0 5px 17px rgba(34, 64, 88, .045);
+        }
+
+        .card.compact {
+            padding: 11px;
+        }
+
+        .section-header {
+            margin: 17px 2px 9px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header:first-child {
+            margin-top: 2px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #304558;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 15px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--cyan));
+        }
+
+        .section-more {
+            padding: 5px;
+            color: var(--primary);
+            background: transparent;
+            font-size: 11px;
+        }
+
+        .muted {
+            color: var(--text-3);
+        }
+
+        .badge {
+            display: inline-flex;
+            min-height: 23px;
+            padding: 0 8px;
+            align-items: center;
+            border-radius: 12px;
+            color: #1769b6;
+            background: #e7f2ff;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge.green {
+            color: #13785b;
+            background: var(--green-soft);
+        }
+
+        .badge.orange {
+            color: #aa611b;
+            background: var(--orange-soft);
+        }
+
+        .badge.red {
+            color: #b93f3f;
+            background: var(--red-soft);
+        }
+
+        .badge.purple {
+            color: #674fba;
+            background: var(--purple-soft);
+        }
+
+        .badge.gray {
+            color: #677784;
+            background: #edf1f4;
+        }
+
+        .primary-btn,
+        .secondary-btn,
+        .ghost-btn,
+        .warning-btn {
+            min-height: 44px;
+            padding: 0 15px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .primary-btn {
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), #149eb3);
+            box-shadow: 0 7px 16px rgba(23, 105, 232, .20);
+        }
+
+        .secondary-btn {
+            color: var(--primary);
+            border: 1px solid #cfe0f3;
+            background: #edf5ff;
+        }
+
+        .ghost-btn {
+            color: var(--text-2);
+            border: 1px solid var(--line-dark);
+            background: #fff;
+        }
+
+        .warning-btn {
+            color: #a45d18;
+            border: 1px solid #efd1af;
+            background: var(--orange-soft);
+        }
+
+        .full-btn {
+            width: 100%;
+        }
+
+        .small-btn {
+            min-height: 34px;
+            padding: 0 11px;
+            border-radius: 9px;
+            font-size: 11px;
+        }
+
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 9px;
+        }
+
+        .alert {
+            margin-bottom: 10px;
+            padding: 11px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            border: 1px solid #cfe2f2;
+            border-radius: 11px;
+            color: #47708e;
+            background: #edf7ff;
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        .alert i {
+            width: 7px;
+            height: 7px;
+            flex: 0 0 7px;
+            margin-top: 5px;
+            border-radius: 50%;
+            background: #2d9cdc;
+            box-shadow: 0 0 6px rgba(45, 156, 220, .45);
+        }
+
+        .alert.green {
+            color: #427d6f;
+            border-color: #cce9e0;
+            background: #eefaf6;
+        }
+
+        .alert.green i {
+            background: var(--green);
+        }
+
+        .alert.orange {
+            color: #94642d;
+            border-color: #efd9bb;
+            background: #fff8ee;
+        }
+
+        .alert.orange i {
+            background: var(--orange);
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+            color: var(--text-3);
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 66px;
+            height: 66px;
+            margin: 0 auto 14px;
+            display: grid;
+            place-items: center;
+            border-radius: 21px;
+            color: #6fa9d6;
+            background: #e9f3fb;
+            font-size: 29px;
+        }
+
+        .empty-state strong {
+            display: block;
+            color: var(--text-2);
+            font-size: 15px;
+        }
+
+        .empty-state span {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        /* ========================================
+   表单
+======================================== */
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            margin-bottom: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #526678;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-label em {
+            color: var(--red);
+            font-style: normal;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 46px;
+            padding: 0 12px;
+            border: 1px solid #d9e3ea;
+            border-radius: 11px;
+            color: var(--text);
+            background: #fff;
+            font-size: 15px;
+        }
+
+        .form-control:focus {
+            border-color: #66a7ed;
+            box-shadow: 0 0 0 3px rgba(50, 132, 225, .10);
+        }
+
+        .form-tip {
+            margin-top: 6px;
+            color: var(--text-3);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .plate-input-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .plate-input {
+            height: 47px;
+            padding: 0 12px;
+            border: 1px solid #cadce9;
+            border-radius: 11px;
+            color: #203e56;
+            background: #fff;
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ========================================
+   扫码来源场景卡片
+======================================== */
+
+        .scene-card {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 12px;
+            padding: 16px;
+            border-radius: 17px;
+            color: #fff;
+            background:
+                radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .20), transparent 35%),
+                linear-gradient(135deg, #1769e8, #1599b1);
+            box-shadow: 0 10px 24px rgba(20, 106, 190, .22);
+        }
+
+        .scene-card.road {
+            background:
+                radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .19), transparent 35%),
+                linear-gradient(135deg, #5b50bf, #716dd2);
+        }
+
+        .scene-card.coupon {
+            background:
+                radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .18), transparent 35%),
+                linear-gradient(135deg, #c56b20, #e19b39);
+        }
+
+        .scene-card.monthly {
+            background:
+                radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .18), transparent 35%),
+                linear-gradient(135deg, #168a77, #21ab99);
+        }
+
+        .scene-card::after {
+            content: "P";
+            position: absolute;
+            right: 10px;
+            bottom: -48px;
+            color: rgba(255, 255, 255, .08);
+            font-size: 145px;
+            font-weight: 900;
+        }
+
+        .scene-head,
+        .scene-main,
+        .scene-meta {
+            position: relative;
+            z-index: 2;
+        }
+
+        .scene-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .scene-head strong {
+            font-size: 13px;
+        }
+
+        .scene-tag {
+            padding: 5px 8px;
+            border: 1px solid rgba(255, 255, 255, .20);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, .13);
+            font-size: 9px;
+        }
+
+        .scene-main {
+            margin-top: 14px;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .scene-meta {
+            margin-top: 7px;
+            color: rgba(255, 255, 255, .76);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        /* ========================================
+   订单详情
+======================================== */
+
+        .order-card {
+            border-color: #cfe1ef;
+        }
+
+        .order-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .order-plate {
+            color: #1f4059;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .order-location {
+            margin-top: 5px;
+            color: var(--text-3);
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        .info-list {
+            margin-top: 11px;
+            padding-top: 8px;
+            border-top: 1px solid #edf1f4;
+        }
+
+        .info-row {
+            min-height: 31px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #edf1f4;
+            color: var(--text-3);
+            font-size: 11px;
+        }
+
+        .info-row:last-child {
+            border-bottom: 0;
+        }
+
+        .info-row strong {
+            color: #3c5264;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        .fee-grid {
+            margin-top: 10px;
+            padding: 11px 5px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-radius: 11px;
+            background: #f4f7fa;
+        }
+
+        .fee-cell {
+            text-align: center;
+            border-right: 1px solid #dfe6eb;
+        }
+
+        .fee-cell:last-child {
+            border-right: 0;
+        }
+
+        .fee-cell span {
+            display: block;
+            color: var(--text-3);
+            font-size: 9px;
+        }
+
+        .fee-cell strong {
+            display: block;
+            margin-top: 5px;
+            color: #354c5e;
+            font-size: 14px;
+        }
+
+        .fee-cell.payable strong {
+            color: var(--orange);
+        }
+
+        /* ========================================
+   待缴费用选择
+======================================== */
+
+        .fee-list {
+            display: grid;
+            gap: 9px;
+        }
+
+        .fee-select-card {
+            position: relative;
+            padding: 13px 48px 13px 13px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .fee-select-card.selected {
+            border-color: var(--primary);
+            background: #f3f8ff;
+        }
+
+        .fee-select-card.mandatory {
+            border-color: #e9d0b2;
+            background: #fff8ee;
+            cursor: default;
+        }
+
+        .fee-select-card strong {
+            display: block;
+            color: #3a5062;
+            font-size: 13px;
+        }
+
+        .fee-select-card p {
+            margin: 6px 0 0;
+            color: var(--text-3);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .fee-card-meta {
+            margin-top: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .fee-card-meta span {
+            color: var(--text-3);
+            font-size: 10px;
+        }
+
+        .fee-card-meta b {
+            color: var(--orange);
+            font-size: 15px;
+        }
+
+        .select-check {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            width: 23px;
+            height: 23px;
+            display: grid;
+            place-items: center;
+            transform: translateY(-50%);
+            border: 1px solid #cfd9e0;
+            border-radius: 7px;
+            color: transparent;
+            background: #fff;
+            font-size: 11px;
+        }
+
+        .fee-select-card.selected .select-check {
+            color: #fff;
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .fee-select-card.mandatory .select-check {
+            color: #fff;
+            border-color: var(--orange);
+            background: var(--orange);
+        }
+
+        /* ========================================
+   充电超时占位费
+======================================== */
+
+        .charging-card {
+            border-color: #cce8df;
+            background:
+                radial-gradient(circle at 95% 0%, rgba(38, 180, 145, .09), transparent 35%),
+                #f5fcf9;
+        }
+
+        .charging-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .charging-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(135deg, #159777, #27b69a);
+            font-size: 20px;
+        }
+
+        .charging-head strong {
+            display: block;
+            color: #315e53;
+            font-size: 13px;
+        }
+
+        .charging-head span {
+            display: block;
+            margin-top: 4px;
+            color: #75998f;
+            font-size: 10px;
+        }
+
+        .charging-amount {
+            margin-left: auto;
+            color: var(--orange);
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        /* ========================================
+   商户优惠券
+======================================== */
+
+        .coupon-hero {
+            position: relative;
+            overflow: hidden;
+            padding: 17px;
+            border-radius: 17px;
+            color: #fff;
+            background:
+                radial-gradient(circle at 90% 0%, rgba(255, 255, 255, .22), transparent 34%),
+                linear-gradient(135deg, #c96e22, #e4a23e);
+            box-shadow: 0 10px 24px rgba(202, 116, 30, .20);
+        }
+
+        .coupon-hero::before,
+        .coupon-hero::after {
+            content: "";
+            position: absolute;
+            left: 105px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--page);
+        }
+
+        .coupon-hero::before {
+            top: -10px;
+        }
+
+        .coupon-hero::after {
+            bottom: -10px;
+        }
+
+        .coupon-merchant {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .coupon-merchant strong {
+            font-size: 13px;
+        }
+
+        .coupon-status {
+            padding: 5px 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .16);
+            font-size: 9px;
+        }
+
+        .coupon-value {
+            margin-top: 18px;
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .coupon-name {
+            margin-top: 4px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .coupon-rule {
+            margin-top: 11px;
+            color: rgba(255, 255, 255, .78);
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .coupon-code {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255, 255, 255, .30);
+            color: rgba(255, 255, 255, .78);
+            font-size: 9px;
+        }
+
+        /* ========================================
+   包月车位续费
+======================================== */
+
+        .owner-card {
+            display: grid;
+            grid-template-columns: 45px 1fr auto;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .owner-avatar {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            color: #fff;
+            background: linear-gradient(135deg, #168d78, #28b29b);
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .owner-info strong {
+            display: block;
+            color: #365348;
+            font-size: 13px;
+        }
+
+        .owner-info span {
+            display: block;
+            margin-top: 5px;
+            color: var(--text-3);
+            font-size: 10px;
+        }
+
+        .space-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .space-card {
+            position: relative;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fff;
+        }
+
+        .space-card.selected {
+            border-color: var(--green);
+            background: #f3fbf8;
+        }
+
+        .space-top {
+            padding-right: 33px;
+        }
+
+        .space-top strong {
+            display: block;
+            color: #395348;
+            font-size: 13px;
+        }
+
+        .space-top span {
+            display: block;
+            margin-top: 5px;
+            color: var(--text-3);
+            font-size: 10px;
+        }
+
+        .space-check {
+            position: absolute;
+            right: 13px;
+            top: 15px;
+            width: 23px;
+            height: 23px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #d0dbd7;
+            border-radius: 7px;
+            color: transparent;
+            background: #fff;
+        }
+
+        .space-card.selected .space-check {
+            color: #fff;
+            border-color: var(--green);
+            background: var(--green);
+        }
+
+        .space-validity {
+            margin-top: 10px;
+            padding: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 9px;
+            background: #f4f7f6;
+        }
+
+        .space-validity span {
+            color: #768a83;
+            font-size: 10px;
+        }
+
+        .space-validity strong {
+            color: #3f5f55;
+            font-size: 10px;
+        }
+
+        .duration-options {
+            margin-top: 10px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+        }
+
+        .space-card.selected .duration-options {
+            display: grid;
+        }
+
+        .duration-option {
+            min-height: 42px;
+            padding: 5px;
+            border: 1px solid #dbe4e1;
+            border-radius: 9px;
+            color: #6d817a;
+            background: #fff;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .duration-option strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 11px;
+        }
+
+        .duration-option.active {
+            color: #13795e;
+            border-color: var(--green);
+            background: #eaf8f3;
+        }
+
+        .new-expiry {
+            margin-top: 8px;
+            display: none;
+            color: #18836a;
+            font-size: 10px;
+        }
+
+        .space-card.selected .new-expiry {
+            display: block;
+        }
+
+        /* ========================================
+   费用汇总
+======================================== */
+
+        .summary-card {
+            overflow: hidden;
+        }
+
+        .summary-row {
+            min-height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #edf1f4;
+            color: var(--text-3);
+            font-size: 11px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: 0;
+        }
+
+        .summary-row strong {
+            color: #42586a;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        .summary-row.discount strong {
+            color: var(--green);
+        }
+
+        .summary-row.total {
+            margin: 7px -14px -14px;
+            padding: 12px 14px;
+            border-bottom: 0;
+            background: #f7fafc;
+        }
+
+        .summary-row.total span {
+            color: #526779;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .summary-row.total strong {
+            color: var(--orange);
+            font-size: 22px;
+        }
+
+        /* ========================================
+   支付收银台
+======================================== */
+
+        .payment-bar {
+            position: absolute;
+            z-index: 70;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            min-height: calc(78px + var(--safe-bottom));
+            padding: 10px 13px calc(10px + var(--safe-bottom));
+            display: none;
+            grid-template-columns: 1fr 170px;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #dfe7ed;
+            background: rgba(255, 255, 255, .98);
+            box-shadow: 0 -6px 20px rgba(32, 58, 80, .08);
+            backdrop-filter: blur(14px);
+        }
+
+        .payment-bar.show {
+            display: grid;
+        }
+
+        .payment-total span {
+            display: block;
+            color: var(--text-3);
+            font-size: 10px;
+        }
+
+        .payment-total strong {
+            display: block;
+            margin-top: 4px;
+            color: var(--orange);
+            font-size: 22px;
+        }
+
+        .cashier-card {
+            margin-bottom: 10px;
+            padding: 14px;
+            border: 1px solid #cfe6de;
+            border-radius: 15px;
+            background: #f4fcf9;
+        }
+
+        .cashier-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cashier-title strong {
+            color: #315c51;
+            font-size: 14px;
+        }
+
+        .cashier-title span {
+            color: var(--green);
+            font-size: 10px;
+        }
+
+        .pay-methods {
+            display: grid;
+            gap: 9px;
+        }
+
+        .pay-method {
+            min-height: 57px;
+            padding: 0 12px;
+            display: grid;
+            grid-template-columns: 38px 1fr 23px;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .pay-method.active {
+            border-color: var(--green);
+            background: #f1faf7;
+        }
+
+        .pay-icon {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            color: #fff;
+            background: #19a56f;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .pay-method.alipay .pay-icon {
+            background: #1677ff;
+        }
+
+        .pay-info strong {
+            display: block;
+            color: #3f554d;
+            font-size: 13px;
+        }
+
+        .pay-info span {
+            display: block;
+            margin-top: 4px;
+            color: var(--text-3);
+            font-size: 10px;
+        }
+
+        .pay-radio {
+            width: 22px;
+            height: 22px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #d0dad6;
+            border-radius: 50%;
+            color: transparent;
+            background: #fff;
+        }
+
+        .pay-method.active .pay-radio {
+            color: #fff;
+            border-color: var(--green);
+            background: var(--green);
+        }
+
+        .agreement {
+            margin-top: 11px;
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            color: var(--text-3);
+            font-size: 10px;
+            line-height: 1.55;
+            padding: 5px 0;
+        }
+
+        .agreement-check {
+            width: 17px;
+            height: 17px;
+            flex: 0 0 17px;
+            display: grid;
+            place-items: center;
+            border-radius: 5px;
+            color: #fff;
+            background: var(--green);
+            font-size: 9px;
+        }
+
+        /* ========================================
+   支付成功
+======================================== */
+
+        .success-page {
+            padding: 38px 18px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 26px;
+            color: #fff;
+            background: linear-gradient(135deg, #18a777, #35c7a1);
+            box-shadow: 0 13px 30px rgba(24, 167, 119, .22);
+            font-size: 39px;
+        }
+
+        .success-page h2 {
+            margin: 0;
+            color: #293f37;
+            font-size: 21px;
+        }
+
+        .success-page>p {
+            margin: 9px 0 18px;
+            color: var(--text-3);
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        .result-card {
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fff;
+            text-align: left;
+        }
+
+        .result-row {
+            min-height: 43px;
+            padding: 0 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #edf1f4;
+            color: var(--text-3);
+            font-size: 11px;
+        }
+
+        .result-row:last-child {
+            border-bottom: 0;
+        }
+
+        .result-row strong {
+            color: #40564e;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        /* ========================================
+   弹窗、Toast、Loading
+======================================== */
+
+        .overlay {
+            position: absolute;
+            z-index: 200;
+            inset: 0;
+            display: none;
+            align-items: flex-end;
+            background: rgba(7, 17, 28, .55);
+            backdrop-filter: blur(2px);
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-height: 88%;
+            overflow-y: auto;
+            border-radius: 22px 22px 0 0;
+            background: var(--page);
+            box-shadow: 0 -12px 40px rgba(0, 0, 0, .20);
+            animation: modalIn .22s ease-out;
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: translateY(45px);
+                opacity: .4;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            position: sticky;
+            z-index: 3;
+            top: 0;
+            min-height: 59px;
+            padding: 0 14px;
+            display: grid;
+            grid-template-columns: 40px 1fr 40px;
+            align-items: center;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, .96);
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-header strong {
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 11px;
+            color: #657685;
+            background: #eef2f5;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            padding: 14px 14px calc(23px + var(--safe-bottom));
+        }
+
+        .toast-container {
+            position: absolute;
+            z-index: 500;
+            left: 16px;
+            right: 16px;
+            top: 99px;
+            pointer-events: none;
+        }
+
+        .toast {
+            margin-bottom: 8px;
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: 23px 1fr;
+            align-items: center;
+            gap: 8px;
+            border-radius: 12px;
+            color: #fff;
+            background: rgba(24, 46, 64, .95);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .20);
+            font-size: 12px;
+            line-height: 1.45;
+            animation: toastIn .22s ease-out;
+        }
+
+        .toast.success {
+            background: rgba(18, 126, 94, .97);
+        }
+
+        .toast.error {
+            background: rgba(189, 63, 63, .97);
+        }
+
+        .toast.warning {
+            background: rgba(183, 104, 30, .97);
+        }
+
+        @keyframes toastIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+        }
+
+        .loading-mask {
+            position: absolute;
+            z-index: 600;
+            inset: 0;
+            display: none;
+            place-items: center;
+            background: rgba(242, 245, 248, .72);
+            backdrop-filter: blur(2px);
+        }
+
+        .loading-mask.show {
+            display: grid;
+        }
+
+        .loading-box {
+            width: 120px;
+            padding: 18px;
+            border-radius: 15px;
+            color: #506474;
+            background: #fff;
+            box-shadow: var(--shadow);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 31px;
+            height: 31px;
+            margin: 0 auto 11px;
+            border: 3px solid #deebf5;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin .75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========================================
+   无效二维码
+======================================== */
+
+        .invalid-page {
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+        .invalid-icon {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 25px;
+            color: var(--red);
+            background: var(--red-soft);
+            font-size: 34px;
+        }
+
+        .invalid-page h2 {
+            margin: 0;
+            color: #384c5d;
+            font-size: 20px;
+        }
+
+        .invalid-page p {
+            margin: 10px 0 20px;
+            color: var(--text-3);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media print {
+
+            html,
+            body {
+                background: #fff;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <div class="status-bar">
+            <span id="statusTime">20:18</span>
+            <span id="environmentText">微信安全页面 · 5G ▮▮▮</span>
+        </div>
+
+        <header class="app-header">
+            <button class="header-back hidden" id="headerBack">‹</button>
+
+            <div class="header-title">
+                <strong id="pageTitle">惠泊停车缴费</strong>
+                <span id="pageSubtitle">正在识别扫码场景</span>
+            </div>
+
+            <button class="header-more" id="headerMore">···</button>
+        </header>
+
+        <main class="page-container" id="pageContainer"></main>
+
+        <div class="payment-bar" id="paymentBar">
+            <div class="payment-total">
+                <span id="paymentBarLabel">合计应支付</span>
+                <strong id="paymentBarAmount">¥0.00</strong>
+            </div>
+
+            <button class="primary-btn" id="paymentBarButton">
+                确认支付
+            </button>
+        </div>
+
+        <div class="overlay" id="modalOverlay">
+            <section class="modal">
+                <div class="modal-header">
+                    <span></span>
+                    <strong id="modalTitle">详情</strong>
+                    <button class="modal-close" id="modalClose">×</button>
+                </div>
+
+                <div class="modal-body" id="modalBody"></div>
+            </section>
+        </div>
+
+        <div class="toast-container" id="toastContainer"></div>
+
+        <div class="loading-mask" id="loadingMask">
+            <div class="loading-box">
+                <div class="spinner"></div>
+                <span id="loadingText">正在查询...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* =========================================================
+           扫码参数及模拟业务数据
+        ========================================================= */
+
+        const params = new URLSearchParams(location.search);
+
+        /*
+          正式部署时由二维码写入以下参数：
+        
+          停车场二维码：
+          ?scene=parking&siteId=LOT001
+        
+          道路停车小票：
+          ?scene=road&ticketId=RT202607190032
+        
+          商户PDA优惠券：
+          ?scene=coupon&token=CPN202607190086
+        
+          包月续费：
+          ?scene=monthly&siteId=LOT001
+        */
+
+        const scene = params.get("scene") || "parking";
+        const siteId = params.get("siteId") || "LOT001";
+        const ticketId = params.get("ticketId") || "RT202607190032";
+        const couponToken = params.get("token") || "CPN202607190086";
+
+        const database = {
+            sites: {
+                LOT001: {
+                    id: "LOT001",
+                    name: "惠泊中心地下停车场",
+                    qrLocation: "B2出口缴费二维码",
+                    qrId: "QRC-B2-008",
+                    freeLeaveMinutes: 15
+                }
+            },
+
+            roadTickets: {
+                RT202607190032: {
+                    id: "RT202607190032",
+                    plateNo: "粤B·A12345",
+                    roadName: "科技路道路停车",
+                    berthNo: "P032",
+                    areaName: "科技园路内停车示范区",
+                    startTime: "2026-07-19 16:32:18",
+                    endTime: "2026-07-19 19:46:25",
+                    durationText: "3小时14分钟",
+                    amount: 18,
+                    status: "unpaid",
+                    printedTime: "2026-07-19 19:46:32"
+                }
+            },
+
+            coupons: {
+                CPN202607190086: {
+                    token: "CPN202607190086",
+                    merchantName: "星悦餐厅 · 惠泊中心店",
+                    merchantId: "M001",
+                    couponName: "2小时停车优惠券",
+                    couponType: "duration",
+                    durationMinutes: 120,
+                    estimatedDiscount: 16,
+                    status: "available",
+                    validUntil: "2026-07-19 23:59:59",
+                    applicableSite: "惠泊中心地下停车场",
+                    issueTime: "2026-07-19 20:06:18",
+                    issueEmployee: "李晓 · 收银员",
+                    consumptionNo: "POS202607190286",
+                    rules: [
+                        "仅限本次停车订单使用",
+                        "不可兑换现金，不与其他商户停车券叠加",
+                        "优惠金额不超过当前停车订单应付金额"
+                    ]
+                }
+            },
+
+            parkingOrders: {
+                "粤B·A12345": {
+                    id: "P202607190001",
+                    plateNo: "粤B·A12345",
+                    parkingLot: "惠泊中心地下停车场",
+                    entrance: "B1北入口",
+                    entryTime: "2026-07-19 12:16:32",
+                    durationText: "8小时02分钟",
+                    currentFee: 38,
+                    existingDiscount: 0,
+                    payable: 38,
+                    status: "parking",
+                    vehicleType: "小型汽车",
+
+                    chargingOccupancy: {
+                        id: "OCC202607190018",
+                        chargerNo: "B2-C018",
+                        chargingOrderNo: "CHG202607190668",
+                        fullTime: "2026-07-19 19:12:08",
+                        occupancyMinutes: 56,
+                        freeMinutes: 15,
+                        billableMinutes: 41,
+                        rateText: "0.20元/分钟",
+                        amount: 8.2,
+                        mandatory: true
+                    }
+                },
+
+                "粤B·D88666": {
+                    id: "P202607190002",
+                    plateNo: "粤B·D88666",
+                    parkingLot: "惠泊中心地下停车场",
+                    entrance: "B2东入口",
+                    entryTime: "2026-07-19 17:05:11",
+                    durationText: "3小时13分钟",
+                    currentFee: 18,
+                    existingDiscount: 0,
+                    payable: 18,
+                    status: "parking",
+                    vehicleType: "新能源汽车",
+                    chargingOccupancy: null
+                },
+
+                "粤A·8K36Q": {
+                    id: "P202607190003",
+                    plateNo: "粤A·8K36Q",
+                    parkingLot: "惠泊中心地下停车场",
+                    entrance: "B1南入口",
+                    entryTime: "2026-07-19 18:02:36",
+                    durationText: "2小时16分钟",
+                    currentFee: 12,
+                    existingDiscount: 0,
+                    payable: 12,
+                    status: "parking",
+                    vehicleType: "小型汽车",
+                    chargingOccupancy: null
+                }
+            },
+
+            arrears: {
+                "粤B·A12345": [
+                    {
+                        id: "ARR-ROAD-001",
+                        type: "road",
+                        title: "科技路 P018 泊位历史欠费",
+                        description: "2026-07-12 · 停车1小时35分钟",
+                        amount: 12,
+                        selected: true
+                    },
+                    {
+                        id: "ARR-LOT-001",
+                        type: "parking",
+                        title: "惠泊南区停车场历史欠费",
+                        description: "2026-06-28 · 出场支付失败",
+                        amount: 8,
+                        selected: true
+                    }
+                ],
+
+                "粤B·D88666": [
+                    {
+                        id: "ARR-ROAD-002",
+                        type: "road",
+                        title: "创新路 P126 泊位历史欠费",
+                        description: "2026-07-02 · 停车52分钟",
+                        amount: 6,
+                        selected: false
+                    }
+                ],
+
+                "粤A·8K36Q": []
+            },
+
+            monthlySpaces: {
+                "粤B·A12345": {
+                    ownerName: "李先生",
+                    mobile: "138****6688",
+                    verified: true,
+                    spaces: [
+                        {
+                            id: "SPACE-A086",
+                            name: "惠泊中心 B1 · 固定车位 A-086",
+                            plateNo: "粤B·A12345",
+                            packageName: "固定车位月租套餐",
+                            validUntil: "2026-07-31",
+                            monthlyPrice: 380,
+                            selected: true,
+                            months: 1
+                        },
+                        {
+                            id: "SPACE-C218",
+                            name: "惠泊中心 B2 · 固定车位 C-218",
+                            plateNo: "粤B·D88666",
+                            packageName: "家庭第二车位套餐",
+                            validUntil: "2026-08-15",
+                            monthlyPrice: 320,
+                            selected: true,
+                            months: 3
+                        },
+                        {
+                            id: "SPACE-NIGHT",
+                            name: "科技园区 · 夜间共享车位",
+                            plateNo: "粤B·A12345",
+                            packageName: "工作日夜间停车套餐",
+                            validUntil: "2026-09-30",
+                            monthlyPrice: 180,
+                            selected: false,
+                            months: 1
+                        }
+                    ]
+                }
+            }
+        };
+
+        /* =========================================================
+           应用状态
+        ========================================================= */
+
+        const appState = {
+            scene,
+            route: "entry",
+            history: [],
+
+            plateNo: "",
+            order: null,
+            roadTicket: null,
+            coupon: null,
+            couponApplied: false,
+
+            arrears: [],
+            includeCurrentOrder: true,
+            includeChargingOccupancy: true,
+
+            monthlyOwner: null,
+            monthlySpaces: [],
+
+            cashierItems: [],
+            cashierTitle: "",
+            paymentAmount: 0,
+            paymentMethod: detectPaymentEnvironment(),
+            paymentScene: "",
+            agreementChecked: true,
+
+            lastPayment: null
+        };
+
+        /* =========================================================
+           工具函数
+        ========================================================= */
+
+        function money(value) {
+            return "¥" + Number(value || 0).toLocaleString("zh-CN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function detectPaymentEnvironment() {
+            const ua = navigator.userAgent.toLowerCase();
+
+            if (ua.includes("alipayclient")) return "alipay";
+            return "wechat";
+        }
+
+        function paymentMethodName(method) {
+            return method === "alipay" ? "支付宝支付" : "微信支付";
+        }
+
+        function normalizePlate(plate) {
+            let value = String(plate || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, "")
+                .replace(/[•．。]/g, "·");
+
+            // 先移除所有分隔点，统一转成无点车牌
+            value = value.replace(/·/g, "");
+
+            // 中国大陆普通/新能源车牌：省份简称 + 字母 + 后续号码
+            // 自动在第2位后补标准分隔点
+            if (/^[\u4e00-\u9fa5][A-Z][A-Z0-9]{5,6}$/.test(value)) {
+                value = value.slice(0, 2) + "·" + value.slice(2);
+            }
+
+            return value;
+        }
+
+        function validatePlate(plate) {
+            const value = normalizePlate(plate);
+
+            // 普通车牌：省份+字母+中点+5位
+            // 新能源车牌：省份+字母+中点+6位
+            return /^[\u4e00-\u9fa5][A-Z]·[A-Z0-9]{5,6}$/.test(value);
+        }
+
+        function addMonths(dateString, months) {
+            const date = new Date(dateString + "T00:00:00");
+            date.setMonth(date.getMonth() + Number(months));
+
+            return [
+                date.getFullYear(),
+                String(date.getMonth() + 1).padStart(2, "0"),
+                String(date.getDate()).padStart(2, "0")
+            ].join("-");
+        }
+
+        function generateId(prefix) {
+            return prefix + Date.now().toString().slice(-12);
+        }
+
+        function nowString() {
+            return new Date().toLocaleString("zh-CN", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }).replace(/\//g, "-");
+        }
+
+        function showLoading(text = "正在处理...") {
+            document.getElementById("loadingText").textContent = text;
+            document.getElementById("loadingMask").classList.add("show");
+        }
+
+        function hideLoading() {
+            document.getElementById("loadingMask").classList.remove("show");
+        }
+
+        function simulateRequest(callback, text = "正在处理...") {
+            showLoading(text);
+
+            setTimeout(function () {
+                try {
+                    callback();
+                } finally {
+                    hideLoading();
+                }
+            }, 650);
+        }
+
+        function toast(message, type = "") {
+            const container = document.getElementById("toastContainer");
+            const element = document.createElement("div");
+
+            element.className = "toast " + type;
+
+            element.innerHTML = `
+    <span>
+      ${type === "success" ? "✓" : type === "error" ? "×" : type === "warning" ? "!" : "i"}
+    </span>
+    <span>${message}</span>
+  `;
+
+            container.appendChild(element);
+
+            setTimeout(function () {
+                element.style.opacity = "0";
+                element.style.transform = "translateY(-8px)";
+            }, 2500);
+
+            setTimeout(function () {
+                element.remove();
+            }, 2900);
+        }
+
+        function openModal(title, html) {
+            document.getElementById("modalTitle").textContent = title;
+            document.getElementById("modalBody").innerHTML = html;
+            document.getElementById("modalOverlay").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("modalOverlay").classList.remove("show");
+        }
+
+        function setHeader(title, subtitle, showBack) {
+            document.getElementById("pageTitle").textContent = title;
+            document.getElementById("pageSubtitle").textContent = subtitle;
+            document.getElementById("headerBack").classList.toggle("hidden", !showBack);
+        }
+
+        function setPaymentBar(show, amount = 0, label = "合计应支付") {
+            const bar = document.getElementById("paymentBar");
+
+            bar.classList.toggle("show", show);
+            document.getElementById("paymentBarLabel").textContent = label;
+            document.getElementById("paymentBarAmount").textContent = money(amount);
+        }
+
+        function updateClock() {
+            document.getElementById("statusTime").textContent =
+                new Date().toLocaleTimeString("zh-CN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                });
+        }
+
+        function setEnvironmentText() {
+            document.getElementById("environmentText").textContent =
+                appState.paymentMethod === "alipay"
+                    ? "支付宝安全页面 · 5G ▮▮▮"
+                    : "微信安全页面 · 5G ▮▮▮";
+        }
+
+        /* =========================================================
+           路由
+        ========================================================= */
+
+        function navigate(route, pushHistory = true) {
+            if (pushHistory && appState.route !== route) {
+                appState.history.push(appState.route);
+            }
+
+            appState.route = route;
+            render();
+            document.getElementById("pageContainer").scrollTop = 0;
+        }
+
+        function goBack() {
+            const previous = appState.history.pop();
+
+            if (previous) {
+                appState.route = previous;
+                render();
+            } else {
+                initializeScene();
+            }
+        }
+
+        function render() {
+            const renderer = {
+                parkingEntry: renderParkingEntry,
+                parkingFees: renderParkingFees,
+
+                roadTicket: renderRoadTicket,
+
+                couponEntry: renderCouponEntry,
+                couponFees: renderCouponFees,
+
+                monthlyEntry: renderMonthlyEntry,
+                monthlySpaces: renderMonthlySpaces,
+
+                cashier: renderCashier,
+                success: renderSuccess,
+                invalid: renderInvalid
+            }[appState.route] || renderInvalid;
+
+            document.getElementById("pageContainer").innerHTML = renderer();
+            setPaymentBar(false);
+            bindPageEvents();
+        }
+
+        /* =========================================================
+           场景初始化
+        ========================================================= */
+
+        function initializeScene() {
+            appState.history = [];
+
+            if (scene === "parking") {
+                const site = database.sites[siteId];
+
+                if (!site) {
+                    appState.route = "invalid";
+                    render();
+                    return;
+                }
+
+                appState.route = "parkingEntry";
+                render();
+                return;
+            }
+
+            if (scene === "road") {
+                const ticket = database.roadTickets[ticketId];
+
+                if (!ticket) {
+                    appState.route = "invalid";
+                    render();
+                    return;
+                }
+
+                appState.roadTicket = JSON.parse(JSON.stringify(ticket));
+                appState.plateNo = ticket.plateNo;
+                appState.arrears = JSON.parse(
+                    JSON.stringify(database.arrears[ticket.plateNo] || [])
+                );
+
+                appState.route = "roadTicket";
+                render();
+                return;
+            }
+
+            if (scene === "coupon") {
+                const coupon = database.coupons[couponToken];
+
+                if (!coupon) {
+                    appState.route = "invalid";
+                    render();
+                    return;
+                }
+
+                appState.coupon = JSON.parse(JSON.stringify(coupon));
+                appState.route = "couponEntry";
+                render();
+                return;
+            }
+
+            if (scene === "monthly") {
+                appState.route = "monthlyEntry";
+                render();
+                return;
+            }
+
+            appState.route = "invalid";
+            render();
+        }
+
+        /* =========================================================
+           停车场二维码：先输入车牌
+        ========================================================= */
+
+        function renderParkingEntry() {
+            const site = database.sites[siteId];
+
+            setHeader(
+                "停车场扫码缴费",
+                "输入车牌查询停车订单",
+                false
+            );
+
+            return `
+    <section class="page">
+
+      <div class="scene-card">
+        <div class="scene-main">${site.name}</div>
+
+        <div class="scene-meta">
+          ${site.qrLocation}<br>
+          二维码编号：${site.qrId}
+        </div>
+      </div>
+
+      <div class="alert">
+        <i></i>
+        <span>
+          请输入需要缴费的车牌。系统将查询当前临时停车费、
+          充电满电超时占位费，以及该车牌名下可合并缴纳的历史欠费。
+        </span>
+      </div>
+
+      <div class="card">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">
+            <span>车牌号码</span>
+          </label>
+
+          <div class="plate-input-row">
+            <input
+              class="plate-input"
+              id="parkingPlateInput"
+              maxlength="8"
+              placeholder="例如：粤B·A12345"
+              value="${appState.plateNo}"
+              autocomplete="off"
+            >
+
+            <button class="primary-btn" id="queryParkingButton">
+              查询
+            </button>
+          </div>
+
+          <div class="form-tip">
+            支持普通蓝牌、黄牌及新能源车牌。
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+        }
+
+        function queryParkingByPlate() {
+            const input = document.getElementById("parkingPlateInput");
+            const plate = normalizePlate(input.value);
+
+            if (!validatePlate(plate)) {
+                toast("请输入完整、有效的车牌号码", "warning");
+                input.focus();
+                return;
+            }
+
+            simulateRequest(function () {
+                const order = database.parkingOrders[plate];
+
+                if (!order) {
+                    openModal("未查询到当前停车订单", `
+        <div class="empty-state">
+          <div class="empty-icon">P</div>
+          <strong>没有找到正在停车的订单</strong>
+          <span>
+            请确认车牌输入是否正确。<br>
+            如车辆为无牌车，请联系停车场工作人员处理。
+          </span>
+        </div>
+
+        <button class="primary-btn full-btn" id="modalReturnButton">
+          返回修改车牌
+        </button>
+      `);
+
+                    setTimeout(function () {
+                        const button = document.getElementById("modalReturnButton");
+                        if (button) button.onclick = closeModal;
+                    }, 0);
+
+                    return;
+                }
+
+                appState.plateNo = plate;
+                appState.order = JSON.parse(JSON.stringify(order));
+                appState.arrears = JSON.parse(
+                    JSON.stringify(database.arrears[plate] || [])
+                );
+                appState.couponApplied = false;
+
+                navigate("parkingFees");
+            }, "正在查询停车订单及欠费...");
+        }
+
+        /* =========================================================
+           停车场费用确认
+        ========================================================= */
+
+        function calculateParkingFees() {
+            const currentFee = appState.includeCurrentOrder
+                ? Number(appState.order?.payable || 0)
+                : 0;
+
+            const occupancy = appState.includeChargingOccupancy
+                ? Number(appState.order?.chargingOccupancy?.amount || 0)
+                : 0;
+
+            const arrears = appState.arrears
+                .filter(item => item.selected)
+                .reduce((sum, item) => sum + Number(item.amount), 0);
+
+            const couponDiscount = appState.couponApplied
+                ? Math.min(
+                    Number(appState.coupon?.estimatedDiscount || 0),
+                    currentFee
+                )
+                : 0;
+
+            return {
+                currentFee,
+                occupancy,
+                arrears,
+                couponDiscount,
+                total: Math.max(
+                    0,
+                    currentFee + occupancy + arrears - couponDiscount
+                )
+            };
+        }
+
+        function renderParkingFees() {
+            const order = appState.order;
+            const fees = calculateParkingFees();
+
+            if (!order) {
+                return renderParkingEntry();
+            }
+
+            setHeader(
+                "停车费用确认",
+                order.plateNo + " · 费用合并结算",
+                true
+            );
+
+            setTimeout(function () {
+                setPaymentBar(true, fees.total, "本次应支付");
+            }, 0);
+
+            return `
+    <section class="page with-payment-bar">
+
+      <div class="card order-card">
+        <div class="order-head">
+          <div>
+            <div class="order-plate">${order.plateNo}</div>
+            <div class="order-location">
+              ${order.parkingLot}<br>
+              ${order.entrance} · ${order.id}
+            </div>
+          </div>
+
+          <span class="badge green">停车中</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span>入场时间</span>
+            <strong>${order.entryTime}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>停车时长</span>
+            <strong>${order.durationText}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>车辆类型</span>
+            <strong>${order.vehicleType}</strong>
+          </div>
+        </div>
+
+        <div class="fee-grid">
+          <div class="fee-cell">
+            <span>停车费</span>
+            <strong>${money(order.currentFee)}</strong>
+          </div>
+
+          <div class="fee-cell">
+            <span>已优惠</span>
+            <strong>${money(order.existingDiscount)}</strong>
+          </div>
+
+          <div class="fee-cell payable">
+            <span>当前待支付</span>
+            <strong>${money(order.payable)}</strong>
+          </div>
+        </div>
+      </div>
+
+      ${order.chargingOccupancy ? `
+        <div class="section-header">
+          <div class="section-title">充电超时占位费</div>
+          <span class="badge orange">需结清</span>
+        </div>
+
+        <div class="card charging-card">
+          <div class="charging-head">
+            <div class="charging-icon">⚡</div>
+
+            <div>
+              <strong>车辆满电后超时占用充电位</strong>
+              <span>
+                充电桩 ${order.chargingOccupancy.chargerNo} ·
+                满电 ${order.chargingOccupancy.fullTime}
+              </span>
+            </div>
+
+            <div class="charging-amount">
+              ${money(order.chargingOccupancy.amount)}
+            </div>
+          </div>
+
+          <div class="info-list">
+            <div class="info-row">
+              <span>满电后占用</span>
+              <strong>${order.chargingOccupancy.occupancyMinutes}分钟</strong>
+            </div>
+
+            <div class="info-row">
+              <span>免费驶离时间</span>
+              <strong>${order.chargingOccupancy.freeMinutes}分钟</strong>
+            </div>
+
+            <div class="info-row">
+              <span>计费时长</span>
+              <strong>${order.chargingOccupancy.billableMinutes}分钟</strong>
+            </div>
+
+            <div class="info-row">
+              <span>计费标准</span>
+              <strong>${order.chargingOccupancy.rateText}</strong>
+            </div>
+          </div>
+        </div>
+      ` : ""}
+
+      ${renderArrearsSection()}
+
+      <div class="section-header">
+        <div class="section-title">费用汇总</div>
+      </div>
+
+      ${renderParkingSummary(fees)}
+
+    </section>
+  `;
+        }
+
+        function renderArrearsSection() {
+            if (!appState.arrears.length) {
+                return `
+      <div class="section-header">
+        <div class="section-title">历史欠费</div>
+      </div>
+
+      <div class="alert green">
+        <i></i>
+        <span>当前车牌没有可合并缴纳的停车场或道路停车欠费。</span>
+      </div>
+    `;
+            }
+
+            return `
+    <div class="section-header">
+      <div class="section-title">可合并缴纳的历史欠费</div>
+      <button class="section-more" id="toggleAllArrears">
+        ${appState.arrears.every(item => item.selected) ? "取消全选" : "全部选择"}
+      </button>
+    </div>
+
+    <div class="fee-list">
+      ${appState.arrears.map(item => `
+        <div
+          class="fee-select-card ${item.selected ? "selected" : ""}"
+          data-arrear-id="${item.id}"
+        >
+          <strong>${item.title}</strong>
+          <p>${item.description}</p>
+
+          <div class="fee-card-meta">
+            <span>
+              ${item.type === "road" ? "道路停车欠费" : "停车场历史欠费"}
+            </span>
+            <b>${money(item.amount)}</b>
+          </div>
+
+          <i class="select-check">✓</i>
+        </div>
+      `).join("")}
+    </div>
+  `;
+        }
+
+        function renderParkingSummary(fees) {
+            return `
+    <div class="card summary-card">
+      <div class="summary-row">
+        <span>当前临时停车费</span>
+        <strong>${money(fees.currentFee)}</strong>
+      </div>
+
+      ${fees.occupancy > 0 ? `
+        <div class="summary-row">
+          <span>充电超时占位费</span>
+          <strong>${money(fees.occupancy)}</strong>
+        </div>
+      ` : ""}
+
+      <div class="summary-row">
+        <span>已选历史欠费</span>
+        <strong>${money(fees.arrears)}</strong>
+      </div>
+
+      ${fees.couponDiscount > 0 ? `
+        <div class="summary-row discount">
+          <span>${appState.coupon.couponName}</span>
+          <strong>-${money(fees.couponDiscount)}</strong>
+        </div>
+      ` : ""}
+
+      <div class="summary-row total">
+        <span>合计应支付</span>
+        <strong>${money(fees.total)}</strong>
+      </div>
+    </div>
+  `;
+        }
+
+        /* =========================================================
+           道路停车小票
+           小票已经包含车牌和订单，不再要求输入车牌
+        ========================================================= */
+
+        function calculateRoadFees() {
+            const ticketAmount = Number(appState.roadTicket?.amount || 0);
+
+            const arrears = appState.arrears
+                .filter(item => item.selected)
+                .reduce((sum, item) => sum + Number(item.amount), 0);
+
+            return {
+                ticketAmount,
+                arrears,
+                total: ticketAmount + arrears
+            };
+        }
+
+        function renderRoadTicket() {
+            const ticket = appState.roadTicket;
+            const fees = calculateRoadFees();
+
+            if (!ticket) {
+                return renderInvalid();
+            }
+
+            setHeader(
+                "道路停车小票缴费",
+                ticket.roadName + " · " + ticket.berthNo,
+                false
+            );
+
+            setTimeout(function () {
+                setPaymentBar(true, fees.total, "道路停车应支付");
+            }, 0);
+
+            return `
+    <section class="page with-payment-bar">
+
+      <div class="scene-card road">
+        <div class="scene-main">${ticket.roadName}</div>
+
+        <div class="scene-meta">
+          ${ticket.areaName}<br>
+          小票编号：${ticket.id}
+        </div>
+      </div>
+
+      <div class="alert green">
+        <i></i>
+        <span>
+          小票已绑定车牌、泊位和本次停车记录，无需再次输入车牌。
+          请核对下方信息后支付。
+        </span>
+      </div>
+
+      <div class="card order-card">
+        <div class="order-head">
+          <div>
+            <div class="order-plate">${ticket.plateNo}</div>
+            <div class="order-location">
+              泊位 ${ticket.berthNo} · ${ticket.areaName}
+            </div>
+          </div>
+
+          <span class="badge orange">待支付</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span>停车开始</span>
+            <strong>${ticket.startTime}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>停车结束</span>
+            <strong>${ticket.endTime}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>停车时长</span>
+            <strong>${ticket.durationText}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>本次道路停车费</span>
+            <strong style="color:var(--orange)">
+              ${money(ticket.amount)}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      ${renderArrearsSection()}
+
+      <div class="section-header">
+        <div class="section-title">费用汇总</div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="summary-row">
+          <span>本次道路停车费</span>
+          <strong>${money(fees.ticketAmount)}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>已选历史欠费</span>
+          <strong>${money(fees.arrears)}</strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>合计应支付</span>
+          <strong>${money(fees.total)}</strong>
+        </div>
+      </div>
+
+    </section>
+  `;
+        }
+
+        /* =========================================================
+           商户PDA优惠券扫码
+           先展示优惠，再输入车牌
+        ========================================================= */
+
+        function renderCouponEntry() {
+            const coupon = appState.coupon;
+
+            if (!coupon) {
+                return renderInvalid();
+            }
+
+            setHeader(
+                "商户停车优惠",
+                coupon.merchantName,
+                false
+            );
+
+            return `
+    <section class="page">
+
+      <div class="coupon-hero">
+        <div class="coupon-merchant">
+          <strong>${coupon.merchantName}</strong>
+          <span class="coupon-status">可使用</span>
+        </div>
+
+        <div class="coupon-value">免费停车 2 小时</div>
+        <div class="coupon-name">${coupon.couponName}</div>
+
+        <div class="coupon-rule">
+          适用停车场：${coupon.applicableSite}<br>
+          有效期至：${coupon.validUntil}
+        </div>
+
+        <div class="coupon-code">
+          优惠凭证：${coupon.token}<br>
+          发放时间：${coupon.issueTime}
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">优惠使用规则</div>
+      </div>
+
+      <div class="card compact">
+        ${coupon.rules.map(rule => `
+          <div class="info-row">
+            <span>• ${rule}</span>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="alert orange">
+        <i></i>
+        <span>
+          当前二维码仅包含商户停车优惠信息，尚未绑定车辆。
+          请输入车牌，系统将查询当前临时停车订单并试算优惠后的应付金额。
+        </span>
+      </div>
+
+      <div class="card">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">
+            <span>使用优惠的车牌</span>
+          </label>
+
+          <div class="plate-input-row">
+            <input
+              class="plate-input"
+              id="couponPlateInput"
+              maxlength="8"
+              placeholder="例如：粤B·A12345"
+              value="${appState.plateNo}"
+            >
+          </div>
+
+          <div class="form-tip">
+            优惠券将在支付成功时完成核销，未支付不会占用优惠。
+          </div>
+        </div>
+      </div>
+
+      <button class="primary-btn full-btn" id="couponContinueButton">
+        查询停车费并使用优惠
+      </button>
+
+    </section>
+  `;
+        }
+
+        function queryCouponParking() {
+            const input = document.getElementById("couponPlateInput");
+            const plate = normalizePlate(input.value);
+
+            if (!validatePlate(plate)) {
+                toast("请输入完整、有效的车牌号码", "warning");
+                input.focus();
+                return;
+            }
+
+            if (appState.coupon.status !== "available") {
+                toast("该优惠券已使用、已失效或已被撤回", "error");
+                return;
+            }
+
+            simulateRequest(function () {
+                const order = database.parkingOrders[plate];
+
+                if (!order) {
+                    openModal("未找到可使用优惠的停车订单", `
+        <div class="empty-state">
+          <div class="empty-icon">券</div>
+          <strong>当前车牌没有正在停车的订单</strong>
+          <span>
+            商户停车优惠只能绑定当前有效的临时停车订单。<br>
+            请核对车牌后重新查询。
+          </span>
+        </div>
+
+        <button class="primary-btn full-btn" id="modalCouponReturn">
+          返回修改车牌
+        </button>
+      `);
+
+                    setTimeout(function () {
+                        const button = document.getElementById("modalCouponReturn");
+                        if (button) button.onclick = closeModal;
+                    }, 0);
+
+                    return;
+                }
+
+                if (order.parkingLot !== appState.coupon.applicableSite) {
+                    toast("该停车订单不在优惠券适用停车场范围内", "error");
+                    return;
+                }
+
+                appState.plateNo = plate;
+                appState.order = JSON.parse(JSON.stringify(order));
+                appState.arrears = JSON.parse(
+                    JSON.stringify(database.arrears[plate] || [])
+                );
+                appState.couponApplied = true;
+
+                navigate("couponFees");
+            }, "正在查询停车订单并校验优惠...");
+        }
+
+        function renderCouponFees() {
+            const coupon = appState.coupon;
+            const order = appState.order;
+            const fees = calculateParkingFees();
+
+            if (!coupon || !order) {
+                return renderCouponEntry();
+            }
+
+            setHeader(
+                "优惠后停车费确认",
+                order.plateNo + " · " + coupon.merchantName,
+                true
+            );
+
+            setTimeout(function () {
+                setPaymentBar(true, fees.total, "优惠后应支付");
+            }, 0);
+
+            return `
+    <section class="page with-payment-bar">
+
+      <div class="alert green">
+        <i></i>
+        <span>
+          优惠资格校验通过。支付成功后，商户停车券将绑定并核销到本次停车订单。
+        </span>
+      </div>
+
+      <div class="card order-card">
+        <div class="order-head">
+          <div>
+            <div class="order-plate">${order.plateNo}</div>
+            <div class="order-location">
+              ${order.parkingLot}<br>
+              ${order.entrance} · ${order.id}
+            </div>
+          </div>
+
+          <span class="badge green">优惠可用</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span>入场时间</span>
+            <strong>${order.entryTime}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>停车时长</span>
+            <strong>${order.durationText}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>当前临停费用</span>
+            <strong>${money(order.payable)}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:#ead8bd;background:#fff9ef">
+        <div class="order-head">
+          <div>
+            <strong style="color:#765433;font-size:14px">
+              ${coupon.couponName}
+            </strong>
+
+            <div class="order-location">
+              ${coupon.merchantName}<br>
+              预计抵扣 ${money(fees.couponDiscount)}
+            </div>
+          </div>
+
+          <span class="badge orange">待核销</span>
+        </div>
+      </div>
+
+      ${order.chargingOccupancy ? `
+        <div class="section-header">
+          <div class="section-title">充电超时占位费</div>
+        </div>
+
+        <div class="card charging-card">
+          <div class="charging-head">
+            <div class="charging-icon">⚡</div>
+
+            <div>
+              <strong>满电后超时占用充电位</strong>
+              <span>
+                超时${order.chargingOccupancy.billableMinutes}分钟 ·
+                ${order.chargingOccupancy.rateText}
+              </span>
+            </div>
+
+            <div class="charging-amount">
+              ${money(order.chargingOccupancy.amount)}
+            </div>
+          </div>
+
+          <div class="form-tip" style="margin-top:10px">
+            商户停车优惠仅抵扣停车费，不抵扣充电超时占位费。
+          </div>
+        </div>
+      ` : ""}
+
+      ${renderArrearsSection()}
+
+      <div class="section-header">
+        <div class="section-title">优惠后费用汇总</div>
+      </div>
+
+      ${renderParkingSummary(fees)}
+
+    </section>
+  `;
+        }
+
+        /* =========================================================
+           包月续费：先输入车牌
+        ========================================================= */
+
+        function renderMonthlyEntry() {
+            const site = database.sites[siteId] || database.sites.LOT001;
+
+            setHeader(
+                "包月车位续费",
+                "输入车牌查询名下车位",
+                false
+            );
+
+            return `
+    <section class="page">
+
+      <div class="scene-card monthly">
+        <div class="scene-main">${site.name}</div>
+
+        <div class="scene-meta">
+          支持查询车牌关联的本人及家庭车位<br>
+          不同有效期、不同套餐可合并一次支付
+        </div>
+      </div>
+
+      <div class="alert">
+        <i></i>
+        <span>
+          请输入主车牌。系统将查询该车牌实名账户下的所有包月车位，
+          每个车位可分别选择续费时长。
+        </span>
+      </div>
+
+      <div class="card">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">
+            <span>主车牌号码</span>
+          </label>
+
+          <div class="plate-input-row">
+            <input
+              class="plate-input"
+              id="monthlyPlateInput"
+              maxlength="8"
+              value="${appState.plateNo || "粤B·A12345"}"
+              placeholder="请输入车牌"
+            >
+          </div>
+        </div>
+      </div>
+
+      <button class="primary-btn full-btn" id="monthlyContinueButton">
+        查询名下包月车位
+      </button>
+
+    </section>
+  `;
+        }
+
+        function queryMonthlySpaces() {
+            const input = document.getElementById("monthlyPlateInput");
+            const plate = normalizePlate(input.value);
+
+            if (!validatePlate(plate)) {
+                toast("请输入完整、有效的车牌号码", "warning");
+                return;
+            }
+
+            simulateRequest(function () {
+                const owner = database.monthlySpaces[plate];
+
+                if (!owner) {
+                    openModal("未查询到包月停车权益", `
+        <div class="empty-state">
+          <div class="empty-icon">月</div>
+          <strong>该车牌没有可续费的包月车位</strong>
+          <span>
+            如包月权益登记在其他车牌或手机号下，<br>
+            请联系停车场管理方核实账户信息。
+          </span>
+        </div>
+
+        <button class="primary-btn full-btn" id="monthlyModalReturn">
+          返回修改车牌
+        </button>
+      `);
+
+                    setTimeout(function () {
+                        const button = document.getElementById("monthlyModalReturn");
+                        if (button) button.onclick = closeModal;
+                    }, 0);
+
+                    return;
+                }
+
+                appState.plateNo = plate;
+                appState.monthlyOwner = {
+                    ownerName: owner.ownerName,
+                    mobile: owner.mobile,
+                    verified: owner.verified
+                };
+                appState.monthlySpaces = JSON.parse(
+                    JSON.stringify(owner.spaces)
+                );
+                appState.arrears = JSON.parse(
+                    JSON.stringify(database.arrears[plate] || [])
+                );
+
+                navigate("monthlySpaces");
+            }, "正在查询实名账户及包月车位...");
+        }
+
+        function getSpaceDiscountRate(months) {
+            if (Number(months) === 3) return 0.03;
+            if (Number(months) === 12) return 0.08;
+            return 0;
+        }
+
+        function calculateMonthlyFees() {
+            let original = 0;
+            let discount = 0;
+            let selectedCount = 0;
+
+            appState.monthlySpaces
+                .filter(space => space.selected)
+                .forEach(function (space) {
+                    const subtotal =
+                        Number(space.monthlyPrice) * Number(space.months);
+
+                    original += subtotal;
+                    discount += subtotal * getSpaceDiscountRate(space.months);
+                    selectedCount += 1;
+                });
+
+            const arrears = appState.arrears
+                .filter(item => item.selected)
+                .reduce((sum, item) => sum + Number(item.amount), 0);
+
+            return {
+                original,
+                discount,
+                arrears,
+                selectedCount,
+                total: Math.max(0, original - discount + arrears)
+            };
+        }
+
+        function renderMonthlySpaces() {
+            const owner = appState.monthlyOwner;
+            const fees = calculateMonthlyFees();
+
+            if (!owner) {
+                return renderMonthlyEntry();
+            }
+
+            setHeader(
+                "选择包月车位",
+                appState.plateNo + " · 分别选择续费时长",
+                true
+            );
+
+            setTimeout(function () {
+                setPaymentBar(
+                    true,
+                    fees.total,
+                    `已选${fees.selectedCount}个车位`
+                );
+            }, 0);
+
+            return `
+    <section class="page with-payment-bar">
+
+      <div class="card owner-card">
+        <div class="owner-avatar">
+          ${owner.ownerName.slice(0, 1)}
+        </div>
+
+        <div class="owner-info">
+          <strong>${owner.ownerName} · ${owner.mobile}</strong>
+          <span>
+            主车牌 ${appState.plateNo} ·
+            查询到${appState.monthlySpaces.length}个停车权益
+          </span>
+        </div>
+
+        <span class="badge green">已实名</span>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">选择需要续费的车位</div>
+      </div>
+
+      <div class="space-list">
+        ${appState.monthlySpaces.map(space => `
+          <div
+            class="space-card ${space.selected ? "selected" : ""}"
+            data-space-id="${space.id}"
+          >
+            <div class="space-top">
+              <strong>${space.name}</strong>
+              <span>
+                ${space.packageName} · 绑定车牌 ${space.plateNo}
+              </span>
+            </div>
+
+            <i class="space-check">✓</i>
+
+            <div class="space-validity">
+              <span>当前有效期至</span>
+              <strong>${space.validUntil}</strong>
+            </div>
+
+            <div class="duration-options">
+              ${[1, 3, 12].map(months => {
+                const subtotal = space.monthlyPrice * months;
+                const rate = getSpaceDiscountRate(months);
+
+                return `
+                  <button
+                    class="duration-option
+                      ${Number(space.months) === months ? "active" : ""}"
+                    data-space-duration="${space.id}"
+                    data-months="${months}"
+                  >
+                    <strong>${months}个月</strong>
+                    ${rate
+                        ? money(subtotal * (1 - rate))
+                        : money(subtotal)}
+                  </button>
+                `;
+            }).join("")}
+            </div>
+
+            <div class="new-expiry">
+              续费后有效期至：
+              <strong>${addMonths(space.validUntil, space.months)}</strong>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+
+      ${renderArrearsSection()}
+
+      <div class="section-header">
+        <div class="section-title">续费订单汇总</div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="summary-row">
+          <span>已选车位</span>
+          <strong>${fees.selectedCount}个</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>续费原价</span>
+          <strong>${money(fees.original)}</strong>
+        </div>
+
+        <div class="summary-row discount">
+          <span>长周期续费优惠</span>
+          <strong>-${money(fees.discount)}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>已选历史欠费</span>
+          <strong>${money(fees.arrears)}</strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>合并应支付</span>
+          <strong>${money(fees.total)}</strong>
+        </div>
+      </div>
+
+    </section>
+  `;
+        }
+
+        /* =========================================================
+           进入统一收银台
+        ========================================================= */
+
+        function buildCashierFromCurrentRoute() {
+            const items = [];
+            let title = "";
+            let paymentScene = "";
+
+            if (
+                appState.route === "parkingFees" ||
+                appState.route === "couponFees"
+            ) {
+                const fees = calculateParkingFees();
+
+                title =
+                    appState.route === "couponFees"
+                        ? "优惠后停车费用"
+                        : "停车场合并费用";
+
+                paymentScene =
+                    appState.route === "couponFees"
+                        ? "coupon"
+                        : "parking";
+
+                if (fees.currentFee > 0) {
+                    items.push({
+                        name: "当前临时停车费",
+                        detail: appState.order.id,
+                        amount: fees.currentFee
+                    });
+                }
+
+                if (fees.occupancy > 0) {
+                    items.push({
+                        name: "充电超时占位费",
+                        detail: appState.order.chargingOccupancy.id,
+                        amount: fees.occupancy
+                    });
+                }
+
+                appState.arrears
+                    .filter(item => item.selected)
+                    .forEach(function (item) {
+                        items.push({
+                            name: item.title,
+                            detail: item.id,
+                            amount: item.amount
+                        });
+                    });
+
+                if (fees.couponDiscount > 0) {
+                    items.push({
+                        name: appState.coupon.couponName,
+                        detail: appState.coupon.token,
+                        amount: -fees.couponDiscount,
+                        discount: true
+                    });
+                }
+
+                appState.paymentAmount = fees.total;
+            }
+
+            if (appState.route === "roadTicket") {
+                const fees = calculateRoadFees();
+
+                title = "道路停车合并费用";
+                paymentScene = "road";
+
+                items.push({
+                    name: "本次道路停车费",
+                    detail: appState.roadTicket.id,
+                    amount: fees.ticketAmount
+                });
+
+                appState.arrears
+                    .filter(item => item.selected)
+                    .forEach(function (item) {
+                        items.push({
+                            name: item.title,
+                            detail: item.id,
+                            amount: item.amount
+                        });
+                    });
+
+                appState.paymentAmount = fees.total;
+            }
+
+            if (appState.route === "monthlySpaces") {
+                const fees = calculateMonthlyFees();
+
+                title = "包月车位合并续费";
+                paymentScene = "monthly";
+
+                appState.monthlySpaces
+                    .filter(space => space.selected)
+                    .forEach(function (space) {
+                        const original =
+                            space.monthlyPrice * space.months;
+
+                        const discount =
+                            original * getSpaceDiscountRate(space.months);
+
+                        items.push({
+                            name: space.name,
+                            detail:
+                                `${space.months}个月 · 新有效期${addMonths(
+                                    space.validUntil,
+                                    space.months
+                                )}`,
+                            amount: original - discount
+                        });
+                    });
+
+                appState.arrears
+                    .filter(item => item.selected)
+                    .forEach(function (item) {
+                        items.push({
+                            name: item.title,
+                            detail: item.id,
+                            amount: item.amount
+                        });
+                    });
+
+                appState.paymentAmount = fees.total;
+            }
+
+            appState.cashierItems = items;
+            appState.cashierTitle = title;
+            appState.paymentScene = paymentScene;
+
+            navigate("cashier");
+        }
+
+        /* =========================================================
+           收银台
+        ========================================================= */
+
+        function renderCashier() {
+            setHeader(
+                "停车统一收银台",
+                "订单信息已加密",
+                true
+            );
+
+            return `
+    <section class="page">
+
+      <div class="cashier-card">
+        <div class="cashier-title">
+          <strong>${appState.cashierTitle}</strong>
+          <span>共${appState.cashierItems.filter(item => !item.discount).length}笔费用</span>
+        </div>
+
+        <div class="info-list">
+          ${appState.cashierItems.map(item => `
+            <div class="info-row">
+              <span>
+                ${item.name}
+              </span>
+
+              <strong style="
+                color:${item.discount ? "var(--green)" : "#42586a"}
+              ">
+                ${item.amount < 0 ? "-" : ""}
+                ${money(Math.abs(item.amount))}
+              </strong>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="summary-row total" style="margin-top:10px">
+          <span>本次实际支付</span>
+          <strong>${money(appState.paymentAmount)}</strong>
+        </div>
+      </div>
+
+      <div class="agreement">
+        <i class="agreement-check" id="agreementCheck">
+          ${appState.agreementChecked ? "✓" : ""}
+        </i>
+
+        <span>
+          已阅读并同意《停车缴费服务协议》和《停车优惠使用规则》。
+          支付后将同步停车订单、历史欠费、充电占位费及商户优惠核销状态。
+        </span>
+      </div>
+
+      <button class="primary-btn full-btn" id="submitPayment">
+        ${paymentMethodName(appState.paymentMethod)}
+        ${money(appState.paymentAmount)}
+      </button>
+
+    </section>
+  `;
+        }
+
+        /* =========================================================
+           支付及成功页
+        ========================================================= */
+
+        function submitPayment() {
+            if (!appState.agreementChecked) {
+                toast("请先阅读并同意停车缴费服务协议", "warning");
+                return;
+            }
+
+            if (appState.paymentAmount <= 0) {
+                toast("当前订单无需支付", "warning");
+                return;
+            }
+
+            simulateRequest(function () {
+                const paymentId = generateId("PAY");
+
+                appState.lastPayment = {
+                    id: paymentId,
+                    amount: appState.paymentAmount,
+                    method: appState.paymentMethod,
+                    time: nowString(),
+                    plateNo:
+                        appState.plateNo ||
+                        appState.roadTicket?.plateNo ||
+                        "",
+                    scene: appState.paymentScene,
+                    items: JSON.parse(
+                        JSON.stringify(appState.cashierItems)
+                    )
+                };
+
+                if (appState.paymentScene === "coupon" && appState.coupon) {
+                    appState.coupon.status = "used";
+                    appState.coupon.usedTime = nowString();
+                    appState.coupon.parkingOrderId = appState.order.id;
+                    appState.coupon.plateNo = appState.order.plateNo;
+                }
+
+                navigate("success");
+            }, "正在唤起" + paymentMethodName(appState.paymentMethod) + "...");
+        }
+
+        function renderSuccess() {
+            const payment = appState.lastPayment;
+
+            if (!payment) {
+                return renderInvalid();
+            }
+
+            setHeader(
+                "支付结果",
+                "支付成功",
+                false
+            );
+
+            const leaveTip =
+                payment.scene === "parking" ||
+                    payment.scene === "coupon"
+                    ? "请在15分钟内驶离停车场，超时可能重新产生停车费。"
+                    : payment.scene === "road"
+                        ? "道路停车订单和已选历史欠费已完成销账。"
+                        : "所选包月车位的新有效期已更新。";
+
+            return `
+    <section class="page success-page">
+
+      <div class="success-icon">✓</div>
+
+      <h2>支付成功</h2>
+
+      <p>${leaveTip}</p>
+
+      <div class="result-card">
+        <div class="result-row">
+          <span>支付金额</span>
+          <strong style="color:var(--orange)">
+            ${money(payment.amount)}
+          </strong>
+        </div>
+
+        <div class="result-row">
+          <span>支付方式</span>
+          <strong>${paymentMethodName(payment.method)}</strong>
+        </div>
+
+        ${payment.plateNo ? `
+          <div class="result-row">
+            <span>车牌号码</span>
+            <strong>${payment.plateNo}</strong>
+          </div>
+        ` : ""}
+
+        <div class="result-row">
+          <span>支付项目</span>
+          <strong>
+            ${payment.items.filter(item => !item.discount).length}笔
+          </strong>
+        </div>
+
+        ${payment.scene === "coupon" ? `
+          <div class="result-row">
+            <span>商户优惠券</span>
+            <strong style="color:var(--green)">
+              已核销
+            </strong>
+          </div>
+        ` : ""}
+
+        ${payment.scene === "monthly" ? `
+          <div class="result-row">
+            <span>包月续费</span>
+            <strong style="color:var(--green)">
+              有效期已更新
+            </strong>
+          </div>
+        ` : ""}
+
+        <div class="result-row">
+          <span>支付时间</span>
+          <strong>${payment.time}</strong>
+        </div>
+
+        <div class="result-row">
+          <span>支付流水号</span>
+          <strong>${payment.id}</strong>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="ghost-btn" id="backToEntry">
+          返回首页
+        </button>
+
+        <button class="primary-btn" id="viewReceipt">
+          查看电子缴费凭证
+        </button>
+      </div>
+
+    </section>
+  `;
+        }
+
+        /* =========================================================
+           无效二维码
+        ========================================================= */
+
+        function renderInvalid() {
+            setHeader(
+                "二维码无效",
+                "无法识别当前扫码信息",
+                false
+            );
+
+            return `
+    <section class="page invalid-page">
+      <div class="invalid-icon">!</div>
+
+      <h2>二维码不存在或已经失效</h2>
+
+      <p>
+        当前二维码缺少有效的停车场、道路小票、商户优惠券
+        或包月续费参数。请重新扫描现场二维码，或联系工作人员处理。
+      </p>
+
+      <button class="primary-btn full-btn" id="retryScan">
+        重新识别二维码
+      </button>
+    </section>
+  `;
+        }
+
+        /* =========================================================
+           页面事件
+        ========================================================= */
+
+        function bindPageEvents() {
+            const queryParkingButton =
+                document.getElementById("queryParkingButton");
+
+            if (queryParkingButton) {
+                queryParkingButton.onclick = queryParkingByPlate;
+            }
+
+            const parkingPlateInput =
+                document.getElementById("parkingPlateInput");
+
+            if (parkingPlateInput) {
+                parkingPlateInput.onkeydown = function (event) {
+                    if (event.key === "Enter") {
+                        queryParkingByPlate();
+                    }
+                };
+            }
+
+            const goMonthlyFromParking =
+                document.getElementById("goMonthlyFromParking");
+
+            if (goMonthlyFromParking) {
+                goMonthlyFromParking.onclick = function () {
+                    appState.route = "monthlyEntry";
+                    appState.history.push("parkingEntry");
+                    render();
+                };
+            }
+
+            const queryCouponPlate =
+                document.getElementById("queryCouponPlate");
+
+            const couponContinueButton =
+                document.getElementById("couponContinueButton");
+
+            if (queryCouponPlate) {
+                queryCouponPlate.onclick = queryCouponParking;
+            }
+
+            if (couponContinueButton) {
+                couponContinueButton.onclick = queryCouponParking;
+            }
+
+            const couponPlateInput =
+                document.getElementById("couponPlateInput");
+
+            if (couponPlateInput) {
+                couponPlateInput.onkeydown = function (event) {
+                    if (event.key === "Enter") {
+                        queryCouponParking();
+                    }
+                };
+            }
+
+            const queryMonthlyButton =
+                document.getElementById("queryMonthlyButton");
+
+            const monthlyContinueButton =
+                document.getElementById("monthlyContinueButton");
+
+            if (queryMonthlyButton) {
+                queryMonthlyButton.onclick = queryMonthlySpaces;
+            }
+
+            if (monthlyContinueButton) {
+                monthlyContinueButton.onclick = queryMonthlySpaces;
+            }
+
+            const monthlyPlateInput =
+                document.getElementById("monthlyPlateInput");
+
+            if (monthlyPlateInput) {
+                monthlyPlateInput.onkeydown = function (event) {
+                    if (event.key === "Enter") {
+                        queryMonthlySpaces();
+                    }
+                };
+            }
+
+            document.querySelectorAll("[data-arrear-id]").forEach(function (card) {
+                card.onclick = function () {
+                    const item = appState.arrears.find(
+                        arrear => arrear.id === card.dataset.arrearId
+                    );
+
+                    if (!item) return;
+
+                    item.selected = !item.selected;
+                    render();
+                };
+            });
+
+            const toggleAllArrears =
+                document.getElementById("toggleAllArrears");
+
+            if (toggleAllArrears) {
+                toggleAllArrears.onclick = function () {
+                    const allSelected =
+                        appState.arrears.every(item => item.selected);
+
+                    appState.arrears.forEach(function (item) {
+                        item.selected = !allSelected;
+                    });
+
+                    render();
+                };
+            }
+
+            document.querySelectorAll("[data-space-id]").forEach(function (card) {
+                card.onclick = function (event) {
+                    if (event.target.closest("[data-space-duration]")) {
+                        return;
+                    }
+
+                    const space = appState.monthlySpaces.find(
+                        item => item.id === card.dataset.spaceId
+                    );
+
+                    if (!space) return;
+
+                    space.selected = !space.selected;
+                    render();
+                };
+            });
+
+            document
+                .querySelectorAll("[data-space-duration]")
+                .forEach(function (button) {
+                    button.onclick = function (event) {
+                        event.stopPropagation();
+
+                        const space = appState.monthlySpaces.find(
+                            item => item.id === button.dataset.spaceDuration
+                        );
+
+                        if (!space) return;
+
+                        space.selected = true;
+                        space.months = Number(button.dataset.months);
+                        render();
+                    };
+                });
+
+            document
+                .querySelectorAll("[data-payment-method]")
+                .forEach(function (method) {
+                    method.onclick = function () {
+                        appState.paymentMethod =
+                            method.dataset.paymentMethod;
+
+                        setEnvironmentText();
+                        render();
+                    };
+                });
+
+            const agreementCheck =
+                document.getElementById("agreementCheck");
+
+            if (agreementCheck) {
+                agreementCheck.onclick = function () {
+                    appState.agreementChecked =
+                        !appState.agreementChecked;
+
+                    render();
+                };
+            }
+
+            const submitPaymentButton =
+                document.getElementById("submitPayment");
+
+            if (submitPaymentButton) {
+                submitPaymentButton.onclick = submitPayment;
+            }
+
+            const backToEntry =
+                document.getElementById("backToEntry");
+
+            if (backToEntry) {
+                backToEntry.onclick = initializeScene;
+            }
+
+            const viewReceipt =
+                document.getElementById("viewReceipt");
+
+            if (viewReceipt) {
+                viewReceipt.onclick = openReceipt;
+            }
+
+            const retryScan =
+                document.getElementById("retryScan");
+
+            if (retryScan) {
+                retryScan.onclick = initializeScene;
+            }
+        }
+
+        /* =========================================================
+           底部支付按钮
+        ========================================================= */
+
+        document
+            .getElementById("paymentBarButton")
+            .addEventListener("click", function () {
+                if (
+                    appState.route === "parkingFees" ||
+                    appState.route === "couponFees" ||
+                    appState.route === "roadTicket"
+                ) {
+                    buildCashierFromCurrentRoute();
+                    return;
+                }
+
+                if (appState.route === "monthlySpaces") {
+                    const fees = calculateMonthlyFees();
+
+                    if (!fees.selectedCount) {
+                        toast("请至少选择一个需要续费的车位", "warning");
+                        return;
+                    }
+
+                    buildCashierFromCurrentRoute();
+                }
+            });
+
+        /* =========================================================
+           电子凭证
+        ========================================================= */
+
+        function openReceipt() {
+            const payment = appState.lastPayment;
+
+            if (!payment) return;
+
+            openModal("电子缴费凭证", `
+    <div class="card compact">
+      <div style="
+        padding:12px 0 15px;
+        text-align:center;
+        border-bottom:1px dashed #dce4e9;
+      ">
+        <div style="
+          width:48px;
+          height:48px;
+          margin:0 auto 9px;
+          display:grid;
+          place-items:center;
+          border-radius:15px;
+          color:#fff;
+          background:linear-gradient(135deg,#1769e8,#18a6bd);
+          font-size:20px;
+          font-weight:900;
+        ">
+          P
+        </div>
+
+        <strong style="font-size:16px">
+          惠泊停车电子缴费凭证
+        </strong>
+
+        <div style="
+          margin-top:6px;
+          color:#87949f;
+          font-size:10px;
+        ">
+          凭证编号 ${generateId("RCP")}
+        </div>
+      </div>
+
+      <div class="info-row">
+        <span>支付流水</span>
+        <strong>${payment.id}</strong>
+      </div>
+
+      <div class="info-row">
+        <span>支付时间</span>
+        <strong>${payment.time}</strong>
+      </div>
+
+      <div class="info-row">
+        <span>支付方式</span>
+        <strong>${paymentMethodName(payment.method)}</strong>
+      </div>
+
+      ${payment.plateNo ? `
+        <div class="info-row">
+          <span>车牌号码</span>
+          <strong>${payment.plateNo}</strong>
+        </div>
+      ` : ""}
+
+      ${payment.items.map(item => `
+        <div class="info-row">
+          <span>${item.name}</span>
+          <strong style="
+            color:${item.discount ? "var(--green)" : "#3c5264"}
+          ">
+            ${item.amount < 0 ? "-" : ""}
+            ${money(Math.abs(item.amount))}
+          </strong>
+        </div>
+      `).join("")}
+
+      <div class="summary-row total">
+        <span>实付金额</span>
+        <strong>${money(payment.amount)}</strong>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="ghost-btn" id="saveReceiptImage">
+        保存凭证
+      </button>
+
+      <button class="primary-btn" id="sendReceiptEmail">
+        发送到邮箱
+      </button>
+    </div>
+  `);
+
+            setTimeout(function () {
+                const saveButton =
+                    document.getElementById("saveReceiptImage");
+
+                const emailButton =
+                    document.getElementById("sendReceiptEmail");
+
+                if (saveButton) {
+                    saveButton.onclick = function () {
+                        toast("电子凭证已生成，可长按页面保存", "success");
+                    };
+                }
+
+                if (emailButton) {
+                    emailButton.onclick = function () {
+                        openModal("发送电子凭证", `
+          <div class="form-group">
+            <label class="form-label">
+              <span>接收邮箱</span>
+              <em>必填</em>
+            </label>
+
+            <input
+              type="email"
+              class="form-control"
+              id="receiptEmail"
+              placeholder="请输入邮箱地址"
+            >
+          </div>
+
+          <button class="primary-btn full-btn" id="submitReceiptEmail">
+            发送电子凭证
+          </button>
+        `);
+
+                        setTimeout(function () {
+                            const submit =
+                                document.getElementById("submitReceiptEmail");
+
+                            if (submit) {
+                                submit.onclick = function () {
+                                    const email =
+                                        document.getElementById("receiptEmail").value.trim();
+
+                                    if (!email.includes("@")) {
+                                        toast("请输入正确的邮箱地址", "warning");
+                                        return;
+                                    }
+
+                                    closeModal();
+                                    toast("电子缴费凭证已发送到邮箱", "success");
+                                };
+                            }
+                        }, 0);
+                    };
+                }
+            }, 0);
+        }
+
+        /* =========================================================
+           顶部及弹窗事件
+        ========================================================= */
+
+        document
+            .getElementById("headerBack")
+            .addEventListener("click", goBack);
+
+        document
+            .getElementById("headerMore")
+            .addEventListener("click", function () {
+                openModal("停车缴费服务", `
+      <div class="card compact">
+        <div class="info-row">
+          <span>当前扫码类型</span>
+          <strong>
+            ${scene === "road"
+                        ? "道路停车小票"
+                        : scene === "coupon"
+                            ? "商户停车优惠券"
+                            : scene === "monthly"
+                                ? "包月续费二维码"
+                                : "停车场缴费二维码"
+                    }
+          </strong>
+        </div>
+
+        <div class="info-row">
+          <span>支付环境</span>
+          <strong>${paymentMethodName(appState.paymentMethod)}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>数据连接</span>
+          <strong style="color:var(--green)">安全连接</strong>
+        </div>
+      </div>
+
+      <button class="secondary-btn full-btn" id="contactService">
+        联系停车客服
+      </button>
+    `);
+
+                setTimeout(function () {
+                    const button =
+                        document.getElementById("contactService");
+
+                    if (button) {
+                        button.onclick = function () {
+                            toast("正在为您连接停车客服", "success");
+                        };
+                    }
+                }, 0);
+            });
+
+        document
+            .getElementById("modalClose")
+            .addEventListener("click", closeModal);
+
+        document
+            .getElementById("modalOverlay")
+            .addEventListener("click", function (event) {
+                if (event.target.id === "modalOverlay") {
+                    closeModal();
+                }
+            });
+
+        /* =========================================================
+           初始化
+        ========================================================= */
+
+        updateClock();
+        setInterval(updateClock, 30000);
+
+        setEnvironmentText();
+        initializeScene();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wortschatz 01 · Gemüse | 德语主题词汇卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F3EE; --bg2:#EFEAE1; --ink:#1B1A18; --ink2:#54504A; --ink3:#8C867D;
+  --line:rgba(27,26,24,.10); --gold:#B08D57; --card:#FFFFFF;
+  --der:#2C5C86; --die:#A8375A; --das:#3E7A55;
+  --serif:'Cormorant Garamond',Georgia,'Songti SC',serif;
+  --sans:'Inter','Helvetica Neue',Arial,'PingFang SC',sans-serif;
+  --cn:'Noto Serif SC','Songti SC',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--sans); color:var(--ink); background:
+    radial-gradient(1200px 600px at 12% -10%, #fffdf8 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, #f0ece3 0%, transparent 55%),
+    var(--bg);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- HEADER ---------- */
+header{max-width:1280px;margin:0 auto;padding:54px 32px 26px}
+.eyebrow{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap;margin-top:14px}
+h1{font-family:var(--serif);font-size:clamp(44px,7vw,84px);line-height:.92;margin:0;font-weight:600;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--gold)}
+.sub{font-family:var(--cn);color:var(--ink2);font-size:17px;margin-top:12px;letter-spacing:.06em}
+.sub span{color:var(--ink3);font-family:var(--sans);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-left:10px}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--ink2);letter-spacing:.08em}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px}
+.rule{height:1px;background:linear-gradient(90deg,var(--gold),rgba(176,141,87,.18) 45%,transparent);margin:26px 0 0}
+
+/* ---------- TOOLBAR ---------- */
+.bar{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);
+  background:rgba(246,243,238,.82);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{flex:1 1 220px;min-width:170px;position:relative}
+.search input{width:100%;padding:10px 14px 10px 34px;border:1px solid var(--line);border-radius:999px;
+  background:#fff;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none;transition:.25s}
+.search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(176,141,87,.13)}
+.search svg{position:absolute;left:12px;top:11px;opacity:.4}
+.group{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
+.chip{border:0;background:transparent;font:inherit;font-size:12.5px;letter-spacing:.04em;color:var(--ink2);
+  padding:6px 13px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap}
+.chip:hover{color:var(--ink)}
+.chip.on{background:var(--ink);color:#fff}
+.chip.on[data-art="der"]{background:var(--der)} .chip.on[data-art="die"]{background:var(--die)} .chip.on[data-art="das"]{background:var(--das)}
+.chip.tog.off{background:#F1EDE5;color:var(--ink3);text-decoration:line-through}
+.count{font-size:12px;color:var(--ink3);letter-spacing:.1em;margin-left:auto}
+
+/* ---------- GRID ---------- */
+main{max-width:1280px;margin:0 auto;padding:30px 32px 70px}
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(252px,1fr))}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(27,26,24,.04),0 20px 40px -30px rgba(27,26,24,.35);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s;cursor:pointer;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-5px);border-color:rgba(176,141,87,.5);
+  box-shadow:0 2px 4px rgba(27,26,24,.05),0 30px 50px -28px rgba(27,26,24,.4)}
+.card::after{content:"";position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+.thumb{position:relative;padding:20px 20px 6px;display:flex;align-items:center;justify-content:center}
+.thumb .disc{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 32% 28%,#fff,var(--tint) 120%);box-shadow:inset 0 0 0 1px rgba(27,26,24,.05)}
+.thumb svg.art{width:104px;height:104px;filter:drop-shadow(0 8px 12px rgba(27,26,24,.13))}
+.num{position:absolute;top:16px;left:18px;font-family:var(--serif);font-size:15px;color:var(--ink3);letter-spacing:.06em}
+.art-pill{position:absolute;top:15px;right:16px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;color:#fff;font-weight:500}
+.body{padding:6px 22px 22px}
+.wrow{display:flex;align-items:baseline;gap:8px}
+.de{font-family:var(--serif);font-size:29px;line-height:1.15;margin:0;font-weight:600;letter-spacing:-.005em}
+.de .a{font-weight:500;opacity:.85;margin-right:.22em}
+.say{margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
+  background:#fff;color:var(--ink2);cursor:pointer;display:grid;place-items:center;transition:.2s}
+.say:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.meta{margin:7px 0 0;font-size:11.5px;color:var(--ink3);letter-spacing:.05em}
+.meta b{font-weight:500;color:var(--ink2)}
+.hr{height:1px;background:var(--line);margin:13px 0 11px}
+.en{margin:0;font-size:13.5px;color:var(--ink2);letter-spacing:.02em;font-style:italic}
+.zh{margin:4px 0 0;font-family:var(--cn);font-size:17px;color:var(--ink);letter-spacing:.05em}
+.ex{margin:12px 0 0;padding:10px 12px;border-radius:11px;background:#FAF8F3;border:1px solid rgba(27,26,24,.05)}
+.ex .exde{display:block;font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.4}
+.ex .exzh{display:block;font-family:var(--cn);font-size:12.5px;color:var(--ink3);margin-top:4px}
+
+/* 遮罩（课堂测验） */
+.mask{filter:blur(7px);opacity:.7;transition:filter .3s,opacity .3s;user-select:none}
+.card.open .mask{filter:none;opacity:1}
+.grid.hd-ex .ex{display:none}
+.card.speaking{border-color:var(--gold);box-shadow:0 0 0 3px rgba(176,141,87,.25)}
+
+footer{max-width:1280px;margin:0 auto;padding:0 32px 70px}
+.tips{border-top:1px solid var(--line);padding-top:22px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tip h4{font-family:var(--serif);font-size:18px;margin:0 0 6px;font-weight:600}
+.tip p{margin:0;font-family:var(--cn);font-size:13px;color:var(--ink2);line-height:1.75}
+.tip .k{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px}
+
+@media(max-width:620px){header{padding:34px 20px 18px}.bar-in,main,footer{padding-left:20px;padding-right:20px}.count{width:100%;margin:2px 0 0}}
+@media print{
+  body{background:#fff}.bar,footer,.say{display:none}
+  header{padding:0 0 12px}h1{font-size:46px}
+  .grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+  .card::after{display:none}.mask{filter:none;opacity:1}
+}
+
+</style>
+<link rel="stylesheet" href="word-scene.css">
+<link rel="stylesheet" href="ai-teacher.css">
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Thema 01 · Grundwortschatz A1–A2</div>
+  <div class="title-row">
+    <div>
+      <h1>Gem<em>ü</em>se</h1>
+      <div class="sub">常用蔬菜 <span>Vegetables · 24 Wörter</span></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--der)"></i>der（阳性）</span>
+      <span><i style="background:var(--die)"></i>die（阴性）</span>
+      <span><i style="background:var(--das)"></i>das（中性）</span>
+    </div>
+  </div>
+  <div class="rule"></div>
+</header>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" placeholder="搜索 德语 / 中文 / English …">
+    </div>
+    <div class="group" id="arts">
+      <button class="chip on" data-art="all">Alle</button>
+      <button class="chip" data-art="der">der</button>
+      <button class="chip" data-art="die">die</button>
+      <button class="chip" data-art="das">das</button>
+    </div>
+    <div class="group" id="togs">
+      <button class="chip tog" data-t="de">德语</button>
+      <button class="chip tog" data-t="zh">中文</button>
+      <button class="chip tog" data-t="en">English</button>
+      <button class="chip tog" data-t="ex">例句</button>
+    </div>
+    <div class="group">
+      <button class="chip" id="play">▶ 朗读全部</button>
+      <button class="chip" id="shuffle">🔀 打乱</button>
+      <button class="chip" id="print">🖨 打印</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+</div>
+
+<main><div class="grid" id="grid"></div></main>
+
+<footer>
+  <div class="tips">
+    <div class="tip"><span class="k">Im Unterricht 01</span><h4>Was ist das?</h4><p>关闭「德语」按钮 → 图片＋中文可见，学生看图抢答：<i>Das ist eine Tomate.</i> 点卡片即可揭晓答案。</p></div>
+    <div class="tip"><span class="k">Im Unterricht 02</span><h4>der / die / das</h4><p>用颜色分组记忆冠词；用 der/die/das 筛选后做「冠词接力」：每人说一个词并加冠词与复数。</p></div>
+    <div class="tip"><span class="k">Im Unterricht 03</span><h4>Einkaufsdialog</h4><p>关闭中英文，仅留图片，两人一组练购物对话：<i>Ich möchte bitte ein Kilo Kartoffeln.</i></p></div>
+    <div class="tip"><span class="k">Hausaufgabe</span><h4>Diktat</h4><p>点「🖨 打印」生成纸质词表；或关闭德语后截图作为听写练习纸。</p></div>
+  </div>
+</footer>
+
+<script>
+/* ============ 数据：24 种常用蔬菜（内置 SVG 插画） ============ */
+const D=[
+{a:"die",w:"Tomate",pl:"die Tomaten",ipa:"[toˈmaːtə]",en:"tomato",zh:"西红柿 / 番茄",tint:"#F7DAD4",
+ exde:"Die Tomate ist rot und saftig.",exzh:"西红柿又红又多汁。",svg:`
+<circle cx="50" cy="60" r="29" fill="#DE3B2F"/><ellipse cx="39" cy="49" rx="10" ry="7" fill="#F4796A" opacity=".6" transform="rotate(-30 39 49)"/>
+<path d="M50 34V21" stroke="#4F7A32" stroke-width="5" stroke-linecap="round"/>
+<path d="M50 33 34 26M50 33 66 26M50 34 36 38M50 34 64 38" stroke="#5D9139" stroke-width="6.5" stroke-linecap="round"/>`},
+
+{a:"die",w:"Gurke",pl:"die Gurken",ipa:"[ˈɡʊʁkə]",en:"cucumber",zh:"黄瓜",tint:"#D9E7CE",
+ exde:"Ich schneide die Gurke in Scheiben.",exzh:"我把黄瓜切成片。",svg:`
+<g transform="rotate(-35 50 50)"><rect x="35" y="14" width="30" height="72" rx="15" fill="#3F7A31"/>
+<rect x="41" y="22" width="8" height="56" rx="4" fill="#6BA84F" opacity=".55"/>
+<g fill="#2C5A23" opacity=".45"><circle cx="56" cy="30" r="2.6"/><circle cx="59" cy="45" r="2.6"/><circle cx="53" cy="57" r="2.6"/><circle cx="58" cy="69" r="2.6"/><circle cx="45" cy="77" r="2.6"/></g></g>`},
+
+{a:"die",w:"Karotte",pl:"die Karotten",ipa:"[kaˈʁɔtə]",en:"carrot",zh:"胡萝卜（也说 die Möhre）",tint:"#FBE0C7",
+ exde:"Karotten sind gut für die Augen.",exzh:"胡萝卜对眼睛有好处。",svg:`
+<path d="M50 92 38 44q12-7 24 0z" fill="#EE7B22"/>
+<g stroke="#C95F13" stroke-width="2.6" stroke-linecap="round" opacity=".55"><path d="M42 56h9"/><path d="M44 67h7"/><path d="M46 77h5"/></g>
+<g stroke="#4E8A34" stroke-width="6" stroke-linecap="round"><path d="M50 44V24"/><path d="M50 41 35 21"/><path d="M50 41 65 21"/></g>`},
+
+{a:"die",w:"Kartoffel",pl:"die Kartoffeln",ipa:"[kaʁˈtɔfl̩]",en:"potato",zh:"土豆 / 马铃薯",tint:"#EEDCC2",
+ exde:"Wir essen heute Kartoffeln mit Fisch.",exzh:"我们今天吃土豆配鱼。",svg:`
+<ellipse cx="50" cy="55" rx="33" ry="25" fill="#C89A63" transform="rotate(-14 50 55)"/>
+<ellipse cx="40" cy="45" rx="12" ry="7" fill="#DFB88E" opacity=".75" transform="rotate(-22 40 45)"/>
+<g fill="#95703F" opacity=".85"><ellipse cx="61" cy="47" rx="3.2" ry="2"/><ellipse cx="52" cy="63" rx="3.6" ry="2.2"/><ellipse cx="35" cy="60" rx="2.6" ry="1.7"/><ellipse cx="69" cy="61" rx="2.4" ry="1.6"/></g>`},
+
+{a:"die",w:"Zwiebel",pl:"die Zwiebeln",ipa:"[ˈtsviːbl̩]",en:"onion",zh:"洋葱",tint:"#F2E2C6",
+ exde:"Beim Zwiebelschneiden weine ich immer.",exzh:"切洋葱时我总会流眼泪。",svg:`
+<path d="M50 24c12 10 30 15 30 34 0 19-14 31-30 31S20 77 20 58c0-19 18-24 30-34z" fill="#E2B274"/>
+<g stroke="#BE8C4C" stroke-width="2.4" fill="none" opacity=".7"><path d="M50 27v60"/><path d="M50 28c-10 16-12 44-6 58"/><path d="M50 28c10 16 12 44 6 58"/><path d="M50 30c-18 14-22 42-14 54"/><path d="M50 30c18 14 22 42 14 54"/></g>
+<path d="M50 25c-3-8-9-12-16-13m16 13c3-8 9-12 16-13" stroke="#6E9B47" stroke-width="4.5" fill="none" stroke-linecap="round"/>`},
+
+{a:"der",w:"Knoblauch",pl:"kein Plural",ipa:"[ˈknoːblaʊx]",en:"garlic",zh:"大蒜",tint:"#EFEAE0",
+ exde:"Ich mag Knoblauch in der Suppe.",exzh:"我喜欢汤里放大蒜。",svg:`
+<path d="M50 26c13 9 28 16 28 34 0 18-13 30-28 30s-28-12-28-30c0-18 15-25 28-34z" fill="#F2ECE0"/>
+<g stroke="#D6C9B2" stroke-width="2.4" fill="none"><path d="M50 28v62"/><path d="M50 28c-11 14-13 46-6 60"/><path d="M50 28c11 14 13 46 6 60"/><path d="M50 30c-19 12-22 44-13 56"/><path d="M50 30c19 12 22 44 13 56"/></g>
+<path d="M50 27c-2-9 1-15 4-19 4 5 5 12 3 19z" fill="#C9BBA1"/>`},
+
+{a:"die",w:"Paprika",pl:"die Paprikas",ipa:"[ˈpapʁika]",en:"bell pepper",zh:"甜椒 / 彩椒（也说 der Paprika）",tint:"#F8D6D2",
+ exde:"Die rote Paprika ist ganz süß.",exzh:"红甜椒很甜。",svg:`
+<path d="M50 30C31 30 25 41 25 53c0 14 6 26 14 32 4 3 7 0 8-4 1 4 2 6 3 6s2-2 3-6c1 4 4 7 8 4 8-6 14-18 14-32C75 41 69 30 50 30z" fill="#D9342C"/>
+<path d="M37 42c-4 8-4 20 0 30" stroke="#F0736B" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>
+<path d="M38 31q12-8 24 0z" fill="#5C9139"/><path d="M50 30V17" stroke="#4F8033" stroke-width="6" stroke-linecap="round"/>`},
+
+{a:"der",w:"Brokkoli",pl:"kein Plural",ipa:"[ˈbʁɔkoli]",en:"broccoli",zh:"西兰花",tint:"#D5E4C6",
+ exde:"Brokkoli kocht man nur kurz.",exzh:"西兰花只需短时间焯煮。",svg:`
+<rect x="44" y="50" width="12" height="38" rx="6" fill="#AFC78B"/>
+<path d="M46 62 34 74" stroke="#AFC78B" stroke-width="8" stroke-linecap="round"/>
+<g fill="#3F7C39"><circle cx="50" cy="41" r="17"/><circle cx="32" cy="47" r="12"/><circle cx="68" cy="47" r="12"/><circle cx="39" cy="31" r="11"/><circle cx="61" cy="31" r="11"/></g>
+<g fill="#57A043" opacity=".7"><circle cx="45" cy="35" r="5"/><circle cx="58" cy="41" r="4.5"/><circle cx="34" cy="45" r="4"/></g>`},
+
+{a:"der",w:"Blumenkohl",pl:"die Blumenkohle",ipa:"[ˈbluːmənkoːl]",en:"cauliflower",zh:"花椰菜 / 菜花",tint:"#EDE7D5",
+ exde:"Der Blumenkohl ist weiß.",exzh:"花椰菜是白色的。",svg:`
+<path d="M22 55c-7 13 3 32 21 32 6 0 8-4 8-10-10 0-23-9-29-22z" fill="#6E9B47"/>
+<path d="M78 55c7 13-3 32-21 32-6 0-8-4-8-10 10 0 23-9 29-22z" fill="#80AD53"/>
+<g fill="#F3ECDA"><circle cx="50" cy="44" r="18"/><circle cx="32" cy="50" r="12"/><circle cx="68" cy="50" r="12"/><circle cx="39" cy="33" r="11"/><circle cx="61" cy="33" r="11"/></g>
+<g fill="#E1D7BC" opacity=".85"><circle cx="45" cy="40" r="5"/><circle cx="57" cy="47" r="4"/><circle cx="35" cy="46" r="3.5"/></g>`},
+
+{a:"der",w:"Weißkohl",pl:"die Weißkohle",ipa:"[ˈvaɪskoːl]",en:"white cabbage",zh:"卷心菜（也说 das Weißkraut）",tint:"#DDE8CB",
+ exde:"Aus Weißkohl macht man Sauerkraut.",exzh:"卷心菜可以做德式酸菜。",svg:`
+<path d="M20 44C5 51 9 76 27 81c-8-12-9-27-7-37z" fill="#7FA75A"/><path d="M80 44c15 7 11 32-7 37 8-12 9-27 7-37z" fill="#7FA75A"/>
+<circle cx="50" cy="56" r="29" fill="#C8DCA6"/>
+<g fill="none" stroke="#8FB268" stroke-width="2.6"><path d="M50 27c-14 12-16 42-4 57"/><path d="M50 27c14 12 16 42 4 57"/><circle cx="50" cy="56" r="12"/><circle cx="50" cy="56" r="20"/></g>`},
+
+{a:"der",w:"Kopfsalat",pl:"die Kopfsalate",ipa:"[ˈkɔpfzalaːt]",en:"lettuce",zh:"生菜（球生菜）",tint:"#DAEBC4",
+ exde:"Der Kopfsalat ist ganz frisch.",exzh:"这生菜非常新鲜。",svg:`
+<g fill="#6FA342"><circle cx="26" cy="46" r="10"/><circle cx="74" cy="46" r="10"/><circle cx="38" cy="34" r="10"/><circle cx="62" cy="34" r="10"/><circle cx="50" cy="30" r="11"/></g>
+<path d="M50 88C25 88 15 69 20 51c4-14 15-21 30-21s26 7 30 21c5 18-5 37-30 37z" fill="#7FB04A"/>
+<path d="M50 83c-16 0-24-12-22-26 2-11 10-17 22-17s20 6 22 17c2 14-6 26-22 26z" fill="#96C55C"/>
+<path d="M50 76c-10 0-15-8-14-17 1-7 6-11 14-11s13 4 14 11c1 9-4 17-14 17z" fill="#B2D775"/>`},
+
+{a:"der",w:"Spinat",pl:"kein Plural",ipa:"[ʃpiˈnaːt]",en:"spinach",zh:"菠菜",tint:"#CFE0C2",
+ exde:"Spinat enthält viel Eisen.",exzh:"菠菜含有丰富的铁。",svg:`
+<path d="M50 88C28 80 17 60 22 38 44 41 57 59 50 88z" fill="#3D7A33"/>
+<path d="M50 88c22-8 33-28 28-50-22 3-35 21-28 50z" fill="#4F9840"/>
+<path d="M50 86c-6-18-2-36 8-50-14 6-24 22-22 40" fill="#5CA84A" opacity=".8"/>
+<g stroke="#2B5A24" stroke-width="1.8" fill="none" opacity=".55"><path d="M50 88C47 68 41 52 27 42"/><path d="M50 88c3-20 9-36 23-44"/></g>`},
+
+{a:"die",w:"Aubergine",pl:"die Auberginen",ipa:"[obɛʁˈʒiːnə]",en:"eggplant / aubergine",zh:"茄子",tint:"#E0D2E8",
+ exde:"Die Aubergine ist dunkelviolett.",exzh:"茄子是深紫色的。",svg:`
+<ellipse cx="50" cy="61" rx="24" ry="29" fill="#5C2A6E"/>
+<ellipse cx="41" cy="53" rx="6.5" ry="13" fill="#9765AB" opacity=".5" transform="rotate(-12 41 53)"/>
+<path d="M50 34 33 23M50 34 67 23M50 33 40 18M50 33 60 18" stroke="#5C9139" stroke-width="7" stroke-linecap="round"/>
+<path d="M50 30V15" stroke="#4E7A32" stroke-width="5.5" stroke-linecap="round"/>`},
+
+{a:"die",w:"Zucchini",pl:"die Zucchini(s)",ipa:"[tsuˈkiːni]",en:"zucchini / courgette",zh:"西葫芦",tint:"#D8E7CB",
+ exde:"Ich brate die Zucchini in der Pfanne.",exzh:"我用平底锅煎西葫芦。",svg:`
+<g transform="rotate(-32 50 50)"><rect x="34" y="18" width="32" height="66" rx="16" fill="#4B8C39"/>
+<rect x="40" y="26" width="8" height="50" rx="4" fill="#7CBC5C" opacity=".5"/>
+<g fill="#2F6224" opacity=".35"><circle cx="57" cy="36" r="2.4"/><circle cx="59" cy="52" r="2.4"/><circle cx="54" cy="66" r="2.4"/></g>
+<path d="M50 18v-7" stroke="#6A9B3F" stroke-width="7" stroke-linecap="round"/></g>`},
+
+{a:"der",w:"Kürbis",pl:"die Kürbisse",ipa:"[ˈkʏʁbɪs]",en:"pumpkin",zh:"南瓜",tint:"#FBDDBC",
+ exde:"Im Herbst kaufen wir einen Kürbis.",exzh:"秋天我们会买一个南瓜。",svg:`
+<ellipse cx="50" cy="61" rx="34" ry="27" fill="#EE8A22"/>
+<ellipse cx="50" cy="61" rx="12" ry="27" fill="#FFAA4C" opacity=".55"/>
+<ellipse cx="27" cy="61" rx="9" ry="23" fill="#D5721A" opacity=".45"/><ellipse cx="73" cy="61" rx="9" ry="23" fill="#D5721A" opacity=".45"/>
+<path d="M50 34V22" stroke="#6B5030" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M50 24c8-7 15-4 17 3" stroke="#7A8C3A" stroke-width="4" fill="none" stroke-linecap="round"/>`},
+
+{a:"der",w:"Mais",pl:"kein Plural",ipa:"[maɪs]",en:"sweetcorn / maize",zh:"玉米",tint:"#F8E7B8",
+ exde:"Der Mais ist goldgelb.",exzh:"玉米是金黄色的。",svg:`
+<path d="M40 84C22 76 18 46 30 24c14 10 18 42 10 60z" fill="#4E8B3C"/>
+<path d="M60 84c18-8 22-38 10-60-14 10-18 42-10 60z" fill="#66A94A"/>
+<ellipse cx="50" cy="54" rx="16" ry="32" fill="#F0C233"/>
+<g stroke="#D6A21E" stroke-width="2" opacity=".85" fill="none"><path d="M37 38h26M35 48h30M35 58h30M37 68h26M40 76h20"/><path d="M44 26v56M50 23v62M56 26v56"/></g>`},
+
+{a:"die",w:"Erbse",pl:"die Erbsen",ipa:"[ˈɛʁpsə]",en:"pea",zh:"豌豆",tint:"#DCEBC8",
+ exde:"Die Erbsen sind noch in der Schote.",exzh:"豌豆还在豆荚里。",svg:`
+<path d="M16 58c2 16 18 27 38 25 18-2 30-12 30-25 0-4-4-6-8-4-16 7-38 9-52 0-4-2-8 0-8 4z" fill="#5C9E3E"/>
+<g fill="#93CE6E" stroke="#6FB24C" stroke-width="1.6"><circle cx="32" cy="52" r="9"/><circle cx="50" cy="50" r="10"/><circle cx="68" cy="52" r="9"/></g>
+<path d="M84 54c6-8 8-16 6-24" stroke="#4E8A34" stroke-width="4" fill="none" stroke-linecap="round"/>`},
+
+{a:"die",w:"Bohne",pl:"die Bohnen",ipa:"[ˈboːnə]",en:"green bean",zh:"豆角 / 青豆",tint:"#D6E8C6",
+ exde:"Grüne Bohnen muss man immer kochen.",exzh:"青豆一定要煮熟。",svg:`
+<g fill="none" stroke-linecap="round"><g stroke="#4E9438" stroke-width="10"><path d="M24 82C18 56 30 30 50 18"/><path d="M39 87C33 61 45 35 65 23"/><path d="M54 89C48 63 60 37 80 27"/></g>
+<g stroke="#82C463" stroke-width="3" opacity=".8"><path d="M25 78C21 56 32 34 48 23"/><path d="M40 83C36 61 47 39 63 28"/><path d="M55 85C51 63 62 41 78 32"/></g></g>`},
+
+{a:"der",w:"Champignon",pl:"die Champignons",ipa:"[ˈʃampɪnjɔ̃]",en:"mushroom",zh:"蘑菇（也说 der Pilz）",tint:"#EADCCB",
+ exde:"Die Champignons schmecken sehr gut.",exzh:"这些蘑菇非常好吃。",svg:`
+<rect x="41" y="48" width="18" height="38" rx="9" fill="#F1E7D3"/>
+<path d="M18 54c0-20 14-32 32-32s32 12 32 32c0 4-4 6-8 6H26c-4 0-8-2-8-6z" fill="#A5643D"/>
+<path d="M26 59h48" stroke="#E2CFB0" stroke-width="4"/>
+<g fill="#C68356" opacity=".75"><ellipse cx="37" cy="36" rx="8" ry="5"/><ellipse cx="60" cy="42" rx="6" ry="4"/><ellipse cx="52" cy="30" rx="5" ry="3.4"/></g>`},
+
+{a:"der",w:"Spargel",pl:"kein Plural",ipa:"[ˈʃpaʁɡl̩]",en:"asparagus",zh:"芦笋",tint:"#DDE9C7",
+ exde:"Im Mai gibt es frischen Spargel.",exzh:"五月有新鲜的芦笋。",svg:`
+<g stroke="#83AF52" stroke-width="9" stroke-linecap="round" fill="none"><path d="M32 88V42"/><path d="M50 90V32"/><path d="M68 88V42"/></g>
+<g fill="#4F7B2E"><path d="M32 26l7 18H25z"/><path d="M50 16l8 20H42z"/><path d="M68 26l7 18H61z"/></g>
+<g stroke="#5F8C39" stroke-width="1.8" opacity=".6"><path d="M28 52h8M46 46h8M64 52h8M28 64h8M46 58h8M64 64h8"/></g>`},
+
+{a:"das",w:"Radieschen",pl:"die Radieschen",ipa:"[ʁaˈdiːsçən]",en:"radish",zh:"小红萝卜",tint:"#F7D5DA",
+ exde:"Radieschen schmecken leicht scharf.",exzh:"小红萝卜味道有点辣。",svg:`
+<g fill="#4E8B34"><path d="M50 37C41 30 31 26 21 28c4 13 17 19 29 17z"/><path d="M50 37c9-7 19-11 29-9-4 13-17 19-29 17z"/></g>
+<path d="M50 34c-3-11 0-19 4-25 6 8 6 18 2 26z" fill="#5FA33F"/>
+<circle cx="50" cy="60" r="22" fill="#D8324B"/>
+<ellipse cx="42" cy="52" rx="7" ry="4.5" fill="#F0708A" opacity=".6" transform="rotate(-28 42 52)"/>
+<path d="M49 81c1 6 3 11 7 15-8-3-12-8-13-15z" fill="#F7F0E4"/>`},
+
+{a:"der",w:"Sellerie",pl:"die Sellerie",ipa:"[ˈzɛləʁiː]",en:"celery",zh:"芹菜",tint:"#E0EBC9",
+ exde:"Sellerie riecht sehr stark.",exzh:"芹菜的气味很浓。",svg:`
+<g fill="#C6D996"><rect x="25" y="40" width="14" height="48" rx="7" transform="rotate(-8 32 64)"/><rect x="43" y="34" width="14" height="54" rx="7"/><rect x="61" y="40" width="14" height="48" rx="7" transform="rotate(8 68 64)"/></g>
+<g stroke="#A9BE79" stroke-width="2" opacity=".8"><path d="M50 40v44M33 46l-2 40M67 46l2 40"/></g>
+<g fill="#4F8B36"><circle cx="30" cy="34" r="10"/><circle cx="70" cy="34" r="10"/><circle cx="50" cy="25" r="12"/><circle cx="40" cy="27" r="9"/><circle cx="60" cy="27" r="9"/></g>`},
+
+{a:"die",w:"Rote Bete",pl:"die Roten Beten",ipa:"[ˈʁoːtə ˈbeːtə]",en:"beetroot",zh:"甜菜根（也说 die Rote Rübe）",tint:"#EBCFDC",
+ exde:"Rote Bete färbt die Hände rot.",exzh:"甜菜根会把手染红。",svg:`
+<g fill="#3D7A33"><path d="M48 36c-6-11-16-17-27-17 2 13 13 21 26 21z"/><path d="M52 36c6-11 16-17 27-17-2 13-13 21-26 21z"/></g>
+<path d="M50 34c-2-12 0-21 4-27 6 9 6 19 2 27z" fill="#4F9840"/>
+<g stroke="#A82A5E" stroke-width="1.8" opacity=".8" fill="none"><path d="M48 36C43 30 34 25 25 22"/><path d="M52 36c5-6 14-11 23-14"/></g>
+<path d="M50 90c-14-7-24-19-24-31 0-14 10-24 24-24s24 10 24 24c0 12-10 24-24 31z" fill="#8E1F4F"/>
+<path d="M41 46c-5 8-5 20 2 30" stroke="#B23A6C" stroke-width="4" fill="none" opacity=".5" stroke-linecap="round"/>
+<path d="M50 88c1 5 3 8 6 12" stroke="#6E1740" stroke-width="3.4" fill="none" stroke-linecap="round"/>`},
+
+{a:"der",w:"Porree",pl:"die Porrees",ipa:"[ˈpɔʁe]",en:"leek",zh:"韭葱 / 大葱（也说 der Lauch）",tint:"#DCE9CE",
+ exde:"Ich brauche Porree für die Suppe.",exzh:"我做汤需要韭葱。",svg:`
+<rect x="41" y="46" width="18" height="42" rx="9" fill="#F2EFE2"/>
+<g stroke="#DAD5C2" stroke-width="2"><path d="M46 86V52M54 86V52"/></g>
+<path d="M50 50c-15-10-19-28-17-40 13 7 19 22 19 36z" fill="#3E7A31"/>
+<path d="M50 50c15-10 19-28 17-40-13 7-19 22-19 36z" fill="#4F9440"/>
+<path d="M50 47c-2-17 0-28 2-36 5 11 5 25 1 36z" fill="#5CA346"/>
+<g stroke="#CFC9B4" stroke-width="2" stroke-linecap="round"><path d="M47 88l-5 9M53 88l5 9M50 89v9"/></g>`}
+];
+
+/* ============ 渲染 ============ */
+const grid=document.getElementById('grid');
+const col={der:'var(--der)',die:'var(--die)',das:'var(--das)'};
+grid.innerHTML=D.map((v,i)=>`
+<article class="card" data-i="${i}" data-art="${v.a}" data-key="${(v.w+' '+v.en+' '+v.zh+' '+v.a).toLowerCase()}" data-say="${v.a} ${v.w}">
+  <div class="thumb" style="--tint:${v.tint}">
+    <span class="num">${String(i+1).padStart(2,'0')}</span>
+    <span class="art-pill" style="background:${col[v.a]}">${v.a}</span>
+    <div class="disc"><svg class="art" viewBox="0 0 100 100">${v.svg}</svg></div>
+  </div>
+  <div class="body">
+    <div class="wrow">
+      <h3 class="de f-de"><span class="a" style="color:${col[v.a]}">${v.a}</span>${v.w}</h3>
+      <button class="say" title="发音">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M19 6.5a8 8 0 0 1 0 11"/></svg>
+      </button>
+    </div>
+    <p class="meta f-de"><b>Pl.</b> ${v.pl} &nbsp;·&nbsp; ${v.ipa}</p>
+    <div class="hr"></div>
+    <p class="en f-en">${v.en}</p>
+    <p class="zh f-zh">${v.zh}</p>
+    <p class="ex"><span class="exde f-de">${v.exde}</span><span class="exzh f-zh">${v.exzh}</span></p>
+  </div>
+</article>`).join('');
+
+const cards=[...grid.children];
+const cnt=document.getElementById('count');
+let art='all', q='';
+function apply(){
+  let n=0;
+  cards.forEach(c=>{
+    const ok=(art==='all'||c.dataset.art===art)&&c.dataset.key.includes(q);
+    c.style.display=ok?'':'none'; if(ok)n++;
+  });
+  cnt.textContent=`显示 ${n} / ${D.length} 个词`;
+}
+apply();
+
+document.getElementById('q').oninput=e=>{q=e.target.value.trim().toLowerCase();apply();};
+document.querySelectorAll('#arts .chip').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#arts .chip').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); art=b.dataset.art; apply();
+});
+
+/* 显隐切换（课堂测验） */
+const mapCls={de:'.f-de',zh:'.f-zh',en:'.f-en'};
+document.querySelectorAll('#togs .chip').forEach(b=>b.onclick=()=>{
+  b.classList.toggle('off'); const t=b.dataset.t, off=b.classList.contains('off');
+  if(t==='ex'){grid.classList.toggle('hd-ex',off);return;}
+  grid.querySelectorAll(mapCls[t]).forEach(el=>el.classList.toggle('mask',off));
+});
+
+/* 点击卡片：揭晓 + 发音 */
+let voice=null;
+function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>v.lang.startsWith('de'))||null;}
+speechSynthesis.onvoiceschanged=pickVoice; pickVoice();
+function say(txt,card){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='de-DE'; u.rate=.82; if(voice)u.voice=voice;
+  if(card){card.classList.add('speaking');u.onend=()=>card.classList.remove('speaking');}
+  speechSynthesis.speak(u);
+}
+grid.addEventListener('click',e=>{
+  const c=e.target.closest('.card'); if(!c)return;
+  if(e.target.closest('.say')){say(c.dataset.say,c);return;}
+  c.classList.toggle('open');
+  const i=Number(c.dataset.i); if(!window.WordScene||!WordScene.open({page:{file:'Gemuese.html',de:'Gemüse',zh:'蔬菜',g:'essen',icons:['🥕']},word:D[i],index:i}))say(c.dataset.say,c);
+});
+
+/* 朗读全部 */
+let playing=false;
+document.getElementById('play').onclick=function(){
+  const vis=cards.filter(c=>c.style.display!=='none');
+  if(playing){speechSynthesis.cancel();playing=false;this.textContent='▶ 朗读全部';return;}
+  playing=true;this.textContent='■ 停止';let i=0;const btn=this;
+  const next=()=>{
+    if(!playing||i>=vis.length){playing=false;btn.textContent='▶ 朗读全部';return;}
+    const c=vis[i++]; c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('open','speaking');
+    const u=new SpeechSynthesisUtterance(c.dataset.say);
+    u.lang='de-DE';u.rate=.8;if(voice)u.voice=voice;
+    u.onend=()=>{c.classList.remove('speaking');setTimeout(next,700)};
+    speechSynthesis.speak(u);
+  };next();
+};
+
+document.getElementById('shuffle').onclick=()=>{
+  [...grid.children].sort(()=>Math.random()-.5).forEach(c=>grid.appendChild(c));
+};
+document.getElementById('print').onclick=()=>window.print();
+</script>
+<script src="word-scenes-custom.js"></script><script src="word-scenes-gemuese.js"></script><script src="word-scenes-gemuese-rest-a.js"></script><script src="word-scenes-gemuese-rest-b.js"></script><script src="word-scenes-gemuese-rest-c.js"></script><script src="word-scenes-tomate.js"></script><script src="ai-teacher.js"></script><script src="word-scene.js"></script>
+</body>
+</html>

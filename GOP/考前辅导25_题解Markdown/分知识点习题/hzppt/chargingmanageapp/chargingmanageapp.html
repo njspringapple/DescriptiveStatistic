@@ -1,0 +1,3182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#091624">
+  <title>星途充电 · 运营管理端</title>
+  <style>
+    :root{
+      --primary:#19d5a5;
+      --primary2:#06ae83;
+      --green-soft:#e9fff8;
+      --blue:#4b7dff;
+      --blue-soft:#edf2ff;
+      --orange:#ff9b42;
+      --orange-soft:#fff4e8;
+      --red:#ff5f6d;
+      --red-soft:#fff0f2;
+      --purple:#8b6cff;
+      --purple-soft:#f3efff;
+      --ink:#142235;
+      --sub:#738096;
+      --line:#edf0f4;
+      --bg:#f4f7fa;
+      --white:#fff;
+      --dark:#091624;
+      --shadow:0 12px 34px rgba(27,45,73,.10);
+      --safe:env(safe-area-inset-bottom,0px);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;min-height:100%;
+      font-family:Inter,"PingFang SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 15% 15%,rgba(25,213,165,.14),transparent 28%),
+        radial-gradient(circle at 85% 85%,rgba(75,125,255,.14),transparent 28%),
+        #e9eff4;
+    }
+    button,input,textarea,select{font:inherit}
+    button{border:0;cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.6}
+    .desktop{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 438px minmax(0,1fr);
+      gap:45px;align-items:center;padding:24px;
+    }
+    .intro{justify-self:end;width:min(440px,100%)}
+    .brand-pill{
+      display:inline-flex;align-items:center;gap:8px;padding:9px 14px;
+      border-radius:999px;background:rgba(255,255,255,.78);
+      color:#087e61;font-weight:850;box-shadow:var(--shadow)
+    }
+    .intro h1{margin:15px 0;font-size:clamp(36px,4vw,58px);line-height:1.08}
+    .intro p{margin:0;color:#607087;font-size:16px;line-height:1.85}
+    .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:25px}
+    .intro-item{
+      padding:16px;border-radius:18px;background:rgba(255,255,255,.7);
+      color:#405067;box-shadow:0 8px 25px rgba(27,45,73,.06)
+    }
+    .desktop-tip{align-self:end;margin-bottom:80px;max-width:320px;color:#758297;line-height:1.75}
+    .phone{
+      position:relative;width:438px;height:min(900px,calc(100vh - 34px));
+      border:8px solid #111a29;border-radius:42px;overflow:hidden;background:var(--bg);
+      box-shadow:0 42px 90px rgba(20,36,58,.28),inset 0 0 0 1px rgba(255,255,255,.08)
+    }
+    .phone:before{
+      content:"";position:absolute;z-index:200;top:8px;left:50%;transform:translateX(-50%);
+      width:116px;height:28px;border-radius:18px;background:#111a29
+    }
+    .app{position:absolute;inset:0;overflow:hidden;background:var(--bg)}
+    .statusbar{
+      position:absolute;z-index:150;left:0;right:0;top:0;height:45px;padding:13px 20px 0;
+      display:flex;justify-content:space-between;color:#fff;font-size:12px;font-weight:850;
+      pointer-events:none
+    }
+    .status-icons{letter-spacing:2px}
+    .view-area{
+      position:absolute;inset:0;padding-bottom:calc(72px + var(--safe));
+      overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth
+    }
+    .view-area::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{width:0}
+    .page{display:none;min-height:100%}
+    .page.active{display:block;animation:pageIn .28s ease}
+    @keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+    /* 登录 */
+    .login-view{
+      position:absolute;z-index:300;inset:0;overflow-y:auto;color:#fff;
+      background:
+        radial-gradient(circle at 86% 13%,rgba(25,213,165,.26),transparent 26%),
+        radial-gradient(circle at 10% 70%,rgba(75,125,255,.22),transparent 32%),
+        linear-gradient(155deg,#07101d,#0c2631 60%,#087961)
+    }
+    .login-view.hide{display:none}
+    .login-inner{min-height:100%;padding:76px 22px 30px;display:flex;flex-direction:column}
+    .login-logo{
+      width:62px;height:62px;display:grid;place-items:center;border-radius:21px;
+      color:#06241c;background:var(--primary);font-size:31px;
+      box-shadow:0 18px 35px rgba(25,213,165,.28)
+    }
+    .login-view h1{margin:20px 0 7px;font-size:29px}
+    .login-view .lead{margin:0;color:rgba(255,255,255,.57);font-size:13px}
+    .login-card{
+      margin-top:35px;padding:20px;border-radius:25px;color:var(--ink);
+      background:rgba(255,255,255,.97);box-shadow:0 25px 65px rgba(0,0,0,.22)
+    }
+    .login-tabs{display:flex;padding:4px;border-radius:14px;background:#edf1f4}
+    .login-tabs button{
+      flex:1;padding:10px;border-radius:11px;color:var(--sub);background:transparent;
+      font-size:13px;font-weight:800
+    }
+    .login-tabs button.active{color:var(--ink);background:#fff;box-shadow:0 4px 12px rgba(30,48,76,.09)}
+    .login-form{display:none;padding-top:9px}
+    .login-form.active{display:block}
+    .login-help{display:flex;justify-content:space-between;margin-top:12px;color:var(--sub);font-size:11px}
+    .login-help button{padding:0;color:#088d6c;background:none;font-size:11px}
+    .login-company{
+      margin-top:14px;padding:12px;border-radius:14px;background:#f4f8f7;
+      color:#607087;font-size:11px;line-height:1.7
+    }
+
+    /* 公共组件 */
+    .topbar{
+      position:sticky;z-index:30;top:0;padding:53px 16px 12px;
+      background:rgba(244,247,250,.92);backdrop-filter:blur(18px)
+    }
+    .topbar.dark{
+      position:relative;padding-bottom:19px;color:#fff;
+      background:linear-gradient(145deg,#091624,#0c3e43)
+    }
+    .top-title,.row,.section-head,.station-head,.task-top,.sheet-head,
+    .metric-head,.summary-row,.order-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px
+    }
+    .top-title h2{margin:0;font-size:23px}
+    .top-title small{display:block;margin-top:4px;color:var(--sub);font-size:10px;font-weight:500}
+    .topbar.dark .top-title small{color:rgba(255,255,255,.58)}
+    .icon-btn{
+      width:38px;height:38px;display:grid;place-items:center;border-radius:13px;
+      color:inherit;background:rgba(255,255,255,.11);transition:.16s
+    }
+    .icon-btn.light{color:var(--ink);background:#fff;box-shadow:0 7px 18px rgba(30,48,76,.07)}
+    .icon-btn:active,.btn:active,.app-card:active,.nav-item:active,.monitor-card:active{transform:scale(.96)}
+    .content{padding:15px 16px 28px}
+    .card{
+      margin-bottom:12px;padding:16px;border:1px solid rgba(230,234,240,.82);
+      border-radius:21px;background:#fff;box-shadow:0 8px 25px rgba(30,48,76,.05)
+    }
+    .card h3,.card h4{margin:0}
+    .section-head{margin:21px 2px 12px}
+    .section-head h3{margin:0;font-size:17px}
+    .section-head button{padding:4px;color:var(--sub);background:none;font-size:11px}
+    .btn{
+      min-height:42px;padding:0 15px;border-radius:13px;color:var(--ink);
+      background:#f0f3f6;font-size:12px;font-weight:820;transition:.15s
+    }
+    .btn.primary{color:#06241d;background:var(--primary);box-shadow:0 8px 20px rgba(25,213,165,.22)}
+    .btn.dark{color:#fff;background:var(--dark)}
+    .btn.blue{color:#fff;background:var(--blue)}
+    .btn.danger{color:#fff;background:var(--red)}
+    .btn.light{color:#087c60;background:var(--green-soft)}
+    .btn.warn{color:#a95d0a;background:var(--orange-soft)}
+    .btn.flex{flex:1}
+    .btn.block{width:100%}
+    .actions{display:flex;gap:8px;margin-top:13px}
+    .tag{
+      display:inline-flex;align-items:center;padding:5px 8px;border-radius:8px;
+      color:#5f6d7f;background:#f2f5f7;font-size:10px;font-weight:750
+    }
+    .tag.green{color:#087e61;background:var(--green-soft)}
+    .tag.red{color:#d64c59;background:var(--red-soft)}
+    .tag.orange{color:#d87917;background:var(--orange-soft)}
+    .tag.blue{color:#3f69d5;background:var(--blue-soft)}
+    .tag.purple{color:#7255d7;background:var(--purple-soft)}
+    .tags{display:flex;flex-wrap:wrap;gap:6px}
+    .field{margin-top:13px}
+    .field label{display:block;margin-bottom:7px;color:var(--sub);font-size:11px;font-weight:700}
+    .input{
+      width:100%;height:45px;padding:0 13px;border:1px solid var(--line);
+      border-radius:13px;outline:0;color:var(--ink);background:#fff
+    }
+    textarea.input{height:88px;padding-top:12px;resize:none}
+    .input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(25,213,165,.11)}
+    .switch{
+      position:relative;width:44px;height:25px;flex:0 0 auto;border-radius:99px;
+      background:#dce2e7;transition:.2s
+    }
+    .switch:after{
+      content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;
+      border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.17);transition:.2s
+    }
+    .switch.on{background:var(--primary2)}
+    .switch.on:after{left:22px}
+    .line{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+      padding:10px 0;border-bottom:1px dashed var(--line);color:var(--sub);font-size:11px
+    }
+    .line:last-child{border-bottom:0}
+    .line b{color:var(--ink);text-align:right}
+    .empty{text-align:center;padding:60px 20px;color:#8b96a5;font-size:12px}
+    .progress{height:7px;overflow:hidden;border-radius:99px;background:#e8edf0}
+    .progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--primary2),var(--primary))}
+    .tabs{
+      display:flex;gap:5px;padding:4px;border-radius:14px;background:#e8edf1;
+      overflow-x:auto
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tabs button{
+      min-width:0;flex:1;padding:9px 7px;border-radius:11px;color:var(--sub);
+      background:transparent;font-size:11px;font-weight:820;white-space:nowrap
+    }
+    .tabs button.active{color:var(--ink);background:#fff;box-shadow:0 4px 12px rgba(30,48,76,.09)}
+    .search{
+      height:44px;margin-top:13px;padding:0 13px;display:flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:15px;background:#fff
+    }
+    .search input{width:100%;border:0;outline:0;background:transparent}
+    .search button{padding:4px;color:#078a69;background:none;font-size:11px;font-weight:800}
+    .notice{
+      padding:12px 13px;border-radius:14px;color:#81601d;background:#fff8e8;
+      border:1px solid #ffedbd;font-size:11px;line-height:1.75
+    }
+
+    /* 首页 */
+    .home-hero{
+      position:relative;padding:55px 16px 22px;overflow:hidden;color:#fff;
+      background:
+        radial-gradient(circle at 84% 16%,rgba(255,255,255,.16),transparent 25%),
+        linear-gradient(145deg,#081320,#0e3b41 62%,#078b6d);
+      border-radius:0 0 30px 30px
+    }
+    .home-hero:after{
+      content:"";position:absolute;right:-100px;bottom:-155px;width:250px;height:250px;
+      border:42px solid rgba(255,255,255,.05);border-radius:50%
+    }
+    .company-btn{
+      display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;
+      color:#fff;background:rgba(255,255,255,.10);font-size:12px;font-weight:780;
+      backdrop-filter:blur(8px)
+    }
+    .hello{margin-top:22px;font-size:22px;font-weight:900}
+    .hello-sub{margin-top:5px;color:rgba(255,255,255,.61);font-size:11px}
+    .period-tabs{display:flex;gap:8px;margin-top:19px}
+    .period-tabs button{
+      padding:7px 13px;border-radius:999px;color:rgba(255,255,255,.62);
+      background:rgba(255,255,255,.08);font-size:11px;font-weight:750
+    }
+    .period-tabs button.active{color:#06241d;background:var(--primary)}
+    .performance{
+      position:relative;z-index:2;margin-top:12px;padding:17px;border-radius:22px;
+      color:var(--ink);background:rgba(255,255,255,.98);
+      box-shadow:0 17px 38px rgba(0,0,0,.17)
+    }
+    .performance-title{font-size:12px;color:var(--sub)}
+    .performance-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px}
+    .performance-item{position:relative;padding:0 8px;text-align:center}
+    .performance-item:not(:last-child):after{
+      content:"";position:absolute;right:0;top:6px;width:1px;height:35px;background:var(--line)
+    }
+    .performance-item b{display:block;font-size:21px}
+    .performance-item span{display:block;margin-top:5px;color:var(--sub);font-size:9px}
+    .compare{
+      display:inline-flex!important;margin-top:6px!important;padding:3px 6px;border-radius:6px;
+      color:#07956f!important;background:var(--green-soft);font-size:9px!important
+    }
+    .compare.down{color:#df5963!important;background:var(--red-soft)}
+    .performance-foot{
+      margin-top:14px;padding-top:12px;display:flex;justify-content:space-between;
+      border-top:1px solid var(--line);color:var(--sub);font-size:10px
+    }
+    .performance-foot button{color:#087f61;background:none;font-weight:800;font-size:10px}
+    .task-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .task-card{
+      position:relative;min-height:112px;padding:14px 10px;border-radius:18px;
+      text-align:left;background:#fff;box-shadow:0 7px 20px rgba(30,48,76,.05)
+    }
+    .task-icon{
+      width:37px;height:37px;display:grid;place-items:center;border-radius:13px;
+      background:var(--blue-soft);font-size:18px
+    }
+    .task-card:nth-child(2) .task-icon{background:var(--orange-soft)}
+    .task-card:nth-child(3) .task-icon{background:var(--purple-soft)}
+    .task-card b{display:block;margin-top:10px;font-size:12px}
+    .task-card span{display:block;margin-top:4px;color:var(--sub);font-size:9px}
+    .task-count{
+      position:absolute;right:9px;top:9px;min-width:20px;height:20px;padding:0 5px;
+      display:grid;place-items:center;border:2px solid #fff;border-radius:99px;
+      color:#fff;background:var(--red);font-size:9px;font-weight:850
+    }
+    .monitor-summary{
+      padding:17px;color:#fff;border-radius:22px;
+      background:
+        radial-gradient(circle at 88% 15%,rgba(255,255,255,.18),transparent 25%),
+        linear-gradient(135deg,#15223a,#214b59)
+    }
+    .power-number{font-size:31px;font-weight:900}
+    .power-number small{font-size:12px;color:rgba(255,255,255,.58)}
+    .status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:16px}
+    .status-box{
+      padding:10px 5px;text-align:center;border-radius:13px;
+      background:rgba(255,255,255,.08)
+    }
+    .status-box b{display:block;font-size:16px}
+    .status-box span{display:block;margin-top:4px;color:rgba(255,255,255,.56);font-size:9px}
+    .app-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .app-card{
+      padding:12px 4px 10px;border-radius:17px;background:#fff;text-align:center;
+      box-shadow:0 7px 20px rgba(30,48,76,.045);transition:.15s
+    }
+    .app-icon{
+      width:40px;height:40px;margin:auto;display:grid;place-items:center;
+      border-radius:14px;background:#eef8f5;font-size:19px
+    }
+    .app-card:nth-child(4n+2) .app-icon{background:var(--blue-soft)}
+    .app-card:nth-child(4n+3) .app-icon{background:var(--orange-soft)}
+    .app-card:nth-child(4n+4) .app-icon{background:var(--purple-soft)}
+    .app-card span{display:block;margin-top:8px;font-size:10px;font-weight:750}
+
+    /* 监控 */
+    .monitor-overview{
+      margin-top:14px;padding:17px;border-radius:22px;color:#fff;
+      background:linear-gradient(135deg,#17243b,#0c7563)
+    }
+    .monitor-number{font-size:27px;font-weight:900}
+    .monitor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+    .monitor-metric{padding:11px 6px;text-align:center;border-radius:13px;background:rgba(255,255,255,.08)}
+    .monitor-metric b{display:block;font-size:16px}
+    .monitor-metric span{display:block;margin-top:4px;color:rgba(255,255,255,.58);font-size:9px}
+    .filter-row{display:flex;gap:7px;padding:0 16px 13px;overflow-x:auto}
+    .filter-row::-webkit-scrollbar{display:none}
+    .filter-chip{
+      flex:0 0 auto;padding:9px 11px;border:1px solid var(--line);
+      border-radius:12px;color:#647184;background:#fff;font-size:10px;font-weight:750
+    }
+    .filter-chip.active{color:#087e61;border-color:#8ee8d0;background:var(--green-soft)}
+    .monitor-list{padding:0 16px 25px}
+    .monitor-card{
+      margin-bottom:11px;padding:15px;border-radius:20px;background:#fff;
+      border:1px solid var(--line);box-shadow:0 7px 21px rgba(30,48,76,.045)
+    }
+    .device-icon{
+      width:42px;height:42px;display:grid;place-items:center;border-radius:14px;
+      background:var(--green-soft);font-size:20px
+    }
+    .device-icon.busy{background:var(--blue-soft)}
+    .device-icon.error{background:var(--red-soft)}
+    .device-icon.offline{background:#f0f2f4}
+    .device-name{font-size:13px;font-weight:850}
+    .device-name small{display:block;margin-top:5px;color:var(--sub);font-size:9px;font-weight:500}
+    .device-data{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:13px;
+      padding-top:12px;border-top:1px solid var(--line)
+    }
+    .device-data div{text-align:center}
+    .device-data b{display:block;font-size:13px}
+    .device-data span{font-size:9px;color:var(--sub)}
+
+    /* 数据 */
+    .data-total{
+      margin-top:14px;padding:18px;border-radius:22px;color:#fff;
+      background:
+        radial-gradient(circle at 85% 18%,rgba(255,255,255,.18),transparent 24%),
+        linear-gradient(135deg,#3a68e8,#7759dc)
+    }
+    .data-total .main{font-size:30px;font-weight:900}
+    .data-total .main small{font-size:12px;opacity:.7}
+    .data-total-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:15px}
+    .data-total-grid div{padding:10px 5px;text-align:center;border-radius:13px;background:rgba(255,255,255,.09)}
+    .data-total-grid b{display:block;font-size:15px}
+    .data-total-grid span{font-size:9px;opacity:.65}
+    .chart{
+      position:relative;height:190px;margin-top:13px;padding:12px 4px 25px 31px;
+      overflow:hidden
+    }
+    .chart-grid{
+      position:absolute;left:31px;right:5px;top:12px;bottom:25px;
+      background:repeating-linear-gradient(to bottom,transparent 0,transparent 35px,#eef1f4 36px)
+    }
+    .chart svg{position:absolute;left:31px;right:5px;top:12px;width:calc(100% - 36px);height:153px;overflow:visible}
+    .chart-labels{
+      position:absolute;left:31px;right:4px;bottom:4px;display:flex;justify-content:space-between;
+      color:#9ba5b2;font-size:8px
+    }
+    .chart-y{
+      position:absolute;left:0;top:9px;bottom:24px;display:flex;flex-direction:column;
+      justify-content:space-between;color:#9ba5b2;font-size:8px
+    }
+    .legend{display:flex;justify-content:center;gap:15px;color:var(--sub);font-size:9px}
+    .legend i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:50%;background:var(--primary)}
+    .rank-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+    .rank-item:last-child{border-bottom:0}
+    .rank-num{
+      width:25px;height:25px;display:grid;place-items:center;border-radius:9px;
+      color:#667487;background:#f1f4f6;font-size:10px;font-weight:850
+    }
+    .rank-item:nth-child(1) .rank-num{color:#8a5d00;background:#fff0ba}
+    .rank-item:nth-child(2) .rank-num{color:#5e6977;background:#e9edf1}
+    .rank-item:nth-child(3) .rank-num{color:#9a5b2e;background:#ffe2ce}
+    .rank-info{flex:1;min-width:0}
+    .rank-info b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rank-info span{font-size:9px;color:var(--sub)}
+    .rank-value{text-align:right;font-size:12px;font-weight:850}
+
+    /* 消息 */
+    .message-list{padding:6px 16px 25px}
+    .message-card{
+      position:relative;margin-bottom:10px;padding:15px;border-radius:19px;background:#fff;
+      box-shadow:0 7px 21px rgba(30,48,76,.045)
+    }
+    .message-card.unread:before{
+      content:"";position:absolute;right:13px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--red)
+    }
+    .message-icon{
+      width:39px;height:39px;flex:0 0 auto;display:grid;place-items:center;
+      border-radius:13px;background:var(--red-soft);font-size:18px
+    }
+    .message-card:nth-child(2) .message-icon{background:var(--orange-soft)}
+    .message-card:nth-child(3) .message-icon{background:var(--blue-soft)}
+    .message-card:nth-child(4) .message-icon{background:var(--purple-soft)}
+    .message-text{flex:1;min-width:0}
+    .message-text b{display:block;font-size:12px}
+    .message-text p{margin:6px 0;color:var(--sub);font-size:10px;line-height:1.6}
+    .message-text time{color:#a2abb7;font-size:9px}
+
+    /* 我的 */
+    .profile-head{
+      position:relative;padding:62px 18px 80px;color:#fff;
+      background:
+        radial-gradient(circle at 84% 15%,rgba(255,255,255,.17),transparent 25%),
+        linear-gradient(135deg,#091624,#124d50);
+      border-radius:0 0 30px 30px
+    }
+    .avatar{
+      width:55px;height:55px;display:grid;place-items:center;border:3px solid rgba(255,255,255,.3);
+      border-radius:19px;background:linear-gradient(135deg,#7df0ce,#20c69a);font-size:27px
+    }
+    .user-name{font-size:18px;font-weight:900}
+    .user-name small{display:block;margin-top:5px;color:rgba(255,255,255,.6);font-size:10px;font-weight:500}
+    .enterprise-card{
+      position:absolute;left:16px;right:16px;bottom:-53px;padding:17px;border-radius:22px;
+      color:var(--ink);background:#fff;box-shadow:var(--shadow)
+    }
+    .profile-content{padding:70px 16px 25px}
+    .menu-list{overflow:hidden;border-radius:21px;background:#fff;box-shadow:0 8px 24px rgba(30,48,76,.05)}
+    .menu-row{
+      width:100%;min-height:53px;padding:0 16px;display:flex;align-items:center;
+      justify-content:space-between;color:var(--ink);background:#fff;border-bottom:1px solid var(--line);
+      text-align:left;font-size:12px;font-weight:750
+    }
+    .menu-row:last-child{border-bottom:0}
+    .menu-row span:last-child{color:#9ca6b3;font-weight:500}
+
+    /* 底部导航 */
+    .bottom-nav{
+      position:absolute;z-index:100;left:0;right:0;bottom:0;height:calc(70px + var(--safe));
+      padding:7px 11px var(--safe);display:grid;grid-template-columns:repeat(5,1fr);
+      background:rgba(255,255,255,.97);border-top:1px solid var(--line);backdrop-filter:blur(20px)
+    }
+    .nav-item{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+      color:#8994a4;background:none;font-size:9px;font-weight:750;transition:.15s
+    }
+    .nav-item b{font-size:20px;font-weight:500;line-height:1}
+    .nav-item.active{color:#079a75}
+
+    /* 抽屉与弹窗 */
+    .overlay{
+      position:absolute;z-index:400;inset:0;display:none;align-items:flex-end;
+      background:rgba(4,12,24,.56);backdrop-filter:blur(3px)
+    }
+    .overlay.show{display:flex;animation:fade .2s}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+    .sheet{
+      width:100%;max-height:94%;overflow:hidden;border-radius:28px 28px 0 0;
+      background:var(--bg);animation:sheetUp .28s cubic-bezier(.2,.9,.25,1)
+    }
+    .sheet.full{height:96%;max-height:96%}
+    @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+    .sheet-head{padding:18px;background:#fff;border-bottom:1px solid var(--line)}
+    .sheet-head h3{margin:0;font-size:17px}
+    .close{
+      width:34px;height:34px;border-radius:12px;color:#647184;background:#f0f3f5;font-size:18px
+    }
+    .sheet-body{
+      max-height:calc(94vh - 70px);padding:14px 16px calc(26px + var(--safe));overflow-y:auto
+    }
+    .sheet.full .sheet-body{height:calc(100% - 70px);max-height:none}
+    .modal{align-items:center;justify-content:center;padding:22px}
+    .dialog{
+      width:100%;max-height:86%;padding:20px;overflow-y:auto;border-radius:24px;background:#fff;
+      box-shadow:0 25px 65px rgba(0,0,0,.25);animation:dialogIn .22s
+    }
+    @keyframes dialogIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+    .dialog h3{margin:0 0 8px}
+    .dialog>p{margin:0;color:var(--sub);font-size:11px;line-height:1.75}
+    .dialog-actions{display:flex;gap:9px;margin-top:18px}
+    .toast{
+      position:absolute;z-index:800;left:50%;top:77px;width:max-content;max-width:86%;
+      padding:11px 15px;opacity:0;transform:translate(-50%,-15px);
+      color:#fff;background:rgba(12,23,38,.95);border-radius:13px;
+      box-shadow:0 12px 30px rgba(0,0,0,.22);font-size:11px;font-weight:750;
+      transition:.25s;pointer-events:none
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .sticky-footer{
+      position:sticky;bottom:0;margin:14px -16px -26px;padding:12px 16px calc(14px + var(--safe));
+      display:flex;gap:9px;background:rgba(255,255,255,.97);
+      border-top:1px solid var(--line);backdrop-filter:blur(15px)
+    }
+
+    /* 业务细节 */
+    .order-card,.appeal-card,.repair-card,.review-card,.invoice-card{
+      margin-bottom:11px;padding:15px;border-radius:19px;background:#fff;
+      box-shadow:0 7px 22px rgba(30,48,76,.045)
+    }
+    .order-card h4,.appeal-card h4,.repair-card h4,.review-card h4,.invoice-card h4{
+      margin:11px 0 6px;font-size:13px
+    }
+    .order-card p,.appeal-card p,.repair-card p,.review-card p,.invoice-card p{
+      margin:4px 0;color:var(--sub);font-size:10px;line-height:1.55
+    }
+    .money{font-size:21px;font-weight:900}
+    .occupy-time{color:var(--red);font-size:21px;font-weight:900}
+    .score-ring{
+      width:110px;height:110px;display:grid;place-items:center;border-radius:50%;
+      background:conic-gradient(var(--primary) 0 86%,#edf1f3 86%)
+    }
+    .score-ring:before{
+      content:"";position:absolute;width:88px;height:88px;border-radius:50%;background:#fff
+    }
+    .score-content{position:relative;text-align:center}
+    .score-content b{display:block;font-size:25px}
+    .score-content span{font-size:9px;color:var(--sub)}
+    .camera{
+      position:relative;height:205px;overflow:hidden;border-radius:19px;color:#fff;
+      background:
+        linear-gradient(rgba(3,8,12,.1),rgba(3,8,12,.55)),
+        repeating-linear-gradient(90deg,#314b4b 0,#314b4b 35px,#385450 36px,#385450 70px)
+    }
+    .camera:before{
+      content:"B2停车场 · C区";position:absolute;left:12px;top:12px;padding:6px 9px;
+      border-radius:8px;background:rgba(0,0,0,.45);font-size:9px
+    }
+    .camera-time{position:absolute;right:12px;top:12px;font-size:9px}
+    .car-shape{
+      position:absolute;left:50%;bottom:40px;transform:translateX(-50%);
+      width:140px;height:54px;border-radius:35px 35px 14px 14px;background:#cad5de;
+      box-shadow:0 8px 18px rgba(0,0,0,.3)
+    }
+    .car-shape:before,.car-shape:after{
+      content:"";position:absolute;bottom:-9px;width:25px;height:17px;border-radius:6px;background:#111
+    }
+    .car-shape:before{left:17px}.car-shape:after{right:17px}
+    .ai-box{
+      position:absolute;left:128px;bottom:27px;width:170px;height:87px;
+      border:2px solid var(--primary)
+    }
+    .ai-box span{
+      position:absolute;left:-2px;top:-22px;padding:4px 6px;color:#06241d;
+      background:var(--primary);font-size:8px;font-weight:850
+    }
+    .video-controls{
+      position:absolute;left:12px;right:12px;bottom:10px;display:flex;justify-content:space-between;
+      font-size:9px
+    }
+    .timeline{
+      position:relative;height:56px;margin-top:13px;border-radius:13px;background:#edf1f4
+    }
+    .timeline:before{
+      content:"";position:absolute;left:8%;right:8%;top:28px;height:4px;border-radius:99px;
+      background:linear-gradient(90deg,#dfe5e9 0 25%,var(--primary) 25% 65%,#dfe5e9 65%)
+    }
+    .timeline-labels{
+      position:absolute;left:7%;right:7%;bottom:6px;display:flex;justify-content:space-between;
+      color:#8f9aa8;font-size:8px
+    }
+    .health-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
+    .health-item{padding:12px 6px;text-align:center;border-radius:14px;background:#f5f8f9}
+    .health-item b{display:block;font-size:16px}
+    .health-item span{font-size:9px;color:var(--sub)}
+    .amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:11px}
+    .amount{
+      padding:10px 4px;border-radius:11px;color:#5e6878;background:#f1f4f6;
+      font-size:11px;font-weight:800
+    }
+    .amount.active{color:#087e61;background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+    .option{
+      position:relative;padding:14px;border:1px solid var(--line);border-radius:15px;background:#fff
+    }
+    .option+.option{margin-top:8px}
+    .option.active{border-color:var(--primary);background:var(--green-soft)}
+    .option b{display:block;font-size:12px}
+    .option span{display:block;margin-top:5px;color:var(--sub);font-size:9px}
+    .option i{
+      position:absolute;right:12px;top:50%;transform:translateY(-50%);
+      width:19px;height:19px;display:grid;place-items:center;border-radius:50%;
+      color:#fff;background:#d9e0e5;font-size:9px;font-style:normal
+    }
+    .option.active i{background:var(--primary2)}
+    .diagnosis-score{
+      padding:20px;border-radius:22px;color:#fff;
+      background:
+        radial-gradient(circle at 85% 15%,rgba(255,255,255,.2),transparent 25%),
+        linear-gradient(135deg,#0ba579,#19d5a5)
+    }
+    .diagnosis-score b{font-size:42px}
+    .diagnosis-score small{font-size:12px;opacity:.7}
+    .diagnosis-dim{margin-top:12px}
+    .diagnosis-dim .row{margin-bottom:7px;font-size:10px}
+    .license{
+      padding:17px;border:1px solid #d9dee4;border-radius:10px;background:#fff;
+      color:#38465a;text-align:center
+    }
+    .license h3{letter-spacing:2px}
+    .loading{
+      width:19px;height:19px;border:2px solid rgba(255,255,255,.35);
+      border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hide{display:none!important}
+
+    @media(max-width:980px){
+      body{background:var(--bg)}
+      .desktop{display:block;padding:0}
+      .intro,.desktop-tip{display:none}
+      .phone{width:100%;height:100vh;border:0;border-radius:0;box-shadow:none}
+      .phone:before{display:none}
+    }
+  </style>
+</head>
+<body>
+<main class="desktop">
+  <section class="intro">
+    <div class="brand-pill">⚡ 星途充电 · 运营管理端</div>
+    <h1>全场站经营，<br>一屏掌控。</h1>
+    <p>
+      从经营业绩、设备监控、占用治理到用户运营，
+      为充电企业提供实时、智能、可执行的场站管理能力。
+    </p>
+    <div class="intro-grid">
+      <div class="intro-item">📊 经营数据实时洞察</div>
+      <div class="intro-item">⚡ 设备状态全量监控</div>
+      <div class="intro-item">📹 千里眼智慧运营</div>
+      <div class="intro-item">🎯 用户营销精细管理</div>
+    </div>
+  </section>
+
+  <section class="phone">
+    <div class="app">
+      <div class="statusbar">
+        <span id="clock">09:41</span>
+        <span class="status-icons">● ▮ 5G ▰</span>
+      </div>
+
+      <!-- 登录 -->
+      <section class="login-view" id="loginView">
+        <div class="login-inner">
+          <div class="login-logo">⚡</div>
+          <h1>星途运营管理</h1>
+          <p class="lead">让每一座充电站都更高效、更可靠</p>
+
+          <div class="login-card">
+            <div class="login-tabs">
+              <button class="active" data-login-tab="password">账号密码</button>
+              <button data-login-tab="sms">验证码登录</button>
+            </div>
+
+            <div class="login-form active" id="passwordForm">
+              <div class="field">
+                <label>登录账号</label>
+                <input class="input" id="accountInput" value="admin@xingtu">
+              </div>
+              <div class="field">
+                <label>登录密码</label>
+                <input class="input" id="passwordInput" type="password" value="123456">
+              </div>
+              <div class="login-help">
+                <label><input type="checkbox" checked> 记住账号</label>
+                <button data-action="forgot-password">忘记密码？</button>
+              </div>
+              <button class="btn primary block" style="margin-top:20px;height:49px"
+                      data-action="login-password">进入运营中心</button>
+            </div>
+
+            <div class="login-form" id="smsForm">
+              <div class="field">
+                <label>手机号</label>
+                <input class="input" id="phoneInput" value="13888886628">
+              </div>
+              <div class="field">
+                <label>短信验证码</label>
+                <div class="row">
+                  <input class="input" id="codeInput" placeholder="请输入6位验证码">
+                  <button class="btn light" style="flex:0 0 108px"
+                          data-action="send-code">获取验证码</button>
+                </div>
+              </div>
+              <button class="btn primary block" style="margin-top:20px;height:49px"
+                      data-action="login-sms">验证并登录</button>
+            </div>
+
+            <div class="login-company">
+              当前演示企业：深圳星途新能源科技有限公司<br>
+              演示账号已自动填充，可直接点击登录。
+            </div>
+          </div>
+
+          <p style="margin:auto 0 0;text-align:center;color:rgba(255,255,255,.45);font-size:10px">
+            登录即代表同意《用户协议》和《隐私政策》
+          </p>
+        </div>
+      </section>
+
+      <div class="view-area" id="viewArea">
+        <!-- 首页 -->
+        <section class="page active" id="homePage">
+          <div class="home-hero">
+            <div class="row">
+              <button class="company-btn" data-action="switch-company">
+                深圳星途新能源科技有限公司⌄
+              </button>
+              <button class="icon-btn" data-page="messagePage">🔔</button>
+            </div>
+
+            <div class="hello">上午好，陈经理</div>
+            <div class="hello-sub">12座电站正在运营，今日整体运行稳定</div>
+
+            <div class="period-tabs">
+              <button class="active" data-period="today">今天</button>
+              <button data-period="week">本周</button>
+              <button data-period="month">本月</button>
+            </div>
+
+            <article class="performance">
+              <div class="metric-head">
+                <div class="performance-title" id="performanceTitle">今日经营业绩</div>
+                <span class="tag green">实时更新</span>
+              </div>
+
+              <div class="performance-grid">
+                <div class="performance-item">
+                  <b id="energyMetric">18,620</b>
+                  <span>充电电量 / kWh</span>
+                  <span class="compare hide" id="energyCompare">↑ 12.8%</span>
+                </div>
+                <div class="performance-item">
+                  <b id="amountMetric">23,846</b>
+                  <span>订单金额 / 元</span>
+                  <span class="compare hide" id="amountCompare">↑ 9.6%</span>
+                </div>
+                <div class="performance-item">
+                  <b id="orderMetric">628</b>
+                  <span>订单数量 / 单</span>
+                  <span class="compare hide" id="orderCompare">↑ 6.3%</span>
+                </div>
+              </div>
+
+              <div class="performance-foot">
+                <span>数据更新时间 10:26:18</span>
+                <button data-action="data-detail">查看充电分析与收益 ›</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="content">
+            <div class="section-head">
+              <h3>待处理事项</h3>
+              <button data-action="pending-center">查看全部 ›</button>
+            </div>
+
+            <div class="task-grid">
+              <button class="task-card" data-action="invoice-list">
+                <i class="task-count">12</i>
+                <div class="task-icon">🧾</div>
+                <b>订单开票</b>
+                <span>12笔等待开票</span>
+              </button>
+              <button class="task-card" data-action="appeal-list">
+                <i class="task-count">5</i>
+                <div class="task-icon">🅿️</div>
+                <b>占用申诉</b>
+                <span>5笔等待处理</span>
+              </button>
+              <button class="task-card" data-action="diagnosis">
+                <i class="task-count">4</i>
+                <div class="task-icon">📈</div>
+                <b>经营诊断</b>
+                <span>4项可提升</span>
+              </button>
+            </div>
+
+            <div class="section-head">
+              <h3>电站实时监控</h3>
+              <button data-page="monitorPage">进入全量监控 ›</button>
+            </div>
+
+            <article class="monitor-summary">
+              <div class="metric-head">
+                <div>
+                  <div style="font-size:10px;color:rgba(255,255,255,.58)">企业实时充电功率</div>
+                  <div class="power-number"><span id="realtimePower">2,864.5</span> <small>kW</small></div>
+                </div>
+                <span class="tag green">● 在线</span>
+              </div>
+
+              <div class="status-grid">
+                <div class="status-box"><b>86</b><span>充电中</span></div>
+                <div class="status-box"><b>218</b><span>空闲</span></div>
+                <div class="status-box"><b style="color:#ffb15f">7</b><span>占用</span></div>
+                <div class="status-box"><b style="color:#ff7883">5</b><span>故障/离线</span></div>
+              </div>
+
+              <div class="actions">
+                <button class="btn flex" data-action="occupancy-monitor">占用监控</button>
+                <button class="btn primary flex" data-page="monitorPage">设备监控</button>
+              </div>
+            </article>
+
+            <div class="section-head">
+              <h3>经营提醒</h3>
+              <button data-action="fault-analysis">故障分析 ›</button>
+            </div>
+
+            <article class="card">
+              <div class="row">
+                <div>
+                  <b style="font-size:13px">近7日订单启动成功率</b>
+                  <div style="margin-top:6px;color:var(--sub);font-size:10px">
+                    较上周期提升 0.8%
+                  </div>
+                </div>
+                <div style="font-size:25px;font-weight:900;color:#079a75">98.6%</div>
+              </div>
+              <div class="progress" style="margin-top:13px"><span style="width:98.6%"></span></div>
+              <div class="actions">
+                <button class="btn warn flex" data-action="repair-list">3个设备维修中</button>
+                <button class="btn light flex" data-action="fault-analysis">查看故障趋势</button>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="row">
+                <div>
+                  <b style="font-size:13px">用户评价</b>
+                  <div style="margin-top:6px;color:var(--sub);font-size:10px">
+                    本月收到评价 286 条
+                  </div>
+                </div>
+                <div style="text-align:right">
+                  <b style="font-size:23px">4.82</b>
+                  <div style="font-size:9px;color:#ffaf30">★★★★★</div>
+                </div>
+              </div>
+              <div class="health-bar">
+                <div class="health-item"><b style="color:#079a75">252</b><span>好评</span></div>
+                <div class="health-item"><b style="color:#e68a28">23</b><span>中评</span></div>
+                <div class="health-item"><b style="color:#df5964">11</b><span>差评</span></div>
+              </div>
+              <button class="btn light block" style="margin-top:12px"
+                      data-action="review-list">7条评价待回复</button>
+            </article>
+
+            <div class="section-head">
+              <h3>全部应用</h3>
+              <button data-action="app-manage">管理应用 ›</button>
+            </div>
+
+            <div class="app-grid" id="appGrid">
+              <button class="app-card" data-action="order-list"><div class="app-icon">📋</div><span>订单列表</span></button>
+              <button class="app-card" data-action="station-manage"><div class="app-icon">🏢</div><span>电站管理</span></button>
+              <button class="app-card" data-action="employee-manage"><div class="app-icon">👥</div><span>员工管理</span></button>
+              <button class="app-card" data-action="review-list"><div class="app-icon">⭐</div><span>评价管理</span></button>
+              <button class="app-card" data-action="eagle-eye"><div class="app-icon">📹</div><span>千里眼</span></button>
+              <button class="app-card" data-action="operation"><div class="app-icon">🛠</div><span>场站运维</span></button>
+              <button class="app-card" data-action="find-owner"><div class="app-icon">🚘</div><span>车牌找人</span></button>
+              <button class="app-card" data-action="price-calc"><div class="app-icon">🧮</div><span>电价测算</span></button>
+              <button class="app-card" data-action="marketing"><div class="app-icon">🎫</div><span>营销工具</span></button>
+              <button class="app-card" data-action="diagnosis"><div class="app-icon">📈</div><span>经营诊断</span></button>
+              <button class="app-card" data-action="appeal-list"><div class="app-icon">🅿️</div><span>占用申诉</span></button>
+              <button class="app-card" data-action="insurance"><div class="app-icon">🛡</div><span>电站保险</span></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 监控 -->
+        <section class="page" id="monitorPage">
+          <header class="topbar">
+            <div class="top-title">
+              <div>
+                <h2>设备监控</h2>
+                <small>全部12座电站 · 316个充电终端</small>
+              </div>
+              <button class="icon-btn light" data-action="monitor-map">⌖</button>
+            </div>
+
+            <article class="monitor-overview">
+              <div class="metric-head">
+                <div>
+                  <div style="font-size:10px;opacity:.65">实时总功率</div>
+                  <div class="monitor-number">2,864.5 <small style="font-size:11px;opacity:.65">kW</small></div>
+                </div>
+                <span class="tag green">数据正常</span>
+              </div>
+              <div class="monitor-grid">
+                <div class="monitor-metric"><b>304</b><span>在线设备</span></div>
+                <div class="monitor-metric"><b>86</b><span>充电中</span></div>
+                <div class="monitor-metric"><b>12</b><span>异常设备</span></div>
+              </div>
+            </article>
+
+            <div class="search">
+              <span>⌕</span>
+              <input id="monitorSearch" placeholder="搜索电站、终端编号或车位">
+              <button data-action="monitor-search">搜索</button>
+            </div>
+          </header>
+
+          <div class="filter-row">
+            <button class="filter-chip active" data-device-filter="all">全部 316</button>
+            <button class="filter-chip" data-device-filter="charging">充电中 86</button>
+            <button class="filter-chip" data-device-filter="occupied">占用 7</button>
+            <button class="filter-chip" data-device-filter="fault">故障 5</button>
+            <button class="filter-chip" data-device-filter="offline">离线 7</button>
+          </div>
+
+          <div class="monitor-list" id="monitorList">
+            <article class="monitor-card" data-device-type="charging" data-device="A08">
+              <div class="row">
+                <div class="row" style="justify-content:flex-start">
+                  <div class="device-icon busy">⚡</div>
+                  <div class="device-name">
+                    A08枪 · 液冷超充
+                    <small>南山科技园超级充电站 · B2-C108</small>
+                  </div>
+                </div>
+                <span class="tag blue">充电中</span>
+              </div>
+              <div class="device-data">
+                <div><b>86.4kW</b><span>实时功率</span></div>
+                <div><b>68%</b><span>车辆SOC</span></div>
+                <div><b>24min</b><span>已充时长</span></div>
+              </div>
+              <div class="actions">
+                <button class="btn flex" data-action="device-order">关联订单</button>
+                <button class="btn danger flex" data-action="stop-device">停止充电</button>
+              </div>
+            </article>
+
+            <article class="monitor-card" data-device-type="occupied" data-device="B06">
+              <div class="row">
+                <div class="row" style="justify-content:flex-start">
+                  <div class="device-icon">🅿️</div>
+                  <div class="device-name">
+                    B06枪 · 快充
+                    <small>深圳湾智慧能源站 · 车牌 粤B·8P3Q2</small>
+                  </div>
+                </div>
+                <span class="tag orange">充电后占用</span>
+              </div>
+              <div class="device-data">
+                <div><b style="color:#df5964">38min</b><span>占用时长</span></div>
+                <div><b>100%</b><span>结束SOC</span></div>
+                <div><b>¥19.00</b><span>已计占位费</span></div>
+              </div>
+              <div class="actions">
+                <button class="btn warn flex" data-action="urge-sms">短信催挪</button>
+                <button class="btn flex" data-action="virtual-call">虚拟拨号</button>
+              </div>
+            </article>
+
+            <article class="monitor-card" data-device-type="fault" data-device="C12">
+              <div class="row">
+                <div class="row" style="justify-content:flex-start">
+                  <div class="device-icon error">⚠</div>
+                  <div class="device-name">
+                    C12枪 · 直流快充
+                    <small>福田中心区公共充电站 · 绝缘检测异常</small>
+                  </div>
+                </div>
+                <span class="tag red">故障</span>
+              </div>
+              <div class="device-data">
+                <div><b>10:18</b><span>发生时间</span></div>
+                <div><b>E-204</b><span>故障代码</span></div>
+                <div><b>0单</b><span>关联订单</span></div>
+              </div>
+              <div class="actions">
+                <button class="btn flex" data-action="fault-detail">故障详情</button>
+                <button class="btn primary flex" data-action="repair-device">一键报修</button>
+              </div>
+            </article>
+
+            <article class="monitor-card" data-device-type="offline" data-device="D03">
+              <div class="row">
+                <div class="row" style="justify-content:flex-start">
+                  <div class="device-icon offline">◉</div>
+                  <div class="device-name">
+                    D03枪 · 交流慢充
+                    <small>宝安壹方城智慧站 · 最后在线 09:38</small>
+                  </div>
+                </div>
+                <span class="tag">离线</span>
+              </div>
+              <div class="actions">
+                <button class="btn flex" data-action="restart-device">远程重启</button>
+                <button class="btn primary flex" data-action="repair-device">提交报修</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 数据 -->
+        <section class="page" id="dataPage">
+          <header class="topbar">
+            <div class="top-title">
+              <div>
+                <h2>经营数据</h2>
+                <small>深圳星途新能源科技有限公司</small>
+              </div>
+              <button class="icon-btn light" data-action="export-data">⇩</button>
+            </div>
+
+            <div class="tabs" id="dataPeriodTabs" style="margin-top:14px">
+              <button class="active" data-data-period="today">今日</button>
+              <button data-data-period="yesterday">昨日</button>
+              <button data-data-period="week">近7日</button>
+              <button data-data-period="month">近30日</button>
+            </div>
+
+            <article class="data-total">
+              <div style="font-size:10px;opacity:.68">充电交易金额</div>
+              <div class="main">¥ <span id="dataAmount">23,846.50</span></div>
+              <div class="data-total-grid">
+                <div><b id="dataEnergy">18,620</b><span>充电量/kWh</span></div>
+                <div><b id="dataOrders">628</b><span>订单数</span></div>
+                <div><b id="dataService">8,286</b><span>服务费/元</span></div>
+              </div>
+            </article>
+          </header>
+
+          <div class="content">
+            <article class="card">
+              <div class="metric-head">
+                <h3 style="font-size:14px">时段充电电量趋势</h3>
+                <span class="tag green">实时</span>
+              </div>
+              <div class="chart">
+                <div class="chart-grid"></div>
+                <div class="chart-y"><span>4k</span><span>3k</span><span>2k</span><span>1k</span><span>0</span></div>
+                <svg viewBox="0 0 330 150" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="areaGreen" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#19d5a5" stop-opacity=".35"/>
+                      <stop offset="100%" stop-color="#19d5a5" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 136 C25 132,40 126,55 122 S90 108,108 113 S142 85,164 89 S203 53,220 64 S255 35,275 43 S310 20,330 26 L330 150 L0 150Z"
+                        fill="url(#areaGreen)"/>
+                  <path d="M0 136 C25 132,40 126,55 122 S90 108,108 113 S142 85,164 89 S203 53,220 64 S255 35,275 43 S310 20,330 26"
+                        fill="none" stroke="#12bf92" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <div class="chart-labels"><span>00</span><span>04</span><span>08</span><span>12</span><span>16</span><span>20</span><span>24</span></div>
+              </div>
+              <div class="legend"><span><i></i>充电电量</span></div>
+            </article>
+
+            <div class="section-head">
+              <h3>经营效率</h3>
+              <button data-action="data-detail">查看明细 ›</button>
+            </div>
+
+            <div class="task-grid">
+              <article class="task-card">
+                <div class="task-icon">⏱</div><b>28.6分钟</b><span>平均充电时长</span>
+              </article>
+              <article class="task-card">
+                <div class="task-icon">⚡</div><b>58.9kWh</b><span>单枪日充</span>
+              </article>
+              <article class="task-card">
+                <div class="task-icon">◴</div><b>36.8%</b><span>设备利用率</span>
+              </article>
+            </div>
+
+            <div class="section-head">
+              <h3>渠道充电金额排名</h3>
+              <button data-action="channel-detail">全部渠道 ›</button>
+            </div>
+
+            <article class="card">
+              <div class="rank-item">
+                <div class="rank-num">1</div>
+                <div class="rank-info"><b>星途充电小程序</b><span>订单 386 笔</span></div>
+                <div class="rank-value">¥14,682</div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-num">2</div>
+                <div class="rank-info"><b>企业车队账户</b><span>订单 136 笔</span></div>
+                <div class="rank-value">¥5,896</div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-num">3</div>
+                <div class="rank-info"><b>第三方聚合平台</b><span>订单 106 笔</span></div>
+                <div class="rank-value">¥3,268</div>
+              </div>
+            </article>
+
+            <div class="section-head">
+              <h3>电站电量排名</h3>
+              <button data-action="station-ranking">查看全部 ›</button>
+            </div>
+
+            <article class="card">
+              <div class="rank-item">
+                <div class="rank-num">1</div>
+                <div class="rank-info"><b>南山科技园超级充电站</b><span>设备利用率 52.6%</span></div>
+                <div class="rank-value">4,286 kWh</div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-num">2</div>
+                <div class="rank-info"><b>深圳湾智慧能源充电站</b><span>设备利用率 48.3%</span></div>
+                <div class="rank-value">3,890 kWh</div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-num">3</div>
+                <div class="rank-info"><b>福田中心区公共充电站</b><span>设备利用率 42.1%</span></div>
+                <div class="rank-value">3,116 kWh</div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 消息 -->
+        <section class="page" id="messagePage">
+          <header class="topbar">
+            <div class="top-title">
+              <div><h2>消息中心</h2><small>当前有 8 条未读消息</small></div>
+              <button class="btn light" style="min-height:36px" data-action="read-all">全部已读</button>
+            </div>
+            <div class="tabs message-tabs" style="margin-top:14px">
+              <button class="active" data-message-filter="all">全部</button>
+              <button data-message-filter="warning">预警</button>
+              <button data-message-filter="review">评价</button>
+              <button data-message-filter="appeal">申诉</button>
+              <button data-message-filter="invoice">开票</button>
+            </div>
+          </header>
+
+          <div class="message-list">
+            <article class="message-card unread" data-message-type="warning" data-action="fault-detail">
+              <div class="row" style="align-items:flex-start">
+                <div class="message-icon">⚠</div>
+                <div class="message-text">
+                  <b>设备故障预警</b>
+                  <p>福田中心区公共充电站 C12 枪发生绝缘检测异常。</p>
+                  <time>10分钟前</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="message-card unread" data-message-type="review" data-action="review-list">
+              <div class="row" style="align-items:flex-start">
+                <div class="message-icon">⭐</div>
+                <div class="message-text">
+                  <b>收到一条用户差评</b>
+                  <p>用户反馈深圳湾站停车减免未生效，建议及时回复处理。</p>
+                  <time>25分钟前</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="message-card unread" data-message-type="appeal" data-action="appeal-list">
+              <div class="row" style="align-items:flex-start">
+                <div class="message-icon">🅿️</div>
+                <div class="message-text">
+                  <b>新的占位费用申诉</b>
+                  <p>订单 20250618102036 申请退还占位费 ¥16.50。</p>
+                  <time>42分钟前</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="message-card" data-message-type="invoice" data-action="invoice-list">
+              <div class="row" style="align-items:flex-start">
+                <div class="message-icon">🧾</div>
+                <div class="message-text">
+                  <b>用户申请换开发票</b>
+                  <p>申请金额 ¥286.80，原发票已完成红冲验证。</p>
+                  <time>昨天 18:36</time>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 我的 -->
+        <section class="page" id="profilePage">
+          <div class="profile-head">
+            <div class="row">
+              <div class="row" style="justify-content:flex-start">
+                <div class="avatar">👔</div>
+                <div class="user-name">
+                  陈志远
+                  <small>企业管理员 · 账号 admin@xingtu</small>
+                </div>
+              </div>
+              <button class="icon-btn" data-action="settings">⚙</button>
+            </div>
+
+            <article class="enterprise-card">
+              <div class="row">
+                <div>
+                  <b style="font-size:13px">深圳星途新能源科技有限公司</b>
+                  <div style="margin-top:6px;color:var(--sub);font-size:9px">
+                    12座电站 · 28名员工 · 企业认证
+                  </div>
+                </div>
+                <button class="btn light" data-action="switch-company">切换</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="profile-content">
+            <div class="menu-list">
+              <button class="menu-row" data-action="account-security"><span>🔐 账号与安全</span><span>›</span></button>
+              <button class="menu-row" data-action="switch-company"><span>🏢 切换企业</span><span>当前企业 ›</span></button>
+              <button class="menu-row" data-action="message-settings"><span>🔔 消息通知设置</span><span>已开启 ›</span></button>
+            </div>
+
+            <div class="menu-list" style="margin-top:14px">
+              <button class="menu-row" data-action="customer-service"><span>🎧 联系客服</span><span>7×24小时 ›</span></button>
+              <button class="menu-row" data-action="privacy"><span>🛡 隐私政策</span><span>›</span></button>
+              <button class="menu-row" data-action="agreement"><span>📃 用户协议</span><span>›</span></button>
+              <button class="menu-row" data-action="version"><span>⬆ 版本更新</span><span>发现新版本 ›</span></button>
+              <button class="menu-row" data-action="about"><span>ℹ 关于我们</span><span>›</span></button>
+            </div>
+
+            <button class="btn block" style="margin-top:17px;color:#df5964"
+                    data-action="logout">退出登录</button>
+          </div>
+        </section>
+      </div>
+
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-page="homePage"><b>⌂</b><span>首页</span></button>
+        <button class="nav-item" data-page="monitorPage"><b>◉</b><span>监控</span></button>
+        <button class="nav-item" data-page="dataPage"><b>▥</b><span>数据</span></button>
+        <button class="nav-item" data-page="messagePage"><b>♧</b><span>消息</span></button>
+        <button class="nav-item" data-page="profilePage"><b>♙</b><span>我的</span></button>
+      </nav>
+
+      <div class="overlay" id="sheetOverlay">
+        <section class="sheet full">
+          <header class="sheet-head">
+            <h3 id="sheetTitle">业务详情</h3>
+            <button class="close" data-action="close-sheet">×</button>
+          </header>
+          <div class="sheet-body" id="sheetBody"></div>
+        </section>
+      </div>
+
+      <div class="overlay modal" id="dialogOverlay">
+        <div class="dialog" id="dialogBody"></div>
+      </div>
+
+      <div class="toast" id="toast">操作成功</div>
+    </div>
+  </section>
+
+  <div class="desktop-tip">
+    所有核心按钮均配置了模拟业务交互。登录后可体验业绩切换、监控、
+    占用治理、订单、开票、运维、评价回复、营销、电价测算和企业设置等功能。
+  </div>
+</main>
+
+<script>
+const $=(s,p=document)=>p.querySelector(s);
+const $$=(s,p=document)=>[...p.querySelectorAll(s)];
+
+const sheetOverlay=$("#sheetOverlay");
+const sheetTitle=$("#sheetTitle");
+const sheetBody=$("#sheetBody");
+const dialogOverlay=$("#dialogOverlay");
+const dialogBody=$("#dialogBody");
+const toastEl=$("#toast");
+
+let toastTimer;
+let verificationCode="668826";
+let currentCompany="深圳星途新能源科技有限公司";
+let repairedDevices=new Set();
+
+function toast(text){
+  clearTimeout(toastTimer);
+  toastEl.textContent=text;
+  toastEl.classList.add("show");
+  toastTimer=setTimeout(()=>toastEl.classList.remove("show"),2200);
+}
+function showSheet(title,html){
+  sheetTitle.textContent=title;
+  sheetBody.innerHTML=html;
+  sheetBody.scrollTop=0;
+  sheetOverlay.classList.add("show");
+}
+function showDialog(html){
+  dialogBody.innerHTML=html;
+  dialogOverlay.classList.add("show");
+}
+function closeSheet(){sheetOverlay.classList.remove("show")}
+function closeDialog(){dialogOverlay.classList.remove("show")}
+function switchPage(id){
+  $$(".page").forEach(p=>p.classList.remove("active"));
+  $("#"+id).classList.add("active");
+  $$(".nav-item[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===id));
+  $("#viewArea").scrollTop=0;
+}
+function statusTag(text,type="green"){
+  return `<span class="tag ${type}">${text}</span>`;
+}
+
+/* 登录 */
+$$("[data-login-tab]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    $$("[data-login-tab]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    $("#passwordForm").classList.toggle("active",btn.dataset.loginTab==="password");
+    $("#smsForm").classList.toggle("active",btn.dataset.loginTab==="sms");
+  });
+});
+
+/* 业务页面 */
+function invoiceList(){
+  showSheet("开票申请管理",`
+    <div class="tabs business-tabs" data-list=".invoice-card">
+      <button class="active" data-status-filter="all">全部 38</button>
+      <button data-status-filter="pending">待开票 12</button>
+      <button data-status-filter="processing">开票中 3</button>
+      <button data-status-filter="completed">已完成 21</button>
+      <button data-status-filter="replace">换开 2</button>
+    </div>
+    <div class="search">
+      <span>⌕</span><input placeholder="搜索申请单号、订单号或发票抬头">
+      <button data-action="local-search">查询</button>
+    </div>
+
+    <article class="invoice-card" data-status="pending">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">申请单 FP202506180026</span>
+        ${statusTag("待开票","orange")}
+      </div>
+      <h4>深圳云途科技有限公司</h4>
+      <p>电子普通发票 · 充电服务费 · 3笔订单</p>
+      <div class="line"><span>申请金额</span><b class="money">¥286.80</b></div>
+      <div class="line"><span>申请时间</span><b>2025-06-18 10:12</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="invoice-detail">查看订单</button>
+        <button class="btn primary flex" data-action="issue-invoice">立即开票</button>
+      </div>
+    </article>
+
+    <article class="invoice-card" data-status="processing">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">申请单 FP202506180021</span>
+        ${statusTag("开票中","blue")}
+      </div>
+      <h4>深圳市启航物流有限公司</h4>
+      <p>增值税专用发票 · 充电服务费</p>
+      <div class="line"><span>开票金额</span><b class="money">¥1,826.50</b></div>
+      <button class="btn light block" style="margin-top:12px" data-action="invoice-progress">
+        查看开票进度
+      </button>
+    </article>
+
+    <article class="invoice-card" data-status="completed">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">申请单 FP202506170018</span>
+        ${statusTag("已完成")}
+      </div>
+      <h4>个人 · 林先生</h4>
+      <p>电子普通发票 · 已发送至用户邮箱</p>
+      <div class="line"><span>开票金额</span><b>¥68.20</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="preview-invoice">查看发票</button>
+        <button class="btn flex" data-action="resend-invoice">重新发送</button>
+      </div>
+    </article>
+
+    <article class="invoice-card" data-status="replace">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">换开申请 HK20250617003</span>
+        ${statusTag("换开中","purple")}
+      </div>
+      <h4>深圳星河网络有限公司</h4>
+      <p>原发票已红冲，等待开具新发票</p>
+      <div class="actions">
+        <button class="btn flex" data-action="invoice-progress">查看进度</button>
+        <button class="btn primary flex" data-action="issue-replacement">完成换开</button>
+      </div>
+    </article>
+  `);
+}
+
+function appealList(){
+  showSheet("占用申诉",`
+    <div class="tabs business-tabs" data-list=".appeal-card">
+      <button class="active" data-status-filter="all">全部 26</button>
+      <button data-status-filter="pending">申诉中 5</button>
+      <button data-status-filter="approved">申诉完成 16</button>
+      <button data-status-filter="rejected">已驳回 5</button>
+    </div>
+
+    <article class="appeal-card" data-status="pending">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">申诉单 SS20250618008</span>
+        ${statusTag("申诉中","orange")}
+      </div>
+      <h4>深圳湾智慧能源充电站</h4>
+      <p>订单 20250618102036 · 粤B·8P3Q2</p>
+      <div class="line"><span>占用时长</span><b>33分钟</b></div>
+      <div class="line"><span>申请退款</span><b class="money">¥16.50</b></div>
+      <div class="notice" style="margin-top:10px">
+        用户说明：充电结束后设备未及时释放充电枪，现场联系工作人员处理耗时较长。
+      </div>
+      <div class="actions">
+        <button class="btn flex" data-action="appeal-detail">历史占用记录</button>
+        <button class="btn primary flex" data-action="process-appeal">立即处理</button>
+      </div>
+    </article>
+
+    <article class="appeal-card" data-status="approved">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">申诉单 SS20250617006</span>
+        ${statusTag("申诉完成")}
+      </div>
+      <h4>南山科技园超级充电站</h4>
+      <p>已同意退款 ¥12.00 · 原路退回用户账户</p>
+      <button class="btn light block" style="margin-top:12px" data-action="appeal-detail">
+        查看处理详情
+      </button>
+    </article>
+
+    <article class="appeal-card" data-status="rejected">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">申诉单 SS20250616002</span>
+        ${statusTag("已驳回","red")}
+      </div>
+      <h4>福田中心区公共充电站</h4>
+      <p>经核实充电结束通知正常送达，用户超时停留 48 分钟。</p>
+      <button class="btn block" style="margin-top:12px" data-action="appeal-detail">
+        查看证据与处理说明
+      </button>
+    </article>
+  `);
+}
+
+function occupancyMonitor(){
+  showSheet("占用监控",`
+    <div class="tabs occupancy-tabs">
+      <button class="active" data-occupancy="before">充电前占用 3</button>
+      <button data-occupancy="after">充电后占用 3</button>
+      <button data-occupancy="none">无充电占用 1</button>
+    </div>
+
+    <div id="occupancyContent">
+      <article class="card">
+        <div class="row">
+          <div>
+            ${statusTag("充电前占用","orange")}
+            <h3 style="margin-top:10px;font-size:14px">A03枪 · 南山科技园站</h3>
+            <p style="margin:6px 0;color:var(--sub);font-size:10px">
+              车辆已插枪但尚未启动充电
+            </p>
+          </div>
+          <div style="text-align:right">
+            <div class="occupy-time">18分钟</div>
+            <span style="font-size:9px;color:var(--sub)">占位时长</span>
+          </div>
+        </div>
+        <div class="line"><span>车牌号</span><b>粤B·6M82Q</b></div>
+        <div class="line"><span>联系方式</span><b>138****2786</b></div>
+        <div class="actions">
+          <button class="btn warn flex" data-action="urge-sms">发送催挪短信</button>
+          <button class="btn flex" data-action="virtual-call">虚拟拨号</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="row">
+          <div>
+            ${statusTag("充电前占用","orange")}
+            <h3 style="margin-top:10px;font-size:14px">A17枪 · 南山科技园站</h3>
+            <p style="margin:6px 0;color:var(--sub);font-size:10px">已插枪，未获取车辆信息</p>
+          </div>
+          <div class="occupy-time">11分钟</div>
+        </div>
+        <div class="notice" style="margin-top:12px">
+          暂未获取车牌或手机号，建议通过现场音柱或千里眼进行催挪。
+        </div>
+        <div class="actions">
+          <button class="btn flex" data-action="camera-view">查看监控</button>
+          <button class="btn primary flex" data-action="speaker-broadcast">音柱播报</button>
+        </div>
+      </article>
+    </div>
+  `);
+}
+
+function diagnosis(){
+  showSheet("经营诊断",`
+    <div class="tabs">
+      <button class="active" data-report-period="week">周报</button>
+      <button data-report-period="month">月报</button>
+    </div>
+
+    <article class="diagnosis-score" style="margin-top:13px">
+      <div style="font-size:11px;opacity:.72">南山科技园站综合经营评分</div>
+      <div><b id="diagnosisScore">86</b><small> / 100分</small></div>
+      <div style="margin-top:4px;font-size:10px;opacity:.75">
+        超过同区域 82% 的同类型电站
+      </div>
+      <div class="health-bar">
+        <div class="health-item" style="background:rgba(255,255,255,.12);color:#fff">
+          <b>92</b><span style="color:rgba(255,255,255,.65)">场站运营</span>
+        </div>
+        <div class="health-item" style="background:rgba(255,255,255,.12);color:#fff">
+          <b>78</b><span style="color:rgba(255,255,255,.65)">用户运营</span>
+        </div>
+        <div class="health-item" style="background:rgba(255,255,255,.12);color:#fff">
+          <b>88</b><span style="color:rgba(255,255,255,.65)">设备稳定</span>
+        </div>
+      </div>
+    </article>
+
+    <div class="section-head"><h3>4项经营提升建议</h3></div>
+
+    <article class="card">
+      <div class="row">
+        <div>
+          ${statusTag("高优先级","red")}
+          <h3 style="margin-top:9px;font-size:13px">提升夜间设备利用率</h3>
+        </div>
+        <b style="color:#079a75">预计 +8.6%</b>
+      </div>
+      <p style="color:var(--sub);font-size:10px;line-height:1.7">
+        23:00-07:00 平均设备利用率仅 12.8%，建议配置夜间谷时折扣并向周边高频用户发券。
+      </p>
+      <button class="btn primary block" data-action="diagnosis-plan">生成改善方案</button>
+    </article>
+
+    <article class="card">
+      <div class="row">
+        <div>
+          ${statusTag("用户运营","orange")}
+          <h3 style="margin-top:9px;font-size:13px">召回30天未充电用户</h3>
+        </div>
+        <b>286人</b>
+      </div>
+      <p style="color:var(--sub);font-size:10px;line-height:1.7">
+        建议向沉默用户发放满30减5元券，预计可召回 32-48 名用户。
+      </p>
+      <button class="btn light block" data-action="create-smart-coupon">创建智慧发券</button>
+    </article>
+
+    <article class="card">
+      <h3 style="font-size:13px">时段电量分布</h3>
+      <div class="chart" style="height:150px">
+        <div class="chart-grid"></div>
+        <svg viewBox="0 0 330 130" preserveAspectRatio="none" style="height:120px">
+          <path d="M0 110 L45 96 L90 105 L135 72 L180 48 L225 62 L270 30 L330 42"
+                fill="none" stroke="#4b7dff" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        <div class="chart-labels"><span>谷</span><span>平</span><span>峰</span><span>尖峰</span></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3 style="font-size:13px">基础经营概况</h3>
+      <div class="line"><span>周期充电金额</span><b>¥186,820</b></div>
+      <div class="line"><span>新增充电用户</span><b>328人</b></div>
+      <div class="line"><span>活动订单占比</span><b>26.8%</b></div>
+      <div class="line"><span>用户综合评分</span><b>4.82分</b></div>
+    </article>
+  `);
+}
+
+function faultAnalysis(){
+  showSheet("故障与订单成功率",`
+    <div class="tabs fault-tabs">
+      <button data-fault-period="yesterday">昨日</button>
+      <button class="active" data-fault-period="week">近7日</button>
+      <button data-fault-period="month">近30日</button>
+    </div>
+
+    <article class="card" style="margin-top:13px">
+      <div class="row">
+        <div>
+          <span style="font-size:10px;color:var(--sub)">订单启动成功率</span>
+          <div style="margin-top:5px;font-size:30px;font-weight:900">98.6%</div>
+        </div>
+        ${statusTag("较上周期 +0.8%")}
+      </div>
+      <div class="chart" style="height:160px">
+        <div class="chart-grid"></div>
+        <svg viewBox="0 0 330 130" preserveAspectRatio="none" style="height:120px">
+          <path d="M0 62 C45 66,72 48,105 51 S165 37,205 43 S270 22,330 27"
+                fill="none" stroke="#19d5a5" stroke-width="4" stroke-linecap="round"/>
+          <path d="M0 110 C45 100,72 112,105 94 S165 103,205 82 S270 92,330 73"
+                fill="none" stroke="#ff6b76" stroke-width="3" stroke-dasharray="5 5"/>
+        </svg>
+        <div class="chart-labels"><span>06-12</span><span>06-14</span><span>06-16</span><span>06-18</span></div>
+      </div>
+      <div class="legend">
+        <span><i></i>成功率</span>
+        <span><i style="background:#ff6b76"></i>故障次数</span>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3 style="font-size:13px">主要故障类型</h3>
+      <div class="line"><span>绝缘检测异常</span><b>8次 · 32%</b></div>
+      <div class="line"><span>充电枪通信中断</span><b>6次 · 24%</b></div>
+      <div class="line"><span>车辆BMS握手失败</span><b>5次 · 20%</b></div>
+      <div class="line"><span>设备离线</span><b>4次 · 16%</b></div>
+    </article>
+
+    <button class="btn primary block" data-action="repair-list">查看维修工单</button>
+  `);
+}
+
+function repairList(){
+  showSheet("维修工单",`
+    <div class="tabs business-tabs" data-list=".repair-card">
+      <button class="active" data-status-filter="all">全部 18</button>
+      <button data-status-filter="pending">待派工 3</button>
+      <button data-status-filter="repairing">维修中 4</button>
+      <button data-status-filter="completed">已完成 11</button>
+    </div>
+
+    <button class="btn primary block" style="margin:13px 0"
+            data-action="new-repair">＋ 设备一键报修</button>
+
+    <article class="repair-card" data-status="pending">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">工单 WX20250618018</span>
+        ${statusTag("待派工","orange")}
+      </div>
+      <h4>C12枪 · 绝缘检测异常</h4>
+      <p>福田中心区公共充电站 · 2025-06-18 10:18</p>
+      <div class="actions">
+        <button class="btn flex" data-action="repair-progress">查看详情</button>
+        <button class="btn primary flex" data-action="assign-worker">立即派工</button>
+      </div>
+    </article>
+
+    <article class="repair-card" data-status="repairing">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">工单 WX20250618012</span>
+        ${statusTag("维修中","blue")}
+      </div>
+      <h4>D03枪 · 通信模块离线</h4>
+      <p>运维人员：王海 · 已到场 35 分钟</p>
+      <div class="line"><span>当前进度</span><b>更换4G通信模块</b></div>
+      <button class="btn light block" style="margin-top:12px"
+              data-action="contact-worker">联系运维人员</button>
+    </article>
+
+    <article class="repair-card" data-status="completed">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">工单 WX20250617008</span>
+        ${statusTag("已完成")}
+      </div>
+      <h4>A06枪 · 急停按钮误触发</h4>
+      <p>处理时长 42分钟 · 已恢复在线</p>
+      <button class="btn block" style="margin-top:12px"
+              data-action="repair-report">查看维修报告</button>
+    </article>
+  `);
+}
+
+function reviewList(){
+  showSheet("评价管理",`
+    <article class="card">
+      <div class="row">
+        <div style="position:relative">
+          <div class="score-ring">
+            <div class="score-content"><b>4.82</b><span>综合评分</span></div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div class="line"><span>好评</span><b style="color:#079a75">252条</b></div>
+          <div class="line"><span>中评</span><b style="color:#dd8526">23条</b></div>
+          <div class="line"><span>差评</span><b style="color:#df5964">11条</b></div>
+          <div class="line"><span>待回复</span><b style="color:#df5964">7条</b></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="tabs review-tabs">
+      <button class="active" data-review-filter="all">全部</button>
+      <button data-review-filter="bad">差评优先</button>
+      <button data-review-filter="unreplied">未回复</button>
+      <button data-review-filter="replied">已回复</button>
+    </div>
+
+    <article class="review-card" data-review="bad unreplied">
+      <div class="order-head">
+        <div>
+          <b>林**</b>
+          <span style="margin-left:7px;color:#ffad2f;font-size:10px">★★☆☆☆</span>
+        </div>
+        ${statusTag("未回复","red")}
+      </div>
+      <h4>深圳湾智慧能源充电站</h4>
+      <p>停车减免没有自动生效，离场时又支付了停车费，希望尽快处理。</p>
+      <p>订单：20250618092618 · 2025-06-18 09:58</p>
+      <div class="actions">
+        <button class="btn flex" data-action="review-order">查看订单</button>
+        <button class="btn flex" data-action="virtual-call">联系用户</button>
+        <button class="btn primary flex" data-action="reply-review">回复</button>
+      </div>
+    </article>
+
+    <article class="review-card" data-review="unreplied">
+      <div class="order-head">
+        <div><b>周**</b><span style="margin-left:7px;color:#ffad2f;font-size:10px">★★★★☆</span></div>
+        ${statusTag("未回复","orange")}
+      </div>
+      <h4>南山科技园超级充电站</h4>
+      <p>充电速度很快，建议休息室增加自动售货机。</p>
+      <div class="actions">
+        <button class="btn flex" data-action="review-order">查看订单</button>
+        <button class="btn primary flex" data-action="reply-review">回复评价</button>
+      </div>
+    </article>
+
+    <article class="review-card" data-review="replied">
+      <div class="order-head">
+        <div><b>李**</b><span style="margin-left:7px;color:#ffad2f;font-size:10px">★★★★★</span></div>
+        ${statusTag("已回复")}
+      </div>
+      <h4>福田中心区公共充电站</h4>
+      <p>位置好找，工作人员服务也很好。</p>
+      <div class="notice" style="margin-top:10px;color:#467064;background:#f1faf7">
+        商家回复：感谢您的认可，期待您的再次光临！
+      </div>
+    </article>
+  `);
+}
+
+function orderList(){
+  showSheet("充电订单",`
+    <div class="search">
+      <span>⌕</span><input id="orderSearchInput" placeholder="订单号、手机号或车牌号">
+      <button data-action="local-search">查询</button>
+    </div>
+    <div class="filter-row" style="padding:12px 0">
+      <button class="filter-chip active">全部状态</button>
+      <button class="filter-chip">进行中</button>
+      <button class="filter-chip">已完成</button>
+      <button class="filter-chip">待支付</button>
+      <button class="filter-chip">异常订单</button>
+    </div>
+
+    <article class="order-card">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">2025061809180826</span>
+        ${statusTag("充电中","blue")}
+      </div>
+      <h4>南山科技园超级充电站 · A08枪</h4>
+      <p>用户 138****7628 · 粤B·A82Q6</p>
+      <div class="line"><span>已充电量</span><b>31.68kWh</b></div>
+      <div class="line"><span>当前金额</span><b class="money">¥37.82</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="send-coupon">发送卡券</button>
+        <button class="btn flex" data-action="virtual-call">联系用户</button>
+        <button class="btn primary flex" data-action="order-detail">订单详情</button>
+      </div>
+    </article>
+
+    <article class="order-card">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">2025061808360128</span>
+        ${statusTag("已完成")}
+      </div>
+      <h4>深圳湾智慧能源充电站 · B06枪</h4>
+      <p>用户 136****9281 · 粤B·8P3Q2</p>
+      <div class="line"><span>充电量</span><b>42.35kWh</b></div>
+      <div class="line"><span>实付金额</span><b class="money">¥46.28</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="send-coupon">发送卡券</button>
+        <button class="btn primary flex" data-action="order-detail">查看详情</button>
+      </div>
+    </article>
+  `);
+}
+
+function orderDetail(){
+  showSheet("订单详情",`
+    <article class="card">
+      <div class="order-head">
+        <div>
+          <b>订单 2025061809180826</b>
+          <div style="margin-top:5px;color:var(--sub);font-size:9px">充电进行中</div>
+        </div>
+        ${statusTag("充电中","blue")}
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="metric-head">
+        <h3 style="font-size:13px">实时充电曲线</h3>
+        <div class="tags">
+          <span class="tag green">SOC</span><span class="tag blue">电压</span><span class="tag orange">电流</span>
+        </div>
+      </div>
+      <div class="chart">
+        <div class="chart-grid"></div>
+        <svg viewBox="0 0 330 150" preserveAspectRatio="none">
+          <path d="M0 138 C45 132,70 110,105 100 S155 78,205 62 S270 42,330 25"
+                fill="none" stroke="#19d5a5" stroke-width="4"/>
+          <path d="M0 55 C70 52,110 58,165 54 S240 48,330 52"
+                fill="none" stroke="#4b7dff" stroke-width="3"/>
+          <path d="M0 105 C50 90,100 94,145 80 S225 91,330 73"
+                fill="none" stroke="#ff9b42" stroke-width="3"/>
+        </svg>
+        <div class="chart-labels"><span>09:18</span><span>09:26</span><span>09:34</span><span>09:42</span></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3 style="font-size:13px">充电信息</h3>
+      <div class="line"><span>电站/终端</span><b>南山科技园站 · A08枪</b></div>
+      <div class="line"><span>车辆/车牌</span><b>特斯拉 Model Y · 粤B·A82Q6</b></div>
+      <div class="line"><span>实时SOC</span><b>68%</b></div>
+      <div class="line"><span>充电电量</span><b>31.68kWh</b></div>
+      <div class="line"><span>充电时长</span><b>24分18秒</b></div>
+    </article>
+
+    <article class="card">
+      <h3 style="font-size:13px">付款信息</h3>
+      <div class="line"><span>计费金额</span><b>¥47.82</b></div>
+      <div class="line"><span>电站折扣</span><b style="color:#079a75">-¥3.00</b></div>
+      <div class="line"><span>优惠券</span><b style="color:#079a75">-¥7.00</b></div>
+      <div class="line"><span>预计实付</span><b class="money">¥37.82</b></div>
+      <div class="line"><span>支付账户</span><b>个人余额账户</b></div>
+    </article>
+
+    <div class="sticky-footer">
+      <button class="btn flex" data-action="virtual-call">联系用户</button>
+      <button class="btn danger flex" data-action="stop-device">停止充电</button>
+    </div>
+  `);
+}
+
+function stationManage(){
+  showSheet("电站管理",`
+    <div class="search">
+      <span>⌕</span><input placeholder="搜索电站名称">
+      <button data-action="local-search">搜索</button>
+    </div>
+
+    <article class="card" style="margin-top:13px">
+      <div class="station-head">
+        <div>
+          <h3 style="font-size:13px">南山科技园超级充电站</h3>
+          <p style="margin:6px 0;color:var(--sub);font-size:9px">28个终端 · 24小时营业</p>
+        </div>
+        ${statusTag("营业中")}
+      </div>
+      <div class="line"><span>当前综合电价</span><b>¥1.18/kWh</b></div>
+      <div class="line"><span>今日充电量</span><b>4,286kWh</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="edit-station">编辑基本信息</button>
+        <button class="btn primary flex" data-action="edit-price">电价管理</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="station-head">
+        <div>
+          <h3 style="font-size:13px">深圳湾智慧能源充电站</h3>
+          <p style="margin:6px 0;color:var(--sub);font-size:9px">16个终端 · 06:00-24:00</p>
+        </div>
+        ${statusTag("营业中")}
+      </div>
+      <div class="line"><span>当前综合电价</span><b>¥1.05/kWh</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="edit-station">编辑基本信息</button>
+        <button class="btn primary flex" data-action="edit-price">电价管理</button>
+      </div>
+    </article>
+
+    <button class="btn primary block" data-action="new-station">＋ 新增电站</button>
+  `);
+}
+
+function employeeManage(){
+  showSheet("员工管理",`
+    <article class="card">
+      <div class="row">
+        <div>
+          <span style="font-size:10px;color:var(--sub)">员工虚拟币总余额</span>
+          <div class="money" style="margin-top:5px">¥8,620.00</div>
+        </div>
+        <button class="btn primary" data-action="new-employee">新增员工</button>
+      </div>
+    </article>
+
+    <div class="search">
+      <span>⌕</span><input placeholder="姓名、手机号、部门">
+      <button data-action="local-search">查询</button>
+    </div>
+    <div class="filter-row" style="padding:12px 0">
+      <button class="filter-chip active">全部角色</button>
+      <button class="filter-chip">管理员</button>
+      <button class="filter-chip">站长</button>
+      <button class="filter-chip">运维人员</button>
+    </div>
+
+    <article class="card">
+      <div class="row">
+        <div class="row" style="justify-content:flex-start">
+          <div class="avatar" style="width:43px;height:43px;border:0;font-size:19px">👨</div>
+          <div>
+            <b style="font-size:12px">王海</b>
+            <div style="margin-top:5px;color:var(--sub);font-size:9px">运维部 · 运维工程师</div>
+          </div>
+        </div>
+        ${statusTag("正常")}
+      </div>
+      <div class="line"><span>虚拟币余额</span><b>¥380.00</b></div>
+      <div class="line"><span>负责电站</span><b>南山站、深圳湾站</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="allocate-balance">分配虚拟币</button>
+        <button class="btn flex" data-action="edit-employee">编辑</button>
+        <button class="btn danger" data-action="delete-employee">删除</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="row">
+        <div class="row" style="justify-content:flex-start">
+          <div class="avatar" style="width:43px;height:43px;border:0;font-size:19px">👩</div>
+          <div>
+            <b style="font-size:12px">李婷</b>
+            <div style="margin-top:5px;color:var(--sub);font-size:9px">运营部 · 电站站长</div>
+          </div>
+        </div>
+        ${statusTag("正常")}
+      </div>
+      <div class="line"><span>虚拟币余额</span><b>¥1,260.00</b></div>
+      <div class="actions">
+        <button class="btn flex" data-action="allocate-balance">分配虚拟币</button>
+        <button class="btn flex" data-action="edit-employee">编辑</button>
+      </div>
+    </article>
+  `);
+}
+
+function eagleEye(){
+  showSheet("千里眼智慧场站",`
+    <div class="tabs camera-tabs">
+      <button class="active" data-camera-tab="live">实时监控</button>
+      <button data-camera-tab="playback">视频回放</button>
+      <button data-camera-tab="alert">AI预警</button>
+      <button data-camera-tab="speaker">音柱播报</button>
+    </div>
+
+    <div id="cameraContent">
+      <article class="card" style="margin-top:13px">
+        <div class="row">
+          <div>
+            <b style="font-size:12px">南山科技园站 · 摄像头03</b>
+            <div style="margin-top:5px;color:var(--sub);font-size:9px">B2停车场 C区 · 在线</div>
+          </div>
+          ${statusTag("● 实时")}
+        </div>
+        <div class="camera" style="margin-top:13px">
+          <span class="camera-time" id="cameraTime">2025-06-18 10:28:36</span>
+          <div class="car-shape"></div>
+          <div class="ai-box"><span>粤B·6M82Q · 占用18分钟</span></div>
+          <div class="video-controls"><span>▶ 实时画面</span><span>高清　🔊　⛶</span></div>
+        </div>
+        <div class="actions">
+          <button class="btn flex" data-action="snapshot">抓拍</button>
+          <button class="btn warn flex" data-action="urge-sms">短信催挪</button>
+          <button class="btn primary flex" data-action="speaker-broadcast">音柱播报</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3 style="font-size:13px">智能识别状态</h3>
+        <div class="line"><span>车牌识别</span><b style="color:#079a75">正常</b></div>
+        <div class="line"><span>车位占用识别</span><b style="color:#079a75">正常</b></div>
+        <div class="line"><span>烟火检测</span><b style="color:#079a75">已开启</b></div>
+        <div class="line"><span>枪头掉地检测</span><b style="color:#079a75">已开启</b></div>
+      </article>
+    </div>
+  `);
+}
+
+function operation(){
+  showSheet("场站运维",`
+    <div class="task-grid">
+      <button class="task-card" data-action="new-repair">
+        <div class="task-icon">🛠</div><b>设备报修</b><span>填写设备与故障信息</span>
+      </button>
+      <button class="task-card" data-action="repair-list">
+        <div class="task-icon">📋</div><b>维修进度</b><span>4个工单处理中</span>
+      </button>
+      <button class="task-card" data-action="inspection-report">
+        <div class="task-icon">✅</div><b>巡检报告</b><span>本月已巡检12次</span>
+      </button>
+    </div>
+
+    <div class="section-head"><h3>最近巡检</h3></div>
+    <article class="card">
+      <div class="order-head">
+        <span style="font-size:9px;color:var(--sub)">2025-06-17 14:30</span>
+        ${statusTag("已完成")}
+      </div>
+      <h3 style="margin-top:11px;font-size:13px">南山科技园超级充电站</h3>
+      <div class="line"><span>巡检人员</span><b>王海</b></div>
+      <div class="line"><span>检查项目</span><b>32项</b></div>
+      <div class="line"><span>发现问题</span><b style="color:#df5964">2项</b></div>
+      <button class="btn light block" style="margin-top:12px"
+              data-action="inspection-report">查看巡检报告</button>
+    </article>
+  `);
+}
+
+function findOwner(){
+  showSheet("车牌找人",`
+    <article class="card">
+      <h3 style="font-size:14px">输入需要联系的车牌</h3>
+      <p style="color:var(--sub);font-size:10px;line-height:1.7">
+        系统将查询平台车辆信息，并通过隐私号码联系车主。
+      </p>
+      <div class="field">
+        <label>车牌号码</label>
+        <input class="input" id="plateSearch" value="粤B·8P3Q2">
+      </div>
+      <button class="btn primary block" style="margin-top:13px"
+              data-action="search-owner">查询车主</button>
+    </article>
+
+    <div id="ownerResult"></div>
+
+    <div class="notice">
+      为保护用户隐私，不展示车主真实手机号。每次查询和拨号操作均会记录企业操作日志。
+    </div>
+  `);
+}
+
+function priceCalculator(){
+  showSheet("场站电价测算",`
+    <article class="card">
+      <div class="field">
+        <label>所在区域</label>
+        <select class="input" id="calcArea">
+          <option>广东省深圳市</option><option>广东省广州市</option><option>上海市</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>用电性质</label>
+        <select class="input"><option>工商业用电</option><option>大工业用电</option></select>
+      </div>
+      <div class="field">
+        <label>电压等级</label>
+        <select class="input"><option>10kV</option><option>20kV</option><option>35kV</option></select>
+      </div>
+      <div class="field">
+        <label>电价模式</label>
+        <select class="input"><option>分时电价</option><option>单一电价</option></select>
+      </div>
+      <div class="field">
+        <label>预计月用电量（kWh）</label>
+        <input class="input" id="monthEnergyInput" type="number" value="560000">
+      </div>
+      <button class="btn primary block" style="margin-top:14px"
+              data-action="calculate-price">开始测算</button>
+    </article>
+    <div id="priceResult"></div>
+  `);
+}
+
+function marketing(){
+  showSheet("营销工具",`
+    <article class="card">
+      <div class="row">
+        <div>
+          <h3 style="font-size:14px">指定用户发券</h3>
+          <p style="margin:6px 0;color:var(--sub);font-size:10px">
+            根据手机号向特定用户发放卡券
+          </p>
+        </div>
+        <div class="app-icon">🎫</div>
+      </div>
+      <button class="btn primary block" style="margin-top:12px"
+              data-action="send-target-coupon">立即发券</button>
+    </article>
+
+    <article class="card">
+      <div class="row">
+        <div>
+          <h3 style="font-size:14px">智慧发券</h3>
+          <p style="margin:6px 0;color:var(--sub);font-size:10px">
+            根据用户充电行为自动触达目标人群
+          </p>
+        </div>
+        ${statusTag("3个策略运行中")}
+      </div>
+      <div class="line"><span>30天未充电召回</span><b>预计触达286人</b></div>
+      <div class="line"><span>高频用户会员券</span><b>预计触达126人</b></div>
+      <button class="btn light block" style="margin-top:12px"
+              data-action="create-smart-coupon">创建智慧发券</button>
+    </article>
+
+    <article class="card">
+      <h3 style="font-size:13px">本月营销效果</h3>
+      <div class="health-bar">
+        <div class="health-item"><b>1,286</b><span>发券数量</span></div>
+        <div class="health-item"><b>36.8%</b><span>使用率</span></div>
+        <div class="health-item"><b>¥3.8</b><span>拉动金额/元</span></div>
+      </div>
+    </article>
+  `);
+}
+
+function insurance(){
+  showSheet("电站增值服务",`
+    <article class="card">
+      <div class="row">
+        <div>
+          ${statusTag("推荐","purple")}
+          <h3 style="margin-top:9px;font-size:14px">充电设备综合保险</h3>
+        </div>
+        <b style="color:#7255d7">¥328/月</b>
+      </div>
+      <p style="color:var(--sub);font-size:10px;line-height:1.8">
+        覆盖设备意外损坏、充电安全事故、第三者责任等风险，
+        单站最高保障额度 200 万元。
+      </p>
+      <div class="line"><span>设备财产损失</span><b>最高50万元</b></div>
+      <div class="line"><span>公众责任保障</span><b>最高200万元</b></div>
+      <button class="btn primary block" style="margin-top:12px"
+              data-action="apply-insurance">申请订阅</button>
+    </article>
+
+    <article class="card">
+      <div class="row">
+        <div><h3 style="font-size:14px">高级运维保障服务</h3></div>
+        <b>¥680/月</b>
+      </div>
+      <p style="color:var(--sub);font-size:10px;line-height:1.8">
+        提供7×24小时远程诊断、4小时响应、专业巡检与备件保障。
+      </p>
+      <button class="btn light block" data-action="apply-insurance">预约顾问</button>
+    </article>
+  `);
+}
+
+/* 事件委托 */
+document.addEventListener("click",e=>{
+  const page=e.target.closest("[data-page]");
+  if(page){
+    switchPage(page.dataset.page);
+    return;
+  }
+
+  const actionEl=e.target.closest("[data-action]");
+  if(!actionEl){
+    const switchEl=e.target.closest(".switch");
+    if(switchEl){
+      switchEl.classList.toggle("on");
+      toast(switchEl.classList.contains("on")?"通知已开启":"通知已关闭");
+    }
+    const option=e.target.closest(".option");
+    if(option){
+      const parent=option.parentElement;
+      $$(".option",parent).forEach(o=>o.classList.remove("active"));
+      option.classList.add("active");
+    }
+    const amount=e.target.closest(".amount");
+    if(amount){
+      $$(".amount",amount.parentElement).forEach(a=>a.classList.remove("active"));
+      amount.classList.add("active");
+    }
+    return;
+  }
+
+  const action=actionEl.dataset.action;
+
+  switch(action){
+    case "login-password":{
+      const account=$("#accountInput").value.trim();
+      const password=$("#passwordInput").value.trim();
+      if(!account||!password){toast("请输入账号和密码");return}
+      actionEl.innerHTML='<span class="loading" style="margin:auto"></span>';
+      setTimeout(()=>{
+        $("#loginView").classList.add("hide");
+        actionEl.textContent="进入运营中心";
+        toast("登录成功，欢迎回来");
+      },750);
+      break;
+    }
+    case "send-code":
+      actionEl.disabled=true;
+      actionEl.textContent="60秒后重发";
+      $("#codeInput").value=verificationCode;
+      toast("验证码已发送，演示验证码为 668826");
+      let sec=60;
+      const timer=setInterval(()=>{
+        sec--;
+        actionEl.textContent=sec+"秒后重发";
+        if(sec<=0){
+          clearInterval(timer);
+          actionEl.disabled=false;
+          actionEl.textContent="获取验证码";
+        }
+      },1000);
+      break;
+    case "login-sms":
+      if($("#codeInput").value.trim()!==verificationCode){
+        toast("验证码错误，请输入 668826");return;
+      }
+      $("#loginView").classList.add("hide");
+      toast("手机号验证成功");
+      break;
+    case "forgot-password":
+      showDialog(`
+        <h3>找回登录密码</h3>
+        <p>请输入企业账号绑定的手机号，验证通过后可重置密码。</p>
+        <div class="field"><input class="input" value="138****6628" disabled></div>
+        <div class="field">
+          <div class="row">
+            <input class="input" placeholder="短信验证码">
+            <button class="btn light" data-action="dialog-code">获取验证码</button>
+          </div>
+        </div>
+        <div class="field"><input class="input" type="password" placeholder="设置新密码"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="reset-password">确认重置</button>
+        </div>`);
+      break;
+
+    case "data-detail": closeSheet();switchPage("dataPage");break;
+    case "invoice-list": invoiceList();break;
+    case "appeal-list": appealList();break;
+    case "diagnosis": diagnosis();break;
+    case "occupancy-monitor": occupancyMonitor();break;
+    case "fault-analysis": faultAnalysis();break;
+    case "repair-list": repairList();break;
+    case "review-list": reviewList();break;
+    case "order-list": orderList();break;
+    case "order-detail":
+    case "device-order":
+    case "review-order": orderDetail();break;
+    case "station-manage": stationManage();break;
+    case "employee-manage": employeeManage();break;
+    case "eagle-eye":
+    case "camera-view": eagleEye();break;
+    case "operation": operation();break;
+    case "find-owner": findOwner();break;
+    case "price-calc": priceCalculator();break;
+    case "marketing": marketing();break;
+    case "insurance": insurance();break;
+
+    case "pending-center":
+      showSheet("全部待处理事项",`
+        <article class="card">
+          <div class="line"><span>待处理开票申请</span><b style="color:#df5964">12笔</b></div>
+          <button class="btn primary block" data-action="invoice-list">处理开票</button>
+        </article>
+        <article class="card">
+          <div class="line"><span>待处理占用申诉</span><b style="color:#df5964">5笔</b></div>
+          <button class="btn primary block" data-action="appeal-list">处理申诉</button>
+        </article>
+        <article class="card">
+          <div class="line"><span>待派工维修工单</span><b style="color:#df5964">3笔</b></div>
+          <button class="btn primary block" data-action="repair-list">处理工单</button>
+        </article>
+        <article class="card">
+          <div class="line"><span>待回复评价</span><b style="color:#df5964">7条</b></div>
+          <button class="btn primary block" data-action="review-list">回复评价</button>
+        </article>`);
+      break;
+
+    case "invoice-detail":
+      showDialog(`
+        <h3>开票关联订单</h3>
+        <p>本次申请包含以下3笔已完成充电订单。</p>
+        <div class="line"><span>20250616082618</span><b>¥86.20</b></div>
+        <div class="line"><span>20250617092862</span><b>¥98.60</b></div>
+        <div class="line"><span>20250618063826</span><b>¥102.00</b></div>
+        <div class="line"><span>开票总额</span><b class="money">¥286.80</b></div>
+        <div class="dialog-actions">
+          <button class="btn block" data-action="close-dialog">关闭</button>
+        </div>`);
+      break;
+    case "issue-invoice":
+      showDialog(`
+        <h3>确认开具发票</h3>
+        <p>请确认开票信息，提交后将调用企业电子开票服务。</p>
+        <div class="line"><span>发票抬头</span><b>深圳云途科技有限公司</b></div>
+        <div class="line"><span>纳税人识别号</span><b>91440300MA5F8****</b></div>
+        <div class="line"><span>开票金额</span><b>¥286.80</b></div>
+        <div class="field"><label>发票备注</label><input class="input" value="充电服务费"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="invoice-success">确认开票</button>
+        </div>`);
+      break;
+    case "invoice-success":
+      closeDialog();toast("发票开具成功，已发送至用户邮箱");
+      setTimeout(invoiceList,450);break;
+    case "invoice-progress":
+      showDialog(`
+        <h3>开票进度</h3>
+        <div class="line"><span>用户提交申请</span><b>10:12 已完成</b></div>
+        <div class="line"><span>企业信息校验</span><b>10:13 已完成</b></div>
+        <div class="line"><span>税务开票平台处理</span><b style="color:#4b7dff">处理中</b></div>
+        <div class="line"><span>发送用户邮箱</span><b>等待中</b></div>
+        <button class="btn block" style="margin-top:13px" data-action="close-dialog">关闭</button>`);
+      break;
+    case "preview-invoice":
+      showDialog(`
+        <h3>电子普通发票</h3>
+        <div class="license">
+          <h3>电子发票</h3>
+          <p>购买方：个人 · 林先生</p>
+          <p>项目名称：充电服务费</p>
+          <p>价税合计：¥68.20</p>
+          <p>开票日期：2025-06-17</p>
+        </div>
+        <button class="btn primary block" style="margin-top:13px"
+                data-action="download-file">保存到手机</button>`);
+      break;
+    case "resend-invoice": toast("发票已重新发送至用户邮箱");break;
+    case "issue-replacement":
+      toast("换开发票已完成，新发票已发送");setTimeout(invoiceList,400);break;
+
+    case "appeal-detail":
+      showDialog(`
+        <h3>用户历史占用记录</h3>
+        <div class="line"><span>近90天占用次数</span><b>3次</b></div>
+        <div class="line"><span>累计占用时长</span><b>86分钟</b></div>
+        <div class="line"><span>累计占用费用</span><b>¥43.00</b></div>
+        <div class="line"><span>历史申诉</span><b>1次 · 已通过</b></div>
+        <div class="notice" style="margin-top:12px">
+          千里眼记录显示：本次充电结束后用户尝试拔枪，但设备电子锁未立即释放。
+        </div>
+        <button class="btn block" style="margin-top:13px" data-action="close-dialog">关闭</button>`);
+      break;
+    case "process-appeal":
+      showDialog(`
+        <h3>处理占用申诉</h3>
+        <p>申请退款 ¥16.50，请结合设备日志和用户历史记录进行处理。</p>
+        <div class="option active"><b>同意退款</b><span>占位费用将原路退还用户</span><i>✓</i></div>
+        <div class="option"><b>驳回申诉</b><span>需填写明确的驳回原因</span><i>✓</i></div>
+        <div class="field"><label>处理说明</label>
+          <textarea class="input">经核实设备电子锁释放存在延迟，同意退还本次占位费用。</textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="appeal-success">提交处理结果</button>
+        </div>`);
+      break;
+    case "appeal-success":
+      closeDialog();toast("申诉处理完成，退款申请已提交");setTimeout(appealList,450);break;
+
+    case "urge-sms":
+      showDialog(`
+        <h3>发送催挪短信</h3>
+        <p>短信将发送至车主 138****2786。</p>
+        <div class="field"><label>短信模板</label>
+          <select class="input">
+            <option>您的车辆已占用充电车位，请尽快驶离</option>
+            <option>车辆已充满，请及时拔枪并驶离车位</option>
+          </select>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="sms-success">确认发送</button>
+        </div>`);
+      break;
+    case "sms-success":closeDialog();toast("催挪短信发送成功，已记录操作日志");break;
+    case "virtual-call":
+      showDialog(`
+        <h3>隐私号码拨号</h3>
+        <p>平台将使用虚拟中间号联系用户，双方真实号码不会被展示。</p>
+        <div class="line"><span>用户号码</span><b>138****2786</b></div>
+        <div class="line"><span>关联车牌</span><b>粤B·8P3Q2</b></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="call-success">立即拨号</button>
+        </div>`);
+      break;
+    case "call-success":closeDialog();toast("正在通过虚拟号码呼叫用户…");break;
+    case "speaker-broadcast":
+      showDialog(`
+        <h3>场站音柱播报</h3>
+        <div class="field"><label>播报文案</label>
+          <textarea class="input">粤B·6M82Q车主您好，您的车辆正在占用充电车位，请尽快驶离，谢谢配合。</textarea>
+        </div>
+        <div class="field"><label>播报次数</label>
+          <select class="input"><option>播报1次</option><option>每隔1分钟播报3次</option></select>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="broadcast-success">开始播报</button>
+        </div>`);
+      break;
+    case "broadcast-success":closeDialog();toast("音柱播报任务已下发");break;
+
+    case "diagnosis-plan":
+      showDialog(`
+        <h3>夜间利用率改善方案</h3>
+        <div class="line"><span>目标时段</span><b>23:00-07:00</b></div>
+        <div class="line"><span>建议综合电价</span><b>¥0.82/kWh</b></div>
+        <div class="line"><span>建议营销人群</span><b>周边5公里夜间用户</b></div>
+        <div class="line"><span>预计触达用户</span><b>1,286人</b></div>
+        <div class="line"><span>预计电量提升</span><b style="color:#079a75">+8.6%</b></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">暂不执行</button>
+          <button class="btn primary flex" data-action="plan-success">创建运营计划</button>
+        </div>`);
+      break;
+    case "plan-success":closeDialog();toast("运营改善计划已创建");break;
+
+    case "fault-detail":
+      showDialog(`
+        <h3>设备故障详情</h3>
+        <div class="line"><span>设备编号</span><b>C12</b></div>
+        <div class="line"><span>故障代码</span><b>E-204</b></div>
+        <div class="line"><span>故障描述</span><b>绝缘检测异常</b></div>
+        <div class="line"><span>发生时间</span><b>2025-06-18 10:18</b></div>
+        <div class="line"><span>远程诊断</span><b style="color:#df5964">疑似枪线绝缘阻值过低</b></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="restart-device">远程重启</button>
+          <button class="btn primary flex" data-action="repair-device">提交报修</button>
+        </div>`);
+      break;
+    case "repair-device":
+    case "new-repair":
+      showDialog(`
+        <h3>设备一键报修</h3>
+        <div class="field"><label>设备编码</label><input class="input" value="C12"></div>
+        <div class="field"><label>故障类型</label>
+          <select class="input"><option>绝缘检测异常</option><option>设备离线</option><option>充电枪损坏</option></select>
+        </div>
+        <div class="field"><label>故障描述</label>
+          <textarea class="input">设备多次出现绝缘检测异常，远程重启后仍未恢复。</textarea>
+        </div>
+        <div class="field"><label>现场照片</label>
+          <button class="btn light block" data-action="upload-repair-image">＋ 上传现场图片</button>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="repair-submit">提交报修</button>
+        </div>`);
+      break;
+    case "upload-repair-image":
+      actionEl.textContent="✓ 已上传2张现场图片";toast("图片上传成功");break;
+    case "repair-submit":
+      closeDialog();toast("报修工单已创建，等待运维接单");break;
+    case "assign-worker":
+      showDialog(`
+        <h3>指派运维人员</h3>
+        <div class="option active"><b>王海 · 距离2.3km</b><span>当前无进行中工单</span><i>✓</i></div>
+        <div class="option"><b>赵磊 · 距离4.8km</b><span>当前1个进行中工单</span><i>✓</i></div>
+        <div class="field"><label>要求到场时间</label><select class="input"><option>2小时内</option><option>4小时内</option></select></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="assign-success">确认派工</button>
+        </div>`);
+      break;
+    case "assign-success":closeDialog();toast("已派工给王海，工单状态更新为维修中");break;
+    case "repair-progress":
+      showDialog(`
+        <h3>维修处理进度</h3>
+        <div class="line"><span>10:18</span><b>系统生成故障预警</b></div>
+        <div class="line"><span>10:24</span><b>商家提交报修</b></div>
+        <div class="line"><span>当前</span><b style="color:#e48322">等待派工</b></div>
+        <button class="btn block" style="margin-top:12px" data-action="close-dialog">关闭</button>`);
+      break;
+    case "contact-worker":toast("正在呼叫运维人员王海…");break;
+    case "repair-report":
+      showDialog(`
+        <h3>维修完成报告</h3>
+        <div class="line"><span>故障原因</span><b>急停按钮被误触发</b></div>
+        <div class="line"><span>处理方式</span><b>解除急停并执行设备复位</b></div>
+        <div class="line"><span>处理人员</span><b>王海</b></div>
+        <div class="line"><span>处理时长</span><b>42分钟</b></div>
+        <div class="line"><span>复测结果</span><b style="color:#079a75">充电测试正常</b></div>
+        <button class="btn primary block" style="margin-top:12px" data-action="close-dialog">确认</button>`);
+      break;
+
+    case "reply-review":
+      showDialog(`
+        <h3>回复用户评价</h3>
+        <p>您的回复将公开展示，请保持真诚、简洁和专业。</p>
+        <div class="field">
+          <textarea class="input">非常抱歉给您带来不便。我们已核查停车减免记录，并安排客服与您联系处理多付费用。</textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="reply-success">提交回复</button>
+        </div>`);
+      break;
+    case "reply-success":closeDialog();toast("评价回复已发布，待回复数量减1");break;
+
+    case "send-coupon":
+      showDialog(`
+        <h3>给订单用户发送卡券</h3>
+        <div class="option active"><b>5元关怀券</b><span>满20元可用 · 7天有效</span><i>✓</i></div>
+        <div class="option"><b>8折体验券</b><span>最高优惠10元 · 15天有效</span><i>✓</i></div>
+        <div class="field"><label>发放原因</label><input class="input" value="订单用户关怀"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="coupon-success">确认发放</button>
+        </div>`);
+      break;
+    case "coupon-success":closeDialog();toast("卡券已发放至用户账户");break;
+    case "stop-device":
+      showDialog(`
+        <h3>确认停止充电？</h3>
+        <p>设备正在为粤B·A82Q6充电。停止后订单将按当前电量和费用结算，并通知用户。</p>
+        <div class="field"><label>停止原因</label>
+          <select class="input"><option>用户要求停止</option><option>设备异常</option><option>运营人员处理</option></select>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn danger flex" data-action="stop-success">确认停止</button>
+        </div>`);
+      break;
+    case "stop-success":closeDialog();toast("停止指令已下发，订单正在结算");break;
+    case "restart-device":
+      showDialog(`
+        <h3>远程重启设备</h3>
+        <p>重启过程约需1-3分钟，期间设备将暂时离线。当前设备无进行中订单。</p>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="restart-success">确认重启</button>
+        </div>`);
+      break;
+    case "restart-success":closeDialog();toast("远程重启指令已发送");break;
+
+    case "edit-station":
+    case "new-station":
+      showDialog(`
+        <h3>${action==="new-station"?"新增电站":"编辑电站信息"}</h3>
+        <div class="field"><label>电站名称</label><input class="input" value="南山科技园超级充电站"></div>
+        <div class="field"><label>详细地址</label><input class="input" value="深圳市南山区科技南十二路18号"></div>
+        <div class="field"><label>营业时间</label><input class="input" value="00:00 - 24:00"></div>
+        <div class="field"><label>联系电话</label><input class="input" value="0755-88886628"></div>
+        <div class="field"><label>找桩指引</label><textarea class="input">进入园区后沿绿色指示牌前往B2停车场C区。</textarea></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="station-save">保存信息</button>
+        </div>`);
+      break;
+    case "station-save":closeDialog();toast("电站信息已保存");break;
+    case "edit-price":
+      showDialog(`
+        <h3>分时电价管理</h3>
+        <div class="line"><span>尖峰 10:00-12:00</span><b>电费0.98 + 服务费0.50</b></div>
+        <div class="line"><span>峰时 14:00-19:00</span><b>电费0.82 + 服务费0.50</b></div>
+        <div class="line"><span>平时 07:00-10:00</span><b>电费0.68 + 服务费0.50</b></div>
+        <div class="line"><span>谷时 23:00-07:00</span><b>电费0.32 + 服务费0.50</b></div>
+        <div class="field"><label>生效时间</label><input class="input" type="date" value="2025-06-19"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="price-save">保存并发布</button>
+        </div>`);
+      break;
+    case "price-save":closeDialog();toast("新电价已发布，将于设定时间生效");break;
+
+    case "new-employee":
+    case "edit-employee":
+      showDialog(`
+        <h3>${action==="new-employee"?"新增员工账号":"编辑员工账号"}</h3>
+        <div class="field"><label>员工姓名</label><input class="input" value="${action==="new-employee"?"":"王海"}"></div>
+        <div class="field"><label>手机号</label><input class="input" value="${action==="new-employee"?"":"13888882618"}"></div>
+        <div class="field"><label>所属部门</label><select class="input"><option>运维部</option><option>运营部</option><option>财务部</option></select></div>
+        <div class="field"><label>员工角色</label><select class="input"><option>运维工程师</option><option>电站站长</option><option>财务人员</option></select></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="employee-save">保存账号</button>
+        </div>`);
+      break;
+    case "employee-save":closeDialog();toast("员工账号已保存");break;
+    case "allocate-balance":
+      showDialog(`
+        <h3>分配员工虚拟币</h3>
+        <div class="line"><span>当前余额</span><b>¥380.00</b></div>
+        <div class="amount-grid">
+          <button class="amount">¥50</button><button class="amount active">¥100</button>
+          <button class="amount">¥200</button><button class="amount">自定义</button>
+        </div>
+        <div class="field"><label>分配说明</label><input class="input" value="员工充电福利"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="balance-success">确认分配</button>
+        </div>`);
+      break;
+    case "balance-success":closeDialog();toast("已向员工账户分配 ¥100.00");break;
+    case "delete-employee":
+      showDialog(`
+        <h3>删除员工账号？</h3>
+        <p>删除后该员工将无法登录管理端，历史操作记录仍会保留。</p>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn danger flex" data-action="delete-success">确认删除</button>
+        </div>`);
+      break;
+    case "delete-success":closeDialog();toast("员工账号已删除");break;
+
+    case "snapshot":toast("监控画面已抓拍并保存至事件记录");break;
+    case "inspection-report":
+      showDialog(`
+        <h3>场站巡检报告</h3>
+        <div class="line"><span>电站</span><b>南山科技园超级充电站</b></div>
+        <div class="line"><span>巡检人员</span><b>王海</b></div>
+        <div class="line"><span>巡检时间</span><b>2025-06-17 14:30</b></div>
+        <div class="line"><span>设备外观</span><b style="color:#079a75">正常</b></div>
+        <div class="line"><span>消防设施</span><b style="color:#079a75">正常</b></div>
+        <div class="line"><span>地锁设备</span><b style="color:#df5964">2个响应延迟</b></div>
+        <div class="line"><span>枪线与枪头</span><b style="color:#df5964">1个枪头磨损</b></div>
+        <button class="btn primary block" style="margin-top:13px"
+                data-action="create-repair-from-report">生成整改工单</button>`);
+      break;
+    case "create-repair-from-report":closeDialog();toast("已根据巡检问题生成2个整改工单");break;
+
+    case "search-owner":{
+      const plate=$("#plateSearch").value.trim();
+      if(!plate){toast("请输入车牌号");return}
+      $("#ownerResult").innerHTML=`
+        <article class="card">
+          <div class="row">
+            <div>
+              <b style="font-size:14px">${plate}</b>
+              <div style="margin-top:5px;color:var(--sub);font-size:9px">平台已维护联系方式</div>
+            </div>
+            ${statusTag("查询成功")}
+          </div>
+          <div class="line"><span>车主称呼</span><b>林先生</b></div>
+          <div class="line"><span>隐私号码</span><b>平台虚拟号码</b></div>
+          <div class="line"><span>最近充电电站</span><b>深圳湾智慧能源站</b></div>
+          <div class="actions">
+            <button class="btn warn flex" data-action="urge-sms">发送挪车短信</button>
+            <button class="btn primary flex" data-action="virtual-call">虚拟拨号</button>
+          </div>
+        </article>`;
+      toast("已查询到平台车辆信息");
+      break;
+    }
+
+    case "calculate-price":{
+      const energy=Number($("#monthEnergyInput").value)||560000;
+      const base=energy*.614;
+      $("#priceResult").innerHTML=`
+        <article class="diagnosis-score">
+          <div style="font-size:10px;opacity:.72">预计月度用电成本</div>
+          <div><b style="font-size:34px">¥${Math.round(base).toLocaleString()}</b></div>
+          <div style="font-size:10px;opacity:.72">综合购电均价约 ¥0.614/kWh</div>
+        </article>
+        <article class="card" style="margin-top:12px">
+          <h3 style="font-size:13px">分时电价测算结果</h3>
+          <div class="line"><span>尖峰电价</span><b>¥1.086/kWh</b></div>
+          <div class="line"><span>峰时电价</span><b>¥0.892/kWh</b></div>
+          <div class="line"><span>平时电价</span><b>¥0.628/kWh</b></div>
+          <div class="line"><span>谷时电价</span><b>¥0.326/kWh</b></div>
+          <div class="line"><span>基本电费预估</span><b>¥28,600/月</b></div>
+          <button class="btn primary block" style="margin-top:12px"
+                  data-action="save-calc">保存测算方案</button>
+        </article>`;
+      toast("电价测算完成");
+      break;
+    }
+    case "save-calc":toast("测算方案已保存至电站筹建档案");break;
+
+    case "send-target-coupon":
+      showDialog(`
+        <h3>指定用户发券</h3>
+        <div class="field"><label>用户手机号</label><input class="input" value="13888887628"></div>
+        <div class="field"><label>选择卡券</label>
+          <select class="input"><option>满30元减5元券</option><option>8折体验券</option><option>夜间充电券</option></select>
+        </div>
+        <div class="field"><label>发放数量</label><input class="input" type="number" value="1"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="coupon-success">确认发放</button>
+        </div>`);
+      break;
+    case "create-smart-coupon":
+      showDialog(`
+        <h3>创建智慧发券策略</h3>
+        <div class="field"><label>目标用户行为</label>
+          <select class="input"><option>30天未充电用户</option><option>充电后7天未复购</option><option>月充电3次以上用户</option></select>
+        </div>
+        <div class="field"><label>发放卡券</label><select class="input"><option>满30减5元券</option><option>夜间8折券</option></select></div>
+        <div class="field"><label>预计触达</label><input class="input" value="286人" disabled></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="smart-coupon-success">启动策略</button>
+        </div>`);
+      break;
+    case "smart-coupon-success":closeDialog();toast("智慧发券策略已启动");break;
+
+    case "apply-insurance":
+      showDialog(`
+        <h3>申请增值服务</h3>
+        <p>提交后专属服务顾问将在1个工作日内联系您确认保障范围和服务协议。</p>
+        <div class="field"><label>申请电站</label><select class="input"><option>南山科技园超级充电站</option><option>企业全部电站</option></select></div>
+        <div class="field"><label>联系人</label><input class="input" value="陈志远 138****6628"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="insurance-success">提交申请</button>
+        </div>`);
+      break;
+    case "insurance-success":closeDialog();toast("申请已提交，服务顾问将尽快联系您");break;
+
+    case "switch-company":
+      showSheet("切换企业",`
+        <article class="option active" data-company="深圳星途新能源科技有限公司">
+          <b>深圳星途新能源科技有限公司</b>
+          <span>12座电站 · 当前企业</span><i>✓</i>
+        </article>
+        <article class="option" data-company="广州星途能源运营有限公司">
+          <b>广州星途能源运营有限公司</b>
+          <span>8座电站 · 企业管理员</span><i>✓</i>
+        </article>
+        <article class="option" data-company="东莞绿色出行科技有限公司">
+          <b>东莞绿色出行科技有限公司</b>
+          <span>3座电站 · 数据查看权限</span><i>✓</i>
+        </article>
+        <button class="btn primary block" style="margin-top:15px"
+                data-action="confirm-company">确认切换</button>`);
+      break;
+    case "confirm-company":{
+      const active=$(".option.active",sheetBody);
+      currentCompany=active?.dataset.company||currentCompany;
+      closeSheet();toast("已切换至："+currentCompany);break;
+    }
+
+    case "message-settings":
+    case "settings":
+      showSheet("消息与系统设置",`
+        <article class="card">
+          <div class="line"><span>允许手机状态栏通知</span><button class="switch on"></button></div>
+          <div class="line"><span>声音与振动提醒</span><button class="switch on"></button></div>
+        </article>
+        <article class="card">
+          <h3 style="font-size:13px">消息类型</h3>
+          <div class="line"><span>设备故障预警</span><button class="switch on"></button></div>
+          <div class="line"><span>用户评价通知</span><button class="switch on"></button></div>
+          <div class="line"><span>占用申诉通知</span><button class="switch on"></button></div>
+          <div class="line"><span>开票申请通知</span><button class="switch on"></button></div>
+          <div class="line"><span>经营日报与周报</span><button class="switch"></button></div>
+        </article>
+        <article class="card">
+          <div class="line"><span>清除本地缓存</span><b>18.6MB</b></div>
+          <button class="btn block" data-action="clear-cache">清除缓存</button>
+        </article>`);
+      break;
+
+    case "customer-service":
+      showSheet("联系客服",`
+        <article class="card">
+          <h3 style="font-size:14px">企业专属客服</h3>
+          <p style="color:var(--sub);font-size:10px;line-height:1.7">
+            服务时间：每天 08:00-22:00，紧急设备故障支持7×24小时处理。
+          </p>
+          <div class="actions">
+            <button class="btn primary flex" data-action="online-service">在线客服</button>
+            <button class="btn flex" data-action="service-call">拨打客服</button>
+          </div>
+        </article>
+        <article class="card">
+          <h3 style="font-size:13px">常见问题</h3>
+          <div class="line"><span>设备无法远程启动</span><button class="btn" data-action="faq">查看</button></div>
+          <div class="line"><span>电子发票开具失败</span><button class="btn" data-action="faq">查看</button></div>
+          <div class="line"><span>企业结算账户问题</span><button class="btn" data-action="faq">查看</button></div>
+        </article>`);
+      break;
+    case "online-service":
+      showDialog(`
+        <h3>在线客服</h3>
+        <div style="height:170px;padding:12px;border-radius:14px;background:#f3f6f8;font-size:10px;line-height:1.7">
+          <div style="margin-bottom:10px;color:var(--sub)">客服小星：您好，请问需要协助处理什么问题？</div>
+          <div style="margin-left:45px;padding:9px;border-radius:12px;background:var(--green-soft)">
+            福田站C12枪出现绝缘检测异常。
+          </div>
+        </div>
+        <div class="field"><input class="input" placeholder="请输入问题"></div>
+        <button class="btn primary block" style="margin-top:10px" data-action="chat-send">发送</button>`);
+      break;
+    case "chat-send":toast("消息已发送，客服正在回复");break;
+    case "service-call":toast("正在拨打企业客服 400-888-6628");break;
+    case "faq":
+      showDialog(`
+        <h3>问题处理指引</h3>
+        <p>建议先确认设备网络状态、平台连接状态和设备急停按钮状态。若远程重启后仍无法恢复，请提交设备报修工单。</p>
+        <button class="btn primary block" style="margin-top:14px" data-action="new-repair">提交报修</button>`);
+      break;
+
+    case "privacy":
+    case "agreement":
+      showSheet(action==="privacy"?"隐私政策":"用户协议",`
+        <article class="card">
+          <h3 style="font-size:14px">${action==="privacy"?"商家管理端隐私政策":"商家管理端用户服务协议"}</h3>
+          <p style="color:var(--sub);font-size:11px;line-height:1.9">
+            本平台重视企业用户和员工账号的信息安全。为提供电站运营、设备监控、
+            用户服务和企业管理能力，平台将在获得授权的范围内处理账号信息、
+            操作日志、设备数据及必要的用户服务信息。
+          </p>
+          <p style="color:var(--sub);font-size:11px;line-height:1.9">
+            企业应按照合法、正当、必要原则使用订单用户信息，不得将用户手机号、
+            车牌号及充电记录用于未经授权的用途。
+          </p>
+          <div class="line"><span>协议版本</span><b>2025年5月版</b></div>
+          <div class="line"><span>生效日期</span><b>2025-05-20</b></div>
+        </article>`);
+      break;
+
+    case "version":
+      showDialog(`
+        <h3>发现新版本 V3.6.0</h3>
+        <p>当前版本 V3.5.2，新版本约 28.6MB。</p>
+        <div class="notice" style="margin-top:12px">
+          1. 新增千里眼枪头掉地识别；<br>
+          2. 优化设备故障远程诊断；<br>
+          3. 新增经营诊断月报；<br>
+          4. 修复部分已知问题。
+        </div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">稍后更新</button>
+          <button class="btn primary flex" data-action="update-version">立即更新</button>
+        </div>`);
+      break;
+    case "update-version":
+      actionEl.innerHTML='<span class="loading" style="margin:auto"></span>';
+      setTimeout(()=>{closeDialog();toast("更新完成，当前已是最新版本 V3.6.0")},1200);
+      break;
+
+    case "about":
+      showSheet("关于我们",`
+        <article class="card" style="text-align:center">
+          <div class="login-logo" style="margin:auto">⚡</div>
+          <h3 style="margin-top:14px">星途充电运营管理平台</h3>
+          <p style="color:var(--sub);font-size:10px">版本 V3.5.2</p>
+          <p style="color:var(--sub);font-size:10px;line-height:1.8">
+            为新能源充电运营企业提供数字化场站管理、设备监控、
+            数据分析和用户运营服务。
+          </p>
+        </article>
+        <article class="card">
+          <div class="line"><span>运营主体</span><b>深圳星途能源科技有限公司</b></div>
+          <div class="line"><span>客服电话</span><b>400-888-6628</b></div>
+          <div class="line"><span>官方网站</span><b>www.xingtu-energy.example</b></div>
+        </article>
+        <div class="license">
+          <h3>营业执照信息披露</h3>
+          <p>企业名称：深圳星途能源科技有限公司</p>
+          <p>统一社会信用代码：91440300MA5F8XXXX</p>
+          <p>住所：深圳市南山区科技园</p>
+        </div>`);
+      break;
+
+    case "account-security":
+      showSheet("账号与安全",`
+        <article class="card">
+          <div class="line"><span>登录账号</span><b>admin@xingtu</b></div>
+          <div class="line"><span>绑定手机号</span><b>138****6628</b></div>
+          <div class="line"><span>登录密码</span><button class="btn" data-action="change-password">修改</button></div>
+          <div class="line"><span>最近登录</span><b>深圳 · 当前设备</b></div>
+        </article>
+        <article class="card">
+          <h3 style="font-size:13px">登录设备</h3>
+          <div class="line"><span>iPhone 15 Pro</span><b style="color:#079a75">当前设备</b></div>
+          <div class="line"><span>MacBook Pro</span><button class="btn danger" data-action="remove-device">下线</button></div>
+        </article>`);
+      break;
+    case "change-password":
+      showDialog(`
+        <h3>修改登录密码</h3>
+        <div class="field"><input class="input" type="password" placeholder="当前密码"></div>
+        <div class="field"><input class="input" type="password" placeholder="新密码"></div>
+        <div class="field"><input class="input" type="password" placeholder="确认新密码"></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="password-success">确认修改</button>
+        </div>`);
+      break;
+    case "password-success":
+    case "reset-password":closeDialog();toast("登录密码修改成功");break;
+    case "remove-device":toast("MacBook Pro 已退出登录");break;
+
+    case "logout":
+      showDialog(`
+        <h3>退出当前账号？</h3>
+        <p>退出后将不再接收当前企业的实时设备预警通知。</p>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn danger flex" data-action="logout-confirm">退出登录</button>
+        </div>`);
+      break;
+    case "logout-confirm":
+      closeDialog();$("#loginView").classList.remove("hide");switchPage("homePage");toast("已安全退出");break;
+
+    case "read-all":
+      $$(".message-card").forEach(m=>m.classList.remove("unread"));
+      toast("所有消息已标记为已读");break;
+    case "export-data":
+      showDialog(`
+        <h3>导出经营数据</h3>
+        <div class="field"><label>数据周期</label><select class="input"><option>今日</option><option>近7日</option><option>近30日</option></select></div>
+        <div class="field"><label>文件格式</label><select class="input"><option>Excel .xlsx</option><option>PDF报表</option></select></div>
+        <div class="dialog-actions">
+          <button class="btn flex" data-action="close-dialog">取消</button>
+          <button class="btn primary flex" data-action="export-success">生成文件</button>
+        </div>`);
+      break;
+    case "export-success":closeDialog();toast("报表生成成功，已保存至下载目录");break;
+    case "download-file":toast("文件已保存至手机");break;
+
+    case "channel-detail":
+    case "station-ranking":
+      showSheet(action==="channel-detail"?"渠道数据排名":"电站经营排名",`
+        <div class="tabs"><button class="active">按充电金额</button><button>按充电量</button><button>按订单数</button></div>
+        ${["南山科技园超级充电站","深圳湾智慧能源充电站","福田中心区公共充电站","宝安壹方城智慧充电站","龙华北站公共充电站"].map((n,i)=>`
+          <article class="card" style="margin-top:${i===0?13:0}px">
+            <div class="rank-item" style="padding:0">
+              <div class="rank-num">${i+1}</div>
+              <div class="rank-info"><b>${n}</b><span>利用率 ${52-i*4}.6%</span></div>
+              <div class="rank-value">${(4286-i*438).toLocaleString()} kWh</div>
+            </div>
+          </article>`).join("")}`);
+      break;
+
+    case "monitor-map":
+      showSheet("电站监控地图",`
+        <article style="position:relative;height:560px;border-radius:23px;overflow:hidden;
+          background:linear-gradient(30deg,#dce8df,#d9e4eb)">
+          <div style="position:absolute;left:18%;top:22%;padding:10px;border-radius:13px;color:#06241d;background:var(--primary);font-size:10px;font-weight:850">南山站 · 2异常</div>
+          <div style="position:absolute;right:15%;top:30%;padding:10px;border-radius:13px;color:#fff;background:var(--dark);font-size:10px;font-weight:850">福田站 · 1故障</div>
+          <div style="position:absolute;left:32%;top:52%;padding:10px;border-radius:13px;color:#06241d;background:var(--primary);font-size:10px;font-weight:850">深圳湾站 · 正常</div>
+          <div style="position:absolute;right:22%;top:68%;padding:10px;border-radius:13px;color:#fff;background:#ff6b76;font-size:10px;font-weight:850">宝安站 · 1离线</div>
+          <div style="position:absolute;left:12px;right:12px;bottom:12px;padding:15px;border-radius:18px;background:#fff">
+            <div class="row"><b>企业监控概览</b>${statusTag("12座电站")}</div>
+            <div class="health-bar">
+              <div class="health-item"><b>304</b><span>在线</span></div>
+              <div class="health-item"><b>5</b><span>故障</span></div>
+              <div class="health-item"><b>7</b><span>离线</span></div>
+            </div>
+          </div>
+        </article>`);
+      break;
+
+    case "monitor-search":
+    case "local-search":toast("查询完成，已更新列表结果");break;
+    case "clear-cache":toast("缓存已清理，释放18.6MB空间");break;
+    case "dialog-code":toast("验证码已发送");break;
+    case "app-manage":
+      showSheet("应用管理",`
+        <div class="notice">长按拖动可调整首页应用顺序。关闭后应用仍可在全部应用中访问。</div>
+        ${["订单列表","电站管理","员工管理","评价管理","千里眼","场站运维","车牌找人","电价测算"].map(n=>`
+          <article class="card">
+            <div class="row"><span>☷　${n}</span><button class="switch on"></button></div>
+          </article>`).join("")}
+        <button class="btn primary block" data-action="save-apps">保存设置</button>`);
+      break;
+    case "save-apps":closeSheet();toast("首页应用配置已保存");break;
+    default:
+      toast("业务操作已执行");
+  }
+});
+
+/* 周期切换 */
+$$(".period-tabs button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    $$(".period-tabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const data={
+      today:{title:"今日经营业绩",energy:"18,620",amount:"23,846",orders:"628",compare:false},
+      week:{title:"本周经营业绩",energy:"126,580",amount:"162,846",orders:"4,286",compare:true},
+      month:{title:"本月经营业绩",energy:"486,320",amount:"628,650",orders:"16,826",compare:true}
+    }[btn.dataset.period];
+    $("#performanceTitle").textContent=data.title;
+    $("#energyMetric").textContent=data.energy;
+    $("#amountMetric").textContent=data.amount;
+    $("#orderMetric").textContent=data.orders;
+    ["energyCompare","amountCompare","orderCompare"].forEach(id=>$("#"+id).classList.toggle("hide",!data.compare));
+  });
+});
+
+/* 数据周期 */
+$$("[data-data-period]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    $$("[data-data-period]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const d={
+      today:["23,846.50","18,620","628","8,286"],
+      yesterday:["21,586.20","16,982","582","7,568"],
+      week:["162,846.80","126,580","4,286","56,826"],
+      month:["628,650.00","486,320","16,826","218,620"]
+    }[btn.dataset.dataPeriod];
+    $("#dataAmount").textContent=d[0];
+    $("#dataEnergy").textContent=d[1];
+    $("#dataOrders").textContent=d[2];
+    $("#dataService").textContent=d[3];
+    toast("数据周期已切换");
+  });
+});
+
+/* 监控筛选 */
+$$("[data-device-filter]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    $$("[data-device-filter]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const type=btn.dataset.deviceFilter;
+    $$(".monitor-card").forEach(card=>{
+      card.classList.toggle("hide",type!=="all"&&card.dataset.deviceType!==type);
+    });
+  });
+});
+
+/* 消息筛选 */
+$$("[data-message-filter]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    $$("[data-message-filter]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const type=btn.dataset.messageFilter;
+    $$(".message-card").forEach(card=>{
+      card.classList.toggle("hide",type!=="all"&&card.dataset.messageType!==type);
+    });
+  });
+});
+
+/* 动态页签 */
+document.addEventListener("click",e=>{
+  const statusBtn=e.target.closest("[data-status-filter]");
+  if(statusBtn){
+    const tabs=statusBtn.parentElement;
+    $$("button",tabs).forEach(b=>b.classList.remove("active"));
+    statusBtn.classList.add("active");
+    const selector=tabs.dataset.list;
+    const type=statusBtn.dataset.statusFilter;
+    if(selector){
+      $$(selector,sheetBody).forEach(card=>{
+        card.classList.toggle("hide",type!=="all"&&card.dataset.status!==type);
+      });
+    }
+  }
+
+  const reviewBtn=e.target.closest("[data-review-filter]");
+  if(reviewBtn){
+    $$("[data-review-filter]").forEach(b=>b.classList.remove("active"));
+    reviewBtn.classList.add("active");
+    const f=reviewBtn.dataset.reviewFilter;
+    $$(".review-card",sheetBody).forEach(card=>{
+      card.classList.toggle("hide",f!=="all"&&!card.dataset.review.includes(f));
+    });
+  }
+
+  const occupyBtn=e.target.closest("[data-occupancy]");
+  if(occupyBtn){
+    $$("[data-occupancy]").forEach(b=>b.classList.remove("active"));
+    occupyBtn.classList.add("active");
+    const type=occupyBtn.dataset.occupancy;
+    const map={
+      before:{
+        tag:"充电前占用",desc:"车辆已插枪但尚未启动充电",time:"18分钟",
+        plate:"粤B·6M82Q",station:"A03枪 · 南山科技园站"
+      },
+      after:{
+        tag:"充电后占用",desc:"订单已结束，车辆尚未拔枪驶离",time:"38分钟",
+        plate:"粤B·8P3Q2",station:"B06枪 · 深圳湾智慧能源站"
+      },
+      none:{
+        tag:"无充电占用",desc:"千里眼识别车辆占用充电车位",time:"26分钟",
+        plate:"粤B·2K18P",station:"车位C118 · 福田中心区站"
+      }
+    }[type];
+    $("#occupancyContent").innerHTML=`
+      <article class="card">
+        <div class="row">
+          <div>
+            ${statusTag(map.tag,"orange")}
+            <h3 style="margin-top:10px;font-size:14px">${map.station}</h3>
+            <p style="margin:6px 0;color:var(--sub);font-size:10px">${map.desc}</p>
+          </div>
+          <div style="text-align:right">
+            <div class="occupy-time">${map.time}</div>
+            <span style="font-size:9px;color:var(--sub)">占用时长</span>
+          </div>
+        </div>
+        <div class="line"><span>识别车牌</span><b>${map.plate}</b></div>
+        <div class="line"><span>用户联系方式</span><b>138****2786</b></div>
+        <div class="actions">
+          <button class="btn warn flex" data-action="urge-sms">发送催挪短信</button>
+          <button class="btn flex" data-action="virtual-call">虚拟拨号</button>
+          ${type==="none"?'<button class="btn primary flex" data-action="camera-view">查看监控</button>':""}
+        </div>
+      </article>`;
+  }
+
+  const cameraBtn=e.target.closest("[data-camera-tab]");
+  if(cameraBtn){
+    $$("[data-camera-tab]").forEach(b=>b.classList.remove("active"));
+    cameraBtn.classList.add("active");
+    const type=cameraBtn.dataset.cameraTab;
+    if(type==="playback"){
+      $("#cameraContent").innerHTML=`
+        <article class="card" style="margin-top:13px">
+          <div class="field"><label>选择日期</label><input class="input" type="date" value="2025-06-18"></div>
+          <div class="camera" style="margin-top:12px">
+            <div class="car-shape"></div>
+            <div class="video-controls"><span>▶ 10:08:36</span><span>倍速　🔊　⛶</span></div>
+          </div>
+          <div class="timeline"><div class="timeline-labels"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div></div>
+          <button class="btn primary block" style="margin-top:12px" data-action="snapshot">保存视频片段</button>
+        </article>`;
+    }else if(type==="alert"){
+      $("#cameraContent").innerHTML=`
+        <article class="card" style="margin-top:13px">
+          <div class="line"><span>占位消息通知</span><button class="switch on"></button></div>
+          <div class="line"><span>烟火检测通知</span><button class="switch on"></button></div>
+          <div class="line"><span>枪头掉地通知</span><button class="switch on"></button></div>
+        </article>
+        <article class="card">
+          <div class="order-head"><b>枪头掉地预警</b>${statusTag("已处理")}</div>
+          <p style="font-size:10px;color:var(--sub)">A16枪 · 2025-06-18 08:36</p>
+          <button class="btn block" data-action="camera-view">查看事件录像</button>
+        </article>`;
+    }else if(type==="speaker"){
+      $("#cameraContent").innerHTML=`
+        <article class="card" style="margin-top:13px">
+          <div class="line"><span>音柱设备状态</span><b style="color:#079a75">在线</b></div>
+          <div class="field"><label>默认播报文案</label><textarea class="input">请勿占用充电车位，充电完成后请及时驶离。</textarea></div>
+          <div class="field"><label>定时播报</label><input class="input" value="每日 08:00、18:00"></div>
+          <button class="btn primary block" style="margin-top:12px" data-action="speaker-broadcast">立即播报</button>
+        </article>`;
+    }else{
+      eagleEye();
+    }
+  }
+});
+
+/* 遮罩关闭 */
+sheetOverlay.addEventListener("click",e=>{if(e.target===sheetOverlay)closeSheet()});
+dialogOverlay.addEventListener("click",e=>{if(e.target===dialogOverlay)closeDialog()});
+
+/* 实时功率 */
+setInterval(()=>{
+  const value=2864.5+Math.sin(Date.now()/1800)*36;
+  $("#realtimePower").textContent=value.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1});
+},1500);
+
+function updateTime(){
+  const now=new Date();
+  $("#clock").textContent=
+    String(now.getHours()).padStart(2,"0")+":"+
+    String(now.getMinutes()).padStart(2,"0");
+  const camera=$("#cameraTime");
+  if(camera){
+    camera.textContent=
+      now.getFullYear()+"-"+
+      String(now.getMonth()+1).padStart(2,"0")+"-"+
+      String(now.getDate()).padStart(2,"0")+" "+
+      String(now.getHours()).padStart(2,"0")+":"+
+      String(now.getMinutes()).padStart(2,"0")+":"+
+      String(now.getSeconds()).padStart(2,"0");
+  }
+}
+updateTime();
+setInterval(updateTime,1000);
+</script>
+</body>
+</html>

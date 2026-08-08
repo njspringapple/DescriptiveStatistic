@@ -1,0 +1,3260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
+  <title>智慧泊车</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --red: #a63132;
+      --red-dark: #762526;
+      --red-soft: #f8eeee;
+
+      --green: #176d5e;
+      --green-dark: #105347;
+      --green-soft: #e8f3ef;
+
+      --gold: #ad7a31;
+      --gold-soft: #f7eedc;
+
+      --blue: #35627d;
+      --blue-soft: #edf3f7;
+
+      --text: #202522;
+      --text-2: #68716d;
+      --text-3: #9ca39f;
+
+      --bg: #f4f5f2;
+      --card: #ffffff;
+      --line: #e8ebe7;
+
+      --shadow:
+        0 9px 24px rgba(37, 46, 42, 0.065),
+        0 2px 6px rgba(37, 46, 42, 0.025);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #e5e8e4;
+    }
+
+    body {
+      max-width: 480px;
+      margin: 0 auto;
+      color: var(--text);
+      background: var(--bg);
+      font-family:
+        "PingFang SC",
+        "Microsoft YaHei",
+        Arial,
+        sans-serif;
+    }
+
+    button {
+      padding: 0;
+      color: inherit;
+      border: 0;
+      outline: 0;
+      background: none;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    svg {
+      display: block;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* ========================
+       顶部品牌区
+    ======================== */
+
+    .hero {
+      position: relative;
+      padding:
+        calc(12px + env(safe-area-inset-top))
+        18px
+        42px;
+      overflow: hidden;
+      color: #fff;
+      background:
+        linear-gradient(
+          112deg,
+          rgba(102, 29, 29, 0.97),
+          rgba(157, 50, 47, 0.93) 57%,
+          rgba(93, 48, 38, 0.87)
+        ),
+        url("https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=1000&q=82")
+        center 45% / cover;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(
+          circle at 88% 15%,
+          rgba(255, 224, 170, 0.17),
+          transparent 30%
+        ),
+        linear-gradient(
+          to bottom,
+          rgba(74, 19, 19, 0.03),
+          rgba(71, 20, 19, 0.27)
+        );
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.13);
+      backdrop-filter: blur(10px);
+      font-family: Georgia, serif;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .brand-name strong {
+      display: block;
+      font-size: 19px;
+      letter-spacing: 1.6px;
+    }
+
+    .brand-name small {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 10px;
+      letter-spacing: 1.2px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 9px;
+    }
+
+    .hero-action {
+      position: relative;
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.21);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.11);
+      backdrop-filter: blur(9px);
+    }
+
+    .hero-action i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .message-dot {
+      position: absolute;
+      top: 3px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      border: 2px solid #963533;
+      border-radius: 50%;
+      background: #f0d086;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      margin-top: 16px;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      color: #f4dfb3;
+      border: 1px solid rgba(245, 222, 179, 0.25);
+      border-radius: 30px;
+      background: rgba(76, 20, 20, 0.18);
+      font-size: 12px;
+    }
+
+    .hero-label i {
+      width: 14px;
+      height: 14px;
+    }
+
+    .hero-main-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .hero-copy {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(20px, 5.6vw, 25px);
+      line-height: 1.25;
+      letter-spacing: 0.1px;
+    }
+
+    .hero-copy h1 span {
+      color: #f6d390;
+    }
+
+    .hero-description {
+      margin-top: 8px;
+      color: rgba(255, 237, 204, 0.94);
+      font-size: 13px;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      margin-left: 12px;
+      padding-bottom: 2px;
+    }
+
+    .hero-stat {
+      min-width: 52px;
+      text-align: right;
+    }
+
+    .hero-stat + .hero-stat {
+      margin-left: 9px;
+      padding-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .hero-stat span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* ========================
+       主体（可滚动）
+    ======================== */
+
+    .main {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+      margin-top: -28px;
+      padding: 0 14px 16px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    .main::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ========================
+       搜索栏
+    ======================== */
+
+    .search-card {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      height: 58px;
+      padding: 7px 7px 7px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.94);
+      border-radius: 19px;
+      background: rgba(255, 255, 255, 0.985);
+      box-shadow:
+        0 13px 28px rgba(75, 42, 38, 0.13),
+        0 2px 6px rgba(75, 42, 38, 0.04);
+      backdrop-filter: blur(13px);
+    }
+
+    .location-entry {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 5px;
+      padding-right: 12px;
+      border-right: 1px solid var(--line);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .location-entry i {
+      width: 20px;
+      height: 20px;
+      color: var(--red);
+      stroke-width: 2;
+    }
+
+    .search-entry {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      padding: 0 11px;
+      color: #8e9692;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .search-entry i {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+
+    .search-entry span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .map-button {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 100%;
+      padding: 0 14px;
+      color: #fff;
+      border-radius: 13px;
+      background: var(--green);
+      box-shadow: 0 6px 14px rgba(23, 109, 94, 0.19);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .map-button i {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ========================
+       标题和更多按钮
+    ======================== */
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      border-radius: 5px;
+      background: var(--red);
+    }
+
+    .section-title h2 {
+      font-size: 16px;
+    }
+
+    .section-title p {
+      color: var(--text-3);
+      font-size: 12px;
+    }
+
+    .section-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 5px 10px;
+      color: #656e69;
+      border-radius: 14px;
+      background: #f2f4f1;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .section-more i {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ========================
+       便捷服务
+    ======================== */
+
+    .service-panel {
+      flex-shrink: 0;
+      padding: 14px 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .service-panel .section-header {
+      padding: 0 8px;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px 0;
+      margin-top: 12px;
+    }
+
+    .service-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 2px;
+      border-radius: 12px;
+    }
+
+    .service-item:active {
+      background: #f7f8f6;
+    }
+
+    .service-icon {
+      position: relative;
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 14px;
+    }
+
+    .service-icon i {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.8;
+    }
+
+    .service-icon.red {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .service-icon.green {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .service-icon.gold {
+      color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .service-icon.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .service-item > span {
+      margin-top: 7px;
+      color: #3f4642;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .service-badge {
+      position: absolute;
+      top: -6px;
+      right: -12px;
+      padding: 2px 6px;
+      color: #fff;
+      border: 1.5px solid #fff;
+      border-radius: 10px;
+      background: #dc6049;
+      font-size: 10px;
+      font-style: normal;
+      white-space: nowrap;
+    }
+
+    /* ========================
+       无感支付广告
+    ======================== */
+
+    .campaign {
+      position: relative;
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      overflow: hidden;
+      padding: 16px 16px;
+      color: #fff;
+      border-radius: 20px;
+      background:
+        linear-gradient(
+          94deg,
+          rgba(11, 83, 69, 0.99) 0%,
+          rgba(22, 105, 88, 0.94) 55%,
+          rgba(33, 116, 96, 0.77) 100%
+        ),
+        url("https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80")
+        center 56% / cover;
+      box-shadow: 0 9px 22px rgba(21, 100, 85, 0.17);
+    }
+
+    .campaign::before {
+      content: "";
+      position: absolute;
+      top: -55px;
+      right: 42px;
+      width: 145px;
+      height: 145px;
+      border: 24px solid rgba(255, 255, 255, 0.045);
+      border-radius: 50%;
+    }
+
+    .campaign-copy {
+      position: relative;
+      z-index: 2;
+      width: 60%;
+    }
+
+    .campaign-label {
+      display: inline-block;
+      padding: 4px 9px;
+      color: #f2d58d;
+      border-radius: 6px;
+      background: rgba(4, 56, 47, 0.55);
+      font-size: 11px;
+    }
+
+    .campaign-copy h2 {
+      margin-top: 7px;
+      font-size: clamp(17px, 4.6vw, 20px);
+      line-height: 1.3;
+    }
+
+    .campaign-copy p {
+      margin-top: 5px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+    }
+
+    .campaign-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+      padding: 8px 15px;
+      color: #225c50;
+      border-radius: 20px;
+      background: #f2e1bc;
+      box-shadow: 0 5px 12px rgba(6, 59, 49, 0.13);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .campaign-button i {
+      width: 14px;
+      height: 14px;
+    }
+
+    .campaign-illustration {
+      position: absolute;
+      right: 4px;
+      bottom: -3px;
+      width: clamp(120px, 34vw, 158px);
+    }
+
+    /* ========================
+       包月停车套餐
+    ======================== */
+
+    .package-panel {
+      flex-shrink: 0;
+    }
+
+    .package-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .package-card {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 13px;
+      border: 1px solid #ebe3d8;
+      border-radius: 17px;
+      background:
+        radial-gradient(
+          circle at 100% 0,
+          rgba(173, 124, 49, 0.15),
+          transparent 35%
+        ),
+        linear-gradient(145deg, #fffdf9, #faf6ed);
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+
+    .package-card.green {
+      border-color: #d9e9e4;
+      background:
+        radial-gradient(
+          circle at 100% 0,
+          rgba(23, 109, 94, 0.14),
+          transparent 36%
+        ),
+        linear-gradient(145deg, #ffffff, #eef7f4);
+    }
+
+    .package-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .package-icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: var(--gold);
+      border-radius: 11px;
+      background: var(--gold-soft);
+    }
+
+    .green .package-icon {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .package-icon i {
+      width: 19px;
+      height: 19px;
+    }
+
+    .recommend-tag {
+      padding: 4px 8px;
+      color: #946921;
+      border-radius: 8px;
+      background: #f8ecd3;
+      font-size: 11px;
+    }
+
+    .green .recommend-tag {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .package-card h3 {
+      margin-top: 10px;
+      overflow: hidden;
+      font-size: 15px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .parking-name {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+      overflow: hidden;
+      color: #5c645f;
+      font-size: 12px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .parking-name i {
+      flex-shrink: 0;
+      width: 13px;
+      height: 13px;
+      color: var(--red);
+    }
+
+    .green .parking-name i {
+      color: var(--green);
+    }
+
+    .package-description {
+      margin-top: 4px;
+      overflow: hidden;
+      color: var(--text-3);
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .package-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+
+    .package-price {
+      color: var(--red);
+      font-size: clamp(18px, 4.8vw, 21px);
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .package-price small {
+      color: var(--text-2);
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .package-buy {
+      padding: 7px 11px;
+      color: #fff;
+      border-radius: 9px;
+      background: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .green .package-buy {
+      background: var(--green);
+    }
+
+    /* ========================
+       车主增值服务
+    ======================== */
+
+    .benefit-panel {
+      flex-shrink: 0;
+    }
+
+    .benefit-featured {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .benefit-card {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 11px;
+      overflow: hidden;
+      padding: 13px 12px;
+      border-radius: 17px;
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+
+    .benefit-card::after {
+      content: "";
+      position: absolute;
+      top: -34px;
+      right: -34px;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+    }
+
+    .benefit-card.wash {
+      border: 1px solid #d9e6ee;
+      background: linear-gradient(135deg, #eef6fb, #ffffff 70%);
+    }
+
+    .benefit-card.wash::after {
+      background: rgba(53, 98, 125, 0.08);
+    }
+
+    .benefit-card.beauty {
+      border: 1px solid #f0ddd2;
+      background: linear-gradient(135deg, #fdf1e9, #ffffff 70%);
+    }
+
+    .benefit-card.beauty::after {
+      background: rgba(169, 98, 66, 0.09);
+    }
+
+    .benefit-icon {
+      display: grid;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border-radius: 13px;
+      background: #fff;
+    }
+
+    .wash .benefit-icon {
+      color: var(--blue);
+      box-shadow: 0 4px 10px rgba(53, 98, 125, 0.13);
+    }
+
+    .beauty .benefit-icon {
+      color: #a96242;
+      box-shadow: 0 4px 10px rgba(169, 98, 66, 0.13);
+    }
+
+    .benefit-icon i {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.9;
+    }
+
+    .benefit-info {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+    }
+
+    .benefit-info strong {
+      display: block;
+      overflow: hidden;
+      font-size: 15px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .benefit-offer {
+      display: inline-flex;
+      align-items: baseline;
+      margin-top: 5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .wash .benefit-offer {
+      color: var(--blue);
+    }
+
+    .beauty .benefit-offer {
+      color: #b0512f;
+    }
+
+    .benefit-offer b {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .benefit-offer small {
+      margin-left: 2px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .benefit-arrow {
+      position: absolute;
+      right: 9px;
+      bottom: 9px;
+      z-index: 1;
+      display: grid;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      color: #fff;
+      border-radius: 50%;
+    }
+
+    .wash .benefit-arrow {
+      background: var(--blue);
+    }
+
+    .beauty .benefit-arrow {
+      background: #b0512f;
+    }
+
+    .benefit-arrow i {
+      width: 13px;
+      height: 13px;
+    }
+
+    .benefit-links {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 10px;
+      padding: 12px 4px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .benefit-link {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .benefit-link + .benefit-link::before {
+      content: "";
+      position: absolute;
+      top: 18%;
+      bottom: 18%;
+      left: 0;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .benefit-link i {
+      width: 21px;
+      height: 21px;
+      color: #38413d;
+      stroke-width: 1.8;
+    }
+
+    .benefit-link span {
+      margin-top: 6px;
+      color: #414945;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    /* ========================
+       底部导航
+    ======================== */
+
+    .bottom-nav {
+      display: flex;
+      height: calc(60px + env(safe-area-inset-bottom));
+      padding:
+        7px 9px
+        calc(5px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 -6px 20px rgba(36, 44, 40, 0.045);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #969d99;
+    }
+
+    .nav-item i {
+      width: 21px;
+      height: 21px;
+      stroke-width: 1.8;
+    }
+
+    .nav-item span {
+      margin-top: 3px;
+      font-size: 11px;
+    }
+
+    .nav-item.active {
+      color: var(--red);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      width: 20px;
+      height: 3px;
+      border-radius: 0 0 7px 7px;
+      background: var(--red);
+      transform: translateX(-50%);
+    }
+
+    /* Toast */
+
+    .toast {
+      position: fixed;
+      z-index: 100;
+      bottom: calc(76px + env(safe-area-inset-bottom));
+      left: 50%;
+      max-width: 82%;
+      padding: 10px 16px;
+      overflow: hidden;
+      color: #fff;
+      border-radius: 20px;
+      background: rgba(27, 32, 29, 0.92);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 10px);
+      transition: 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* ==================================================
+       ↓↓↓ 二级页面 / 交互组件 ↓↓↓
+    ================================================== */
+
+    .page {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg);
+      visibility: hidden;
+      transform: translateX(100%);
+      transition: transform 0.34s cubic-bezier(0.32, 0.72, 0.24, 1);
+    }
+
+    .page.open {
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .page-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      padding:
+        calc(12px + env(safe-area-inset-top))
+        14px
+        13px;
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .page-back {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      color: var(--text);
+      border-radius: 50%;
+      background: #f2f4f1;
+    }
+
+    .page-back i {
+      width: 20px;
+      height: 20px;
+    }
+
+    .page-header h1 {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .page-header .head-extra {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .page-body {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding: 14px;
+    }
+
+    .page-body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .page-footer {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding:
+        12px 16px
+        calc(12px + env(safe-area-inset-bottom));
+      background: var(--card);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -6px 18px rgba(36, 44, 40, 0.05);
+    }
+
+    .footer-total {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .footer-total b {
+      margin-left: 4px;
+      color: var(--red);
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .footer-btn {
+      flex-shrink: 0;
+      height: 48px;
+      padding: 0 30px;
+      color: #fff;
+      border-radius: 14px;
+      background: var(--red);
+      box-shadow: 0 8px 16px rgba(166, 49, 50, 0.24);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .footer-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* 通用卡片 / 按钮 */
+
+    .form-card {
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 13px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .form-label i {
+      width: 16px;
+      height: 16px;
+      color: var(--red);
+    }
+
+    .primary-btn {
+      width: 100%;
+      height: 50px;
+      margin-top: 4px;
+      color: #fff;
+      border-radius: 14px;
+      background: var(--red);
+      box-shadow: 0 8px 18px rgba(166, 49, 50, 0.24);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 车牌输入 */
+
+    .plate-input {
+      display: flex;
+      gap: 6px;
+    }
+
+    .plate-box {
+      display: grid;
+      flex: 1;
+      height: 48px;
+      place-items: center;
+      color: var(--text);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfa;
+      font-size: 19px;
+      font-weight: 700;
+      transition: 0.15s;
+    }
+
+    .plate-box.filled {
+      background: #fff;
+    }
+
+    .plate-box.active {
+      border-color: var(--red);
+      background: #fff;
+      box-shadow: 0 0 0 3px var(--red-soft);
+    }
+
+    /* 车牌键盘 */
+
+    .kb {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 120;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 8px 8px calc(10px + env(safe-area-inset-bottom));
+      background: #e6e9e5;
+      border-top: 1px solid #d5d9d3;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(120%);
+      transition: transform 0.28s cubic-bezier(0.32, 0.72, 0.24, 1);
+    }
+
+    .kb.show {
+      transform: translateY(0);
+    }
+
+    .kb-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 6px 9px;
+    }
+
+    .kb-hint {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .kb-done {
+      padding: 5px 14px;
+      color: #fff;
+      border-radius: 16px;
+      background: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .kb-keys {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+    }
+
+    .kb-key {
+      height: 40px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      border-radius: 7px;
+      background: #fff;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .kb-key:active {
+      background: #f0d086;
+    }
+
+    .kb-key.wide {
+      grid-column: span 2;
+      background: #d3d7d1;
+    }
+
+    .kb-key.wide i {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* 月租 - 车场选择 */
+
+    .lot-opt {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 13px 14px;
+      margin-bottom: 9px;
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      background: #fbfcfa;
+      text-align: left;
+      transition: 0.15s;
+    }
+
+    .lot-opt:last-child {
+      margin-bottom: 0;
+    }
+
+    .lot-opt.active {
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .lot-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .lot-info b {
+      display: block;
+      font-size: 15px;
+    }
+
+    .lot-info span {
+      display: block;
+      margin-top: 4px;
+      color: var(--text-3);
+      font-size: 12px;
+    }
+
+    .lot-price {
+      flex-shrink: 0;
+      margin-right: 10px;
+      color: var(--red);
+      font-size: 17px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .lot-price small {
+      color: var(--text-3);
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .lot-check {
+      display: grid;
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      color: #fff;
+      border: 1.5px solid #d3d8d2;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .lot-check i {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+    }
+
+    .lot-opt.active .lot-check {
+      border-color: var(--red);
+      background: var(--red);
+    }
+
+    .lot-opt.active .lot-check i {
+      opacity: 1;
+    }
+
+    /* 月租 - 时长 */
+
+    .dur-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+    }
+
+    .dur-opt {
+      position: relative;
+      padding: 14px 0;
+      color: var(--text);
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: #fbfcfa;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.15s;
+    }
+
+    .dur-opt.active {
+      color: var(--red);
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .dur-opt em {
+      position: absolute;
+      top: -8px;
+      right: -4px;
+      padding: 1px 6px;
+      color: #fff;
+      border-radius: 8px;
+      background: #dc6049;
+      font-size: 10px;
+      font-style: normal;
+    }
+
+    .dur-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      color: var(--gold);
+      border-radius: 10px;
+      background: var(--gold-soft);
+      font-size: 12px;
+    }
+
+    .start-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .start-card > span {
+      color: var(--text-2);
+    }
+
+    .start-card b {
+      font-weight: 700;
+    }
+
+    /* 停车缴费 - 结果卡 */
+
+    .result-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .result-lot {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .result-lot .oi {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      color: var(--red);
+      border-radius: 10px;
+      background: var(--red-soft);
+    }
+
+    .result-lot .oi i {
+      width: 19px;
+      height: 19px;
+    }
+
+    .in-tag {
+      padding: 4px 10px;
+      color: var(--green);
+      border-radius: 20px;
+      background: var(--green-soft);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .result-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .result-rows > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .result-rows span {
+      color: var(--text-2);
+    }
+
+    .result-rows b {
+      font-weight: 600;
+    }
+
+    .result-rows b.hl {
+      color: var(--red);
+      font-size: 16px;
+    }
+
+    .fee-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .fee-row + .fee-row {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .fee-row > span {
+      color: var(--text-2);
+    }
+
+    .coupon-select {
+      cursor: pointer;
+    }
+
+    .cs-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text) !important;
+      font-weight: 600;
+    }
+
+    .cs-left i {
+      width: 16px;
+      height: 16px;
+      color: var(--gold);
+    }
+
+    .coupon-select input {
+      margin-left: auto;
+      margin-right: 8px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--red);
+    }
+
+    .cs-val {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* Tabs */
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      background: #eaece8;
+    }
+
+    .tab {
+      flex: 1;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      color: var(--text-2);
+      border-radius: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.15s;
+    }
+
+    .tab.active {
+      color: var(--red);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    /* 优惠券 */
+
+    .coupon {
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      margin-bottom: 11px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .coupon-left {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 100px;
+      color: #fff;
+    }
+
+    .coupon-left::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -6px;
+      width: 12px;
+      background:
+        radial-gradient(circle, var(--bg) 3px, transparent 3.5px) 0 0 / 12px 11px;
+    }
+
+    .coupon-left.red { background: linear-gradient(150deg, #b53c3c, var(--red-dark)); }
+    .coupon-left.green { background: linear-gradient(150deg, #1c8271, var(--green-dark)); }
+    .coupon-left.gold { background: linear-gradient(150deg, #c08a3e, #8a5c1f); }
+    .coupon-left.blue { background: linear-gradient(150deg, #457896, #2b4f66); }
+
+    .coupon-left .cv {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .coupon-left .cv small {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .coupon-left .cu {
+      margin-top: 6px;
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    .coupon-right {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      padding: 14px 90px 14px 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .coupon-scene {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .coupon-cond {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .coupon-btn {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      padding: 8px 15px;
+      color: #fff;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      transform: translateY(-50%);
+    }
+
+    .coupon-btn.red { background: var(--red); }
+    .coupon-btn.green { background: var(--green); }
+    .coupon-btn.gold { background: var(--gold); }
+    .coupon-btn.blue { background: var(--blue); }
+
+    .coupon-btn.claimed {
+      color: var(--text-3) !important;
+      background: #eef0ed !important;
+    }
+
+    .empty-state {
+      padding: 60px 0;
+      text-align: center;
+      color: var(--text-3);
+    }
+
+    .empty-state i {
+      width: 46px;
+      height: 46px;
+      margin-bottom: 12px;
+      stroke-width: 1.5;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+    }
+
+    /* 洗车页 */
+
+    .wash-banner {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 18px;
+      margin-bottom: 14px;
+      color: #fff;
+      border-radius: 20px;
+      background: linear-gradient(120deg, #2b4f66, #457896);
+      box-shadow: 0 9px 22px rgba(43, 79, 102, 0.22);
+    }
+
+    .wash-banner::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -20px;
+      width: 130px;
+      height: 130px;
+      border: 22px solid rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+    }
+
+    .wash-banner h2 {
+      position: relative;
+      font-size: 20px;
+    }
+
+    .wash-banner p {
+      position: relative;
+      margin-top: 7px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .wash-claim {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px dashed #b9d0dd;
+      border-radius: 16px;
+      background: var(--blue-soft);
+    }
+
+    .wash-claim .wc-val {
+      color: var(--blue);
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .wash-claim .wc-val small {
+      font-size: 15px;
+    }
+
+    .wash-claim .wc-info {
+      margin-left: 14px;
+      flex: 1;
+    }
+
+    .wash-claim .wc-info b {
+      display: block;
+      font-size: 15px;
+    }
+
+    .wash-claim .wc-info span {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .wash-claim-btn {
+      flex-shrink: 0;
+      padding: 9px 16px;
+      color: #fff;
+      border-radius: 20px;
+      background: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .wash-claim-btn.done {
+      color: var(--text-3);
+      background: #dfe6ea;
+    }
+
+    .shop-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .shop-logo {
+      display: grid;
+      flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+      place-items: center;
+      color: var(--blue);
+      border-radius: 13px;
+      background: var(--blue-soft);
+    }
+
+    .shop-logo i {
+      width: 24px;
+      height: 24px;
+    }
+
+    .shop-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .shop-info b {
+      font-size: 15px;
+    }
+
+    .shop-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .shop-meta .star {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .shop-meta .star i {
+      width: 12px;
+      height: 12px;
+      fill: var(--gold);
+    }
+
+    .shop-price {
+      margin-top: 6px;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .shop-book {
+      flex-shrink: 0;
+      align-self: center;
+      padding: 8px 14px;
+      color: var(--blue);
+      border: 1px solid var(--blue);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* 订单页 */
+
+    .order-card {
+      padding: 15px;
+      margin-bottom: 11px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .order-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .order-lot {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .order-lot .oi {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 10px;
+    }
+
+    .order-lot .oi i { width: 18px; height: 18px; }
+    .order-lot .oi.parking { color: var(--red); background: var(--red-soft); }
+    .order-lot .oi.monthly { color: var(--gold); background: var(--gold-soft); }
+    .order-lot .oi.charging { color: var(--green); background: var(--green-soft); }
+
+    .order-status {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .order-status.unpaid { color: var(--red); }
+    .order-status.done { color: var(--text-3); }
+    .order-status.ongoing { color: var(--green); }
+
+    .order-meta {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .order-meta > div {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .order-meta span { color: var(--text-2); }
+    .order-meta b { font-weight: 600; }
+
+    .order-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 13px;
+      padding-top: 13px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .order-amount {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .order-amount b {
+      margin-left: 3px;
+      color: var(--text);
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .order-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .order-btn.pay {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .order-btn.ghost {
+      color: var(--text-2);
+      border: 1px solid var(--line);
+    }
+
+    /* 成功弹窗 */
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 40px;
+      background: rgba(20, 24, 22, 0.5);
+    }
+
+    .modal-mask.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      padding: 28px 22px 22px;
+      border-radius: 22px;
+      background: #fff;
+      text-align: center;
+      transform: scale(0.9);
+      opacity: 0;
+      transition: 0.25s cubic-bezier(0.32, 0.72, 0.24, 1);
+    }
+
+    .modal-mask.show .modal {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .modal-icon {
+      display: grid;
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 16px;
+      place-items: center;
+      color: #fff;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 8px 18px rgba(23, 109, 94, 0.28);
+    }
+
+    .modal-icon i {
+      width: 32px;
+      height: 32px;
+      stroke-width: 3;
+    }
+
+    .modal-title {
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .modal-sub {
+      margin-top: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    /* 小屏微调 */
+
+    @media (max-width: 360px) {
+      .hero-stat:last-child {
+        display: none;
+      }
+
+      .campaign-illustration {
+        width: 112px;
+      }
+    }
+
+    @media (min-width: 481px) {
+      body {
+        box-shadow: 0 0 45px rgba(35, 43, 39, 0.14);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- 顶部 -->
+    <header class="hero">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-logo">P</div>
+
+          <div class="brand-name">
+            <strong>智慧泊车</strong>
+            <small>SMART PARKING</small>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="hero-action action" data-message="进入消息中心">
+            <i data-lucide="bell"></i>
+            <span class="message-dot"></span>
+          </button>
+
+          <button class="hero-action action" data-message="联系在线客服">
+            <i data-lucide="headphones"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-label">
+          <i data-lucide="landmark"></i>
+          便民停车服务
+        </div>
+
+        <div class="hero-main-row">
+          <div class="hero-copy">
+            <h1>
+              <span>让停车从容一点</span>
+            </h1>
+
+            <div class="hero-description">
+              找车位、缴费、充电、开票，一站办理
+            </div>
+          </div>
+
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <strong>126</strong>
+              <span>联网车场</span>
+            </div>
+
+            <div class="hero-stat">
+              <strong>3,286</strong>
+              <span>空余泊位</span>
+            </div>
+
+            <div class="hero-stat">
+              <strong>24h</strong>
+              <span>便民服务</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主体 -->
+    <main class="main">
+      <!-- 搜索区域 -->
+      <section class="search-card">
+        <button
+          class="location-entry action"
+          data-message="当前区域：北京市东城区"
+        >
+          <i data-lucide="map-pin"></i>
+          建邺区
+        </button>
+
+        <button
+          class="search-entry action"
+          data-message="搜索停车场、商圈或目的地"
+        >
+          <i data-lucide="search"></i>
+          <span>搜索停车场或目的地</span>
+        </button>
+
+        <button
+          class="map-button action"
+          data-message="打开东城区可视化停车地图"
+        >
+          <i data-lucide="map"></i>
+          地图找位
+        </button>
+      </section>
+
+      <!-- 便捷服务 -->
+      <section class="service-panel">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>便捷服务</h2>
+          </div>
+
+          <button
+            class="section-more action"
+            data-message="查看全部停车服务"
+          >
+            全部服务
+            <i data-lucide="chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="service-grid">
+          <button class="service-item action" data-page="pay">
+            <div class="service-icon red">
+              <i data-lucide="circle-parking"></i>
+            </div>
+            <span>停车缴费</span>
+          </button>
+
+          <button class="service-item action" data-page="monthly">
+            <div class="service-icon gold">
+              <i data-lucide="calendar-days"></i>
+              <em class="service-badge">热门</em>
+            </div>
+            <span>月租办理</span>
+          </button>
+
+          <button
+            class="service-item action"
+            data-message="查询充电桩实时状态"
+          >
+            <div class="service-icon green">
+              <i data-lucide="battery-charging"></i>
+            </div>
+            <span>充电服务</span>
+          </button>
+
+          <button
+            class="service-item action"
+            data-message="申请停车、月租或充电发票"
+          >
+            <div class="service-icon blue">
+              <i data-lucide="receipt-text"></i>
+            </div>
+            <span>电子发票</span>
+          </button>
+
+          <button
+            class="service-item action"
+            data-message="开通停车无感支付"
+          >
+            <div class="service-icon green">
+              <i data-lucide="radio-tower"></i>
+            </div>
+            <span>无感支付</span>
+          </button>
+
+          <button class="service-item action" data-page="pay">
+            <div class="service-icon red">
+              <i data-lucide="hand-coins"></i>
+            </div>
+            <span>临时代缴</span>
+          </button>
+
+          <button class="service-item action" data-page="coupon">
+            <div class="service-icon gold">
+              <i data-lucide="ticket-percent"></i>
+              <em class="service-badge">领券</em>
+            </div>
+            <span>优惠中心</span>
+          </button>
+
+          <button
+            class="service-item action"
+            data-message="查看更多城市车主服务"
+          >
+            <div class="service-icon blue">
+              <i data-lucide="layout-grid"></i>
+            </div>
+            <span>全部服务</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 无感支付宣传 -->
+      <section class="campaign">
+        <div class="campaign-copy">
+          <span class="campaign-label">绿色出行计划</span>
+
+          <h2>
+            签约无感支付<br />
+            离场快人一步
+          </h2>
+
+          <p>自动抬杆 · 自动扣费 · 无需排队</p>
+
+          <button
+            class="campaign-button action"
+            data-message="进入无感支付签约页面"
+          >
+            立即开通
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </div>
+
+        <svg
+          class="campaign-illustration"
+          viewBox="0 0 190 145"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <ellipse cx="104" cy="130" rx="76" ry="9" fill="#0A5043" opacity=".45" />
+          <rect x="37" y="27" width="81" height="97" rx="14" fill="#F3E3BF" />
+          <rect x="46" y="37" width="63" height="75" rx="9" fill="#FFF9EB" />
+          <circle cx="77" cy="67" r="22" fill="#1B7563" />
+          <path d="M72 51H82V62H91V72H82V85H72V72H63V62H72Z" fill="#F5E2B5" />
+          <rect x="61" y="99" width="32" height="4" rx="2" fill="#D5BD8C" />
+          <path d="M106 91H145L162 111V128H98V108Z" fill="#B84942" />
+          <path d="M115 96H141L152 108H110Z" fill="#D8ECE7" />
+          <circle cx="114" cy="128" r="10" fill="#31413D" />
+          <circle cx="149" cy="128" r="10" fill="#31413D" />
+          <circle cx="114" cy="128" r="4" fill="#D8D9D4" />
+          <circle cx="149" cy="128" r="4" fill="#D8D9D4" />
+          <rect x="155" y="115" width="10" height="5" rx="2" fill="#F2D17E" />
+          <path d="M20 121H40" stroke="#F0D9A8" stroke-width="4" stroke-linecap="round" />
+          <path d="M24 111H39" stroke="#F0D9A8" stroke-width="3" stroke-linecap="round" />
+        </svg>
+      </section>
+
+      <!-- 包月套餐 -->
+      <section class="package-panel">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>包月停车套餐</h2>
+            <p>指定车场办理</p>
+          </div>
+
+          <button class="section-more action" data-page="monthly">
+            更多套餐
+            <i data-lucide="chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="package-list">
+          <button class="package-card action" data-page="monthly">
+            <div>
+              <div class="package-top">
+                <span class="package-icon">
+                  <i data-lucide="briefcase-business"></i>
+                </span>
+                <span class="recommend-tag">上班族推荐</span>
+              </div>
+              <h3>工作日通勤月卡</h3>
+              <div class="parking-name">
+                <i data-lucide="map-pin"></i>
+                青年沟停车场
+              </div>
+              <p class="package-description">周一至周五 07:00—20:00</p>
+            </div>
+            <div class="package-bottom">
+              <div class="package-price">¥680<small>/月起</small></div>
+              <span class="package-buy">立即办理</span>
+            </div>
+          </button>
+
+          <button class="package-card green action" data-page="monthly">
+            <div>
+              <div class="package-top">
+                <span class="package-icon">
+                  <i data-lucide="moon-star"></i>
+                </span>
+                <span class="recommend-tag">居民推荐</span>
+              </div>
+              <h3>夜间错时共享月卡</h3>
+              <div class="parking-name">
+                <i data-lucide="map-pin"></i>
+                大华路停车场
+              </div>
+              <p class="package-description">每日18:00至次日08:00</p>
+            </div>
+            <div class="package-bottom">
+              <div class="package-price">¥360<small>/月起</small></div>
+              <span class="package-buy">立即办理</span>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <!-- 车主增值服务 -->
+      <section class="benefit-panel">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>车主增值服务</h2>
+          </div>
+
+          <button
+            class="section-more action"
+            data-message="查看全部车主增值服务"
+          >
+            更多福利
+            <i data-lucide="chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="benefit-featured">
+          <button class="benefit-card wash action" data-page="wash">
+            <span class="benefit-icon">
+              <i data-lucide="car-front"></i>
+            </span>
+            <span class="benefit-info">
+              <strong>品质洗车</strong>
+              <span class="benefit-offer">
+                <b>20</b><small>元券</small>
+              </span>
+            </span>
+            <span class="benefit-arrow">
+              <i data-lucide="arrow-right"></i>
+            </span>
+          </button>
+
+          <button
+            class="benefit-card beauty action"
+            data-message="领取汽车美容8折优惠"
+          >
+            <span class="benefit-icon">
+              <i data-lucide="sparkles"></i>
+            </span>
+            <span class="benefit-info">
+              <strong>汽车美容</strong>
+              <span class="benefit-offer">
+                <b>8</b><small>折起</small>
+              </span>
+            </span>
+            <span class="benefit-arrow">
+              <i data-lucide="arrow-right"></i>
+            </span>
+          </button>
+        </div>
+
+        <div class="benefit-links">
+          <button class="benefit-link action" data-message="进入机动车违章查询">
+            <i data-lucide="shield-alert"></i>
+            <span>违章查询</span>
+          </button>
+          <button class="benefit-link action" data-message="查看北京市机动车限行提醒">
+            <i data-lucide="calendar-clock"></i>
+            <span>限行提醒</span>
+          </button>
+          <button class="benefit-link action" data-message="查找附近加油站">
+            <i data-lucide="fuel"></i>
+            <span>附近加油</span>
+          </button>
+          <button class="benefit-link action" data-message="正在跳转交管12123">
+            <i data-lucide="external-link"></i>
+            <span>交管12123</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-nav>
+        <i data-lucide="house"></i>
+        <span>首页</span>
+      </button>
+
+      <button class="nav-item action" data-nav data-message="打开东城区停车地图">
+        <i data-lucide="map-pinned"></i>
+        <span>停车地图</span>
+      </button>
+
+      <button class="nav-item action" data-nav data-page="orders">
+        <i data-lucide="file-text"></i>
+        <span>停车订单</span>
+      </button>
+
+      <button class="nav-item action" data-nav data-message="进入个人中心">
+        <i data-lucide="user-round"></i>
+        <span>我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ============ 停车缴费 ============ -->
+  <section class="page" id="page-pay">
+    <header class="page-header">
+      <button class="page-back" data-close><i data-lucide="arrow-left"></i></button>
+      <h1>停车缴费</h1>
+    </header>
+
+    <div class="page-body">
+      <div class="form-card">
+        <div class="form-label">
+          <i data-lucide="scan-line"></i>
+          输入车牌号查询待缴费用
+        </div>
+        <div class="plate-input" id="plate-pay"></div>
+        <button class="primary-btn" id="pay-query">查询待缴订单</button>
+      </div>
+
+      <div id="pay-result" style="display: none">
+        <div class="form-card">
+          <div class="result-top">
+            <div class="result-lot">
+              <span class="oi"><i data-lucide="circle-parking"></i></span>
+              青年沟停车场
+            </div>
+            <span class="in-tag">在场中</span>
+          </div>
+          <div class="result-rows">
+            <div><span>车牌号码</span><b id="pay-plate-show">京A·8F52K</b></div>
+            <div><span>车位编号</span><b>B2-108</b></div>
+            <div><span>入场时间</span><b>今天 09:12</b></div>
+            <div><span>停车时长</span><b>2小时18分</b></div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="fee-row">
+            <span>停车费用</span>
+            <b>¥18.00</b>
+          </div>
+          <label class="fee-row coupon-select">
+            <span class="cs-left">
+              <i data-lucide="ticket-percent"></i>
+              停车抵扣券（满10减5）
+            </span>
+            <input type="checkbox" id="pay-coupon" checked />
+            <span class="cs-val">-¥5.00</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer" id="pay-footer" style="display: none">
+      <div class="footer-total">实付<b id="pay-total">¥13.00</b></div>
+      <button class="footer-btn" id="pay-submit">立即支付</button>
+    </div>
+  </section>
+
+  <!-- ============ 月租办理 ============ -->
+  <section class="page" id="page-monthly">
+    <header class="page-header">
+      <button class="page-back" data-close><i data-lucide="arrow-left"></i></button>
+      <h1>月租办理</h1>
+    </header>
+
+    <div class="page-body">
+      <div class="form-card">
+        <div class="form-label"><i data-lucide="map-pin"></i>选择停车场</div>
+        <div id="lot-list">
+          <button class="lot-opt" data-lot="青年沟停车场" data-price="680">
+            <div class="lot-info">
+              <b>青年沟停车场</b>
+              <span>工作日通勤月卡 · 距您 1.2km</span>
+            </div>
+            <div class="lot-price">¥680<small>/月</small></div>
+            <span class="lot-check"><i data-lucide="check"></i></span>
+          </button>
+          <button class="lot-opt" data-lot="大华路停车场" data-price="360">
+            <div class="lot-info">
+              <b>大华路停车场</b>
+              <span>夜间错时共享月卡 · 距您 0.8km</span>
+            </div>
+            <div class="lot-price">¥360<small>/月</small></div>
+            <span class="lot-check"><i data-lucide="check"></i></span>
+          </button>
+          <button class="lot-opt" data-lot="王府井地下车库" data-price="1200">
+            <div class="lot-info">
+              <b>王府井地下车库</b>
+              <span>全时段月卡 · 距您 2.4km</span>
+            </div>
+            <div class="lot-price">¥1200<small>/月</small></div>
+            <span class="lot-check"><i data-lucide="check"></i></span>
+          </button>
+          <button class="lot-opt" data-lot="交道口街道车场" data-price="520">
+            <div class="lot-info">
+              <b>交道口街道车场</b>
+              <span>居民优惠月卡 · 距您 1.6km</span>
+            </div>
+            <div class="lot-price">¥520<small>/月</small></div>
+            <span class="lot-check"><i data-lucide="check"></i></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-label"><i data-lucide="scan-line"></i>车牌号码</div>
+        <div class="plate-input" id="plate-monthly"></div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-label"><i data-lucide="calendar-range"></i>购买时长</div>
+        <div class="dur-list" id="dur-list">
+          <button class="dur-opt" data-months="1" data-discount="1">1个月</button>
+          <button class="dur-opt" data-months="3" data-discount="0.95">3个月<em>95折</em></button>
+          <button class="dur-opt" data-months="6" data-discount="0.9">6个月<em>9折</em></button>
+          <button class="dur-opt" data-months="12" data-discount="0.85">12个月<em>85折</em></button>
+        </div>
+        <div class="dur-note" id="dur-note"></div>
+      </div>
+
+      <div class="form-card start-card">
+        <span>生效日期</span>
+        <b>2026-07-17</b>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="footer-total">合计<b id="monthly-total">¥680</b></div>
+      <button class="footer-btn" id="monthly-submit">确认办理</button>
+    </div>
+  </section>
+
+  <!-- ============ 优惠中心 ============ -->
+  <section class="page" id="page-coupon">
+    <header class="page-header">
+      <button class="page-back" data-close><i data-lucide="arrow-left"></i></button>
+      <h1>优惠中心</h1>
+      <span class="head-extra" id="coupon-count">已领 0 张</span>
+    </header>
+
+    <div class="page-body">
+      <div class="tabs">
+        <button class="tab active" data-ctab="all">可领取</button>
+        <button class="tab" data-ctab="mine">我的券</button>
+      </div>
+      <div id="coupon-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ 品质洗车 ============ -->
+  <section class="page" id="page-wash">
+    <header class="page-header">
+      <button class="page-back" data-close><i data-lucide="arrow-left"></i></button>
+      <h1>品质洗车</h1>
+    </header>
+
+    <div class="page-body">
+      <div class="wash-banner">
+        <h2>合作门店 品质洗车</h2>
+        <p>东城泊车会员专享 · 全城 38 家门店通用</p>
+      </div>
+
+      <div class="wash-claim">
+        <div class="wc-val">20<small>元</small></div>
+        <div class="wc-info">
+          <b>品质洗车抵扣券</b>
+          <span>合作门店通用 · 有效期 30 天</span>
+        </div>
+        <button class="wash-claim-btn" id="wash-claim-btn">立即领取</button>
+      </div>
+
+      <div class="section-header" style="margin-bottom: 12px">
+        <div class="section-title"><h2>附近门店</h2></div>
+        <span class="head-extra">按距离排序</span>
+      </div>
+
+      <div class="shop-card">
+        <div class="shop-logo"><i data-lucide="car-front"></i></div>
+        <div class="shop-info">
+          <b>悦享汽车养护中心</b>
+          <div class="shop-meta">
+            <span class="star"><i data-lucide="star"></i>4.9</span>
+            <span>· 1.2km</span>
+          </div>
+          <div class="shop-price">精致洗车 ¥38 起</div>
+        </div>
+        <button class="shop-book action" data-message="正在为您预约悦享汽车养护中心">预约</button>
+      </div>
+
+      <div class="shop-card">
+        <div class="shop-logo"><i data-lucide="car-front"></i></div>
+        <div class="shop-info">
+          <b>车管家洗车（东单店）</b>
+          <div class="shop-meta">
+            <span class="star"><i data-lucide="star"></i>4.6</span>
+            <span>· 0.8km</span>
+          </div>
+          <div class="shop-price">标准洗车 ¥25 起</div>
+        </div>
+        <button class="shop-book action" data-message="正在为您预约车管家洗车（东单店）">预约</button>
+      </div>
+
+      <div class="shop-card">
+        <div class="shop-logo"><i data-lucide="car-front"></i></div>
+        <div class="shop-info">
+          <b>洁净坊汽车美容</b>
+          <div class="shop-meta">
+            <span class="star"><i data-lucide="star"></i>4.8</span>
+            <span>· 2.1km</span>
+          </div>
+          <div class="shop-price">打蜡镀膜 ¥88 起</div>
+        </div>
+        <button class="shop-book action" data-message="正在为您预约洁净坊汽车美容">预约</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 停车订单 ============ -->
+  <section class="page" id="page-orders">
+    <header class="page-header">
+      <button class="page-back" data-close><i data-lucide="arrow-left"></i></button>
+      <h1>停车订单</h1>
+    </header>
+
+    <div class="page-body">
+      <div class="tabs">
+        <button class="tab active" data-otab="all">全部</button>
+        <button class="tab" data-otab="parking">停车</button>
+        <button class="tab" data-otab="monthly">月租</button>
+        <button class="tab" data-otab="charging">充电</button>
+      </div>
+      <div id="order-list"></div>
+    </div>
+  </section>
+
+  <!-- 车牌键盘 -->
+  <div class="kb" id="kb">
+    <div class="kb-bar">
+      <span class="kb-hint" id="kb-hint">选择省份简称</span>
+      <button class="kb-done" id="kb-done">完成</button>
+    </div>
+    <div class="kb-keys" id="kb-keys"></div>
+  </div>
+
+  <!-- 成功弹窗 -->
+  <div class="modal-mask" id="modal">
+    <div class="modal">
+      <div class="modal-icon"><i data-lucide="check"></i></div>
+      <div class="modal-title" id="modal-title">支付成功</div>
+      <div class="modal-sub" id="modal-sub">感谢使用东城泊车</div>
+      <button class="primary-btn" id="modal-ok">完成</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">操作提示</div>
+
+  <script>
+    lucide.createIcons();
+
+    /* ---------- Toast ---------- */
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    /* ---------- 成功弹窗 ---------- */
+    const modal = document.getElementById("modal");
+    let modalOk = null;
+    function openSuccess(title, sub, onOk) {
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-sub").textContent = sub;
+      modalOk = onOk || null;
+      modal.classList.add("show");
+      lucide.createIcons();
+    }
+    document.getElementById("modal-ok").addEventListener("click", () => {
+      modal.classList.remove("show");
+      if (modalOk) modalOk();
+      modalOk = null;
+    });
+
+    /* ---------- 页面导航 ---------- */
+    const openStack = [];
+    function openPage(id) {
+      const p = document.getElementById("page-" + id);
+      if (!p) return;
+      if (id === "pay") initPay();
+      if (id === "monthly") initMonthly();
+      if (id === "coupon") renderCoupons();
+      if (id === "orders") renderOrders();
+      p.classList.add("open");
+      p.querySelector(".page-body").scrollTop = 0;
+      openStack.push(id);
+      lucide.createIcons();
+    }
+    function closeTopPage() {
+      const id = openStack.pop();
+      if (!id) return;
+      document.getElementById("page-" + id).classList.remove("open");
+      closeKeyboard();
+      resetNav();
+    }
+    document.querySelectorAll("[data-close]").forEach((b) =>
+      b.addEventListener("click", closeTopPage)
+    );
+
+    /* ---------- 通用 action / nav ---------- */
+    function resetNav() {
+      document.querySelectorAll(".nav-item").forEach((n, i) =>
+        n.classList.toggle("active", i === 0)
+      );
+    }
+    document.querySelectorAll(".action").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const pg = btn.dataset.page;
+        if (pg) {
+          openPage(pg);
+          return;
+        }
+        showToast(btn.dataset.message || "功能开发中");
+      });
+    });
+    document.querySelectorAll("[data-nav]").forEach((item) => {
+      item.addEventListener("click", () => {
+        if (item.dataset.page) return; // 打开页面的导航不改变高亮
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
+        item.classList.add("active");
+      });
+    });
+
+    /* ==================================================
+       车牌键盘
+    ================================================== */
+    const PROVINCES =
+      "京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新".split("");
+    const LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ".split("");
+    const DIGITS = "0123456789".split("");
+
+    const kb = document.getElementById("kb");
+    const kbKeys = document.getElementById("kb-keys");
+    const kbHint = document.getElementById("kb-hint");
+    let activePlateEl = null;
+    let activeBoxIndex = -1;
+
+    function initPlate(container) {
+      container._plate = ["", "", "", "", "", "", ""];
+      container.innerHTML = "";
+      for (let i = 0; i < 7; i++) {
+        const b = document.createElement("div");
+        b.className = "plate-box";
+        b.dataset.index = i;
+        b.addEventListener("click", (e) => {
+          e.stopPropagation();
+          activePlateEl = container;
+          activeBoxIndex = i;
+          markActiveBox();
+          openKeyboard();
+        });
+        container.appendChild(b);
+      }
+    }
+    function markActiveBox() {
+      if (!activePlateEl) return;
+      activePlateEl.querySelectorAll(".plate-box").forEach((b, i) => {
+        b.classList.toggle("active", i === activeBoxIndex);
+      });
+    }
+    function paintPlate() {
+      if (!activePlateEl) return;
+      activePlateEl.querySelectorAll(".plate-box").forEach((b, i) => {
+        const v = activePlateEl._plate[i];
+        b.textContent = v;
+        b.classList.toggle("filled", !!v);
+      });
+    }
+    function plateString(container) {
+      return (container._plate || []).join("");
+    }
+    function makeKey(ch) {
+      const k = document.createElement("button");
+      k.className = "kb-key";
+      k.textContent = ch;
+      k.addEventListener("click", () => pressKey(ch));
+      return k;
+    }
+    function makeDelete() {
+      const k = document.createElement("button");
+      k.className = "kb-key wide";
+      k.innerHTML = '<i data-lucide="delete"></i>';
+      k.addEventListener("click", pressDelete);
+      return k;
+    }
+    function renderKeyboard() {
+      kbKeys.innerHTML = "";
+      if (activeBoxIndex === 0) {
+        kbHint.textContent = "选择省份简称";
+        PROVINCES.forEach((c) => kbKeys.appendChild(makeKey(c)));
+        kbKeys.appendChild(makeDelete());
+      } else {
+        kbHint.textContent = "输入车牌号（不含省份）";
+        DIGITS.forEach((c) => kbKeys.appendChild(makeKey(c)));
+        LETTERS.forEach((c) => kbKeys.appendChild(makeKey(c)));
+        kbKeys.appendChild(makeDelete());
+      }
+      lucide.createIcons();
+    }
+    function pressKey(ch) {
+      if (!activePlateEl || activeBoxIndex < 0) return;
+      activePlateEl._plate[activeBoxIndex] = ch;
+      paintPlate();
+      if (activeBoxIndex < 6) {
+        activeBoxIndex++;
+        markActiveBox();
+        renderKeyboard();
+      }
+    }
+    function pressDelete() {
+      if (!activePlateEl) return;
+      if (activePlateEl._plate[activeBoxIndex] === "" && activeBoxIndex > 0) {
+        activeBoxIndex--;
+      }
+      activePlateEl._plate[activeBoxIndex] = "";
+      paintPlate();
+      markActiveBox();
+      renderKeyboard();
+    }
+    function openKeyboard() {
+      renderKeyboard();
+      kb.classList.add("show");
+    }
+    function closeKeyboard() {
+      kb.classList.remove("show");
+      if (activePlateEl) {
+        activePlateEl.querySelectorAll(".plate-box").forEach((b) =>
+          b.classList.remove("active")
+        );
+      }
+      activeBoxIndex = -1;
+    }
+    document.getElementById("kb-done").addEventListener("click", closeKeyboard);
+
+    /* ==================================================
+       停车缴费
+    ================================================== */
+    const payPlate = document.getElementById("plate-pay");
+    const payResult = document.getElementById("pay-result");
+    const payFooter = document.getElementById("pay-footer");
+    const payCoupon = document.getElementById("pay-coupon");
+    const PAY_FEE = 18;
+
+    function initPay() {
+      initPlate(payPlate);
+      payResult.style.display = "none";
+      payFooter.style.display = "none";
+      payCoupon.checked = true;
+    }
+    function updatePayTotal() {
+      const total = payCoupon.checked ? PAY_FEE - 5 : PAY_FEE;
+      document.getElementById("pay-total").textContent =
+        "¥" + total.toFixed(2);
+    }
+    payCoupon.addEventListener("change", updatePayTotal);
+
+    document.getElementById("pay-query").addEventListener("click", () => {
+      const val = plateString(payPlate);
+      if (val.length < 6) {
+        showToast("请输入完整车牌号");
+        return;
+      }
+      closeKeyboard();
+      document.getElementById("pay-plate-show").textContent =
+        val[0] + val[1] + "·" + val.slice(2);
+      updatePayTotal();
+      payResult.style.display = "block";
+      payFooter.style.display = "flex";
+      lucide.createIcons();
+    });
+
+    document.getElementById("pay-submit").addEventListener("click", () => {
+      const total = payCoupon.checked ? PAY_FEE - 5 : PAY_FEE;
+      openSuccess(
+        "支付成功",
+        "已支付 ¥" + total.toFixed(2) + "，祝您出行愉快",
+        closeTopPage
+      );
+    });
+
+    /* ==================================================
+       月租办理
+    ================================================== */
+    const lotList = document.getElementById("lot-list");
+    const durList = document.getElementById("dur-list");
+    let mLot = { name: "青年沟停车场", price: 680 };
+    let mMonths = 1,
+      mDisc = 1;
+
+    function initMonthly() {
+      initPlate(document.getElementById("plate-monthly"));
+      lotList.querySelectorAll(".lot-opt").forEach((o, i) =>
+        o.classList.toggle("active", i === 0)
+      );
+      durList.querySelectorAll(".dur-opt").forEach((o, i) =>
+        o.classList.toggle("active", i === 0)
+      );
+      mLot = { name: "青年沟停车场", price: 680 };
+      mMonths = 1;
+      mDisc = 1;
+      updateMonthly();
+    }
+    function updateMonthly() {
+      const total = Math.round(mLot.price * mMonths * mDisc);
+      document.getElementById("monthly-total").textContent = "¥" + total;
+      const orig = mLot.price * mMonths;
+      const note = document.getElementById("dur-note");
+      if (mDisc < 1) {
+        note.style.display = "block";
+        note.textContent =
+          "原价 ¥" +
+          orig +
+          "，已优惠 ¥" +
+          (orig - total) +
+          "，折合 ¥" +
+          Math.round(total / mMonths) +
+          "/月";
+      } else {
+        note.style.display = "block";
+        note.textContent = "标准价 ¥" + mLot.price + "/月，购买更长时间更划算";
+      }
+    }
+    lotList.addEventListener("click", (e) => {
+      const opt = e.target.closest(".lot-opt");
+      if (!opt) return;
+      lotList.querySelectorAll(".lot-opt").forEach((o) =>
+        o.classList.remove("active")
+      );
+      opt.classList.add("active");
+      mLot = { name: opt.dataset.lot, price: +opt.dataset.price };
+      updateMonthly();
+    });
+    durList.addEventListener("click", (e) => {
+      const opt = e.target.closest(".dur-opt");
+      if (!opt) return;
+      durList.querySelectorAll(".dur-opt").forEach((o) =>
+        o.classList.remove("active")
+      );
+      opt.classList.add("active");
+      mMonths = +opt.dataset.months;
+      mDisc = +opt.dataset.discount;
+      updateMonthly();
+    });
+    document.getElementById("monthly-submit").addEventListener("click", () => {
+      const val = plateString(document.getElementById("plate-monthly"));
+      if (val.length < 6) {
+        showToast("请输入完整车牌号");
+        return;
+      }
+      const total = Math.round(mLot.price * mMonths * mDisc);
+      openSuccess(
+        "办理成功",
+        mLot.name + " · " + mMonths + "个月月卡已开通（¥" + total + "）",
+        closeTopPage
+      );
+    });
+
+    /* ==================================================
+       优惠中心
+    ================================================== */
+    const coupons = [
+      { id: "c1", value: 5, unit: "满10元可用", scene: "停车抵扣券", cond: "停车缴费时自动抵扣", color: "red" },
+      { id: "c2", value: 10, unit: "满30元可用", scene: "充电立减券", cond: "充电服务专用", color: "green" },
+      { id: "c3", value: 20, unit: "门店通用", scene: "品质洗车券", cond: "合作洗车门店通用", color: "blue" },
+      { id: "c4", value: 50, unit: "满600元可用", scene: "月租办理券", cond: "办理包月停车时抵扣", color: "gold" },
+      { id: "c5", value: 8, unit: "满8元可用", scene: "新人停车券", cond: "新用户首单专享", color: "red" },
+    ];
+    const claimed = new Set();
+    let couponTab = "all";
+
+    function renderCoupons() {
+      document.getElementById("coupon-count").textContent =
+        "已领 " + claimed.size + " 张";
+      const list =
+        couponTab === "mine"
+          ? coupons.filter((c) => claimed.has(c.id))
+          : coupons;
+      const box = document.getElementById("coupon-list");
+
+      if (list.length === 0) {
+        box.innerHTML =
+          '<div class="empty-state"><i data-lucide="ticket"></i><p>还没有领取任何优惠券</p></div>';
+        lucide.createIcons();
+        return;
+      }
+
+      box.innerHTML = list
+        .map((c) => {
+          const got = claimed.has(c.id);
+          let btn;
+          if (couponTab === "mine") {
+            btn = '<span class="coupon-btn ' + c.color + '">去使用</span>';
+          } else if (got) {
+            btn = '<span class="coupon-btn claimed">已领取</span>';
+          } else {
+            btn =
+              '<button class="coupon-btn ' +
+              c.color +
+              '" data-claim="' +
+              c.id +
+              '">立即领取</button>';
+          }
+          return (
+            '<div class="coupon">' +
+            '<div class="coupon-left ' +
+            c.color +
+            '"><div class="cv">' +
+            c.value +
+            '<small>元</small></div><div class="cu">' +
+            c.unit +
+            "</div></div>" +
+            '<div class="coupon-right"><div class="coupon-scene">' +
+            c.scene +
+            '</div><div class="coupon-cond">' +
+            c.cond +
+            "</div>" +
+            btn +
+            "</div></div>"
+          );
+        })
+        .join("");
+
+      box.querySelectorAll("[data-claim]").forEach((b) => {
+        b.addEventListener("click", () => {
+          claimed.add(b.dataset.claim);
+          showToast("领取成功，可在「我的券」中查看");
+          renderCoupons();
+        });
+      });
+      lucide.createIcons();
+    }
+    document.querySelectorAll("[data-ctab]").forEach((t) => {
+      t.addEventListener("click", () => {
+        document
+          .querySelectorAll("[data-ctab]")
+          .forEach((x) => x.classList.remove("active"));
+        t.classList.add("active");
+        couponTab = t.dataset.ctab;
+        renderCoupons();
+      });
+    });
+
+    /* ==================================================
+       品质洗车 - 领券
+    ================================================== */
+    const washBtn = document.getElementById("wash-claim-btn");
+    washBtn.addEventListener("click", () => {
+      if (washBtn.classList.contains("done")) return;
+      washBtn.classList.add("done");
+      washBtn.textContent = "已领取";
+      showToast("洗车券领取成功");
+    });
+
+    /* ==================================================
+       停车订单
+    ================================================== */
+    let orders = [
+      { type: "parking", lot: "青年沟停车场", plate: "京A·8F52K", info: "今天 09:12 入场", amount: 18, status: "unpaid" },
+      { type: "monthly", lot: "大华路停车场", plate: "京N·1D30Q", info: "2026-07-01 至 07-31", amount: 360, status: "ongoing" },
+      { type: "charging", lot: "东单充电站", plate: "京A·8F52K", info: "2026-07-14 20:30 · 充电 24.6 度", amount: 42.5, status: "done" },
+      { type: "parking", lot: "王府井地下车库", plate: "京A·8F52K", info: "2026-07-10 14:05 · 停车 1.5 小时", amount: 24, status: "done" },
+      { type: "monthly", lot: "交道口街道车场", plate: "京A·8F52K", info: "2026-06-01 至 06-30", amount: 520, status: "done" },
+    ];
+    let orderTab = "all";
+    const TYPE_META = {
+      parking: { icon: "circle-parking", label: "停车订单" },
+      monthly: { icon: "calendar-days", label: "月租订单" },
+      charging: { icon: "battery-charging", label: "充电订单" },
+    };
+    const STATUS_META = {
+      unpaid: { cls: "unpaid", label: "待支付" },
+      ongoing: { cls: "ongoing", label: "生效中" },
+      done: { cls: "done", label: "已完成" },
+    };
+
+    function renderOrders() {
+      const list =
+        orderTab === "all"
+          ? orders
+          : orders.filter((o) => o.type === orderTab);
+      const box = document.getElementById("order-list");
+
+      if (list.length === 0) {
+        box.innerHTML =
+          '<div class="empty-state"><i data-lucide="inbox"></i><p>暂无相关订单</p></div>';
+        lucide.createIcons();
+        return;
+      }
+
+      box.innerHTML = list
+        .map((o) => {
+          const tm = TYPE_META[o.type];
+          const sm = STATUS_META[o.status];
+          let actions = "";
+          if (o.status === "unpaid") {
+            actions =
+              '<div class="order-actions"><button class="order-btn pay" data-payorder="' +
+              o.plate +
+              "|" +
+              o.lot +
+              '">去支付</button></div>';
+          } else if (o.status === "done") {
+            actions =
+              '<div class="order-actions"><button class="order-btn ghost invoice-btn">开发票</button><button class="order-btn ghost detail-btn">详情</button></div>';
+          } else {
+            actions =
+              '<div class="order-actions"><button class="order-btn ghost detail-btn">查看</button></div>';
+          }
+          return (
+            '<div class="order-card">' +
+            '<div class="order-head"><div class="order-lot"><span class="oi ' +
+            o.type +
+            '"><i data-lucide="' +
+            tm.icon +
+            '"></i></span>' +
+            o.lot +
+            '</div><span class="order-status ' +
+            sm.cls +
+            '">' +
+            sm.label +
+            "</span></div>" +
+            '<div class="order-meta"><div><span>' +
+            tm.label +
+            "</span><b>" +
+            o.plate +
+            "</b></div><div><span>" +
+            o.info +
+            "</span></div></div>" +
+            '<div class="order-foot"><div class="order-amount">' +
+            (o.status === "unpaid" ? "应付" : "金额") +
+            "<b>¥" +
+            o.amount.toFixed(2) +
+            "</b></div>" +
+            actions +
+            "</div></div>"
+          );
+        })
+        .join("");
+
+      box.querySelectorAll("[data-payorder]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const key = b.dataset.payorder.split("|");
+          openSuccess("支付成功", "订单已完成支付，感谢使用", () => {
+            const target = orders.find(
+              (o) => o.plate === key[0] && o.lot === key[1] && o.status === "unpaid"
+            );
+            if (target) target.status = "done";
+            renderOrders();
+          });
+        });
+      });
+      box.querySelectorAll(".invoice-btn").forEach((b) =>
+        b.addEventListener("click", () => showToast("正在为该订单申请电子发票"))
+      );
+      box.querySelectorAll(".detail-btn").forEach((b) =>
+        b.addEventListener("click", () => showToast("查看订单详情"))
+      );
+      lucide.createIcons();
+    }
+    document.querySelectorAll("[data-otab]").forEach((t) => {
+      t.addEventListener("click", () => {
+        document
+          .querySelectorAll("[data-otab]")
+          .forEach((x) => x.classList.remove("active"));
+        t.classList.add("active");
+        orderTab = t.dataset.otab;
+        renderOrders();
+      });
+    });
+  </script>
+</body>
+</html>

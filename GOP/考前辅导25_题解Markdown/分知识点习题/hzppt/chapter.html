@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章节｜AI停车智能体网关</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 71% 45%, rgba(0, 196, 255, .19), transparent 31%),
+    radial-gradient(circle at 89% 17%, rgba(110, 74, 255, .14), transparent 25%),
+    radial-gradient(circle at 16% 78%, rgba(0, 224, 190, .07), transparent 28%),
+    linear-gradient(135deg, #040c19 0%, #07172b 48%, #061327 73%, #040c19 100%);
+}
+
+/* 背景网格 */
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .13;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .32) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 17%,
+    #000 90%,
+    transparent
+  );
+}
+
+/* 右侧大光环 */
+#stage::after {
+  content: "";
+  position: absolute;
+  right: -190px;
+  top: -60px;
+  width: 980px;
+  height: 980px;
+  border: 1px solid rgba(64, 191, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 184, 255, .06),
+    inset 0 0 140px rgba(0, 184, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   背景科技装饰
+======================================== */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.2;
+  opacity: .20;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #49ddeb;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .14;
+  animation: dataFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5ce8f4;
+  opacity: .65;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes dataFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* ========================================
+   顶部品牌栏
+======================================== */
+
+.top-bar {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  top: 33px;
+  z-index: 8;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #23d7df);
+  box-shadow:
+    0 7px 22px rgba(0, 181, 255, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.brand-logo::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(53, 214, 238, .15);
+  border-radius: 15px;
+}
+
+.brand-logo svg {
+  width: 25px;
+  height: 25px;
+}
+
+.brand-cn {
+  color: #dff7ff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-en {
+  margin-top: 3px;
+  color: #4f7e9b;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+}
+
+.chapter-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #668ba3;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.chapter-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #49e6cb;
+  box-shadow: 0 0 9px #49e6cb;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .42;
+    box-shadow: 0 0 3px #49e6cb;
+  }
+}
+
+/* ========================================
+   左侧章节信息
+======================================== */
+
+.chapter-copy {
+  position: absolute;
+  left: 90px;
+  top: 145px;
+  z-index: 6;
+  width: 620px;
+  height: 600px;
+}
+
+/* 巨大章节数字 */
+.chapter-number {
+  position: absolute;
+  left: -10px;
+  top: -35px;
+  z-index: 0;
+  color: transparent;
+  font-size: 225px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -15px;
+  -webkit-text-stroke: 1px rgba(79, 201, 239, .12);
+  text-shadow: 0 0 60px rgba(0, 180, 238, .04);
+  user-select: none;
+}
+
+.chapter-content {
+  position: relative;
+  z-index: 2;
+  padding-top: 80px;
+}
+
+.chapter-label {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #55cbe6;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.chapter-label::before {
+  content: "";
+  width: 43px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #188fff, #39e6dc);
+  box-shadow: 0 0 10px rgba(53, 219, 239, .28);
+}
+
+.chapter-title {
+  margin-top: 28px;
+}
+
+.chapter-title h1 {
+  margin: 0;
+  color: transparent;
+  font-size: 52px;
+  line-height: 1.2;
+  letter-spacing: 3px;
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #a6efff 48%,
+    #55e3e9 78%,
+    #79efd7 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow: 0 10px 35px rgba(0, 10, 30, .25);
+}
+
+.chapter-en {
+  position: relative;
+  margin-top: 17px;
+  padding-bottom: 23px;
+  color: #527f9a;
+  font-size: 11px;
+  letter-spacing: 5px;
+}
+
+.chapter-en::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 460px;
+  height: 1px;
+  opacity: .48;
+  background: linear-gradient(
+    90deg,
+    #289cff,
+    #41e3e3,
+    transparent
+  );
+}
+
+.chapter-slogan {
+  margin-top: 31px;
+  color: #dceff6;
+  font-size: 22px;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.chapter-slogan strong {
+  color: #57e8d2;
+  font-weight: 700;
+}
+
+.chapter-description {
+  margin-top: 15px;
+  width: 525px;
+  color: #7095aa;
+  font-size: 11.5px;
+  line-height: 1.9;
+  letter-spacing: .4px;
+}
+
+/* 核心标签 */
+.keywords {
+  margin-top: 27px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.keyword {
+  height: 32px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(61, 185, 228, .19);
+  border-radius: 16px;
+  color: #8fc0d2;
+  font-size: 9px;
+  background: rgba(13, 55, 84, .53);
+}
+
+.keyword i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4bdff0;
+  box-shadow: 0 0 7px #4bdff0;
+}
+
+.keyword.purple {
+  color: #b9adf3;
+  border-color: rgba(151, 124, 241, .19);
+  background: rgba(74, 55, 131, .24);
+}
+
+.keyword.purple i {
+  background: #ad94ff;
+  box-shadow: 0 0 7px #ad94ff;
+}
+
+.keyword.green {
+  color: #84d9c6;
+  border-color: rgba(49, 211, 177, .19);
+  background: rgba(23, 121, 103, .20);
+}
+
+.keyword.green i {
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+/* ========================================
+   右侧AI网关主视觉
+======================================== */
+
+.gateway-visual {
+  position: absolute;
+  right: 48px;
+  top: 105px;
+  z-index: 4;
+  width: 850px;
+  height: 640px;
+}
+
+/* 环形背景 */
+.gateway-orbit {
+  position: absolute;
+  left: 160px;
+  top: 6px;
+  width: 600px;
+  height: 600px;
+  border: 1px solid rgba(66, 202, 239, .10);
+  border-radius: 50%;
+}
+
+.gateway-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 39px;
+  border: 1px dashed rgba(71, 220, 235, .14);
+  border-radius: 50%;
+  animation: rotate 35s linear infinite;
+}
+
+.gateway-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 92px;
+  border: 1px solid rgba(108, 102, 255, .10);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-dot {
+  position: absolute;
+  z-index: 7;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #58e8f3;
+  box-shadow:
+    0 0 9px #58e8f3,
+    0 0 20px rgba(45, 220, 240, .42);
+}
+
+.dot-1 {
+  left: 210px;
+  top: 65px;
+}
+
+.dot-2 {
+  right: 96px;
+  top: 179px;
+  background: #ae96ff;
+  box-shadow:
+    0 0 9px #ae96ff,
+    0 0 20px rgba(144, 111, 255, .42);
+}
+
+.dot-3 {
+  right: 151px;
+  bottom: 69px;
+  background: #4be6c6;
+  box-shadow:
+    0 0 9px #4be6c6,
+    0 0 20px rgba(56, 219, 186, .42);
+}
+
+/* 网关底部光晕 */
+.gateway-glow {
+  position: absolute;
+  left: 235px;
+  top: 403px;
+  width: 440px;
+  height: 95px;
+  border-radius: 50%;
+  background: rgba(0, 199, 255, .17);
+  filter: blur(34px);
+}
+
+/* 拟物网关设备 */
+.gateway-device {
+  position: absolute;
+  left: 215px;
+  top: 118px;
+  z-index: 6;
+  width: 470px;
+  height: 326px;
+}
+
+/* 顶部斜面 */
+.device-top {
+  position: absolute;
+  left: 30px;
+  top: 0;
+  width: 410px;
+  height: 74px;
+  clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
+  border: 1px solid rgba(78, 226, 243, .31);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(31, 105, 145, .96),
+      rgba(9, 57, 89, .97)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    0 -8px 30px rgba(0, 178, 255, .06);
+}
+
+.device-brand {
+  position: absolute;
+  left: 51px;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.device-brand-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg, #168dff, #2edfd5);
+  box-shadow:
+    0 0 18px rgba(38, 215, 232, .31),
+    inset 0 1px 0 rgba(255, 255, 255, .23);
+}
+
+.device-brand-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.device-brand-name {
+  color: #e9fbff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.device-brand-en {
+  margin-top: 4px;
+  color: #67abc1;
+  font-size: 7px;
+  letter-spacing: 1.4px;
+}
+
+.device-online {
+  position: absolute;
+  right: 49px;
+  top: 27px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #5ce7cc;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.device-online i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #48ebc9;
+  box-shadow: 0 0 10px #48ebc9;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+/* 网关正面 */
+.device-body {
+  position: absolute;
+  left: 0;
+  top: 65px;
+  width: 470px;
+  height: 238px;
+  overflow: hidden;
+  border: 1px solid rgba(65, 220, 239, .42);
+  border-radius: 11px 11px 28px 28px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(0, 199, 229, .17), transparent 46%),
+    linear-gradient(
+      150deg,
+      rgba(13, 68, 101, .99),
+      rgba(4, 22, 43, .99)
+    );
+  box-shadow:
+    0 35px 70px rgba(0, 5, 20, .58),
+    0 0 56px rgba(0, 191, 231, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .09);
+}
+
+.device-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .08;
+  background-image:
+    linear-gradient(rgba(80, 214, 243, .4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 214, 243, .4) 1px, transparent 1px);
+  background-size: 27px 27px;
+}
+
+/* 中心AI图形 */
+.ai-core {
+  position: absolute;
+  left: 163px;
+  top: 24px;
+  z-index: 3;
+  width: 144px;
+  height: 144px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(67, 229, 239, .36);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(18, 132, 162, .68),
+      rgba(5, 42, 70, .93) 68%
+    );
+  box-shadow:
+    0 0 42px rgba(0, 211, 234, .20),
+    inset 0 0 36px rgba(0, 218, 234, .12);
+}
+
+.ai-core::before {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  border: 1px dashed rgba(84, 231, 239, .26);
+  border-radius: 50%;
+  animation: rotate 18s linear infinite;
+}
+
+.ai-core::after {
+  content: "";
+  position: absolute;
+  inset: 25px;
+  border: 1px solid rgba(96, 225, 238, .13);
+  border-radius: 50%;
+}
+
+.ai-core-icon {
+  position: relative;
+  z-index: 3;
+  width: 63px;
+  height: 63px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #178fff, #31dfd4);
+  box-shadow:
+    0 0 25px rgba(42, 218, 231, .35),
+    inset 0 1px 0 rgba(255,255,255,.22);
+}
+
+.ai-core-icon svg {
+  width: 38px;
+  height: 38px;
+}
+
+/* 内部标签 */
+.internal-label {
+  position: absolute;
+  z-index: 3;
+  width: 102px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(64, 184, 220, .17);
+  border-radius: 9px;
+  color: #8fbdcc;
+  font-size: 8.5px;
+  background: rgba(5, 30, 53, .68);
+}
+
+.label-1 {
+  left: 27px;
+  top: 31px;
+}
+
+.label-2 {
+  left: 27px;
+  top: 82px;
+}
+
+.label-3 {
+  right: 27px;
+  top: 31px;
+}
+
+.label-4 {
+  right: 27px;
+  top: 82px;
+}
+
+.internal-label.purple {
+  color: #b8a9eb;
+  border-color: rgba(151, 125, 239, .18);
+  background: rgba(62, 47, 111, .25);
+}
+
+.internal-label.green {
+  color: #79d7c2;
+  border-color: rgba(53, 207, 174, .17);
+  background: rgba(22, 108, 92, .22);
+}
+
+/* 底部接口 */
+.device-footer {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  bottom: 17px;
+  z-index: 3;
+  height: 38px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(68, 181, 214, .14);
+  border-radius: 9px;
+  background: rgba(2, 18, 35, .61);
+}
+
+.port-list {
+  display: flex;
+  gap: 6px;
+}
+
+.port {
+  width: 20px;
+  height: 11px;
+  border: 1px solid rgba(71, 186, 219, .29);
+  border-radius: 3px;
+  background: rgba(4, 24, 43, .85);
+}
+
+.port.active {
+  border-color: rgba(64, 231, 202, .46);
+  box-shadow: inset 0 0 5px rgba(47, 222, 193, .15);
+}
+
+.port-status {
+  margin-left: 10px;
+  color: #517f94;
+  font-size: 7px;
+  letter-spacing: .5px;
+}
+
+.port-status b {
+  color: #46d9bd;
+}
+
+.device-spec {
+  margin-left: auto;
+  color: #476e83;
+  font-size: 7px;
+  letter-spacing: .8px;
+}
+
+/* ========================================
+   三个章节内容卡片
+======================================== */
+
+.chapter-path {
+  position: absolute;
+  left: 14px;
+  right: 0;
+  bottom: 0;
+  z-index: 7;
+  height: 154px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+}
+
+.path-card {
+  position: relative;
+  height: 143px;
+  padding: 17px 16px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(61, 181, 226, .20);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 56, 87, .87),
+      rgba(6, 27, 51, .92)
+    );
+  box-shadow:
+    0 14px 32px rgba(0, 5, 18, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  backdrop-filter: blur(10px);
+}
+
+.path-card::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #57def1, transparent);
+}
+
+.path-card.purple {
+  border-color: rgba(153, 123, 255, .25);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(56, 47, 112, .62),
+      rgba(7, 30, 55, .92)
+    );
+}
+
+.path-card.purple::before {
+  background: linear-gradient(90deg, transparent, #aa91ff, transparent);
+}
+
+.path-card.green {
+  border-color: rgba(47, 215, 177, .23);
+}
+
+.path-card.green::before {
+  background: linear-gradient(90deg, transparent, #50e5c5, transparent);
+}
+
+.path-number {
+  position: absolute;
+  right: 14px;
+  top: 9px;
+  color: rgba(71, 211, 235, .13);
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.path-card.purple .path-number {
+  color: rgba(175, 150, 255, .14);
+}
+
+.path-card.green .path-number {
+  color: rgba(74, 224, 190, .13);
+}
+
+.path-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.path-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #56e0f2;
+  background: rgba(23, 149, 190, .15);
+  border: 1px solid rgba(67, 205, 235, .15);
+}
+
+.path-card.purple .path-icon {
+  color: #c7b6ff;
+  background: rgba(127, 90, 218, .16);
+  border-color: rgba(167, 138, 246, .17);
+}
+
+.path-card.green .path-icon {
+  color: #55e4c5;
+  background: rgba(31, 179, 144, .14);
+  border-color: rgba(57, 211, 176, .16);
+}
+
+.path-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.path-title {
+  color: #dceff6;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.path-en {
+  margin-top: 3px;
+  color: #597f95;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.path-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 11px;
+  color: #7398aa;
+  font-size: 8.5px;
+  line-height: 1.55;
+}
+
+.path-points {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.path-point {
+  padding: 4px 7px;
+  border-radius: 7px;
+  color: #80b4c6;
+  font-size: 7.5px;
+  background: rgba(17, 70, 98, .48);
+}
+
+.path-card.purple .path-point {
+  color: #aa9ed6;
+  background: rgba(83, 62, 141, .28);
+}
+
+.path-card.green .path-point {
+  color: #79c6b5;
+  background: rgba(22, 117, 97, .24);
+}
+
+/* ========================================
+   网关与卡片连接线
+======================================== */
+
+.visual-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 850px;
+  height: 640px;
+  pointer-events: none;
+}
+
+.gateway-line {
+  fill: none;
+  stroke: #4bd9ed;
+  stroke-width: 1.4;
+  stroke-dasharray: 6 7;
+  opacity: .53;
+  animation: lineFlow 10s linear infinite;
+}
+
+.gateway-line-purple {
+  stroke: #a28aff;
+}
+
+.gateway-line-green {
+  stroke: #49dfbf;
+}
+
+.gateway-node {
+  fill: #59e8f3;
+  filter: drop-shadow(0 0 6px #26d8ee);
+}
+
+.gateway-node-purple {
+  fill: #b39bff;
+  filter: drop-shadow(0 0 6px #9175ff);
+}
+
+.gateway-node-green {
+  fill: #55e9ca;
+  filter: drop-shadow(0 0 6px #38dbb8);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+/* ========================================
+   底部章节进度
+======================================== */
+
+.chapter-progress {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  bottom: 50px;
+  z-index: 8;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-label {
+  color: #52788e;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.progress-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  margin: 0 17px;
+  background: rgba(65, 136, 172, .18);
+}
+
+.progress-active {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 42%;
+  height: 2px;
+  background: linear-gradient(90deg, #188fff, #42e2e5);
+  box-shadow: 0 0 8px rgba(55, 215, 235, .24);
+}
+
+.progress-dot {
+  position: absolute;
+  left: 42%;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #52e4ee;
+  box-shadow: 0 0 9px #52e4ee;
+}
+
+.progress-chapter {
+  color: #77a6ba;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* ========================================
+   页脚
+======================================== */
+
+.footer {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  bottom: 18px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #476e85;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景曲线 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="backgroundGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 718 C229 658 305 755 493 680 C690 601 717 421 904 356 C1090 291 1305 416 1600 228"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 761 C245 710 387 793 568 722 C746 652 787 483 966 420 C1168 349 1371 419 1600 326"
+      />
+
+      <circle class="bg-dot" cx="493" cy="680" r="3"/>
+      <circle class="bg-dot" cx="904" cy="356" r="3"/>
+      <circle class="bg-dot" cx="1305" cy="416" r="3"/>
+    </svg>
+
+    <!-- 顶部品牌 -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 20V7.5C5 5.57 6.57 4 8.5 4h4A4.5 4.5 0 0 1 17 8.5v1A4.5 4.5 0 0 1 12.5 14H9"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M9 20V14M5 17h4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18 14l-2 3h2l-1 3 3-4h-2l1-2h-1z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <div class="brand-cn">惠泊云</div>
+          <div class="brand-en">HUIBO CLOUD</div>
+        </div>
+      </div>
+
+      <div class="chapter-status">
+        <i></i>
+        CHAPTER · AI PARKING AGENT GATEWAY
+      </div>
+    </header>
+
+    <!-- 左侧章节标题 -->
+    <section class="chapter-copy">
+      <div class="chapter-number">02</div>
+
+      <div class="chapter-content">
+        <div class="chapter-label">
+          核心创新能力
+        </div>
+
+        <div class="chapter-title">
+          <h1>AI 停车智能体网关</h1>
+        </div>
+
+        <div class="chapter-en">
+          AI PARKING AGENT GATEWAY
+        </div>
+
+        <div class="chapter-slogan">
+          让停车场从“设备联网”<br>
+          走向真正的<strong>场端智能</strong>
+        </div>
+
+        <div class="chapter-description">
+          一台网关融合停车业务、设备控制、数据存储、视频取证、
+          流媒体与 AI 智能体能力，实现断网不停服、数据自主可控，
+          并通过边云协同持续提升停车场运营效率。
+        </div>
+
+        <div class="keywords">
+          <span class="keyword">
+            <i></i>
+            本地业务闭环
+          </span>
+
+          <span class="keyword">
+            <i></i>
+            断网正常运营
+          </span>
+
+          <span class="keyword purple">
+            <i></i>
+            AI 智能体
+          </span>
+
+          <span class="keyword green">
+            <i></i>
+            数据安全自主
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右侧章节视觉 -->
+    <section class="gateway-visual">
+
+      <div class="gateway-orbit"></div>
+
+      <i class="orbit-dot dot-1"></i>
+      <i class="orbit-dot dot-2"></i>
+      <i class="orbit-dot dot-3"></i>
+
+      <div class="gateway-glow"></div>
+
+      <!-- 网关连接到三个内容章节 -->
+      <svg class="visual-lines" viewBox="0 0 850 640">
+        <path
+          class="gateway-line"
+          d="M362 432 C292 461 188 462 144 496"
+        />
+        <circle class="gateway-node" cx="263" cy="464" r="3.5"/>
+
+        <path
+          class="gateway-line gateway-line-purple"
+          d="M450 439 V487"
+        />
+        <circle class="gateway-node-purple" cx="450" cy="463" r="3.5"/>
+
+        <path
+          class="gateway-line gateway-line-green"
+          d="M538 432 C609 461 712 462 757 496"
+        />
+        <circle class="gateway-node-green" cx="637" cy="464" r="3.5"/>
+      </svg>
+
+      <!-- 拟物AI网关 -->
+      <div class="gateway-device">
+
+        <div class="device-top">
+          <div class="device-brand">
+            <div class="device-brand-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="4"
+                  y="5"
+                  width="16"
+                  height="14"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+                <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+                <path
+                  d="M9 16h6M12 2v3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="device-brand-name">AI PARKING EDGE</div>
+              <div class="device-brand-en">
+                INTELLIGENT AGENT GATEWAY
+              </div>
+            </div>
+          </div>
+
+          <div class="device-online">
+            <i></i>
+            AGENT ONLINE
+          </div>
+        </div>
+
+        <div class="device-body">
+
+          <div class="internal-label label-1">
+            停车业务程序
+          </div>
+
+          <div class="internal-label label-2 green">
+            本地数据库
+          </div>
+
+          <div class="internal-label label-3 purple">
+            AI 智能体
+          </div>
+
+          <div class="internal-label label-4">
+            NVR／流媒体
+          </div>
+
+          <div class="ai-core">
+            <div class="ai-core-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="4"
+                  y="5"
+                  width="16"
+                  height="14"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <circle cx="9" cy="12" r="1.4" fill="currentColor"/>
+                <circle cx="15" cy="12" r="1.4" fill="currentColor"/>
+                <path
+                  d="M9 16h6M12 2v3M2 10h2M20 10h2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div class="device-footer">
+            <div class="port-list">
+              <i class="port active"></i>
+              <i class="port active"></i>
+              <i class="port active"></i>
+              <i class="port"></i>
+              <i class="port"></i>
+            </div>
+
+            <div class="port-status">
+              <b>●</b> DEVICE CONNECTED
+            </div>
+
+            <div class="device-spec">
+              AI · STORAGE · NVR · STREAMING
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 三个后续内容 -->
+      <div class="chapter-path">
+
+        <!-- 第一部分 -->
+        <article class="path-card">
+          <span class="path-number">01</span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 18h16M6 18V9h5v9M13 18V5h5v13"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M5 7l5-4 5 3 5-4"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">创新架构与价值对比</div>
+              <div class="path-en">ARCHITECTURE &amp; VALUE</div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            对比设备直连、双存储与 AI 网关方案，
+            直观呈现架构创新与客户价值。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">传统痛点</span>
+            <span class="path-point">断网不停服</span>
+            <span class="path-point">数据本地化</span>
+          </div>
+        </article>
+
+        <!-- 第二部分 -->
+        <article class="path-card purple">
+          <span class="path-number">02</span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="3"
+                  y="6"
+                  width="18"
+                  height="12"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M7 10h4M7 14h6"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+                <circle cx="18" cy="10" r="1" fill="currentColor"/>
+                <circle cx="18" cy="14" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">网关硬件与部署方式</div>
+              <div class="path-en">HARDWARE &amp; DEPLOYMENT</div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            展示实际硬件设备、接口能力、内部资源，
+            以及停车场现场部署和设备接入方式。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">设备实物</span>
+            <span class="path-point">接口说明</span>
+            <span class="path-point">现场部署</span>
+          </div>
+        </article>
+
+        <!-- 第三部分 -->
+        <article class="path-card green">
+          <span class="path-number">03</span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="16"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M7 8h4M7 12h7M7 16h5"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M17 8l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">智能体应用与实战</div>
+              <div class="path-en">AI AGENT IN PRACTICE</div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            通过真实系统页面，展示智能问答、异常研判、
+            数据分析与运营辅助等落地能力。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">内嵌页面</span>
+            <span class="path-point">智能问答</span>
+            <span class="path-point">运营分析</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 章节进度 -->
+    <div class="chapter-progress">
+      <span class="progress-label">SOLUTION JOURNEY</span>
+
+      <div class="progress-track">
+        <i class="progress-active"></i>
+        <i class="progress-dot"></i>
+      </div>
+
+      <span class="progress-chapter">
+        CHAPTER 02 · AI 智能体网关
+      </span>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        本章节将从架构、硬件与应用三个维度完整介绍 AI 停车智能体网关
+      </div>
+
+      <div class="footer-right">
+        EDGE INTELLIGENCE · LOCAL SERVICE · SECURE DATA · AI AGENT
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>概率论要素关系地图</title>
+<style>
+  html,body{margin:0;padding:0;background:#eef2f7;font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif;}
+  .wrap{max-width:1720px;margin:0 auto;padding:18px;}
+  .card{background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(15,23,42,.12);padding:10px;}
+  svg{width:100%;height:auto;display:block;}
+  /* ---- 通用文字 ---- */
+  .h1{font:700 30px "Microsoft YaHei",sans-serif;fill:#0f172a;}
+  .h2{font:400 15px "Microsoft YaHei",sans-serif;fill:#64748b;}
+  .ptitle{font:700 19px "Microsoft YaHei",sans-serif;}
+  .t1{font:700 15.5px "Microsoft YaHei",sans-serif;fill:#0f172a;}
+  .t2{font:15px "Cambria Math",Cambria,Georgia,serif;fill:#1e293b;}
+  .t3{font:12px "Microsoft YaHei",sans-serif;fill:#475569;}
+  .red{fill:#b91c1c;}
+  /* 箭头标签仅保留细白色光晕，避免连线穿过文字；颜色类只改变 fill。 */
+  .lbl{font:600 13px "Microsoft YaHei","Cambria Math",sans-serif;fill:#334155;
+       paint-order:stroke fill;stroke:#fff;stroke-width:2.4px;
+       stroke-linejoin:round;stroke-opacity:.98;vector-effect:non-scaling-stroke;}
+  .lbl.b{fill:#1d4ed8;} .lbl.p{fill:#6d28d9;} .lbl.o{fill:#c2410c;} .lbl.g{fill:#15803d;}
+  .big{font:700 21px "Cambria Math",Cambria,Georgia,serif;fill:#7c2d12;}
+  .li{font:13.5px "Microsoft YaHei",sans-serif;fill:#7f1d1d;}
+  /* ---- 节点配色 ---- */
+  .n rect{stroke-width:2;}
+  .blue  rect{fill:#dbeafe;stroke:#2563eb;}
+  .purple rect{fill:#ede9fe;stroke:#7c3aed;}
+  .orange rect{fill:#ffedd5;stroke:#ea580c;}
+  .green rect{fill:#dcfce7;stroke:#16a34a;}
+  .gray  rect{fill:#f1f5f9;stroke:#64748b;}
+  .pink  rect{fill:#fee2e2;stroke:#dc2626;}
+  .hub rect{fill:#ddd6fe;stroke:#6d28d9;stroke-width:3;}
+  /* ---- 连线 ---- */
+  .ar{fill:none;stroke-width:2.2;}
+  .ar.b{stroke:#2563eb;} .ar.p{stroke:#7c3aed;} .ar.o{stroke:#ea580c;} .ar.g{stroke:#16a34a;} .ar.k{stroke:#64748b;}
+  .dash{stroke-dasharray:9 6;}
+  .dot{stroke-dasharray:2 5;stroke-linecap:round;}
+  /* ---- A4 单页打印 ---- */
+  @page{size:A4 portrait;margin:5mm;}
+  @media print{
+    html,body{
+      width:100%;margin:0!important;padding:0!important;
+      background:#fff!important;overflow:hidden;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    .wrap{
+      width:100%;max-width:none;margin:0!important;padding:0!important;
+      break-inside:avoid;page-break-inside:avoid;
+    }
+    .card{
+      width:100%;margin:0!important;padding:0!important;
+      border-radius:0;box-shadow:none;overflow:hidden;
+      break-inside:avoid;page-break-inside:avoid;
+    }
+    svg{
+      width:auto;height:286mm;max-width:100%;margin:0 auto;
+      display:block;break-inside:avoid;page-break-inside:avoid;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<svg viewBox="0 0 1700 2450" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="mb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+  <marker id="mp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+  <marker id="mo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/></marker>
+  <marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+
+<!-- ================= 标题 & 图例 ================= -->
+<text class="h1" x="850" y="46" text-anchor="middle">概率论要素关系地图</text>
+<text class="h2" x="850" y="72" text-anchor="middle">分布表示（PMF/PDF/CDF/ECDF） · 多变量结构（联合/边缘/条件） · 贝叶斯推断（先验/似然/后验） · 数字特征（期望/方差/协方差）</text>
+
+<rect x="40" y="88" width="1620" height="50" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+<line x1="60" y1="113" x2="102" y2="113" class="ar k" marker-end="url(#mk)"/>
+<text class="t3" x="110" y="118">确定性转换（Σ / ∫ / d·dx / ÷ / ×）</text>
+<line x1="330" y1="113" x2="372" y2="113" class="ar k dash" marker-end="url(#mk)"/>
+<text class="t3" x="380" y="118">估计 / 近似</text>
+<line x1="490" y1="113" x2="532" y2="113" class="ar k dot" marker-end="url(#mk)"/>
+<text class="t3" x="540" y="118">特殊关系 / 判定</text>
+<rect x="700" y="106" width="14" height="14" fill="#dbeafe" stroke="#2563eb"/><text class="t3" x="720" y="118">分布表示</text>
+<rect x="800" y="106" width="14" height="14" fill="#ede9fe" stroke="#7c3aed"/><text class="t3" x="820" y="118">联合/边缘/条件</text>
+<rect x="950" y="106" width="14" height="14" fill="#ffedd5" stroke="#ea580c"/><text class="t3" x="970" y="118">先验/似然/后验</text>
+<rect x="1100" y="106" width="14" height="14" fill="#dcfce7" stroke="#16a34a"/><text class="t3" x="1120" y="118">期望/方差/协方差</text>
+<rect x="1270" y="106" width="14" height="14" fill="#f1f5f9" stroke="#64748b"/><text class="t3" x="1290" y="118">样本/数据</text>
+<rect x="1380" y="106" width="14" height="14" fill="#fee2e2" stroke="#dc2626"/><text class="t3" x="1400" y="118">易错点</text>
+
+<!-- ================= ① 分布表示层 ================= -->
+<rect x="40" y="150" width="1620" height="350" rx="14" fill="#f2f8ff" stroke="#93c5fd" stroke-dasharray="8 6"/>
+<text class="ptitle" x="60" y="182" fill="#1d4ed8">① 分布表示层 · 一个随机变量的分布怎么写</text>
+
+<g class="n gray"><rect x="60" y="300" width="140" height="70" rx="12"/>
+  <text class="t1" x="130" y="328" text-anchor="middle">样本 / 数据</text>
+  <text class="t2" x="130" y="352" text-anchor="middle">x₁, …, xₙ</text></g>
+
+<g class="n blue"><rect x="250" y="295" width="230" height="86" rx="12"/>
+  <text class="t1" x="365" y="322" text-anchor="middle">ECDF 经验分布函数</text>
+  <text class="t2" x="365" y="346" text-anchor="middle">F̂ₙ(x)=(1/n)Σᵢ 1(xᵢ ≤ x)</text>
+  <text class="t3" x="365" y="368" text-anchor="middle">由数据构造的阶梯函数</text></g>
+
+<g class="n blue"><rect x="560" y="205" width="250" height="76" rx="12"/>
+  <text class="t1" x="685" y="232" text-anchor="middle">PMF 概率质量（离散）</text>
+  <text class="t2" x="685" y="256" text-anchor="middle">p(x) = P(X = x)</text>
+  <text class="t3" x="685" y="274" text-anchor="middle">p ≥ 0 , Σₓ p(x) = 1</text></g>
+
+<g class="n blue"><rect x="560" y="390" width="250" height="76" rx="12"/>
+  <text class="t1" x="685" y="416" text-anchor="middle">PDF 概率密度（连续）</text>
+  <text class="t2" x="685" y="440" text-anchor="middle">f(x) ≥ 0 , ∫ f(x)dx = 1</text>
+  <text class="t3 red" x="685" y="459" text-anchor="middle">f(x) ≠ P(X=x)，且 P(X=x)=0</text></g>
+
+<g class="n blue"><rect x="890" y="290" width="250" height="92" rx="12"/>
+  <text class="t1" x="1015" y="317" text-anchor="middle">CDF 累积分布函数</text>
+  <text class="t2" x="1015" y="341" text-anchor="middle">F(x) = P(X ≤ x)</text>
+  <text class="t3" x="1015" y="364" text-anchor="middle">单调不减 · 右连续 · 0 → 1</text></g>
+
+<g class="n blue"><rect x="1300" y="290" width="310" height="92" rx="12"/>
+  <text class="t1" x="1455" y="317" text-anchor="middle">区间概率 P(a &lt; X ≤ b)</text>
+  <text class="t2" x="1455" y="342" text-anchor="middle">P(a &lt; X ≤ b) = F(b) − F(a)</text>
+  <text class="t2" x="1455" y="366" text-anchor="middle">P(a &lt; X ≤ b) = ∫ₐᵇ f(x) dx</text></g>
+
+<path class="ar k" d="M 202,335 L 246,335" marker-end="url(#mk)"/>
+<text class="lbl" x="224" y="322" text-anchor="middle">计数</text>
+<path class="ar b dash" d="M 482,335 L 886,335" marker-end="url(#mb)"/>
+<text class="lbl b" x="670" y="324" text-anchor="middle">估计 / 大样本逼近：F̂ₙ ⟶ F</text>
+<text class="t3 red" x="670" y="360" text-anchor="middle">ECDF 直接求导 ≠ 总体 PDF（需核密度等平滑）</text>
+
+<path class="ar b" d="M 812,258 L 908,288" marker-end="url(#mb)" marker-start="url(#mb)"/>
+<text class="lbl b" x="852" y="226" text-anchor="middle">→ 累加 Σ_{t≤x}</text>
+<text class="lbl b" x="852" y="244" text-anchor="middle">← 跳跃量 F(x)−F(x⁻)</text>
+
+<path class="ar b" d="M 812,412 L 908,386" marker-end="url(#mb)" marker-start="url(#mb)"/>
+<text class="lbl b" x="856" y="436" text-anchor="middle">→ 积分 ∫₋∞ˣ</text>
+<text class="lbl b" x="856" y="454" text-anchor="middle">← 求导 d/dx</text>
+
+<path class="ar b" d="M 1142,325 L 1296,325" marker-end="url(#mb)"/>
+<text class="lbl b" x="1219" y="313" text-anchor="middle">F(b) − F(a)</text>
+<path class="ar b" d="M 810,440 C 1000,490 1150,440 1306,384" marker-end="url(#mb)"/>
+<text class="lbl b" x="1040" y="478" text-anchor="middle">∫ₐᵇ f(x)dx</text>
+
+<!-- ================= ② 多变量概率结构 ================= -->
+<rect x="40" y="520" width="970" height="470" rx="14" fill="#f7f4ff" stroke="#c4b5fd" stroke-dasharray="8 6"/>
+<text class="ptitle" x="60" y="552" fill="#6d28d9">② 多变量概率结构 · 联合分布是枢纽</text>
+
+<g class="n hub"><rect x="395" y="580" width="250" height="82" rx="12"/>
+  <text class="t1" x="520" y="606" text-anchor="middle">★ 联合分布（枢纽）</text>
+  <text class="t2" x="520" y="630" text-anchor="middle">p(x, y) / f(x, y)</text>
+  <text class="t3" x="520" y="650" text-anchor="middle">ΣΣ p = 1 或 ∫∫ f = 1</text></g>
+
+<g class="n purple"><rect x="70" y="730" width="190" height="78" rx="12"/>
+  <text class="t1" x="165" y="756" text-anchor="middle">边缘分布 p(x)</text>
+  <text class="t2" x="165" y="779" text-anchor="middle">p(x) = Σ_y p(x,y)</text>
+  <text class="t3" x="165" y="798" text-anchor="middle">f(x) = ∫ f(x,y) dy</text></g>
+
+<g class="n purple"><rect x="300" y="730" width="200" height="78" rx="12"/>
+  <text class="t1" x="400" y="756" text-anchor="middle">条件分布 p(y|x)</text>
+  <text class="t2" x="400" y="779" text-anchor="middle">p(y|x) = p(x,y) / p(x)</text>
+  <text class="t3" x="400" y="798" text-anchor="middle">要求 p(x) &gt; 0</text></g>
+
+<g class="n purple"><rect x="540" y="730" width="200" height="78" rx="12"/>
+  <text class="t1" x="640" y="756" text-anchor="middle">条件分布 p(x|y)</text>
+  <text class="t2" x="640" y="779" text-anchor="middle">p(x|y) = p(x,y) / p(y)</text>
+  <text class="t3" x="640" y="798" text-anchor="middle">要求 p(y) &gt; 0</text></g>
+
+<g class="n purple"><rect x="770" y="730" width="190" height="78" rx="12"/>
+  <text class="t1" x="865" y="756" text-anchor="middle">边缘分布 p(y)</text>
+  <text class="t2" x="865" y="779" text-anchor="middle">p(y) = Σ_x p(x,y)</text>
+  <text class="t3" x="865" y="798" text-anchor="middle">f(y) = ∫ f(x,y) dx</text></g>
+
+<g class="n purple"><rect x="70" y="880" width="470" height="78" rx="12"/>
+  <text class="t1" x="305" y="908" text-anchor="middle">乘法公式 / 链式法则（反向合成联合）</text>
+  <text class="t2" x="305" y="936" text-anchor="middle">p(x,y) = p(y|x)·p(x) = p(x|y)·p(y)</text></g>
+
+<g class="n purple"><rect x="570" y="880" width="390" height="78" rx="12"/>
+  <text class="t1" x="765" y="908" text-anchor="middle">独立性判定  X ⟂ Y</text>
+  <text class="t2" x="765" y="936" text-anchor="middle">⇔ p(x,y)=p(x)p(y) ⇔ p(y|x)=p(y)</text></g>
+
+<path class="ar p" d="M 430,663 L 172,728" marker-end="url(#mp)"/>
+<text class="lbl p" x="285" y="682" text-anchor="middle">边缘化：Σ_y / ∫dy</text>
+<path class="ar p" d="M 615,663 L 858,728" marker-end="url(#mp)"/>
+<text class="lbl p" x="755" y="682" text-anchor="middle">边缘化：Σ_x / ∫dx</text>
+<path class="ar p" d="M 480,664 L 402,728" marker-end="url(#mp)" marker-start="url(#mp)"/>
+<text class="lbl p" x="405" y="702" text-anchor="middle">÷ p(x) ⇄ × p(x)</text>
+<path class="ar p" d="M 562,664 L 638,728" marker-end="url(#mp)" marker-start="url(#mp)"/>
+<text class="lbl p" x="638" y="702" text-anchor="middle">÷ p(y) ⇄ × p(y)</text>
+<path class="ar p" d="M 400,810 C 480,868 760,868 860,812" marker-end="url(#mp)"/>
+<text class="lbl p" x="630" y="836" text-anchor="middle">全概率公式：p(y)=Σₓ p(y|x)p(x)（连续用 ∫）</text>
+<path class="ar p dot" d="M 960,770 C 1000,770 1000,900 964,908" marker-end="url(#mp)"/>
+
+<!-- ================= ④ 数字特征层 ================= -->
+<rect x="1040" y="520" width="620" height="470" rx="14" fill="#f2fdf5" stroke="#86efac" stroke-dasharray="8 6"/>
+<text class="ptitle" x="1060" y="552" fill="#15803d">④ 数字特征层 · 把分布压缩成数字</text>
+
+<g class="n green"><rect x="1070" y="586" width="190" height="66" rx="12"/>
+  <text class="t1" x="1165" y="612" text-anchor="middle">期望 E[X]</text>
+  <text class="t2" x="1165" y="636" text-anchor="middle">Σ x·p(x) / ∫ x·f(x)dx</text></g>
+
+<g class="n green"><rect x="1070" y="666" width="190" height="58" rx="12"/>
+  <text class="t1" x="1165" y="691" text-anchor="middle">二阶矩 E[X²]</text>
+  <text class="t3" x="1165" y="712" text-anchor="middle">E[g(X)]=Σ/∫ g·p</text></g>
+
+<g class="n green"><rect x="1330" y="596" width="300" height="96" rx="12"/>
+  <text class="t1" x="1480" y="624" text-anchor="middle">方差 Var(X)</text>
+  <text class="t2" x="1480" y="650" text-anchor="middle">Var(X) = E[(X−E X)²] = E[X²] − E[X]²</text>
+  <text class="t3" x="1480" y="674" text-anchor="middle">标准差 σₓ = √Var(X)</text></g>
+
+<g class="n green"><rect x="1070" y="800" width="190" height="58" rx="12"/>
+  <text class="t1" x="1165" y="825" text-anchor="middle">交叉矩 E[XY]</text>
+  <text class="t3" x="1165" y="846" text-anchor="middle">来自联合分布</text></g>
+
+<g class="n green"><rect x="1070" y="880" width="190" height="58" rx="12"/>
+  <text class="t1" x="1165" y="905" text-anchor="middle">E[X]·E[Y]</text>
+  <text class="t3" x="1165" y="926" text-anchor="middle">来自两个边缘分布</text></g>
+
+<g class="n green"><rect x="1330" y="752" width="300" height="104" rx="12"/>
+  <text class="t1" x="1480" y="780" text-anchor="middle">协方差 Cov(X, Y)</text>
+  <text class="t2" x="1480" y="806" text-anchor="middle">Cov(X,Y) = E[(X−E X)(Y−E Y)]</text>
+  <text class="t2" x="1480" y="830" text-anchor="middle">Cov(X,Y) = E[XY] − E[X]E[Y]</text></g>
+
+<g class="n green"><rect x="1330" y="886" width="300" height="66" rx="12"/>
+  <text class="t1" x="1480" y="912" text-anchor="middle">相关系数 ρ (无量纲)</text>
+  <text class="t2" x="1480" y="936" text-anchor="middle">ρ(X,Y) = Cov(X,Y)/(σₓ σ_y) ∈ [−1,1]</text></g>
+
+<path class="ar g" d="M 1262,612 L 1326,620" marker-end="url(#mg)"/>
+<path class="ar g" d="M 1262,690 L 1326,668" marker-end="url(#mg)"/>
+<path class="ar g" d="M 1262,822 L 1326,800" marker-end="url(#mg)"/>
+<path class="ar g" d="M 1262,902 L 1326,846" marker-end="url(#mg)"/>
+<text class="lbl g" x="1300" y="880" text-anchor="middle">相减</text>
+<path class="ar g dot" d="M 1480,694 L 1480,748" marker-end="url(#mg)"/>
+<text class="lbl g" x="1492" y="724" text-anchor="start">Var(X)=Cov(X,X)</text>
+<path class="ar g" d="M 1480,858 L 1480,882" marker-end="url(#mg)"/>
+<text class="lbl g" x="1545" y="874" text-anchor="middle">标准化</text>
+<path class="ar g dot" d="M 1068,620 C 1048,680 1048,860 1066,900" marker-end="url(#mg)"/>
+
+<!-- 跨层：PMF/PDF → 矩 ；联合 → E[XY] -->
+<path class="ar g" d="M 812,222 C 1020,165 1245,195 1250,320 C 1254,450 1180,522 1142,582" marker-end="url(#mg)"/>
+<text class="lbl g" x="1055" y="196" text-anchor="middle">加权求和 Σ x·p(x)</text>
+<path class="ar g" d="M 700,468 L 700,506 L 1025,506 L 1025,616 L 1064,616" marker-end="url(#mg)" stroke-linejoin="round"/>
+<text class="lbl g" x="880" y="498" text-anchor="middle">加权积分 ∫ x·f(x)dx（分布 ⟶ 矩）</text>
+<path class="ar g" d="M 647,616 C 830,600 980,640 1020,730 C 1040,780 1050,812 1062,824" marker-end="url(#mg)"/>
+<text class="lbl g" x="880" y="656" text-anchor="middle">联合分布 ⟶ E[XY]</text>
+
+<!-- ================= ③ 贝叶斯推断层 ================= -->
+<rect x="40" y="1010" width="1090" height="460" rx="14" fill="#fff8f1" stroke="#fdba74" stroke-dasharray="8 6"/>
+<text class="ptitle" x="60" y="1042" fill="#c2410c">③ 贝叶斯推断层 · 就是把 (X,Y) 换成 (Θ, X) 的条件概率</text>
+
+<path class="ar o dash" d="M 300,960 L 300,1072" marker-end="url(#mo)"/>
+<text class="lbl o" x="316" y="1002" text-anchor="start">同一套规则搬到「参数 Θ ↔ 数据 X」：生成方向 Θ ⟶ X，推断方向 X ⟶ Θ</text>
+
+<g class="n orange"><rect x="80" y="1080" width="210" height="76" rx="12"/>
+  <text class="t1" x="185" y="1108" text-anchor="middle">先验 p(θ)</text>
+  <text class="t3" x="185" y="1132" text-anchor="middle">见数据前对 θ 的不确定性</text></g>
+
+<g class="n orange"><rect x="330" y="1080" width="270" height="76" rx="12"/>
+  <text class="t1" x="465" y="1108" text-anchor="middle">似然 L(θ; x) = p(x|θ)</text>
+  <text class="t3" x="465" y="1132" text-anchor="middle">固定观测 x，看作 θ 的函数</text></g>
+
+<g class="n orange"><rect x="180" y="1200" width="310" height="76" rx="12"/>
+  <text class="t1" x="335" y="1228" text-anchor="middle">联合分布 p(θ, x)</text>
+  <text class="t2" x="335" y="1254" text-anchor="middle">p(θ,x) = p(x|θ) · p(θ)</text></g>
+
+<g class="n orange"><rect x="630" y="1110" width="290" height="86" rx="12"/>
+  <text class="t1" x="775" y="1138" text-anchor="middle">证据 / 边缘似然 p(x)</text>
+  <text class="t2" x="775" y="1164" text-anchor="middle">p(x) = ∫ p(x|θ) p(θ) dθ</text>
+  <text class="t3" x="775" y="1185" text-anchor="middle">对 θ 边缘化（模型证据）</text></g>
+
+<g class="n orange"><rect x="630" y="1240" width="290" height="86" rx="12"/>
+  <text class="t1" x="775" y="1268" text-anchor="middle">后验 p(θ | x)</text>
+  <text class="t2" x="775" y="1294" text-anchor="middle">p(θ|x) = p(θ,x) / p(x)</text>
+  <text class="t3" x="775" y="1315" text-anchor="middle">见数据后对 θ 的不确定性</text></g>
+
+<g class="n pink"><rect x="950" y="1080" width="160" height="190" rx="12"/>
+  <text class="t1 red" x="1030" y="1108" text-anchor="middle">似然 ≠ 分布</text>
+  <text class="t3 red" x="1030" y="1134" text-anchor="middle">p(x|θ)：固定 θ，</text>
+  <text class="t3 red" x="1030" y="1154" text-anchor="middle">是 x 的分布</text>
+  <text class="t3 red" x="1030" y="1180" text-anchor="middle">L(θ;x)：固定 x，</text>
+  <text class="t3 red" x="1030" y="1200" text-anchor="middle">是 θ 的函数</text>
+  <text class="t3 red" x="1030" y="1230" text-anchor="middle">一般 ∫L(θ;x)dθ ≠ 1</text>
+  <text class="t3 red" x="1030" y="1252" text-anchor="middle">（不必归一化）</text></g>
+
+<path class="ar o" d="M 235,1158 L 300,1198" marker-end="url(#mo)"/>
+<text class="lbl o" x="243" y="1190" text-anchor="middle">×</text>
+<path class="ar o" d="M 420,1158 L 390,1198" marker-end="url(#mo)"/>
+<text class="lbl o" x="428" y="1190" text-anchor="middle">×</text>
+<path class="ar o" d="M 492,1228 L 626,1176" marker-end="url(#mo)"/>
+<text class="lbl o" x="562" y="1188" text-anchor="middle">对 θ 积分 ∫dθ</text>
+<path class="ar o" d="M 492,1256 L 626,1284" marker-end="url(#mo)"/>
+<text class="lbl o" x="558" y="1290" text-anchor="middle">÷ p(x)</text>
+<path class="ar o" d="M 775,1198 L 775,1236" marker-end="url(#mo)"/>
+<text class="lbl o" x="790" y="1222" text-anchor="start">作归一化常数</text>
+<path class="ar o" d="M 500,1300 L 500,1356" marker-end="url(#mo)"/>
+
+<rect x="80" y="1360" width="840" height="92" rx="12" fill="#ffe4cc" stroke="#c2410c" stroke-width="2.5"/>
+<text class="big" x="150" y="1414" text-anchor="middle">p(θ | x)  =</text>
+<text class="t2" x="400" y="1396" text-anchor="middle" style="font-size:19px">p(x | θ) · p(θ)　（似然 × 先验）</text>
+<line x1="255" y1="1406" x2="545" y2="1406" stroke="#7c2d12" stroke-width="2"/>
+<text class="t2" x="400" y="1436" text-anchor="middle" style="font-size:19px">∫ p(x | θ) p(θ) dθ  =  p(x)</text>
+<text class="big" x="740" y="1414" text-anchor="middle">∝  L(θ; x) · p(θ)</text>
+
+<!-- ================= ⑤ 易错点 ================= -->
+<rect x="1160" y="1010" width="500" height="460" rx="14" fill="#fff1f2" stroke="#fca5a5" stroke-dasharray="8 6"/>
+<text class="ptitle" x="1180" y="1042" fill="#b91c1c">⑤ 六个易错点</text>
+<text class="li" x="1182" y="1082">① 密度不是概率：f(x) ≠ P(X=x)，连续型 P(X=x)=0，</text>
+<text class="li" x="1182" y="1104">　　概率只对区间才有意义：P(a&lt;X≤b)=∫ₐᵇ f。</text>
+<text class="li" x="1182" y="1142">② 似然不是 θ 的概率分布，不要求对 θ 归一化。</text>
+<text class="li" x="1182" y="1180">③ ECDF 是由样本构造的 CDF 估计（阶梯函数），</text>
+<text class="li" x="1182" y="1202">　　不能直接求导当作总体 PDF。</text>
+<text class="li" x="1182" y="1240">④ 边缘化 = 求和/积分；条件化 = 除以边缘分布；</text>
+<text class="li" x="1182" y="1262">　　合成 = 相乘（乘法公式）。三者互逆。</text>
+<text class="li" x="1182" y="1300">⑤ Cov(X,Y)=0 一般推不出独立；</text>
+<text class="li" x="1182" y="1322">　　独立 ⇒ 协方差为 0，反向仅在联合正态等条件成立。</text>
+<text class="li" x="1182" y="1360">⑥ 期望/方差/协方差只是分布的「摘要」：</text>
+<text class="li" x="1182" y="1382">　　分布可定矩，但少数几个矩一般无法还原分布。</text>
+<text class="li" x="1182" y="1420">⑦ 贝叶斯公式不是孤立公式，它 = 联合 ÷ 边缘：</text>
+<text class="li" x="1182" y="1442">　　p(θ|x)=p(θ,x)/p(x)，p(x)=∫p(θ,x)dθ。</text>
+
+<!-- ================= 主线 ================= -->
+<rect x="40" y="1500" width="1620" height="72" rx="14" fill="#0f172a"/>
+<text x="850" y="1532" text-anchor="middle" style="font:700 21px 'Microsoft YaHei';fill:#e2e8f0">
+  主线：样本 ⟶ 经验分布(ECDF) ≈ 总体分布(PMF/PDF/CDF) ⟶ 联合 / 边缘 / 条件 ⟶ 贝叶斯更新（先验×似然÷证据） + 数字特征（E / Var / Cov）
+</text>
+<text x="850" y="1558" text-anchor="middle" style="font:13.5px 'Microsoft YaHei';fill:#94a3b8">
+  一句话记忆：联合是枢纽 —— 求和/积分得边缘，除以边缘得条件，条件乘边缘还原联合；把 (X,Y) 换成 (Θ,X)，条件概率就变成了贝叶斯推断。
+</text>
+
+<!-- ================= ⑥ 样本、收敛与近似 ================= -->
+<rect x="40" y="1605" width="1050" height="520" rx="16" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text class="ptitle" x="60" y="1642" fill="#1d4ed8">⑥ 样本、收敛与近似 · 样本量增大时发生什么</text>
+
+<g class="n gray"><rect x="70" y="1680" width="280" height="110" rx="13"/>
+  <text class="t1" x="210" y="1714" text-anchor="middle">样本均值 X̄ₙ</text>
+  <text class="t2" x="210" y="1744" text-anchor="middle">E[X̄ₙ] = μ</text>
+  <text class="t2" x="210" y="1770" text-anchor="middle">Var(X̄ₙ) = σ²/n</text></g>
+
+<g class="n green"><rect x="405" y="1680" width="295" height="110" rx="13"/>
+  <text class="t1" x="552" y="1714" text-anchor="middle">大数定律 LLN</text>
+  <text class="t2" x="552" y="1744" text-anchor="middle">X̄ₙ ⟶ μ（依概率）</text>
+  <text class="t3" x="552" y="1770" text-anchor="middle">回答：均值是否靠近真值</text></g>
+
+<path class="ar g" d="M 350,1735 L 395,1735" marker-end="url(#mg)"/>
+<text class="lbl g" x="372" y="1723" text-anchor="middle">n ↑</text>
+
+<g class="n gray"><rect x="70" y="1845" width="280" height="120" rx="13"/>
+  <text class="t1" x="210" y="1880" text-anchor="middle">标准化均值误差</text>
+  <text class="t2" x="210" y="1913" text-anchor="middle">√n (X̄ₙ − μ) / σ</text>
+  <text class="t3" x="210" y="1940" text-anchor="middle">波动尺度：1/√n</text></g>
+
+<g class="n green"><rect x="405" y="1845" width="295" height="120" rx="13"/>
+  <text class="t1" x="552" y="1880" text-anchor="middle">中心极限定理 CLT</text>
+  <text class="t2" x="552" y="1913" text-anchor="middle">√n (X̄ₙ−μ)/σ ⟶ N(0,1)</text>
+  <text class="t3" x="552" y="1940" text-anchor="middle">回答：误差以什么形状波动</text></g>
+
+<path class="ar g" d="M 350,1905 L 395,1905" marker-end="url(#mg)"/>
+
+<g class="n purple"><rect x="750" y="1680" width="310" height="110" rx="13"/>
+  <text class="t1" x="905" y="1714" text-anchor="middle">经验分布 ECDF</text>
+  <text class="t2" x="905" y="1744" text-anchor="middle">F̂ₙ(t) = (1/n) Σᵢ 1(Xᵢ ≤ t)</text>
+  <text class="t3" x="905" y="1770" text-anchor="middle">固定 t：Bernoulli 样本均值</text></g>
+
+<g class="n purple"><rect x="750" y="1845" width="310" height="120" rx="13"/>
+  <text class="t1" x="905" y="1880" text-anchor="middle">Glivenko–Cantelli</text>
+  <text class="t2" x="905" y="1913" text-anchor="middle">supₓ |F̂ₙ(x) − F(x)| ⟶ 0</text>
+  <text class="t3" x="905" y="1940" text-anchor="middle">整条 ECDF 一致逼近真实 CDF</text></g>
+
+<path class="ar p" d="M 905,1790 L 905,1835" marker-end="url(#mp)"/>
+<text class="lbl p" x="922" y="1818" text-anchor="start">n ↑</text>
+
+<rect x="70" y="2005" width="990" height="82" rx="12" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
+<text class="t1" x="565" y="2037" text-anchor="middle">LLN 与 CLT 不回答同一个问题</text>
+<text class="t3" x="565" y="2065" text-anchor="middle">LLN：位置趋近 μ　｜　CLT：标准化误差的渐近分布是 N(0,1)　｜　ECDF：从一个均值推广到整条分布</text>
+
+<!-- ================= ⑦ 变量变换、求和与模拟 ================= -->
+<rect x="1110" y="1605" width="550" height="520" rx="16" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+<text class="ptitle" x="1130" y="1642" fill="#c2410c">⑦ 变量变换、求和与模拟</text>
+
+<g class="n orange"><rect x="1135" y="1680" width="500" height="112" rx="13"/>
+  <text class="t1" x="1385" y="1713" text-anchor="middle">单调变换 Y = g(X)</text>
+  <text class="t2" x="1385" y="1743" text-anchor="middle">F_Y(y) = P(g(X) ≤ y)</text>
+  <text class="t3" x="1385" y="1770" text-anchor="middle">f_Y(y)=f_X(g⁻¹(y)) · |d g⁻¹(y)/dy|</text></g>
+
+<g class="n orange"><rect x="1135" y="1820" width="500" height="122" rx="13"/>
+  <text class="t1" x="1385" y="1852" text-anchor="middle">独立和 Z = X + Y：卷积</text>
+  <text class="t2" x="1385" y="1882" text-anchor="middle">离散：p_Z(z) = Σₓ p_X(x)p_Y(z−x)</text>
+  <text class="t2" x="1385" y="1912" text-anchor="middle">连续：f_Z(z) = ∫ f_X(x)f_Y(z−x) dx</text></g>
+
+<g class="n orange"><rect x="1135" y="1970" width="500" height="118" rx="13"/>
+  <text class="t1" x="1385" y="2002" text-anchor="middle">逆变换法生成随机数</text>
+  <text class="t2" x="1385" y="2032" text-anchor="middle">U ∼ U(0,1)，X = F⁻¹(U)</text>
+  <text class="t3" x="1385" y="2062" text-anchor="middle">广义逆：F⁻¹(u)=inf{x : F(x) ≥ u}</text></g>
+
+<path class="ar o" d="M 1385,1792 L 1385,1810" marker-end="url(#mo)"/>
+<path class="ar o" d="M 1385,1942 L 1385,1960" marker-end="url(#mo)"/>
+
+<!-- ================= ⑧ 三条高频关联桥梁 ================= -->
+<rect x="40" y="2150" width="1620" height="180" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+<text class="ptitle" x="60" y="2182" fill="#334155">⑧ 三条高频关联桥梁 · 从“会认公式”到“知道什么时候用”</text>
+
+<g class="n blue"><rect x="65" y="2200" width="510" height="108" rx="12"/>
+  <text class="t1" x="320" y="2228" text-anchor="middle">分布族：计数 ↔ 等待</text>
+  <text class="t3" x="320" y="2253" text-anchor="middle">Σ Bernoulli(p) → Bin(n,p)；稀有事件 → Pois(np)</text>
+  <text class="t3" x="320" y="2277" text-anchor="middle">Poisson 过程：计数 ∼ Pois(λt) ↔ 等待 ∼ Exp(λ)</text>
+  <text class="t3" x="320" y="2300" text-anchor="middle">第 k 次到达的等待时间 ∼ Gamma(k,λ)</text></g>
+
+<g class="n purple"><rect x="595" y="2200" width="510" height="108" rx="12"/>
+  <text class="t1" x="850" y="2228" text-anchor="middle">条件矩：分组后再合并</text>
+  <text class="t2" x="850" y="2255" text-anchor="middle">E[X] = E(E[X|Y])</text>
+  <text class="t2" x="850" y="2281" text-anchor="middle">Var(X) = E(Var(X|Y)) + Var(E[X|Y])</text>
+  <text class="t3" x="850" y="2301" text-anchor="middle">总波动 = 平均组内波动 + 组间均值波动</text></g>
+
+<g class="n green"><rect x="1125" y="2200" width="510" height="108" rx="12"/>
+  <text class="t1" x="1380" y="2228" text-anchor="middle">关联度量：先判断关系形状</text>
+  <text class="t3" x="1380" y="2253" text-anchor="middle">线性 → Pearson　｜　单调/有异常值 → Spearman（秩）</text>
+  <text class="t3" x="1380" y="2277" text-anchor="middle">次序一致性 → Kendall τ　｜　一般非线性 → 距离相关</text>
+  <text class="t3" x="1380" y="2300" text-anchor="middle">dCor = 0 ⇔ 独立；Pearson = 0 只表示无线性相关</text></g>
+
+<!-- ================= 底部考试路线 ================= -->
+<rect x="40" y="2350" width="1620" height="72" rx="14" fill="#0f172a"/>
+<text x="850" y="2379" text-anchor="middle" style="font:700 19px 'Microsoft YaHei';fill:#e2e8f0">
+  考试选路：求概率 → CDF/积分　｜　求边缘 → 消去另一变量　｜　已知条件 → 联合÷边缘　｜　求和 → 卷积　｜　大样本和/均值 → CLT
+</text>
+<text x="850" y="2405" text-anchor="middle" style="font:13.5px 'Microsoft YaHei';fill:#94a3b8">
+  先画支撑集、再定求和/积分边界；公式正确但边界错误，结果仍然错误。
+</text>
+</svg>
+</div></div>
+</body>
+</html>

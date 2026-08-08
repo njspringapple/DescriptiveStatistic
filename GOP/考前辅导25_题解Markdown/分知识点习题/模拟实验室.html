@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>从零搭建一个能上网的网络 —— 交互式实验</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:#f0f4f8; color:#2c3e50; }
+  #app { display:flex; gap:12px; padding:12px; height:100vh; }
+  #left { flex:1.5; display:flex; flex-direction:column; gap:10px; min-width:640px; }
+  #right { flex:1; background:#fff; border-radius:12px; padding:18px; overflow-y:auto;
+           box-shadow:0 2px 8px rgba(0,0,0,.08); min-width:380px;}
+  #canvasWrap { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.08); padding:6px; }
+  svg { width:100%; display:block; }
+  .hidden { opacity:0; pointer-events:none; }
+  .node { transition: opacity .6s; }
+  .link { stroke:#7f9db9; stroke-width:2.5; transition: opacity .6s; }
+  .nodeLabel { font-size:15px; font-weight:bold; fill:#fff; text-anchor:middle; }
+  .subLabel  { font-size:11px; fill:#546e7a; text-anchor:middle; }
+  .macLabel  { font-size:10px; fill:#8e44ad; text-anchor:middle; font-family:Consolas,monospace;}
+  .ipLabel   { font-size:11px; fill:#c0392b; text-anchor:middle; font-family:Consolas,monospace; font-weight:bold;}
+  /* 报文检查器 */
+  #inspector { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.08);
+               padding:10px 14px; min-height:150px; font-size:13px;}
+  #inspector h3 { font-size:14px; margin-bottom:6px; color:#34495e;}
+  #inspector h3 .badge { padding:2px 10px; border-radius:10px; color:#fff; font-size:12px; margin-left:8px;}
+  .layerRow { display:flex; border-radius:6px; margin:3px 0; overflow:hidden; font-family:Consolas,monospace; font-size:12.5px;}
+  .layerName { width:150px; padding:5px 8px; color:#fff; font-weight:bold; font-family:"Microsoft YaHei";}
+  .layerBody { flex:1; padding:5px 10px; background:#f8f9fa;}
+  .l2 .layerName{background:#78909c} .l3 .layerName{background:#f39c12}
+  .l4 .layerName{background:#2980b9} .l7 .layerName{background:#27ae60}
+  .chg { color:#e74c3c; font-weight:bold; background:#ffeaea; padding:0 3px; border-radius:3px;}
+  .old { text-decoration:line-through; color:#95a5a6; }
+  .noPkt { color:#95a5a6; padding:20px; text-align:center;}
+  /* 表格区 */
+  #tables { display:grid; grid-template-columns:1fr 1fr 1fr 1.3fr; gap:8px; }
+  .tcard { background:#fff; border-radius:10px; padding:8px; box-shadow:0 2px 6px rgba(0,0,0,.07); font-size:11.5px;}
+  .tcard h4 { font-size:12.5px; margin-bottom:5px; color:#34495e; border-bottom:2px solid #eef2f5; padding-bottom:3px;}
+  .tcard table { width:100%; border-collapse:collapse; font-family:Consolas,monospace; font-size:10.5px;}
+  .tcard td,.tcard th { border:1px solid #e3eaf0; padding:2.5px 4px; text-align:left;}
+  .tcard th { background:#f4f8fb; font-family:"Microsoft YaHei";}
+  .empty { color:#b0bec5; font-style:italic;}
+  tr.newrow td { background:#fff6d8; animation:flash 1.2s ease 3;}
+  @keyframes flash { 0%,100%{background:#fff6d8} 50%{background:#ffd54f} }
+  /* 右侧 */
+  #controls { display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  button { background:#3498db; color:#fff; border:none; padding:9px 22px; border-radius:8px;
+           font-size:15px; cursor:pointer; font-weight:bold;}
+  button:hover{background:#2980b9} button:disabled{background:#b0bec5; cursor:not-allowed;}
+  #stepNum { font-size:13px; color:#7f8c8d; }
+  #dots { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:14px;}
+  .dot { width:22px; height:22px; border-radius:50%; background:#dfe6ec; font-size:10px;
+         display:flex; align-items:center; justify-content:center; cursor:pointer; color:#546e7a;}
+  .dot.done{background:#a5d6a7} .dot.cur{background:#3498db; color:#fff; transform:scale(1.2);}
+  #stepTitle { font-size:19px; color:#c0392b; margin-bottom:10px; border-left:5px solid #c0392b; padding-left:10px;}
+  #explain { font-size:14.5px; line-height:1.85; }
+  #explain .kw { color:#c0392b; font-weight:bold; }
+  #explain .blue { color:#2980b9; font-weight:bold; }
+  #explain .mono { font-family:Consolas,monospace; background:#eef4f8; padding:1px 5px; border-radius:4px; font-size:13px;}
+  #explain .tip { background:#fff8e1; border-left:4px solid #f39c12; padding:8px 12px; margin:10px 0; border-radius:0 6px 6px 0; font-size:13.5px;}
+  #explain .key { background:#e8f5e9; border-left:4px solid #27ae60; padding:8px 12px; margin:10px 0; border-radius:0 6px 6px 0; font-size:13.5px;}
+  #explain table { border-collapse:collapse; margin:8px 0; font-size:12.5px; font-family:Consolas,monospace;}
+  #explain td,#explain th { border:1px solid #cfd8dc; padding:4px 9px;}
+  #explain th{ background:#f4f8fb; font-family:"Microsoft YaHei";}
+  #explain ul,#explain ol{ padding-left:22px; }
+  #explain li{ margin:4px 0;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="left">
+    <div id="canvasWrap">
+      <svg id="cv" viewBox="0 0 1000 540">
+        <!-- 链路 -->
+        <line id="lAX" class="link hidden" x1="110" y1="430" x2="220" y2="345"/>
+        <line id="lBX" class="link hidden" x1="330" y1="430" x2="220" y2="345"/>
+        <line id="lXR" class="link hidden" x1="220" y1="295" x2="220" y2="200"/>
+        <line id="lRC" class="link hidden" x1="255" y1="170" x2="455" y2="170"/>
+        <line id="lCD" class="link hidden" x1="565" y1="145" x2="755" y2="85"/>
+        <line id="lCW" class="link hidden" x1="565" y1="195" x2="755" y2="285"/>
+        <!-- 子网圈 -->
+        <g id="gZones" class="node hidden">
+          <rect x="40" y="120" width="360" height="400" rx="18" fill="none" stroke="#e74c3c" stroke-dasharray="6 4" stroke-width="1.5"/>
+          <text x="60" y="143" fill="#e74c3c" font-size="13" font-weight="bold">私网 (局域网) 192.168.1.0/24</text>
+          <rect x="420" y="20" width="560" height="330" rx="18" fill="none" stroke="#2980b9" stroke-dasharray="6 4" stroke-width="1.5"/>
+          <text x="440" y="43" fill="#2980b9" font-size="13" font-weight="bold">公网 (互联网)</text>
+        </g>
+        <!-- 电脑 A -->
+        <g id="gA" class="node hidden">
+          <rect x="75" y="430" width="70" height="55" rx="8" fill="#4caf50"/>
+          <text class="nodeLabel" x="110" y="465" font-size="22">A</text>
+          <circle cx="110" cy="430" r="6" fill="#e74c3c" stroke="#fff" stroke-width="1.5"/>
+          <text class="macLabel" x="110" y="502">MAC 02:00:00:00:00:0A</text>
+          <text class="ipLabel" id="ipA" x="110" y="518">IP: 无 (未配置)</text>
+        </g>
+        <!-- 电脑 B -->
+        <g id="gB" class="node hidden">
+          <rect x="295" y="430" width="70" height="55" rx="8" fill="#4caf50"/>
+          <text class="nodeLabel" x="330" y="465" font-size="22">B</text>
+          <circle cx="330" cy="430" r="6" fill="#e74c3c" stroke="#fff" stroke-width="1.5"/>
+          <text class="macLabel" x="330" y="502">MAC 02:00:00:00:00:0B</text>
+          <text class="ipLabel" id="ipB" x="330" y="518">IP: 无</text>
+        </g>
+        <!-- 交换机 X -->
+        <g id="gX" class="node hidden">
+          <rect x="180" y="295" width="80" height="50" rx="8" fill="#3f51b5"/>
+          <text class="nodeLabel" x="220" y="326" font-size="20">X</text>
+          <text class="subLabel" x="220" y="360">交换机 · 二层 · 网口无IP</text>
+          <text class="subLabel" x="150" y="418" fill="#3f51b5">端口1</text>
+          <text class="subLabel" x="292" y="418" fill="#3f51b5">端口2</text>
+          <text class="subLabel" x="248" y="290" fill="#3f51b5">端口3</text>
+        </g>
+        <!-- 路由器 R -->
+        <g id="gR" class="node hidden">
+          <circle cx="220" cy="170" r="32" fill="#2196f3"/>
+          <text class="nodeLabel" x="220" y="178" font-size="20">R</text>
+          <circle cx="220" cy="200" r="6" fill="#e74c3c" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="252" cy="170" r="6" fill="#8e24aa" stroke="#fff" stroke-width="1.5"/>
+          <text class="ipLabel" x="130" y="215" text-anchor="start" fill="#e74c3c">LAN口 192.168.1.1/24</text>
+          <text class="macLabel" x="130" y="228" text-anchor="start">MAC 02:00:00:00:01:01</text>
+          <text class="ipLabel" x="262" y="140" text-anchor="start" fill="#8e24aa">WAN口 203.0.113.10</text>
+          <text class="macLabel" x="262" y="153" text-anchor="start">MAC 02:00:00:00:01:02</text>
+          <text class="subLabel" x="220" y="118">路由器 · 三层 · 每个网口一个IP</text>
+        </g>
+        <!-- 互联网云 -->
+        <g id="gC" class="node hidden">
+          <ellipse cx="520" cy="170" rx="62" ry="36" fill="#90a4ae"/>
+          <text class="nodeLabel" x="520" y="176" font-size="16">互联网</text>
+        </g>
+        <!-- DNS -->
+        <g id="gDNS" class="node hidden">
+          <rect x="755" y="50" width="110" height="58" rx="8" fill="#00897b"/>
+          <text class="nodeLabel" x="810" y="75" font-size="15">DNS 服务器</text>
+          <text class="nodeLabel" x="810" y="95" font-size="12" font-family="Consolas">8.8.8.8 :53</text>
+        </g>
+        <!-- WWW -->
+        <g id="gWWW" class="node hidden">
+          <rect x="755" y="255" width="130" height="66" rx="8" fill="#00897b"/>
+          <text class="nodeLabel" x="820" y="278" font-size="14">WWW 服务器</text>
+          <text class="nodeLabel" x="820" y="295" font-size="11">www.example.com</text>
+          <text class="nodeLabel" x="820" y="312" font-size="12" font-family="Consolas">93.184.216.34 :80</text>
+        </g>
+        <!-- 动态层：报文/特效 -->
+        <g id="fx"></g>
+      </svg>
+    </div>
+    <div id="inspector">
+      <h3>🔍 报文检查器 <span id="pktBadge"></span></h3>
+      <div id="pktBody"><div class="noPkt">—— 当前步骤没有报文在网络中传输 ——</div></div>
+    </div>
+    <div id="tables">
+      <div class="tcard"><h4>💻 电脑A 网络配置</h4><div id="tCfg"></div></div>
+      <div class="tcard"><h4>🔀 交换机X MAC地址表</h4><div id="tMac"></div></div>
+      <div class="tcard"><h4>📒 电脑A ARP缓存</h4><div id="tArp"></div></div>
+      <div class="tcard"><h4>🔄 路由器R NAT映射表</h4><div id="tNat"></div></div>
+    </div>
+  </div>
+  <div id="right">
+    <div id="controls">
+      <button id="btnPrev">← 上一步</button>
+      <button id="btnNext">下一步 →</button>
+      <span id="stepNum"></span>
+    </div>
+    <div id="dots"></div>
+    <h2 id="stepTitle"></h2>
+    <div id="explain"></div>
+  </div>
+</div>
+
+<script>
+/* ============ 常量 ============ */
+const MA='02:00:00:00:00:0A', MB='02:00:00:00:00:0B',
+      MRL='02:00:00:00:01:01', MRW='02:00:00:00:01:02',
+      BC='FF:FF:FF:FF:FF:FF', MISP='(运营商下一跳MAC)';
+const P = { A:[110,455], B:[330,455], X:[220,320], R:[220,170],
+            C:[520,170], DNS:[810,80], WWW:[820,288] };
+const fx = document.getElementById('fx');
+const svgNS = 'http://www.w3.org/2000/svg';
+let cur = 0, busy = false;
+
+/* ============ 动画工具 ============ */
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+function mkPkt(label,color){
+  const g=document.createElementNS(svgNS,'g');
+  const w=Math.max(label.length*8+18,70);
+  g.innerHTML=`<rect x="${-w/2}" y="-13" width="${w}" height="26" rx="13" fill="${color}" stroke="#fff" stroke-width="2"/>
+   <text x="0" y="5" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">${label}</text>`;
+  fx.appendChild(g); return g;
+}
+function movePkt(g,pathIds,segMs=750){
+  return new Promise(res=>{
+    const pts=pathIds.map(id=>P[id]); let seg=0,t0=null;
+    function frame(ts){
+      if(!t0)t0=ts;
+      let p=(ts-t0)/segMs;
+      if(p>=1){seg++;t0=ts;p=0;
+        if(seg>=pts.length-1){
+          g.setAttribute('transform',`translate(${pts[pts.length-1][0]},${pts[pts.length-1][1]-30})`);
+          return res();
+        }}
+      const [x1,y1]=pts[seg],[x2,y2]=pts[seg+1];
+      g.setAttribute('transform',`translate(${x1+(x2-x1)*p},${y1+(y2-y1)*p-30})`);
+      requestAnimationFrame(frame);
+    }
+    const [x,y]=pts[0]; g.setAttribute('transform',`translate(${x},${y-30})`);
+    requestAnimationFrame(frame);
+  });
+}
+async function runPkt(pathIds,label,color,keep=false){
+  const g=mkPkt(label,color); await movePkt(g,pathIds);
+  if(!keep){ g.style.transition='opacity .5s'; g.style.opacity=0; setTimeout(()=>g.remove(),600);}
+  return g;
+}
+function pulse(id,color='#e74c3c'){
+  const [x,y]=P[id];
+  const c=document.createElementNS(svgNS,'circle');
+  c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',20);
+  c.setAttribute('fill','none');c.setAttribute('stroke',color);c.setAttribute('stroke-width',3);
+  fx.appendChild(c); let r=20,o=1;
+  const iv=setInterval(()=>{r+=3;o-=.05;c.setAttribute('r',r);c.setAttribute('opacity',o);
+    if(o<=0){clearInterval(iv);c.remove();}},30);
+}
+function marker(x,y,txt,color='#e74c3c',ms=2500){
+  const t=document.createElementNS(svgNS,'text');
+  t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill',color);
+  t.setAttribute('font-size','15');t.setAttribute('font-weight','bold');t.setAttribute('text-anchor','middle');
+  t.textContent=txt; fx.appendChild(t); setTimeout(()=>t.remove(),ms);
+}
+function clearFx(){ fx.innerHTML=''; }
+
+/* ============ 报文检查器 ============ */
+function showDetail(d){
+  const badge=document.getElementById('pktBadge'), body=document.getElementById('pktBody');
+  if(!d){ badge.innerHTML=''; body.innerHTML='<div class="noPkt">—— 当前步骤没有报文在网络中传输 ——</div>'; return;}
+  badge.innerHTML=`<span class="badge" style="background:${d.color}">${d.name}</span>`;
+  let h='';
+  h+=`<div class="layerRow l2"><div class="layerName">以太网帧头 (二层)</div><div class="layerBody">源MAC: ${d.l2[0]} &nbsp;→&nbsp; 目的MAC: ${d.l2[1]}</div></div>`;
+  if(d.l3) h+=`<div class="layerRow l3"><div class="layerName">IP 头 (三层)</div><div class="layerBody">源IP: ${d.l3[0]} &nbsp;→&nbsp; 目的IP: ${d.l3[1]}</div></div>`;
+  if(d.l4) h+=`<div class="layerRow l4"><div class="layerName">${d.l4[0]} (四层)</div><div class="layerBody">源端口: ${d.l4[1]} &nbsp;→&nbsp; 目的端口: ${d.l4[2]}${d.l4[3]?' &nbsp;|&nbsp; '+d.l4[3]:''}</div></div>`;
+  if(d.app) h+=`<div class="layerRow l7"><div class="layerName">应用层数据</div><div class="layerBody">${d.app}</div></div>`;
+  body.innerHTML=h;
+}
+
+/* ============ 状态表 ============ */
+function renderTables(i){
+  const cfg = i>=8
+   ? `<table><tr><th>项</th><th>值</th></tr>
+      <tr${i===8?' class="newrow"':''}><td>IP地址</td><td>192.168.1.100</td></tr>
+      <tr${i===8?' class="newrow"':''}><td>子网掩码</td><td>255.255.255.0</td></tr>
+      <tr${i===8?' class="newrow"':''}><td>默认网关</td><td>192.168.1.1</td></tr>
+      <tr${i===8?' class="newrow"':''}><td>DNS</td><td>8.8.8.8</td></tr>
+      <tr><td>MAC</td><td>02:..:00:0A</td></tr></table>`
+   : `<table><tr><th>项</th><th>值</th></tr>
+      <tr><td>IP地址</td><td class="empty">未获取</td></tr>
+      <tr><td>子网掩码</td><td class="empty">未获取</td></tr>
+      <tr><td>默认网关</td><td class="empty">未获取</td></tr>
+      <tr><td>DNS</td><td class="empty">未获取</td></tr>
+      <tr><td>MAC</td><td>02:..:00:0A ✓出厂自带</td></tr></table>`;
+  document.getElementById('tCfg').innerHTML=cfg;
+
+  let mac='<table><tr><th>MAC地址</th><th>端口</th></tr>';
+  const mrows=[[5,'02:..:00:0A (A)','1'],[6,'02:..:01:01 (R)','3'],[8,'02:..:00:0B (B)','2']];
+  let any=false;
+  mrows.forEach(r=>{ if(i>=r[0]){any=true; mac+=`<tr${i===r[0]?' class="newrow"':''}><td>${r[1]}</td><td>${r[2]}</td></tr>`;}});
+  if(!any) mac+='<tr><td colspan="2" class="empty">空 (通过学习源MAC自动填充)</td></tr>';
+  document.getElementById('tMac').innerHTML=mac+'</table>';
+
+  let arp='<table><tr><th>IP</th><th>MAC</th></tr>';
+  if(i>=11) arp+=`<tr${i===11?' class="newrow"':''}><td>192.168.1.1</td><td>02:..:01:01</td></tr>`;
+  else arp+='<tr><td colspan="2" class="empty">空 (通过ARP协议填充)</td></tr>';
+  document.getElementById('tArp').innerHTML=arp+'</table>';
+
+  let nat='<table><tr><th>协议</th><th>内网 IP:端口</th><th>外网 IP:端口</th></tr>';
+  let n=false;
+  if(i>=13){n=true; nat+=`<tr${i===13?' class="newrow"':''}><td>UDP</td><td>192.168.1.100:55000</td><td>203.0.113.10:40001</td></tr>`;}
+  if(i>=16){n=true; nat+=`<tr${i===16?' class="newrow"':''}><td>TCP</td><td>192.168.1.100:52344</td><td>203.0.113.10:40002</td></tr>`;}
+  if(!n) nat+='<tr><td colspan="3" class="empty">空 (出站流量触发建立)</td></tr>';
+  document.getElementById('tNat').innerHTML=nat+'</table>';
+}
+
+/* ============ 可见性 ============ */
+function applyVisibility(i){
+  const th={gA:1,gX:2,gB:2,lAX:2,lBX:2,gR:3,lXR:3,gC:4,gDNS:4,gWWW:4,lRC:4,lCD:4,lCW:4,gZones:4};
+  for(const id in th) document.getElementById(id).classList.toggle('hidden', i<th[id]);
+  document.getElementById('ipA').textContent = i>=8?'IP: 192.168.1.100/24':'IP: 无 (未配置)';
+  document.getElementById('ipB').textContent = i>=8?'IP: 192.168.1.101/24':'IP: 无';
+}
+
+/* ============ 报文详情预定义 ============ */
+const D={
+ dhcpD:{name:'DHCP Discover',color:'#e67e22',l2:[MA,`<span class="chg">${BC} (广播!)</span>`],
+   l3:['<span class="chg">0.0.0.0 (我还没有IP)</span>','255.255.255.255 (全网广播)'],
+   l4:['UDP','68 (DHCP客户端)','67 (DHCP服务端)'],
+   app:'DHCP Discover：有没有DHCP服务器？我的MAC是 02:..:00:0A，请给我分配一个IP！'},
+ dhcpO:{name:'DHCP Offer',color:'#e67e22',l2:[MRL,MA],
+   l3:['192.168.1.1','255.255.255.255'],l4:['UDP','67','68'],
+   app:'DHCP Offer：给你提供 <b>IP=192.168.1.100</b>，掩码=255.255.255.0，网关=192.168.1.1，DNS=8.8.8.8，租期24小时'},
+ dhcpR:{name:'DHCP Request',color:'#e67e22',l2:[MA,BC+' (仍是广播)'],
+   l3:['0.0.0.0','255.255.255.255'],l4:['UDP','68','67'],
+   app:'DHCP Request：我接受 192.168.1.1 提供的 192.168.1.100 这个地址！(广播是为了通知所有DHCP服务器)'},
+ dhcpA:{name:'DHCP ACK',color:'#e67e22',l2:[MRL,MA],
+   l3:['192.168.1.1','255.255.255.255'],l4:['UDP','67','68'],
+   app:'DHCP ACK：确认！192.168.1.100 归你使用。⚡ 电脑A此刻正式写入网络配置'},
+ arpQ:{name:'ARP 请求',color:'#8e44ad',l2:[MA,`<span class="chg">${BC} (广播!)</span>`],
+   l3:null,l4:null,
+   app:'ARP Request：谁的IP是 <b>192.168.1.1</b>？请把你的MAC告诉 192.168.1.100 (02:..:00:0A)。<br>⚠️ 注意：ARP报文没有IP头，它是纯二层协议！'},
+ arpR:{name:'ARP 应答',color:'#8e44ad',l2:[MRL,MA+' (单播，精确送达)'],l3:null,l4:null,
+   app:'ARP Reply：我就是 192.168.1.1，我的MAC是 <b>02:00:00:00:01:01</b>'},
+ dnsQ1:{name:'DNS 查询 (NAT前)',color:'#00897b',
+   l2:[MA,`<span class="chg">${MRL} (网关的MAC！)</span>`],
+   l3:['192.168.1.100','<span class="chg">8.8.8.8 (IP是最终目标)</span>'],
+   l4:['UDP','55000 (随机源端口)','53 (DNS)'],
+   app:'DNS Query：请问 www.example.com 的 A记录 (IPv4地址) 是什么？'},
+ dnsQ2:{name:'DNS 查询 (NAT后)',color:'#00897b',
+   l2:[MRW,MISP],
+   l3:['<span class="old">192.168.1.100</span> → <span class="chg">203.0.113.10</span>','8.8.8.8'],
+   l4:['UDP','<span class="old">55000</span> → <span class="chg">40001</span>','53'],
+   app:'DNS Query：请问 www.example.com 的 A记录是什么？(内容不变，只改了源IP和源端口)'},
+ dnsA1:{name:'DNS 响应 (回到WAN口)',color:'#00897b',l2:[MISP,MRW],
+   l3:['8.8.8.8','203.0.113.10 (只知道公网地址)'],l4:['UDP','53','40001'],
+   app:'DNS Response：www.example.com 的 A记录 = <b>93.184.216.34</b>，TTL=300秒'},
+ dnsA2:{name:'DNS 响应 (NAT还原后)',color:'#00897b',l2:[MRL,MA],
+   l3:['8.8.8.8','<span class="old">203.0.113.10</span> → <span class="chg">192.168.1.100</span>'],
+   l4:['UDP','53','<span class="old">40001</span> → <span class="chg">55000</span>'],
+   app:'DNS Response：www.example.com = <b>93.184.216.34</b> ✅ 电脑A拿到了目标IP！'},
+ syn1:{name:'TCP SYN (NAT前)',color:'#2980b9',
+   l2:[MA,MRL+' (还是先交给网关)'],
+   l3:['192.168.1.100','93.184.216.34'],
+   l4:['TCP','52344 (随机源端口)','80 (HTTP)','标志位: <b>SYN</b> seq=1000'],
+   app:'(无应用数据，握手第1步：我想和你建立连接)'},
+ syn2:{name:'TCP SYN (NAT后)',color:'#2980b9',l2:[MRW,MISP],
+   l3:['<span class="old">192.168.1.100</span> → <span class="chg">203.0.113.10</span>','93.184.216.34'],
+   l4:['TCP','<span class="old">52344</span> → <span class="chg">40002</span>','80','标志位: <b>SYN</b>'],
+   app:'(握手第1步，源地址已被NAT改写)'},
+ synack:{name:'TCP SYN+ACK',color:'#2980b9',l2:[MISP,MRW],
+   l3:['93.184.216.34','203.0.113.10 → <span class="chg">192.168.1.100</span> (R查NAT表还原)'],
+   l4:['TCP','80','40002 → <span class="chg">52344</span>','标志位: <b>SYN+ACK</b> seq=8000 ack=1001'],
+   app:'(握手第2步：同意连接！)'},
+ ack:{name:'TCP ACK',color:'#2980b9',l2:[MA,MRL],
+   l3:['192.168.1.100 (出网关时同样被NAT改写)','93.184.216.34'],
+   l4:['TCP','52344','80','标志位: <b>ACK</b> ack=8001'],
+   app:'(握手第3步：确认！TCP连接建立 🎉)'},
+ get:{name:'HTTP GET 请求',color:'#27ae60',l2:[MA+' → 经NAT改写 → '+MRW,'...'],
+   l3:['192.168.1.100 → <span class="chg">203.0.113.10</span>','93.184.216.34'],
+   l4:['TCP','52344 → <span class="chg">40002</span>','80','复用已有NAT表项'],
+   app:'<b>GET / HTTP/1.1</b><br>Host: www.example.com<br>User-Agent: Mozilla/5.0 ...'},
+ resp:{name:'HTTP 200 响应',color:'#27ae60',l2:['... → 经NAT还原 → '+MA.slice(0,8)+'..0A','...'],
+   l3:['93.184.216.34','203.0.113.10 → <span class="chg">192.168.1.100</span>'],
+   l4:['TCP','80','40002 → <span class="chg">52344</span>'],
+   app:'<b>HTTP/1.1 200 OK</b><br>Content-Type: text/html<br><br>&lt;html&gt;&lt;h1&gt;你好，世界！&lt;/h1&gt;&lt;/html&gt;'},
+};
+
+/* ============ 步骤定义 ============ */
+const steps=[
+{t:'🎯 实验目标：从零搭建一个能上网的网络',
+ ex:`<p>你已经分别学过 <span class="kw">MAC地址、IP、掩码、DHCP、ARP、DNS、NAT、TCP</span>…… 但它们是怎么<span class="blue">串在一起工作</span>的？</p>
+ <p>这个实验就像你亲手做一次组网：</p>
+ <ol><li>把 <b>电脑、交换机、路由器</b> 一台台摆上桌，接线</li>
+ <li>看着电脑<b>自动获取IP</b> (DHCP)</li>
+ <li>在浏览器输入 <span class="mono">www.example.com</span>，追踪<b>每一个报文</b>直到网页显示</li></ol>
+ <div class="tip">💡 左侧上方是<b>网络拓扑动画</b>；中间的<b>报文检查器</b>会把每个报文按 二层/三层/四层/应用层 拆开给你看；下方4张表 (配置/MAC表/ARP缓存/NAT表) 会<b>实时更新并高亮</b>。</div>
+ <p>点击 <b>「下一步」</b> 开始！</p>`,
+ anim:null,det:null},
+
+{t:'第1步：放上一台电脑 A —— 它只有 MAC 地址',
+ ex:`<p>一台刚出厂的电脑，网卡上<span class="kw">烧录了一个全球唯一的 MAC 地址</span>：</p>
+ <p style="text-align:center" class="mono">02:00:00:00:00:0A （48位，前24位是厂商编号）</p>
+ <ul><li><b>MAC地址</b>是<span class="blue">链路层(二层)</span>的地址，像人的"身份证号"，出厂就有，一辈子不变</li>
+ <li><b>IP地址</b>是<span class="blue">网络层(三层)</span>的地址，像"住址"，搬家(换网络)就会变 —— 现在它<span class="kw">还没有IP</span></li></ul>
+ <div class="key">✅ 看左下角"电脑A网络配置"表：IP/掩码/网关/DNS 全部是空的，只有MAC是自带的。</div>`,
+ anim:async()=>{pulse('A','#4caf50');},det:null},
+
+{t:'第2步：加交换机 X 和电脑 B —— 交换机的网口不需要 IP',
+ ex:`<p>两台电脑要通信，用<span class="kw">交换机</span>把它们连起来。</p>
+ <ul><li>交换机工作在<span class="blue">二层（链路层）</span>，只认 <b>MAC地址</b>，完全不看IP —— 所以它的<span class="kw">网口不需要设置IP地址</span></li>
+ <li>它内部维护一张 <b>MAC地址表</b>：<span class="mono">MAC → 端口</span>，现在是<b>空的</b></li>
+ <li>转发规则：收到帧 → 记住"源MAC来自哪个端口"（<b>学习</b>）→ 查表找目的MAC；<b>查不到就向所有端口泛洪</b></li></ul>
+ <div class="tip">💡 接在同一台交换机下的所有主机在<b>同一个子网</b>内（相同掩码），处于同一个<b>广播域</b>。</div>`,
+ anim:async()=>{pulse('X','#3f51b5');pulse('B','#4caf50');},det:null},
+
+{t:'第3步：加路由器 R —— 它有两个网口、两个 IP',
+ ex:`<p><span class="kw">路由器</span>工作在<span class="blue">三层（网络层）</span>，基于 <b>IP地址</b> 转发，用来<b>连接不同的子网</b>。注意它和交换机的本质区别：</p>
+ <table><tr><th></th><th>交换机</th><th>路由器</th></tr>
+ <tr><td>工作层</td><td>二层</td><td>三层</td></tr>
+ <tr><td>看什么转发</td><td>MAC</td><td>IP</td></tr>
+ <tr><td>网口要IP吗</td><td>不需要</td><td><b>每个网口都要一个所在子网的IP</b></td></tr></table>
+ <p>所以 R 有 <span class="kw">两个IP</span>：</p>
+ <ul><li><b>LAN口</b> <span class="mono">192.168.1.1/24</span> —— 面向内网，习惯上末尾用 <b>.1</b>，对A、B来说它就是<span class="kw">网关 Gateway</span></li>
+ <li><b>WAN口</b> <span class="mono">203.0.113.10</span> —— 由运营商分配的<b>公网IP</b></li></ul>
+ <div class="key">🚧 路由器还是<b>广播域的边界</b>：广播帧（如ARP、DHCP广播）<b>不能穿过路由器</b>，这就是"路由器隔离"。稍后会亲眼看到。</div>`,
+ anim:async()=>{pulse('R','#2196f3');},det:null},
+
+{t:'第4步：接入互联网 —— 私网 vs 公网',
+ ex:`<p>WAN口接上运营商，互联网上有两台我们要打交道的服务器：</p>
+ <ul><li><b>DNS服务器</b> <span class="mono">8.8.8.8:53</span> —— 负责"网址 → IP"翻译</li>
+ <li><b>WWW服务器</b> <span class="mono">93.184.216.34:80</span> —— 就是网站 www.example.com</li></ul>
+ <p>注意左侧两个虚线框：</p>
+ <ul><li><span class="kw">私网地址</span>：<span class="mono">192.168.x.x / 10.x.x.x / 172.16~31.x.x</span>，只在局域网内有效，<b>互联网上不认、不路由</b>，千家万户可以重复使用</li>
+ <li><span class="kw">公网地址</span>：全球唯一，如 203.0.113.10</li></ul>
+ <div class="tip">💡 私网地址的报文要上互联网，必须经路由器做 <b>NAT（网络地址转换）</b>改写成公网地址 —— 这是本实验的重头戏。</div>
+ <div class="key">📏 同一子网内的主机 <b>IP 不能相同，MAC 也不能相同</b>，否则会冲突。</div>`,
+ anim:async()=>{pulse('C','#90a4ae');pulse('DNS','#00897b');pulse('WWW','#00897b');},det:null},
+
+{t:'第5步：开机！DHCP Discover（广播找服务器）',
+ ex:`<p>电脑A开机，没有IP寸步难行。它运行 <span class="kw">DHCP</span> 协议自动要一个IP。第1个报文：<b>Discover</b>。</p>
+ <p>看报文检查器，这个报文很特别：</p>
+ <ul><li>源IP <span class="mono">0.0.0.0</span> —— "我还没有IP"</li>
+ <li>目的IP <span class="mono">255.255.255.255</span>、目的MAC <span class="mono">FF:FF:FF:FF:FF:FF</span> —— <b>广播</b>，因为它根本不知道DHCP服务器在哪</li>
+ <li>UDP <span class="mono">68 → 67</span>（DHCP固定端口）</li></ul>
+ <p>两件事同时发生：</p>
+ <ol><li>交换机X 收到帧，<b>学习</b>：源MAC 02:..:0A 来自端口1 → <span class="kw">写入MAC表</span>（看下方表格高亮！）</li>
+ <li>目的是广播地址 → 交换机<b>向其余所有端口泛洪</b>（B 和 R 都收到；B 不是DHCP服务器，忽略）</li></ol>`,
+ anim:async()=>{
+   showDetail(D.dhcpD);
+   await runPkt(['A','X'],'DHCP Discover','#e67e22');
+   pulse('X','#e67e22'); marker(360,320,'广播 → 泛洪到所有端口','#e67e22');
+   await Promise.all([runPkt(['X','B'],'Discover','#e67e22'),runPkt(['X','R'],'Discover','#e67e22')]);
+   marker(330,410,'B：不关我事，丢弃 ✗','#95a5a6'); pulse('R','#e67e22');
+ },det:'dhcpD'},
+
+{t:'第6步：DHCP Offer（路由器提供IP方案）',
+ ex:`<p>家用路由器通常兼任 <span class="kw">DHCP服务器</span>。它从地址池里挑一个没用过的地址，打包一整套配置回复给A：</p>
+ <table><tr><th>配置项</th><th>值</th><th>作用</th></tr>
+ <tr><td>IP</td><td>192.168.1.100</td><td>A 在本子网的地址</td></tr>
+ <tr><td>掩码</td><td>255.255.255.0</td><td>划定子网范围（/24=前24位是网络号）</td></tr>
+ <tr><td>网关</td><td>192.168.1.1</td><td>出子网找它（就是R的LAN口IP）</td></tr>
+ <tr><td>DNS</td><td>8.8.8.8</td><td>网址翻译找它</td></tr></table>
+ <p>这次是<b>单播帧</b>（目的MAC直接写A的MAC，从Discover里学来的）。交换机X又学习到：R的MAC 02:..:01:01 在端口3 → <span class="kw">MAC表再添一行</span>。</p>`,
+ anim:async()=>{showDetail(D.dhcpO); await runPkt(['R','X','A'],'DHCP Offer','#e67e22'); pulse('A','#e67e22');},det:'dhcpO'},
+
+{t:'第7步：DHCP Request（我要了！仍然广播）',
+ ex:`<p>A 回复 <b>Request</b>："我接受 192.168.1.1 给我的 192.168.1.100！"</p>
+ <div class="tip">🤔 为什么<b>还要广播</b>而不是直接单播给R？<br>因为网络里可能有<b>多台DHCP服务器</b>同时发了Offer。A 广播 Request，等于向所有服务器公示"我选了谁家的"，落选的服务器就可以收回自己预留的地址。</div>
+ <p>注意源IP此刻仍是 <span class="mono">0.0.0.0</span> —— 在收到最终确认(ACK)之前，A 还不能正式使用这个IP。</p>`,
+ anim:async()=>{
+   showDetail(D.dhcpR);
+   await runPkt(['A','X'],'DHCP Request','#e67e22');
+   await Promise.all([runPkt(['X','B'],'Request','#e67e22'),runPkt(['X','R'],'Request','#e67e22')]);
+ },det:'dhcpR'},
+
+{t:'第8步：DHCP ACK —— 配置生效！',
+ ex:`<p>路由器发出最终确认 <b>ACK</b>。电脑A把整套配置写入网卡 —— 看左下角配置表，<span class="kw">四项配置全部点亮</span>！左上角A的IP标签也变了。</p>
+ <p>完整四步曲（口诀 <b>D-O-R-A</b>）：</p>
+ <p class="mono" style="text-align:center">Discover(广播) → Offer(单播) → Request(广播) → ACK(单播)</p>
+ <p>电脑B开机后经历一模一样的流程，拿到 <span class="mono">192.168.1.101</span>（同一子网内IP不能重复，DHCP自动保证）。</p>
+ <div class="key">✅ 至此"物理组网 + 自动配置"完成。整个过程你一个数字都没手输 —— 这就是 DHCP 的意义。</div>`,
+ anim:async()=>{showDetail(D.dhcpA); await runPkt(['R','X','A'],'DHCP ACK','#e67e22');
+   pulse('A','#27ae60'); marker(110,395,'✅ 配置生效','#27ae60',3000);},det:'dhcpA'},
+
+{t:'第9步：输入网址 —— 电脑先做一道"掩码运算题"',
+ ex:`<p>用户在A的浏览器输入 <span class="mono">www.example.com</span>。浏览器只认IP，得先问DNS(8.8.8.8)。但发包前，A 要先判断：<span class="kw">8.8.8.8 和我在同一个子网吗？</span></p>
+ <p>方法：把双方IP分别与掩码做<b>按位与(AND)</b>，比较网络号：</p>
+ <table>
+ <tr><th></th><th>IP</th><th>AND 255.255.255.0</th><th>网络号</th></tr>
+ <tr><td>自己</td><td>192.168.1.100</td><td>→</td><td>192.168.1.0</td></tr>
+ <tr><td>目标</td><td>8.8.8.8</td><td>→</td><td>8.8.8.0</td></tr></table>
+ <p><span class="kw">网络号不同 → 不在同一子网</span> → 这个包必须交给<b>默认网关 192.168.1.1</b> 转发。</p>
+ <p>可是发帧需要填<b>目的MAC</b>。查ARP缓存（左下角）——<b>空的！</b>A 知道网关的IP，却不知道它的MAC。</p>
+ <div class="key">➡️ 于是触发 <b>ARP协议</b>：由 IP 查 MAC。这正是"三层地址"落到"二层帧"上的关键衔接点。</div>`,
+ anim:async()=>{pulse('A','#f39c12'); marker(110,395,'🤔 8.8.8.8 不在本子网 → 找网关','#f39c12',3500);},det:null},
+
+{t:'第10步：ARP 广播 —— 顺便看看"路由器隔离"',
+ ex:`<p>A 发出 <span class="kw">ARP请求（广播）</span>："谁的IP是 192.168.1.1？把MAC告诉我！"</p>
+ <ul><li>看报文检查器：ARP 报文<b>没有IP头</b> —— 它是纯二层协议，直接装在以太网帧里</li>
+ <li>目的MAC是 FF:FF:...:FF，交换机照例<b>泛洪</b>：B 和 R 都收到</li>
+ <li>B 一看："问的不是我的IP"，默默丢弃</li></ul>
+ <div class="key">🚧 <b>重点观察路由器右侧的红色 ✗：</b>广播帧到路由器为止，<b>绝不会被转发到WAN口</b>！<br>这就是"路由器隔离广播域"：<br>① ARP 广播不能跨子网 —— 所以你永远无法 ARP 到公网服务器的MAC；<br>② 否则全世界的广播涌到一起，互联网会被"广播风暴"淹没。</div>`,
+ anim:async()=>{
+   showDetail(D.arpQ);
+   await runPkt(['A','X'],'ARP: 谁是192.168.1.1?','#8e44ad');
+   await Promise.all([runPkt(['X','B'],'ARP请求','#8e44ad'),runPkt(['X','R'],'ARP请求','#8e44ad')]);
+   marker(330,410,'B：不是我 ✗','#95a5a6');
+   marker(355,160,'✗ 广播被路由器阻断！','#e74c3c',3500); pulse('R','#e74c3c');
+ },det:'arpQ'},
+
+{t:'第11步：ARP 应答（单播）—— ARP缓存建立',
+ ex:`<p>路由器认出"192.168.1.1 是我"，用<b>单播</b>直接回给A：</p>
+ <p style="text-align:center" class="mono">192.168.1.1 is at 02:00:00:00:01:01</p>
+ <ul><li>这次不用广播 —— R 从请求里已经知道 A 的 MAC；交换机的MAC表里也有A的记录，帧<b>精确送达端口1</b>，不打扰B</li>
+ <li>A 把结果写进 <span class="kw">ARP缓存</span>（看左下角表格高亮），有效期一般几分钟，期间不必重复询问</li></ul>
+ <div class="tip">💡 小结这一对概念：<br><b>DNS</b>：网址 → IP（应用层，跑UDP）<br><b>ARP</b>：IP → MAC（二层，广播问、单播答）<br>方向和层次完全不同，别混淆。</div>`,
+ anim:async()=>{showDetail(D.arpR); await runPkt(['R','X','A'],'ARP: 我的MAC是..01:01','#8e44ad'); pulse('A','#8e44ad');},det:'arpR'},
+
+{t:'第12步：DNS 查询发出 —— 注意"IP是终点，MAC是下一跳"',
+ ex:`<p>万事俱备，A 发出DNS查询。<span class="kw">请死死盯住报文检查器的前两行</span>，这是全课最容易迷糊的地方：</p>
+ <table><tr><th>字段</th><th>值</th><th>含义</th></tr>
+ <tr><td>目的 <b>IP</b></td><td>8.8.8.8</td><td>最终目的地，<b>全程不变</b></td></tr>
+ <tr><td>目的 <b>MAC</b></td><td>02:..:01:01（网关！）</td><td>只管<b>下一跳</b>，每过一个路由器就换一次</td></tr></table>
+ <div class="key">🧭 记住这句话：<b>IP地址负责"去哪"，MAC地址负责"下一步交给谁"。</b>就像寄快递：面单上的收件地址(IP)不变，但包裹一站一站换承运人(MAC)。</div>
+ <p>四层用 <b>UDP</b>（DNS查询小而快，不需要建连接），源端口是系统随机分配的 <span class="mono">55000</span>，目的端口 <span class="mono">53</span>。</p>`,
+ anim:async()=>{showDetail(D.dnsQ1); await runPkt(['A','X','R'],'DNS查询','#00897b',true); pulse('R','#00897b');},det:'dnsQ1'},
+
+{t:'第13步：NAT 出站改写 —— 私网包"换装"上公网',
+ ex:`<p>路由器收到包，查路由表：去8.8.8.8走WAN口。但是——源IP是 <span class="mono">192.168.1.100</span>，私网地址<b>发上互联网别人没法回包</b>（互联网不路由私网地址）！</p>
+ <p>于是路由器执行 <span class="kw">NAT（准确说是NAPT，带端口转换）</span>，改写两处并<b>记账</b>：</p>
+ <table><tr><th></th><th>改写前</th><th>改写后</th></tr>
+ <tr><td>源IP</td><td class="mono">192.168.1.100</td><td class="mono"><b>203.0.113.10</b>（WAN口公网IP）</td></tr>
+ <tr><td>源端口</td><td class="mono">55000</td><td class="mono"><b>40001</b>（路由器自己挑的）</td></tr></table>
+ <p>同时在 <span class="kw">NAT映射表</span>（右下角，已高亮）记下这条对应关系 —— 这是回程包能找到A的<b>唯一线索</b>。</p>
+ <div class="tip">💡 为什么连端口也要改？因为A、B可能恰好用了相同源端口，全家共享一个公网IP，必须靠<b>不同的外部端口</b>区分是谁的流量。</div>`,
+ anim:async()=>{
+   showDetail(D.dnsQ1); pulse('R','#e74c3c');
+   marker(360,110,'⚙️ NAT: 192.168.1.100:55000 → 203.0.113.10:40001','#e74c3c',3000);
+   await sleep(1500); showDetail(D.dnsQ2);
+   await runPkt(['R','C','DNS'],'DNS查询(已NAT)','#00897b'); pulse('DNS','#00897b');
+ },det:'dnsQ2'},
+
+{t:'第14步：DNS 服务器应答',
+ ex:`<p>8.8.8.8 查到答案，回复一条 <span class="kw">A记录</span>：</p>
+ <p style="text-align:center" class="mono">www.example.com → 93.184.216.34 （TTL=300秒）</p>
+ <ul><li><b>A查询</b>：网址 → IPv4地址；<b>AAAA查询</b>：网址 → IPv6地址</li>
+ <li>看报文检查器：DNS服务器眼里的"客户"是 <span class="mono">203.0.113.10:40001</span> —— 它<b>完全不知道</b>私网里还有台192.168.1.100，回包只能寄到路由器的WAN口</li></ul>`,
+ anim:async()=>{showDetail(D.dnsA1); await runPkt(['DNS','C','R'],'DNS应答: 93.184.216.34','#00897b',true); pulse('R','#00897b');},det:'dnsA1'},
+
+{t:'第15步：NAT 入站还原 —— 回程包按账本送回A',
+ ex:`<p>回包到达WAN口，目的是 <span class="mono">203.0.113.10:40001</span>。路由器<b>查NAT表</b>：</p>
+ <p style="text-align:center" class="mono">203.0.113.10:40001 ⇌ 192.168.1.100:55000 (UDP)</p>
+ <p>命中！于是把<b>目的IP和目的端口反向还原</b>，从LAN口发给A（目的MAC填A的MAC，交换机查表精确转发）。</p>
+ <div class="key">✅ 电脑A终于知道：<b>www.example.com = 93.184.216.34</b>。浏览器会把它缓存一会儿（按TTL）。</div>
+ <div class="tip">💡 顺便理解一个现象：如果没有任何映射/端口转发，<b>外网无法主动连进你家电脑</b> —— 因为NAT表里没有对应表项，包会被路由器直接丢弃。NAT顺手当了半个防火墙。</div>`,
+ anim:async()=>{
+   pulse('R','#e74c3c'); marker(360,110,'⚙️ 查NAT表 → 还原为 192.168.1.100:55000','#e74c3c',2800);
+   await sleep(1300); showDetail(D.dnsA2);
+   await runPkt(['R','X','A'],'DNS应答(已还原)','#00897b'); pulse('A','#27ae60');
+ },det:'dnsA2'},
+
+{t:'第16步：TCP 三次握手 ① SYN',
+ ex:`<p>有了IP，浏览器开始连接网站。网页走 <span class="kw">HTTP协议，基于TCP</span>（可靠传输，先握手建连接；对比DNS用UDP即发即走）。</p>
+ <p>A 发出第一个握手包 <b>SYN</b>：</p>
+ <ul><li>源 <span class="mono">192.168.1.100:52344</span>（又一个新随机端口）→ 目的 <span class="mono">93.184.216.34:80</span></li>
+ <li>目的MAC照旧是<b>网关</b> —— 跨子网的包永远先交给网关</li>
+ <li>ARP缓存里已有网关MAC，<b>不需要再ARP了</b>（体会缓存的作用）</li></ul>
+ <p>经过路由器时再次NAT：<span class="mono">52344 → 40002</span>，NAT表新增第二行（右下角高亮）—— 注意DNS那行(UDP)和这行(TCP)<b>互不干扰</b>。</p>`,
+ anim:async()=>{
+   showDetail(D.syn1); await runPkt(['A','X','R'],'TCP SYN','#2980b9',true);
+   pulse('R','#e74c3c'); marker(360,110,'⚙️ NAT: :52344 → :40002 (新表项)','#e74c3c',2500);
+   await sleep(1200); showDetail(D.syn2);
+   await runPkt(['R','C','WWW'],'SYN(已NAT)','#2980b9'); pulse('WWW','#2980b9');
+ },det:'syn2'},
+
+{t:'第17步：TCP 三次握手 ② SYN+ACK',
+ ex:`<p>WWW服务器同意建立连接，回 <b>SYN+ACK</b>。</p>
+ <p>路径与NAT过程和DNS回包完全同理：到达WAN口 → 查NAT表（TCP那行）→ 目的还原为 <span class="mono">192.168.1.100:52344</span> → LAN口送回A。</p>
+ <div class="tip">💡 观察规律：<b>出去改"源"，回来改"目的"</b>。NAT表就是路由器手里的"收发件登记簿"，一来一回全靠它对账。</div>`,
+ anim:async()=>{
+   showDetail(D.synack); await runPkt(['WWW','C','R'],'SYN+ACK','#2980b9',true);
+   pulse('R','#e74c3c'); marker(360,110,'⚙️ 查NAT表 → 还原目的地址','#e74c3c',2200);
+   await sleep(1000); await runPkt(['R','X','A'],'SYN+ACK(已还原)','#2980b9');
+ },det:'synack'},
+
+{t:'第18步：TCP 三次握手 ③ ACK —— 连接建立！',
+ ex:`<p>A 回最后一个 <b>ACK</b>，三次握手完成，TCP连接建立：</p>
+ <p style="text-align:center" class="mono">192.168.1.100:52344 ⇌ 93.184.216.34:80</p>
+ <p>为什么要三次？双方都要确认"<b>我能发你能收、你能发我能收</b>"：</p>
+ <ol><li>SYN：A→服务器，"我要连你"（证明A能发）</li>
+ <li>SYN+ACK：服务器→A，"收到，我也准备好了"（证明服务器能收也能发）</li>
+ <li>ACK：A→服务器，"收到！"（证明A能收）</li></ol>`,
+ anim:async()=>{showDetail(D.ack); await runPkt(['A','X','R'],'ACK','#2980b9',true);
+   await runPkt(['R','C','WWW'],'ACK(已NAT)','#2980b9');
+   marker(650,230,'🤝 TCP连接建立！','#27ae60',3000);},det:'ack'},
+
+{t:'第19步：HTTP GET —— 正式索要网页',
+ ex:`<p>连接建好，浏览器发出<b>应用层数据</b>（看报文检查器最下面绿色一行，第一次出现真正的"内容"）：</p>
+ <pre class="mono" style="padding:8px;display:block;margin:8px 0">GET / HTTP/1.1
+Host: www.example.com</pre>
+ <ul><li><span class="mono">GET /</span>：请求根路径页面</li>
+ <li><span class="mono">Host:</span> 一台服务器可能挂多个网站，用它区分</li>
+ <li>四元组没变(52344→80)，路由器<b>复用已有NAT表项</b>，不再新增</li></ul>
+ <p>整个报文的"套娃"结构：<span class="mono">以太网帧 [ IP包 [ TCP段 [ HTTP请求 ] ] ]</span> —— 每一层各管一件事。</p>`,
+ anim:async()=>{showDetail(D.get); await runPkt(['A','X','R'],'HTTP GET','#27ae60',true);
+   await runPkt(['R','C','WWW'],'GET(已NAT)','#27ae60'); pulse('WWW','#27ae60');},det:'get'},
+
+{t:'第20步：HTTP 200 响应 —— 网页到手！🎉',
+ ex:`<p>服务器返回：</p>
+ <pre class="mono" style="padding:8px;display:block;margin:8px 0">HTTP/1.1 200 OK
+Content-Type: text/html
+
+&lt;html&gt;&lt;h1&gt;你好，世界！&lt;/h1&gt;&lt;/html&gt;</pre>
+ <p>响应包沿原路返回：互联网 → WAN口 → <b>NAT还原</b> → 交换机查MAC表 → 端口1 → 电脑A。浏览器解析HTML，<span class="kw">网页显示出来了！</span></p>
+ <p>真实网页有几十上百个资源（图片/CSS/JS），会重复"TCP+HTTP"这一段，但DHCP/ARP/DNS都<b>不必重来</b>——缓存都在。</p>`,
+ anim:async()=>{showDetail(D.resp); await runPkt(['WWW','C','R'],'HTTP 200 OK','#27ae60',true);
+   pulse('R','#e74c3c'); await sleep(600);
+   await runPkt(['R','X','A'],'200 OK(已还原)','#27ae60');
+   pulse('A','#27ae60'); marker(110,395,'🎉 网页显示成功！','#27ae60',4000);},det:'resp'},
+
+{t:'🏁 总结：一次上网，串起了所有概念',
+ ex:`<p>回顾从按下回车到网页显示，报文时间线：</p>
+ <table style="font-size:12px">
+ <tr><th>阶段</th><th>协议</th><th>层次</th><th>解决的问题</th></tr>
+ <tr><td>①开机</td><td>DHCP (UDP 67/68，广播)</td><td>应用层</td><td>自动获得 IP/掩码/网关/DNS</td></tr>
+ <tr><td>②找网关</td><td>ARP (广播问/单播答)</td><td>二层</td><td>IP → MAC；<b>不能跨路由器</b></td></tr>
+ <tr><td>③翻译网址</td><td>DNS (UDP 53)</td><td>应用层</td><td>网址 → IP（A记录/AAAA记录）</td></tr>
+ <tr><td>④建连接</td><td>TCP 三次握手 (80)</td><td>四层</td><td>可靠传输通道</td></tr>
+ <tr><td>⑤取网页</td><td>HTTP (基于TCP)</td><td>应用层</td><td>传输网页内容</td></tr>
+ <tr><td>贯穿全程</td><td>NAT</td><td>路由器上</td><td>私网↔公网 地址+端口改写</td></tr></table>
+ <p>五句核心结论，请务必带走：</p>
+ <ol><li><b>交换机</b>：二层、认MAC、网口无IP、靠学习建MAC表、广播就泛洪</li>
+ <li><b>路由器</b>：三层、认IP、<b>每个网口一个所在子网的IP</b>（LAN口常为 .1，即网关）、阻断广播、隔离子网</li>
+ <li><b>掩码</b>决定"同不同网"：同网直达（ARP对方），跨网找网关（ARP网关）</li>
+ <li><b>IP管终点，MAC管下一跳</b>：目的IP全程不变，目的MAC逐跳更换</li>
+ <li><b>NAT</b>：出去改源(IP:端口)，回来查表还原目的 —— 全家共享一个公网IP的秘密</li></ol>
+ <div class="tip">🧪 建议自测：把B设为发起方，或把目标换成同子网的B (192.168.1.101)，在脑中重演一遍 —— 哪些步骤会消失？（答案：不需要走网关和NAT，ARP直接问B本人。）可点击上方圆点回看任意步骤。</div>`,
+ anim:null,det:null},
+];
+
+/* ============ 控制 ============ */
+const dots=document.getElementById('dots');
+steps.forEach((s,i)=>{
+  const d=document.createElement('div'); d.className='dot'; d.textContent=i;
+  d.title=s.t; d.onclick=()=>{ if(!busy) go(i); }; dots.appendChild(d);
+});
+async function go(i){
+  cur=i; busy=true;
+  document.getElementById('btnPrev').disabled=true;
+  document.getElementById('btnNext').disabled=true;
+  clearFx(); applyVisibility(i); renderTables(i);
+  document.getElementById('stepTitle').textContent=steps[i].t;
+  document.getElementById('explain').innerHTML=steps[i].ex;
+  document.getElementById('stepNum').textContent=`第 ${i} / ${steps.length-1} 步`;
+  document.querySelectorAll('.dot').forEach((d,k)=>{
+    d.classList.toggle('cur',k===i); d.classList.toggle('done',k<i);});
+  showDetail(steps[i].det?D[steps[i].det]:null);
+  if(steps[i].anim){ try{ await steps[i].anim(); }catch(e){} }
+  busy=false;
+  document.getElementById('btnPrev').disabled=(cur===0);
+  document.getElementById('btnNext').disabled=(cur===steps.length-1);
+}
+document.getElementById('btnNext').onclick=()=>{ if(!busy&&cur<steps.length-1) go(cur+1); };
+document.getElementById('btnPrev').onclick=()=>{ if(!busy&&cur>0) go(cur-1); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&!busy&&cur<steps.length-1)go(cur+1);
+  if(e.key==='ArrowLeft'&&!busy&&cur>0)go(cur-1);
+});
+go(0);
+</script>
+</body>
+</html>

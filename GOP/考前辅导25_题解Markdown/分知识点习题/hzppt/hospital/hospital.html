@@ -1,0 +1,4223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医院智慧停车管理平台</title>
+    <style>
+        :root {
+            --primary: #2878d0;
+            --primary-dark: #1d5fa8;
+            --primary-soft: #edf6ff;
+            --success: #199b68;
+            --success-soft: #eaf8f2;
+            --warning: #dc8a16;
+            --warning-soft: #fff6e6;
+            --danger: #d94d4d;
+            --danger-soft: #fff0f0;
+            --purple: #7257bd;
+            --purple-soft: #f3efff;
+            --text: #243247;
+            --text-2: #566579;
+            --muted: #8491a4;
+            --border: #dce4ed;
+            --bg: #f4f7fa;
+            --card: #ffffff;
+            --sidebar: #203c63;
+            --sidebar-active: #2e5b91;
+            --shadow: 0 7px 24px rgba(34, 54, 80, .07);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--bg);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        /* 左侧导航 */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 30;
+            width: 245px;
+            overflow-y: auto;
+            color: #fff;
+            background: var(--sidebar);
+        }
+
+        .brand {
+            padding: 22px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            flex: 0 0 46px;
+            place-items: center;
+            border-radius: 12px;
+            color: #fff;
+            background: #3c78b9;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            color: rgba(255,255,255,.63);
+            font-size: 13px;
+        }
+
+        .nav {
+            padding: 15px 12px 25px;
+        }
+
+        .nav-title {
+            margin: 16px 11px 8px;
+            color: rgba(255,255,255,.45);
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 12px 13px;
+            border: 0;
+            border-radius: 10px;
+            color: rgba(255,255,255,.82);
+            background: transparent;
+            text-align: left;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: var(--sidebar-active);
+        }
+
+        .nav-icon {
+            display: grid;
+            width: 28px;
+            height: 28px;
+            flex: 0 0 28px;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(255,255,255,.1);
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            min-width: 23px;
+            padding: 1px 7px;
+            border-radius: 999px;
+            color: #fff;
+            background: #e35c5c;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* 主区域 */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 245px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            min-height: 72px;
+            padding: 11px 26px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,.96);
+        }
+
+        .page-info h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .page-info p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-left: auto;
+        }
+
+        .hospital-select,
+        .role-select {
+            padding: 9px 34px 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .date-box {
+            color: var(--text-2);
+            font-size: 14px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-left: 12px;
+            border-left: 1px solid var(--border);
+        }
+
+        .avatar {
+            display: grid;
+            width: 39px;
+            height: 39px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-weight: bold;
+        }
+
+        .user strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .user span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 24px 27px 50px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* 公共 */
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 19px 21px 0;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 19px 21px 21px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 17px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .section-title p {
+            max-width: 900px;
+            margin: 5px 0 0;
+            color: var(--text-2);
+        }
+
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 39px;
+            padding: 8px 15px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            color: var(--text);
+            background: #fff;
+        }
+
+        .btn-success {
+            color: #fff;
+            background: var(--success);
+        }
+
+        .btn-warning {
+            color: #fff;
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background: var(--danger);
+        }
+
+        .btn-sm {
+            min-height: 33px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .tag-blue {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .tag-green {
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .tag-orange {
+            color: #b16908;
+            background: var(--warning-soft);
+        }
+
+        .tag-red {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .tag-purple {
+            color: var(--purple);
+            background: var(--purple-soft);
+        }
+
+        .tag-gray {
+            color: #667486;
+            background: #eef2f5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .warning-banner,
+        .info-banner,
+        .success-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px 17px;
+            border-radius: 12px;
+        }
+
+        .warning-banner {
+            border: 1px solid #f0d39e;
+            color: #805510;
+            background: var(--warning-soft);
+        }
+
+        .info-banner {
+            border: 1px solid #cddff4;
+            color: #315f92;
+            background: var(--primary-soft);
+        }
+
+        .success-banner {
+            border: 1px solid #c6e6d8;
+            color: #226b50;
+            background: var(--success-soft);
+        }
+
+        .banner-icon {
+            font-size: 23px;
+            line-height: 1.2;
+        }
+
+        .banner-text strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* 岗位说明 */
+
+        .role-strip {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 17px;
+            padding: 13px 16px;
+            border: 1px solid #d8e4f0;
+            border-radius: 12px;
+            background: #f8fbfe;
+        }
+
+        .role-strip strong {
+            color: var(--primary-dark);
+        }
+
+        .role-strip span {
+            color: var(--text-2);
+        }
+
+        /* KPI */
+
+        .metric-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-2);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            margin: 10px 0 4px;
+            font-size: 28px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .metric-icon {
+            display: grid;
+            width: 36px;
+            height: 36px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-weight: bold;
+        }
+
+        /* 工作台待办 */
+
+        .todo-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .todo-item {
+            display: grid;
+            grid-template-columns: 8px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .todo-level {
+            width: 8px;
+            height: 52px;
+            border-radius: 99px;
+            background: var(--primary);
+        }
+
+        .todo-level.danger {
+            background: var(--danger);
+        }
+
+        .todo-level.warning {
+            background: var(--warning);
+        }
+
+        .todo-level.success {
+            background: var(--success);
+        }
+
+        .todo-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .todo-content p {
+            margin: 0;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+
+        .todo-meta {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* 表格 */
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+            max-width: 430px;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .search-box span {
+            padding-left: 12px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+        }
+
+        .toolbar select {
+            padding: 9px 34px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 920px;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #e9eef3;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-2);
+            background: #f8fafc;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #fbfdff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .plate {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #a9c6e8;
+            border-radius: 6px;
+            color: #215f9e;
+            background: #eff7ff;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* 表单 */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--text-2);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .required::after {
+            content: "*";
+            margin-left: 3px;
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #81afe0;
+            box-shadow: 0 0 0 3px rgba(40,120,208,.1);
+        }
+
+        textarea.form-control {
+            min-height: 85px;
+            resize: vertical;
+        }
+
+        .help {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .readonly-box {
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #f8fafc;
+        }
+
+        .readonly-box p {
+            margin: 3px 0;
+        }
+
+        /* 详情 */
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .detail-item {
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f9fbfd;
+        }
+
+        .detail-item span {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .detail-section {
+            margin-top: 18px;
+        }
+
+        .detail-section h4 {
+            margin: 0 0 9px;
+            font-size: 16px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 22px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 7px;
+            bottom: 7px;
+            width: 2px;
+            background: #d9e4ef;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0 0 15px 13px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 9px;
+            height: 9px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 2px #c1d7ed;
+        }
+
+        .timeline-item strong {
+            font-size: 14px;
+        }
+
+        .timeline-item p {
+            margin: 2px 0 0;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+
+        /* 资源地图 */
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: minmax(600px, 1.5fr) minmax(330px, .7fr);
+            gap: 17px;
+        }
+
+        .hospital-map {
+            position: relative;
+            min-height: 565px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background:
+                linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.65)),
+                repeating-linear-gradient(0deg, #e8eef4 0, #e8eef4 1px, transparent 1px, transparent 35px),
+                repeating-linear-gradient(90deg, #e8eef4 0, #e8eef4 1px, transparent 1px, transparent 35px);
+        }
+
+        .map-road {
+            position: absolute;
+            border-radius: 8px;
+            background: #cfd7df;
+        }
+
+        .road-horizontal {
+            left: 5%;
+            right: 5%;
+            top: 46%;
+            height: 55px;
+        }
+
+        .road-vertical {
+            top: 5%;
+            bottom: 5%;
+            left: 48%;
+            width: 58px;
+        }
+
+        .road-line-h {
+            position: absolute;
+            left: 5%;
+            right: 5%;
+            top: calc(46% + 26px);
+            border-top: 2px dashed #fff;
+        }
+
+        .road-line-v {
+            position: absolute;
+            top: 5%;
+            bottom: 5%;
+            left: calc(48% + 28px);
+            border-left: 2px dashed #fff;
+        }
+
+        .zone {
+            position: absolute;
+            padding: 14px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .zone:hover {
+            border-color: var(--primary);
+        }
+
+        .zone h4 {
+            margin: 0 0 5px;
+        }
+
+        .zone p {
+            margin: 2px 0;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+
+        .zone strong {
+            font-size: 22px;
+        }
+
+        .zone.red {
+            border-color: #e77c7c;
+            background: #fff4f4;
+        }
+
+        .zone.orange {
+            border-color: #e5ad5a;
+            background: #fff9ed;
+        }
+
+        .zone.green {
+            border-color: #72c8a5;
+            background: #f0fbf6;
+        }
+
+        .zone.purple {
+            border-color: #a997dd;
+            background: #f7f4ff;
+        }
+
+        .zone-a {
+            left: 5%;
+            top: 8%;
+            width: 34%;
+            height: 29%;
+        }
+
+        .zone-b {
+            right: 5%;
+            top: 8%;
+            width: 34%;
+            height: 29%;
+        }
+
+        .zone-c {
+            left: 5%;
+            bottom: 8%;
+            width: 34%;
+            height: 30%;
+        }
+
+        .zone-d {
+            right: 5%;
+            bottom: 8%;
+            width: 34%;
+            height: 30%;
+        }
+
+        .map-entry {
+            position: absolute;
+            z-index: 3;
+            padding: 6px 10px;
+            border-radius: 7px;
+            color: #fff;
+            background: var(--primary);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .entry-north {
+            left: calc(48% - 10px);
+            top: 1%;
+        }
+
+        .entry-south {
+            left: calc(48% - 10px);
+            bottom: 1%;
+        }
+
+        .entry-west {
+            left: 1%;
+            top: 47%;
+        }
+
+        .entry-east {
+            right: 1%;
+            top: 47%;
+        }
+
+        .map-car {
+            position: absolute;
+            z-index: 4;
+            width: 25px;
+            height: 13px;
+            border-radius: 5px;
+            background: #f2b33d;
+            box-shadow: 0 2px 4px rgba(0,0,0,.2);
+        }
+
+        .map-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 11px;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+
+        .legend-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+
+        .side-panel {
+            display: grid;
+            align-content: start;
+            gap: 13px;
+        }
+
+        .action-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .action-card h4 {
+            margin: 0 0 6px;
+        }
+
+        .action-card p {
+            margin: 0 0 11px;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+
+        /* 屏幕管理 */
+
+        .screen-preview {
+            padding: 18px;
+            border: 7px solid #3b4653;
+            border-radius: 8px;
+            color: #f3d54e;
+            background: #182129;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.55;
+        }
+
+        .screen-preview small {
+            display: block;
+            color: #8ee0a6;
+            font-size: 14px;
+        }
+
+        /* 潮汐车道 */
+
+        .lane-diagram {
+            display: grid;
+            gap: 11px;
+        }
+
+        .lane-row {
+            display: grid;
+            grid-template-columns: 125px minmax(0, 1fr) 145px;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fff;
+        }
+
+        .lane-track {
+            position: relative;
+            height: 48px;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #d8dee5;
+        }
+
+        .lane-track::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 23px;
+            border-top: 2px dashed #fff;
+        }
+
+        .lane-arrow {
+            position: absolute;
+            z-index: 2;
+            left: 12px;
+            top: 7px;
+            color: var(--primary-dark);
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .lane-arrow.exit {
+            left: auto;
+            right: 12px;
+            color: var(--success);
+        }
+
+        .check-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .check-item input {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 周边停车场 */
+
+        .lot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .lot-card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .lot-map {
+            position: relative;
+            height: 120px;
+            background:
+                linear-gradient(135deg, #e8f2e9 25%, #f3f7fa 25%, #f3f7fa 50%, #e8f2e9 50%, #e8f2e9 75%, #f3f7fa 75%);
+            background-size: 40px 40px;
+        }
+
+        .lot-pin {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            display: grid;
+            width: 43px;
+            height: 43px;
+            place-items: center;
+            transform: translate(-50%, -50%);
+            border-radius: 50% 50% 50% 0;
+            color: #fff;
+            background: var(--primary);
+            font-weight: bold;
+            rotate: -45deg;
+        }
+
+        .lot-pin span {
+            rotate: 45deg;
+        }
+
+        .lot-content {
+            padding: 16px;
+        }
+
+        .lot-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .lot-title h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .lot-data {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+            margin: 13px 0;
+        }
+
+        .lot-data div {
+            padding: 8px 5px;
+            border-radius: 8px;
+            background: #f7f9fb;
+            text-align: center;
+        }
+
+        .lot-data strong {
+            display: block;
+            font-size: 17px;
+        }
+
+        .lot-data span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* 流程 */
+
+        .flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 9px;
+        }
+
+        .flow-step {
+            position: relative;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .flow-step:not(:last-child)::after {
+            content: "→";
+            position: absolute;
+            right: -12px;
+            top: 38%;
+            z-index: 2;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .flow-step strong {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--primary-dark);
+        }
+
+        .flow-step span {
+            color: var(--text-2);
+            font-size: 12px;
+        }
+
+        /* 弹窗 */
+
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(28, 41, 59, .48);
+        }
+
+        .modal-mask.show {
+            display: flex;
+        }
+
+        .modal {
+            overflow: hidden;
+            width: min(900px, 100%);
+            max-height: 92vh;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 25px 80px rgba(20, 35, 52, .28);
+        }
+
+        .modal.large {
+            width: min(1100px, 100%);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 19px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-header p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .modal-close {
+            display: grid;
+            width: 37px;
+            height: 37px;
+            place-items: center;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-2);
+            background: #eef2f5;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            max-height: calc(92vh - 145px);
+            padding: 20px 22px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            padding: 14px 22px;
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+        }
+
+        /* 提示 */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            top: 84px;
+            z-index: 200;
+            display: grid;
+            gap: 9px;
+        }
+
+        .toast {
+            width: min(390px, calc(100vw - 35px));
+            padding: 13px 15px;
+            border: 1px solid #bfe0d2;
+            border-radius: 10px;
+            color: #21694f;
+            background: #effaf5;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.error {
+            border-color: #efc8c8;
+            color: #983939;
+            background: #fff3f3;
+        }
+
+        .empty {
+            padding: 28px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        @media (max-width: 1250px) {
+            .grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-4,
+            .lot-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .map-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 950px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .nav-title {
+                display: none;
+            }
+
+            .nav-item {
+                min-width: 155px;
+            }
+
+            .topbar {
+                position: static;
+            }
+
+            .hospital-select,
+            .date-box,
+            .user {
+                display: none;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-5,
+            .lot-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-step:not(:last-child)::after {
+                display: none;
+            }
+
+            .map-layout {
+                display: block;
+            }
+
+            .side-panel {
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                font-size: 15px;
+            }
+
+            .content {
+                padding: 17px 13px 35px;
+            }
+
+            .topbar {
+                padding: 11px 14px;
+            }
+
+            .role-select {
+                display: none;
+            }
+
+            .form-grid,
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .hospital-map {
+                min-height: 650px;
+            }
+
+            .zone {
+                width: 42%;
+            }
+
+            .todo-item {
+                grid-template-columns: 7px 1fr;
+            }
+
+            .todo-item .btn {
+                grid-column: 2;
+                justify-self: start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-row">
+                <div class="brand-logo">十</div>
+                <div>
+                    <h1>医院智慧停车</h1>
+                    <p>真实业务协同管理平台</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <div class="nav-title">值班工作</div>
+
+            <button class="nav-item active" data-view="dashboard">
+                <span class="nav-icon">首</span>
+                运营工作台
+                <span class="nav-badge">8</span>
+            </button>
+
+            <button class="nav-item" data-view="coupon">
+                <span class="nav-icon">券</span>
+                医疗停车优惠
+                <span class="nav-badge" id="couponBadge">3</span>
+            </button>
+
+            <button class="nav-item" data-view="meal">
+                <span class="nav-icon">餐</span>
+                住院送餐停车
+                <span class="nav-badge" id="mealBadge">2</span>
+            </button>
+
+            <button class="nav-item" data-view="lottery">
+                <span class="nav-icon">摇</span>
+                职工停车摇号
+            </button>
+
+            <div class="nav-title">交通与资源</div>
+
+            <button class="nav-item" data-view="map">
+                <span class="nav-icon">图</span>
+                院内停车资源图
+                <span class="nav-badge">1</span>
+            </button>
+
+            <button class="nav-item" data-view="tidal">
+                <span class="nav-icon">潮</span>
+                潮汐车道管理
+                <span class="nav-badge">1</span>
+            </button>
+
+            <button class="nav-item" data-view="nearby">
+                <span class="nav-icon">外</span>
+                周边停车协同
+            </button>
+
+            <div class="nav-title">监督管理</div>
+
+            <button class="nav-item" data-view="audit">
+                <span class="nav-icon">审</span>
+                操作与费用审计
+            </button>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="page-info">
+                <h2 id="pageTitle">停车运营工作台</h2>
+                <p id="pageDesc">值班人员今天需要处理的停车问题</p>
+            </div>
+
+            <div class="top-actions">
+                <select class="hospital-select">
+                    <option>第一人民医院·主院区</option>
+                    <option>第一人民医院·东院区</option>
+                </select>
+
+                <select class="role-select" id="roleSelect" onchange="changeRole(this.value)">
+                    <option>停车运营值班主管</option>
+                    <option>门诊医生</option>
+                    <option>住院部护士站</option>
+                    <option>人事与工会管理员</option>
+                    <option>停车场现场班组长</option>
+                    <option>财务审计人员</option>
+                </select>
+
+                <div class="date-box">2026年7月18日 星期六</div>
+
+                <div class="user">
+                    <div class="avatar">王</div>
+                    <div>
+                        <strong id="userName">王主管</strong>
+                        <span id="userRole">停车运营中心</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- 运营工作台 -->
+            <section class="view active" id="view-dashboard">
+                <div class="role-strip">
+                    <strong>当前使用人：停车运营值班主管</strong>
+                    <span>负责查看院内停车运行、处理车位不均衡、入口拥堵、业务异常和跨部门待办。</span>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">
+                            院内剩余车位
+                            <span class="metric-icon">P</span>
+                        </div>
+                        <div class="metric-value">126</div>
+                        <div class="metric-note">总使用率91%，接近饱和</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">
+                            北门入口排队
+                            <span class="metric-icon">车</span>
+                        </div>
+                        <div class="metric-value">18辆</div>
+                        <div class="metric-note">预计等待8分钟</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">
+                            急诊通道
+                            <span class="metric-icon">急</span>
+                        </div>
+                        <div class="metric-value">畅通</div>
+                        <div class="metric-note">1辆落客车辆即将超时</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">
+                            周边车场余位
+                            <span class="metric-icon">外</span>
+                        </div>
+                        <div class="metric-value">386</div>
+                        <div class="metric-note">3个合作停车场在线</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">
+                            当前潮汐车道
+                            <span class="metric-icon">潮</span>
+                        </div>
+                        <div class="metric-value">2入2出</div>
+                        <div class="metric-note">系统建议调整为3入1出</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>今天优先处理</h3>
+                                <p>按风险等级和持续时间排序</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="todo-list">
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>门诊B1区车位严重不均衡</strong>
+                                        <p>B1仅剩12个车位，B2仍有86个车位，B1平均找位时间已达9分钟。</p>
+                                        <div class="todo-meta">持续6分钟 · 责任岗位：停车运营值班主管</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="goToMapAlert()">处理分流</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>北门潮汐车道切换建议待确认</strong>
+                                        <p>当前入场排队18辆，出场仅3辆，建议将2号出口临时调整为入口。</p>
+                                        <div class="todo-meta">建议生效：07:30—09:30 · 需现场安全确认</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('tidal')">查看建议</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>2张患者全免停车券待审批</strong>
+                                        <p>分别由心内科、肿瘤科医生发起，合计预计减免68元。</p>
+                                        <div class="todo-meta">最长等待22分钟 · 审批岗位：科室负责人/停车运营</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('coupon')">进入审批</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>住院送餐车辆已超时12分钟</strong>
+                                        <p>粤A·27Q8M，住院部2号短停区，免费45分钟已用完。</p>
+                                        <div class="todo-meta">患者：李建国 · 住院部八病区</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="openMealOvertime()">查看处置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>今日业务情况</h3>
+                                <p>医院停车业务，不只是车辆进出数量</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span>医生发放优惠券</span>
+                                    <strong>68张</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>优惠已抵扣</span>
+                                    <strong>51张</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>送餐车辆入场</span>
+                                    <strong>43辆</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>院内分流车辆</span>
+                                    <strong>126辆</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>周边车场承接</span>
+                                    <strong>89辆</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>现场诱导任务</span>
+                                    <strong>7项</strong>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>当前停车状态</h4>
+                                <div class="table-wrap">
+                                    <table style="min-width:600px">
+                                        <thead>
+                                        <tr>
+                                            <th>区域</th>
+                                            <th>剩余</th>
+                                            <th>使用率</th>
+                                            <th>状态</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>门诊B1区</td>
+                                            <td>12</td>
+                                            <td>96%</td>
+                                            <td><span class="tag tag-red">需要分流</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>门诊B2区</td>
+                                            <td>86</td>
+                                            <td>68%</td>
+                                            <td><span class="tag tag-green">可承接车辆</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>住院部停车区</td>
+                                            <td>18</td>
+                                            <td>91%</td>
+                                            <td><span class="tag tag-orange">接近饱和</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>职工停车区</td>
+                                            <td>10</td>
+                                            <td>94%</td>
+                                            <td><span class="tag tag-orange">正常管控</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 医疗停车优惠 -->
+            <section class="view" id="view-coupon">
+                <div class="section-title">
+                    <div>
+                        <h2>医疗停车优惠</h2>
+                        <p>医生给真实就诊患者发券，患者绑定本次车辆，离场时自动抵扣，并记录科室费用。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openIssueCoupon()">医生发放优惠券</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>医生负责发券；科室负责人审批全免券；患者绑定车牌；停车系统抵扣；财务负责费用审计。</span>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">今日发放</div>
+                        <div class="metric-value">68张</div>
+                        <div class="metric-note">预计优惠1,286元</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">已使用</div>
+                        <div class="metric-value">51张</div>
+                        <div class="metric-note">使用率75%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待患者绑车</div>
+                        <div class="metric-value">9张</div>
+                        <div class="metric-note">已发送患者消息</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待审批全免券</div>
+                        <div class="metric-value" id="pendingCouponCount">2张</div>
+                        <div class="metric-note">最高等待22分钟</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>优惠券业务记录</h3>
+                            <p>每张券均关联患者、医生、科室、车辆和停车订单</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <div class="search-box">
+                                <span>查</span>
+                                <input id="couponSearch" placeholder="搜索患者、医生、车牌、券号"
+                                       oninput="renderCouponTable()">
+                            </div>
+
+                            <select id="couponStatus" onchange="renderCouponTable()">
+                                <option value="">全部状态</option>
+                                <option>待患者绑车</option>
+                                <option>待审批</option>
+                                <option>可使用</option>
+                                <option>已抵扣</option>
+                                <option>已驳回</option>
+                            </select>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>券号/患者</th>
+                                    <th>发券医生</th>
+                                    <th>优惠内容</th>
+                                    <th>关联车辆</th>
+                                    <th>发券原因</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="couponTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 送餐停车 -->
+            <section class="view" id="view-meal">
+                <div class="section-title">
+                    <div>
+                        <h2>住院家属送餐停车</h2>
+                        <p>按照早餐、午餐、晚餐时段开放短时免费资格，避免家属借送餐名义全天免费停车。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openMealApplication()">办理送餐停车资格</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>家属可自助申请；护士站负责本病区审核和特殊延时；停车系统负责时段放行、计时及超时收费。</span>
+                </div>
+
+                <div class="success-banner mb-16">
+                    <div class="banner-icon">✓</div>
+                    <div class="banner-text">
+                        <strong>当前执行的送餐时段</strong>
+                        早餐06:30—08:30、午餐10:30—13:00、晚餐16:30—19:00；每次免费45分钟，第35分钟发送离场提醒。
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">有效资格</div>
+                        <div class="metric-value">126个</div>
+                        <div class="metric-note">覆盖9个住院病区</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">今日已入场</div>
+                        <div class="metric-value">43辆</div>
+                        <div class="metric-note">午餐时段31辆</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">当前未离场</div>
+                        <div class="metric-value">8辆</div>
+                        <div class="metric-note">即将超时2辆</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">已超时</div>
+                        <div class="metric-value">1辆</div>
+                        <div class="metric-note">超时部分正常计费</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>今日送餐车辆</h3>
+                            <p>护士站只处理本病区车辆，停车运营人员处理跨区域和费用异常</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>患者/病区</th>
+                                    <th>送餐车辆</th>
+                                    <th>允许时段</th>
+                                    <th>本次入场</th>
+                                    <th>剩余免费时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="mealTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 职工摇号 -->
+            <section class="view" id="view-lottery">
+                <div class="section-title">
+                    <div>
+                        <h2>职工停车摇号</h2>
+                        <p>车位不够时，不再依靠人工关系分配，实行申请、审核、摇号、公示、确认、递补和到期回收。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openLotteryRules()">查看本期规则</button>
+                        <button class="btn btn-primary" onclick="openLotteryBatch()">新建摇号批次</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>职工提交申请；HR自动核验在职信息；工会组织摇号；纪检监督；停车系统下发中签权限。</span>
+                </div>
+
+                <div class="warning-banner mb-16">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-text">
+                        <strong>2026年第三季度职工停车资格摇号</strong>
+                        申请名单已锁定，共612人通过审核，提供180个正式名额和40个候补名额。计划今天15:00公开摇号。
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">申请人数</div>
+                        <div class="metric-value">685人</div>
+                        <div class="metric-note">较上期增加47人</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">审核通过</div>
+                        <div class="metric-value">612人</div>
+                        <div class="metric-note">73人未通过</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">正式名额</div>
+                        <div class="metric-value">180个</div>
+                        <div class="metric-note">预计中签率29.4%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">候补名额</div>
+                        <div class="metric-value">40个</div>
+                        <div class="metric-note">按候补顺序递补</div>
+                    </div>
+                </div>
+
+                <div class="card mb-16">
+                    <div class="card-header">
+                        <div>
+                            <h3>摇号工作进度</h3>
+                            <p>每一步有明确责任岗位和结果</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="flow">
+                            <div class="flow-step">
+                                <strong>申请结束</strong>
+                                <span>685名职工提交申请</span>
+                            </div>
+                            <div class="flow-step">
+                                <strong>资格审核完成</strong>
+                                <span>612人进入有效名单</span>
+                            </div>
+                            <div class="flow-step">
+                                <strong>名单已锁定</strong>
+                                <span>纪检与职工代表已确认</span>
+                            </div>
+                            <div class="flow-step">
+                                <strong id="drawFlowTitle">等待摇号</strong>
+                                <span id="drawFlowText">今天15:00执行公开摇号</span>
+                            </div>
+                            <div class="flow-step">
+                                <strong>中签确认</strong>
+                                <span>逾期未确认由候补递补</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>分组名额</h3>
+                                <p>不同岗位分别配置名额，避免全部混在一起竞争</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-wrap">
+                                <table style="min-width:600px">
+                                    <thead>
+                                    <tr>
+                                        <th>职工分组</th>
+                                        <th>通过审核</th>
+                                        <th>正式名额</th>
+                                        <th>预计中签率</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr><td>临床医生</td><td>218</td><td>68</td><td>31.2%</td></tr>
+                                    <tr><td>护理人员</td><td>206</td><td>58</td><td>28.2%</td></tr>
+                                    <tr><td>医技人员</td><td>92</td><td>27</td><td>29.3%</td></tr>
+                                    <tr><td>行政后勤</td><td>71</td><td>20</td><td>28.2%</td></tr>
+                                    <tr><td>规培及其他</td><td>25</td><td>7</td><td>28.0%</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>摇号执行</h3>
+                                <p>执行前必须确认名单、名额和监督人员</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="drawBefore">
+                                <div class="check-list">
+                                    <label class="check-item">
+                                        <input type="checkbox" class="draw-check">
+                                        申请名单已锁定，不能继续新增或删除
+                                    </label>
+                                    <label class="check-item">
+                                        <input type="checkbox" class="draw-check">
+                                        各岗位名额已经工会及人事确认
+                                    </label>
+                                    <label class="check-item">
+                                        <input type="checkbox" class="draw-check">
+                                        纪检人员和职工代表已到场
+                                    </label>
+                                    <label class="check-item">
+                                        <input type="checkbox" class="draw-check">
+                                        摇号规则及随机算法版本已公示
+                                    </label>
+                                </div>
+
+                                <button class="btn btn-primary mt-16" onclick="executeDraw()">
+                                    确认并执行本期摇号
+                                </button>
+                            </div>
+
+                            <div id="drawAfter" class="hidden">
+                                <div class="success-banner">
+                                    <div class="banner-icon">✓</div>
+                                    <div class="banner-text">
+                                        <strong>摇号已完成并锁定结果</strong>
+                                        生成180名中签人员、40名候补人员。结果已发送给职工并进入公示期。
+                                    </div>
+                                </div>
+
+                                <div class="section-actions mt-16">
+                                    <button class="btn btn-secondary" onclick="openWinnerList()">查看中签名单</button>
+                                    <button class="btn btn-primary" onclick="openCandidateReplacement()">处理候补递补</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 院内资源图 -->
+            <section class="view" id="view-map">
+                <div class="section-title">
+                    <div>
+                        <h2>院内停车资源图</h2>
+                        <p>看到哪个区域满、哪个区域空，直接调整车辆去向、诱导屏内容和现场人员任务。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openScreenManager()">管理诱导屏</button>
+                        <button class="btn btn-primary" onclick="openDiversionStrategy()">处理车位不均衡</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>停车指挥中心查看全局；现场班组长接收诱导任务；入口保安按新动线引导；诱导屏自动发布方向。</span>
+                </div>
+
+                <div class="warning-banner mb-16" id="imbalanceBanner">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-text">
+                        <strong>门诊停车区出现明显不均衡</strong>
+                        B1剩余12个、使用率96%；B2剩余86个、使用率68%。建议暂停车辆进入B1，引导后续车辆前往B2。
+                    </div>
+                </div>
+
+                <div class="map-layout">
+                    <div>
+                        <div class="hospital-map">
+                            <div class="map-road road-horizontal"></div>
+                            <div class="map-road road-vertical"></div>
+                            <div class="road-line-h"></div>
+                            <div class="road-line-v"></div>
+
+                            <span class="map-entry entry-north">北门</span>
+                            <span class="map-entry entry-south">南门</span>
+                            <span class="map-entry entry-west">西门</span>
+                            <span class="map-entry entry-east">东门</span>
+
+                            <div class="zone zone-a red" onclick="openZone('B1')">
+                                <h4>门诊地下B1区</h4>
+                                <strong>12</strong> 个空位
+                                <p>总车位300 · 使用率96%</p>
+                                <p>平均找位9分钟</p>
+                                <span class="tag tag-red">需要分流</span>
+                            </div>
+
+                            <div class="zone zone-b green" onclick="openZone('B2')">
+                                <h4>门诊地下B2区</h4>
+                                <strong>86</strong> 个空位
+                                <p>总车位270 · 使用率68%</p>
+                                <p>平均找位2分钟</p>
+                                <span class="tag tag-green">可承接车辆</span>
+                            </div>
+
+                            <div class="zone zone-c orange" onclick="openZone('INPATIENT')">
+                                <h4>住院部停车区</h4>
+                                <strong>18</strong> 个空位
+                                <p>总车位200 · 使用率91%</p>
+                                <p>送餐短停区剩余4个</p>
+                                <span class="tag tag-orange">接近饱和</span>
+                            </div>
+
+                            <div class="zone zone-d purple" onclick="openZone('EMERGENCY')">
+                                <h4>急诊保障区</h4>
+                                <strong>10</strong> 个保障位
+                                <p>总车位25 · 当前占用15</p>
+                                <p>不向普通车辆开放</p>
+                                <span class="tag tag-purple">重点保障</span>
+                            </div>
+
+                            <div class="map-car" style="left:43%;top:22%"></div>
+                            <div class="map-car" style="left:48%;top:39%"></div>
+                            <div class="map-car" style="left:53%;top:56%"></div>
+                            <div class="map-car" style="left:68%;top:47%"></div>
+                            <div class="map-car" style="left:31%;top:48%"></div>
+                        </div>
+
+                        <div class="map-legend">
+                            <span><i class="legend-dot" style="background:#d94d4d"></i>满位或需要分流</span>
+                            <span><i class="legend-dot" style="background:#dc8a16"></i>接近饱和</span>
+                            <span><i class="legend-dot" style="background:#199b68"></i>车位充足</span>
+                            <span><i class="legend-dot" style="background:#7257bd"></i>医疗保障区域</span>
+                        </div>
+                    </div>
+
+                    <div class="side-panel">
+                        <div class="action-card">
+                            <h4>系统建议</h4>
+                            <p>停止向B1继续放行普通门诊车辆，将北门、东门新入场车辆统一引导至B2。</p>
+                            <button class="btn btn-primary btn-sm" onclick="openDiversionStrategy()">发布分流策略</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>现场诱导任务</h4>
+                            <p id="fieldTaskText">当前暂无已发布的B1分流任务。</p>
+                            <button class="btn btn-secondary btn-sm" onclick="openFieldTask()">下发给现场人员</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>诱导屏当前内容</h4>
+                            <div class="screen-preview" id="screenPreview">
+                                B1剩余12个<br>
+                                B2剩余86个
+                                <small>请按现场标识通行</small>
+                            </div>
+                            <button class="btn btn-secondary btn-sm mt-16" onclick="openScreenManager()">修改显示内容</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h4>分流效果</h4>
+                            <p id="diversionResult">尚未启动本次分流。策略启动后每5分钟统计进入B1、B2的车辆数和找位时间。</p>
+                            <button class="btn btn-success btn-sm hidden" id="finishDiversionBtn"
+                                    onclick="finishDiversion()">结束本次分流</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 潮汐车道 -->
+            <section class="view" id="view-tidal">
+                <div class="section-title">
+                    <div>
+                        <h2>潮汐车道管理</h2>
+                        <p>早上入场多时把部分出口调整为入口；高峰结束后再安全恢复，不能只改一个道闸方向。</p>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>值班主管发起切换；现场班组长清空车道并检查设备；系统联动道闸、相机、红绿灯和指示屏。</span>
+                </div>
+
+                <div class="warning-banner mb-16" id="tidalSuggestion">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-text">
+                        <strong>北门早高峰潮汐切换建议</strong>
+                        入场排队18辆，出场仅3辆。建议将北门2号出口切换为入口，预计入口通行能力提升35%。
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>北门当前车道</h3>
+                                <p>2条入口、2条出口</p>
+                            </div>
+                            <span class="tag tag-blue" id="tidalStatusTag">等待确认</span>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="lane-diagram">
+                                <div class="lane-row">
+                                    <strong>1号车道</strong>
+                                    <div class="lane-track"><span class="lane-arrow">→ 入口</span></div>
+                                    <span class="tag tag-blue">固定入口</span>
+                                </div>
+
+                                <div class="lane-row">
+                                    <strong>2号车道</strong>
+                                    <div class="lane-track"><span class="lane-arrow">→ 入口</span></div>
+                                    <span class="tag tag-blue">固定入口</span>
+                                </div>
+
+                                <div class="lane-row">
+                                    <strong>3号车道</strong>
+                                    <div class="lane-track">
+                                        <span class="lane-arrow exit" id="tidalArrow">出口 ←</span>
+                                    </div>
+                                    <span class="tag tag-orange" id="tidalLaneTag">潮汐车道</span>
+                                </div>
+
+                                <div class="lane-row">
+                                    <strong>4号车道</strong>
+                                    <div class="lane-track"><span class="lane-arrow exit">出口 ←</span></div>
+                                    <span class="tag tag-green">固定出口</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 id="tidalActionTitle">切换前安全检查</h3>
+                                <p>全部确认后才能改变车道方向</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div id="tidalBefore">
+                                <div class="check-list">
+                                    <label class="check-item"><input type="checkbox" class="tidal-check"> 潮汐车道内车辆已经全部驶离</label>
+                                    <label class="check-item"><input type="checkbox" class="tidal-check"> 入口和出口相机在线</label>
+                                    <label class="check-item"><input type="checkbox" class="tidal-check"> 红绿灯及车道指示灯正常</label>
+                                    <label class="check-item"><input type="checkbox" class="tidal-check"> 隔离栏和交通锥已完成调整</label>
+                                    <label class="check-item"><input type="checkbox" class="tidal-check"> 现场安保人员已经到位</label>
+                                    <label class="check-item"><input type="checkbox" class="tidal-check"> 出场车辆已引导至4号出口</label>
+                                </div>
+
+                                <button class="btn btn-primary mt-16" onclick="switchTidalLane()">
+                                    确认切换为入口
+                                </button>
+                            </div>
+
+                            <div id="tidalRunning" class="hidden">
+                                <div class="success-banner">
+                                    <div class="banner-icon">✓</div>
+                                    <div class="banner-text">
+                                        <strong>3号潮汐车道已切换为入口</strong>
+                                        道闸、相机、红绿灯和指示屏已同步完成方向切换。
+                                    </div>
+                                </div>
+
+                                <div class="detail-grid mt-16">
+                                    <div class="detail-item"><span>切换时间</span><strong>07:26</strong></div>
+                                    <div class="detail-item"><span>当前模式</span><strong>3入1出</strong></div>
+                                    <div class="detail-item"><span>入场排队</span><strong>9辆</strong></div>
+                                    <div class="detail-item"><span>通行效率</span><strong>提升34%</strong></div>
+                                    <div class="detail-item"><span>现场负责人</span><strong>张班长</strong></div>
+                                    <div class="detail-item"><span>建议恢复</span><strong>09:30</strong></div>
+                                </div>
+
+                                <button class="btn btn-warning mt-16" onclick="openRestoreTidal()">高峰结束，恢复为出口</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 周边停车协同 -->
+            <section class="view" id="view-nearby">
+                <div class="section-title">
+                    <div>
+                        <h2>周边停车协同</h2>
+                        <p>院内车位不足时，把车辆引导到有实时余位、可核销医院优惠的合作停车场。</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openNearbySettlement()">合作车场对账</button>
+                        <button class="btn btn-primary" onclick="openDiversionToNearby()">启动周边分流</button>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>医院运营人员管理合作车场和分流策略；患者获取导航及优惠；合作车场回传入场、离场和结算数据。</span>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">合作停车场</div>
+                        <div class="metric-value">3个</div>
+                        <div class="metric-note">全部在线</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">当前开放配额</div>
+                        <div class="metric-value">386个</div>
+                        <div class="metric-note">可承接医院车辆</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">今日分流</div>
+                        <div class="metric-value">89辆</div>
+                        <div class="metric-note">较昨日增加22辆</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">今日医院补贴</div>
+                        <div class="metric-value">1,068元</div>
+                        <div class="metric-note">待月度统一结算</div>
+                    </div>
+                </div>
+
+                <div class="lot-grid" id="nearbyLotGrid"></div>
+            </section>
+
+            <!-- 审计 -->
+            <section class="view" id="view-audit">
+                <div class="section-title">
+                    <div>
+                        <h2>操作与费用审计</h2>
+                        <p>谁发了券、谁延长了免费时间、谁调整了车位和道闸，全部有记录。</p>
+                    </div>
+                </div>
+
+                <div class="role-strip">
+                    <strong>使用岗位：</strong>
+                    <span>财务查看优惠费用；审计查看高风险操作；运营负责人核查人工干预和异常放行。</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>今日重点操作记录</h3>
+                            <p>高风险操作支持按人员、科室、车辆和费用追溯</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作人员</th>
+                                    <th>所属岗位</th>
+                                    <th>操作内容</th>
+                                    <th>关联对象</th>
+                                    <th>影响结果</th>
+                                    <th>状态</th>
+                                </tr>
+                                </thead>
+                                <tbody id="auditTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-mask" id="modalMask" onclick="maskClose(event)">
+    <div class="modal" id="modalBox">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalTitle">业务办理</h3>
+                <p id="modalSubtitle"></p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+    const pageMeta = {
+        dashboard: ["停车运营工作台", "值班人员今天需要处理的停车问题"],
+        coupon: ["医疗停车优惠", "医生发券、患者绑车、停车抵扣和费用审计"],
+        meal: ["住院家属送餐停车", "按送餐时段开放短时免费停车资格"],
+        lottery: ["职工停车摇号", "公开申请、资格审核、摇号、公示和候补递补"],
+        map: ["院内停车资源图", "区域余位、车辆动线、诱导屏和现场任务"],
+        tidal: ["潮汐车道管理", "高峰车道切换、安全检查、运行监控和恢复"],
+        nearby: ["周边停车协同", "院内满位后的车场推荐、优惠核销和结算"],
+        audit: ["操作与费用审计", "人工干预、优惠费用和高风险操作追溯"]
+    };
+
+    let coupons = [
+        {
+            id: "YH20260718068",
+            patient: "张敏",
+            medicalNo: "MZ202607180382",
+            doctor: "陈医生",
+            department: "心内科",
+            type: "当次停车全免",
+            plate: "粤A·38K7Q",
+            reason: "检查延误超过2小时",
+            status: "待审批",
+            amount: "预计减免32元",
+            timeline: [
+                ["09:12", "患者完成心内科门诊签到"],
+                ["11:26", "陈医生发起全免停车券"],
+                ["11:26", "系统核验接诊关系及科室额度通过"],
+                ["11:27", "全免券进入科室负责人审批"]
+            ]
+        },
+        {
+            id: "YH20260718063",
+            patient: "刘建华",
+            medicalNo: "MZ202607180317",
+            doctor: "王医生",
+            department: "肿瘤科",
+            type: "当次停车全免",
+            plate: "",
+            reason: "日间治疗延时",
+            status: "待审批",
+            amount: "预计减免36元",
+            timeline: [
+                ["08:45", "患者完成日间治疗登记"],
+                ["10:58", "王医生发起全免停车券"],
+                ["10:59", "患者尚未绑定本次车辆"],
+                ["11:00", "进入审批流程"]
+            ]
+        },
+        {
+            id: "YH20260718057",
+            patient: "周丽",
+            medicalNo: "MZ202607180255",
+            doctor: "李医生",
+            department: "骨科",
+            type: "免费2小时",
+            plate: "",
+            reason: "行动不便患者",
+            status: "待患者绑车",
+            amount: "减免12元",
+            timeline: [
+                ["09:34", "李医生发放2小时优惠券"],
+                ["09:34", "系统向患者发送绑车通知"]
+            ]
+        },
+        {
+            id: "YH20260718049",
+            patient: "赵国强",
+            medicalNo: "MZ202607180189",
+            doctor: "孙医生",
+            department: "神经内科",
+            type: "免费2小时",
+            plate: "粤B·62M9P",
+            reason: "就诊等待时间较长",
+            status: "可使用",
+            amount: "减免12元",
+            timeline: [
+                ["08:10", "孙医生发放2小时优惠券"],
+                ["08:17", "患者绑定车辆粤B·62M9P"],
+                ["08:26", "车辆从北门入场"]
+            ]
+        },
+        {
+            id: "YH20260718031",
+            patient: "何秀兰",
+            medicalNo: "MZ202607180086",
+            doctor: "周医生",
+            department: "眼科",
+            type: "免费1小时",
+            plate: "粤A·52N3D",
+            reason: "高龄患者",
+            status: "已抵扣",
+            amount: "已减免6元",
+            timeline: [
+                ["07:42", "周医生发放1小时优惠券"],
+                ["07:50", "患者绑定车辆粤A·52N3D"],
+                ["10:08", "车辆离场，优惠自动抵扣6元"]
+            ]
+        }
+    ];
+
+    let mealRecords = [
+        {
+            id: "SC20260718021",
+            patient: "李建国",
+            ward: "住院部八病区",
+            plate: "粤A·27Q8M",
+            period: "午餐 10:30—13:00",
+            enter: "11:02",
+            remaining: "已超时12分钟",
+            status: "已超时",
+            phone: "138****5268"
+        },
+        {
+            id: "SC20260718019",
+            patient: "陈丽芳",
+            ward: "住院部六病区",
+            plate: "粤B·18M6K",
+            period: "午餐 10:30—13:00",
+            enter: "11:21",
+            remaining: "剩余18分钟",
+            status: "停车中",
+            phone: "139****3271"
+        },
+        {
+            id: "SC20260718017",
+            patient: "王志远",
+            ward: "住院部三病区",
+            plate: "粤A·93T2F",
+            period: "午餐 10:30—13:00",
+            enter: "11:35",
+            remaining: "剩余32分钟",
+            status: "停车中",
+            phone: "136****9125"
+        },
+        {
+            id: "SC20260718012",
+            patient: "林雪梅",
+            ward: "住院部五病区",
+            plate: "粤A·65P1R",
+            period: "晚餐 16:30—19:00",
+            enter: "尚未入场",
+            remaining: "今日可使用1次",
+            status: "待入场",
+            phone: "137****6803"
+        }
+    ];
+
+    let nearbyLots = [
+        {
+            id: 1,
+            name: "东侧公共停车场",
+            distance: "320米",
+            walk: "步行7分钟",
+            total: 260,
+            available: 126,
+            quota: 110,
+            price: "5元/小时",
+            discount: "就诊患者减免2小时",
+            shuttle: "无需接驳",
+            status: "正常承接"
+        },
+        {
+            id: 2,
+            name: "城市广场地下停车场",
+            distance: "680米",
+            walk: "步行12分钟",
+            total: 520,
+            available: 184,
+            quota: 160,
+            price: "4元/小时",
+            discount: "医院补贴10元",
+            shuttle: "每15分钟接驳",
+            status: "正常承接"
+        },
+        {
+            id: 3,
+            name: "机关夜间共享停车场",
+            distance: "450米",
+            walk: "步行9分钟",
+            total: 180,
+            available: 76,
+            quota: 60,
+            price: "3元/小时",
+            discount: "18:00后开放",
+            shuttle: "无接驳",
+            status: "未到开放时间"
+        }
+    ];
+
+    let audits = [
+        ["11:27", "赵主任", "心内科负责人", "审批患者全免停车券", "张敏 / YH20260718068", "预计减免32元", "待审批"],
+        ["11:16", "护士刘敏", "住院部八病区", "延长送餐停车时长15分钟", "粤A·19D6K", "免费结束时间延至11:31", "已完成"],
+        ["10:48", "王主管", "停车运营中心", "调整诱导屏内容", "门诊B1/B2", "车辆优先引导至B2", "已完成"],
+        ["10:20", "陈医生", "心内科", "发放患者停车全免券", "张敏 / MZ202607180382", "进入科室审批", "待审批"],
+        ["09:35", "张班长", "现场安保", "人工延长急诊落客时间", "粤B·28K7M", "延长10分钟", "已完成"],
+        ["09:18", "财务李会计", "财务处", "复核合作车场优惠", "东侧公共停车场", "确认医院承担486元", "已完成"]
+    ];
+
+    document.querySelectorAll(".nav-item").forEach(button => {
+        button.addEventListener("click", () => navigateTo(button.dataset.view));
+    });
+
+    function navigateTo(view) {
+        document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+
+        document.getElementById("view-" + view).classList.add("active");
+        document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[view][0];
+        document.getElementById("pageDesc").textContent = pageMeta[view][1];
+        window.scrollTo({top: 0, behavior: "smooth"});
+    }
+
+    function changeRole(role) {
+        const config = {
+            "停车运营值班主管": ["王主管", "停车运营中心", "dashboard"],
+            "门诊医生": ["陈医生", "心内科门诊", "coupon"],
+            "住院部护士站": ["刘护士", "住院部八病区", "meal"],
+            "人事与工会管理员": ["李老师", "人事与工会", "lottery"],
+            "停车场现场班组长": ["张班长", "现场安保班组", "map"],
+            "财务审计人员": ["李会计", "医院财务处", "audit"]
+        };
+
+        const target = config[role];
+        document.getElementById("userName").textContent = target[0];
+        document.getElementById("userRole").textContent = target[1];
+        navigateTo(target[2]);
+        showToast(`已切换至“${role}”工作视角。`);
+    }
+
+    /* 医疗优惠券 */
+
+    function renderCouponTable() {
+        const keyword = (document.getElementById("couponSearch")?.value || "").toLowerCase();
+        const status = document.getElementById("couponStatus")?.value || "";
+
+        const list = coupons.filter(item => {
+            const text = `${item.id}${item.patient}${item.doctor}${item.plate}`.toLowerCase();
+            return (!keyword || text.includes(keyword)) &&
+                (!status || item.status === status);
+        });
+
+        document.getElementById("couponTableBody").innerHTML = list.length
+            ? list.map(item => `
+                <tr>
+                    <td>
+                        <strong>${item.id}</strong>
+                        <div class="muted">${item.patient} · ${item.medicalNo}</div>
+                    </td>
+                    <td>
+                        ${item.doctor}
+                        <div class="muted">${item.department}</div>
+                    </td>
+                    <td>
+                        <strong>${item.type}</strong>
+                        <div class="muted">${item.amount}</div>
+                    </td>
+                    <td>${item.plate ? `<span class="plate">${item.plate}</span>` : "尚未绑定"}</td>
+                    <td>${item.reason}</td>
+                    <td>${statusTag(item.status)}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm"
+                                onclick="openCouponDetail('${item.id}')">
+                            查看处理
+                        </button>
+                    </td>
+                </tr>
+            `).join("")
+            : `<tr><td colspan="7"><div class="empty">没有符合条件的优惠券记录</div></td></tr>`;
+
+        const pending = coupons.filter(item => item.status === "待审批").length;
+        document.getElementById("pendingCouponCount").textContent = pending + "张";
+        document.getElementById("couponBadge").textContent = pending;
+    }
+
+    function openIssueCoupon() {
+        const body = `
+            <div class="info-banner mb-16">
+                <div class="banner-icon">医</div>
+                <div class="banner-text">
+                    <strong>医生只需对当前接诊患者选择优惠内容</strong>
+                    患者、就诊号、医生和科室由医生工作站自动带出，避免手工输入错误。
+                </div>
+            </div>
+
+            <form id="couponForm" onsubmit="submitCoupon(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>当前接诊患者</label>
+                        <div class="readonly-box">
+                            <strong>许文静</strong>
+                            <p>门诊号：MZ202607180426</p>
+                            <p>心内科 · 陈医生 · 今日有效就诊</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>医生发券额度</label>
+                        <div class="readonly-box">
+                            <strong>本月剩余：17张</strong>
+                            <p>普通优惠可直接发放</p>
+                            <p>全免券需科室负责人审批</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">优惠内容</label>
+                        <select class="form-control" name="type" required onchange="couponTypeChanged(this.value)">
+                            <option value="">请选择</option>
+                            <option>免费1小时</option>
+                            <option>免费2小时</option>
+                            <option>减免10元</option>
+                            <option>当日封顶20元</option>
+                            <option>当次停车全免</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">发放原因</label>
+                        <select class="form-control" name="reason" required>
+                            <option>就诊等待时间过长</option>
+                            <option>检查项目延迟</option>
+                            <option>手术或特殊治疗</option>
+                            <option>行动不便患者</option>
+                            <option>医疗服务补偿</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>患者车辆</label>
+                        <div class="readonly-box">
+                            患者尚未绑定本次到院车辆。发券后系统将向患者发送消息，由患者自行确认车牌。
+                        </div>
+                    </div>
+
+                    <div class="form-group full hidden" id="fullWaiverTip">
+                        <div class="warning-banner">
+                            <div class="banner-icon">!</div>
+                            <div class="banner-text">
+                                <strong>全免券不能直接生效</strong>
+                                提交后由科室负责人审批。审批通过后，患者绑定车辆才可使用。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "向当前患者发放停车优惠",
+            "使用人：门诊医生",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('couponForm').requestSubmit()">
+                    确认发放
+                </button>
+            `
+        );
+    }
+
+    function couponTypeChanged(value) {
+        document.getElementById("fullWaiverTip").classList.toggle(
+            "hidden",
+            value !== "当次停车全免"
+        );
+    }
+
+    function submitCoupon(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        const id = "YH" + Date.now().toString().slice(-11);
+        const isFull = data.type === "当次停车全免";
+
+        coupons.unshift({
+            id,
+            patient: "许文静",
+            medicalNo: "MZ202607180426",
+            doctor: "陈医生",
+            department: "心内科",
+            type: data.type,
+            plate: "",
+            reason: data.reason,
+            status: isFull ? "待审批" : "待患者绑车",
+            amount: isFull ? "金额按离场订单计算" : "等待车辆绑定",
+            timeline: [
+                [currentTime(), "陈医生发起停车优惠"],
+                [currentTime(), "系统核验医生与患者接诊关系通过"],
+                [currentTime(), isFull ? "进入科室负责人审批" : "已向患者发送绑车通知"]
+            ]
+        });
+
+        addAudit("陈医生", "心内科", `发放${data.type}`, "许文静 / MZ202607180426",
+            isFull ? "进入负责人审批" : "等待患者绑定车辆",
+            isFull ? "待审批" : "处理中");
+
+        renderCouponTable();
+        closeModal();
+
+        showToast(
+            isFull
+                ? "全免停车券已提交科室负责人审批，审批通过后通知患者绑定车辆。"
+                : "优惠券已发放，系统已通知患者绑定本次到院车辆。"
+        );
+    }
+
+    function openCouponDetail(id) {
+        const item = coupons.find(x => x.id === id);
+        if (!item) return;
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>患者</span>
+                    <strong>${item.patient}</strong>
+                    <div>${item.medicalNo}</div>
+                </div>
+                <div class="detail-item">
+                    <span>发券人员</span>
+                    <strong>${item.doctor}</strong>
+                    <div>${item.department}</div>
+                </div>
+                <div class="detail-item">
+                    <span>当前状态</span>
+                    ${statusTag(item.status)}
+                </div>
+                <div class="detail-item">
+                    <span>优惠内容</span>
+                    <strong>${item.type}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>关联车辆</span>
+                    ${item.plate ? `<span class="plate">${item.plate}</span>` : "<strong>尚未绑定</strong>"}
+                </div>
+                <div class="detail-item">
+                    <span>发券原因</span>
+                    <strong>${item.reason}</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>系统核验结果</h4>
+                <div class="success-banner">
+                    <div class="banner-icon">✓</div>
+                    <div class="banner-text">
+                        <strong>患者存在当日有效就诊记录</strong>
+                        发券医生为当前接诊医生；科室额度充足；患者当日未使用同类停车优惠。
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>业务处理记录</h4>
+                <div class="timeline">
+                    ${item.timeline.map(t => `
+                        <div class="timeline-item">
+                            <strong>${t[0]}</strong>
+                            <p>${t[1]}</p>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+
+        let actions = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+        if (item.status === "待审批") {
+            actions += `
+                <button class="btn btn-danger" onclick="rejectCoupon('${id}')">驳回申请</button>
+                <button class="btn btn-success" onclick="approveCoupon('${id}')">批准全免券</button>
+            `;
+        } else if (item.status === "待患者绑车") {
+            actions += `<button class="btn btn-primary" onclick="bindCouponPlate('${id}')">协助患者绑定车牌</button>`;
+        } else if (item.status === "可使用") {
+            actions += `<button class="btn btn-primary" onclick="settleCoupon('${id}')">查看当前订单并抵扣</button>`;
+        }
+
+        openModal(
+            `停车优惠券：${item.id}`,
+            "查看核验信息并完成当前待办",
+            body,
+            actions,
+            true
+        );
+    }
+
+    function approveCoupon(id) {
+        const item = coupons.find(x => x.id === id);
+        item.status = item.plate ? "可使用" : "待患者绑车";
+        item.timeline.push([currentTime(), "科室负责人批准全免停车券"]);
+        item.timeline.push([currentTime(), item.plate ? "优惠已生效" : "已通知患者绑定本次车辆"]);
+
+        addAudit("赵主任", `${item.department}负责人`, "审批患者全免停车券",
+            `${item.patient} / ${item.id}`, "全免券审批通过", "已完成");
+
+        renderCouponTable();
+        closeModal();
+        showToast("全免停车券已批准，系统已通知患者绑定本次车辆。");
+    }
+
+    function rejectCoupon(id) {
+        const item = coupons.find(x => x.id === id);
+        item.status = "已驳回";
+        item.timeline.push([currentTime(), "科室负责人驳回全免申请：建议改为免费2小时"]);
+        renderCouponTable();
+        closeModal();
+        showToast("全免申请已驳回，发券医生将收到处理结果。");
+    }
+
+    function bindCouponPlate(id) {
+        const body = `
+            <div class="info-banner mb-16">
+                <div class="banner-icon">车</div>
+                <div class="banner-text">
+                    <strong>服务台协助患者绑定本次车辆</strong>
+                    需要核对患者身份、车辆入场图片和车牌，不能把优惠转给其他车辆。
+                </div>
+            </div>
+
+            <form id="bindPlateForm" onsubmit="submitBindPlate(event, '${id}')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>患者身份核验</label>
+                        <div class="readonly-box">手机号尾号5268验证通过</div>
+                    </div>
+                    <div class="form-group">
+                        <label>查询到的在场车辆</label>
+                        <div class="readonly-box">10:18从北门进入 · 白色小型车</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">确认车牌</label>
+                        <input class="form-control" name="plate" value="粤A·76K2M" required>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "协助患者绑定车辆",
+            "使用人：停车服务台或无人值守坐席",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('bindPlateForm').requestSubmit()">
+                    确认绑定
+                </button>
+            `
+        );
+    }
+
+    function submitBindPlate(event, id) {
+        event.preventDefault();
+        const plate = new FormData(event.target).get("plate");
+        const item = coupons.find(x => x.id === id);
+
+        item.plate = plate;
+        item.status = "可使用";
+        item.timeline.push([currentTime(), `服务台核验并绑定车辆${plate}`]);
+
+        renderCouponTable();
+        closeModal();
+        showToast(`车辆${plate}已绑定，优惠将在该车本次离场时自动抵扣。`);
+    }
+
+    function settleCoupon(id) {
+        const item = coupons.find(x => x.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>车辆</span><span class="plate">${item.plate}</span></div>
+                <div class="detail-item"><span>入场时间</span><strong>08:26</strong></div>
+                <div class="detail-item"><span>停车时长</span><strong>3小时36分钟</strong></div>
+                <div class="detail-item"><span>原始费用</span><strong>22元</strong></div>
+                <div class="detail-item"><span>医疗优惠</span><strong>减免12元</strong></div>
+                <div class="detail-item"><span>患者应付</span><strong style="color:var(--danger)">10元</strong></div>
+            </div>
+
+            <div class="success-banner mt-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-text">
+                    <strong>优惠核验通过</strong>
+                    当前车辆、患者就诊记录和优惠券匹配，可直接抵扣并完成缴费。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "停车订单优惠抵扣",
+            `${item.patient} · ${item.plate}`,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不结算</button>
+                <button class="btn btn-success" onclick="confirmCouponSettlement('${id}')">
+                    确认抵扣并完成支付
+                </button>
+            `
+        );
+    }
+
+    function confirmCouponSettlement(id) {
+        const item = coupons.find(x => x.id === id);
+        item.status = "已抵扣";
+        item.amount = "已减免12元";
+        item.timeline.push([currentTime(), "停车订单完成支付，优惠抵扣12元"]);
+
+        addAudit("系统自动核销", "停车收费系统", "患者优惠抵扣",
+            `${item.plate} / ${item.id}`, "原价22元，实收10元", "已完成");
+
+        renderCouponTable();
+        closeModal();
+        showToast("停车优惠已抵扣，患者支付10元，费用记录已进入财务对账。");
+    }
+
+    /* 送餐停车 */
+
+    function renderMealTable() {
+        document.getElementById("mealTableBody").innerHTML = mealRecords.map(item => `
+            <tr>
+                <td>
+                    <strong>${item.patient}</strong>
+                    <div class="muted">${item.ward}</div>
+                </td>
+                <td><span class="plate">${item.plate}</span></td>
+                <td>${item.period}</td>
+                <td>${item.enter}</td>
+                <td>${item.remaining}</td>
+                <td>${statusTag(item.status)}</td>
+                <td>
+                    <button class="btn btn-secondary btn-sm"
+                            onclick="openMealDetail('${item.id}')">
+                        查看处理
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openMealApplication() {
+        const body = `
+            <div class="info-banner mb-16">
+                <div class="banner-icon">餐</div>
+                <div class="banner-text">
+                    <strong>护士站办理本病区送餐停车资格</strong>
+                    系统自动核验患者是否在院，只需要确认家属和车辆信息。
+                </div>
+            </div>
+
+            <form id="mealApplyForm" onsubmit="submitMealApplication(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">住院号</label>
+                        <input class="form-control" name="medicalNo" value="ZY202607160328" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>患者信息</label>
+                        <div class="readonly-box">
+                            王海英 · 住院部八病区<br>
+                            当前状态：在院
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">家属姓名</label>
+                        <input class="form-control" name="relative" value="王晓东" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">联系电话</label>
+                        <input class="form-control" name="phone" value="13856283126" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">送餐车牌</label>
+                        <input class="form-control" name="plate" value="粤A·82Q6P" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">允许送餐时段</label>
+                        <select class="form-control" name="period">
+                            <option>早餐 06:30—08:30</option>
+                            <option selected>午餐 10:30—13:00</option>
+                            <option>晚餐 16:30—19:00</option>
+                            <option>早餐、午餐和晚餐</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>每次免费时长</label>
+                        <div class="readonly-box">45分钟，超出部分按临停收费</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>资格有效期</label>
+                        <div class="readonly-box">从办理成功开始，患者出院后自动失效</div>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "办理家属送餐停车资格",
+            "使用人：住院部护士站",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('mealApplyForm').requestSubmit()">
+                    核验并办理
+                </button>
+            `
+        );
+    }
+
+    function submitMealApplication(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        mealRecords.unshift({
+            id: "SC" + Date.now().toString().slice(-11),
+            patient: "王海英",
+            ward: "住院部八病区",
+            plate: data.plate,
+            period: data.period,
+            enter: "尚未入场",
+            remaining: "今日可使用1次",
+            status: "待入场",
+            phone: data.phone
+        });
+
+        addAudit("刘护士", "住院部八病区", "办理送餐停车资格",
+            `${data.plate} / 王海英`, `${data.period}免费45分钟`, "已完成");
+
+        renderMealTable();
+        closeModal();
+        showToast(`送餐车辆${data.plate}已办理成功，只在指定时段内允许免费停车45分钟。`);
+    }
+
+    function openMealDetail(id) {
+        const item = mealRecords.find(x => x.id === id);
+        if (!item) return;
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>患者</span><strong>${item.patient}</strong></div>
+                <div class="detail-item"><span>所在病区</span><strong>${item.ward}</strong></div>
+                <div class="detail-item"><span>车辆</span><span class="plate">${item.plate}</span></div>
+                <div class="detail-item"><span>送餐时段</span><strong>${item.period}</strong></div>
+                <div class="detail-item"><span>本次入场</span><strong>${item.enter}</strong></div>
+                <div class="detail-item"><span>当前状态</span>${statusTag(item.status)}</div>
+            </div>
+
+            <div class="detail-section">
+                <h4>通行与计费规则</h4>
+                <div class="readonly-box">
+                    <p>允许在指定送餐时段内入场。</p>
+                    <p>每次免费45分钟，第35分钟发送离场提醒。</p>
+                    <p>超过45分钟的部分按普通临停标准计费。</p>
+                    <p>同一患者同一时段仅允许一辆送餐车辆享受免费资格。</p>
+                </div>
+            </div>
+        `;
+
+        let actions = `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>`;
+
+        if (item.status === "已超时" || item.status === "停车中") {
+            actions += `
+                <button class="btn btn-warning" onclick="extendMealParking('${id}')">护士站延长15分钟</button>
+                <button class="btn btn-primary" onclick="finishMealParking('${id}')">确认车辆已离场</button>
+            `;
+        }
+
+        if (item.status === "待入场") {
+            actions += `<button class="btn btn-danger" onclick="suspendMealPermit('${id}')">暂停本次资格</button>`;
+        }
+
+        openModal(
+            `送餐停车：${item.plate}`,
+            `${item.patient} · ${item.ward}`,
+            body,
+            actions
+        );
+    }
+
+    function extendMealParking(id) {
+        const item = mealRecords.find(x => x.id === id);
+
+        const body = `
+            <form id="extendMealForm" onsubmit="submitMealExtension(event, '${id}')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>车辆</label>
+                        <div class="readonly-box">${item.plate}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>患者</label>
+                        <div class="readonly-box">${item.patient} · ${item.ward}</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">延时原因</label>
+                        <select class="form-control" name="reason">
+                            <option>患者临时需要家属协助</option>
+                            <option>电梯或病区等待时间较长</option>
+                            <option>患者行动不便</option>
+                            <option>病区临时安排</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <div class="warning-banner mt-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-text">
+                    本次仅延长15分钟。延长操作将记录护士站、患者、车辆和操作原因。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "延长送餐停车时间",
+            "使用人：患者所在病区护士站",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-warning"
+                        onclick="document.getElementById('extendMealForm').requestSubmit()">
+                    确认延长15分钟
+                </button>
+            `
+        );
+    }
+
+    function submitMealExtension(event, id) {
+        event.preventDefault();
+        const reason = new FormData(event.target).get("reason");
+        const item = mealRecords.find(x => x.id === id);
+
+        item.status = "停车中";
+        item.remaining = "已延长15分钟";
+
+        addAudit("刘护士", item.ward, "延长送餐停车时长15分钟",
+            item.plate, reason, "已完成");
+
+        renderMealTable();
+        closeModal();
+        showToast("已延长15分钟，家属和停车现场已收到新的免费结束时间。");
+    }
+
+    function finishMealParking(id) {
+        const item = mealRecords.find(x => x.id === id);
+        item.status = "已离场";
+        item.remaining = "本次已核销";
+        renderMealTable();
+        closeModal();
+        showToast("车辆已离场，本次送餐免费资格已完成核销。");
+    }
+
+    function suspendMealPermit(id) {
+        const item = mealRecords.find(x => x.id === id);
+        item.status = "已暂停";
+        renderMealTable();
+        closeModal();
+        showToast("本次送餐停车资格已暂停，车辆暂不能凭该资格免费入场。");
+    }
+
+    function openMealOvertime() {
+        navigateTo("meal");
+        setTimeout(() => openMealDetail("SC20260718021"), 120);
+    }
+
+    /* 职工摇号 */
+
+    function openLotteryRules() {
+        const body = `
+            <div class="detail-section">
+                <h4>申请条件</h4>
+                <div class="readonly-box">
+                    <p>1. 当前为医院在职人员，且入职满6个月。</p>
+                    <p>2. 未享受其他固定停车资格。</p>
+                    <p>3. 车辆材料有效，无严重停车违规。</p>
+                    <p>4. 上期中签人员实际使用率不得低于规定标准。</p>
+                    <p>5. 一名职工只能提交一个申请账户。</p>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>中签后的管理</h4>
+                <div class="readonly-box">
+                    <p>中签人需在3日内确认并缴费，逾期由候补递补。</p>
+                    <p>允许登记两辆常用车，但同一时间只能一辆享受职工权益。</p>
+                    <p>连续30天未使用将收到资格确认提醒。</p>
+                    <p>离职、转借或多车同时使用时，系统自动暂停资格。</p>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "2026年第三季度职工停车摇号规则",
+            "规则发布后进入版本锁定，不得临时改变申请条件",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">我已了解</button>`
+        );
+    }
+
+    function openLotteryBatch() {
+        const body = `
+            <form id="lotteryBatchForm" onsubmit="submitLotteryBatch(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">批次名称</label>
+                        <input class="form-control" value="2026年第四季度职工停车资格摇号" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">资格有效期</label>
+                        <input class="form-control" value="2026-10-01 至 2026-12-31" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">正式名额</label>
+                        <input class="form-control" type="number" value="180" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">候补名额</label>
+                        <input class="form-control" type="number" value="40" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">申请开始时间</label>
+                        <input class="form-control" type="date" value="2026-09-01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">申请截止时间</label>
+                        <input class="form-control" type="date" value="2026-09-10" required>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "新建职工停车摇号批次",
+            "使用人：人事、工会及停车管理部门",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('lotteryBatchForm').requestSubmit()">
+                    保存并提交审批
+                </button>
+            `
+        );
+    }
+
+    function submitLotteryBatch(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("第四季度摇号批次已建立，待人事、工会和保卫处共同审批后发布。");
+    }
+
+    function executeDraw() {
+        const checks = [...document.querySelectorAll(".draw-check")];
+
+        if (!checks.every(item => item.checked)) {
+            showToast("请完成名单、名额、监督人员和摇号规则确认。", true);
+            return;
+        }
+
+        document.getElementById("drawBefore").classList.add("hidden");
+        document.getElementById("drawAfter").classList.remove("hidden");
+        document.getElementById("drawFlowTitle").textContent = "摇号已完成";
+        document.getElementById("drawFlowText").textContent = "180人中签，40人候补";
+
+        addAudit("李老师", "人事与工会", "执行职工停车公开摇号",
+            "2026年第三季度批次", "180人中签、40人候补", "已完成");
+
+        showToast("摇号结果已锁定并进入公示期，不能由普通管理员直接修改。");
+    }
+
+    function openWinnerList() {
+        const body = `
+            <div class="success-banner mb-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-text">
+                    <strong>中签结果已发送给职工</strong>
+                    中签人须在7月21日18:00前确认车辆并缴费，逾期自动放弃。
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table style="min-width:700px">
+                    <thead>
+                    <tr>
+                        <th>职工</th>
+                        <th>科室</th>
+                        <th>申请车辆</th>
+                        <th>结果</th>
+                        <th>确认状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>陈志强</td><td>急诊医学科</td><td><span class="plate">粤A·38M6K</span></td><td><span class="tag tag-green">中签</span></td><td>已确认</td></tr>
+                    <tr><td>刘晓梅</td><td>护理部</td><td><span class="plate">粤A·75T2P</span></td><td><span class="tag tag-green">中签</span></td><td>待确认</td></tr>
+                    <tr><td>王建华</td><td>医学影像科</td><td><span class="plate">粤B·26K9Q</span></td><td><span class="tag tag-green">中签</span></td><td>待缴费</td></tr>
+                    <tr><td>赵文静</td><td>财务处</td><td><span class="plate">粤A·61N8D</span></td><td><span class="tag tag-orange">候补1</span></td><td>等待递补</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "本期摇号结果",
+            "中签、候补及确认情况",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    function openCandidateReplacement() {
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-text">
+                    <strong>发现1名中签职工逾期未确认</strong>
+                    系统建议释放该名额，并按照候补顺序递补第一候补人员赵文静。
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>放弃资格人员</span>
+                    <strong>周明</strong>
+                    <div>行政后勤组</div>
+                </div>
+                <div class="detail-item">
+                    <span>候补人员</span>
+                    <strong>赵文静</strong>
+                    <div>候补顺序1</div>
+                </div>
+                <div class="detail-item">
+                    <span>递补车辆</span>
+                    <span class="plate">粤A·61N8D</span>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "候补名额递补",
+            "系统按锁定的候补顺序执行，不能人工跳过顺序",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不处理</button>
+                <button class="btn btn-success" onclick="confirmCandidateReplacement()">确认递补</button>
+            `
+        );
+    }
+
+    function confirmCandidateReplacement() {
+        addAudit("李老师", "人事与工会", "执行职工停车候补递补",
+            "赵文静 / 候补顺序1", "获得中签确认资格", "已完成");
+
+        closeModal();
+        showToast("赵文静已递补获得中签资格，系统已通知其在3日内确认并缴费。");
+    }
+
+    /* 资源图和分流 */
+
+    function goToMapAlert() {
+        navigateTo("map");
+        setTimeout(openDiversionStrategy, 150);
+    }
+
+    function openZone(zone) {
+        const configs = {
+            B1: {
+                title: "门诊地下B1区",
+                status: "需要分流",
+                total: 300,
+                available: 12,
+                usage: "96%",
+                wait: "9分钟",
+                detail: "当前仍有18辆车正在前往B1，继续放行可能导致内部道路排队。"
+            },
+            B2: {
+                title: "门诊地下B2区",
+                status: "可承接车辆",
+                total: 270,
+                available: 86,
+                usage: "68%",
+                wait: "2分钟",
+                detail: "B2可承接B1分流车辆，当前下行通道正常。"
+            },
+            INPATIENT: {
+                title: "住院部停车区",
+                status: "接近饱和",
+                total: 200,
+                available: 18,
+                usage: "91%",
+                wait: "6分钟",
+                detail: "送餐短停区域仅剩4个车位，需要控制非送餐车辆进入。"
+            },
+            EMERGENCY: {
+                title: "急诊保障区",
+                status: "重点保障",
+                total: 25,
+                available: 10,
+                usage: "60%",
+                wait: "无需等待",
+                detail: "保障车位不参与普通余位发布，仅供救护、急诊和特殊患者使用。"
+            }
+        };
+
+        const item = configs[zone];
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>总车位</span><strong>${item.total}</strong></div>
+                <div class="detail-item"><span>当前空位</span><strong>${item.available}</strong></div>
+                <div class="detail-item"><span>使用率</span><strong>${item.usage}</strong></div>
+                <div class="detail-item"><span>平均找位</span><strong>${item.wait}</strong></div>
+                <div class="detail-item"><span>当前状态</span><strong>${item.status}</strong></div>
+                <div class="detail-item"><span>设备状态</span><strong>正常</strong></div>
+            </div>
+
+            <div class="info-banner mt-16">
+                <div class="banner-icon">i</div>
+                <div class="banner-text">${item.detail}</div>
+            </div>
+        `;
+
+        openModal(
+            item.title,
+            "查看区域车位、车流和设备状态",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openDiversionStrategy() {
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-text">
+                    <strong>当前问题</strong>
+                    B1剩余12个，B2剩余86个；B1平均找位时间9分钟，已达到不均衡预警条件。
+                </div>
+            </div>
+
+            <form id="diversionForm" onsubmit="submitDiversion(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>停止进入区域</label>
+                        <div class="readonly-box">门诊地下B1区</div>
+                    </div>
+                    <div class="form-group">
+                        <label>车辆承接区域</label>
+                        <div class="readonly-box">门诊地下B2区</div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="required">对哪些车辆生效</label>
+                        <select class="form-control" name="vehicleType">
+                            <option>普通门诊及社会车辆</option>
+                            <option>所有非保障车辆</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>北门入口</label>
+                        <select class="form-control">
+                            <option>新入场车辆引导至B2</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>东门入口</label>
+                        <select class="form-control">
+                            <option>新入场车辆引导至B2</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>诱导屏显示内容</label>
+                        <textarea class="form-control" name="screen">B1即将满位，请前往B2；B2剩余86个车位</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>现场任务</label>
+                        <select class="form-control">
+                            <option>下发给地下车库1号巡逻岗</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>自动结束条件</label>
+                        <select class="form-control">
+                            <option>B1使用率低于85%</option>
+                            <option>由值班主管手工结束</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "发布B1至B2分流策略",
+            "一次发布同时影响入口、诱导屏、车辆导航和现场人员任务",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('diversionForm').requestSubmit()">
+                    确认发布
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitDiversion(event) {
+        event.preventDefault();
+        const screen = new FormData(event.target).get("screen");
+
+        document.getElementById("screenPreview").innerHTML =
+            `B1即将满位<br>请前往B2<small>B2剩余86个车位</small>`;
+
+        document.getElementById("fieldTaskText").textContent =
+            "任务已下发：地下车库1号巡逻岗需在3分钟内到达B1东入口，引导车辆下行至B2。";
+
+        document.getElementById("diversionResult").textContent =
+            "分流已启动。过去5分钟：进入B1车辆由18辆降至5辆，进入B2车辆增加21辆，B1平均找位时间降至6分钟。";
+
+        document.getElementById("finishDiversionBtn").classList.remove("hidden");
+
+        addAudit("王主管", "停车运营中心", "发布区域车辆分流策略",
+            "门诊B1 → B2", screen, "执行中");
+
+        closeModal();
+        showToast("分流策略已发布，道闸权限、诱导屏、患者导航和现场任务已同步更新。");
+    }
+
+    function openFieldTask() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>任务位置</span><strong>B1东入口</strong></div>
+                <div class="detail-item"><span>接收岗位</span><strong>地下车库1号巡逻岗</strong></div>
+                <div class="detail-item"><span>要求到场</span><strong>3分钟内</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>现场需要做什么</h4>
+                <div class="readonly-box">
+                    <p>1. 在B1东入口摆放交通锥，暂停普通车辆继续进入。</p>
+                    <p>2. 引导后续车辆通过下行通道前往B2。</p>
+                    <p>3. 上传现场照片并反馈实际排队车辆数。</p>
+                    <p>4. 发现下行通道拥堵时立即上报指挥中心。</p>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "下发现场诱导任务",
+            "任务将发送到现场人员移动端",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmFieldTask()">确认下发</button>
+            `
+        );
+    }
+
+    function confirmFieldTask() {
+        document.getElementById("fieldTaskText").textContent =
+            "张师傅已接单，正在前往B1东入口，要求3分钟内完成隔离和车辆引导。";
+
+        closeModal();
+        showToast("现场任务已下发，张师傅已接单。");
+    }
+
+    function openScreenManager() {
+        const body = `
+            <div class="grid-2">
+                <div>
+                    <h4>当前显示</h4>
+                    <div class="screen-preview">
+                        B1剩余12个<br>
+                        B2剩余86个
+                        <small>请按现场标识通行</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>计划发布</h4>
+                    <div class="screen-preview">
+                        B1即将满位<br>
+                        请前往B2
+                        <small>↓ B2剩余86个</small>
+                    </div>
+                </div>
+            </div>
+
+            <form id="screenForm" onsubmit="publishScreen(event)">
+                <div class="form-grid mt-16">
+                    <div class="form-group">
+                        <label class="required">发布到哪些屏幕</label>
+                        <select class="form-control" name="screens">
+                            <option>北门入口屏、东门入口屏、B1内部屏</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">有效时间</label>
+                        <select class="form-control">
+                            <option>发布后生效，车位恢复均衡后结束</option>
+                            <option>生效2小时</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label class="required">修改原因</label>
+                        <input class="form-control" value="B1与B2车位分布不均衡" required>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "诱导屏内容管理",
+            "人工修改需要记录屏幕、内容、原因和有效时间",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('screenForm').requestSubmit()">
+                    发布新内容
+                </button>
+            `,
+            true
+        );
+    }
+
+    function publishScreen(event) {
+        event.preventDefault();
+
+        document.getElementById("screenPreview").innerHTML =
+            `B1即将满位<br>请前往B2<small>↓ B2剩余86个</small>`;
+
+        addAudit("王主管", "停车运营中心", "修改诱导屏显示内容",
+            "北门、东门、B1内部屏", "车辆引导至B2", "已完成");
+
+        closeModal();
+        showToast("新内容已发布到3块诱导屏，设备回执显示全部发布成功。");
+    }
+
+    function finishDiversion() {
+        const body = `
+            <div class="success-banner mb-16">
+                <div class="banner-icon">✓</div>
+                <div class="banner-text">
+                    <strong>区域车位已恢复基本均衡</strong>
+                    B1剩余42个、使用率86%；B2剩余61个、使用率77%。B1平均找位时间已降至3分钟。
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item"><span>本次持续</span><strong>38分钟</strong></div>
+                <div class="detail-item"><span>分流至B2</span><strong>76辆</strong></div>
+                <div class="detail-item"><span>找位时间下降</span><strong>6分钟</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "结束B1至B2分流策略",
+            "结束后恢复正常入口权限和余位显示",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">继续观察</button>
+                <button class="btn btn-success" onclick="confirmFinishDiversion()">确认结束</button>
+            `
+        );
+    }
+
+    function confirmFinishDiversion() {
+        document.getElementById("imbalanceBanner").className = "success-banner mb-16";
+        document.getElementById("imbalanceBanner").innerHTML = `
+            <div class="banner-icon">✓</div>
+            <div class="banner-text">
+                <strong>B1与B2已恢复基本均衡</strong>
+                分流策略已经结束，入口权限和诱导屏恢复为实时余位展示。
+            </div>
+        `;
+
+        document.getElementById("screenPreview").innerHTML =
+            `B1剩余42个<br>B2剩余61个<small>请按实时余位通行</small>`;
+
+        document.getElementById("finishDiversionBtn").classList.add("hidden");
+        closeModal();
+        showToast("分流已结束，入口、诱导屏和现场任务均已恢复正常策略。");
+    }
+
+    /* 潮汐车道 */
+
+    function switchTidalLane() {
+        const checks = [...document.querySelectorAll(".tidal-check")];
+
+        if (!checks.every(item => item.checked)) {
+            showToast("请由现场班组长完成全部安全检查后再切换。", true);
+            return;
+        }
+
+        document.getElementById("tidalBefore").classList.add("hidden");
+        document.getElementById("tidalRunning").classList.remove("hidden");
+        document.getElementById("tidalArrow").textContent = "→ 入口";
+        document.getElementById("tidalArrow").classList.remove("exit");
+        document.getElementById("tidalLaneTag").className = "tag tag-blue";
+        document.getElementById("tidalLaneTag").textContent = "临时入口";
+        document.getElementById("tidalStatusTag").className = "tag tag-green";
+        document.getElementById("tidalStatusTag").textContent = "3入1出运行中";
+        document.getElementById("tidalActionTitle").textContent = "潮汐车道运行监控";
+
+        addAudit("王主管/张班长", "停车运营与现场安保", "潮汐车道切换",
+            "北门3号车道", "由出口调整为入口", "执行中");
+
+        showToast("3号车道已切换为入口，设备方向、计费逻辑和诱导屏已同步完成。");
+    }
+
+    function openRestoreTidal() {
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-text">
+                    <strong>恢复出口前仍需执行安全检查</strong>
+                    需要停止新车辆进入3号车道、清空车道，并由现场人员重新调整隔离设施。
+                </div>
+            </div>
+
+            <form id="restoreForm" onsubmit="confirmRestoreTidal(event)">
+                <div class="check-list">
+                    <label class="check-item"><input type="checkbox" class="restore-check"> 已停止新车辆进入3号车道</label>
+                    <label class="check-item"><input type="checkbox" class="restore-check"> 车道内车辆已经全部清空</label>
+                    <label class="check-item"><input type="checkbox" class="restore-check"> 隔离设施已恢复出口方向</label>
+                    <label class="check-item"><input type="checkbox" class="restore-check"> 现场安保确认可以恢复</label>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "恢复3号潮汐车道为出口",
+            "高峰结束后的恢复闭环",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">暂不恢复</button>
+                <button class="btn btn-warning"
+                        onclick="document.getElementById('restoreForm').requestSubmit()">
+                    确认恢复出口
+                </button>
+            `
+        );
+    }
+
+    function confirmRestoreTidal(event) {
+        event.preventDefault();
+
+        const checks = [...document.querySelectorAll(".restore-check")];
+        if (!checks.every(item => item.checked)) {
+            showToast("请完成全部恢复前检查。", true);
+            return;
+        }
+
+        document.getElementById("tidalBefore").classList.remove("hidden");
+        document.getElementById("tidalRunning").classList.add("hidden");
+        document.querySelectorAll(".tidal-check").forEach(item => item.checked = false);
+        document.getElementById("tidalArrow").textContent = "出口 ←";
+        document.getElementById("tidalArrow").classList.add("exit");
+        document.getElementById("tidalLaneTag").className = "tag tag-orange";
+        document.getElementById("tidalLaneTag").textContent = "潮汐车道";
+        document.getElementById("tidalStatusTag").className = "tag tag-blue";
+        document.getElementById("tidalStatusTag").textContent = "已恢复2入2出";
+        document.getElementById("tidalActionTitle").textContent = "下一次切换前安全检查";
+
+        addAudit("王主管/张班长", "停车运营与现场安保", "恢复潮汐车道",
+            "北门3号车道", "由入口恢复为出口", "已完成");
+
+        closeModal();
+        showToast("3号车道已安全恢复为出口，道闸、相机和出口计费逻辑均已恢复。");
+    }
+
+    /* 周边停车场 */
+
+    function renderNearbyLots() {
+        document.getElementById("nearbyLotGrid").innerHTML = nearbyLots.map(lot => `
+            <div class="lot-card">
+                <div class="lot-map">
+                    <div class="lot-pin"><span>P</span></div>
+                </div>
+
+                <div class="lot-content">
+                    <div class="lot-title">
+                        <div>
+                            <h3>${lot.name}</h3>
+                            <div class="muted">${lot.distance} · ${lot.walk}</div>
+                        </div>
+                        ${statusTag(lot.status)}
+                    </div>
+
+                    <div class="lot-data">
+                        <div><strong>${lot.available}</strong><span>实时余位</span></div>
+                        <div><strong>${lot.quota}</strong><span>医院配额</span></div>
+                        <div><strong>${lot.total}</strong><span>总车位</span></div>
+                    </div>
+
+                    <p><strong>收费：</strong>${lot.price}</p>
+                    <p><strong>医院优惠：</strong>${lot.discount}</p>
+                    <p><strong>接驳：</strong>${lot.shuttle}</p>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="openLotDetail(${lot.id})">管理车场</button>
+                        <button class="btn btn-primary btn-sm" onclick="recommendLot(${lot.id})">设为推荐</button>
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function openLotDetail(id) {
+        const lot = nearbyLots.find(x => x.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>实时余位</span><strong>${lot.available}</strong></div>
+                <div class="detail-item"><span>医院开放配额</span><strong>${lot.quota}</strong></div>
+                <div class="detail-item"><span>距离医院</span><strong>${lot.distance}</strong></div>
+                <div class="detail-item"><span>收费标准</span><strong>${lot.price}</strong></div>
+                <div class="detail-item"><span>医院优惠</span><strong>${lot.discount}</strong></div>
+                <div class="detail-item"><span>接驳服务</span><strong>${lot.shuttle}</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>今日协同情况</h4>
+                <div class="readonly-box">
+                    <p>医院分流进入：42辆</p>
+                    <p>已完成就诊优惠核销：31辆</p>
+                    <p>医院承担优惠费用：486元</p>
+                    <p>数据最后同步：1分钟前</p>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            lot.name,
+            "合作车场档案、余位、优惠和结算情况",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                <button class="btn btn-primary" onclick="recommendLot(${id})">设为当前推荐</button>
+            `
+        );
+    }
+
+    function recommendLot(id) {
+        const lot = nearbyLots.find(x => x.id === id);
+        closeModal();
+
+        addAudit("王主管", "停车运营中心", "调整周边推荐停车场",
+            lot.name, `向普通门诊车辆推荐，当前余位${lot.available}`, "已完成");
+
+        showToast(`已将“${lot.name}”设为当前推荐，患者端和入口诱导屏已更新。`);
+    }
+
+    function openDiversionToNearby() {
+        const body = `
+            <div class="warning-banner mb-16">
+                <div class="banner-icon">!</div>
+                <div class="banner-text">
+                    <strong>院内使用率已达到91%</strong>
+                    建议提前对未来1小时到院的普通门诊患者推荐周边停车场，但仍保留院内急诊和保障车辆通行。
+                </div>
+            </div>
+
+            <form id="nearbyDiversionForm" onsubmit="submitNearbyDiversion(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">主要承接车场</label>
+                        <select class="form-control">
+                            <option>东侧公共停车场 · 余位126</option>
+                            <option>城市广场地下停车场 · 余位184</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">分流对象</label>
+                        <select class="form-control">
+                            <option>普通门诊及社会车辆</option>
+                            <option>所有非保障车辆</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>启动条件</label>
+                        <div class="readonly-box">院内使用率≥90%</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>停止条件</label>
+                        <div class="readonly-box">院内使用率低于80%</div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>患者端提示</label>
+                        <textarea class="form-control">院内停车位紧张，预计排队18分钟。建议前往东侧公共停车场，步行7分钟，持当日就诊记录可减免2小时。</textarea>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "启动周边停车场分流",
+            "同步更新患者提醒、入口屏和合作停车场配额",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('nearbyDiversionForm').requestSubmit()">
+                    确认启动
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitNearbyDiversion(event) {
+        event.preventDefault();
+
+        addAudit("王主管", "停车运营中心", "启动周边停车场分流",
+            "东侧公共停车场", "普通门诊车辆优先推荐", "执行中");
+
+        closeModal();
+        showToast("周边分流已启动，未来1小时到院患者和入口排队车辆将收到停车建议。");
+    }
+
+    function openNearbySettlement() {
+        const body = `
+            <div class="table-wrap">
+                <table style="min-width:760px">
+                    <thead>
+                    <tr>
+                        <th>合作车场</th>
+                        <th>本月分流</th>
+                        <th>已核销优惠</th>
+                        <th>医院承担</th>
+                        <th>数据差异</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>东侧公共停车场</td><td>1,286辆</td><td>986笔</td><td>14,620元</td><td>0笔</td><td><span class="tag tag-green">可结算</span></td></tr>
+                    <tr><td>城市广场地下停车场</td><td>862辆</td><td>645笔</td><td>6,450元</td><td>3笔</td><td><span class="tag tag-orange">待核对</span></td></tr>
+                    <tr><td>机关夜间共享停车场</td><td>328辆</td><td>206笔</td><td>1,236元</td><td>0笔</td><td><span class="tag tag-green">可结算</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        openModal(
+            "合作停车场月度对账",
+            "医院优惠承担金额与合作车场订单核对",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                <button class="btn btn-primary" onclick="confirmNearbySettlement()">生成结算单</button>
+            `,
+            true
+        );
+    }
+
+    function confirmNearbySettlement() {
+        closeModal();
+        showToast("无差异车场已生成结算单，3笔差异订单已转交财务复核。");
+    }
+
+    /* 审计 */
+
+    function renderAudits() {
+        document.getElementById("auditTableBody").innerHTML = audits.map(item => `
+            <tr>
+                <td>${item[0]}</td>
+                <td><strong>${item[1]}</strong></td>
+                <td>${item[2]}</td>
+                <td>${item[3]}</td>
+                <td>${item[4]}</td>
+                <td>${item[5]}</td>
+                <td>${statusTag(item[6])}</td>
+            </tr>
+        `).join("");
+    }
+
+    function addAudit(user, role, operation, target, result, status) {
+        audits.unshift([currentTime(), user, role, operation, target, result, status]);
+        renderAudits();
+    }
+
+    /* 公共 */
+
+    function statusTag(status) {
+        const map = {
+            "待审批": "tag-orange",
+            "待患者绑车": "tag-orange",
+            "可使用": "tag-blue",
+            "已抵扣": "tag-green",
+            "已驳回": "tag-red",
+            "停车中": "tag-blue",
+            "已超时": "tag-red",
+            "待入场": "tag-orange",
+            "已离场": "tag-green",
+            "已暂停": "tag-gray",
+            "正常承接": "tag-green",
+            "未到开放时间": "tag-gray",
+            "已完成": "tag-green",
+            "处理中": "tag-orange",
+            "执行中": "tag-blue"
+        };
+
+        return `<span class="tag ${map[status] || "tag-gray"}">${status}</span>`;
+    }
+
+    function openModal(title, subtitle, body, footer, large = false) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalSubtitle").textContent = subtitle || "";
+        document.getElementById("modalBody").innerHTML = body;
+        document.getElementById("modalFooter").innerHTML =
+            footer || `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`;
+
+        document.getElementById("modalBox").classList.toggle("large", large);
+        document.getElementById("modalMask").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        document.getElementById("modalMask").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function maskClose(event) {
+        if (event.target.id === "modalMask") closeModal();
+    }
+
+    function showToast(message, error = false) {
+        const toast = document.createElement("div");
+        toast.className = "toast" + (error ? " error" : "");
+        toast.innerHTML = `<strong>${error ? "暂不能操作" : "处理完成"}</strong><br>${message}`;
+
+        document.getElementById("toastWrap").appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3800);
+    }
+
+    function currentTime() {
+        return new Date().toLocaleTimeString("zh-CN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeModal();
+    });
+
+    function init() {
+        renderCouponTable();
+        renderMealTable();
+        renderNearbyLots();
+        renderAudits();
+    }
+
+    init();
+</script>
+</body>
+</html>

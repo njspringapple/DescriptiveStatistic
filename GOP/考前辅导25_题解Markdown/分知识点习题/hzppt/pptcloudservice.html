@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>无人值守停车场AI云客服系统</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 62% 46%, rgba(0, 198, 255, .17), transparent 31%),
+    radial-gradient(circle at 80% 22%, rgba(110, 73, 255, .12), transparent 27%),
+    radial-gradient(circle at 9% 70%, rgba(255, 73, 97, .06), transparent 25%),
+    linear-gradient(135deg, #061224 0%, #08192f 50%, #050e1d 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(75, 150, 255, .34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(75, 150, 255, .34) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 17%,
+    #000 89%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  width: 770px;
+  height: 770px;
+  left: 670px;
+  top: 75px;
+  border-radius: 50%;
+  border: 1px solid rgba(70, 180, 255, .08);
+  box-shadow:
+    0 0 120px rgba(0, 175, 255, .05),
+    inset 0 0 120px rgba(0, 175, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==============================
+   标题区域
+============================== */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 23px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 51px;
+  height: 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #168cff, #22d2e5);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .3),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+.logo svg {
+  width: 31px;
+  height: 31px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3.5px;
+}
+
+.header-message {
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #d8f7ff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.header-message span {
+  color: #6195b5;
+  font-size: 11px;
+}
+
+.header-message b {
+  color: #4ae4ef;
+  font-weight: 600;
+}
+
+/* ==============================
+   通用卡片
+============================== */
+
+.card {
+  border: 1px solid rgba(66, 169, 237, .24);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .91)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  opacity: .6;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+/* ==============================
+   左侧传统方案
+============================== */
+
+.legacy-area {
+  position: absolute;
+  left: 46px;
+  top: 118px;
+  width: 410px;
+  height: 694px;
+}
+
+.section-head {
+  height: 37px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 23px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ff6372, #ff9d62);
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #d7e9f3;
+  font-size: 17px;
+}
+
+.section-head span {
+  margin-left: auto;
+  color: #718da0;
+  font-size: 10px;
+}
+
+.legacy-card {
+  position: relative;
+  width: 100%;
+  height: 267px;
+  margin-top: 13px;
+  padding: 15px 17px;
+  border-color: rgba(255, 101, 117, .22);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(72, 36, 56, .57),
+      rgba(10, 28, 50, .92)
+    );
+}
+
+.legacy-card::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 108, 119, .9),
+      transparent
+    );
+}
+
+.legacy-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f4e8ea;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.legacy-index {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #ff9ba5;
+  font-size: 11px;
+  background: rgba(255, 94, 112, .11);
+  border: 1px solid rgba(255, 105, 121, .2);
+}
+
+.legacy-tag {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 9px;
+  color: #ff8f9d;
+  font-size: 9px;
+  font-weight: 500;
+  background: rgba(255, 92, 111, .09);
+}
+
+/* 传统方案拓扑 */
+
+.legacy-topology {
+  position: relative;
+  height: 80px;
+  margin-top: 13px;
+  overflow: hidden;
+  border: 1px solid rgba(124, 142, 170, .10);
+  border-radius: 10px;
+  background: rgba(5, 23, 43, .52);
+}
+
+.legacy-topology svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.mini-line {
+  fill: none;
+  stroke: #ff8d96;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  opacity: .62;
+}
+
+.mini-site,
+.mini-person,
+.mini-phone,
+.mini-center {
+  position: absolute;
+  top: 17px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(121, 156, 188, .16);
+  border-radius: 9px;
+  color: #b8c9d5;
+  background: rgba(23, 49, 77, .75);
+  font-size: 9.5px;
+  text-align: center;
+}
+
+.mini-site {
+  left: 13px;
+  width: 91px;
+}
+
+.mini-person {
+  left: 143px;
+  width: 89px;
+  color: #f1c3c7;
+  border-color: rgba(255, 105, 121, .22);
+  background: rgba(101, 42, 59, .34);
+}
+
+.mini-phone {
+  left: 145px;
+  width: 86px;
+  color: #e5c6a8;
+  border-color: rgba(255, 157, 89, .25);
+}
+
+.mini-center {
+  right: 13px;
+  width: 108px;
+  color: #d0c8ff;
+  border-color: rgba(146, 122, 255, .24);
+  background: rgba(54, 45, 105, .37);
+}
+
+.manual-call {
+  position: absolute;
+  left: 216px;
+  top: 7px;
+  padding: 2px 6px;
+  border-radius: 7px;
+  color: #ffae78;
+  font-size: 8px;
+  background: rgba(255, 139, 76, .11);
+}
+
+.problem-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.problem-list li {
+  position: relative;
+  min-height: 27px;
+  padding-left: 19px;
+  color: #a8b9c5;
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+.problem-list li::before {
+  content: "×";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #ff7180;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.problem-list b {
+  color: #f1c5ca;
+  font-weight: 600;
+}
+
+.legacy-summary {
+  position: relative;
+  height: 91px;
+  margin-top: 13px;
+  padding: 14px 17px;
+  border: 1px solid rgba(255, 105, 119, .18);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(104, 39, 59, .28),
+      rgba(12, 31, 53, .75)
+    );
+}
+
+.summary-title {
+  color: #ff9aa5;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.summary-values {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 12px;
+}
+
+.summary-value {
+  color: #758d9e;
+  border-right: 1px solid rgba(255,255,255,.06);
+  font-size: 9px;
+  text-align: center;
+}
+
+.summary-value:last-child {
+  border-right: 0;
+}
+
+.summary-value strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #d7b7bc;
+  font-size: 11px;
+}
+
+/* ==============================
+   架构跃迁箭头
+============================== */
+
+.evolution {
+  position: absolute;
+  left: 468px;
+  top: 385px;
+  z-index: 6;
+  display: flex;
+  width: 73px;
+  height: 95px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.evolution span {
+  margin-bottom: 10px;
+  color: #65b6d7;
+  font-size: 9px;
+  letter-spacing: 1px;
+  writing-mode: vertical-lr;
+}
+
+.evolution-arrow {
+  position: absolute;
+  top: 32px;
+  width: 66px;
+  height: 34px;
+}
+
+.evolution-arrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 48px;
+  height: 5px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #23658b, #49e2f0);
+  box-shadow: 0 0 15px rgba(46, 218, 240, .3);
+}
+
+.evolution-arrow::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 4px;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 20px solid #49e2f0;
+  filter: drop-shadow(0 0 7px rgba(48, 220, 239, .38));
+}
+
+/* ==============================
+   右侧创新区域
+============================== */
+
+.innovation-area {
+  position: absolute;
+  left: 535px;
+  top: 115px;
+  width: 1019px;
+  height: 716px;
+}
+
+.innovation-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 39px;
+}
+
+.innovation-head .section-line {
+  background: linear-gradient(90deg, #28bdff, #45ebd3);
+}
+
+.innovation-head h2 {
+  margin: 0;
+  color: #e1f7ff;
+  font-size: 18px;
+}
+
+.innovation-head .head-tag {
+  margin-left: 5px;
+  padding: 5px 10px;
+  border: 1px solid rgba(54, 226, 197, .19);
+  border-radius: 12px;
+  color: #52e7d2;
+  background: rgba(28, 194, 166, .08);
+  font-size: 9px;
+}
+
+.innovation-head .head-desc {
+  margin-left: auto;
+  color: #7199ae;
+  font-size: 10px;
+}
+
+/* ==============================
+   顶部坐席资源
+============================== */
+
+.agent-zone {
+  position: absolute;
+  left: 205px;
+  top: 48px;
+  width: 610px;
+  height: 84px;
+}
+
+.agent-title {
+  height: 19px;
+  color: #788fae;
+  font-size: 9px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.agent-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.agent-card {
+  width: 137px;
+  height: 50px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(139, 119, 255, .24);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(58, 49, 117, .52),
+      rgba(13, 33, 61, .84)
+    );
+  box-shadow:
+    0 8px 22px rgba(0, 3, 15, .2),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.agent-logo {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border: 1px solid rgba(160, 146, 255, .22);
+  border-radius: 9px;
+  color: #d8d2ff;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(114, 101, 255, .32),
+      rgba(62, 177, 255, .18)
+    );
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.agent-name {
+  color: #e4e1ff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.agent-desc {
+  margin-top: 3px;
+  color: #7f82a7;
+  font-size: 7.5px;
+}
+
+/* ==============================
+   创新拓扑连线
+============================== */
+
+.innovation-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1019px;
+  height: 716px;
+  pointer-events: none;
+}
+
+.line-device {
+  fill: none;
+  stroke: #48caed;
+  stroke-width: 1.6;
+  opacity: .75;
+}
+
+.line-agent {
+  fill: none;
+  stroke: #9e87ff;
+  stroke-width: 1.6;
+  stroke-dasharray: 6 6;
+  opacity: .78;
+}
+
+.line-platform {
+  fill: none;
+  stroke: #56e6f2;
+  stroke-width: 1.8;
+  opacity: .84;
+}
+
+.line-field {
+  fill: none;
+  stroke: #40e0c1;
+  stroke-width: 1.6;
+  stroke-dasharray: 7 6;
+  opacity: .78;
+}
+
+.line-flow {
+  stroke-dasharray: 7 7;
+  animation: lineFlow 9s linear infinite;
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -150;
+  }
+}
+
+.node-cyan {
+  fill: #5ceaff;
+  filter: drop-shadow(0 0 6px #20d8ff);
+}
+
+.node-purple {
+  fill: #ba9fff;
+  filter: drop-shadow(0 0 6px #9276ff);
+}
+
+.node-green {
+  fill: #54efd0;
+  filter: drop-shadow(0 0 6px #33dfba);
+}
+
+/* ==============================
+   左侧停车场接入
+============================== */
+
+.site-stack {
+  position: absolute;
+  left: 0;
+  top: 160px;
+  z-index: 3;
+  width: 146px;
+}
+
+.site-stack-title {
+  margin-bottom: 10px;
+  padding-left: 5px;
+  color: #6d9bb4;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.site-item {
+  width: 143px;
+  height: 55px;
+  margin-bottom: 8px;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(65, 177, 233, .19);
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 54, 84, .81),
+      rgba(7, 28, 51, .88)
+    );
+  box-shadow: 0 8px 20px rgba(0, 4, 15, .18);
+}
+
+.site-icon {
+  display: grid;
+  width: 33px;
+  height: 33px;
+  flex: 0 0 33px;
+  place-items: center;
+  border: 1px solid rgba(64, 206, 239, .16);
+  border-radius: 9px;
+  color: #54ddff;
+  background: rgba(23, 147, 192, .13);
+}
+
+.site-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.site-name {
+  color: #cde9f5;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.site-desc {
+  margin-top: 3px;
+  color: #63899f;
+  font-size: 8px;
+}
+
+/* ==============================
+   中央云客服指挥中心
+============================== */
+
+.cloud-wrap {
+  position: absolute;
+  left: 166px;
+  top: 155px;
+  z-index: 4;
+  width: 660px;
+  height: 424px;
+}
+
+.cloud-glow {
+  position: absolute;
+  left: 54px;
+  right: 54px;
+  bottom: 4px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(0, 205, 255, .18);
+  filter: blur(30px);
+}
+
+.cloud-top {
+  position: absolute;
+  left: 27px;
+  top: 0;
+  width: 606px;
+  height: 63px;
+  clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
+  border: 1px solid rgba(92, 228, 255, .3);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(31, 103, 142, .94),
+      rgba(10, 55, 87, .96)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 -8px 30px rgba(0, 178, 255, .05);
+}
+
+.top-brand {
+  position: absolute;
+  left: 34px;
+  top: 17px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.top-brand-logo {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #188eff, #39e0db);
+  box-shadow: 0 0 16px rgba(35, 213, 235, .3);
+}
+
+.top-brand-logo svg {
+  width: 18px;
+  height: 18px;
+}
+
+.top-brand-name {
+  color: #e7fbff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.top-brand-desc {
+  margin-top: 3px;
+  color: #73b8cf;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.online-indicator {
+  position: absolute;
+  right: 34px;
+  top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #58eed2;
+  font-size: 9px;
+}
+
+.online-indicator i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #46efcc;
+  box-shadow: 0 0 10px #46efcc;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .45;
+    box-shadow: 0 0 3px #46efcc;
+  }
+}
+
+.cloud-body {
+  position: absolute;
+  left: 0;
+  top: 56px;
+  width: 660px;
+  height: 347px;
+  overflow: hidden;
+  border: 1px solid rgba(70, 217, 241, .4);
+  border-radius: 9px 9px 22px 22px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 196, 229, .12), transparent 50%),
+    linear-gradient(
+      150deg,
+      rgba(15, 65, 96, .98),
+      rgba(5, 24, 46, .99)
+    );
+  box-shadow:
+    0 27px 65px rgba(0, 5, 18, .55),
+    0 0 46px rgba(0, 185, 223, .10),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.cloud-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .08;
+  background-image:
+    linear-gradient(rgba(73, 199, 239, .4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 199, 239, .4) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.cloud-side-left,
+.cloud-side-right {
+  position: absolute;
+  top: 80px;
+  z-index: -1;
+  width: 13px;
+  height: 245px;
+  border: 1px solid rgba(67, 165, 205, .2);
+  background: #071a31;
+}
+
+.cloud-side-left {
+  left: -11px;
+  transform: skewY(-17deg);
+  border-radius: 5px 0 0 10px;
+}
+
+.cloud-side-right {
+  right: -11px;
+  transform: skewY(17deg);
+  border-radius: 0 5px 10px 0;
+}
+
+.cloud-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 66px;
+  padding: 14px 19px 10px;
+}
+
+.cloud-title-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cloud-main-icon {
+  position: relative;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #148cff, #2bded4);
+  box-shadow:
+    0 0 22px rgba(30, 205, 229, .31),
+    inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.cloud-main-icon::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 221, 235, .16);
+  border-radius: 15px;
+}
+
+.cloud-main-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cloud-name {
+  color: #effcff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.cloud-slogan {
+  margin-top: 4px;
+  color: #63abc1;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.service-badge {
+  margin-left: auto;
+  padding: 8px 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(54, 228, 193, .20);
+  border-radius: 16px;
+  color: #72f0d2;
+  background: rgba(35, 205, 168, .09);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.service-badge i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #46e8c5;
+  box-shadow: 0 0 9px #46e8c5;
+}
+
+/* 功能模块 */
+
+.cloud-modules {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 4px 18px 10px;
+}
+
+.cloud-module {
+  position: relative;
+  height: 95px;
+  padding: 12px 10px 9px;
+  border: 1px solid rgba(62, 183, 222, .17);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 62, 92, .76),
+      rgba(6, 32, 57, .79)
+    );
+}
+
+.cloud-module.highlight {
+  border-color: rgba(159, 127, 255, .35);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(68, 51, 125, .57),
+      rgba(8, 39, 65, .78)
+    );
+}
+
+.module-label {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  color: #bca6ff;
+  background: rgba(137, 96, 239, .12);
+  font-size: 7px;
+}
+
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.module-icon {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  place-items: center;
+  border: 1px solid rgba(62, 204, 232, .14);
+  border-radius: 8px;
+  color: #55def4;
+  background: rgba(25, 150, 191, .13);
+}
+
+.highlight .module-icon {
+  color: #c8b6ff;
+  border-color: rgba(165, 134, 244, .18);
+  background: rgba(124, 86, 218, .17);
+}
+
+.module-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.module-name {
+  color: #d9f1f8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.highlight .module-name {
+  color: #eee8ff;
+}
+
+.module-desc {
+  margin-top: 9px;
+  color: #668fa4;
+  font-size: 8.5px;
+  line-height: 1.5;
+}
+
+.highlight .module-desc {
+  color: #8f87ae;
+}
+
+/* 云客服底部运行状态 */
+
+.cloud-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  margin: 3px 18px 0;
+  padding: 0 14px;
+  border: 1px solid rgba(61, 176, 211, .14);
+  border-radius: 10px;
+  background: rgba(3, 20, 38, .56);
+}
+
+.seat-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.seat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #42dec0;
+  box-shadow: 0 0 6px rgba(66, 222, 192, .45);
+}
+
+.seat-dot.busy {
+  background: #49a8ff;
+  box-shadow: 0 0 6px rgba(73, 168, 255, .45);
+}
+
+.seat-dot.warning {
+  background: #ffad55;
+  box-shadow: 0 0 6px rgba(255, 173, 85, .45);
+}
+
+.footer-status {
+  margin-left: 12px;
+  color: #59899f;
+  font-size: 8px;
+}
+
+.footer-status b {
+  color: #43d9bd;
+  font-weight: 600;
+}
+
+.cloud-spec {
+  margin-left: auto;
+  color: #52798e;
+  font-size: 8px;
+  letter-spacing: .5px;
+}
+
+/* ==============================
+   右侧坐席和现场协同
+============================== */
+
+.operation-stack {
+  position: absolute;
+  right: 0;
+  top: 161px;
+  z-index: 3;
+  width: 174px;
+}
+
+.operation-node {
+  position: relative;
+  width: 174px;
+  margin-bottom: 12px;
+  padding: 11px;
+  border: 1px solid rgba(58, 214, 225, .24);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 69, 91, .82),
+      rgba(7, 29, 51, .9)
+    );
+  box-shadow: 0 12px 28px rgba(0, 5, 18, .23);
+}
+
+.video-node {
+  height: 130px;
+  padding: 7px;
+}
+
+.video-window {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(73, 199, 231, .25);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 64% 24%, rgba(31, 104, 126, .18), transparent 27%),
+    #03090d;
+  box-shadow: inset 0 0 24px rgba(0,0,0,.75);
+}
+
+.video-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: .16;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(255,255,255,.1) 4px
+    );
+}
+
+.video-head {
+  position: absolute;
+  z-index: 10;
+  left: 6px;
+  right: 6px;
+  top: 4px;
+  display: flex;
+  justify-content: space-between;
+  color: #b6d4de;
+  font-family: Consolas, monospace;
+  font-size: 5.8px;
+}
+
+.video-rec {
+  color: #ff5f68;
+}
+
+.video-road {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  bottom: 0;
+  height: 62%;
+  clip-path: polygon(23% 0, 77% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 49%,
+      rgba(255,255,255,.38) 50%,
+      transparent 51%
+    ),
+    #263139;
+}
+
+.video-car {
+  position: absolute;
+  z-index: 4;
+  left: 34%;
+  bottom: 18px;
+  width: 58px;
+  height: 29px;
+  border-radius: 12px 14px 4px 4px;
+  background: linear-gradient(#cfd6da, #67747c);
+}
+
+.video-car::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: -12px;
+  width: 32px;
+  height: 18px;
+  border-radius: 13px 13px 2px 2px;
+  background: #66747c;
+}
+
+.video-car::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: -8px;
+  width: 20px;
+  height: 10px;
+  border-radius: 8px 8px 1px 1px;
+  background: #1d3039;
+}
+
+.detect-box {
+  position: absolute;
+  z-index: 9;
+  left: 31%;
+  bottom: 14px;
+  width: 68px;
+  height: 42px;
+  border: 1px solid #4bf2a1;
+}
+
+.detect-box::before {
+  content: "粤A·8K36Q";
+  position: absolute;
+  left: -1px;
+  top: -11px;
+  padding: 1px 3px;
+  color: #06150e;
+  background: #4bf2a1;
+  font-family: Consolas, monospace;
+  font-size: 5.5px;
+  font-weight: 900;
+}
+
+.video-barrier {
+  position: absolute;
+  z-index: 4;
+  right: 10%;
+  bottom: 45px;
+  width: 61px;
+  height: 5px;
+  transform: rotate(65deg);
+  transform-origin: right center;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #f0f0f0 0,
+      #f0f0f0 9px,
+      #d94949 9px,
+      #d94949 18px
+    );
+}
+
+.video-bottom {
+  position: absolute;
+  z-index: 10;
+  left: 6px;
+  right: 6px;
+  bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  color: #7399a5;
+  font-family: Consolas, monospace;
+  font-size: 5.5px;
+}
+
+.operation-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d7f2f8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.operation-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 8px;
+  color: #4ce2f1;
+  background: rgba(25, 160, 190, .14);
+}
+
+.operation-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.operation-desc {
+  margin-top: 8px;
+  color: #658fa3;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.operation-desc b {
+  color: #7dd8e5;
+  font-weight: 600;
+}
+
+.field-node {
+  border-color: rgba(52, 217, 180, .24);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10, 71, 72, .68),
+      rgba(7, 28, 49, .9)
+    );
+}
+
+.field-node .operation-icon {
+  color: #4ce8c8;
+  background: rgba(34, 184, 148, .13);
+}
+
+.field-node .operation-desc b {
+  color: #70dfc3;
+}
+
+/* ==============================
+   底部价值卡片
+============================== */
+
+.value-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 119px;
+}
+
+.value-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  color: #8eb5c8;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.value-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dbfff, #43e7ce);
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 9px;
+}
+
+.value-card {
+  position: relative;
+  height: 83px;
+  padding: 12px 10px 9px 44px;
+  overflow: hidden;
+  border: 1px solid rgba(54, 192, 222, .18);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 56, 82, .72),
+      rgba(6, 26, 47, .8)
+    );
+}
+
+.value-card::after {
+  content: "";
+  position: absolute;
+  right: -25px;
+  bottom: -29px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(40, 215, 224, .05);
+}
+
+.value-number {
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  color: rgba(76, 223, 238, .22);
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.value-name {
+  color: #d3eff6;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.value-desc {
+  margin-top: 7px;
+  color: #688fa3;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.value-desc b {
+  color: #55dbc9;
+  font-weight: 600;
+}
+
+/* ==============================
+   页脚
+============================== */
+
+.legend {
+  position: absolute;
+  left: 49px;
+  bottom: 21px;
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  color: #557c94;
+  font-size: 9px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-line {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: #4eddf0;
+}
+
+.legend-line.agent {
+  height: 0;
+  background: none;
+  border-top: 2px dashed #9b85ff;
+}
+
+.legend-line.field {
+  height: 0;
+  background: none;
+  border-top: 2px dashed #44dec0;
+}
+
+.footer {
+  position: absolute;
+  right: 49px;
+  bottom: 19px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #50758c;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.footer i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 8px #3ee3c3;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 3v-6a3 3 0 0 1 0-1V8z"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M8 10h8M8 14h5"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>无人值守停车场 AI 云客服：从“现场岗亭”到“集中值守”</h1>
+          <div class="subtitle">
+            AI PARKING CLOUD SERVICE · REMOTE COMMAND CENTER
+          </div>
+        </div>
+      </div>
+
+      <div class="header-message">
+        <strong>让一个云客服中心服务多个停车场</strong>
+        <span>
+          可视对讲 · 智能诊断 · 远程处置 · 现场协同 · 全程审计
+        </span>
+      </div>
+    </header>
+
+    <!-- 左侧传统方案 -->
+    <section class="legacy-area">
+
+      <div class="section-head">
+        <span class="section-number">01</span>
+        <i class="section-line"></i>
+        <h2>传统模式为何越来越“重”？</h2>
+        <span>OPERATION PAIN POINTS</span>
+      </div>
+
+      <!-- 传统模式A -->
+      <div class="card legacy-card">
+        <div class="legacy-title">
+          <span class="legacy-index">A</span>
+          一场一岗亭、三班倒值守
+          <span class="legacy-tag">人力密集</span>
+        </div>
+
+        <div class="legacy-topology">
+          <svg viewBox="0 0 376 80">
+            <path class="mini-line" d="M104 40 H143"/>
+            <path class="mini-line" d="M124 34 l8 6 -8 6"/>
+          </svg>
+
+          <div class="mini-site">
+            停车场设备<br>
+            车辆求助
+          </div>
+
+          <div class="mini-person">
+            现场收费员<br>
+            独立值守
+          </div>
+        </div>
+
+        <ul class="problem-list">
+          <li>每个出入口都要配人，<b>多项目人力成本持续增加</b></li>
+          <li>夜间和低峰时段人员闲置，资源利用率低</li>
+          <li>异常处理依赖收费员经验，服务标准不统一</li>
+          <li>人员请假、离岗或交接不清，容易形成服务空档</li>
+        </ul>
+      </div>
+
+      <!-- 传统模式B -->
+      <div class="card legacy-card">
+        <div class="legacy-title">
+          <span class="legacy-index">B</span>
+          简单远程对讲＋人工开闸
+          <span class="legacy-tag">只解决“抬杆”</span>
+        </div>
+
+        <div class="legacy-topology">
+          <svg viewBox="0 0 376 80">
+            <path class="mini-line" d="M104 40 H145"/>
+            <path class="mini-line" d="M231 40 H255"/>
+            <path class="mini-line" d="M237 34 l8 6 -8 6"/>
+          </svg>
+
+          <div class="mini-site">
+            对讲按钮<br>
+            车道视频
+          </div>
+
+          <div class="mini-phone">
+            人工电话<br>
+            反复询问
+          </div>
+
+          <div class="mini-center">
+            远程人员<br>
+            手工开闸
+          </div>
+
+          <div class="manual-call">缺少业务数据</div>
+        </div>
+
+        <ul class="problem-list">
+          <li>坐席看不到订单、支付和权益，<b>只能凭车主描述判断</b></li>
+          <li>支付异常、月卡冲突、访客预约仍要电话确认</li>
+          <li>远程解决不了的问题无法准确派发到现场</li>
+          <li>人工开闸、费用减免和收入损失缺少完整审计</li>
+        </ul>
+      </div>
+
+      <!-- 痛点总结 -->
+      <div class="legacy-summary">
+        <div class="summary-title">传统值守模式的四重负担</div>
+
+        <div class="summary-values">
+          <div class="summary-value">
+            <strong>人力投入重</strong>
+            多岗三班
+          </div>
+
+          <div class="summary-value">
+            <strong>异常处理慢</strong>
+            反复沟通
+          </div>
+
+          <div class="summary-value">
+            <strong>服务不统一</strong>
+            依赖经验
+          </div>
+
+          <div class="summary-value">
+            <strong>收入难监管</strong>
+            开闸无据
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 架构跃迁 -->
+    <div class="evolution">
+      <span>服务跃迁</span>
+      <i class="evolution-arrow"></i>
+    </div>
+
+    <!-- 右侧创新方案 -->
+    <section class="innovation-area">
+
+      <div class="innovation-head">
+        <span class="section-number">02</span>
+        <i class="section-line"></i>
+        <h2>创新方案：无人值守停车场 AI 云客服系统</h2>
+        <span class="head-tag">一中心 · 多项目 · 统一服务</span>
+        <span class="head-desc">远程客服、指挥调度、现场协同与费用审计一体化</span>
+      </div>
+
+      <!-- 顶部坐席资源 -->
+      <div class="agent-zone">
+        <div class="agent-title">共享坐席资源池 · 按行业与技能智能分配</div>
+
+        <div class="agent-list">
+          <div class="agent-card">
+            <div class="agent-logo">医</div>
+            <div>
+              <div class="agent-name">医院停车专席</div>
+              <div class="agent-desc">患者权益与急诊场景</div>
+            </div>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-logo">商</div>
+            <div>
+              <div class="agent-name">商业会员专席</div>
+              <div class="agent-desc">消费优惠与会员权益</div>
+            </div>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-logo">住</div>
+            <div>
+              <div class="agent-name">住宅夜间专席</div>
+              <div class="agent-desc">访客、月卡与住户服务</div>
+            </div>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-logo">综</div>
+            <div>
+              <div class="agent-name">综合停车专席</div>
+              <div class="agent-desc">园区、公共与物流停车</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拓扑连线 -->
+      <svg class="innovation-lines" viewBox="0 0 1019 716">
+        <defs>
+          <marker
+            id="arrowCyan"
+            markerWidth="8"
+            markerHeight="8"
+            refX="7"
+            refY="4"
+            orient="auto"
+          >
+            <path d="M0,0 L8,4 L0,8 Z" fill="#55dff2"/>
+          </marker>
+
+          <marker
+            id="arrowPurple"
+            markerWidth="8"
+            markerHeight="8"
+            refX="7"
+            refY="4"
+            orient="auto"
+          >
+            <path d="M0,0 L8,4 L0,8 Z" fill="#a48cff"/>
+          </marker>
+
+          <marker
+            id="arrowGreen"
+            markerWidth="8"
+            markerHeight="8"
+            refX="7"
+            refY="4"
+            orient="auto"
+          >
+            <path d="M0,0 L8,4 L0,8 Z" fill="#4be3c5"/>
+          </marker>
+        </defs>
+
+        <!-- 坐席资源接入云客服中心 -->
+        <path
+          class="line-agent line-flow"
+          d="M510 130 V155"
+          marker-end="url(#arrowPurple)"
+        />
+        <circle class="node-purple" cx="510" cy="142" r="3.5"/>
+
+        <!-- 各停车项目接入 -->
+        <path class="line-device" d="M143 216 H166"/>
+        <path class="line-device" d="M143 279 H166"/>
+        <path class="line-device" d="M143 342 H166"/>
+        <path class="line-device" d="M143 405 H166"/>
+        <path class="line-device" d="M143 468 H166"/>
+
+        <circle class="node-cyan" cx="154" cy="216" r="3"/>
+        <circle class="node-cyan" cx="154" cy="279" r="3"/>
+        <circle class="node-cyan" cx="154" cy="342" r="3"/>
+        <circle class="node-cyan" cx="154" cy="405" r="3"/>
+        <circle class="node-cyan" cx="154" cy="468" r="3"/>
+
+        <!-- 云客服中心至远程坐席 -->
+        <path
+          class="line-platform line-flow"
+          d="M826 228 H846"
+          marker-end="url(#arrowCyan)"
+        />
+
+        <!-- 云客服中心至现场移动端 -->
+        <path
+          class="line-field line-flow"
+          d="M826 400 C842 400 839 421 846 421"
+          marker-end="url(#arrowGreen)"
+        />
+
+        <!-- 工单回执闭环 -->
+        <path
+          class="line-field line-flow"
+          d="M846 498 C828 498 841 518 826 518"
+          marker-end="url(#arrowGreen)"
+        />
+      </svg>
+
+      <!-- 多项目停车场接入 -->
+      <div class="site-stack">
+        <div class="site-stack-title">多类型停车项目统一接入</div>
+
+        <div class="site-item">
+          <div class="site-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 20V8l8-5 8 5v12"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M9 20v-6h6v6M9 9h6"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="site-name">医院停车</div>
+            <div class="site-desc">患者权益 · 急诊保障</div>
+          </div>
+        </div>
+
+        <div class="site-item">
+          <div class="site-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 21V5h10v16M14 10h6v11"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M7 8h4M7 12h4M7 16h4M17 14h1"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="site-name">办公园区</div>
+            <div class="site-desc">企业额度 · 访客停车</div>
+          </div>
+        </div>
+
+        <div class="site-item">
+          <div class="site-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M3 11l9-7 9 7v9H3v-9z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M9 20v-6h6v6"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="site-name">住宅社区</div>
+            <div class="site-desc">住户月卡 · 访客秩序</div>
+          </div>
+        </div>
+
+        <div class="site-item">
+          <div class="site-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 7h16l-1 13H5L4 7z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M8 7a4 4 0 0 1 8 0"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="site-name">商业综合体</div>
+            <div class="site-desc">会员优惠 · 商户停车券</div>
+          </div>
+        </div>
+
+        <div class="site-item">
+          <div class="site-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="3"
+                y="7"
+                width="18"
+                height="11"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M7 18v3M17 18v3M7 12h10"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="site-name">物流及公共停车</div>
+            <div class="site-desc">任务车辆 · 多场站值守</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 中央云客服中心 -->
+      <div class="cloud-wrap">
+
+        <div class="cloud-glow"></div>
+        <div class="cloud-side-left"></div>
+        <div class="cloud-side-right"></div>
+
+        <div class="cloud-top">
+          <div class="top-brand">
+            <div class="top-brand-logo">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 3v-6a3 3 0 0 1 0-1V8z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M8 10h8M8 14h5"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="top-brand-name">AI PARKING CLOUD SERVICE</div>
+              <div class="top-brand-desc">REMOTE CUSTOMER SERVICE & COMMAND CENTER</div>
+            </div>
+          </div>
+
+          <div class="online-indicator">
+            <i></i>
+            7 × 24 CLOUD SERVICE ONLINE
+          </div>
+        </div>
+
+        <div class="cloud-body">
+
+          <div class="cloud-header">
+            <div class="cloud-title-area">
+              <div class="cloud-main-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6 14v-2a6 6 0 0 1 12 0v2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <rect
+                    x="3"
+                    y="13"
+                    width="4"
+                    height="6"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <rect
+                    x="17"
+                    y="13"
+                    width="4"
+                    height="6"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M19 19v1a2 2 0 0 1-2 2h-3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <div class="cloud-name">无人值守停车 AI 云客服中心</div>
+                <div class="cloud-slogan">
+                  一中心统一处理车主求助、业务异常、设备故障与现场事件
+                </div>
+              </div>
+            </div>
+
+            <div class="service-badge">
+              <i></i>
+              多项目集中值守
+            </div>
+          </div>
+
+          <div class="cloud-modules">
+
+            <div class="cloud-module highlight">
+              <span class="module-label">AI CORE</span>
+
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 3l2.2 4.5L19 9l-3.5 3.4.8 4.8L12 15l-4.3 2.2.8-4.8L5 9l4.8-1.5L12 3z"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                  </svg>
+                </div>
+                <div class="module-name">AI 事件诊断</div>
+              </div>
+
+              <div class="module-desc">
+                自动聚合车辆、订单、支付<br>
+                权益与设备，推荐处置方案
+              </div>
+            </div>
+
+            <div class="cloud-module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="5"
+                      y="3"
+                      width="14"
+                      height="18"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 8h8M8 12h8M8 16h5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="module-name">订单与支付处理</div>
+              </div>
+
+              <div class="module-desc">
+                查订单 · 查支付 · 重算费用<br>
+                支付迁移 · 异常订单补单
+              </div>
+            </div>
+
+            <div class="cloud-module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 20V7M5 9h14"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <circle cx="5" cy="5" r="2" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="module-name">远程设备控制</div>
+              </div>
+
+              <div class="module-desc">
+                远程开闸 · 设备重启<br>
+                车道停用 · 诱导与权限控制
+              </div>
+            </div>
+
+            <div class="cloud-module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 7h16v13H4V7z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 4v6M16 4v6M7 14h4M7 17h7"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                  </svg>
+                </div>
+                <div class="module-name">停车权益核验</div>
+              </div>
+
+              <div class="module-desc">
+                月卡 · 访客 · 企业额度<br>
+                会员、消费与行业权益补核
+              </div>
+            </div>
+
+            <div class="cloud-module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 5h16v14H4V5z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 9h8M8 13h5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M16 17l2 2 3-4"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                  </svg>
+                </div>
+                <div class="module-name">现场协同工单</div>
+              </div>
+
+              <div class="module-desc">
+                秩序 · 安保 · 运维精准派单<br>
+                接单、到场、处置、复核闭环
+              </div>
+            </div>
+
+            <div class="cloud-module">
+              <div class="module-head">
+                <div class="module-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 12l2 2 4-5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="module-name">开闸与费用审计</div>
+              </div>
+
+              <div class="module-desc">
+                录音录像 · 操作依据<br>
+                减免、退款、未收与收入风险
+              </div>
+            </div>
+
+          </div>
+
+          <div class="cloud-footer">
+            <div class="seat-dots">
+              <i class="seat-dot"></i>
+              <i class="seat-dot busy"></i>
+              <i class="seat-dot busy"></i>
+              <i class="seat-dot"></i>
+              <i class="seat-dot warning"></i>
+            </div>
+
+            <div class="footer-status">
+              <b>●</b> 18 / 22 AGENTS ONLINE
+            </div>
+
+            <div class="cloud-spec">
+              VISUAL INTERCOM · AI DIAGNOSIS · REMOTE CONTROL · AUDIT
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧坐席及现场 -->
+      <div class="operation-stack">
+
+        <!-- 仿真视频 -->
+        <div class="operation-node video-node">
+          <div class="video-window">
+            <div class="video-head">
+              <span>CAM-HOSP-02</span>
+              <span class="video-rec">● REC</span>
+              <span id="videoClock">11:42:18</span>
+            </div>
+
+            <div class="video-road"></div>
+            <div class="video-car"></div>
+            <div class="detect-box"></div>
+            <div class="video-barrier"></div>
+
+            <div class="video-bottom">
+              <span>医院急诊出口2</span>
+              <span>LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="operation-node">
+          <div class="operation-title">
+            <span class="operation-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6 14v-2a6 6 0 0 1 12 0v2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <rect
+                  x="3"
+                  y="13"
+                  width="4"
+                  height="6"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <rect
+                  x="17"
+                  y="13"
+                  width="4"
+                  height="6"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </span>
+            远程坐席工作台
+          </div>
+
+          <div class="operation-desc">
+            <b>可视对讲一键接入</b><br>
+            视频、车辆、订单、支付、权益<br>
+            和设备状态一屏呈现
+          </div>
+        </div>
+
+        <div class="operation-node field-node">
+          <div class="operation-title">
+            <span class="operation-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M4 21c.7-4 3.4-6 8-6s7.3 2 8 6"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </span>
+            现场移动工单
+          </div>
+
+          <div class="operation-desc">
+            <b>无法远程解决精准派人</b><br>
+            位置、车辆、现场截图、操作要求<br>
+            和到场时限一次说清
+          </div>
+        </div>
+
+        <div class="operation-node">
+          <div class="operation-title">
+            <span class="operation-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 4h14v16H5V4z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M8 9h8M8 13h8M8 17h5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </span>
+            运营监管平台
+          </div>
+
+          <div class="operation-desc">
+            <b>服务质量与收入统一监管</b><br>
+            接听率、解决率、人工开闸率<br>
+            工单时效和收入损失分析
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 五大价值 -->
+      <div class="value-zone">
+        <div class="value-title">
+          五大核心价值，让停车场真正实现无人值守
+        </div>
+
+        <div class="value-grid">
+
+          <div class="value-card">
+            <div class="value-number">01</div>
+            <div class="value-name">多项目共享坐席</div>
+            <div class="value-desc">
+              一个中心集中服务多个车场<br>
+              <b>降低现场三班倒人力投入</b>
+            </div>
+          </div>
+
+          <div class="value-card">
+            <div class="value-number">02</div>
+            <div class="value-name">异常处理更快</div>
+            <div class="value-desc">
+              接通前自动准备业务数据<br>
+              <b>减少反复询问与电话确认</b>
+            </div>
+          </div>
+
+          <div class="value-card">
+            <div class="value-number">03</div>
+            <div class="value-name">服务标准统一</div>
+            <div class="value-desc">
+              项目规则、知识库与流程统一<br>
+              <b>降低人员经验差异</b>
+            </div>
+          </div>
+
+          <div class="value-card">
+            <div class="value-number">04</div>
+            <div class="value-name">远程现场完整闭环</div>
+            <div class="value-desc">
+              远程解决不了精准派单<br>
+              <b>接单、到场、处理、复核可追踪</b>
+            </div>
+          </div>
+
+          <div class="value-card">
+            <div class="value-number">05</div>
+            <div class="value-name">收入与操作可监管</div>
+            <div class="value-desc">
+              开闸、减免、退款、补单有依据<br>
+              <b>降低停车收入流失风险</b>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 图例 -->
+    <div class="legend">
+      <div class="legend-item">
+        <i class="legend-line"></i>
+        停车项目／云客服连接
+      </div>
+
+      <div class="legend-item">
+        <i class="legend-line agent"></i>
+        坐席资源与智能分配
+      </div>
+
+      <div class="legend-item">
+        <i class="legend-line field"></i>
+        现场工单与结果回传
+      </div>
+    </div>
+
+    <footer class="footer">
+      <i></i>
+      ONE CENTER · MULTI PARKS · VISUAL SERVICE · CLOSED-LOOP OPERATION
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+function updateClock() {
+  const clock = document.getElementById("videoClock");
+
+  if (!clock) {
+    return;
+  }
+
+  clock.textContent = new Date().toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+}
+
+window.addEventListener("resize", resizeStage);
+
+resizeStage();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>

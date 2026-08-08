@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERRA-1 · 轨道观测指挥中心</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ================= 基础与配色 ================= */
+:root{
+  --cyan:#00e5ff;
+  --cyan-dim:rgba(0,229,255,.28);
+  --panel-bg:rgba(5,14,32,.62);
+  --txt:#bfe9ff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+  font-family:'Rajdhani','Microsoft YaHei',sans-serif;
+  color:var(--txt);
+  /* 深空渐变背景 */
+  background:
+    radial-gradient(ellipse at 28% 18%, #0b1a3d 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 82%, #0a1430 0%, transparent 50%),
+    linear-gradient(180deg,#02040c 0%,#050c1e 50%,#010208 100%);
+}
+#scene{position:fixed;inset:0;z-index:2;display:block;touch-action:none}
+
+/* ================= 星云层（视差） ================= */
+.neb-wrap{position:fixed;inset:0;z-index:1;pointer-events:none;will-change:transform}
+.neb{position:absolute;border-radius:50%;mix-blend-mode:screen}
+#neb1{width:62vmax;height:46vmax;left:-12vmax;top:-10vmax;
+  background:radial-gradient(circle at 42% 42%,rgba(72,52,180,.30),rgba(72,52,180,.08) 45%,transparent 65%);
+  animation:drift1 60s ease-in-out infinite alternate}
+#neb2{width:55vmax;height:50vmax;right:-14vmax;top:16vh;
+  background:radial-gradient(circle at 50% 50%,rgba(0,130,170,.24),rgba(0,130,170,.06) 48%,transparent 66%);
+  animation:drift2 74s ease-in-out infinite alternate}
+#neb3{width:72vmax;height:42vmax;left:12vw;bottom:-16vmax;
+  background:radial-gradient(circle at 50% 50%,rgba(130,45,150,.20),rgba(130,45,150,.05) 46%,transparent 64%);
+  animation:drift3 66s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(4vmax,3vmax) scale(1.08)}}
+@keyframes drift2{to{transform:translate(-3vmax,4vmax) scale(1.05)}}
+@keyframes drift3{to{transform:translate(3vmax,-3vmax) scale(1.1)}}
+
+/* ================= 流星 ================= */
+#meteor-layer{position:fixed;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.meteor{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;
+  box-shadow:0 0 6px 2px rgba(255,255,255,.55);opacity:0;
+  animation:meteorFall var(--dur,1.6s) linear forwards}
+.meteor::after{content:'';position:absolute;top:1px;left:2px;width:150px;height:1.5px;
+  background:linear-gradient(to right,rgba(170,225,255,.9),transparent);
+  transform-origin:left center;transform:rotate(-28deg)}
+@keyframes meteorFall{
+  0%{opacity:0;transform:translate3d(0,0,0)}
+  5%{opacity:1}70%{opacity:1}
+  100%{opacity:0;transform:translate3d(-46vw,27vh,0)}
+}
+
+/* ================= HUD 圆环装饰 ================= */
+.hud{position:fixed;top:50%;left:50%;border-radius:50%;pointer-events:none;z-index:3;transform:translate(-50%,-50%)}
+.ring1{width:66vmin;height:66vmin;border:1px dashed rgba(0,229,255,.22);
+  animation:spinC 120s linear infinite}
+.ring2{width:73vmin;height:73vmin;
+  background:repeating-conic-gradient(from 0deg,rgba(0,229,255,.45) 0deg .5deg,transparent .5deg 6deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));
+  animation:spinCR 90s linear infinite}
+.ring3{width:80vmin;height:80vmin;
+  background:conic-gradient(rgba(0,229,255,.5) 0deg 40deg,transparent 40deg 90deg,rgba(0,229,255,.5) 90deg 130deg,transparent 130deg 180deg,rgba(0,229,255,.5) 180deg 220deg,transparent 220deg 270deg,rgba(0,229,255,.5) 270deg 310deg,transparent 310deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));
+  animation:spinC 55s linear infinite}
+.sat-orbit{position:fixed;top:50%;left:50%;z-index:3;pointer-events:none}
+.sat-orbit i{position:absolute;width:5px;height:5px;margin:-2.5px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan),0 0 16px rgba(0,229,255,.5)}
+#orb1{width:66vmin;height:66vmin;animation:spinC 26s linear infinite}
+#orb1 i{left:50%;top:0}
+#orb2{width:80vmin;height:80vmin;animation:spinCR 40s linear infinite}
+#orb2 i{left:50%;top:0;background:#ffd27a;box-shadow:0 0 8px #ffd27a}
+@keyframes spinC{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes spinCR{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0)}}
+.axis{position:fixed;z-index:3;pointer-events:none;opacity:.12}
+#ax-h{left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan) 50%,transparent)}
+#ax-v{top:0;bottom:0;left:50%;width:1px;background:linear-gradient(180deg,transparent,var(--cyan) 50%,transparent)}
+.corner{position:fixed;width:26px;height:26px;border:2px solid rgba(0,229,255,.45);z-index:30;pointer-events:none}
+.c-tl{top:8px;left:8px;border-right:none;border-bottom:none}
+.c-tr{top:8px;right:8px;border-left:none;border-bottom:none}
+.c-bl{bottom:8px;left:8px;border-right:none;border-top:none}
+.c-br{bottom:8px;right:8px;border-left:none;border-top:none}
+
+/* ================= 顶栏 ================= */
+#topbar{position:fixed;top:0;left:0;right:0;height:58px;z-index:20;display:flex;
+  align-items:center;justify-content:space-between;padding:0 22px;
+  background:linear-gradient(180deg,rgba(3,10,24,.9),rgba(3,10,24,.45));
+  border-bottom:1px solid var(--cyan-dim);backdrop-filter:blur(6px)}
+.tb-left{display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;border:1px solid var(--cyan);display:grid;place-items:center;
+  color:var(--cyan);font-size:18px;clip-path:polygon(0 0,100% 0,100% 70%,70% 100%,0 100%);
+  text-shadow:0 0 8px var(--cyan);animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{50%{box-shadow:0 0 14px rgba(0,229,255,.5) inset,0 0 10px rgba(0,229,255,.4)}}
+.tb-title{font-size:17px;font-weight:600;letter-spacing:2px;color:#e6f7ff;text-shadow:0 0 10px rgba(0,229,255,.4)}
+.tb-sub{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:rgba(159,220,255,.55)}
+.tb-right{display:flex;align-items:center;gap:18px}
+.clock-box{text-align:right;line-height:1.15}
+.ck-label{display:block;font-size:9px;letter-spacing:2px;color:rgba(159,220,255,.5)}
+.clock-box span:last-child{font-family:'Orbitron',monospace;font-size:16px;color:#fff;text-shadow:0 0 8px rgba(0,229,255,.6)}
+.status{display:flex;align-items:center;gap:7px;font-size:12px;letter-spacing:1px;color:#7dffb0}
+.status .dot{width:8px;height:8px;border-radius:50%;background:#3dff88;box-shadow:0 0 8px #3dff88;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+
+/* ================= 侧边数据面板 ================= */
+.panel{position:fixed;top:76px;width:258px;z-index:20;padding:14px 16px;font-size:13px;
+  background:var(--panel-bg);border:1px solid var(--cyan-dim);backdrop-filter:blur(7px);
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+#panel-left{left:18px}
+#panel-right{right:18px}
+.panel h2{display:flex;align-items:center;gap:8px;font-size:13px;letter-spacing:2px;color:#eaf7ff;
+  margin:10px 0 8px;font-weight:600}
+.panel h2:first-child{margin-top:0}
+.panel h2 em{font-family:'Orbitron',monospace;font-style:normal;font-size:8px;letter-spacing:2px;color:rgba(159,220,255,.45)}
+.hbar{width:14px;height:2px;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.data-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed rgba(0,229,255,.12)}
+.data-row span{color:rgba(191,233,255,.72)}
+.data-row b{font-family:'Orbitron',monospace;font-weight:500;color:#fff;text-shadow:0 0 6px rgba(0,229,255,.45)}
+.ok{color:#7dffb0!important;text-shadow:0 0 6px rgba(61,255,136,.5)!important}
+.bar-row{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px}
+.bar-row>span{width:62px;color:rgba(191,233,255,.72)}
+.bar{flex:1;height:5px;background:rgba(0,229,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#0077ff,var(--cyan));
+  box-shadow:0 0 8px rgba(0,229,255,.6);transition:width .8s ease}
+.bar-row b{font-family:'Orbitron',monospace;font-size:11px;width:36px;text-align:right;color:#fff}
+#event-log{list-style:none;margin-top:4px;max-height:132px;overflow:hidden}
+#event-log li{font-size:11px;padding:3px 0;color:rgba(191,233,255,.75);border-bottom:1px dashed rgba(0,229,255,.08);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:logIn .4s ease}
+#event-log li b{font-family:'Orbitron',monospace;color:var(--cyan);margin-right:6px;font-weight:500}
+@keyframes logIn{from{opacity:0;transform:translateX(-8px)}}
+
+/* ================= 底部栏 ================= */
+#bottombar{position:fixed;bottom:0;left:0;right:0;height:36px;z-index:20;display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;font-size:12px;
+  background:linear-gradient(0deg,rgba(3,10,24,.9),rgba(3,10,24,.4));
+  border-top:1px solid var(--cyan-dim);backdrop-filter:blur(6px)}
+#cam-readout{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;color:rgba(159,220,255,.8)}
+#ticker-wrap{width:38vw;overflow:hidden;mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  -webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+#ticker{white-space:nowrap;display:inline-block;animation:tick 34s linear infinite;
+  font-size:11px;letter-spacing:1px;color:rgba(159,220,255,.65)}
+@keyframes tick{to{transform:translateX(-50%)}}
+.fb-right{display:flex;gap:14px;align-items:center}
+#fps{font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan)}
+.hint{color:rgba(159,220,255,.5);letter-spacing:1px}
+
+/* ================= 地表标记与信息卡 ================= */
+#marker-layer{position:fixed;inset:0;z-index:10;pointer-events:none}
+.marker{position:absolute;left:0;top:0;width:0;height:0;pointer-events:auto;cursor:pointer}
+.m-dot{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan),0 0 18px rgba(0,229,255,.6)}
+.m-pulse{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;
+  border:1px solid rgba(0,229,255,.8);animation:mpulse 2.2s ease-out infinite}
+@keyframes mpulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(4.6);opacity:0}}
+.m-label{position:absolute;left:14px;top:-7px;font-size:11px;letter-spacing:2px;color:#9fdcff;
+  text-shadow:0 0 6px rgba(0,229,255,.7);white-space:nowrap}
+#info-card{position:fixed;z-index:26;width:252px;padding:14px 16px;font-size:13px;
+  background:rgba(4,13,30,.88);border:1px solid var(--cyan);backdrop-filter:blur(10px);
+  box-shadow:0 0 24px rgba(0,229,255,.25);opacity:0;pointer-events:none;transition:opacity .2s;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+#info-card.show{opacity:1;pointer-events:auto}
+#card-close{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--cyan);
+  font-size:18px;cursor:pointer}
+.ic-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.ic-dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+#ic-name{font-size:16px;font-weight:600;color:#fff;letter-spacing:2px}
+#ic-en{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:rgba(159,220,255,.5)}
+.ic-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed rgba(0,229,255,.12)}
+.ic-row span{color:rgba(191,233,255,.6)}
+.ic-row b{font-weight:500;color:#eaf7ff}
+#ic-status.ok{color:#7dffb0}#ic-status.warn{color:#ffd27a}
+.ic-desc{margin:8px 0;font-size:12px;color:rgba(191,233,255,.75);line-height:1.5}
+.ic-load{display:flex;align-items:center;gap:8px;font-size:11px}
+
+/* ================= 扫描线 / 噪点 / 暗角 ================= */
+#scanlines{position:fixed;inset:0;z-index:40;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px);
+  animation:crt 6s ease-in-out infinite}
+@keyframes crt{0%,100%{opacity:.9}50%{opacity:.75}}
+#scanbar{position:fixed;left:0;right:0;top:-140px;height:140px;z-index:40;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(0,229,255,.05) 45%,rgba(0,229,255,.1) 50%,rgba(0,229,255,.05) 55%,transparent);
+  animation:scanMove 7.5s linear infinite}
+@keyframes scanMove{to{transform:translateY(calc(100vh + 280px))}}
+#noise{position:fixed;inset:-120px;z-index:41;pointer-events:none;opacity:.4;
+  animation:noiseShift .45s steps(3) infinite}
+@keyframes noiseShift{0%{transform:translate(0,0)}33%{transform:translate(-28px,18px)}66%{transform:translate(22px,-24px)}100%{transform:translate(0,0)}}
+#vignette{position:fixed;inset:0;z-index:42;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+
+/* ================= 加载画面 ================= */
+#loading{position:fixed;inset:0;z-index:100;background:#02040c;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;transition:opacity .7s}
+#loading.done{opacity:0;pointer-events:none}
+.ld-ring{width:76px;height:76px;border-radius:50%;border:2px dashed var(--cyan);
+  animation:spin 2.4s linear infinite;box-shadow:0 0 20px rgba(0,229,255,.25)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-title{font-family:'Orbitron',monospace;letter-spacing:5px;font-size:15px;color:#eaf7ff;text-shadow:0 0 12px rgba(0,229,255,.5)}
+.ld-barwrap{width:280px;height:4px;background:rgba(0,229,255,.12)}
+#ld-bar{height:100%;width:0;background:linear-gradient(90deg,#0077ff,var(--cyan));box-shadow:0 0 10px var(--cyan);transition:width .3s}
+#ld-tip{font-size:12px;letter-spacing:2px;color:rgba(159,220,255,.6)}
+
+/* ================= 响应式 ================= */
+@media (max-width:960px){
+  .panel{display:none}
+  #ticker-wrap{display:none}
+  .m-label{display:none}
+  .tb-title{font-size:14px}
+  #cam-readout{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 加载画面 -->
+<div id="loading">
+  <div class="ld-ring"></div>
+  <div class="ld-title">TERRA-1 UPLINK</div>
+  <div class="ld-barwrap"><div id="ld-bar"></div></div>
+  <div id="ld-tip">正在建立轨道链路…</div>
+</div>
+
+<!-- 星云 / 流星层 -->
+<div class="neb-wrap" data-depth="14"><div class="neb" id="neb1"></div></div>
+<div class="neb-wrap" data-depth="26"><div class="neb" id="neb2"></div></div>
+<div class="neb-wrap" data-depth="20"><div class="neb" id="neb3"></div></div>
+<div id="meteor-layer"></div>
+
+<!-- 3D 画布 -->
+<canvas id="scene"></canvas>
+
+<!-- HUD 装饰 -->
+<div class="hud ring1"></div>
+<div class="hud ring2"></div>
+<div class="hud ring3"></div>
+<div class="sat-orbit" id="orb1"><i></i></div>
+<div class="sat-orbit" id="orb2"><i></i></div>
+<div class="axis" id="ax-h"></div>
+<div class="axis" id="ax-v"></div>
+<div class="corner c-tl"></div><div class="corner c-tr"></div>
+<div class="corner c-bl"></div><div class="corner c-br"></div>
+
+<!-- 地表标记层 -->
+<div id="marker-layer"></div>
+
+<!-- 顶栏 -->
+<header id="topbar">
+  <div class="tb-left">
+    <div class="logo">◢</div>
+    <div>
+      <div class="tb-title">TERRA-1 · 轨道观测指挥中心</div>
+      <div class="tb-sub">EARTH OBSERVATION COMMAND DECK</div>
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="clock-box"><span class="ck-label" id="date-line">----年--月--日</span><span>日期 DATE</span></div>
+    <div class="clock-box"><span class="ck-label">UTC</span><span id="utc-time">--:--:--</span></div>
+    <div class="clock-box"><span class="ck-label" id="tz-name">本地</span><span id="local-time">--:--:--</span></div>
+    <div class="status"><i class="dot"></i>系统正常 NOMINAL</div>
+  </div>
+</header>
+
+<!-- 左：轨道遥测 -->
+<aside class="panel" id="panel-left">
+  <h2><span class="hbar"></span>轨道遥测 <em>ORBITAL TELEMETRY</em></h2>
+  <div class="data-row"><span>在轨卫星追踪</span><b id="d-sat">8,462</b></div>
+  <div class="data-row"><span>空间碎片目标</span><b id="d-debris">34,580</b></div>
+  <div class="data-row"><span>太阳风速度</span><b><span id="d-solar">412</span> km/s</b></div>
+  <div class="data-row"><span>地磁 Kp 指数</span><b id="d-kp">2.3</b></div>
+  <div class="data-row"><span>空间站 ISS</span><b class="ok">在线 NOMINAL</b></div>
+  <h2><span class="hbar"></span>链路状态 <em>LINK STATUS</em></h2>
+  <div class="bar-row"><span>上行链路</span><div class="bar"><i id="b1" style="width:92%"></i></div><b id="b1v">92%</b></div>
+  <div class="bar-row"><span>下行带宽</span><div class="bar"><i id="b2" style="width:78%"></i></div><b id="b2v">78%</b></div>
+  <div class="bar-row"><span>电源阵列</span><div class="bar"><i id="b3" style="width:96%"></i></div><b id="b3v">96%</b></div>
+</aside>
+
+<!-- 右：大气监测 -->
+<aside class="panel" id="panel-right">
+  <h2><span class="hbar"></span>大气监测 <em>ATMOSPHERE</em></h2>
+  <div class="data-row"><span>CO₂ 浓度</span><b><span id="d-co2">421.3</span> ppm</b></div>
+  <div class="data-row"><span>全球均温距平</span><b>+<span id="d-temp">1.24</span> °C</b></div>
+  <div class="data-row"><span>臭氧柱总量</span><b><span id="d-o3">297</span> DU</b></div>
+  <div class="data-row"><span>海平面上升</span><b>+3.4 mm/yr</b></div>
+  <h2><span class="hbar"></span>事件日志 <em>EVENT LOG</em></h2>
+  <ul id="event-log"></ul>
+</aside>
+
+<!-- 信息卡片 -->
+<div id="info-card">
+  <button id="card-close">×</button>
+  <div class="ic-head"><span class="ic-dot"></span>
+    <div><div id="ic-name">北京</div><div id="ic-en">BEIJING</div></div>
+  </div>
+  <div class="ic-row"><span>坐标</span><b id="ic-coord"></b></div>
+  <div class="ic-row"><span>类型</span><b id="ic-type"></b></div>
+  <div class="ic-row"><span>状态</span><b id="ic-status"></b></div>
+  <div class="ic-desc" id="ic-desc"></div>
+  <div class="ic-load"><span>节点负载</span><div class="bar"><i id="ic-loadbar"></i></div><b id="ic-loadv"></b></div>
+</div>
+
+<!-- 底部栏 -->
+<footer id="bottombar">
+  <div id="cam-readout">LON --- · LAT --- · ALT ---</div>
+  <div id="ticker-wrap"><div id="ticker"></div></div>
+  <div class="fb-right">
+    <span id="rot-status">自转 AUTO-ROT: ON</span>
+    <span id="fps">-- FPS</span>
+    <span class="hint">拖拽旋转 · 滚轮缩放 · 点击标记</span>
+  </div>
+</footer>
+
+<!-- CRT 滤镜 -->
+<div id="scanlines"></div>
+<div id="scanbar"></div>
+<div id="noise"></div>
+<div id="vignette"></div>
+
+<!-- Three.js 依赖（importmap 方式引入 r160） -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ============================================================
+ * 全局配置
+ * ============================================================ */
+const R = 1;                                  // 地球半径（场景单位）
+const AUTO_SPEED = 0.025;                     // 自转速度 rad/s
+const SUN_DIR = new THREE.Vector3(-3.2, 1.4, 2.4).normalize(); // 太阳方向
+
+/* ============================================================
+ * 贴图地址（多 CDN 降级；对应你提供的几张官方贴图）
+ * 本地化：下载后放入 ./textures/ 并把数组第一项改为本地路径
+ * ============================================================ */
+const GH = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/textures/planets/';
+const TG = 'https://cdn.jsdelivr.net/npm/three-globe@2.31.1/example/img/';
+const UG = 'https://unpkg.com/three-globe@2.31.1/example/img/';
+const URLS = {
+  day:      [ GH+'earth_atmos_2048.jpg',  TG+'earth-blue-marble.jpg', UG+'earth-blue-marble.jpg', TG+'earth-day.jpg' ],
+  night:    [ GH+'earth_lights_2048.png', TG+'earth-night.jpg' ],
+  normal:   [ GH+'earth_normal_2048.jpg' ],
+  specular: [ GH+'earth_specular_2048.jpg', TG+'earth-water.png' ],
+  bump:     [ TG+'earth-topology.png', UG+'earth-topology.png' ],
+  clouds:   [ GH+'earth_clouds_1024.png' ]
+};
+
+/* ---------- 带降级链的贴图加载器 ---------- */
+function loadTexture(urls, srgb){
+  return new Promise(resolve=>{
+    const loader = new THREE.TextureLoader();
+    let i = 0;
+    const next = ()=>{
+      if(i >= urls.length){ resolve(null); return; }
+      loader.load(urls[i], tex=>{
+        if(srgb) tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = maxAniso;
+        resolve(tex);
+      }, undefined, ()=>{ i++; next(); });
+    };
+    next();
+  });
+}
+
+/* ---------- 程序化兜底贴图（所有 CDN 失效时使用） ---------- */
+function fallbackDay(){
+  const c=document.createElement('canvas'); c.width=1024; c.height=512;
+  const g=c.getContext('2d');
+  const grad=g.createLinearGradient(0,0,0,512);
+  grad.addColorStop(0,'#123a6e'); grad.addColorStop(.5,'#0d4a7d'); grad.addColorStop(1,'#123a6e');
+  g.fillStyle=grad; g.fillRect(0,0,1024,512);
+  const cols=['#2f6b3a','#3d7a41','#8a7a4a','#6b5b38'];
+  for(let i=0;i<46;i++){                                   // 随机大陆块
+    g.fillStyle=cols[i%4];
+    g.beginPath();
+    g.ellipse(Math.random()*1024, 90+Math.random()*330, 30+Math.random()*110, 20+Math.random()*70, Math.random()*3, 0, 7);
+    g.fill();
+  }
+  g.fillStyle='#eef4ff';                                   // 极地冰盖
+  g.fillRect(0,0,1024,26); g.fillRect(0,486,1024,26);
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t;
+}
+function fallbackClouds(){
+  const c=document.createElement('canvas'); c.width=1024; c.height=512;
+  const g=c.getContext('2d');
+  for(let i=0;i<380;i++){
+    const x=Math.random()*1024, y=Math.random()*512, r=8+Math.random()*42;
+    const rg=g.createRadialGradient(x,y,0,x,y,r);
+    rg.addColorStop(0,'rgba(255,255,255,'+(0.12+Math.random()*0.25)+')');
+    rg.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=rg; g.beginPath(); g.arc(x,y,r,0,7); g.fill();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+/* ============================================================
+ * 场景基础
+ * ============================================================ */
+const canvas = document.getElementById('scene');
+let renderer;
+try{
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'});
+}catch(e){
+  document.getElementById('ld-tip').textContent = '⚠ 当前浏览器不支持 WebGL';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0, 0.9, 4.2);
+
+/* ---------- 光照系统：太阳平行光 + 环境光 ---------- */
+const sunLight = new THREE.DirectionalLight(0xfff2dd, 2.6);
+sunLight.position.copy(SUN_DIR).multiplyScalar(12);
+scene.add(sunLight);
+scene.add(new THREE.AmbientLight(0x2a3a5f, 0.55));   // 避免夜面纯黑
+
+/* ============================================================
+ * 星空：2800 颗星（自定义着色器，大小/颜色/闪烁各异）+ 银河带
+ * ============================================================ */
+let starMat;
+function createStars(){
+  const N1=2000, N2=800, N=N1+N2;
+  const pos=new Float32Array(N*3), size=new Float32Array(N),
+        phase=new Float32Array(N), amp=new Float32Array(N), col=new Float32Array(N*3);
+  const palette=[[1,1,1],[1,1,1],[0.74,0.85,1],[1,0.89,0.7],[0.62,0.71,1]];
+  const v=new THREE.Vector3();
+  for(let i=0;i<N;i++){
+    if(i<N1){                                              // 均匀散布
+      v.set(Math.random()*2-1, Math.random()*2-1, Math.random()*2-1).normalize();
+    }else{                                                 // 银河带：沿倾斜大圆聚集
+      const t=Math.random()*Math.PI*2;
+      const n=new THREE.Vector3(0.35,1,0.25).normalize();
+      const u=new THREE.Vector3(1,0,0).cross(n).normalize();
+      const w=n.clone().cross(u);
+      const g=((Math.random()+Math.random()+Math.random())-1.5)*0.09;
+      v.copy(u).multiplyScalar(Math.cos(t)).addScaledVector(w,Math.sin(t)).addScaledVector(n,g).normalize();
+    }
+    const r=70+Math.random()*110;
+    pos.set([v.x*r, v.y*r, v.z*r], i*3);
+    size[i] = i<N1 ? 0.6+Math.random()*1.8 : 0.5+Math.random()*1.0;
+    phase[i]=Math.random();
+    amp[i]=Math.random()<0.3 ? 0.3+Math.random()*0.7 : 0;  // 30% 的星闪烁
+    const p=palette[(Math.random()*palette.length)|0], b=(0.55+Math.random()*0.45)*(i<N2?1:0.75);
+    col.set([p[0]*b, p[1]*b, p[2]*b], i*3);
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('aSize', new THREE.BufferAttribute(size,1));
+  geo.setAttribute('aPhase', new THREE.BufferAttribute(phase,1));
+  geo.setAttribute('aAmp', new THREE.BufferAttribute(amp,1));
+  geo.setAttribute('aColor', new THREE.BufferAttribute(col,3));
+  starMat = new THREE.ShaderMaterial({
+    uniforms:{ uTime:{value:0}, uPR:{value:renderer.getPixelRatio()} },
+    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+    vertexShader:`
+      attribute float aSize; attribute float aPhase; attribute float aAmp; attribute vec3 aColor;
+      uniform float uTime; uniform float uPR;
+      varying vec3 vColor; varying float vAlpha;
+      void main(){
+        vColor = aColor;
+        float tw = sin(uTime*(0.6+aPhase*1.8) + aPhase*40.0);   // 闪烁
+        vAlpha = 1.0 - aAmp*(0.5+0.5*tw)*0.75;
+        vec4 mv = modelViewMatrix * vec4(position,1.0);
+        gl_PointSize = aSize * uPR * (300.0 / -mv.z);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader:`
+      varying vec3 vColor; varying float vAlpha;
+      void main(){
+        float d = length(gl_PointCoord - 0.5);
+        float a = smoothstep(0.5, 0.05, d) * vAlpha;            // 柔和圆点
+        gl_FragColor = vec4(vColor, a);
+      }`
+  });
+  const stars = new THREE.Points(geo, starMat);
+  scene.add(stars);
+  return stars;
+}
+
+/* ============================================================
+ * 地球本体（128 分段 / 法线 / 凹凸 / 高光 / 夜光着色器注入）
+ * ============================================================ */
+const earthGroup = new THREE.Group();          // 自转组（含地表与标记锚点）
+scene.add(earthGroup);
+let earthMat=null, cloudsMesh=null;
+
+function createEarth(tex){
+  const geo = new THREE.SphereGeometry(R, 128, 128);   // ≥64 分段保证平滑
+  earthMat = new THREE.MeshPhongMaterial({ map: tex.day });
+  if(tex.normal){ earthMat.normalMap=tex.normal; earthMat.normalScale.set(0.85,0.85); }
+  if(tex.bump){ earthMat.bumpMap=tex.bump; earthMat.bumpScale=0.04; }
+  if(tex.specular){
+    earthMat.specularMap=tex.specular;
+    earthMat.specular=new THREE.Color(0x4a5f70);
+    earthMat.shininess=16;                             // 海面高光
+  }else{
+    earthMat.specular=new THREE.Color(0x111111); earthMat.shininess=6;
+  }
+
+  /* --- 注入夜光城市贴图：按太阳方向在昼夜线处平滑过渡 --- */
+  if(tex.night){
+    earthMat.onBeforeCompile = (shader)=>{
+      shader.uniforms.uNightMap = { value: tex.night };
+      shader.uniforms.uSunView  = { value: new THREE.Vector3() };
+      earthMat.userData.shader = shader;
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', m=>m+`
+          uniform sampler2D uNightMap;
+          uniform vec3 uSunView;`)
+        .replace('#include <emissivemap_fragment>', m=>m+`
+          {
+            float sunDot = dot(normalize(vNormal), normalize(uSunView));
+            float nightMix = 1.0 - smoothstep(-0.12, 0.12, sunDot);   // 昼夜过渡带
+            vec3 nightCol = texture2D(uNightMap, vMapUv).rgb;
+            totalEmissiveRadiance += nightCol * nightMix * vec3(1.5, 1.25, 0.95); // 暖色城市灯光
+          }`);
+    };
+  }
+  const earth = new THREE.Mesh(geo, earthMat);
+  earthGroup.add(earth);
+  earthGroup.rotation.y = 2.6;                          // 初始朝向：东亚
+
+  /* --- 云层：独立球体，转速略不同步 --- */
+  const cMat = new THREE.MeshLambertMaterial({
+    map: tex.clouds || fallbackClouds(),
+    transparent:true, opacity:0.85, depthWrite:false
+  });
+  cloudsMesh = new THREE.Mesh(new THREE.SphereGeometry(R*1.012, 64, 64), cMat);
+  cloudsMesh.renderOrder = 1;
+  scene.add(cloudsMesh);
+}
+
+/* ============================================================
+ * 大气层：Fresnel 边缘辉光（外圈光晕 + 表面蓝边）
+ * ============================================================ */
+function createAtmosphere(){
+  const vs = `varying vec3 vN;
+    void main(){ vN = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`;
+  // 外圈光晕（背面球体）
+  const haloMat = new THREE.ShaderMaterial({
+    uniforms:{ uColor:{value:new THREE.Color(0x3f8cff)} },
+    vertexShader:vs,
+    fragmentShader:`uniform vec3 uColor; varying vec3 vN;
+      void main(){
+        float i = pow(0.72 - dot(vN, vec3(0.0,0.0,1.0)), 4.0);
+        gl_FragColor = vec4(uColor, 1.0) * i;
+      }`,
+    side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false
+  });
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(R*1.22, 64, 64), haloMat));
+  // 地表边缘蓝边（正面菲涅尔）
+  const rimMat = new THREE.ShaderMaterial({
+    uniforms:{ uColor:{value:new THREE.Color(0x66b8ff)} },
+    vertexShader:vs,
+    fragmentShader:`uniform vec3 uColor; varying vec3 vN;
+      void main(){
+        float rim = 1.0 - max(dot(vN, vec3(0.0,0.0,1.0)), 0.0);
+        float i = pow(rim, 3.5) * 0.85;
+        gl_FragColor = vec4(uColor, 1.0) * i;
+      }`,
+    blending:THREE.AdditiveBlending, transparent:true, depthWrite:false
+  });
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(R*1.025, 64, 64), rimMat));
+}
+
+/* ---------- 太阳光晕精灵 ---------- */
+function createSunGlow(){
+  const c=document.createElement('canvas'); c.width=c.height=256;
+  const g=c.getContext('2d');
+  const rg=g.createRadialGradient(128,128,0,128,128,128);
+  rg.addColorStop(0,'rgba(255,242,214,1)');
+  rg.addColorStop(0.2,'rgba(255,222,165,.55)');
+  rg.addColorStop(0.55,'rgba(255,200,120,.16)');
+  rg.addColorStop(1,'rgba(255,200,120,0)');
+  g.fillStyle=rg; g.fillRect(0,0,256,256);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({
+    map:new THREE.CanvasTexture(c), blending:THREE.AdditiveBlending,
+    transparent:true, depthWrite:false
+  }));
+  sp.position.copy(SUN_DIR).multiplyScalar(26);
+  sp.scale.setScalar(11);
+  scene.add(sp);
+}
+
+/* ============================================================
+ * 地表发光标记（HTML 投影 + 点击信息卡）
+ * ============================================================ */
+const MARKERS=[
+  {cn:'北京', en:'BEIJING',    lat:39.90, lon:116.40, type:'核心数据枢纽', status:'在线',  desc:'亚太骨干网核心节点 · 平均延迟 12ms', load:67},
+  {cn:'纽约', en:'NEW YORK',   lat:40.71, lon:-74.00, type:'金融数据中心', status:'在线',  desc:'北美东岸交换枢纽 · 平均延迟 8ms',  load:72},
+  {cn:'伦敦', en:'LONDON',     lat:51.50, lon:-0.13,  type:'欧洲中继站',   status:'在线',  desc:'跨大西洋光缆登陆站 · 平均延迟 9ms', load:54},
+  {cn:'东京', en:'TOKYO',      lat:35.68, lon:139.69, type:'边缘计算节点', status:'在线',  desc:'东亚低延迟骨干节点 · 平均延迟 6ms', load:61},
+  {cn:'悉尼', en:'SYDNEY',     lat:-33.87,lon:151.21, type:'南半球网关',   status:'维护中',desc:'大洋洲海缆枢纽 · 平均延迟 15ms',   load:33},
+  {cn:'开普敦',en:'CAPE TOWN', lat:-33.92,lon:18.42,  type:'深空测控站',   status:'在线',  desc:'南半球深空天线阵列 · 仰角 42°',    load:48}
+];
+const markerAnchors=[], markerEls=[], markerScreen=[];
+function latLonToVec3(lat, lon, r){                       // 经纬度 → 三维坐标
+  const phi=(90-lat)*Math.PI/180, theta=(lon+180)*Math.PI/180;
+  return new THREE.Vector3(
+    -r*Math.sin(phi)*Math.cos(theta),
+     r*Math.cos(phi),
+     r*Math.sin(phi)*Math.sin(theta));
+}
+function createMarkers(){
+  const layer=document.getElementById('marker-layer');
+  MARKERS.forEach((m,i)=>{
+    const anchor=new THREE.Object3D();
+    anchor.position.copy(latLonToVec3(m.lat, m.lon, R*1.015));
+    earthGroup.add(anchor);                               // 跟随地球自转
+    markerAnchors.push(anchor);
+    const el=document.createElement('div');
+    el.className='marker';
+    el.innerHTML='<span class="m-pulse"></span><span class="m-dot"></span><span class="m-label">'+m.cn+'</span>';
+    el.addEventListener('click', ev=>{ ev.stopPropagation(); openCard(i); });
+    layer.appendChild(el);
+    markerEls.push(el);
+    markerScreen.push({x:0,y:0,vis:false});
+  });
+}
+let openIdx=-1;
+const card=document.getElementById('info-card');
+function openCard(i){
+  const m=MARKERS[i]; openIdx=i;
+  document.getElementById('ic-name').textContent=m.cn;
+  document.getElementById('ic-en').textContent=m.en;
+  document.getElementById('ic-coord').textContent=
+    Math.abs(m.lat).toFixed(2)+'°'+(m.lat>=0?'N':'S')+' / '+Math.abs(m.lon).toFixed(2)+'°'+(m.lon>=0?'E':'W');
+  document.getElementById('ic-type').textContent=m.type;
+  const st=document.getElementById('ic-status');
+  st.textContent=m.status; st.className=m.status==='在线'?'ok':'warn';
+  document.getElementById('ic-desc').textContent=m.desc;
+  document.getElementById('ic-loadbar').style.width=m.load+'%';
+  document.getElementById('ic-loadv').textContent=m.load+'%';
+  card.classList.add('show');
+}
+document.getElementById('card-close').onclick=()=>{ openIdx=-1; card.classList.remove('show'); };
+canvas.addEventListener('pointerdown', ()=>{ openIdx=-1; card.classList.remove('show'); });
+
+/* ---------- 每帧投影标记到屏幕，背面自动隐藏 ---------- */
+const _wp=new THREE.Vector3(), _cd=new THREE.Vector3();
+function updateMarkers(){
+  _cd.copy(camera.position).normalize();
+  markerAnchors.forEach((a,i)=>{
+    a.getWorldPosition(_wp);
+    const facing=_wp.clone().normalize().dot(_cd);        // 是否朝向相机
+    const v=_wp.clone().project(camera);
+    const x=(v.x*0.5+0.5)*innerWidth, y=(-v.y*0.5+0.5)*innerHeight;
+    const vis = facing>0.12 && v.z<1;
+    const el=markerEls[i];
+    el.style.display=vis?'block':'none';
+    if(vis){
+      el.style.transform='translate('+x+'px,'+y+'px)';
+      el.style.opacity=Math.min(1,(facing-0.12)/0.25).toFixed(2);
+      markerScreen[i]={x,y,vis:true};
+    }else markerScreen[i].vis=false;
+  });
+  if(openIdx>=0){                                          // 信息卡跟随
+    const s=markerScreen[openIdx];
+    if(!s.vis){ openIdx=-1; card.classList.remove('show'); return; }
+    card.style.left=Math.min(Math.max(s.x+18,8), innerWidth-268)+'px';
+    card.style.top =Math.min(Math.max(s.y-40,66), innerHeight-220)+'px';
+  }
+}
+
+/* ============================================================
+ * 控制器：拖拽 / 缩放 / 惯性阻尼 / 自动自转
+ * ============================================================ */
+const controls=new OrbitControls(camera, canvas);
+controls.enableDamping=true; controls.dampingFactor=0.07;  // 惯性
+controls.rotateSpeed=0.4; controls.zoomSpeed=0.7;
+controls.enablePan=false;
+controls.minDistance=2.2; controls.maxDistance=9;
+let interacting=false, lastEndT=-10;
+controls.addEventListener('start', ()=>{ interacting=true;  setRotStatus(false); });
+controls.addEventListener('end',   ()=>{ interacting=false; lastEndT=clockNow; });
+function setRotStatus(on){
+  document.getElementById('rot-status').textContent='自转 AUTO-ROT: '+(on?'ON':'PAUSED');
+}
+
+/* ============================================================
+ * UI：时钟 / 数据面板 / 日志 / 流星 / 视差 / 噪点
+ * ============================================================ */
+function startUI(){
+  /* 时钟 */
+  const days=['日','一','二','三','四','五','六'];
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'LOCAL';
+  document.getElementById('tz-name').textContent=tz.split('/').pop().toUpperCase();
+  const pad=n=>String(n).padStart(2,'0');
+  setInterval(()=>{
+    const d=new Date();
+    document.getElementById('utc-time').textContent=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds());
+    document.getElementById('local-time').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+    document.getElementById('date-line').textContent=d.getFullYear()+'年'+pad(d.getMonth()+1)+'月'+pad(d.getDate())+'日 周'+days[d.getDay()];
+  },1000);
+
+  /* 数据面板微抖动 */
+  let sat=8462, debris=34580;
+  setInterval(()=>{
+    sat+=Math.round((Math.random()-0.45)*6);
+    debris+=Math.round((Math.random()-0.4)*8);
+    document.getElementById('d-sat').textContent=sat.toLocaleString();
+    document.getElementById('d-debris').textContent=debris.toLocaleString();
+    document.getElementById('d-solar').textContent=(400+Math.random()*50|0);
+    document.getElementById('d-kp').textContent=(1.5+Math.random()*2).toFixed(1);
+    document.getElementById('d-co2').textContent=(421+Math.random()*.8).toFixed(1);
+    document.getElementById('d-temp').textContent=(1.18+Math.random()*.14).toFixed(2);
+    document.getElementById('d-o3').textContent=(292+Math.random()*10|0);
+    ['b1','b2','b3'].forEach(id=>{
+      const base={b1:92,b2:78,b3:96}[id], v=Math.round(base+(Math.random()-.5)*8);
+      document.getElementById(id).style.width=v+'%';
+      document.getElementById(id+'v').textContent=v+'%';
+    });
+  },2000);
+
+  /* 事件日志 */
+  const LOGS=['卫星 NOAA-19 进入测控范围','大气采样完成 · 数据包 #','深空网络链路心跳正常',
+    '轨道碎片预警解除 · OBJ-','地面站 GOLDSTONE 同步完成','云层反照率分析完成',
+    '磁层顶位置更新 · 9.8 RE','下行链路重校准完成','太阳风速度波动已记录'];
+  const logEl=document.getElementById('event-log');
+  const pushLog=()=>{
+    const d=new Date(), t=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds());
+    const li=document.createElement('li');
+    li.innerHTML='<b>'+t+'</b>'+LOGS[Math.random()*LOGS.length|0]+(Math.random()*9000+1000|0);
+    logEl.prepend(li);
+    while(logEl.children.length>6) logEl.lastChild.remove();
+  };
+  pushLog(); pushLog(); pushLog();
+  (function logLoop(){ pushLog(); setTimeout(logLoop, 3500+Math.random()*4000); })();
+
+  /* 流星 */
+  const mLayer=document.getElementById('meteor-layer');
+  (function meteorLoop(){
+    if(Math.random()<0.75){
+      const m=document.createElement('div');
+      m.className='meteor';
+      m.style.left=(innerWidth*(0.3+Math.random()*0.75))+'px';
+      m.style.top=(-20+Math.random()*innerHeight*0.3)+'px';
+      m.style.setProperty('--dur',(1.1+Math.random()*1.2)+'s');
+      mLayer.appendChild(m);
+      setTimeout(()=>m.remove(),2600);
+    }
+    setTimeout(meteorLoop, 2800+Math.random()*5500);
+  })();
+
+  /* 星云鼠标视差 */
+  const nebs=document.querySelectorAll('.neb-wrap');
+  addEventListener('mousemove', e=>{
+    const nx=e.clientX/innerWidth-0.5, ny=e.clientY/innerHeight-0.5;
+    nebs.forEach(w=>{
+      const d=+w.dataset.depth;
+      w.style.transform='translate('+(-nx*d)+'px,'+(-ny*d)+'px)';
+    });
+  });
+
+  /* 噪点贴图（程序生成） */
+  const nc=document.createElement('canvas'); nc.width=nc.height=140;
+  const ng=nc.getContext('2d'), nd=ng.createImageData(140,140);
+  for(let i=0;i<nd.data.length;i+=4){
+    const v=Math.random()*255|0;
+    nd.data[i]=nd.data[i+1]=nd.data[i+2]=v; nd.data[i+3]=16;
+  }
+  ng.putImageData(nd,0,0);
+  document.getElementById('noise').style.backgroundImage='url('+nc.toDataURL()+')';
+
+  /* 底部滚动播报 */
+  const msg='◆ 轨道高度 35,786 km · 同步卫星链路正常 ◆ 地磁活动平静 Kp=2 ◆ 深空网络 DSN 连接稳定 ◆ 下一窗口：ISS 过境 04:32 UTC ◆ 数据传输速率 1.2 Gbps ◆ 太阳活动低 · 无耀斑预警 ◆ 量子密钥分发测试通过 ';
+  document.getElementById('ticker').textContent=msg+msg;
+}
+
+/* ============================================================
+ * 主循环
+ * ============================================================ */
+const clock=new THREE.Clock();
+let clockNow=0, frames=0, lastFpsT=performance.now();
+const _sunV=new THREE.Vector3(), _vm=new THREE.Matrix4();
+let stars=null, lastReadT=0;
+
+function animate(){
+  requestAnimationFrame(animate);
+  const delta=Math.min(clock.getDelta(),0.05);
+  clockNow+=delta;
+
+  /* 自转：交互结束后 1.2s 恢复 */
+  if(!interacting && clockNow-lastEndT>1.2){
+    earthGroup.rotation.y+=AUTO_SPEED*delta;
+    setRotStatus(true);
+  }
+  if(cloudsMesh) cloudsMesh.rotation.y+=AUTO_SPEED*1.22*delta;  // 云层不同步
+  if(stars) stars.rotation.y+=delta*0.004;                      // 星空极缓漂移
+  if(starMat) starMat.uniforms.uTime.value=clockNow;            // 星星闪烁
+
+  controls.update();
+  camera.updateMatrixWorld();
+
+  /* 更新夜光着色的太阳方向（世界→视空间） */
+  if(earthMat && earthMat.userData.shader){
+    _vm.copy(camera.matrixWorld).invert();
+    _sunV.copy(SUN_DIR).transformDirection(_vm);
+    earthMat.userData.shader.uniforms.uSunView.value.copy(_sunV);
+  }
+
+  updateMarkers();
+  renderer.render(scene, camera);
+
+  /* FPS 与相机读数 */
+  frames++;
+  const now=performance.now();
+  if(now-lastFpsT>=1000){
+    document.getElementById('fps').textContent=Math.round(frames*1000/(now-lastFpsT))+' FPS';
+    frames=0; lastFpsT=now;
+  }
+  if(now-lastReadT>120){
+    lastReadT=now;
+    const p=camera.position, r=p.length();
+    const lat=90-Math.acos(THREE.MathUtils.clamp(p.y/r,-1,1))*180/Math.PI;
+    let lon=Math.atan2(p.z,-p.x)*180/Math.PI-180;
+    lon=((lon+540)%360)-180;
+    document.getElementById('cam-readout').textContent=
+      'LON '+lon.toFixed(1)+'° · LAT '+lat.toFixed(1)+'° · ALT '+Math.round((r-1)*6371).toLocaleString()+' km';
+  }
+}
+
+/* ---------- 自适应 ---------- */
+addEventListener('resize', ()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  if(starMat) starMat.uniforms.uPR.value=renderer.getPixelRatio();
+});
+
+/* ============================================================
+ * 启动：加载贴图 → 建场景 → 关闭加载画面
+ * ============================================================ */
+const TIPS=['正在下载地表贴图…','校准大气散射模型…','同步城市夜光数据…','部署云层渲染单元…','链路建立完成'];
+const T_KEYS=['day','night','normal','specular','bump','clouds'];
+let done=0, tipIdx=0;
+const tipTimer=setInterval(()=>{
+  document.getElementById('ld-tip').textContent=TIPS[Math.min(tipIdx++,TIPS.length-1)];
+},900);
+
+const jobs=T_KEYS.map(k=>{
+  const p=loadTexture(URLS[k], k==='day'||k==='night').then(t=>{
+    if(k==='day'&&!t) t=fallbackDay();       // 主贴图必须有兜底
+    done++;
+    document.getElementById('ld-bar').style.width=(done/T_KEYS.length*100)+'%';
+    return t;
+  });
+  return p;
+});
+
+Promise.all(jobs).then(([day,night,normal,specular,bump,clouds])=>{
+  stars=createStars();
+  createEarth({day,night,normal,specular,bump,clouds});
+  createAtmosphere();
+  createSunGlow();
+  createMarkers();
+  startUI();
+  animate();
+  clearInterval(tipTimer);
+  const ld=document.getElementById('loading');
+  ld.classList.add('done');
+  setTimeout(()=>ld.remove(),800);
+});
+</script>
+</body>
+</html>

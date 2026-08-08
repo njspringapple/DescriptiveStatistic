@@ -1,0 +1,4700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无人值守停车远程指挥中心</title>
+
+    <style>
+        :root {
+            --primary: #2878d0;
+            --primary-dark: #1c5d9f;
+            --primary-soft: #edf6ff;
+            --success: #169568;
+            --success-soft: #eaf8f2;
+            --warning: #db8816;
+            --warning-soft: #fff6e5;
+            --danger: #d94f4f;
+            --danger-soft: #fff0f0;
+            --purple: #7359bd;
+            --purple-soft: #f3efff;
+            --cyan: #13899c;
+            --cyan-soft: #eaf9fb;
+            --text: #243247;
+            --text-secondary: #59687a;
+            --muted: #8793a4;
+            --border: #dbe4ed;
+            --background: #f3f6f9;
+            --card: #fff;
+            --sidebar: #1d3859;
+            --sidebar-active: #2d5f93;
+            --video: #071015;
+            --shadow: 0 7px 24px rgba(30, 50, 76, .08);
+            --radius: 13px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.55;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 50;
+            width: 255px;
+            overflow-y: auto;
+            color: #fff;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(72, 126, 188, .28), transparent 22%),
+                var(--sidebar);
+        }
+
+        .brand {
+            padding: 21px 18px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            display: grid;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            place-items: center;
+            border-radius: 13px;
+            background: #3c79b8;
+            font-size: 16px;
+            font-weight: 850;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        .brand p {
+            margin: 3px 0 0;
+            color: rgba(255,255,255,.64);
+            font-size: 12px;
+        }
+
+        .center-status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 13px 0 0;
+            padding: 8px 10px;
+            border-radius: 9px;
+            background: rgba(255,255,255,.08);
+            font-size: 12px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #42db91;
+            box-shadow: 0 0 0 4px rgba(66,219,145,.12);
+        }
+
+        .nav {
+            padding: 14px 11px 28px;
+        }
+
+        .nav-title {
+            margin: 17px 11px 8px;
+            color: rgba(255,255,255,.45);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 11px 12px;
+            border: 0;
+            border-radius: 10px;
+            color: rgba(255,255,255,.83);
+            background: transparent;
+            text-align: left;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: var(--sidebar-active);
+        }
+
+        .nav-icon {
+            display: grid;
+            width: 29px;
+            height: 29px;
+            flex: 0 0 29px;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(255,255,255,.1);
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .nav-badge {
+            min-width: 24px;
+            margin-left: auto;
+            padding: 1px 7px;
+            border-radius: 999px;
+            color: #fff;
+            background: #df5b5b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* 主区域 */
+
+        .main {
+            min-height: 100vh;
+            margin-left: 255px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            min-height: 72px;
+            padding: 10px 25px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,.97);
+        }
+
+        .page-info h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .page-info p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: auto;
+        }
+
+        .top-select {
+            padding: 9px 33px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .seat-state {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 11px;
+            border: 1px solid #c9e6da;
+            border-radius: 9px;
+            color: var(--success);
+            background: var(--success-soft);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-left: 12px;
+            border-left: 1px solid var(--border);
+        }
+
+        .avatar {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-weight: 850;
+        }
+
+        .user strong,
+        .user span {
+            display: block;
+        }
+
+        .user strong {
+            font-size: 14px;
+        }
+
+        .user span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 22px 25px 50px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* 公共组件 */
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 18px 20px 0;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card-header p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 18px 20px 20px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 17px;
+            margin-bottom: 16px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .section-heading p {
+            max-width: 920px;
+            margin: 4px 0 0;
+            color: var(--text-secondary);
+        }
+
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 38px;
+            padding: 8px 14px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            color: var(--text);
+            background: #fff;
+        }
+
+        .btn-success {
+            color: #fff;
+            background: var(--success);
+        }
+
+        .btn-warning {
+            color: #fff;
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background: var(--danger);
+        }
+
+        .btn-dark {
+            color: #fff;
+            background: #253647;
+        }
+
+        .btn-sm {
+            min-height: 32px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: .52;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tag-blue {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .tag-green {
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .tag-orange {
+            color: #ac6708;
+            background: var(--warning-soft);
+        }
+
+        .tag-red {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .tag-purple {
+            color: var(--purple);
+            background: var(--purple-soft);
+        }
+
+        .tag-gray {
+            color: #667587;
+            background: #eef2f5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .grid-6 {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .metric-card {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            margin: 9px 0 4px;
+            font-size: 27px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .info-banner,
+        .warning-banner,
+        .success-banner,
+        .danger-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 14px 16px;
+            border-radius: 10px;
+        }
+
+        .info-banner {
+            border: 1px solid #c9dff5;
+            color: #315f91;
+            background: var(--primary-soft);
+        }
+
+        .warning-banner {
+            border: 1px solid #eed099;
+            color: #815710;
+            background: var(--warning-soft);
+        }
+
+        .success-banner {
+            border: 1px solid #c2e3d4;
+            color: #226b50;
+            background: var(--success-soft);
+        }
+
+        .danger-banner {
+            border: 1px solid #efc7c7;
+            color: #8f3535;
+            background: var(--danger-soft);
+        }
+
+        .banner-icon {
+            font-size: 21px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .banner-content strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 11px;
+        }
+
+        .detail-item {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #f9fbfd;
+        }
+
+        .detail-item > span:first-child {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .detail-section {
+            margin-top: 17px;
+        }
+
+        .detail-section h4 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .readonly-box {
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #f8fafc;
+        }
+
+        .readonly-box p {
+            margin: 3px 0;
+        }
+
+        /* 表格 */
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 930px;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 12px 13px;
+            border-bottom: 1px solid #e9eef3;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-secondary);
+            background: #f8fafc;
+            font-size: 13px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #fbfdff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .plate {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #a8c5e7;
+            border-radius: 6px;
+            color: #215f9e;
+            background: #eff7ff;
+            font-weight: 850;
+            letter-spacing: 1px;
+        }
+
+        /* 工具栏表单 */
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 13px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+            max-width: 440px;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .search-box span {
+            padding-left: 11px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 10px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+        }
+
+        .toolbar select {
+            padding: 9px 32px 9px 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required::after {
+            content: "*";
+            margin-left: 3px;
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: 0;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #83b0e0;
+            box-shadow: 0 0 0 3px rgba(40,120,208,.1);
+        }
+
+        textarea.form-control {
+            min-height: 86px;
+            resize: vertical;
+        }
+
+        /* 仿真视频 */
+
+        .video-window {
+            position: relative;
+            overflow: hidden;
+            min-height: 300px;
+            border: 1px solid #263944;
+            border-radius: 11px;
+            color: #d8eef5;
+            background:
+                radial-gradient(circle at 65% 25%, rgba(42,93,110,.22), transparent 28%),
+                linear-gradient(180deg, #081116, #03090d);
+            box-shadow: inset 0 0 50px rgba(0,0,0,.65);
+        }
+
+        .video-window::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 8;
+            pointer-events: none;
+            opacity: .18;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0,
+                transparent 3px,
+                rgba(255,255,255,.08) 4px
+            );
+        }
+
+        .video-window::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 7;
+            pointer-events: none;
+            background: radial-gradient(circle, transparent 52%, rgba(0,0,0,.55) 100%);
+        }
+
+        .video-noise {
+            position: absolute;
+            inset: -50%;
+            z-index: 6;
+            pointer-events: none;
+            opacity: .035;
+            background-image:
+                repeating-radial-gradient(circle at 20% 20%, #fff 0, #fff 1px, transparent 1px, transparent 4px);
+            animation: noiseMove .22s steps(2) infinite;
+        }
+
+        @keyframes noiseMove {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(2%, -1%); }
+            50% { transform: translate(-1%, 2%); }
+            75% { transform: translate(1%, 1%); }
+            100% { transform: translate(0,0); }
+        }
+
+        .camera-top {
+            position: absolute;
+            left: 13px;
+            right: 13px;
+            top: 10px;
+            z-index: 12;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            color: #d9f3fb;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        .rec-indicator {
+            color: #ff6666;
+            font-weight: 800;
+        }
+
+        .camera-bottom {
+            position: absolute;
+            left: 13px;
+            right: 13px;
+            bottom: 10px;
+            z-index: 12;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            color: #bfe0e8;
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        .video-road {
+            position: absolute;
+            left: -8%;
+            right: -8%;
+            bottom: -5px;
+            height: 58%;
+            clip-path: polygon(21% 0, 79% 0, 100% 100%, 0 100%);
+            background:
+                linear-gradient(90deg, transparent 48%, rgba(226,232,228,.65) 49%, rgba(226,232,228,.65) 51%, transparent 52%),
+                #273239;
+        }
+
+        .video-curb-left,
+        .video-curb-right {
+            position: absolute;
+            bottom: 0;
+            z-index: 3;
+            width: 22%;
+            height: 58%;
+            background: #182228;
+        }
+
+        .video-curb-left {
+            left: 0;
+            clip-path: polygon(0 0, 70% 0, 100% 100%, 0 100%);
+        }
+
+        .video-curb-right {
+            right: 0;
+            clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .camera-car {
+            position: absolute;
+            left: 39%;
+            bottom: 54px;
+            z-index: 5;
+            width: 150px;
+            height: 72px;
+            transition: 1.3s ease;
+        }
+
+        .camera-car.moving {
+            transform: translateY(-140px) scale(.68);
+            opacity: .55;
+        }
+
+        .car-body {
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            bottom: 5px;
+            height: 48px;
+            border-radius: 20px 24px 8px 8px;
+            background: linear-gradient(180deg, #d7dce0, #77838b);
+            box-shadow: 0 8px 15px rgba(0,0,0,.55);
+        }
+
+        .car-roof {
+            position: absolute;
+            left: 33px;
+            top: 0;
+            width: 84px;
+            height: 38px;
+            border-radius: 25px 25px 4px 4px;
+            background: #6d7981;
+        }
+
+        .car-window {
+            position: absolute;
+            left: 43px;
+            top: 8px;
+            width: 64px;
+            height: 22px;
+            border-radius: 15px 15px 2px 2px;
+            background: #263944;
+        }
+
+        .car-wheel {
+            position: absolute;
+            bottom: 0;
+            width: 24px;
+            height: 24px;
+            border: 5px solid #68737a;
+            border-radius: 50%;
+            background: #101619;
+        }
+
+        .wheel-left { left: 24px; }
+        .wheel-right { right: 24px; }
+
+        .recognition-box {
+            position: absolute;
+            left: 38%;
+            bottom: 45px;
+            z-index: 10;
+            width: 170px;
+            height: 95px;
+            border: 2px solid #4bf2a1;
+            transition: 1.2s ease;
+        }
+
+        .recognition-box::before {
+            content: "粤A·8K36Q  98.6%";
+            position: absolute;
+            left: -2px;
+            top: -24px;
+            padding: 2px 6px;
+            color: #06120d;
+            background: #4bf2a1;
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .recognition-box.moving {
+            transform: translateY(-140px) scale(.68);
+            opacity: .4;
+        }
+
+        .barrier-post {
+            position: absolute;
+            right: 18%;
+            bottom: 72px;
+            z-index: 5;
+            width: 28px;
+            height: 75px;
+            border-radius: 4px;
+            background: repeating-linear-gradient(
+                180deg,
+                #e8e8e8 0,
+                #e8e8e8 12px,
+                #e34f4f 12px,
+                #e34f4f 24px
+            );
+        }
+
+        .barrier-arm {
+            position: absolute;
+            right: calc(18% + 17px);
+            bottom: 132px;
+            z-index: 5;
+            width: 190px;
+            height: 14px;
+            border-radius: 7px;
+            transform-origin: right center;
+            background: repeating-linear-gradient(
+                90deg,
+                #eee 0,
+                #eee 24px,
+                #d84848 24px,
+                #d84848 48px
+            );
+            box-shadow: 0 3px 8px rgba(0,0,0,.4);
+            transition: .8s ease;
+        }
+
+        .barrier-arm.open {
+            transform: rotate(72deg);
+        }
+
+        .video-message {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 20;
+            display: none;
+            padding: 12px 18px;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(255,255,255,.3);
+            border-radius: 7px;
+            color: #fff;
+            background: rgba(4,12,17,.82);
+            font-weight: 800;
+        }
+
+        .video-message.show {
+            display: block;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 11px;
+        }
+
+        .mini-video {
+            position: relative;
+            overflow: hidden;
+            min-height: 168px;
+            border: 1px solid #263944;
+            border-radius: 9px;
+            color: #d5e7ec;
+            background:
+                linear-gradient(rgba(2,10,14,.2), rgba(2,10,14,.72)),
+                radial-gradient(circle at 60% 40%, #31444d, #060d11);
+            cursor: pointer;
+        }
+
+        .mini-video::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .15;
+            background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, #fff 4px);
+        }
+
+        .mini-video-title {
+            position: absolute;
+            left: 9px;
+            top: 7px;
+            z-index: 3;
+            font-size: 11px;
+            font-family: Consolas, monospace;
+        }
+
+        .mini-video-status {
+            position: absolute;
+            right: 8px;
+            top: 7px;
+            z-index: 3;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4dd899;
+        }
+
+        .mini-lane {
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            bottom: 0;
+            height: 72%;
+            clip-path: polygon(20% 0, 80% 0, 100% 100%, 0 100%);
+            background: #273239;
+        }
+
+        .mini-car {
+            position: absolute;
+            left: 39%;
+            bottom: 28px;
+            z-index: 2;
+            width: 70px;
+            height: 34px;
+            border-radius: 13px 15px 5px 5px;
+            background: #9faab0;
+            animation: miniCar 5s ease-in-out infinite;
+        }
+
+        @keyframes miniCar {
+            0%, 25% { transform: translateY(0) scale(1); }
+            65%, 100% { transform: translateY(-55px) scale(.72); }
+        }
+
+        /* 全局驾驶舱 */
+
+        .global-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(350px, .65fr);
+            gap: 16px;
+        }
+
+        .project-map {
+            position: relative;
+            min-height: 450px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background:
+                linear-gradient(rgba(255,255,255,.72), rgba(255,255,255,.72)),
+                repeating-linear-gradient(0deg, #dfe7ee 0, #dfe7ee 1px, transparent 1px, transparent 32px),
+                repeating-linear-gradient(90deg, #dfe7ee 0, #dfe7ee 1px, transparent 1px, transparent 32px);
+        }
+
+        .project-node {
+            position: absolute;
+            min-width: 150px;
+            padding: 11px 12px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .project-node:hover {
+            border-color: var(--primary);
+        }
+
+        .project-node h4 {
+            margin: 0 0 3px;
+            font-size: 14px;
+        }
+
+        .project-node p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .node-danger {
+            border-color: #dc7777;
+            background: #fff5f5;
+        }
+
+        .node-warning {
+            border-color: #dfad61;
+            background: #fff9ec;
+        }
+
+        .node-success {
+            border-color: #72c4a3;
+            background: #f1fbf6;
+        }
+
+        /* 坐席工作台 */
+
+        .agent-layout {
+            display: grid;
+            grid-template-columns: 305px minmax(620px, 1fr) 365px;
+            gap: 13px;
+            align-items: start;
+        }
+
+        .queue-panel,
+        .agent-center,
+        .diagnosis-panel {
+            min-height: 760px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 14px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .call-list {
+            overflow-y: auto;
+            max-height: 700px;
+        }
+
+        .call-card {
+            padding: 13px 14px;
+            border-bottom: 1px solid #edf1f5;
+            cursor: pointer;
+        }
+
+        .call-card:hover,
+        .call-card.active {
+            background: var(--primary-soft);
+        }
+
+        .call-card.high {
+            border-left: 4px solid var(--danger);
+        }
+
+        .call-card.medium {
+            border-left: 4px solid var(--warning);
+        }
+
+        .call-card.normal {
+            border-left: 4px solid var(--primary);
+        }
+
+        .call-card-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 9px;
+        }
+
+        .call-card h4 {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .call-card p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .wait-time {
+            color: var(--danger);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .current-case-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .current-case-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .call-state {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--success);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 28px;
+        }
+
+        .waveform i {
+            display: block;
+            width: 3px;
+            border-radius: 2px;
+            background: var(--success);
+            animation: wave .8s ease-in-out infinite alternate;
+        }
+
+        .waveform i:nth-child(1) { height: 8px; }
+        .waveform i:nth-child(2) { height: 20px; animation-delay: .12s; }
+        .waveform i:nth-child(3) { height: 13px; animation-delay: .22s; }
+        .waveform i:nth-child(4) { height: 24px; animation-delay: .34s; }
+        .waveform i:nth-child(5) { height: 10px; animation-delay: .44s; }
+
+        @keyframes wave {
+            to { transform: scaleY(.35); }
+        }
+
+        .agent-video-wrap {
+            padding: 12px;
+            background: #101a20;
+        }
+
+        .video-tools {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            padding: 10px 12px;
+            color: #d9e9ee;
+            background: #17242b;
+        }
+
+        .video-tool-btn {
+            padding: 7px 10px;
+            border: 1px solid #40525b;
+            border-radius: 7px;
+            color: #dce8ec;
+            background: #24343c;
+        }
+
+        .video-tool-btn.active {
+            border-color: #4fafdd;
+            color: #fff;
+            background: #24648f;
+        }
+
+        .case-tabs {
+            display: flex;
+            gap: 3px;
+            padding: 8px;
+            border-bottom: 1px solid var(--border);
+            background: #f3f6f8;
+        }
+
+        .case-tab {
+            flex: 1;
+            padding: 8px;
+            border: 0;
+            border-radius: 7px;
+            color: var(--text-secondary);
+            background: transparent;
+            font-weight: 700;
+        }
+
+        .case-tab.active {
+            color: var(--primary);
+            background: #fff;
+            box-shadow: 0 2px 7px rgba(40,65,90,.08);
+        }
+
+        .case-content {
+            display: none;
+            padding: 13px 15px;
+        }
+
+        .case-content.active {
+            display: block;
+        }
+
+        .diagnosis-block {
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .diagnosis-block:last-child {
+            border-bottom: 0;
+        }
+
+        .diagnosis-block h4 {
+            margin: 0 0 8px;
+            font-size: 15px;
+        }
+
+        .diagnosis-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 9px;
+            border-radius: 8px;
+        }
+
+        .diagnosis-row:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .diagnosis-row p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .suggestion-box {
+            padding: 12px;
+            border: 1px solid #c9dff5;
+            border-radius: 9px;
+            color: #315f91;
+            background: var(--primary-soft);
+        }
+
+        .seat-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 呼叫队列 */
+
+        .call-queue-board {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(260px, 1fr));
+            gap: 13px;
+            overflow-x: auto;
+            align-items: start;
+        }
+
+        .call-column {
+            min-width: 260px;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #eef2f6;
+        }
+
+        .call-column-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .call-column-title h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .queue-event {
+            margin-bottom: 9px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .queue-event h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .queue-event p {
+            margin: 3px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 工单 */
+
+        .workorder-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(350px, .7fr);
+            gap: 16px;
+        }
+
+        .workorder-stepper {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 7px;
+        }
+
+        .work-step {
+            padding: 9px 6px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--muted);
+            background: #fff;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .work-step.done {
+            border-color: #aad6c4;
+            color: var(--success);
+            background: var(--success-soft);
+        }
+
+        .work-step.active {
+            border-color: #9cc4ea;
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        /* 设备 */
+
+        .device-layout {
+            display: grid;
+            grid-template-columns: 330px minmax(0, 1fr);
+            min-height: 650px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .device-list {
+            border-right: 1px solid var(--border);
+        }
+
+        .device-list-head {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .device-item {
+            padding: 13px 14px;
+            border-bottom: 1px solid #edf1f5;
+            cursor: pointer;
+        }
+
+        .device-item:hover,
+        .device-item.active {
+            background: var(--primary-soft);
+        }
+
+        .device-item h4 {
+            margin: 0 0 3px;
+            font-size: 14px;
+        }
+
+        .device-item p {
+            margin: 2px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .device-detail {
+            padding: 19px;
+        }
+
+        .diagnostic-log {
+            overflow-y: auto;
+            height: 210px;
+            padding: 12px;
+            border-radius: 9px;
+            color: #a9e3c1;
+            background: #0d171c;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+        }
+
+        .diagnostic-log p {
+            margin: 3px 0;
+        }
+
+        /* 开闸审批 */
+
+        .approval-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 400px;
+            gap: 16px;
+        }
+
+        .risk-score {
+            display: grid;
+            width: 96px;
+            height: 96px;
+            place-items: center;
+            border: 9px solid #ecc1c1;
+            border-radius: 50%;
+            color: var(--danger);
+            background: #fff7f7;
+            font-size: 27px;
+            font-weight: 850;
+        }
+
+        /* 应急 */
+
+        .emergency-panel {
+            padding: 19px;
+            border: 2px solid #e8b2b2;
+            border-radius: 13px;
+            background: #fff6f6;
+        }
+
+        .emergency-panel h3 {
+            margin: 0 0 6px;
+            color: #9a3737;
+        }
+
+        .emergency-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 11px;
+        }
+
+        .emergency-action {
+            padding: 15px;
+            border: 1px solid #edc8c8;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .emergency-action h4 {
+            margin: 0 0 5px;
+        }
+
+        .emergency-action p {
+            min-height: 45px;
+            margin: 0 0 11px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 时间线 */
+
+        .timeline {
+            position: relative;
+            padding-left: 22px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 7px;
+            bottom: 7px;
+            width: 2px;
+            background: #d9e4ef;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0 0 15px 13px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 9px;
+            height: 9px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 2px #c1d7ed;
+        }
+
+        .timeline-item strong {
+            font-size: 14px;
+        }
+
+        .timeline-item p {
+            margin: 2px 0 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* 弹窗 */
+
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(22,34,49,.56);
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-mask.show {
+            display: flex;
+        }
+
+        .modal {
+            overflow: hidden;
+            width: min(900px, 100%);
+            max-height: 92vh;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 25px 80px rgba(15,28,45,.32);
+        }
+
+        .modal.large {
+            width: min(1140px, 100%);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 18px 21px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-header p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .modal-close {
+            display: grid;
+            width: 37px;
+            height: 37px;
+            place-items: center;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            background: #eef2f5;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            max-height: calc(92vh - 145px);
+            padding: 20px 21px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 21px;
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+        }
+
+        /* Toast */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            top: 83px;
+            z-index: 200;
+            display: grid;
+            gap: 9px;
+        }
+
+        .toast {
+            width: min(420px, calc(100vw - 35px));
+            padding: 13px 15px;
+            border: 1px solid #bfe0d2;
+            border-radius: 10px;
+            color: #21694f;
+            background: #effaf5;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.error {
+            border-color: #efc8c8;
+            color: #983939;
+            background: #fff3f3;
+        }
+
+        @media (max-width: 1450px) {
+            .agent-layout {
+                grid-template-columns: 280px minmax(560px, 1fr);
+            }
+
+            .diagnosis-panel {
+                grid-column: 1 / -1;
+                min-height: auto;
+            }
+
+            .grid-6 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1250px) {
+            .grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-4,
+            .emergency-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .global-layout,
+            .workorder-layout,
+            .approval-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+
+            .nav-title {
+                display: none;
+            }
+
+            .nav-item {
+                min-width: 180px;
+            }
+
+            .topbar {
+                position: static;
+            }
+
+            .agent-layout,
+            .device-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .queue-panel,
+            .agent-center,
+            .diagnosis-panel {
+                min-height: auto;
+            }
+
+            .device-list {
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .call-queue-board {
+                grid-template-columns: repeat(4, 270px);
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                font-size: 15px;
+            }
+
+            .content {
+                padding: 16px 12px 35px;
+            }
+
+            .topbar {
+                padding: 10px 13px;
+            }
+
+            .top-select,
+            .seat-state,
+            .user {
+                display: none;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-5,
+            .grid-6,
+            .form-grid,
+            .detail-grid,
+            .emergency-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .camera-car {
+                left: 27%;
+            }
+
+            .recognition-box {
+                left: 26%;
+            }
+
+            .workorder-stepper {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- 左侧菜单 -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-row">
+                <div class="brand-logo">指挥</div>
+                <div>
+                    <h1>无人值守远程中心</h1>
+                    <p>多项目集中值守平台</p>
+                </div>
+            </div>
+
+            <div class="center-status">
+                <span class="online-dot"></span>
+                主中心运行正常 · 备用中心在线
+            </div>
+        </div>
+
+        <nav class="nav">
+            <div class="nav-title">运行指挥</div>
+
+            <button class="nav-item active" data-view="global">
+                <span class="nav-icon">全</span>
+                全局运行态势
+                <span class="nav-badge">6</span>
+            </button>
+
+            <button class="nav-item" data-view="agent">
+                <span class="nav-icon">席</span>
+                远程坐席工作台
+                <span class="nav-badge" id="callBadge">5</span>
+            </button>
+
+            <button class="nav-item" data-view="queue">
+                <span class="nav-icon">队</span>
+                呼叫与事件队列
+                <span class="nav-badge">12</span>
+            </button>
+
+            <button class="nav-item" data-view="workorder">
+                <span class="nav-icon">单</span>
+                现场协同工单
+                <span class="nav-badge" id="workBadge">7</span>
+            </button>
+
+            <div class="nav-title">设备与风险</div>
+
+            <button class="nav-item" data-view="device">
+                <span class="nav-icon">设</span>
+                设备远程运维
+                <span class="nav-badge" id="deviceBadge">4</span>
+            </button>
+
+            <button class="nav-item" data-view="approval">
+                <span class="nav-icon">闸</span>
+                开闸与减免审批
+                <span class="nav-badge" id="approvalBadge">3</span>
+            </button>
+
+            <button class="nav-item" data-view="emergency">
+                <span class="nav-icon">急</span>
+                应急指挥模式
+            </button>
+
+            <div class="nav-title">管理与监督</div>
+
+            <button class="nav-item" data-view="handover">
+                <span class="nav-icon">交</span>
+                交接班管理
+                <span class="nav-badge">4</span>
+            </button>
+
+            <button class="nav-item" data-view="audit">
+                <span class="nav-icon">审</span>
+                收入与操作审计
+            </button>
+        </nav>
+    </aside>
+
+    <!-- 主区域 -->
+    <main class="main">
+        <header class="topbar">
+            <div class="page-info">
+                <h2 id="pageTitle">全局运行态势</h2>
+                <p id="pageDesc">多项目、呼叫、设备、车流和坐席资源统一监管</p>
+            </div>
+
+            <div class="top-actions">
+                <select class="top-select">
+                    <option>华南区域远程中心</option>
+                    <option>集团备用指挥中心</option>
+                </select>
+
+                <select class="top-select" onchange="changeRole(this.value)">
+                    <option>远程运营主管</option>
+                    <option>远程坐席A016</option>
+                    <option>坐席班组长</option>
+                    <option>设备运维主管</option>
+                    <option>财务审计人员</option>
+                </select>
+
+                <div class="seat-state">
+                    <span class="online-dot"></span>
+                    在线接待
+                </div>
+
+                <div class="user">
+                    <div class="avatar">王</div>
+                    <div>
+                        <strong id="userName">王主管</strong>
+                        <span id="userRole">远程运营中心</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- 全局态势 -->
+            <section class="view active" id="view-global">
+                <div class="section-heading">
+                    <div>
+                        <h2>多项目集中运行态势</h2>
+                        <p>先看哪些项目正在拥堵、哪些设备故障、哪些呼叫等待过久，再进入具体车辆处置。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openSeatDispatch()">调整坐席资源</button>
+                        <button class="btn btn-danger" onclick="navigateTo('emergency')">进入应急指挥</button>
+                    </div>
+                </div>
+
+                <div class="grid-6 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">在线项目</div>
+                        <div class="metric-value">36/38</div>
+                        <div class="metric-note">2个项目降级运行</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">当前等待呼叫</div>
+                        <div class="metric-value">12</div>
+                        <div class="metric-note">最长等待1分26秒</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">在线坐席</div>
+                        <div class="metric-value">18/22</div>
+                        <div class="metric-note">忙碌14 · 空闲4</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">现场待处理工单</div>
+                        <div class="metric-value">7</div>
+                        <div class="metric-note">超时1项</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">离线设备</div>
+                        <div class="metric-value">4台</div>
+                        <div class="metric-note">相机2 · 对讲1 · 道闸1</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">今日人工开闸率</div>
+                        <div class="metric-value">0.82%</div>
+                        <div class="metric-note">较昨日下降0.13%</div>
+                    </div>
+                </div>
+
+                <div class="global-layout mb-16">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>项目运行地图</h3>
+                                <p>点击项目查看出入口、呼叫和设备状态</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="project-map">
+                                <div class="project-node node-danger"
+                                     style="left:8%;top:12%"
+                                     onclick="openProjectStatus('第一人民医院')">
+                                    <h4>第一人民医院</h4>
+                                    <p>出口排队18辆</p>
+                                    <p>等待呼叫4项</p>
+                                </div>
+
+                                <div class="project-node node-success"
+                                     style="left:39%;top:9%"
+                                     onclick="openProjectStatus('智谷办公园区')">
+                                    <h4>智谷办公园区</h4>
+                                    <p>设备运行正常</p>
+                                    <p>等待呼叫0项</p>
+                                </div>
+
+                                <div class="project-node node-warning"
+                                     style="right:7%;top:14%"
+                                     onclick="openProjectStatus('阳光雅苑住宅')">
+                                    <h4>阳光雅苑住宅</h4>
+                                    <p>B2出口相机离线</p>
+                                    <p>现场工单1项</p>
+                                </div>
+
+                                <div class="project-node node-success"
+                                     style="left:15%;top:47%"
+                                     onclick="openProjectStatus('星汇商业中心')">
+                                    <h4>星汇商业中心</h4>
+                                    <p>集中离场预警</p>
+                                    <p>设备在线率100%</p>
+                                </div>
+
+                                <div class="project-node node-warning"
+                                     style="left:46%;top:49%"
+                                     onclick="openProjectStatus('华南物流园')">
+                                    <h4>华南物流园</h4>
+                                    <p>南门对讲离线</p>
+                                    <p>降级人工值守</p>
+                                </div>
+
+                                <div class="project-node node-success"
+                                     style="right:9%;top:52%"
+                                     onclick="openProjectStatus('城市公共停车')">
+                                    <h4>城市公共停车</h4>
+                                    <p>12个场站在线</p>
+                                    <p>当前呼叫2项</p>
+                                </div>
+
+                                <div class="project-node node-success"
+                                     style="left:31%;bottom:8%"
+                                     onclick="openProjectStatus('汽车交易市场')">
+                                    <h4>汽车交易市场</h4>
+                                    <p>运行正常</p>
+                                    <p>夜间出场审批1项</p>
+                                </div>
+
+                                <div class="project-node node-warning"
+                                     style="right:19%;bottom:8%"
+                                     onclick="openProjectStatus('交通枢纽P3')">
+                                    <h4>交通枢纽P3</h4>
+                                    <p>支付接口延迟</p>
+                                    <p>人工介入率上升</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>当前高优先级事件</h3>
+                                <p>安全和出口阻塞优先</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="todo-list">
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>医院急诊出口车辆完全阻塞</strong>
+                                        <p>支付成功未同步，出口已排队8辆。</p>
+                                        <div class="todo-meta">持续2分14秒 · 坐席A016处理中</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="navigateTo('agent')">进入事件</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level danger"></div>
+                                    <div class="todo-content">
+                                        <strong>住宅项目车辆碰撞道闸</strong>
+                                        <p>道闸防砸记录异常，现场人员尚未到达。</p>
+                                        <div class="todo-meta">持续6分钟 · 可能涉及车辆损伤</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('workorder')">查看工单</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>物流园南门对讲设备离线</strong>
+                                        <p>远程重启失败，当前切换电话求助。</p>
+                                        <div class="todo-meta">运维人员预计12分钟到达</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('device')">设备诊断</button>
+                                </div>
+
+                                <div class="todo-item">
+                                    <div class="todo-level warning"></div>
+                                    <div class="todo-content">
+                                        <strong>交通枢纽支付服务响应缓慢</strong>
+                                        <p>平均支付回调由1秒增加至14秒。</p>
+                                        <div class="todo-meta">影响3个出口 · 尚未完全中断</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="navigateTo('emergency')">准备降级</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>实时项目视频轮巡</h3>
+                            <p>黑色监控窗口模拟实时车道视频</p>
+                        </div>
+
+                        <button class="btn btn-secondary btn-sm" onclick="toggleVideoRotation()">暂停/恢复轮巡</button>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="video-grid">
+                            <div class="mini-video" onclick="navigateTo('agent')">
+                                <div class="mini-video-title">CAM-HOSP-OUT-02 · 医院急诊出口</div>
+                                <div class="mini-video-status" style="background:#ef5c5c"></div>
+                                <div class="mini-lane"></div>
+                                <div class="mini-car"></div>
+                            </div>
+
+                            <div class="mini-video">
+                                <div class="mini-video-title">CAM-MALL-P2-OUT · 商业中心P2出口</div>
+                                <div class="mini-video-status"></div>
+                                <div class="mini-lane"></div>
+                                <div class="mini-car" style="animation-delay:1s"></div>
+                            </div>
+
+                            <div class="mini-video">
+                                <div class="mini-video-title">CAM-PARK-NORTH · 办公园区北门</div>
+                                <div class="mini-video-status"></div>
+                                <div class="mini-lane"></div>
+                                <div class="mini-car" style="animation-delay:2s"></div>
+                            </div>
+
+                            <div class="mini-video">
+                                <div class="mini-video-title">CAM-RES-B2-OUT · 住宅B2出口</div>
+                                <div class="mini-video-status" style="background:#e4a035"></div>
+                                <div class="mini-lane"></div>
+                                <div class="mini-car" style="animation-delay:.4s"></div>
+                            </div>
+
+                            <div class="mini-video">
+                                <div class="mini-video-title">CAM-LOGI-SOUTH · 物流园南门</div>
+                                <div class="mini-video-status" style="background:#e4a035"></div>
+                                <div class="mini-lane"></div>
+                                <div class="mini-car" style="animation-delay:1.7s"></div>
+                            </div>
+
+                            <div class="mini-video">
+                                <div class="mini-video-title">CAM-CITY-P08 · 城市公共停车P08</div>
+                                <div class="mini-video-status"></div>
+                                <div class="mini-lane"></div>
+                                <div class="mini-car" style="animation-delay:2.5s"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 远程坐席 -->
+            <section class="view" id="view-agent">
+                <div class="section-heading">
+                    <div>
+                        <h2>远程坐席事件工作台</h2>
+                        <p>接入求助后自动聚合视频、车辆、订单、支付、权益和设备状态。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="toggleSeatPause()">小休/恢复</button>
+                        <button class="btn btn-primary" onclick="acceptNextCall()">接听下一呼叫</button>
+                    </div>
+                </div>
+
+                <div class="agent-layout">
+
+                    <!-- 左侧呼叫队列 -->
+                    <div class="queue-panel">
+                        <div class="panel-title">
+                            <h3>等待呼叫</h3>
+                            <span class="tag tag-red" id="waitingCallCount">5项</span>
+                        </div>
+
+                        <div class="call-list" id="agentCallList"></div>
+                    </div>
+
+                    <!-- 中间处理区 -->
+                    <div class="agent-center">
+                        <div class="current-case-header">
+                            <div>
+                                <h3 id="currentCaseTitle">医院急诊出口 · 粤A·8K36Q</h3>
+                                <div class="call-state">
+                                    <span class="online-dot"></span>
+                                    <span id="callStatusText">对讲中 00:00</span>
+                                </div>
+                            </div>
+
+                            <div class="waveform" id="waveform">
+                                <i></i><i></i><i></i><i></i><i></i>
+                            </div>
+                        </div>
+
+                        <div class="agent-video-wrap">
+                            <div class="video-window" id="mainVideo">
+                                <div class="video-noise"></div>
+
+                                <div class="camera-top">
+                                    <span>CAM-HOSP-ER-OUT-02</span>
+                                    <span class="rec-indicator">● REC</span>
+                                    <span id="videoClock">2026-07-18 11:42:18</span>
+                                </div>
+
+                                <div class="video-road"></div>
+                                <div class="video-curb-left"></div>
+                                <div class="video-curb-right"></div>
+
+                                <div class="camera-car" id="cameraCar">
+                                    <div class="car-roof"></div>
+                                    <div class="car-window"></div>
+                                    <div class="car-body"></div>
+                                    <div class="car-wheel wheel-left"></div>
+                                    <div class="car-wheel wheel-right"></div>
+                                </div>
+
+                                <div class="recognition-box" id="recognitionBox"></div>
+                                <div class="barrier-post"></div>
+                                <div class="barrier-arm" id="barrierArm"></div>
+
+                                <div class="video-message" id="videoMessage">支付状态同步成功</div>
+
+                                <div class="camera-bottom">
+                                    <span>第一人民医院 / 急诊出口2号车道</span>
+                                    <span>1080P · 25FPS · 延迟86ms</span>
+                                </div>
+                            </div>
+
+                            <div class="video-tools">
+                                <button class="video-tool-btn active" onclick="switchCamera(this,'出口全景')">出口全景</button>
+                                <button class="video-tool-btn" onclick="switchCamera(this,'车牌特写')">车牌特写</button>
+                                <button class="video-tool-btn" onclick="switchCamera(this,'道闸侧视')">道闸侧视</button>
+                                <button class="video-tool-btn" onclick="captureEvidence()">现场截图</button>
+                                <button class="video-tool-btn" onclick="toggleIntercom()">静音/恢复对讲</button>
+                                <span style="margin-left:auto" id="laneQueueText">车道后方排队：8辆</span>
+                            </div>
+                        </div>
+
+                        <div class="case-tabs">
+                            <button class="case-tab active" onclick="switchCaseTab(this,'caseOverview')">车辆订单</button>
+                            <button class="case-tab" onclick="switchCaseTab(this,'casePayment')">支付流水</button>
+                            <button class="case-tab" onclick="switchCaseTab(this,'caseRights')">停车权益</button>
+                            <button class="case-tab" onclick="switchCaseTab(this,'caseHistory')">事件记录</button>
+                        </div>
+
+                        <div class="case-content active" id="caseOverview">
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span>识别车牌</span>
+                                    <strong>粤A·8K36Q</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>入场时间</span>
+                                    <strong>2026-07-18 09:16</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>停车时长</span>
+                                    <strong>2小时26分钟</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>原始停车费</span>
+                                    <strong>18元</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>支付状态</span>
+                                    <strong style="color:var(--success)">支付平台已成功</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>场端订单状态</span>
+                                    <strong style="color:var(--danger)" id="fieldOrderState">仍显示未支付</strong>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>入口与出口证据</h4>
+                                <div class="grid-2">
+                                    <div class="readonly-box">
+                                        <strong>入口记录</strong>
+                                        <p>09:16:22 从医院北门进入</p>
+                                        <p>车牌置信度：99.1%</p>
+                                        <p>车辆：白色小型轿车</p>
+                                    </div>
+
+                                    <div class="readonly-box">
+                                        <strong>当前出口</strong>
+                                        <p>11:42:18 到达急诊出口2号车道</p>
+                                        <p>车牌置信度：98.6%</p>
+                                        <p>连续呼叫：2次</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="case-content" id="casePayment">
+                            <div class="table-wrap">
+                                <table style="min-width:700px">
+                                    <thead>
+                                    <tr>
+                                        <th>时间</th>
+                                        <th>支付渠道</th>
+                                        <th>金额</th>
+                                        <th>支付订单</th>
+                                        <th>回调状态</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>11:39:26</td>
+                                        <td>微信支付</td>
+                                        <td>18元</td>
+                                        <td>WX2026071811392686</td>
+                                        <td><span class="tag tag-green">支付成功</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>11:39:27</td>
+                                        <td>停车平台回调</td>
+                                        <td>18元</td>
+                                        <td>PK20260718086218</td>
+                                        <td><span class="tag tag-green">平台已接收</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>11:39:28</td>
+                                        <td>场端同步</td>
+                                        <td>—</td>
+                                        <td>LANE-HOSP-02</td>
+                                        <td><span class="tag tag-red">同步超时</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="case-content" id="caseRights">
+                            <div class="detail-grid">
+                                <div class="detail-item"><span>车辆类型</span><strong>普通临停车辆</strong></div>
+                                <div class="detail-item"><span>医疗权益</span><strong>无可用权益</strong></div>
+                                <div class="detail-item"><span>停车券</span><strong>未使用</strong></div>
+                                <div class="detail-item"><span>月卡</span><strong>无</strong></div>
+                                <div class="detail-item"><span>黑名单</span><strong>否</strong></div>
+                                <div class="detail-item"><span>历史欠费</span><strong>0元</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="case-content" id="caseHistory">
+                            <div class="timeline" id="caseTimeline">
+                                <div class="timeline-item">
+                                    <strong>11:41:52</strong>
+                                    <p>车主第一次按下出口对讲按钮。</p>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong>11:42:03</strong>
+                                    <p>系统识别“支付成功但场端未同步”。</p>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong>11:42:08</strong>
+                                    <p>事件分配至坐席A016。</p>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong>11:42:18</strong>
+                                    <p>坐席接通可视对讲。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧诊断操作 -->
+                    <div class="diagnosis-panel">
+                        <div class="panel-title">
+                            <h3>系统诊断与处置</h3>
+                            <span class="tag tag-red">出口阻塞</span>
+                        </div>
+
+                        <div class="diagnosis-block">
+                            <h4>自动诊断结果</h4>
+
+                            <div class="diagnosis-row">
+                                <div>
+                                    <strong>支付流水</strong>
+                                    <p>微信支付18元，状态成功</p>
+                                </div>
+                                <span class="tag tag-green">正常</span>
+                            </div>
+
+                            <div class="diagnosis-row">
+                                <div>
+                                    <strong>停车订单</strong>
+                                    <p>平台中心订单已支付</p>
+                                </div>
+                                <span class="tag tag-green">正常</span>
+                            </div>
+
+                            <div class="diagnosis-row">
+                                <div>
+                                    <strong>场端同步</strong>
+                                    <p>支付结果下发超时</p>
+                                </div>
+                                <span class="tag tag-red">异常</span>
+                            </div>
+
+                            <div class="diagnosis-row">
+                                <div>
+                                    <strong>出口设备</strong>
+                                    <p>相机、道闸和地感在线</p>
+                                </div>
+                                <span class="tag tag-green">在线</span>
+                            </div>
+                        </div>
+
+                        <div class="diagnosis-block">
+                            <h4>推荐方案</h4>
+                            <div class="suggestion-box">
+                                支付依据完整，无需人工减免。建议重新同步支付状态，成功后由场端自动开闸。
+                            </div>
+                        </div>
+
+                        <div class="diagnosis-block">
+                            <h4>坐席可执行操作</h4>
+
+                            <div class="seat-actions">
+                                <button class="btn btn-primary" id="syncPaymentBtn" onclick="syncPaymentState()">重新同步支付</button>
+                                <button class="btn btn-secondary" onclick="sendPaymentLink()">发送缴费链接</button>
+                                <button class="btn btn-secondary" onclick="correctPlate()">修正本次车牌</button>
+                                <button class="btn btn-secondary" onclick="recalculateOrder()">重新计算费用</button>
+                                <button class="btn btn-warning" onclick="requestManualGate()">申请人工开闸</button>
+                                <button class="btn btn-danger" onclick="dispatchFieldTask()">派发现场任务</button>
+                            </div>
+                        </div>
+
+                        <div class="diagnosis-block">
+                            <h4>当前处理结果</h4>
+                            <div class="readonly-box" id="caseResultBox">
+                                正在与车主通话，尚未执行处置。
+                            </div>
+                        </div>
+
+                        <div class="diagnosis-block">
+                            <div class="section-actions">
+                                <button class="btn btn-secondary" onclick="holdCurrentCall()">挂起事件</button>
+                                <button class="btn btn-success" id="closeCaseBtn" disabled onclick="closeCurrentCase()">解决并结束通话</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 呼叫队列 -->
+            <section class="view" id="view-queue">
+                <div class="section-heading">
+                    <div>
+                        <h2>呼叫与事件优先级队列</h2>
+                        <p>安全事件、出口完全阻塞和多车排队优先于一般咨询。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openQueueRule()">队列分配规则</button>
+                        <button class="btn btn-primary" onclick="openSeatDispatch()">临时增加坐席</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">等待接听</div>
+                        <div class="metric-value">12项</div>
+                        <div class="metric-note">最长等待1分26秒</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">当前处理中</div>
+                        <div class="metric-value">14项</div>
+                        <div class="metric-note">3项即将超时</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">等待现场反馈</div>
+                        <div class="metric-value">7项</div>
+                        <div class="metric-note">最长等待18分钟</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待审批</div>
+                        <div class="metric-value">3项</div>
+                        <div class="metric-note">开闸2 · 减免1</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">今日一次解决率</div>
+                        <div class="metric-value">91.8%</div>
+                        <div class="metric-note">目标≥90%</div>
+                    </div>
+                </div>
+
+                <div class="call-queue-board" id="callQueueBoard"></div>
+            </section>
+
+            <!-- 现场工单 -->
+            <section class="view" id="view-workorder">
+                <div class="section-heading">
+                    <div>
+                        <h2>现场协同工单</h2>
+                        <p>远程无法解决的问题，准确告诉现场人员去哪里、找哪辆车、执行什么动作。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="createManualWorkorder()">人工创建工单</button>
+                    </div>
+                </div>
+
+                <div class="workorder-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>当前现场任务</h3>
+                                <p>按照到场时限和风险等级排序</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>工单/项目</th>
+                                        <th>现场位置</th>
+                                        <th>事件</th>
+                                        <th>处理人员</th>
+                                        <th>已持续</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="workorderTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>工单处置详情</h3>
+                                <p id="selectedWorkorderSubtitle">住宅B2出口碰杆事件</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body" id="workorderDetail"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 设备运维 -->
+            <section class="view" id="view-device">
+                <div class="section-heading">
+                    <div>
+                        <h2>设备远程诊断与运维</h2>
+                        <p>先远程诊断和恢复，无法恢复再派发现场维修任务。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="runAllDeviceCheck()">执行全量巡检</button>
+                        <button class="btn btn-primary" onclick="createDeviceWorkorder()">新建设备工单</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">接入设备</div>
+                        <div class="metric-value">2,862</div>
+                        <div class="metric-note">38个停车项目</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">设备在线率</div>
+                        <div class="metric-value">99.86%</div>
+                        <div class="metric-note">离线4台</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">今日故障</div>
+                        <div class="metric-value">18项</div>
+                        <div class="metric-note">远程恢复13项</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">平均恢复时间</div>
+                        <div class="metric-value">16分钟</div>
+                        <div class="metric-note">较上月下降4分钟</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">重复故障</div>
+                        <div class="metric-value">3台</div>
+                        <div class="metric-note">建议更换设备</div>
+                    </div>
+                </div>
+
+                <div class="device-layout">
+                    <div class="device-list">
+                        <div class="device-list-head">
+                            <select class="form-control" id="deviceFilter" onchange="renderDeviceList()">
+                                <option value="">全部异常设备</option>
+                                <option>离线</option>
+                                <option>响应慢</option>
+                                <option>重复故障</option>
+                            </select>
+                        </div>
+
+                        <div id="deviceList"></div>
+                    </div>
+
+                    <div class="device-detail" id="deviceDetail"></div>
+                </div>
+            </section>
+
+            <!-- 开闸审批 -->
+            <section class="view" id="view-approval">
+                <div class="section-heading">
+                    <div>
+                        <h2>远程开闸与费用减免审批</h2>
+                        <p>按业务依据、风险等级和未收金额执行分级审批，所有操作留存视频证据。</p>
+                    </div>
+                </div>
+
+                <div class="approval-layout">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>待审批事项</h3>
+                                <p>高风险开闸及费用调整</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>申请/项目</th>
+                                        <th>车辆</th>
+                                        <th>申请事项</th>
+                                        <th>金额影响</th>
+                                        <th>申请人</th>
+                                        <th>风险</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="approvalTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>审批依据</h3>
+                                <p>当前选中：住宅夜间欠费车辆放行</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body" id="approvalDetail"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 应急 -->
+            <section class="view" id="view-emergency">
+                <div class="section-heading">
+                    <div>
+                        <h2>大面积故障与应急指挥</h2>
+                        <p>支付、网络、供电或平台异常时，按项目预案降级运行并保留完整放行记录。</p>
+                    </div>
+                </div>
+
+                <div class="danger-banner mb-16">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">
+                        <strong>交通枢纽P3支付接口响应异常</strong>
+                        平均支付回调14秒，已影响3个出口。当前尚未完全中断，建议准备支付降级预案。
+                    </div>
+                </div>
+
+                <div class="emergency-panel mb-16">
+                    <h3>应急模式控制</h3>
+                    <p class="muted">以下操作会影响车辆收费和通行，必须由应急主管确认。</p>
+
+                    <div class="emergency-actions mt-16">
+                        <div class="emergency-action">
+                            <h4>支付降级模式</h4>
+                            <p>启用先离场后付费、短信补缴和出口快速疏散。</p>
+                            <button class="btn btn-warning btn-sm" onclick="startPaymentDegrade()">准备启动</button>
+                        </div>
+
+                        <div class="emergency-action">
+                            <h4>场端离线运行</h4>
+                            <p>使用本地规则和白名单，网络恢复后补传订单。</p>
+                            <button class="btn btn-secondary btn-sm" onclick="startOfflineMode()">启用离线模式</button>
+                        </div>
+
+                        <div class="emergency-action">
+                            <h4>批量安全疏散</h4>
+                            <p>指定出口常开并保存所有车辆图像和放行时间。</p>
+                            <button class="btn btn-danger btn-sm" onclick="startEvacuation()">启动疏散审批</button>
+                        </div>
+
+                        <div class="emergency-action">
+                            <h4>备用中心接管</h4>
+                            <p>将项目对讲、事件和设备控制切换到备用中心。</p>
+                            <button class="btn btn-primary btn-sm" onclick="switchBackupCenter()">切换备用中心</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>应急执行清单</h3>
+                                <p>按步骤确认，避免只开闸不留记录</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div id="emergencyChecklist">
+                                <label class="readonly-box" style="display:block;margin-bottom:8px">
+                                    <input type="checkbox" class="emergency-check">
+                                    已通知项目负责人和现场值班人员
+                                </label>
+                                <label class="readonly-box" style="display:block;margin-bottom:8px">
+                                    <input type="checkbox" class="emergency-check">
+                                    已确认异常范围和受影响车道
+                                </label>
+                                <label class="readonly-box" style="display:block;margin-bottom:8px">
+                                    <input type="checkbox" class="emergency-check">
+                                    已启动车辆图像和离线订单留存
+                                </label>
+                                <label class="readonly-box" style="display:block;margin-bottom:8px">
+                                    <input type="checkbox" class="emergency-check">
+                                    已向等待车主播放故障和补缴说明
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>当前应急状态</h3>
+                                <p>尚未启动正式降级</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="detail-grid">
+                                <div class="detail-item"><span>受影响项目</span><strong>交通枢纽P3</strong></div>
+                                <div class="detail-item"><span>受影响出口</span><strong>3条</strong></div>
+                                <div class="detail-item"><span>当前排队</span><strong>42辆</strong></div>
+                                <div class="detail-item"><span>已支付未同步</span><strong>18辆</strong></div>
+                                <div class="detail-item"><span>现场人员</span><strong>4人到位</strong></div>
+                                <div class="detail-item"><span>备用中心</span><strong>在线待命</strong></div>
+                            </div>
+
+                            <div class="readonly-box mt-16" id="emergencyStateBox">
+                                当前执行常规处置，系统每30秒重新检测支付服务状态。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 交接班 -->
+            <section class="view" id="view-handover">
+                <div class="section-heading">
+                    <div>
+                        <h2>坐席交接班管理</h2>
+                        <p>未关闭事件、设备故障、待审批事项和应急策略必须明确移交到下一班。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openHandoverConfirm()">发起交班</button>
+                    </div>
+                </div>
+
+                <div class="grid-4 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">本班处理呼叫</div>
+                        <div class="metric-value">286项</div>
+                        <div class="metric-note">一次解决率92.1%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">遗留事件</div>
+                        <div class="metric-value">4项</div>
+                        <div class="metric-note">高风险1项</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待现场反馈</div>
+                        <div class="metric-value">3项</div>
+                        <div class="metric-note">最长等待18分钟</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待补订单</div>
+                        <div class="metric-value">2笔</div>
+                        <div class="metric-note">未收金额36元</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>必须交接的事项</h3>
+                            <p>接班人确认后才能完成班次切换</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>事项</th>
+                                    <th>项目</th>
+                                    <th>当前状态</th>
+                                    <th>下一步</th>
+                                    <th>责任人</th>
+                                    <th>风险</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>碰杆车辆损伤事件</td>
+                                    <td>阳光雅苑住宅</td>
+                                    <td>等待现场照片</td>
+                                    <td>现场反馈后转保险定责</td>
+                                    <td>张班长</td>
+                                    <td><span class="tag tag-red">高</span></td>
+                                </tr>
+                                <tr>
+                                    <td>南门对讲设备离线</td>
+                                    <td>华南物流园</td>
+                                    <td>现场运维途中</td>
+                                    <td>维修后完成通话测试</td>
+                                    <td>陈工</td>
+                                    <td><span class="tag tag-orange">中</span></td>
+                                </tr>
+                                <tr>
+                                    <td>错误车牌支付迁移</td>
+                                    <td>城市公共停车P08</td>
+                                    <td>待财务复核</td>
+                                    <td>复核支付手机号和入场图片</td>
+                                    <td>财务李会计</td>
+                                    <td><span class="tag tag-orange">中</span></td>
+                                </tr>
+                                <tr>
+                                    <td>医院支付同步补单</td>
+                                    <td>第一人民医院</td>
+                                    <td>待系统自动补单</td>
+                                    <td>15分钟后检查订单状态</td>
+                                    <td>下一班坐席</td>
+                                    <td><span class="tag tag-blue">低</span></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 审计 -->
+            <section class="view" id="view-audit">
+                <div class="section-heading">
+                    <div>
+                        <h2>收入损失与操作审计</h2>
+                        <p>每次人工开闸、减免、退款、订单修正和未收金额均可追溯。</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="exportAuditReport()">导出当班审计报告</button>
+                    </div>
+                </div>
+
+                <div class="grid-5 mb-16">
+                    <div class="metric-card">
+                        <div class="metric-label">今日人工开闸</div>
+                        <div class="metric-value">126次</div>
+                        <div class="metric-note">占总出场0.82%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">有依据开闸</div>
+                        <div class="metric-value">119次</div>
+                        <div class="metric-note">依据完整率94.4%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">待补订单</div>
+                        <div class="metric-value">7笔</div>
+                        <div class="metric-note">预计金额126元</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">费用减免</div>
+                        <div class="metric-value">¥1,286</div>
+                        <div class="metric-note">项目原因占68%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">收入风险</div>
+                        <div class="metric-value">¥386</div>
+                        <div class="metric-note">待责任复核</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>重点操作记录</h3>
+                            <p>可查看关联录音、视频、订单和审批依据</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作人员</th>
+                                    <th>项目/车辆</th>
+                                    <th>操作</th>
+                                    <th>费用影响</th>
+                                    <th>业务依据</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="auditTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-mask" id="modalMask" onclick="maskClose(event)">
+    <div class="modal" id="modalBox">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalTitle">业务处理</h3>
+                <p id="modalSubtitle"></p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+    const pageMeta = {
+        global: ["全局运行态势", "多项目、呼叫、设备、车流和坐席资源统一监管"],
+        agent: ["远程坐席事件工作台", "视频、车辆、订单、支付、权益与设备一屏协同"],
+        queue: ["呼叫与事件优先级队列", "安全事件、出口阻塞和普通咨询分级处理"],
+        workorder: ["现场协同工单", "远程无法解决的问题准确派发现场"],
+        device: ["设备远程诊断与运维", "远程恢复、现场维修、测试和故障复盘"],
+        approval: ["开闸与减免审批", "依据、风险、权限和费用影响分级审批"],
+        emergency: ["应急指挥模式", "支付、网络、供电和平台故障降级运行"],
+        handover: ["坐席交接班管理", "未关闭事件、待补订单和重大故障数字化移交"],
+        audit: ["收入与操作审计", "开闸、减免、退款、补单及收入损失追溯"]
+    };
+
+    let calls = [
+        {
+            id: "CALL001",
+            project: "第一人民医院",
+            location: "急诊出口2号车道",
+            plate: "粤A·8K36Q",
+            type: "支付成功未放行",
+            wait: 86,
+            level: "high",
+            status: "等待接听",
+            queue: 8
+        },
+        {
+            id: "CALL002",
+            project: "阳光雅苑住宅",
+            location: "B2入口1号车道",
+            plate: "粤B·62M9P",
+            type: "月卡车辆无法进入",
+            wait: 62,
+            level: "medium",
+            status: "等待接听",
+            queue: 3
+        },
+        {
+            id: "CALL003",
+            project: "星汇商业中心",
+            location: "P2出口4号车道",
+            plate: "粤A·28K7M",
+            type: "商户优惠未抵扣",
+            wait: 48,
+            level: "medium",
+            status: "等待接听",
+            queue: 5
+        },
+        {
+            id: "CALL004",
+            project: "智谷办公园区",
+            location: "北门入口2号车道",
+            plate: "粤A·76M2Q",
+            type: "访客预约未匹配",
+            wait: 31,
+            level: "normal",
+            status: "等待接听",
+            queue: 1
+        },
+        {
+            id: "CALL005",
+            project: "城市公共停车P08",
+            location: "出口1号车道",
+            plate: "无牌车辆",
+            type: "手机无网络无法支付",
+            wait: 18,
+            level: "normal",
+            status: "等待接听",
+            queue: 2
+        }
+    ];
+
+    let queueEvents = [
+        {id:"QE001", stage:"等待接听", project:"第一人民医院", location:"急诊出口2", plate:"粤A·8K36Q", type:"出口阻塞", wait:"1分26秒", level:"高"},
+        {id:"QE002", stage:"等待接听", project:"星汇商业中心", location:"P2出口4", plate:"粤A·28K7M", type:"优惠未抵扣", wait:"48秒", level:"中"},
+        {id:"QE003", stage:"处理中", project:"阳光雅苑住宅", location:"B2出口", plate:"粤B·19Q6M", type:"道闸误落", wait:"处理6分钟", level:"高"},
+        {id:"QE004", stage:"处理中", project:"华南物流园", location:"南货运门", plate:"粤A·52T8M", type:"对讲设备离线", wait:"处理12分钟", level:"中"},
+        {id:"QE005", stage:"等待现场", project:"阳光雅苑住宅", location:"B2出口", plate:"粤B·19Q6M", type:"车辆损伤核验", wait:"现场途中", level:"高"},
+        {id:"QE006", stage:"等待现场", project:"智谷办公园区", location:"2号停车场", plate:"粤A·38M6K", type:"车辆堵塞出口", wait:"等待8分钟", level:"中"},
+        {id:"QE007", stage:"待审批", project:"城市公共停车P08", location:"出口1", plate:"粤A·61N8D", type:"欠费先离场", wait:"等待2分钟", level:"中"},
+        {id:"QE008", stage:"待审批", project:"汽车交易市场", location:"南门出口", plate:"无牌/VIN682316", type:"夜间商品车出场", wait:"等待5分钟", level:"高"}
+    ];
+
+    const queueStages = ["等待接听", "处理中", "等待现场", "待审批"];
+
+    let workorders = [
+        {
+            id:"WO001",
+            project:"阳光雅苑住宅",
+            location:"B2出口1号车道",
+            type:"车辆碰撞道闸",
+            assignee:"张班长",
+            duration:"6分钟",
+            status:"前往现场",
+            priority:"高",
+            plate:"粤B·19Q6M",
+            instruction:"保护现场，检查车辆和道闸损伤，暂停该车道。",
+            doneSteps:2
+        },
+        {
+            id:"WO002",
+            project:"华南物流园",
+            location:"南货运门",
+            type:"对讲设备离线",
+            assignee:"陈工",
+            duration:"12分钟",
+            status:"前往现场",
+            priority:"中",
+            plate:"—",
+            instruction:"检查对讲供电、网络和设备控制器，完成通话测试。",
+            doneSteps:2
+        },
+        {
+            id:"WO003",
+            project:"智谷办公园区",
+            location:"2号停车场出口",
+            type:"车辆故障堵塞车道",
+            assignee:"刘师傅",
+            duration:"8分钟",
+            status:"已到场",
+            priority:"中",
+            plate:"粤A·38M6K",
+            instruction:"设置警示锥，引导其他车辆改道并联系救援。",
+            doneSteps:4
+        },
+        {
+            id:"WO004",
+            project:"第一人民医院",
+            location:"急诊落客区",
+            type:"车辆超时占用",
+            assignee:"赵安保",
+            duration:"5分钟",
+            status:"处理中",
+            priority:"高",
+            plate:"粤A·72K8P",
+            instruction:"联系家属移车，保障急救通道畅通。",
+            doneSteps:4
+        }
+    ];
+
+    let selectedWorkorderId = "WO001";
+
+    let devices = [
+        {
+            id:"DEV001",
+            project:"华南物流园",
+            name:"南门可视对讲",
+            code:"INTERCOM-SOUTH-01",
+            type:"对讲设备",
+            state:"离线",
+            since:"10:28",
+            network:"网络端口无响应",
+            power:"供电正常",
+            history:"近30天第2次离线",
+            selected:true
+        },
+        {
+            id:"DEV002",
+            project:"阳光雅苑住宅",
+            name:"B2出口车牌相机",
+            code:"CAM-B2-OUT-02",
+            type:"车牌相机",
+            state:"离线",
+            since:"10:36",
+            network:"交换机端口正常",
+            power:"疑似设备断电",
+            history:"首次故障"
+        },
+        {
+            id:"DEV003",
+            project:"交通枢纽P3",
+            name:"P3出口道闸控制器",
+            code:"GATE-P3-OUT-04",
+            type:"道闸",
+            state:"响应慢",
+            since:"10:40",
+            network:"平均延迟860ms",
+            power:"供电正常",
+            history:"近7天第3次"
+        },
+        {
+            id:"DEV004",
+            project:"城市公共停车P08",
+            name:"出口自助缴费机",
+            code:"PAY-P08-OUT-01",
+            type:"缴费机",
+            state:"重复故障",
+            since:"09:52",
+            network:"网络正常",
+            power:"供电正常",
+            history:"近30天故障6次"
+        }
+    ];
+
+    let selectedDeviceId = "DEV001";
+
+    let approvals = [
+        {
+            id:"AP001",
+            project:"阳光雅苑住宅",
+            plate:"粤A·61N8D",
+            type:"欠费先离场后补缴",
+            amount:26,
+            applicant:"坐席A008",
+            risk:"中",
+            reason:"老人手机无网络，手机号和车辆身份已核验",
+            evidence:"入场图片、住户档案、手机号验证",
+            selected:true
+        },
+        {
+            id:"AP002",
+            project:"汽车交易市场",
+            plate:"无牌/VIN682316",
+            type:"夜间商品车出场",
+            amount:0,
+            applicant:"坐席A012",
+            risk:"高",
+            reason:"商户申请车辆外出上牌，夜间需管理方审批",
+            evidence:"车辆VIN、商户任务、驾驶员信息"
+        },
+        {
+            id:"AP003",
+            project:"星汇商业中心",
+            plate:"粤B·26K9Q",
+            type:"停车费全额减免",
+            amount:48,
+            applicant:"坐席A005",
+            risk:"高",
+            reason:"顾客称因停车场出口拥堵导致超时",
+            evidence:"出口排队记录、顾客订单、现场视频"
+        }
+    ];
+
+    let selectedApprovalId = "AP001";
+
+    let audits = [
+        ["11:42","坐席A016","第一人民医院 / 粤A·8K36Q","重新同步支付状态","0元","微信支付流水完整","处理中"],
+        ["11:36","班组长李明","城市公共停车 / 粤A·62M8Q","批准先离场后付费","26元待补","手机号及入场图片","已完成"],
+        ["11:28","坐席A008","星汇商业中心 / 粤B·19Q6M","补充商户停车券","减免12元","有效消费订单","已完成"],
+        ["11:16","坐席A012","阳光雅苑住宅 / 粤A·38M6K","人工远程开闸","未收18元","场端网络中断","待补单"],
+        ["10:52","设备运维陈工","华南物流园 / 南门","远程重启对讲设备","0元","设备无响应","转现场"],
+        ["10:26","坐席A003","智谷办公园区 / 粤A·76M2Q","修正访客车牌","0元","被访人确认","已完成"]
+    ];
+
+    let callSeconds = 0;
+    let callTimer = null;
+    let caseSolved = false;
+    let intercomMuted = false;
+
+    /* 导航 */
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => navigateTo(item.dataset.view));
+    });
+
+    function navigateTo(view) {
+        document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+
+        document.getElementById("view-" + view).classList.add("active");
+        document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[view][0];
+        document.getElementById("pageDesc").textContent = pageMeta[view][1];
+
+        if (view === "agent" && !callTimer) {
+            startCallTimer();
+        }
+
+        window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function changeRole(role) {
+        const roles = {
+            "远程运营主管":["王主管","远程运营中心","global"],
+            "远程坐席A016":["陈坐席","远程坐席A016","agent"],
+            "坐席班组长":["李班长","远程坐席一组","queue"],
+            "设备运维主管":["赵主管","设备运维中心","device"],
+            "财务审计人员":["刘会计","停车财务审计","audit"]
+        };
+
+        const current = roles[role];
+        document.getElementById("userName").textContent = current[0];
+        document.getElementById("userRole").textContent = current[1];
+        navigateTo(current[2]);
+        showToast(`已切换至“${role}”工作视角。`);
+    }
+
+    /* 视频与坐席 */
+
+    function renderAgentCalls() {
+        document.getElementById("agentCallList").innerHTML = calls.map((call, index) => `
+            <div class="call-card ${call.level} ${index === 0 ? "active" : ""}"
+                 onclick="selectCall('${call.id}')">
+                <div class="call-card-top">
+                    <h4>${call.project}</h4>
+                    <span class="wait-time">${formatWait(call.wait)}</span>
+                </div>
+                <p>${call.location}</p>
+                <p><span class="plate">${call.plate}</span></p>
+                <p>${call.type} · 后方排队${call.queue}辆</p>
+            </div>
+        `).join("");
+
+        document.getElementById("waitingCallCount").textContent = calls.length + "项";
+        document.getElementById("callBadge").textContent = calls.length;
+    }
+
+    function selectCall(id) {
+        const call = calls.find(item => item.id === id);
+
+        if (!call) return;
+
+        if (id !== "CALL001") {
+            openAlternativeCall(call);
+            return;
+        }
+
+        document.querySelectorAll(".call-card").forEach(item => item.classList.remove("active"));
+        event.currentTarget.classList.add("active");
+    }
+
+    function openAlternativeCall(call) {
+        const suggestions = {
+            CALL002: "检查月卡有效期、一位多车占用状态和权限同步情况。",
+            CALL003: "查询商户消费订单、停车券有效期和车辆绑定关系。",
+            CALL004: "核验预约车牌、被访人、访问时段及是否走错入口。",
+            CALL005: "核验手机号和入场图片，可发送短信链接或申请先离场后付费。"
+        };
+
+        const body = `
+            <div class="grid-2">
+                <div class="video-window" style="min-height:330px">
+                    <div class="video-noise"></div>
+                    <div class="camera-top">
+                        <span>LIVE-${call.id}</span>
+                        <span class="rec-indicator">● REC</span>
+                        <span>${fullTime()}</span>
+                    </div>
+                    <div class="video-road"></div>
+                    <div class="video-curb-left"></div>
+                    <div class="video-curb-right"></div>
+                    <div class="camera-car" style="left:34%">
+                        <div class="car-roof"></div>
+                        <div class="car-window"></div>
+                        <div class="car-body"></div>
+                        <div class="car-wheel wheel-left"></div>
+                        <div class="car-wheel wheel-right"></div>
+                    </div>
+                    <div class="camera-bottom">
+                        <span>${call.project} / ${call.location}</span>
+                        <span>LIVE</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+                        <div class="detail-item"><span>项目</span><strong>${call.project}</strong></div>
+                        <div class="detail-item"><span>车道</span><strong>${call.location}</strong></div>
+                        <div class="detail-item"><span>车辆</span><strong>${call.plate}</strong></div>
+                        <div class="detail-item"><span>求助原因</span><strong>${call.type}</strong></div>
+                        <div class="detail-item"><span>等待时间</span><strong>${formatWait(call.wait)}</strong></div>
+                        <div class="detail-item"><span>后方排队</span><strong>${call.queue}辆</strong></div>
+                    </div>
+
+                    <div class="info-banner mt-16">
+                        <div class="banner-icon">诊</div>
+                        <div class="banner-content">
+                            <strong>建议核验</strong>
+                            ${suggestions[call.id]}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            `接入呼叫：${call.project}`,
+            `${call.plate} · ${call.type}`,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">稍后处理</button>
+                <button class="btn btn-primary" onclick="acceptAlternativeCall('${call.id}')">接听此呼叫</button>
+            `,
+            true
+        );
+    }
+
+    function acceptAlternativeCall(id) {
+        const call = calls.find(item => item.id === id);
+        calls = calls.filter(item => item.id !== id);
+        renderAgentCalls();
+        closeModal();
+        showToast(`已接听${call.project}呼叫，车辆事件工作台正在加载。`);
+    }
+
+    function acceptNextCall() {
+        if (!calls.length) {
+            showToast("当前没有等待接听的呼叫。");
+            return;
+        }
+
+        showToast(`已按优先级接入：${calls[0].project} ${calls[0].location}。`);
+    }
+
+    function startCallTimer() {
+        clearInterval(callTimer);
+
+        callTimer = setInterval(() => {
+            callSeconds++;
+            document.getElementById("callStatusText").textContent =
+                "对讲中 " + formatDuration(callSeconds);
+        }, 1000);
+    }
+
+    function syncPaymentState() {
+        const button = document.getElementById("syncPaymentBtn");
+        button.disabled = true;
+        button.textContent = "正在同步...";
+
+        addCaseTimeline("正在向医院场端重新下发支付成功状态。");
+
+        setTimeout(() => {
+            document.getElementById("fieldOrderState").textContent = "已同步支付成功";
+            document.getElementById("fieldOrderState").style.color = "var(--success)";
+            document.getElementById("videoMessage").textContent = "支付状态同步成功";
+            document.getElementById("videoMessage").classList.add("show");
+            document.getElementById("caseResultBox").innerHTML =
+                "<strong>支付状态已重新同步。</strong><br>场端确认收到，正在自动执行开闸。";
+
+            addCaseTimeline("场端收到支付结果，订单状态已更新为已支付。");
+
+            setTimeout(() => {
+                document.getElementById("barrierArm").classList.add("open");
+                document.getElementById("cameraCar").classList.add("moving");
+                document.getElementById("recognitionBox").classList.add("moving");
+                document.getElementById("videoMessage").textContent = "道闸已抬起 · 车辆正在离场";
+                document.getElementById("laneQueueText").textContent = "车道恢复通行";
+
+                addCaseTimeline("道闸自动抬起，车辆正常离场。");
+
+                setTimeout(() => {
+                    document.getElementById("videoMessage").classList.remove("show");
+                    document.getElementById("closeCaseBtn").disabled = false;
+                    caseSolved = true;
+
+                    button.textContent = "支付同步完成";
+                    document.getElementById("caseResultBox").innerHTML =
+                        "<strong style='color:var(--success)'>事件已解决。</strong><br>车辆正常离场，无人工减免、无收入损失。";
+
+                    addAudit(
+                        "坐席A016",
+                        "第一人民医院 / 粤A·8K36Q",
+                        "重新同步支付并自动放行",
+                        "0元",
+                        "微信支付流水完整",
+                        "已解决"
+                    );
+                }, 1800);
+            }, 900);
+        }, 1400);
+    }
+
+    function closeCurrentCase() {
+        if (!caseSolved) {
+            showToast("当前事件尚未形成明确处理结果。", true);
+            return;
+        }
+
+        clearInterval(callTimer);
+        callTimer = null;
+
+        calls = calls.filter(item => item.id !== "CALL001");
+        renderAgentCalls();
+
+        document.getElementById("waveform").classList.add("hidden");
+        document.getElementById("callStatusText").textContent = "通话已结束 " + formatDuration(callSeconds);
+
+        showToast("事件已关闭：远程解决，未产生现场工单和费用损失。");
+    }
+
+    function requestManualGate() {
+        const body = `
+            <div class="warning-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    当前支付依据完整，系统建议优先重新同步支付状态，不建议直接人工开闸。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">申请原因</label>
+                    <select class="form-control" id="manualGateReason">
+                        <option>支付同步多次失败，出口持续拥堵</option>
+                        <option>设备故障无法自动开闸</option>
+                        <option>安全疏散需要</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>费用影响</label>
+                    <div class="readonly-box">车辆已支付18元，无未收费用</div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "申请人工远程开闸",
+            "开闸操作将保存视频、订单和申请依据",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-warning" onclick="submitManualGateRequest()">提交班组长审批</button>
+            `
+        );
+    }
+
+    function submitManualGateRequest() {
+        closeModal();
+        showToast("人工开闸申请已提交班组长审批。");
+    }
+
+    function dispatchFieldTask() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>项目</span><strong>第一人民医院</strong></div>
+                <div class="detail-item"><span>位置</span><strong>急诊出口2号车道</strong></div>
+                <div class="detail-item"><span>车辆</span><strong>粤A·8K36Q</strong></div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">任务类型</label>
+                    <select class="form-control" id="fieldTaskType">
+                        <option>现场检查道闸及车道</option>
+                        <option>人工疏导出口车辆</option>
+                        <option>设备运维支援</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>到场时限</label>
+                    <div class="readonly-box">高优先级：3分钟</div>
+                </div>
+
+                <div class="form-group full">
+                    <label>坐席已执行操作</label>
+                    <div class="readonly-box">已核验微信支付成功；场端支付状态同步失败。</div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "派发医院现场任务",
+            "现场人员无需重复询问车辆和订单信息",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmFieldDispatch()">确认派单</button>
+            `
+        );
+    }
+
+    function confirmFieldDispatch() {
+        workorders.unshift({
+            id:"WO" + Date.now().toString().slice(-6),
+            project:"第一人民医院",
+            location:"急诊出口2号车道",
+            type:document.getElementById("fieldTaskType").value,
+            assignee:"医院安保1号岗",
+            duration:"刚刚",
+            status:"待接单",
+            priority:"高",
+            plate:"粤A·8K36Q",
+            instruction:"检查道闸和出口车道，必要时现场引导车辆离场。",
+            doneSteps:1
+        });
+
+        renderWorkorders();
+        closeModal();
+        showToast("现场任务已派发至医院安保1号岗。");
+    }
+
+    function correctPlate() {
+        const body = `
+            <div class="grid-2">
+                <div class="video-window" style="min-height:260px">
+                    <div class="video-noise"></div>
+                    <div class="camera-top"><span>车牌特写</span><span class="rec-indicator">● REC</span></div>
+                    <div style="position:absolute;left:22%;right:22%;top:35%;height:70px;border:2px solid #4bf2a1;display:grid;place-items:center;font-size:23px;font-weight:850">
+                        粤A·8K36Q
+                    </div>
+                </div>
+
+                <form id="plateCorrectionForm" onsubmit="submitPlateCorrection(event)">
+                    <div class="form-group">
+                        <label>系统识别车牌</label>
+                        <input class="form-control" value="粤A·8K36Q" readonly>
+                    </div>
+
+                    <div class="form-group mt-16">
+                        <label class="required">修正车牌</label>
+                        <input class="form-control" name="plate" value="粤A·8K36Q" required>
+                    </div>
+
+                    <div class="form-group mt-16">
+                        <label class="required">修正原因</label>
+                        <select class="form-control">
+                            <option>字符识别错误</option>
+                            <option>临牌或特殊车牌</option>
+                            <option>车主错误输入支付车牌</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        openModal(
+            "修正本次停车订单车牌",
+            "修正仅影响当前订单，不会自动加入长期白名单",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('plateCorrectionForm').requestSubmit()">
+                    核验并修正
+                </button>
+            `,
+            true
+        );
+    }
+
+    function submitPlateCorrection(event) {
+        event.preventDefault();
+        closeModal();
+        showToast("本次订单车牌核验完成，未发现需要修改的字符。");
+    }
+
+    function recalculateOrder() {
+        showToast("费用已重新计算：停车2小时26分钟，应收18元，与原订单一致。");
+    }
+
+    function sendPaymentLink() {
+        showToast("缴费链接已发送至车主手机号138****5268。");
+    }
+
+    function holdCurrentCall() {
+        showToast("当前事件已挂起并进入“我的待办”，通话保持中。");
+    }
+
+    function switchCamera(button, name) {
+        document.querySelectorAll(".video-tool-btn").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+
+        document.getElementById("videoMessage").textContent = "已切换：" + name;
+        document.getElementById("videoMessage").classList.add("show");
+
+        setTimeout(() => {
+            document.getElementById("videoMessage").classList.remove("show");
+        }, 800);
+    }
+
+    function captureEvidence() {
+        addCaseTimeline("坐席保存当前出口视频截图作为事件证据。");
+        showToast("当前视频截图已保存至事件证据链。");
+    }
+
+    function toggleIntercom() {
+        intercomMuted = !intercomMuted;
+        document.getElementById("waveform").classList.toggle("hidden", intercomMuted);
+        showToast(intercomMuted ? "坐席麦克风已静音。" : "坐席麦克风已恢复。");
+    }
+
+    function addCaseTimeline(text) {
+        const timeline = document.getElementById("caseTimeline");
+        const div = document.createElement("div");
+        div.className = "timeline-item";
+        div.innerHTML = `<strong>${currentTime()}</strong><p>${text}</p>`;
+        timeline.appendChild(div);
+    }
+
+    function switchCaseTab(button, id) {
+        document.querySelectorAll(".case-tab").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".case-content").forEach(item => item.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(id).classList.add("active");
+    }
+
+    function toggleSeatPause() {
+        showToast("坐席状态已切换，系统会在完成当前通话后停止分配新呼叫。");
+    }
+
+    /* 队列 */
+
+    function renderCallQueueBoard() {
+        document.getElementById("callQueueBoard").innerHTML = queueStages.map(stage => {
+            const items = queueEvents.filter(item => item.stage === stage);
+
+            return `
+                <div class="call-column">
+                    <div class="call-column-title">
+                        <h3>${stage}</h3>
+                        <span class="tag tag-gray">${items.length}项</span>
+                    </div>
+
+                    ${items.map(item => `
+                        <div class="queue-event">
+                            <h4>${item.project}</h4>
+                            <p>${item.location} · <span class="plate">${item.plate}</span></p>
+                            <p>${item.type}</p>
+                            <p><strong>${item.wait}</strong></p>
+
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                                <span class="tag ${item.level === "高" ? "tag-red" : "tag-orange"}">${item.level}优先级</span>
+                                <button class="btn btn-secondary btn-sm" onclick="handleQueueEvent('${item.id}')">处理</button>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+        }).join("");
+    }
+
+    function handleQueueEvent(id) {
+        const item = queueEvents.find(event => event.id === id);
+
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>项目</span><strong>${item.project}</strong></div>
+                <div class="detail-item"><span>位置</span><strong>${item.location}</strong></div>
+                <div class="detail-item"><span>车辆</span><strong>${item.plate}</strong></div>
+                <div class="detail-item"><span>事件</span><strong>${item.type}</strong></div>
+                <div class="detail-item"><span>当前阶段</span><strong>${item.stage}</strong></div>
+                <div class="detail-item"><span>等待/处理</span><strong>${item.wait}</strong></div>
+            </div>
+        `;
+
+        openModal(
+            `队列事件：${item.type}`,
+            item.project,
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                <button class="btn btn-primary" onclick="takeQueueEvent('${id}')">接管事件</button>
+            `
+        );
+    }
+
+    function takeQueueEvent(id) {
+        const item = queueEvents.find(event => event.id === id);
+        item.stage = "处理中";
+        item.wait = "刚刚接管";
+
+        renderCallQueueBoard();
+        closeModal();
+        showToast(`${item.project}事件已由当前班组接管。`);
+    }
+
+    function openQueueRule() {
+        const body = `
+            <div class="readonly-box">
+                <p><strong>一级：</strong>消防、急救、安全疏散、车辆损伤和出口完全阻塞。</p>
+                <p><strong>二级：</strong>多车排队、设备故障、重复呼叫和高金额收费争议。</p>
+                <p><strong>三级：</strong>支付异常、月卡、访客、停车权益及一般通行问题。</p>
+                <p><strong>四级：</strong>发票、寻车、规则咨询及非实时业务。</p>
+            </div>
+        `;
+
+        openModal(
+            "呼叫队列优先级规则",
+            "排序不仅依据呼叫时间",
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`
+        );
+    }
+
+    function openSeatDispatch() {
+        const body = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>在线坐席</span><strong>18人</strong></div>
+                <div class="detail-item"><span>当前忙碌</span><strong>14人</strong></div>
+                <div class="detail-item"><span>备用坐席</span><strong>4人</strong></div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">调入技能组</label>
+                    <select class="form-control">
+                        <option>医院停车专席</option>
+                        <option>商业会员权益专席</option>
+                        <option>综合停车专席</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">调入人数</label>
+                    <select class="form-control">
+                        <option>2人</option>
+                        <option>3人</option>
+                        <option>4人</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "动态调整远程坐席",
+            "根据项目呼叫高峰临时增加服务能力",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmSeatDispatch()">确认调度</button>
+            `
+        );
+    }
+
+    function confirmSeatDispatch() {
+        closeModal();
+        showToast("已调入2名备用坐席支援医院停车专席。");
+    }
+
+    /* 工单 */
+
+    function renderWorkorders() {
+        document.getElementById("workorderTableBody").innerHTML = workorders.map(item => `
+            <tr onclick="selectWorkorder('${item.id}')" style="cursor:pointer">
+                <td><strong>${item.id}</strong><br><span class="muted">${item.project}</span></td>
+                <td>${item.location}</td>
+                <td>${item.type}<br><span class="muted">${item.plate}</span></td>
+                <td>${item.assignee}</td>
+                <td>${item.duration}</td>
+                <td>${statusTag(item.status)}</td>
+                <td><button class="btn btn-secondary btn-sm">查看</button></td>
+            </tr>
+        `).join("");
+
+        document.getElementById("workBadge").textContent =
+            workorders.filter(item => item.status !== "已关闭").length;
+    }
+
+    function selectWorkorder(id) {
+        selectedWorkorderId = id;
+        renderWorkorderDetail();
+    }
+
+    function renderWorkorderDetail() {
+        const item = workorders.find(order => order.id === selectedWorkorderId);
+        const steps = ["待接单","已接单","前往现场","已到场","处理中","待复核"];
+
+        document.getElementById("selectedWorkorderSubtitle").textContent =
+            `${item.project} · ${item.type}`;
+
+        document.getElementById("workorderDetail").innerHTML = `
+            <div class="detail-grid">
+                <div class="detail-item"><span>工单</span><strong>${item.id}</strong></div>
+                <div class="detail-item"><span>优先级</span><strong>${item.priority}</strong></div>
+                <div class="detail-item"><span>当前状态</span>${statusTag(item.status)}</div>
+                <div class="detail-item"><span>位置</span><strong>${item.location}</strong></div>
+                <div class="detail-item"><span>车辆</span><strong>${item.plate}</strong></div>
+                <div class="detail-item"><span>处理人员</span><strong>${item.assignee}</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>现场执行要求</h4>
+                <div class="readonly-box">${item.instruction}</div>
+            </div>
+
+            <div class="detail-section">
+                <h4>处置进度</h4>
+                <div class="workorder-stepper">
+                    ${steps.map((step,index) => `
+                        <div class="work-step ${index < item.doneSteps ? "done" : index === item.doneSteps ? "active" : ""}">
+                            ${step}
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>现场视频</h4>
+                <div class="mini-video" style="min-height:220px">
+                    <div class="mini-video-title">${item.project} · ${item.location} · BODY-CAM</div>
+                    <div class="mini-video-status"></div>
+                    <div class="mini-lane"></div>
+                    <div class="mini-car"></div>
+                </div>
+            </div>
+
+            <div class="section-actions mt-16">
+                <button class="btn btn-secondary" onclick="contactFieldWorker()">联系现场人员</button>
+                <button class="btn btn-primary" onclick="advanceWorkorder('${item.id}')">推进下一状态</button>
+                <button class="btn btn-success" onclick="closeWorkorder('${item.id}')">复核关闭</button>
+            </div>
+        `;
+    }
+
+    function advanceWorkorder(id) {
+        const item = workorders.find(order => order.id === id);
+
+        if (item.doneSteps < 5) {
+            item.doneSteps++;
+            const states = ["待接单","已接单","前往现场","已到场","处理中","待复核"];
+            item.status = states[item.doneSteps];
+        }
+
+        renderWorkorders();
+        renderWorkorderDetail();
+        showToast(`工单已推进至“${item.status}”。`);
+    }
+
+    function closeWorkorder(id) {
+        const item = workorders.find(order => order.id === id);
+
+        if (item.status !== "待复核" && item.doneSteps < 5) {
+            showToast("现场处理尚未完成，不能直接关闭。", true);
+            return;
+        }
+
+        item.status = "已关闭";
+        renderWorkorders();
+        renderWorkorderDetail();
+        showToast("工单已复核关闭，现场证据和处理结果已归档。");
+    }
+
+    function contactFieldWorker() {
+        showToast("已向现场人员发起语音联系。");
+    }
+
+    function createManualWorkorder() {
+        const body = `
+            <form id="manualWorkorderForm" onsubmit="submitManualWorkorder(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required">项目</label>
+                        <select class="form-control" name="project">
+                            <option>第一人民医院</option>
+                            <option>阳光雅苑住宅</option>
+                            <option>星汇商业中心</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">任务类型</label>
+                        <select class="form-control" name="type">
+                            <option>秩序现场处理</option>
+                            <option>设备运维</option>
+                            <option>车辆救援</option>
+                            <option>安全事件</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">位置</label>
+                        <input class="form-control" name="location" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>关联车牌</label>
+                        <input class="form-control" name="plate">
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="required">现场执行要求</label>
+                        <textarea class="form-control" name="instruction" required></textarea>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        openModal(
+            "人工创建现场协同工单",
+            "任务将按项目和类型分派现场岗位",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('manualWorkorderForm').requestSubmit()">
+                    创建并派发
+                </button>
+            `
+        );
+    }
+
+    function submitManualWorkorder(event) {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target).entries());
+
+        workorders.unshift({
+            id:"WO" + Date.now().toString().slice(-6),
+            project:data.project,
+            location:data.location,
+            type:data.type,
+            assignee:"待分派",
+            duration:"刚刚",
+            status:"待接单",
+            priority:"中",
+            plate:data.plate || "—",
+            instruction:data.instruction,
+            doneSteps:0
+        });
+
+        renderWorkorders();
+        closeModal();
+        showToast("现场工单已创建并进入项目任务池。");
+    }
+
+    /* 设备 */
+
+    function renderDeviceList() {
+        const filter = document.getElementById("deviceFilter")?.value || "";
+
+        const list = devices.filter(item => !filter || item.state === filter);
+
+        document.getElementById("deviceList").innerHTML = list.map(item => `
+            <div class="device-item ${item.id === selectedDeviceId ? "active" : ""}"
+                 onclick="selectDevice('${item.id}')">
+                <div style="display:flex;justify-content:space-between;gap:10px">
+                    <h4>${item.name}</h4>
+                    ${statusTag(item.state)}
+                </div>
+                <p>${item.project}</p>
+                <p>${item.code} · 自${item.since}</p>
+            </div>
+        `).join("");
+
+        document.getElementById("deviceBadge").textContent =
+            devices.filter(item => item.state !== "正常").length;
+    }
+
+    function selectDevice(id) {
+        selectedDeviceId = id;
+        renderDeviceList();
+        renderDeviceDetail();
+    }
+
+    function renderDeviceDetail() {
+        const device = devices.find(item => item.id === selectedDeviceId);
+
+        document.getElementById("deviceDetail").innerHTML = `
+            <div style="display:flex;justify-content:space-between;gap:15px">
+                <div>
+                    <h3 style="margin:0">${device.name}</h3>
+                    <p class="muted">${device.project} · ${device.code}</p>
+                </div>
+                <div>${statusTag(device.state)}</div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>设备类型</span><strong>${device.type}</strong></div>
+                <div class="detail-item"><span>异常开始</span><strong>${device.since}</strong></div>
+                <div class="detail-item"><span>历史故障</span><strong>${device.history}</strong></div>
+                <div class="detail-item"><span>网络状态</span><strong>${device.network}</strong></div>
+                <div class="detail-item"><span>供电状态</span><strong>${device.power}</strong></div>
+                <div class="detail-item"><span>业务降级</span><strong>已启用备用方案</strong></div>
+            </div>
+
+            <div class="detail-section">
+                <h4>远程诊断日志</h4>
+                <div class="diagnostic-log" id="diagnosticLog">
+                    <p>[10:28:02] 设备心跳中断</p>
+                    <p>[10:28:05] 尝试ICMP探测：超时</p>
+                    <p>[10:28:08] 检查上级交换机：在线</p>
+                    <p>[10:28:11] 检查同车道相机：在线</p>
+                    <p>[10:28:15] 推断：设备网络模块或本体故障</p>
+                </div>
+            </div>
+
+            <div class="section-actions mt-16">
+                <button class="btn btn-secondary" onclick="pingDevice()">重新检测</button>
+                <button class="btn btn-warning" onclick="restartDevice()">远程重启</button>
+                <button class="btn btn-secondary" onclick="disableLane()">停用当前车道</button>
+                <button class="btn btn-danger" onclick="dispatchDeviceRepair()">派发现场维修</button>
+            </div>
+        `;
+    }
+
+    function pingDevice() {
+        appendDiagnostic("开始重新检测设备网络和服务端口...");
+
+        setTimeout(() => {
+            appendDiagnostic("检测结果：网络端口仍无响应，建议尝试远程重启。");
+            showToast("设备检测完成，异常仍然存在。");
+        }, 800);
+    }
+
+    function restartDevice() {
+        appendDiagnostic("正在向设备控制器下发远程重启指令...");
+
+        setTimeout(() => {
+            appendDiagnostic("重启指令未收到确认，设备本体可能失去网络连接。");
+            showToast("远程重启失败，建议派发现场维修。", true);
+        }, 1100);
+    }
+
+    function appendDiagnostic(text) {
+        const log = document.getElementById("diagnosticLog");
+        const p = document.createElement("p");
+        p.textContent = `[${currentTime()}] ${text}`;
+        log.appendChild(p);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function disableLane() {
+        appendDiagnostic("当前车道已标记为暂停服务，入口诱导已更新。");
+        showToast("车道已停用，车辆将被引导至其他车道。");
+    }
+
+    function dispatchDeviceRepair() {
+        const device = devices.find(item => item.id === selectedDeviceId);
+
+        workorders.unshift({
+            id:"WO" + Date.now().toString().slice(-6),
+            project:device.project,
+            location:device.name,
+            type:"设备现场维修",
+            assignee:"设备运维陈工",
+            duration:"刚刚",
+            status:"待接单",
+            priority:"中",
+            plate:"—",
+            instruction:`检查${device.code}供电、网络和设备本体，维修后完成业务测试。`,
+            doneSteps:0
+        });
+
+        renderWorkorders();
+        showToast("设备维修工单已派发，现场恢复后必须完成业务测试。");
+    }
+
+    function runAllDeviceCheck() {
+        showToast("全量设备巡检已启动，预计3分钟完成。");
+    }
+
+    function createDeviceWorkorder() {
+        navigateTo("workorder");
+        createManualWorkorder();
+    }
+
+    /* 审批 */
+
+    function renderApprovalTable() {
+        document.getElementById("approvalTableBody").innerHTML = approvals.map(item => `
+            <tr onclick="selectApproval('${item.id}')" style="cursor:pointer">
+                <td><strong>${item.id}</strong><br><span class="muted">${item.project}</span></td>
+                <td><span class="plate">${item.plate}</span></td>
+                <td>${item.type}</td>
+                <td>${item.amount ? item.amount + "元" : "无直接费用"}</td>
+                <td>${item.applicant}</td>
+                <td><span class="tag ${item.risk === "高" ? "tag-red" : "tag-orange"}">${item.risk}</span></td>
+                <td><button class="btn btn-secondary btn-sm">审批</button></td>
+            </tr>
+        `).join("");
+
+        document.getElementById("approvalBadge").textContent = approvals.length;
+    }
+
+    function selectApproval(id) {
+        selectedApprovalId = id;
+        renderApprovalDetail();
+    }
+
+    function renderApprovalDetail() {
+        const item = approvals.find(approval => approval.id === selectedApprovalId);
+        const score = item.risk === "高" ? 82 : 56;
+
+        document.getElementById("approvalDetail").innerHTML = `
+            <div style="display:flex;align-items:center;gap:18px">
+                <div class="risk-score">${score}</div>
+                <div>
+                    <h3 style="margin:0">${item.type}</h3>
+                    <p class="muted">${item.project} · ${item.plate}</p>
+                    <span class="tag ${item.risk === "高" ? "tag-red" : "tag-orange"}">${item.risk}风险</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>申请原因</h4>
+                <div class="readonly-box">${item.reason}</div>
+            </div>
+
+            <div class="detail-section">
+                <h4>已有依据</h4>
+                <div class="readonly-box">${item.evidence}</div>
+            </div>
+
+            <div class="detail-grid mt-16" style="grid-template-columns:1fr 1fr">
+                <div class="detail-item"><span>费用影响</span><strong>${item.amount}元</strong></div>
+                <div class="detail-item"><span>申请人员</span><strong>${item.applicant}</strong></div>
+            </div>
+
+            <div class="section-actions mt-16">
+                <button class="btn btn-danger" onclick="rejectApproval('${item.id}')">驳回</button>
+                <button class="btn btn-secondary" onclick="requestMoreEvidence('${item.id}')">补充证据</button>
+                <button class="btn btn-success" onclick="approveApplication('${item.id}')">批准并执行</button>
+            </div>
+        `;
+    }
+
+    function approveApplication(id) {
+        const item = approvals.find(approval => approval.id === id);
+
+        addAudit(
+            "班组长李明",
+            `${item.project} / ${item.plate}`,
+            `批准：${item.type}`,
+            item.amount ? item.amount + "元" : "0元",
+            item.evidence,
+            "已批准"
+        );
+
+        approvals = approvals.filter(approval => approval.id !== id);
+        selectedApprovalId = approvals[0]?.id || "";
+
+        renderApprovalTable();
+
+        if (selectedApprovalId) {
+            renderApprovalDetail();
+        } else {
+            document.getElementById("approvalDetail").innerHTML =
+                `<div class="success-banner"><div class="banner-icon">✓</div><div class="banner-content">当前没有待审批事项。</div></div>`;
+        }
+
+        showToast("申请已批准，执行结果将进入费用及开闸审计。");
+    }
+
+    function rejectApproval(id) {
+        approvals = approvals.filter(approval => approval.id !== id);
+        selectedApprovalId = approvals[0]?.id || "";
+        renderApprovalTable();
+
+        if (selectedApprovalId) renderApprovalDetail();
+
+        showToast("申请已驳回，申请坐席已收到原因提示。");
+    }
+
+    function requestMoreEvidence(id) {
+        showToast("已退回申请人补充订单、现场图片或业务凭证。");
+    }
+
+    /* 应急 */
+
+    function startPaymentDegrade() {
+        if (![...document.querySelectorAll(".emergency-check")].every(item => item.checked)) {
+            showToast("请先完成应急执行清单确认。", true);
+            return;
+        }
+
+        const body = `
+            <div class="danger-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>准备启动支付降级模式</strong>
+                    车辆可以核验手机号后先离场，未支付费用将形成补缴订单。
+                </div>
+            </div>
+
+            <div class="detail-grid mt-16">
+                <div class="detail-item"><span>影响项目</span><strong>交通枢纽P3</strong></div>
+                <div class="detail-item"><span>影响出口</span><strong>3条</strong></div>
+                <div class="detail-item"><span>预计车辆</span><strong>42辆</strong></div>
+            </div>
+        `;
+
+        openModal(
+            "确认启动支付降级模式",
+            "所有降级放行车辆将保存图像和补缴信息",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmPaymentDegrade()">确认启动</button>
+            `
+        );
+    }
+
+    function confirmPaymentDegrade() {
+        document.getElementById("emergencyStateBox").innerHTML =
+            "<strong style='color:var(--danger)'>支付降级模式运行中。</strong><br>出口启用手机号核验、先离场后付费和短信补缴。";
+
+        closeModal();
+        showToast("支付降级模式已启动，出口车辆开始快速疏散。");
+    }
+
+    function startOfflineMode() {
+        showToast("场端离线运行预案已下发，本地订单和月卡白名单开始生效。");
+    }
+
+    function startEvacuation() {
+        openModal(
+            "批量安全疏散审批",
+            "安全疏散会暂停收费并将指定出口常开",
+            `
+                <div class="danger-banner">
+                    <div class="banner-icon">!</div>
+                    <div class="banner-content">
+                        启动后将记录所有放行车辆图像和时间，不对安全疏散车辆机械追费。
+                    </div>
+                </div>
+            `,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmEvacuation()">确认启动疏散</button>
+            `
+        );
+    }
+
+    function confirmEvacuation() {
+        closeModal();
+        showToast("安全疏散模式已启动，指定出口已常开并开始记录车辆图像。");
+    }
+
+    function switchBackupCenter() {
+        showToast("项目对讲和事件数据正在同步至备用中心，当前坐席保持会话不中断。");
+    }
+
+    /* 交接 */
+
+    function openHandoverConfirm() {
+        const body = `
+            <div class="warning-banner">
+                <div class="banner-icon">!</div>
+                <div class="banner-content">
+                    <strong>当前有4项遗留事项</strong>
+                    接班人确认前，交班人员仍对高风险事件负责。
+                </div>
+            </div>
+
+            <div class="form-grid mt-16">
+                <div class="form-group">
+                    <label class="required">接班人员</label>
+                    <select class="form-control">
+                        <option>坐席B班组 · 李班长</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>交班时间</label>
+                    <div class="readonly-box">${fullTime()}</div>
+                </div>
+
+                <div class="form-group full">
+                    <label class="required">交班补充说明</label>
+                    <textarea class="form-control">重点关注住宅碰杆事件和物流园对讲维修结果。</textarea>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "发起当班交接",
+            "接班人将收到遗留事件、故障和补单清单",
+            body,
+            `
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmHandover()">提交接班确认</button>
+            `
+        );
+    }
+
+    function confirmHandover() {
+        closeModal();
+        showToast("交接清单已发送给B班组，待李班长逐项确认。");
+    }
+
+    /* 审计 */
+
+    function renderAuditTable() {
+        document.getElementById("auditTableBody").innerHTML = audits.map((item,index) => `
+            <tr>
+                <td>${item[0]}</td>
+                <td><strong>${item[1]}</strong></td>
+                <td>${item[2]}</td>
+                <td>${item[3]}</td>
+                <td>${item[4]}</td>
+                <td>${item[5]}</td>
+                <td>${statusTag(item[6])}</td>
+                <td><button class="btn btn-secondary btn-sm" onclick="openAuditEvidence(${index})">证据链</button></td>
+            </tr>
+        `).join("");
+    }
+
+    function addAudit(user, object, action, amount, evidence, status) {
+        audits.unshift([
+            currentTime(),
+            user,
+            object,
+            action,
+            amount,
+            evidence,
+            status
+        ]);
+
+        renderAuditTable();
+    }
+
+    function openAuditEvidence(index) {
+        const item = audits[index];
+
+        const body = `
+            <div class="grid-2">
+                <div class="mini-video" style="min-height:260px">
+                    <div class="mini-video-title">操作关联视频 · ${item[2]}</div>
+                    <div class="mini-video-status"></div>
+                    <div class="mini-lane"></div>
+                    <div class="mini-car"></div>
+                </div>
+
+                <div>
+                    <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+                        <div class="detail-item"><span>操作时间</span><strong>${item[0]}</strong></div>
+                        <div class="detail-item"><span>操作人员</span><strong>${item[1]}</strong></div>
+                        <div class="detail-item"><span>操作内容</span><strong>${item[3]}</strong></div>
+                        <div class="detail-item"><span>费用影响</span><strong>${item[4]}</strong></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>业务依据</h4>
+                        <div class="readonly-box">${item[5]}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>证据资料</h4>
+                <div class="readonly-box">
+                    对讲录音、入口图片、出口视频、停车订单、支付流水、道闸控制日志及审批记录已归档。
+                </div>
+            </div>
+        `;
+
+        openModal(
+            "操作审计证据链",
+            item[2],
+            body,
+            `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`,
+            true
+        );
+    }
+
+    function exportAuditReport() {
+        const text = [
+            "无人值守停车远程指挥中心当班审计报告",
+            "",
+            "人工开闸：126次",
+            "依据完整率：94.4%",
+            "待补订单：7笔",
+            "费用减免：1286元",
+            "待复核收入风险：386元",
+            "",
+            "重点事项：",
+            "1. 医院支付成功未同步事件已远程解决。",
+            "2. 住宅碰杆事件等待现场损伤核验。",
+            "3. 物流园南门对讲设备等待现场维修。"
+        ].join("\n");
+
+        const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "无人值守指挥中心当班审计报告.txt";
+        link.click();
+        URL.revokeObjectURL(url);
+
+        showToast("当班审计报告已导出。");
+    }
+
+    /* 项目和视频 */
+
+    function openProjectStatus(name) {
+        const body = `
+            <div class="grid-2">
+                <div class="mini-video" style="min-height:300px">
+                    <div class="mini-video-title">${name} · 实时入口视频</div>
+                    <div class="mini-video-status"></div>
+                    <div class="mini-lane"></div>
+                    <div class="mini-car"></div>
+                </div>
+
+                <div>
+                    <div class="detail-grid" style="grid-template-columns:1fr 1fr">
+                        <div class="detail-item"><span>设备在线率</span><strong>99.8%</strong></div>
+                        <div class="detail-item"><span>当前呼叫</span><strong>2项</strong></div>
+                        <div class="detail-item"><span>当前排队</span><strong>8辆</strong></div>
+                        <div class="detail-item"><span>现场人员</span><strong>3人在线</strong></div>
+                        <div class="detail-item"><span>人工开闸率</span><strong>0.6%</strong></div>
+                        <div class="detail-item"><span>项目模式</span><strong>远程值守</strong></div>
+                    </div>
+
+                    <div class="section-actions mt-16">
+                        <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                        <button class="btn btn-primary" onclick="closeModal();navigateTo('agent')">进入坐席事件</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        openModal(
+            `${name}运行状态`,
+            "实时视频、设备、呼叫和现场人员",
+            body,
+            "",
+            true
+        );
+
+        document.getElementById("modalFooter").classList.add("hidden");
+    }
+
+    function toggleVideoRotation() {
+        document.querySelectorAll(".mini-car").forEach(item => {
+            item.style.animationPlayState =
+                item.style.animationPlayState === "paused" ? "running" : "paused";
+        });
+
+        showToast("视频轮巡动画状态已切换。");
+    }
+
+    /* 公共方法 */
+
+    function statusTag(status) {
+        const map = {
+            "等待接听":"tag-red",
+            "处理中":"tag-blue",
+            "等待现场":"tag-orange",
+            "待审批":"tag-purple",
+            "待接单":"tag-orange",
+            "已接单":"tag-blue",
+            "前往现场":"tag-blue",
+            "已到场":"tag-purple",
+            "待复核":"tag-purple",
+            "已关闭":"tag-green",
+            "离线":"tag-red",
+            "响应慢":"tag-orange",
+            "重复故障":"tag-red",
+            "已解决":"tag-green",
+            "已完成":"tag-green",
+            "待补单":"tag-orange",
+            "转现场":"tag-purple",
+            "已批准":"tag-green",
+            "执行中":"tag-blue"
+        };
+
+        return `<span class="tag ${map[status] || "tag-gray"}">${status}</span>`;
+    }
+
+    function formatWait(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return m ? `${m}分${s}秒` : `${s}秒`;
+    }
+
+    function formatDuration(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    }
+
+    function currentTime() {
+        return new Date().toLocaleTimeString("zh-CN", {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:false
+        });
+    }
+
+    function fullTime() {
+        return new Date().toLocaleString("zh-CN", {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit",
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:false
+        }).replace(/\//g, "-");
+    }
+
+    function updateClocks() {
+        const clock = document.getElementById("videoClock");
+        if (clock) clock.textContent = fullTime();
+    }
+
+    function openModal(title, subtitle, body, footer, large = false) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalSubtitle").textContent = subtitle || "";
+        document.getElementById("modalBody").innerHTML = body;
+        document.getElementById("modalFooter").innerHTML =
+            footer || `<button class="btn btn-primary" onclick="closeModal()">关闭</button>`;
+
+        document.getElementById("modalFooter").classList.remove("hidden");
+        document.getElementById("modalBox").classList.toggle("large", large);
+        document.getElementById("modalMask").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        document.getElementById("modalMask").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function maskClose(event) {
+        if (event.target.id === "modalMask") closeModal();
+    }
+
+    function showToast(message, error = false) {
+        const toast = document.createElement("div");
+        toast.className = "toast" + (error ? " error" : "");
+        toast.innerHTML = `
+            <strong>${error ? "暂不能处理" : "处理完成"}</strong><br>
+            ${message}
+        `;
+
+        document.getElementById("toastWrap").appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeModal();
+    });
+
+    /* 初始化 */
+
+    function init() {
+        renderAgentCalls();
+        renderCallQueueBoard();
+
+        renderWorkorders();
+        renderWorkorderDetail();
+
+        renderDeviceList();
+        renderDeviceDetail();
+
+        renderApprovalTable();
+        renderApprovalDetail();
+
+        renderAuditTable();
+
+        updateClocks();
+        setInterval(updateClocks, 1000);
+
+        setInterval(() => {
+            calls.forEach(call => call.wait++);
+            if (document.getElementById("view-agent").classList.contains("active")) {
+                renderAgentCalls();
+            }
+        }, 1000);
+    }
+
+    init();
+</script>
+</body>
+</html>

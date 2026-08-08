@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>两轮车充电数字化运营解决方案</title>
+
+  <style>
+    /* ==========================================================
+       01. Reset & Theme
+       ========================================================== */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #020914;
+      font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        "Noto Sans SC",
+        Arial,
+        sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    :root {
+      --blue: #21a8ff;
+      --blue-light: #6bd7ff;
+      --cyan: #45e7f2;
+      --green: #45e3be;
+      --purple: #a18cff;
+      --orange: #f5b84f;
+      --red: #ff7588;
+
+      --text: #effcff;
+      --text-soft: #cce8f2;
+      --text-secondary: #82aabd;
+      --text-muted: #587d91;
+
+      --border: rgba(66, 177, 231, 0.22);
+      --border-bright: rgba(66, 218, 238, 0.42);
+      --border-purple: rgba(157, 132, 255, 0.27);
+      --border-green: rgba(61, 222, 184, 0.25);
+
+      --card:
+        linear-gradient(
+          145deg,
+          rgba(15, 50, 84, 0.92),
+          rgba(6, 24, 47, 0.94)
+        );
+
+      --shadow:
+        0 18px 44px rgba(0, 5, 20, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* ==========================================================
+       02. Stage
+       ========================================================== */
+
+    #stage {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      overflow: hidden;
+      transform-origin: center center;
+      color: var(--text);
+      background:
+        radial-gradient(
+          circle at 48% 44%,
+          rgba(0, 190, 255, 0.18),
+          transparent 31%
+        ),
+        radial-gradient(
+          circle at 84% 25%,
+          rgba(117, 77, 255, 0.13),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 10% 72%,
+          rgba(0, 221, 190, 0.08),
+          transparent 27%
+        ),
+        linear-gradient(
+          135deg,
+          #051122 0%,
+          #081a31 52%,
+          #040d1b 100%
+        );
+    }
+
+    #stage::before {
+      position: absolute;
+      inset: 0;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(
+          rgba(75, 150, 255, 0.33) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(75, 150, 255, 0.33) 1px,
+          transparent 1px
+        );
+      background-size: 40px 40px;
+      mask-image:
+        linear-gradient(
+          to bottom,
+          transparent 1%,
+          #000 16%,
+          #000 90%,
+          transparent
+        );
+      content: "";
+      pointer-events: none;
+    }
+
+    #stage::after {
+      position: absolute;
+      top: 110px;
+      left: 390px;
+      width: 810px;
+      height: 680px;
+      border: 1px solid rgba(68, 184, 255, 0.05);
+      border-radius: 50%;
+      box-shadow:
+        0 0 115px rgba(0, 176, 255, 0.05),
+        inset 0 0 115px rgba(0, 176, 255, 0.035);
+      content: "";
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ==========================================================
+       03. Header
+       ========================================================== */
+
+    .header {
+      position: absolute;
+      top: 22px;
+      right: 48px;
+      left: 48px;
+      display: flex;
+      height: 78px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      position: relative;
+      display: grid;
+      width: 52px;
+      height: 52px;
+      place-items: center;
+      border-radius: 15px;
+      color: #fff;
+      background:
+        linear-gradient(
+          135deg,
+          #168cff,
+          #22d2e5
+        );
+      box-shadow:
+        0 8px 28px rgba(0, 177, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .logo::after {
+      position: absolute;
+      inset: -5px;
+      border: 1px solid rgba(47, 216, 240, 0.14);
+      border-radius: 18px;
+      content: "";
+    }
+
+    .logo svg {
+      width: 31px;
+      height: 31px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #f2fdff;
+      font-size: 31px;
+      line-height: 1.16;
+      letter-spacing: 1px;
+    }
+
+    h1 b {
+      color: var(--cyan);
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: #65a9d0;
+      font-size: 11px;
+      letter-spacing: 3.2px;
+    }
+
+    .header-right {
+      text-align: right;
+    }
+
+    .header-right strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #dff8ff;
+      font-size: 15px;
+      letter-spacing: 1px;
+    }
+
+    .header-right strong b {
+      color: var(--green);
+    }
+
+    .header-right span {
+      color: #6796b1;
+      font-size: 10.5px;
+    }
+
+    /* ==========================================================
+       04. Top Concepts
+       ========================================================== */
+
+    .concepts {
+      position: absolute;
+      top: 107px;
+      right: 48px;
+      left: 48px;
+      display: flex;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+    }
+
+    .concept {
+      display: flex;
+      height: 34px;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid rgba(67, 187, 232, 0.21);
+      border-radius: 17px;
+      color: #9fcbdc;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(18, 72, 108, 0.5),
+          rgba(7, 33, 60, 0.5)
+        );
+      font-size: 10px;
+    }
+
+    .concept i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .concept strong {
+      color: #def8ff;
+      font-size: 11px;
+    }
+
+    .concept.green {
+      border-color: rgba(63, 220, 183, 0.2);
+    }
+
+    .concept.green i {
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .concept.purple {
+      border-color: rgba(157, 135, 255, 0.23);
+    }
+
+    .concept.purple i {
+      background: var(--purple);
+      box-shadow: 0 0 8px var(--purple);
+    }
+
+    /* ==========================================================
+       05. Shared Components
+       ========================================================== */
+
+    .card {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .card::before {
+      position: absolute;
+      top: 0;
+      right: 18px;
+      left: 18px;
+      height: 1px;
+      opacity: 0.62;
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          #55dafa,
+          transparent
+        );
+      content: "";
+    }
+
+    .section-head {
+      display: flex;
+      height: 42px;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .section-number {
+      color: #426d8b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .section-line {
+      width: 22px;
+      height: 2px;
+      border-radius: 2px;
+      background:
+        linear-gradient(
+          90deg,
+          #27baff,
+          #45e8d3
+        );
+    }
+
+    .section-head h2 {
+      margin: 0;
+      color: #dff6ff;
+      font-size: 17px;
+    }
+
+    .section-en {
+      margin-left: auto;
+      color: #617f94;
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    /* ==========================================================
+       06. Left Scenarios
+       ========================================================== */
+
+    .scenario-zone {
+      position: absolute;
+      top: 160px;
+      left: 48px;
+      width: 342px;
+      height: 574px;
+    }
+
+    .scenario-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 7px;
+    }
+
+    .scenario-card {
+      position: relative;
+      display: flex;
+      height: 94px;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+      padding: 12px 13px;
+      border: 1px solid rgba(61, 171, 228, 0.18);
+      border-radius: 13px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15, 52, 82, 0.82),
+          rgba(7, 27, 50, 0.88)
+        );
+      box-shadow: 0 10px 25px rgba(0, 5, 18, 0.18);
+    }
+
+    .scenario-card::after {
+      position: absolute;
+      right: -30px;
+      bottom: -38px;
+      width: 94px;
+      height: 94px;
+      border-radius: 50%;
+      background: rgba(38, 199, 224, 0.04);
+      content: "";
+    }
+
+    .scenario-card.purple {
+      border-color: rgba(150, 119, 255, 0.22);
+    }
+
+    .scenario-card.green {
+      border-color: rgba(50, 219, 179, 0.21);
+    }
+
+    .scenario-card.orange {
+      border-color: rgba(245, 184, 79, 0.19);
+    }
+
+    .scenario-icon {
+      display: grid;
+      width: 50px;
+      height: 50px;
+      flex: 0 0 50px;
+      place-items: center;
+      border: 1px solid rgba(69, 211, 238, 0.18);
+      border-radius: 14px;
+      color: #54e1f5;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(27, 150, 196, 0.2),
+          rgba(18, 79, 117, 0.14)
+        );
+    }
+
+    .scenario-card.purple .scenario-icon {
+      border-color: rgba(165, 134, 244, 0.18);
+      color: #c1afff;
+      background: rgba(124, 86, 218, 0.15);
+    }
+
+    .scenario-card.green .scenario-icon {
+      border-color: rgba(61, 218, 179, 0.17);
+      color: #55e7c6;
+      background: rgba(31, 180, 145, 0.13);
+    }
+
+    .scenario-card.orange .scenario-icon {
+      border-color: rgba(245, 184, 79, 0.18);
+      color: #f7c86d;
+      background: rgba(186, 123, 29, 0.12);
+    }
+
+    .scenario-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .scenario-copy {
+      position: relative;
+      z-index: 2;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .scenario-name {
+      display: flex;
+      align-items: center;
+      color: #dbf1f8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .scenario-tag {
+      margin-left: auto;
+      padding: 3px 7px;
+      border-radius: 8px;
+      color: #65dff0;
+      background: rgba(31, 171, 207, 0.1);
+      font-size: 8px;
+      font-weight: 500;
+    }
+
+    .scenario-card.purple .scenario-tag {
+      color: #c0adff;
+      background: rgba(129, 91, 220, 0.11);
+    }
+
+    .scenario-card.green .scenario-tag {
+      color: #5de2c4;
+      background: rgba(35, 187, 150, 0.1);
+    }
+
+    .scenario-card.orange .scenario-tag {
+      color: #f7c86d;
+      background: rgba(186, 123, 29, 0.1);
+    }
+
+    .scenario-demand {
+      margin-top: 6px;
+      color: #668da3;
+      font-size: 8.5px;
+    }
+
+    .scenario-plan {
+      margin-top: 7px;
+      color: #a8cbd9;
+      font-size: 9.3px;
+      line-height: 1.35;
+    }
+
+    .scenario-plan b {
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    .scenario-card.purple .scenario-plan b {
+      color: var(--purple-light);
+    }
+
+    .scenario-card.green .scenario-plan b {
+      color: var(--green);
+    }
+
+    .scenario-card.orange .scenario-plan b {
+      color: #f7c86d;
+    }
+
+    /* ==========================================================
+       07. Center Engine
+       ========================================================== */
+
+    .engine-zone {
+      position: absolute;
+      top: 160px;
+      left: 411px;
+      width: 735px;
+      height: 574px;
+    }
+
+    .engine-card {
+      position: absolute;
+      top: 49px;
+      left: 0;
+      width: 735px;
+      height: 518px;
+      overflow: hidden;
+      border-color: rgba(50, 216, 233, 0.42);
+      border-radius: 20px;
+      background:
+        radial-gradient(
+          circle at 50% 46%,
+          rgba(0, 200, 231, 0.17),
+          transparent 42%
+        ),
+        linear-gradient(
+          145deg,
+          rgba(11, 66, 98, 0.96),
+          rgba(5, 26, 50, 0.97)
+        );
+      box-shadow:
+        0 24px 65px rgba(0, 5, 20, 0.46),
+        0 0 50px rgba(0, 189, 229, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    }
+
+    .engine-card::after {
+      position: absolute;
+      top: 104px;
+      left: 245px;
+      width: 244px;
+      height: 244px;
+      border: 1px solid rgba(70, 222, 239, 0.12);
+      border-radius: 50%;
+      box-shadow:
+        0 0 55px rgba(25, 207, 230, 0.09),
+        inset 0 0 55px rgba(25, 207, 230, 0.05);
+      content: "";
+    }
+
+    .engine-top {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      height: 66px;
+      align-items: center;
+      padding: 14px 19px 9px;
+    }
+
+    .engine-logo {
+      display: grid;
+      width: 39px;
+      height: 39px;
+      flex: none;
+      place-items: center;
+      border-radius: 12px;
+      color: #fff;
+      background:
+        linear-gradient(
+          135deg,
+          #188eff,
+          #2dded4
+        );
+      box-shadow:
+        0 0 20px rgba(30, 205, 229, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .engine-logo svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .engine-title {
+      margin-left: 12px;
+    }
+
+    .engine-title strong {
+      display: block;
+      color: #effcff;
+      font-size: 18px;
+    }
+
+    .engine-title span {
+      display: block;
+      margin-top: 4px;
+      color: #68abc1;
+      font-size: 8.5px;
+      letter-spacing: 1px;
+    }
+
+    .engine-badge {
+      margin-left: auto;
+      padding: 7px 11px;
+      border: 1px solid rgba(62, 228, 199, 0.2);
+      border-radius: 15px;
+      color: #65ebce;
+      background: rgba(34, 195, 161, 0.08);
+      font-size: 8.5px;
+    }
+
+    .engine-main {
+      position: relative;
+      z-index: 3;
+      height: 350px;
+    }
+
+    .engine-lines {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 735px;
+      height: 350px;
+      pointer-events: none;
+    }
+
+    .engine-line {
+      fill: none;
+      stroke: #42cee8;
+      stroke-width: 1.3;
+      stroke-dasharray: 5 6;
+      opacity: 0.5;
+      animation: line-flow 10s linear infinite;
+    }
+
+    .engine-line.purple {
+      stroke: var(--purple);
+    }
+
+    .engine-line.green {
+      stroke: var(--green);
+    }
+
+    @keyframes line-flow {
+      to {
+        stroke-dashoffset: -120;
+      }
+    }
+
+    .engine-dot {
+      fill: #57e9f6;
+      filter: drop-shadow(0 0 5px #24d9f0);
+    }
+
+    .engine-core {
+      position: absolute;
+      top: 70px;
+      left: 264px;
+      z-index: 2;
+      display: flex;
+      width: 207px;
+      height: 207px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(70, 231, 239, 0.36);
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle,
+          rgba(20, 124, 154, 0.53),
+          rgba(6, 37, 65, 0.94) 65%
+        );
+      box-shadow:
+        0 0 38px rgba(0, 207, 231, 0.15),
+        inset 0 0 36px rgba(0, 210, 230, 0.08);
+    }
+
+    .engine-core::before,
+    .engine-core::after {
+      position: absolute;
+      border-radius: 50%;
+      content: "";
+    }
+
+    .engine-core::before {
+      inset: 12px;
+      border: 1px dashed rgba(82, 225, 237, 0.24);
+      animation: rotate 24s linear infinite;
+    }
+
+    .engine-core::after {
+      inset: 27px;
+      border: 1px solid rgba(82, 225, 237, 0.1);
+    }
+
+    @keyframes rotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .core-copy {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+    }
+
+    .core-icon {
+      display: grid;
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 10px;
+      place-items: center;
+      border-radius: 16px;
+      color: #fff;
+      background:
+        linear-gradient(
+          135deg,
+          #188fff,
+          #30dfd4
+        );
+      box-shadow: 0 0 23px rgba(37, 217, 231, 0.3);
+    }
+
+    .core-icon svg {
+      width: 31px;
+      height: 31px;
+    }
+
+    .core-name {
+      color: #effcff;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .core-description {
+      margin-top: 7px;
+      color: #72b2c5;
+      font-size: 8.5px;
+      line-height: 1.5;
+    }
+
+    .core-tag {
+      display: inline-block;
+      margin-top: 9px;
+      padding: 4px 9px;
+      border-radius: 10px;
+      color: var(--green);
+      background: rgba(33, 196, 163, 0.09);
+      font-size: 7.5px;
+    }
+
+    .engine-node {
+      position: absolute;
+      z-index: 2;
+      width: 182px;
+      height: 87px;
+      padding: 11px 12px;
+      border: 1px solid rgba(60, 181, 222, 0.18);
+      border-radius: 12px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15, 61, 91, 0.83),
+          rgba(6, 31, 56, 0.87)
+        );
+      box-shadow: 0 10px 25px rgba(0, 5, 16, 0.18);
+    }
+
+    .engine-node.purple {
+      border-color: rgba(153, 123, 255, 0.25);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(56, 47, 112, 0.57),
+          rgba(7, 33, 58, 0.88)
+        );
+    }
+
+    .engine-node.green {
+      border-color: rgba(47, 215, 177, 0.23);
+    }
+
+    .node-1 {
+      top: 12px;
+      left: 25px;
+    }
+
+    .node-2 {
+      top: 12px;
+      right: 25px;
+    }
+
+    .node-3 {
+      top: 132px;
+      left: 13px;
+    }
+
+    .node-4 {
+      top: 132px;
+      right: 13px;
+    }
+
+    .node-5 {
+      top: 252px;
+      left: 54px;
+    }
+
+    .node-6 {
+      top: 252px;
+      right: 54px;
+    }
+
+    .node-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .node-icon {
+      display: grid;
+      width: 29px;
+      height: 29px;
+      flex: none;
+      place-items: center;
+      border-radius: 8px;
+      color: #54def3;
+      background: rgba(23, 148, 189, 0.14);
+    }
+
+    .engine-node.purple .node-icon {
+      color: #c4b2ff;
+      background: rgba(129, 91, 220, 0.15);
+    }
+
+    .engine-node.green .node-icon {
+      color: #58e4c5;
+      background: rgba(32, 180, 145, 0.13);
+    }
+
+    .node-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .node-name {
+      color: #d7eff7;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+
+    .node-description {
+      margin-top: 8px;
+      color: #668da2;
+      font-size: 8px;
+      line-height: 1.45;
+    }
+
+    .engine-footer {
+      position: relative;
+      z-index: 4;
+      height: 86px;
+      margin: 4px 18px 0;
+      padding: 10px;
+      border: 1px solid rgba(58, 181, 216, 0.15);
+      border-radius: 12px;
+      background: rgba(3, 22, 41, 0.57);
+    }
+
+    .engine-footer-title {
+      color: #63a4ba;
+      font-size: 8px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .engine-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .engine-tag {
+      padding: 6px 8px;
+      border: 1px solid rgba(54, 178, 214, 0.15);
+      border-radius: 8px;
+      color: #94bdcd;
+      background: rgba(12, 51, 76, 0.51);
+      font-size: 8px;
+    }
+
+    .engine-tag.highlight {
+      border-color: rgba(51, 216, 179, 0.19);
+      color: #65e3cf;
+      background: rgba(27, 151, 126, 0.09);
+    }
+
+    /* ==========================================================
+       08. Right Dual-End
+       ========================================================== */
+
+    .value-zone {
+      position: absolute;
+      top: 160px;
+      right: 48px;
+      width: 385px;
+      height: 574px;
+    }
+
+    .value-card {
+      position: relative;
+      height: 525px;
+      margin-top: 7px;
+      padding: 13px;
+      border: 1px solid rgba(123, 104, 255, 0.27);
+      border-radius: 16px;
+      background:
+        radial-gradient(
+          circle at 50% 10%,
+          rgba(103, 74, 226, 0.13),
+          transparent 36%
+        ),
+        linear-gradient(
+          145deg,
+          rgba(34, 42, 93, 0.82),
+          rgba(7, 27, 50, 0.94)
+        );
+      box-shadow:
+        0 18px 42px rgba(0, 5, 18, 0.27),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .value-card::before {
+      position: absolute;
+      top: 0;
+      right: 20px;
+      left: 20px;
+      height: 1px;
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          var(--purple),
+          transparent
+        );
+      content: "";
+    }
+
+    .dual-head {
+      display: flex;
+      align-items: center;
+    }
+
+    .dual-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #ece9ff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dual-icon {
+      display: grid;
+      width: 31px;
+      height: 31px;
+      place-items: center;
+      border: 1px solid rgba(166, 139, 246, 0.17);
+      border-radius: 9px;
+      color: #d1c4ff;
+      background: rgba(121, 91, 218, 0.16);
+    }
+
+    .dual-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .dual-badge {
+      margin-left: auto;
+      padding: 4px 8px;
+      border-radius: 9px;
+      color: var(--green);
+      background: rgba(34, 190, 159, 0.09);
+      font-size: 7.5px;
+    }
+
+    /* Mini devices */
+
+    .dual-screens {
+      position: relative;
+      height: 190px;
+      margin-top: 12px;
+    }
+
+    .mini-admin {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 175px;
+      overflow: hidden;
+      border: 4px solid #162436;
+      border-radius: 10px;
+      background: #f2f5f8;
+      box-shadow: 0 15px 30px rgba(0, 5, 18, 0.28);
+    }
+
+    .mini-browser {
+      display: flex;
+      height: 14px;
+      align-items: center;
+      gap: 3px;
+      padding-left: 5px;
+      background: #dbe3ed;
+    }
+
+    .mini-browser i {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #9ba9b7;
+    }
+
+    .mini-admin-body {
+      display: grid;
+      height: calc(100% - 14px);
+      grid-template-columns: 49px 1fr;
+    }
+
+    .mini-sidebar {
+      padding: 6px 4px;
+      color: #8496a9;
+      background: #101b2b;
+    }
+
+    .mini-brand {
+      color: #fff;
+      font-size: 4.5px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .mini-nav {
+      margin-top: 8px;
+    }
+
+    .mini-nav span {
+      display: block;
+      height: 12px;
+      margin-bottom: 3px;
+      padding-left: 3px;
+      border-radius: 3px;
+      font-size: 3.5px;
+      line-height: 12px;
+    }
+
+    .mini-nav span.active {
+      color: #fff;
+      background: #1677ff;
+    }
+
+    .mini-main {
+      padding: 5px;
+      color: #172033;
+    }
+
+    .mini-main-title {
+      font-size: 5px;
+      font-weight: 700;
+    }
+
+    .mini-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      margin-top: 5px;
+    }
+
+    .mini-kpi {
+      height: 27px;
+      padding: 3px;
+      border: 1px solid #e4e9ef;
+      border-radius: 3px;
+      background: #fff;
+    }
+
+    .mini-kpi span {
+      display: block;
+      color: #7d8997;
+      font-size: 2.8px;
+    }
+
+    .mini-kpi strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 5.5px;
+    }
+
+    .mini-chart {
+      height: 62px;
+      margin-top: 4px;
+      padding: 4px;
+      border: 1px solid #e4e9ef;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .mini-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini-chart-grid {
+      stroke: #e8edf3;
+      stroke-width: 1;
+    }
+
+    .mini-chart-line {
+      fill: none;
+      stroke: #1677ff;
+      stroke-width: 2;
+    }
+
+    .mini-table {
+      margin-top: 4px;
+      border: 1px solid #e4e9ef;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .mini-row {
+      display: grid;
+      height: 11px;
+      grid-template-columns: 1.4fr 0.8fr 1fr 0.8fr;
+      align-items: center;
+      padding: 0 3px;
+      border-top: 1px solid #eef1f5;
+      color: #687383;
+      font-size: 2.7px;
+    }
+
+    .mini-row:first-child {
+      border-top: 0;
+      background: #f7f9fb;
+      font-weight: 700;
+    }
+
+    .mini-phone {
+      position: absolute;
+      top: 8px;
+      right: 0;
+      z-index: 3;
+      width: 103px;
+      height: 184px;
+      overflow: hidden;
+      border: 4px solid #172435;
+      border-radius: 17px;
+      background: #f4f7fb;
+      box-shadow: 0 16px 34px rgba(0, 4, 18, 0.4);
+    }
+
+    .mini-phone-status {
+      display: flex;
+      height: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5px;
+      color: #fff;
+      background: #1677ff;
+      font-size: 2.8px;
+    }
+
+    .mini-phone-head {
+      display: grid;
+      height: 17px;
+      place-items: center;
+      color: #fff;
+      background: #1677ff;
+      font-size: 4px;
+      font-weight: 700;
+    }
+
+    .mini-phone-hero {
+      height: 50px;
+      padding: 8px 6px;
+      color: #fff;
+      background:
+        linear-gradient(
+          145deg,
+          #1677ff,
+          #0958d9
+        );
+    }
+
+    .mini-phone-hero strong {
+      display: block;
+      font-size: 5px;
+    }
+
+    .mini-phone-hero span {
+      display: block;
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 2.8px;
+    }
+
+    .mini-scan-box {
+      margin: -10px 5px 0;
+      padding: 5px;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 5px 10px rgba(20, 60, 100, 0.12);
+    }
+
+    .mini-scan-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mini-scan-icon {
+      display: grid;
+      width: 18px;
+      height: 18px;
+      place-items: center;
+      border-radius: 5px;
+      color: #fff;
+      background: #1677ff;
+      font-size: 8px;
+    }
+
+    .mini-scan-copy strong {
+      display: block;
+      color: #172033;
+      font-size: 4px;
+    }
+
+    .mini-scan-copy span {
+      display: block;
+      color: #8b95a3;
+      font-size: 2.3px;
+    }
+
+    .mini-phone-card {
+      margin: 5px;
+      padding: 5px;
+      border: 1px solid #e5ebf2;
+      border-radius: 5px;
+      background: #fff;
+    }
+
+    .mini-phone-card strong {
+      color: #172033;
+      font-size: 3.8px;
+    }
+
+    .mini-phone-data {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 4px;
+    }
+
+    .mini-phone-data span {
+      display: grid;
+      height: 15px;
+      place-items: center;
+      border-radius: 4px;
+      color: #1677ff;
+      background: #eaf3ff;
+      font-size: 2.6px;
+    }
+
+    /* Value metrics */
+
+    .value-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .value-metric {
+      min-height: 62px;
+      padding: 9px 7px;
+      border: 1px solid rgba(134, 116, 228, 0.14);
+      border-radius: 9px;
+      background: rgba(13, 33, 65, 0.63);
+      text-align: center;
+    }
+
+    .value-metric strong {
+      display: block;
+      color: #e9e5ff;
+      font-size: 13px;
+    }
+
+    .value-metric span {
+      display: block;
+      margin-top: 5px;
+      color: #777e9e;
+      font-size: 7px;
+    }
+
+    .value-metric b {
+      display: block;
+      margin-top: 4px;
+      color: var(--green);
+      font-size: 6px;
+      font-weight: 500;
+    }
+
+    .value-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .value-item {
+      min-height: 57px;
+      padding: 8px 9px;
+      border: 1px solid rgba(129, 111, 218, 0.13);
+      border-radius: 9px;
+      color: #8f92b0;
+      background: rgba(14, 31, 59, 0.58);
+      font-size: 7.5px;
+      line-height: 1.4;
+    }
+
+    .value-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #d1ccea;
+      font-size: 8.5px;
+    }
+
+    .ai-advice {
+      margin-top: 9px;
+      min-height: 80px;
+      padding: 10px;
+      border: 1px solid rgba(49, 217, 181, 0.18);
+      border-radius: 10px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(17, 78, 78, 0.38),
+          rgba(7, 30, 51, 0.68)
+        );
+    }
+
+    .advice-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #77e4cf;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .advice-head i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .advice-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 9px;
+    }
+
+    .advice-point {
+      padding: 4px 6px;
+      border-radius: 6px;
+      color: #9ccdc3;
+      background: rgba(30, 148, 124, 0.11);
+      font-size: 6.5px;
+    }
+
+    /* ==========================================================
+       09. Main Connection Lines
+       ========================================================== */
+
+    .main-lines {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 1600px;
+      height: 900px;
+      pointer-events: none;
+    }
+
+    .customer-line {
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 1.3;
+      stroke-dasharray: 5 6;
+      opacity: 0.43;
+      animation: main-flow 10s linear infinite;
+    }
+
+    .operation-line {
+      fill: none;
+      stroke: var(--purple);
+      stroke-width: 1.4;
+      stroke-dasharray: 6 6;
+      opacity: 0.5;
+      animation: main-flow 10s linear infinite;
+    }
+
+    @keyframes main-flow {
+      to {
+        stroke-dashoffset: -130;
+      }
+    }
+
+    .main-dot {
+      fill: var(--cyan);
+      filter: drop-shadow(0 0 5px var(--cyan));
+    }
+
+    .main-dot-purple {
+      fill: var(--purple);
+      filter: drop-shadow(0 0 5px var(--purple));
+    }
+
+    /* ==========================================================
+       10. Bottom Lifecycle
+       ========================================================== */
+
+    .lifecycle-zone {
+      position: absolute;
+      right: 48px;
+      bottom: 42px;
+      left: 48px;
+      height: 111px;
+    }
+
+    .lifecycle-title {
+      display: flex;
+      height: 27px;
+      align-items: center;
+      gap: 8px;
+      color: #8ab2c6;
+      font-size: 9.5px;
+      letter-spacing: 1px;
+    }
+
+    .lifecycle-title::before {
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background:
+        linear-gradient(
+          90deg,
+          #29bdff,
+          #45e6ce
+        );
+      content: "";
+    }
+
+    .lifecycle {
+      display: grid;
+      height: 80px;
+      grid-template-columns:
+        1fr 29px
+        1fr 29px
+        1fr 29px
+        1fr 29px
+        1fr 29px
+        1fr 29px
+        1fr;
+      align-items: center;
+      padding: 0 14px;
+      border: 1px solid rgba(58, 180, 218, 0.16);
+      border-radius: 13px;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(9, 39, 66, 0.76),
+          rgba(18, 40, 80, 0.67),
+          rgba(8, 38, 63, 0.76)
+        );
+    }
+
+    .life-step {
+      text-align: center;
+    }
+
+    .life-number {
+      display: block;
+      margin-bottom: 4px;
+      color: rgba(73, 217, 235, 0.34);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .life-name {
+      color: #d0eaf3;
+      font-size: 9.5px;
+      font-weight: 700;
+    }
+
+    .life-description {
+      margin-top: 4px;
+      color: #63899e;
+      font-size: 7px;
+      line-height: 1.35;
+    }
+
+    .life-arrow {
+      position: relative;
+      height: 2px;
+      background:
+        linear-gradient(
+          90deg,
+          #237fa2,
+          #45d9e7
+        );
+    }
+
+    .life-arrow::after {
+      position: absolute;
+      top: -4px;
+      right: -1px;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 7px solid var(--cyan);
+      content: "";
+    }
+
+    /* ==========================================================
+       11. Footer
+       ========================================================== */
+
+    .footer {
+      position: absolute;
+      right: 49px;
+      bottom: 15px;
+      left: 49px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #50778f;
+      font-size: 8.5px;
+      letter-spacing: 1px;
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .footer i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    /* ==========================================================
+       12. Print
+       ========================================================== */
+
+    @media print {
+      html,
+      body {
+        width: 1600px;
+        height: 900px;
+        background: #030b17;
+      }
+
+      #stage {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="stage">
+    <div class="content">
+
+      <!-- ======================================================
+           Header
+           ====================================================== -->
+
+      <header class="header">
+        <div class="title-wrap">
+          <div class="logo">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <rect
+                x="4"
+                y="3"
+                width="12"
+                height="18"
+                rx="3"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+
+              <path
+                d="M8 8h4M8 12h4M8 16h3"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+
+              <path
+                d="M17 7h2v4h2l-4 6v-4h-2l2-6z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+
+          <div>
+            <h1>
+              两轮车充电数字化运营解决方案：
+              <b>安全充电 · 灵活经营 · 全链闭环</b>
+            </h1>
+
+            <div class="subtitle">
+              TWO-WHEELER CHARGING DIGITAL OPERATION SOLUTION
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <strong>
+            一套平台连接
+            <b>用户、设备、运营、运维与财务</b>
+          </strong>
+
+          <span>
+            多项目统一管理 · 多权益灵活经营 · 多厂商设备接入 · 多方收益结算
+          </span>
+        </div>
+      </header>
+
+      <!-- ======================================================
+           Concepts
+           ====================================================== -->
+
+      <section class="concepts">
+        <div class="concept">
+          <i></i>
+          <strong>一码即充</strong>
+          扫码识别站点、设备与端口
+        </div>
+
+        <div class="concept purple">
+          <i></i>
+          <strong>一人多权益</strong>
+          免费、套餐、余额、在线支付灵活选择
+        </div>
+
+        <div class="concept green">
+          <i></i>
+          <strong>一桩全监控</strong>
+          在线、离线、故障、功率与温度实时可视
+        </div>
+
+        <div class="concept">
+          <i></i>
+          <strong>一单全追溯</strong>
+          支付、充电、退款、权益与设备记录贯通
+        </div>
+
+        <div class="concept green">
+          <i></i>
+          <strong>一账全结算</strong>
+          收入、消耗、减免、分账口径清晰
+        </div>
+      </section>
+
+      <!-- ======================================================
+           Main topology lines
+           ====================================================== -->
+
+      <svg
+        class="main-lines"
+        viewBox="0 0 1600 900"
+      >
+        <!-- 场景至中台 -->
+
+        <path
+          class="customer-line"
+          d="M390 256 H411"
+        />
+
+        <path
+          class="customer-line"
+          d="M390 358 H411"
+        />
+
+        <path
+          class="customer-line"
+          d="M390 460 H411"
+        />
+
+        <path
+          class="customer-line"
+          d="M390 562 H411"
+        />
+
+        <path
+          class="customer-line"
+          d="M390 664 H411"
+        />
+
+        <circle
+          class="main-dot"
+          cx="400"
+          cy="256"
+          r="3"
+        />
+
+        <circle
+          class="main-dot"
+          cx="400"
+          cy="358"
+          r="3"
+        />
+
+        <circle
+          class="main-dot"
+          cx="400"
+          cy="460"
+          r="3"
+        />
+
+        <circle
+          class="main-dot"
+          cx="400"
+          cy="562"
+          r="3"
+        />
+
+        <circle
+          class="main-dot"
+          cx="400"
+          cy="664"
+          r="3"
+        />
+
+        <!-- 中台至双端 -->
+
+        <path
+          class="operation-line"
+          d="M1146 295 H1167"
+        />
+
+        <path
+          class="operation-line"
+          d="M1146 448 H1167"
+        />
+
+        <path
+          class="operation-line"
+          d="M1146 602 H1167"
+        />
+
+        <circle
+          class="main-dot-purple"
+          cx="1157"
+          cy="295"
+          r="3"
+        />
+
+        <circle
+          class="main-dot-purple"
+          cx="1157"
+          cy="448"
+          r="3"
+        />
+
+        <circle
+          class="main-dot-purple"
+          cx="1157"
+          cy="602"
+          r="3"
+        />
+      </svg>
+
+      <!-- ======================================================
+           Left: Scenarios
+           ====================================================== -->
+
+      <section class="scenario-zone">
+        <div class="section-head">
+          <span class="section-number">
+            01
+          </span>
+
+          <i class="section-line"></i>
+
+          <h2>
+            多元场景，一体化充电方案
+          </h2>
+
+          <span class="section-en">
+            SCENARIO
+          </span>
+        </div>
+
+        <div class="scenario-list">
+
+          <!-- 社区 -->
+
+          <div class="scenario-card">
+            <div class="scenario-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M4 20V9l8-5 8 5v11"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+
+                <path
+                  d="M8 20v-6h8v6M8 10h2M14 10h2"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div class="scenario-copy">
+              <div class="scenario-name">
+                社区／住宅小区
+
+                <span class="scenario-tag">
+                  居民高频
+                </span>
+              </div>
+
+              <div class="scenario-demand">
+                解决飞线充电、资源紧张、收费单一与安全监管难题
+              </div>
+
+              <div class="scenario-plan">
+                <b>扫码收费＋居民月卡＋物业职工免费</b>
+                · 充满自停 · 异常告警
+              </div>
+            </div>
+          </div>
+
+          <!-- 园区 -->
+
+          <div class="scenario-card purple">
+            <div class="scenario-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M4 20V8h7v12M13 20V4h7v16M2 20h20"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+
+                <path
+                  d="M7 11h1M7 14h1M16 8h1M16 11h1M16 14h1"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div class="scenario-copy">
+              <div class="scenario-name">
+                园区／写字楼
+
+                <span class="scenario-tag">
+                  员工通勤
+                </span>
+              </div>
+
+              <div class="scenario-demand">
+                员工长期使用、企业福利、上下班高峰及多组织管理
+              </div>
+
+              <div class="scenario-plan">
+                <b>员工认证＋次卡月卡＋企业统一额度</b>
+                · 分时计费 · 统一账单
+              </div>
+            </div>
+          </div>
+
+          <!-- 医院学校 -->
+
+          <div class="scenario-card green">
+            <div class="scenario-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <rect
+                  x="4"
+                  y="4"
+                  width="16"
+                  height="16"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M12 8v8M8 12h8"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div class="scenario-copy">
+              <div class="scenario-name">
+                医院／学校
+
+                <span class="scenario-tag">
+                  内外分流
+                </span>
+              </div>
+
+              <div class="scenario-demand">
+                职工、师生与访客并存，需要差异化权益及安全保障
+              </div>
+
+              <div class="scenario-plan">
+                <b>职工免费＋师生套餐＋访客扫码支付</b>
+                · 身份校验 · 限额防滥用
+              </div>
+            </div>
+          </div>
+
+          <!-- 商场 -->
+
+          <div class="scenario-card orange">
+            <div class="scenario-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M4 9l2-5h12l2 5M5 9v10h14V9"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+
+                <path
+                  d="M3 9h18M9 19v-5h6v5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </div>
+
+            <div class="scenario-copy">
+              <div class="scenario-name">
+                商场／商业综合体
+
+                <span class="scenario-tag">
+                  临停消费
+                </span>
+              </div>
+
+              <div class="scenario-demand">
+                临时用户多、使用时长不一，需要便捷支付和营销转化
+              </div>
+
+              <div class="scenario-plan">
+                <b>固定档位＋余额充值＋优惠套餐</b>
+                · 即扫即充 · 提前结束退款
+              </div>
+            </div>
+          </div>
+
+          <!-- 停车场 -->
+
+          <div class="scenario-card">
+            <div class="scenario-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <rect
+                  x="4"
+                  y="3"
+                  width="16"
+                  height="18"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M8 17V7h4a3 3 0 0 1 0 6H8"
+                  stroke="currentColor"
+                  stroke-width="1.9"
+                  stroke-linecap="round"
+                />
+
+                <path
+                  d="M16 14h2v2h-2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+
+            <div class="scenario-copy">
+              <div class="scenario-name">
+                停车场／交通枢纽
+
+                <span class="scenario-tag">
+                  统一经营
+                </span>
+              </div>
+
+              <div class="scenario-demand">
+                停车与充电资源共管，多场站收入及合作方结算复杂
+              </div>
+
+              <div class="scenario-plan">
+                <b>多站点统一运营＋支付退款＋多方结算</b>
+                · 设备厂商兼容
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================
+           Center: Digital Engine
+           ====================================================== -->
+
+      <section class="engine-zone">
+        <div class="section-head">
+          <span class="section-number">
+            02
+          </span>
+
+          <i class="section-line"></i>
+
+          <h2>
+            两轮车充电数字化运营中枢
+          </h2>
+
+          <span class="section-en">
+            DIGITAL OPERATION ENGINE
+          </span>
+        </div>
+
+        <div class="card engine-card">
+          <div class="engine-top">
+            <div class="engine-logo">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M9 2h6l-1 7h4l-8 13 2-9H7L9 2z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div class="engine-title">
+              <strong>
+                充电业务全生命周期管理平台
+              </strong>
+
+              <span>
+                USER · BENEFIT · DEVICE · ORDER · SAFETY · FINANCE
+              </span>
+            </div>
+
+            <div class="engine-badge">
+              多模式运营 · 多厂商接入 · 多角色协同
+            </div>
+          </div>
+
+          <div class="engine-main">
+
+            <!-- Inner lines -->
+
+            <svg
+              class="engine-lines"
+              viewBox="0 0 735 350"
+            >
+              <path
+                class="engine-line"
+                d="M207 55 C247 55 241 106 282 128"
+              />
+
+              <path
+                class="engine-line purple"
+                d="M528 55 C488 55 494 106 453 128"
+              />
+
+              <path
+                class="engine-line"
+                d="M195 175 H264"
+              />
+
+              <path
+                class="engine-line green"
+                d="M540 175 H471"
+              />
+
+              <path
+                class="engine-line green"
+                d="M236 295 C278 295 277 260 298 247"
+              />
+
+              <path
+                class="engine-line purple"
+                d="M499 295 C457 295 458 260 437 247"
+              />
+
+              <circle
+                class="engine-dot"
+                cx="244"
+                cy="82"
+                r="3"
+              />
+
+              <circle
+                class="engine-dot"
+                cx="491"
+                cy="82"
+                r="3"
+              />
+
+              <circle
+                class="engine-dot"
+                cx="230"
+                cy="175"
+                r="3"
+              />
+
+              <circle
+                class="engine-dot"
+                cx="505"
+                cy="175"
+                r="3"
+              />
+
+              <circle
+                class="engine-dot"
+                cx="272"
+                cy="278"
+                r="3"
+              />
+
+              <circle
+                class="engine-dot"
+                cx="463"
+                cy="278"
+                r="3"
+              />
+            </svg>
+
+            <!-- Node 1 -->
+
+            <div class="engine-node node-1">
+              <div class="node-head">
+                <div class="node-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M4 6h16v12H4V6z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M8 10h8M8 14h5"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="node-name">
+                  灵活计费与营销套餐
+                </div>
+              </div>
+
+              <div class="node-description">
+                按时、按量、档位、分时、阶梯计费<br>
+                月卡、次卡、时长包、金额包、充值赠送
+              </div>
+            </div>
+
+            <!-- Node 2 -->
+
+            <div class="engine-node node-2 purple">
+              <div class="node-head">
+                <div class="node-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      cx="9"
+                      cy="8"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M4 19c.5-4 2.3-6 5-6s4.5 2 5 6"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M16 12l1.5 1.5L21 10"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="node-name">
+                  用户身份与权益中心
+                </div>
+              </div>
+
+              <div class="node-description">
+                普通用户、居民、员工、合作方统一识别<br>
+                免费、套餐、余额、在线支付智能匹配
+              </div>
+            </div>
+
+            <!-- Node 3 -->
+
+            <div class="engine-node node-3">
+              <div class="node-head">
+                <div class="node-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <rect
+                      x="5"
+                      y="3"
+                      width="14"
+                      height="18"
+                      rx="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M9 7h6M9 11h6M9 15h4"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="node-name">
+                  设备与端口数字化
+                </div>
+              </div>
+
+              <div class="node-description">
+                一桩一档、一口一码、状态实时上报<br>
+                远程启停、重启、禁用、二维码批量管理
+              </div>
+            </div>
+
+            <!-- Node 4 -->
+
+            <div class="engine-node node-4 green">
+              <div class="node-head">
+                <div class="node-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M12 3l8 4v5c0 5-3.3 8-8 9-4.7-1-8-4-8-9V7l8-4z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linejoin="round"
+                    />
+
+                    <path
+                      d="M9 12l2 2 4-5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="node-name">
+                  安全用电与运维闭环
+                </div>
+              </div>
+
+              <div class="node-description">
+                高温、过载、短路、离线、异常断电告警<br>
+                告警确认、远程断电、转工单、维修复核
+              </div>
+            </div>
+
+            <!-- Node 5 -->
+
+            <div class="engine-node node-5 green">
+              <div class="node-head">
+                <div class="node-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M4 17V7h16v10H4z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M8 12h8M12 8v8"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="node-name">
+                  订单支付与异常补偿
+                </div>
+              </div>
+
+              <div class="node-description">
+                普通、套餐、免费、后台启动订单统一管理<br>
+                启动失败自动退款、退权益、释放免费额度
+              </div>
+            </div>
+
+            <!-- Node 6 -->
+
+            <div class="engine-node node-6 purple">
+              <div class="node-head">
+                <div class="node-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M5 4h14v16H5V4z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M8 8h8M8 12h8M8 16h5"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="node-name">
+                  财务对账与多方结算
+                </div>
+              </div>
+
+              <div class="node-description">
+                实收、套餐售卖、权益消耗、免费减免分口径<br>
+                支付对账、退款审核、分账账单与打款归档
+              </div>
+            </div>
+
+            <!-- Core -->
+
+            <div class="engine-core">
+              <div class="core-copy">
+                <div class="core-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M10 2h5l-1 7h4l-8 13 2-9H7l3-11z"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linejoin="round"
+                    />
+
+                    <circle
+                      cx="18"
+                      cy="5"
+                      r="2"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+
+                <div class="core-name">
+                  两轮车充电运营中心
+                </div>
+
+                <div class="core-description">
+                  将充电设备转化为可配置、可销售、<br>
+                  可监控、可服务、可结算的数字化资产
+                </div>
+
+                <div class="core-tag">
+                  数据驱动经营 · 风险主动预警
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Engine footer -->
+
+          <div class="engine-footer">
+            <div class="engine-footer-title">
+              开放扩展能力｜兼容多厂商设备，支持未来拓展三轮车、换电柜、储能柜与消防联动
+            </div>
+
+            <div class="engine-tags">
+              <span class="engine-tag highlight">
+                支付成功自动启动
+              </span>
+
+              <span class="engine-tag highlight">
+                启动失败自动补偿
+              </span>
+
+              <span class="engine-tag">
+                充满／到时自动停止
+              </span>
+
+              <span class="engine-tag">
+                权益优先级配置
+              </span>
+
+              <span class="engine-tag">
+                多项目多站点管理
+              </span>
+
+              <span class="engine-tag">
+                免费高频风险监控
+              </span>
+
+              <span class="engine-tag">
+                多厂商协议接入
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================
+           Right: Dual-End & Value
+           ====================================================== -->
+
+      <section class="value-zone">
+        <div class="section-head">
+          <span class="section-number">
+            03
+          </span>
+
+          <i class="section-line"></i>
+
+          <h2>
+            双端协同与运营价值
+          </h2>
+
+          <span class="section-en">
+            USER & OPERATION
+          </span>
+        </div>
+
+        <div class="value-card">
+          <div class="dual-head">
+            <div class="dual-title">
+              <div class="dual-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <rect
+                    x="3"
+                    y="4"
+                    width="12"
+                    height="16"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+
+                  <rect
+                    x="16"
+                    y="7"
+                    width="5"
+                    height="10"
+                    rx="1.5"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+
+                  <path
+                    d="M7 8h4M7 12h4M7 16h2"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              管理后台＋车主小程序
+            </div>
+
+            <span class="dual-badge">
+              数据与业务实时贯通
+            </span>
+          </div>
+
+          <!-- Screens -->
+
+          <div class="dual-screens">
+            <!-- Admin -->
+
+            <div class="mini-admin">
+              <div class="mini-browser">
+                <i></i>
+                <i></i>
+                <i></i>
+              </div>
+
+              <div class="mini-admin-body">
+                <aside class="mini-sidebar">
+                  <div class="mini-brand">
+                    两轮车充电管理
+                  </div>
+
+                  <div class="mini-nav">
+                    <span class="active">
+                      运营工作台
+                    </span>
+
+                    <span>
+                      项目与站点
+                    </span>
+
+                    <span>
+                      设备与端口
+                    </span>
+
+                    <span>
+                      充电订单
+                    </span>
+
+                    <span>
+                      套餐管理
+                    </span>
+
+                    <span>
+                      免费人员
+                    </span>
+
+                    <span>
+                      告警工单
+                    </span>
+
+                    <span>
+                      财务结算
+                    </span>
+                  </div>
+                </aside>
+
+                <main class="mini-main">
+                  <div class="mini-main-title">
+                    两轮车充电运营工作台
+                  </div>
+
+                  <div class="mini-kpis">
+                    <div class="mini-kpi">
+                      <span>
+                        今日订单
+                      </span>
+
+                      <strong>
+                        1,286
+                      </strong>
+
+                      <small>
+                        ↑12.6%
+                      </small>
+                    </div>
+
+                    <div class="mini-kpi">
+                      <span>
+                        今日实收
+                      </span>
+
+                      <strong>
+                        ¥8,652
+                      </strong>
+
+                      <small>
+                        ↑8.3%
+                      </small>
+                    </div>
+
+                    <div class="mini-kpi">
+                      <span>
+                        套餐消耗
+                      </span>
+
+                      <strong>
+                        ¥2,368
+                      </strong>
+
+                      <small>
+                        334单
+                      </small>
+                    </div>
+
+                    <div class="mini-kpi">
+                      <span>
+                        免费减免
+                      </span>
+
+                      <strong>
+                        ¥986
+                      </strong>
+
+                      <small>
+                        206单
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="mini-chart">
+                    <svg viewBox="0 0 180 55">
+                      <line
+                        class="mini-chart-grid"
+                        x1="5"
+                        y1="10"
+                        x2="175"
+                        y2="10"
+                      />
+
+                      <line
+                        class="mini-chart-grid"
+                        x1="5"
+                        y1="28"
+                        x2="175"
+                        y2="28"
+                      />
+
+                      <line
+                        class="mini-chart-grid"
+                        x1="5"
+                        y1="47"
+                        x2="175"
+                        y2="47"
+                      />
+
+                      <polyline
+                        class="mini-chart-line"
+                        points="
+                          5,44 20,42 35,38 50,29
+                          65,34 80,21 95,26 110,16
+                          125,22 140,11 155,18 175,8
+                        "
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="mini-table">
+                    <div class="mini-row">
+                      <span>订单</span>
+                      <span>类型</span>
+                      <span>站点</span>
+                      <span>状态</span>
+                    </div>
+
+                    <div class="mini-row">
+                      <span>C2026...2631</span>
+                      <span>普通</span>
+                      <span>滨江东区</span>
+                      <span>充电中</span>
+                    </div>
+
+                    <div class="mini-row">
+                      <span>C2026...2618</span>
+                      <span>套餐</span>
+                      <span>高新园区</span>
+                      <span>充电中</span>
+                    </div>
+
+                    <div class="mini-row">
+                      <span>C2026...2597</span>
+                      <span>免费</span>
+                      <span>人民医院</span>
+                      <span>充电中</span>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+
+            <!-- Phone -->
+
+            <div class="mini-phone">
+              <div class="mini-phone-status">
+                <span>14:32</span>
+                <span>5G 100%</span>
+              </div>
+
+              <div class="mini-phone-head">
+                两轮车充电
+              </div>
+
+              <div class="mini-phone-hero">
+                <strong>
+                  下午好，李女士
+                </strong>
+
+                <span>
+                  安全充电，守护社区消防安全
+                </span>
+              </div>
+
+              <div class="mini-scan-box">
+                <div class="mini-scan-row">
+                  <div class="mini-scan-icon">
+                    ▦
+                  </div>
+
+                  <div class="mini-scan-copy">
+                    <strong>
+                      扫码充电
+                    </strong>
+
+                    <span>
+                      扫描端口二维码
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mini-phone-card">
+                <strong>
+                  常用服务
+                </strong>
+
+                <div class="mini-phone-data">
+                  <span>订单</span>
+                  <span>套餐</span>
+                  <span>余额</span>
+                </div>
+              </div>
+
+              <div class="mini-phone-card">
+                <strong>
+                  我的权益
+                </strong>
+
+                <div class="mini-phone-data">
+                  <span>余额¥26</span>
+                  <span>次卡9次</span>
+                  <span>免费8h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metrics -->
+
+          <div class="value-metrics">
+            <div class="value-metric">
+              <strong>
+                即扫即充
+              </strong>
+
+              <span>
+                无需安装App
+              </span>
+
+              <b>
+                降低使用门槛
+              </b>
+            </div>
+
+            <div class="value-metric">
+              <strong>
+                93.5%
+              </strong>
+
+              <span>
+                设备在线率
+              </span>
+
+              <b>
+                状态实时可视
+              </b>
+            </div>
+
+            <div class="value-metric">
+              <strong>
+                全自动
+              </strong>
+
+              <span>
+                退款与权益回滚
+              </span>
+
+              <b>
+                降低客服成本
+              </b>
+            </div>
+          </div>
+
+          <!-- Value list -->
+
+          <div class="value-list">
+            <div class="value-item">
+              <strong>
+                用户体验更便捷
+              </strong>
+
+              扫码、选时长、选权益、支付、启动一步完成
+            </div>
+
+            <div class="value-item">
+              <strong>
+                运营经营更灵活
+              </strong>
+
+              计费、套餐、免费规则按项目和站点差异配置
+            </div>
+
+            <div class="value-item">
+              <strong>
+                安全运维更主动
+              </strong>
+
+              风险实时告警，远程断电与工单维修形成闭环
+            </div>
+
+            <div class="value-item">
+              <strong>
+                财务收益更清晰
+              </strong>
+
+              现金收入、权益消耗、免费成本与结算独立核算
+            </div>
+          </div>
+
+          <!-- Insight -->
+
+          <div class="ai-advice">
+            <div class="advice-head">
+              <i></i>
+
+              数据驱动精细化运营
+            </div>
+
+            <div class="advice-points">
+              <span class="advice-point">
+                站点利用率排行
+              </span>
+
+              <span class="advice-point">
+                套餐销售转化
+              </span>
+
+              <span class="advice-point">
+                免费使用成本
+              </span>
+
+              <span class="advice-point">
+                异常退款率
+              </span>
+
+              <span class="advice-point">
+                设备故障率
+              </span>
+
+              <span class="advice-point">
+                合作方收益
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================
+           Bottom Lifecycle
+           ====================================================== -->
+
+      <section class="lifecycle-zone">
+        <div class="lifecycle-title">
+          从用户扫码到财务结算的全链路数字化闭环
+        </div>
+
+        <div class="lifecycle">
+          <div class="life-step">
+            <span class="life-number">
+              01
+            </span>
+
+            <div class="life-name">
+              扫码识别
+            </div>
+
+            <div class="life-description">
+              识别站点、设备、端口<br>
+              校验端口可用状态
+            </div>
+          </div>
+
+          <i class="life-arrow"></i>
+
+          <div class="life-step">
+            <span class="life-number">
+              02
+            </span>
+
+            <div class="life-name">
+              权益匹配
+            </div>
+
+            <div class="life-description">
+              免费、套餐、余额<br>
+              在线支付智能推荐
+            </div>
+          </div>
+
+          <i class="life-arrow"></i>
+
+          <div class="life-step">
+            <span class="life-number">
+              03
+            </span>
+
+            <div class="life-name">
+              支付启动
+            </div>
+
+            <div class="life-description">
+              支付或权益扣减成功<br>
+              自动下发启动指令
+            </div>
+          </div>
+
+          <i class="life-arrow"></i>
+
+          <div class="life-step">
+            <span class="life-number">
+              04
+            </span>
+
+            <div class="life-name">
+              实时充电
+            </div>
+
+            <div class="life-description">
+              功率、电量、时长监控<br>
+              用户可主动结束
+            </div>
+          </div>
+
+          <i class="life-arrow"></i>
+
+          <div class="life-step">
+            <span class="life-number">
+              05
+            </span>
+
+            <div class="life-name">
+              安全处置
+            </div>
+
+            <div class="life-description">
+              充满、到时、过载自停<br>
+              告警转运维工单
+            </div>
+          </div>
+
+          <i class="life-arrow"></i>
+
+          <div class="life-step">
+            <span class="life-number">
+              06
+            </span>
+
+            <div class="life-name">
+              结算补偿
+            </div>
+
+            <div class="life-description">
+              按实际使用结算<br>
+              退款、退权益、释放额度
+            </div>
+          </div>
+
+          <i class="life-arrow"></i>
+
+          <div class="life-step">
+            <span class="life-number">
+              07
+            </span>
+
+            <div class="life-name">
+              对账分账
+            </div>
+
+            <div class="life-description">
+              收入、消耗、减免分口径<br>
+              合作方账单结算归档
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================
+           Footer
+           ====================================================== -->
+
+      <footer class="footer">
+        <div class="footer-left">
+          <i></i>
+
+          让两轮车充电业务可接入、可经营、可监控、可服务、可结算、可持续优化
+        </div>
+
+        <div class="footer-right">
+          SAFE CHARGING · FLEXIBLE OPERATION · SMART DEVICE · CLOSED-LOOP FINANCE
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    function resizeStage() {
+      const stage =
+        document.getElementById("stage");
+
+      const baseWidth = 1600;
+      const baseHeight = 900;
+
+      const scale = Math.min(
+        window.innerWidth / baseWidth,
+        window.innerHeight / baseHeight
+      );
+
+      stage.style.transform =
+        `scale(${scale})`;
+    }
+
+    window.addEventListener(
+      "resize",
+      resizeStage
+    );
+
+    resizeStage();
+  </script>
+</body>
+</html>

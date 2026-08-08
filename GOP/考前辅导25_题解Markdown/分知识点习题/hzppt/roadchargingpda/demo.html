@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>惠泊云 · 工作台</title>
+<style>
+  /* 关键:根字号随视口宽度等比缩放。720屏≈16px基准,iPhone390屏≈自动减半 */
+  html{font-size:clamp(10px, 2.22vw, 18px);}
+
+  :root{
+    --primary:#3b5bdb; --success:#0ca678; --warning:#e8590c;
+    --danger:#e03131; --purple:#7048e8;
+    --primary-soft:#eef2ff; --success-soft:#e6fcf5; --warning-soft:#fff4e6;
+    --danger-soft:#fff5f5; --purple-soft:#f3f0ff;
+    --ink:#1a1c22; --ink-2:#5c6270; --ink-3:#9aa1b0;
+    --line:#eceef2; --bg:#f4f6fa; --surface:#fff;
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden}
+  body{background:var(--bg);-webkit-font-smoothing:antialiased}
+
+  .shell{width:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+
+  /* 顶部头 —— 全部改用 rem */
+  .hero{flex:none;background:linear-gradient(150deg,#4263eb,#3b5bdb 55%,#364fc7);color:#fff;padding:1.5rem 1.75rem}
+  .hero-top{display:flex;align-items:center;gap:1.125rem}
+  .avatar{width:4.5rem;height:4.5rem;border-radius:1.375rem;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:700;font-size:1.7rem;flex:none;border:1px solid rgba(255,255,255,.25)}
+  .who{flex:1;min-width:0}
+  .who h1{font-size:1.75rem;font-weight:700}
+  .who p{font-size:1.15rem;opacity:.78;margin-top:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .icon-btn{width:4rem;height:4rem;border-radius:1.25rem;background:rgba(255,255,255,.16);color:#fff;border:0;display:grid;place-items:center;position:relative;flex:none}
+  .icon-btn:active{transform:scale(.92)}
+  .icon-btn svg{width:2rem;height:2rem}
+  .badge{position:absolute;top:-.375rem;right:-.375rem;min-width:1.75rem;height:1.75rem;padding:0 .44rem;background:var(--danger);border:.19rem solid #3b5bdb;border-radius:99px;color:#fff;font-size:1rem;font-weight:700;display:grid;place-items:center}
+  .road{margin-top:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.125rem 1.375rem;border-radius:1.25rem;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16)}
+  .rn{font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:.7rem}
+  .rn::before{content:"";width:.75rem;height:.75rem;border-radius:50%;background:#69db7c;box-shadow:0 0 0 .3rem rgba(105,219,124,.3)}
+  .rm{font-size:1.12rem;opacity:.75;margin-top:.5rem}
+  .road-btn{background:rgba(255,255,255,.2);color:#fff;border:0;padding:.94rem 1.625rem;border-radius:1rem;font-size:1.2rem;font-weight:600;flex:none}
+
+    .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:1.5rem 1.75rem;gap:1.375rem;overflow:hidden}
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.94rem}
+  .sec-head h2{font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:.75rem}
+  .sec-head h2::before{content:"";width:.44rem;height:1.5rem;border-radius:.25rem;background:var(--primary)}
+  .sec-link{font-size:1.15rem;color:var(--primary);font-weight:600;background:0;border:0}
+    .block{display:flex;flex-direction:column;min-height:0}
+
+.kpi{flex:none;background:var(--surface);border:1px solid var(--line);border-radius:1.5rem;display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;box-shadow:0 2px 6px rgba(20,30,60,.05)}
+.k{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 0;border-right:1px solid var(--line)}
+  .k:last-child{border-right:0}
+  .k .n{font-size:3.4rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+  .k .l{font-size:1.2rem;color:var(--ink-3);margin-top:.875rem}
+  .k.idle .n{color:var(--success)}.k.pend .n{color:var(--warning)}
+  .k.fault .n{color:var(--ink-3)}.k.risk .n{color:var(--danger)}
+
+.quick{flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:1.5rem;padding:1.5rem .5rem;box-shadow:0 2px 6px rgba(20,30,60,.05)}
+  .q{background:0;border:0;text-align:center}
+  .qi{width:5.125rem;height:5.125rem;margin:0 auto .875rem;border-radius:1.5rem;display:grid;place-items:center}
+  .q:active .qi{transform:scale(.9)}
+  .qi svg{width:2.5rem;height:2.5rem}
+  .ql{font-size:1.2rem;color:var(--ink-2);font-weight:500}
+  .b{background:var(--primary-soft);color:var(--primary)}.g{background:var(--success-soft);color:var(--success)}
+  .o{background:var(--warning-soft);color:var(--warning)}.r{background:var(--danger-soft);color:var(--danger)}
+  .p{background:var(--purple-soft);color:var(--purple)}
+
+.income{flex:none;display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:1.5rem;overflow:hidden;box-shadow:0 2px 6px rgba(20,30,60,.05);min-height:6.5rem}
+  .income-main{flex:1;padding:1.375rem 1.625rem;background:linear-gradient(135deg,#0ca678,#099268);color:#fff;display:flex;flex-direction:column;justify-content:center}
+  .income-main .il{font-size:1.15rem;opacity:.85}
+  .income-main .iv{font-size:2.6rem;font-weight:800;margin-top:.375rem;font-variant-numeric:tabular-nums}
+  .income-main .iv small{font-size:1.4rem}
+  .income-side{flex:1.15;display:flex}
+  .is{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--line)}
+  .is:last-child{border-right:0}
+  .isv{font-size:1.9rem;font-weight:800}.isl{font-size:1.1rem;color:var(--ink-3);margin-top:.5rem}
+  .is.rec .isv{color:var(--success)}.is.out .isv{color:var(--danger)}
+
+.warn-sec{flex:1;min-height:0}
+.warns{flex:1;min-height:0;display:flex;flex-direction:column;gap:1.125rem}
+  .warn{flex:1;min-height:0;background:var(--surface);border:1px solid var(--line);border-radius:1.5rem;padding:1.375rem 1.625rem;position:relative;overflow:hidden;text-align:left;display:flex;flex-direction:column;justify-content:center;box-shadow:0 2px 6px rgba(20,30,60,.05)}
+  .warn::before{content:"";position:absolute;left:0;top:0;bottom:0;width:.375rem;background:var(--wc)}
+  .warn.high{--wc:var(--danger)}.warn.mid{--wc:var(--warning)}
+  .warn-top{display:flex;align-items:center;justify-content:space-between;gap:.875rem}
+  .warn-title{font-size:1.55rem;font-weight:700;color:var(--ink)}
+  .tag{padding:.44rem 1rem;border-radius:.75rem;font-size:1.1rem;font-weight:600;white-space:nowrap}
+  .tag-d{background:var(--danger-soft);color:var(--danger)}.tag-w{background:var(--warning-soft);color:var(--warning)}
+  .warn-meta{margin-top:.875rem;display:flex;flex-wrap:wrap;gap:.375rem 1.625rem;font-size:1.18rem;color:var(--ink-3)}
+  .warn-reason{margin-top:.875rem;font-size:1.18rem;color:var(--ink-2);line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+  .toast{position:fixed;left:50%;top:2.5rem;transform:translateX(-50%);z-index:99;background:var(--ink);color:#fff;padding:1.125rem 2rem;border-radius:1.125rem;font-size:1.3rem;font-weight:600;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 16px 40px -14px rgba(0,0,0,.5)}
+  .toast.show{opacity:1;top:3.5rem}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="hero">
+    <div class="hero-top">
+      <div class="avatar">李</div>
+      <div class="who">
+        <h1>李建国</h1>
+        <p>工号 GD0271 · 巡检收费员 · 早班</p>
+      </div>
+      <button class="icon-btn" onclick="toast('消息中心')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="badge">3</span>
+      </button>
+    </div>
+    <div class="road">
+      <div>
+        <div class="rn">解放路东段停车区</div>
+        <div class="rm">HZ-A-07 · 定位正常 · 42 个泊位</div>
+      </div>
+      <button class="road-btn" onclick="toast('切换路段')">切换</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="kpi">
+      <div class="k idle"><div class="n">18</div><div class="l">空闲</div></div>
+      <div class="k pend"><div class="n">5</div><div class="l">待录入</div></div>
+      <div class="k fault"><div class="n">1</div><div class="l">故障</div></div>
+      <div class="k risk"><div class="n">3</div><div class="l">高风险</div></div>
+    </div>
+
+    <div class="block">
+      <div class="sec-head"><h2>快捷操作</h2></div>
+      <div class="quick">
+        <button class="q" onclick="toast('欠费缴纳')"><div class="qi r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="ql">欠费缴纳</div></button>
+        <button class="q" onclick="toast('订单查询')"><div class="qi b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div><div class="ql">订单查询</div></button>
+        <button class="q" onclick="toast('收费报表')"><div class="qi p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div><div class="ql">收费报表</div></button>
+        <button class="q" onclick="toast('异常上报')"><div class="qi o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17v.01"/></svg></div><div class="ql">异常上报</div></button>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="sec-head"><h2>今日收入</h2><button class="sec-link" onclick="toast('明细')">明细 ›</button></div>
+      <div class="income">
+        <div class="income-main">
+          <div class="il">今日实收</div>
+          <div class="iv">¥2,486<small>.50</small></div>
+        </div>
+        <div class="income-side">
+          <div class="is"><div class="isv">73</div><div class="isl">订单</div></div>
+          <div class="is rec"><div class="isv">2132</div><div class="isl">已回款</div></div>
+          <div class="is out"><div class="isv">354</div><div class="isl">待收</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block warn-sec">
+      <div class="sec-head"><h2>待处理预警</h2><button class="sec-link" onclick="toast('全部')">全部 ›</button></div>
+      <div class="warns">
+        <button class="warn high" onclick="toast('处理欠费预警')">
+          <div class="warn-top"><span class="warn-title">长时欠费未缴</span><span class="tag tag-d">高优先</span></div>
+          <div class="warn-meta"><span>A-12 泊位</span><span>浙A·8F2K9</span><span>已停 4h20m</span></div>
+          <div class="warn-reason">车辆离场未支付,累计欠费 ¥46.00,建议现场核查或拍照取证。</div>
+        </button>
+        <button class="warn mid" onclick="toast('处理占位预警')">
+          <div class="warn-top"><span class="warn-title">疑似违规占位</span><span class="tag tag-w">中优先</span></div>
+          <div class="warn-meta"><span>B-05 泊位</span><span>未识别车牌</span><span>8 分钟前</span></div>
+          <div class="warn-reason">地磁检测到车辆但无入场记录,请前往确认并补录信息。</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+  let t;
+  function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(t);t=setTimeout(()=>el.classList.remove('show'),1400)}
+</script>
+</body>
+</html>

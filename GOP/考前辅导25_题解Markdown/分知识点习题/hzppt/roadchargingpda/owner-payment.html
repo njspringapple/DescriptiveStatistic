@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#1268e8" />
+  <title>惠泊云智慧停车 - 停车缴费</title>
+  <style>
+    :root{
+      --primary:#1268e8;
+      --primary-dark:#0b4fbd;
+      --primary-soft:#eaf3ff;
+      --success:#16a35a;
+      --success-soft:#eaf9f0;
+      --danger:#e5484d;
+      --warning:#ed8b00;
+      --text:#172033;
+      --text-2:#4f5f78;
+      --text-3:#7b8ba4;
+      --line:#dfe7f1;
+      --surface:#fff;
+      --page:#f3f7fc;
+      --shadow:0 8px 28px rgba(18,65,130,.09);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--page);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px}
+    button,input{font:inherit}
+    button{border:0;cursor:pointer}
+    .app{width:min(100%,520px);min-height:100dvh;margin:0 auto;background:var(--page);position:relative;overflow-x:hidden}
+    .topbar{position:sticky;top:0;z-index:20;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 16px;color:#fff;background:linear-gradient(135deg,#0e5fd8,#2783f6 68%,#0a4fb8);box-shadow:0 10px 26px rgba(18,104,232,.2)}
+    .brand{display:flex;align-items:center;gap:11px}
+    .brand-mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);font-size:23px;font-weight:800}
+    .brand-name{font-size:20px;font-weight:800;line-height:1.2}
+    .brand-sub{margin-top:3px;font-size:13px;opacity:.82}
+    .content{padding:14px 14px calc(116px + env(safe-area-inset-bottom,0px))}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}
+    .order-card{padding:16px}
+    .plate-row,.section-head,.summary-row,.invoice-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .plate{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border-radius:9px;color:#fff;background:#176be8;border:2px solid #fff;box-shadow:0 0 0 1px #176be8;font-size:20px;font-weight:800;letter-spacing:.05em}
+    .status{padding:5px 9px;border-radius:999px;color:var(--warning);background:#fff6df;font-size:13px;font-weight:700}
+    .order-title{margin-top:15px;font-size:15px;color:var(--text-3)}
+    .amount{margin-top:2px;color:var(--primary);font-size:36px;font-weight:850;letter-spacing:-.03em}
+    .amount small{font-size:20px}
+    .info-grid{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .info-item span{display:block;color:var(--text-3);font-size:13px}
+    .info-item strong{display:block;margin-top:4px;font-size:15px;line-height:1.4}
+    .notice{margin-top:12px;padding:10px 12px;border-radius:11px;color:#25623f;background:var(--success-soft);font-size:13px;line-height:1.5}
+    .section{margin-top:18px}
+    .section-head{margin:0 2px 9px;align-items:flex-end}
+    .section-title{font-size:18px;font-weight:800}
+    .section-sub{margin-top:3px;color:var(--text-3);font-size:13px}
+    .text-btn{padding:5px;color:var(--primary);background:transparent;font-size:14px;font-weight:700}
+    .arrears-list{display:grid;gap:9px}
+    .arrears-card{width:100%;padding:13px;display:grid;grid-template-columns:25px minmax(0,1fr) auto;align-items:center;gap:10px;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;color:var(--text);box-shadow:0 3px 12px rgba(18,65,130,.04)}
+    .arrears-card.selected{border-color:var(--primary);background:#f5f9ff}
+    .checkbox{width:23px;height:23px;border-radius:7px;border:1.5px solid #aab8ca;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800}
+    .selected .checkbox{background:var(--primary);border-color:var(--primary)}
+    .arrears-no{display:block;font-size:15px;font-weight:750}
+    .arrears-meta{display:block;margin-top:4px;color:var(--text-3);font-size:13px;line-height:1.45}
+    .arrears-money{color:var(--danger);font-size:17px;font-weight:800;white-space:nowrap}
+    .summary-card{margin-top:10px;padding:13px 14px}
+    .summary-row{color:var(--text-3);font-size:14px}
+    .summary-row + .summary-row{margin-top:9px}
+    .summary-row strong{color:var(--text);font-size:16px}
+    .summary-row.total{padding-top:10px;border-top:1px dashed #cbd6e4;color:var(--text);font-weight:700}
+    .summary-row.total strong{color:var(--primary);font-size:22px}
+    .paybar{position:fixed;z-index:25;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,520px);padding:11px 14px calc(11px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,44%);align-items:center;gap:12px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(24,56,104,.09);backdrop-filter:blur(12px)}
+    .pay-total span{display:block;color:var(--text-3);font-size:13px}
+    .pay-total strong{display:block;margin-top:2px;color:var(--danger);font-size:24px}
+    .primary-btn,.outline-btn{width:100%;min-height:50px;border-radius:13px;font-weight:800}
+    .primary-btn{color:#fff;background:linear-gradient(135deg,var(--primary),#087ef1);box-shadow:0 7px 18px rgba(18,104,232,.22)}
+    .primary-btn:active{transform:scale(.98)}
+    .outline-btn{color:var(--primary);background:#fff;border:1.5px solid #9bc4fa}
+    .screen{display:none}
+    .screen.active{display:block}
+    .success-wrap{padding:36px 20px 30px;text-align:center}
+    .success-icon{width:82px;height:82px;margin:0 auto;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--success);box-shadow:0 12px 28px rgba(22,163,90,.24);font-size:46px;font-weight:800}
+    .success-title{margin-top:18px;font-size:24px;font-weight:850}
+    .success-amount{margin-top:7px;color:var(--success);font-size:34px;font-weight:850}
+    .success-desc{margin-top:6px;color:var(--text-3);font-size:14px}
+    .success-detail{margin-top:23px;padding:15px;text-align:left}
+    .success-actions{margin-top:16px;display:grid;gap:10px}
+    .invoice-head{padding:16px 16px 14px;display:flex;align-items:center;gap:11px;background:#fff;border-bottom:1px solid var(--line)}
+    .back-btn{width:42px;height:42px;border-radius:12px;color:var(--primary);background:var(--primary-soft);font-size:25px}
+    .invoice-title{font-size:20px;font-weight:800}
+    .form-card{padding:16px}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px;border-radius:12px;background:#edf2f8}
+    .tab{min-height:42px;border-radius:9px;color:var(--text-2);background:transparent;font-weight:700}
+    .tab.active{color:var(--primary);background:#fff;box-shadow:0 2px 8px rgba(24,56,104,.1)}
+    .field{margin-top:15px}
+    .field label{display:block;margin-bottom:7px;font-size:15px;font-weight:700}
+    .field input{width:100%;min-height:48px;padding:0 13px;border-radius:11px;border:1.5px solid #cfd9e6;outline:0;color:var(--text);background:#fbfdff;font-size:16px}
+    .field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,232,.1)}
+    .required{color:var(--danger)}
+    .invoice-orders{margin-top:15px;display:grid;gap:8px}
+    .invoice-row{padding:11px 12px;border-radius:11px;background:#f7f9fc;font-size:14px}
+    .invoice-row strong{color:var(--primary)}
+    .invoice-submit{margin-top:18px}
+    .invoice-success{padding:70px 20px;text-align:center}
+    @media (min-width:700px){body{padding:20px}.app{min-height:calc(100dvh - 40px);border-radius:22px;box-shadow:0 16px 50px rgba(28,62,110,.15);overflow:hidden}.paybar{bottom:20px;border-radius:0 0 22px 22px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="pay-screen" class="screen active">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">P</div>
+          <div><div class="brand-name">惠泊云智慧停车</div><div class="brand-sub">停车缴费 · 安全便捷</div></div>
+        </div>
+      </header>
+      <div class="content">
+        <article class="card order-card">
+          <div class="plate-row"><span class="plate">浙A·8K92F</span><span class="status">停车中</span></div>
+          <div class="order-title">本次停车应付</div>
+          <div class="amount"><small>¥</small><span id="current-amount">7.50</span></div>
+          <div class="info-grid">
+            <div class="info-item"><span>停车路段</span><strong>人民路东段</strong></div>
+            <div class="info-item"><span>泊位编号</span><strong>RM-03</strong></div>
+            <div class="info-item"><span>入场时间</span><strong>2026-07-18 01:21</strong></div>
+            <div class="info-item"><span>停车时长</span><strong>1小时33分</strong></div>
+          </div>
+          <div class="notice">费用按当前时间计算，支付完成后请在 15 分钟内驶离泊位。</div>
+        </article>
+
+        <section class="section">
+          <div class="section-head">
+            <div><div class="section-title">历史欠费订单</div><div class="section-sub">可选择后与本次停车费合并支付</div></div>
+            <button id="select-all" class="text-btn" type="button">全选</button>
+          </div>
+          <div id="arrears-list" class="arrears-list"></div>
+          <div class="card summary-card">
+            <div class="summary-row"><span>本次停车费</span><strong>¥7.50</strong></div>
+            <div class="summary-row"><span>已选历史欠费</span><strong id="arrears-total">¥0.00</strong></div>
+            <div class="summary-row total"><span>合计支付</span><strong id="summary-total">¥7.50</strong></div>
+          </div>
+        </section>
+      </div>
+      <div class="paybar">
+        <div class="pay-total"><span>合计</span><strong id="pay-total">¥7.50</strong></div>
+        <button id="pay-button" class="primary-btn" type="button">立即支付</button>
+      </div>
+    </section>
+
+    <section id="success-screen" class="screen">
+      <header class="topbar"><div class="brand"><div class="brand-mark">P</div><div><div class="brand-name">惠泊云智慧停车</div><div class="brand-sub">支付结果</div></div></div></header>
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <div class="success-title">支付成功</div>
+        <div id="success-amount" class="success-amount">¥7.50</div>
+        <div class="success-desc">停车订单和所选历史欠费均已结清</div>
+        <div class="card success-detail">
+          <div class="summary-row"><span>车牌号</span><strong>浙A·8K92F</strong></div>
+          <div class="summary-row"><span>支付时间</span><strong id="paid-time">--</strong></div>
+          <div class="summary-row"><span>支付方式</span><strong>微信支付</strong></div>
+          <div class="summary-row"><span>支付订单</span><strong id="paid-orders">本次停车</strong></div>
+        </div>
+        <div class="success-actions">
+          <button id="invoice-button" class="primary-btn" type="button">在线开具电子发票</button>
+          <button id="back-pay" class="outline-btn" type="button">查看缴费记录</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="invoice-screen" class="screen">
+      <div class="invoice-head"><button id="invoice-back" class="back-btn" type="button">‹</button><div class="invoice-title">在线开票</div></div>
+      <div class="content" style="padding-bottom:28px">
+        <div class="card form-card">
+          <div class="tabs"><button class="tab active" data-invoice-type="个人" type="button">个人发票</button><button class="tab" data-invoice-type="企业" type="button">企业发票</button></div>
+          <div class="field"><label><span class="required">*</span> 发票抬头</label><input id="invoice-name" value="个人" placeholder="请输入发票抬头" /></div>
+          <div id="tax-field" class="field" hidden><label><span class="required">*</span> 纳税人识别号</label><input id="tax-no" placeholder="请输入统一社会信用代码" /></div>
+          <div class="field"><label><span class="required">*</span> 接收邮箱</label><input id="invoice-email" type="email" placeholder="用于接收电子发票" /></div>
+          <div class="field"><label>开票金额</label><input id="invoice-amount" disabled /></div>
+          <div class="invoice-orders" id="invoice-orders"></div>
+          <button id="invoice-submit" class="primary-btn invoice-submit" type="button">提交开票申请</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="invoice-success-screen" class="screen">
+      <div class="invoice-success">
+        <div class="success-icon">✓</div>
+        <div class="success-title">开票申请已提交</div>
+        <div class="success-desc">电子发票将在开具后发送至您的邮箱</div>
+        <button id="finish-button" class="primary-btn" style="margin-top:24px" type="button">完成</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const currentAmount = 7.5;
+      const arrears = [
+        { id: "P2026070800518", road: "人民路东段 · RM-07", time: "2026-07-09 08:20", amount: 22.5, selected: false },
+        { id: "P2026070300389", road: "解放路西段 · JF-01", time: "2026-07-04 10:08", amount: 17.5, selected: false }
+      ];
+      const money = value => `¥${Number(value).toFixed(2)}`;
+      const byId = id => document.getElementById(id);
+      let paidTotal = currentAmount;
+      let paidItems = [];
+
+      function show(screenId) {
+        document.querySelectorAll(".screen").forEach(item => item.classList.toggle("active", item.id === screenId));
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+
+      function renderArrears() {
+        byId("arrears-list").innerHTML = arrears.map(item => `
+          <button class="arrears-card ${item.selected ? "selected" : ""}" data-id="${item.id}" type="button">
+            <span class="checkbox">${item.selected ? "✓" : ""}</span>
+            <span><span class="arrears-no">${item.id}</span><span class="arrears-meta">${item.road}<br/>${item.time}</span></span>
+            <span class="arrears-money">${money(item.amount)}</span>
+          </button>
+        `).join("");
+        const selected = arrears.filter(item => item.selected);
+        const arrearsTotal = selected.reduce((sum, item) => sum + item.amount, 0);
+        paidTotal = currentAmount + arrearsTotal;
+        byId("arrears-total").textContent = money(arrearsTotal);
+        byId("summary-total").textContent = money(paidTotal);
+        byId("pay-total").textContent = money(paidTotal);
+        byId("pay-button").textContent = selected.length ? `合并支付 ${money(paidTotal)}` : `立即支付 ${money(paidTotal)}`;
+        byId("select-all").textContent = selected.length === arrears.length ? "取消全选" : "全选";
+      }
+
+      byId("arrears-list").addEventListener("click", event => {
+        const card = event.target.closest("[data-id]");
+        if (!card) return;
+        const item = arrears.find(row => row.id === card.dataset.id);
+        if (item) item.selected = !item.selected;
+        renderArrears();
+      });
+
+      byId("select-all").addEventListener("click", () => {
+        const shouldSelect = !arrears.every(item => item.selected);
+        arrears.forEach(item => item.selected = shouldSelect);
+        renderArrears();
+      });
+
+      byId("pay-button").addEventListener("click", () => {
+        paidItems = arrears.filter(item => item.selected);
+        byId("success-amount").textContent = money(paidTotal);
+        byId("paid-time").textContent = new Date().toLocaleString("zh-CN", { hour12: false });
+        byId("paid-orders").textContent = paidItems.length ? `本次停车 + ${paidItems.length} 笔历史欠费` : "本次停车";
+        show("success-screen");
+      });
+
+      byId("invoice-button").addEventListener("click", () => {
+        byId("invoice-amount").value = money(paidTotal);
+        byId("invoice-orders").innerHTML = [
+          `<div class="invoice-row"><span>本次停车 · RM-03</span><strong>${money(currentAmount)}</strong></div>`,
+          ...paidItems.map(item => `<div class="invoice-row"><span>${item.id}</span><strong>${money(item.amount)}</strong></div>`)
+        ].join("");
+        show("invoice-screen");
+      });
+
+      document.querySelectorAll("[data-invoice-type]").forEach(tab => tab.addEventListener("click", () => {
+        document.querySelectorAll("[data-invoice-type]").forEach(item => item.classList.toggle("active", item === tab));
+        const company = tab.dataset.invoiceType === "企业";
+        byId("tax-field").hidden = !company;
+        byId("invoice-name").value = company ? "" : "个人";
+      }));
+
+      byId("invoice-submit").addEventListener("click", () => {
+        const company = !byId("tax-field").hidden;
+        if (!byId("invoice-name").value.trim()) return alert("请输入发票抬头");
+        if (company && !byId("tax-no").value.trim()) return alert("请输入纳税人识别号");
+        if (!/^\S+@\S+\.\S+$/.test(byId("invoice-email").value.trim())) return alert("请输入正确的接收邮箱");
+        show("invoice-success-screen");
+      });
+
+      byId("invoice-back").addEventListener("click", () => show("success-screen"));
+      byId("back-pay").addEventListener("click", () => show("pay-screen"));
+      byId("finish-button").addEventListener("click", () => show("success-screen"));
+      renderArrears();
+    })();
+  </script>
+</body>
+</html>

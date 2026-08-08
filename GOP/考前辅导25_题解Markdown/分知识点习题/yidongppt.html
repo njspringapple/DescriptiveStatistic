@@ -1,0 +1,3219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>城市级停车充电运营智能化建设“防坑”指南</title>
+
+<style>
+/* =========================================================
+   基础设置
+========================================================= */
+:root{
+  --navy:#081B33;
+  --navy-2:#102B4E;
+  --blue:#1677FF;
+  --cyan:#22C7E8;
+  --green:#20C997;
+  --orange:#FF9F43;
+  --red:#FF5C66;
+  --purple:#7C5CFC;
+  --text:#132238;
+  --muted:#66758A;
+  --line:#DDE7F2;
+  --bg:#F3F7FC;
+  --white:#FFFFFF;
+  --shadow:0 1.2rem 3rem rgba(13,45,82,.15);
+  --u:min(1vw,1.78vh);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:#071526;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+  color:var(--text);
+}
+
+button{
+  font:inherit;
+}
+
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* =========================================================
+   16:9 PPT 画布
+========================================================= */
+.deck{
+  position:relative;
+  width:min(100vw, calc(100vh * 16 / 9));
+  height:min(100vh, calc(100vw * 9 / 16));
+  background:var(--bg);
+  overflow:hidden;
+  box-shadow:0 0 5rem rgba(0,0,0,.38);
+}
+
+.slides{
+  position:absolute;
+  inset:0;
+}
+
+.slide{
+  position:absolute;
+  inset:0;
+  display:none;
+  overflow:hidden;
+  padding:5.4% 6.2% 5.3%;
+  background:
+    radial-gradient(circle at 90% 8%, rgba(34,199,232,.09), transparent 24%),
+    linear-gradient(135deg,#F8FBFF 0%,#EEF5FC 100%);
+}
+
+.slide.active{
+  display:block;
+  animation:slideIn .45s cubic-bezier(.2,.75,.25,1);
+}
+
+.slide.exit-left{
+  display:block;
+  animation:slideOutLeft .32s ease both;
+}
+
+.slide.exit-right{
+  display:block;
+  animation:slideOutRight .32s ease both;
+}
+
+@keyframes slideIn{
+  from{
+    opacity:0;
+    transform:translateX(2.2%) scale(.985);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+@keyframes slideOutLeft{
+  to{
+    opacity:0;
+    transform:translateX(-3%);
+  }
+}
+
+@keyframes slideOutRight{
+  to{
+    opacity:0;
+    transform:translateX(3%);
+  }
+}
+
+/* =========================================================
+   通用排版
+========================================================= */
+h1,h2,h3,p{
+  margin:0;
+}
+
+.slide-title{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:2%;
+  margin-bottom:2.5%;
+}
+
+.title-block{
+  max-width:82%;
+}
+
+.eyebrow{
+  display:flex;
+  align-items:center;
+  gap:.55em;
+  margin-bottom:.55em;
+  color:var(--blue);
+  font-size:calc(var(--u) * 1.05);
+  font-weight:800;
+  letter-spacing:.12em;
+}
+
+.eyebrow::before{
+  content:"";
+  width:1.7em;
+  height:.28em;
+  border-radius:1em;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+}
+
+.slide-title h2{
+  color:var(--navy);
+  font-size:calc(var(--u) * 2.45);
+  line-height:1.15;
+  letter-spacing:-.03em;
+}
+
+.slide-title .desc{
+  margin-top:.65em;
+  color:var(--muted);
+  font-size:calc(var(--u) * 1.05);
+  line-height:1.55;
+}
+
+.title-no{
+  color:rgba(8,27,51,.08);
+  font-size:calc(var(--u) * 5.2);
+  line-height:.8;
+  font-weight:900;
+  letter-spacing:-.08em;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2.2%;
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.7%;
+}
+
+.card{
+  position:relative;
+  border:1px solid rgba(164,187,213,.44);
+  border-radius:calc(var(--u) * 1.15);
+  background:rgba(255,255,255,.91);
+  box-shadow:0 .8rem 2rem rgba(18,54,91,.09);
+  overflow:hidden;
+}
+
+.card-pad{
+  padding:5.2%;
+}
+
+.card h3{
+  color:var(--navy);
+  font-size:calc(var(--u) * 1.28);
+  line-height:1.25;
+}
+
+.card p,
+.card li{
+  color:var(--muted);
+  font-size:calc(var(--u) * .94);
+  line-height:1.62;
+}
+
+.card ul{
+  margin:.8em 0 0;
+  padding-left:1.15em;
+}
+
+.card li::marker{
+  color:var(--blue);
+}
+
+.icon{
+  display:grid;
+  place-items:center;
+  width:calc(var(--u) * 3.3);
+  height:calc(var(--u) * 3.3);
+  flex:0 0 auto;
+  border-radius:calc(var(--u) * .9);
+  color:var(--blue);
+  background:#EAF3FF;
+  font-size:calc(var(--u) * 1.65);
+  font-weight:900;
+}
+
+.icon.green{
+  color:#0D9F77;
+  background:#E4FAF3;
+}
+
+.icon.orange{
+  color:#D97816;
+  background:#FFF2E3;
+}
+
+.icon.red{
+  color:#E34A55;
+  background:#FFECEF;
+}
+
+.icon.purple{
+  color:#6B4DE8;
+  background:#EEE9FF;
+}
+
+.chip-wrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:calc(var(--u) * .55);
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.45em;
+  padding:.58em .9em;
+  border:1px solid #D8E5F2;
+  border-radius:999px;
+  color:#38516D;
+  background:#F8FBFF;
+  font-size:calc(var(--u) * .82);
+  font-weight:700;
+}
+
+.chip::before{
+  content:"";
+  width:.48em;
+  height:.48em;
+  border-radius:50%;
+  background:var(--blue);
+}
+
+.note-box{
+  display:flex;
+  align-items:center;
+  gap:1em;
+  padding:1.2em 1.4em;
+  border-left:.35em solid var(--orange);
+  border-radius:0 calc(var(--u) * .8) calc(var(--u) * .8) 0;
+  background:#FFF8ED;
+  color:#6E4B1B;
+  font-size:calc(var(--u) * .94);
+  line-height:1.55;
+}
+
+.note-box strong{
+  color:#A95B0D;
+}
+
+.value-box{
+  position:relative;
+  padding:1.25em 1.45em;
+  border-radius:calc(var(--u) * .9);
+  color:white;
+  background:linear-gradient(135deg,var(--navy-2),#15528D);
+  box-shadow:0 1rem 2.2rem rgba(12,47,83,.18);
+  font-size:calc(var(--u) * 1.02);
+  line-height:1.6;
+}
+
+.value-box::before{
+  content:"“";
+  position:absolute;
+  top:-.25em;
+  right:.18em;
+  color:rgba(255,255,255,.12);
+  font-size:6em;
+  line-height:1;
+  font-weight:900;
+}
+
+.value-box strong{
+  color:#70E7F6;
+}
+
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:.5em;
+  padding:.55em .9em;
+  border-radius:999px;
+  background:#E8F2FF;
+  color:var(--blue);
+  font-size:calc(var(--u) * .82);
+  font-weight:800;
+}
+
+.number-badge{
+  display:grid;
+  place-items:center;
+  width:2em;
+  height:2em;
+  flex:0 0 auto;
+  border-radius:50%;
+  color:white;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  font-size:calc(var(--u) * .9);
+  font-weight:900;
+}
+
+.label{
+  color:var(--blue);
+  font-size:calc(var(--u) * .8);
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
+.mini-title{
+  color:var(--navy);
+  font-size:calc(var(--u) * 1.08);
+  font-weight:900;
+}
+
+/* =========================================================
+   底部导航
+========================================================= */
+.top-tools{
+  position:absolute;
+  z-index:60;
+  top:2.3%;
+  right:2.2%;
+  display:flex;
+  gap:calc(var(--u) * .55);
+}
+
+.tool-btn,
+.nav-btn{
+  display:grid;
+  place-items:center;
+  width:calc(var(--u) * 2.6);
+  height:calc(var(--u) * 2.6);
+  border:1px solid rgba(157,182,209,.5);
+  border-radius:50%;
+  color:var(--navy);
+  background:rgba(255,255,255,.88);
+  box-shadow:0 .45rem 1rem rgba(7,33,64,.12);
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.tool-btn:hover,
+.nav-btn:hover{
+  color:white;
+  border-color:var(--blue);
+  background:var(--blue);
+  transform:translateY(-2px);
+}
+
+.navbar{
+  position:absolute;
+  z-index:55;
+  right:2.2%;
+  bottom:2.2%;
+  display:flex;
+  align-items:center;
+  gap:calc(var(--u) * .65);
+}
+
+.page-count{
+  min-width:5.3em;
+  color:#4B627B;
+  text-align:center;
+  font-size:calc(var(--u) * .85);
+  font-weight:800;
+}
+
+.progress{
+  position:absolute;
+  z-index:58;
+  left:0;
+  right:0;
+  bottom:0;
+  height:calc(var(--u) * .23);
+  background:rgba(8,27,51,.08);
+}
+
+.progress-bar{
+  width:6.666%;
+  height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  transition:width .35s ease;
+}
+
+.slide-footer{
+  position:absolute;
+  left:6.2%;
+  bottom:2.5%;
+  display:flex;
+  align-items:center;
+  gap:.65em;
+  color:#8A98A9;
+  font-size:calc(var(--u) * .7);
+  letter-spacing:.06em;
+}
+
+.slide-footer::before{
+  content:"";
+  width:1.8em;
+  height:.22em;
+  border-radius:1em;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+}
+
+/* =========================================================
+   目录弹层
+========================================================= */
+.toc-panel{
+  position:absolute;
+  z-index:100;
+  inset:0;
+  display:none;
+  padding:5.5% 7%;
+  color:white;
+  background:
+    radial-gradient(circle at 82% 15%,rgba(34,199,232,.22),transparent 25%),
+    linear-gradient(135deg,#07172B 0%,#0D3158 100%);
+}
+
+.toc-panel.open{
+  display:block;
+  animation:fadeIn .25s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+.toc-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:3%;
+}
+
+.toc-head h2{
+  font-size:calc(var(--u) * 2.5);
+}
+
+.close-toc{
+  border:0;
+  color:white;
+  background:transparent;
+  font-size:calc(var(--u) * 2);
+  cursor:pointer;
+}
+
+.toc-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:calc(var(--u) * .7);
+}
+
+.toc-item{
+  display:flex;
+  align-items:center;
+  gap:1em;
+  min-height:calc(var(--u) * 3.25);
+  padding:.75em 1em;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:calc(var(--u) * .7);
+  color:#DCEEFF;
+  background:rgba(255,255,255,.055);
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.toc-item:hover{
+  border-color:rgba(86,218,242,.7);
+  background:rgba(34,199,232,.12);
+  transform:translateY(-2px);
+}
+
+.toc-item span{
+  color:#68DFF1;
+  font-weight:900;
+}
+
+.toc-item b{
+  font-size:calc(var(--u) * .82);
+  line-height:1.35;
+}
+
+/* =========================================================
+   第1页：封面
+========================================================= */
+.cover{
+  color:white;
+  background:
+    linear-gradient(90deg,rgba(6,21,39,.97),rgba(9,42,75,.92)),
+    linear-gradient(135deg,#06162A,#0C4679);
+}
+
+.cover::before{
+  content:"";
+  position:absolute;
+  top:-25%;
+  right:-10%;
+  width:55%;
+  height:90%;
+  border-radius:50%;
+  border:1px solid rgba(87,222,241,.17);
+  box-shadow:
+    0 0 0 calc(var(--u) * 2.5) rgba(87,222,241,.035),
+    0 0 0 calc(var(--u) * 5) rgba(87,222,241,.025);
+}
+
+.cover::after{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:48%;
+  height:55%;
+  opacity:.32;
+  background:
+    linear-gradient(90deg,transparent 49%,rgba(104,223,241,.28) 50%,transparent 51%) 0 0/9% 100%,
+    linear-gradient(0deg,transparent 49%,rgba(104,223,241,.22) 50%,transparent 51%) 0 0/100% 14%;
+  transform:perspective(400px) rotateX(58deg);
+  transform-origin:bottom;
+}
+
+.cover-content{
+  position:relative;
+  z-index:4;
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  align-items:center;
+  height:100%;
+}
+
+.cover-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:.7em;
+  margin-bottom:1.7em;
+  color:#6DE4F5;
+  font-size:calc(var(--u) * .9);
+  font-weight:900;
+  letter-spacing:.16em;
+}
+
+.cover-tag::before{
+  content:"";
+  width:2.7em;
+  height:.28em;
+  border-radius:1em;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+}
+
+.cover h1{
+  max-width:12em;
+  font-size:calc(var(--u) * 3.35);
+  line-height:1.18;
+  letter-spacing:-.055em;
+}
+
+.cover h1 em{
+  color:#67DDEF;
+  font-style:normal;
+}
+
+.cover-subtitle{
+  max-width:34em;
+  margin-top:1.8em;
+  color:#BFD2E6;
+  font-size:calc(var(--u) * 1.15);
+  line-height:1.7;
+}
+
+.cover-bottom{
+  display:flex;
+  gap:1.2em;
+  margin-top:2.1em;
+}
+
+.cover-bottom span{
+  padding:.6em 1em;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  color:#DDEFFF;
+  background:rgba(255,255,255,.06);
+  font-size:calc(var(--u) * .75);
+}
+
+.city-graphic{
+  position:relative;
+  height:65%;
+}
+
+.city-ring{
+  position:absolute;
+  top:0;
+  right:4%;
+  width:90%;
+  aspect-ratio:1;
+  border:1px solid rgba(102,225,244,.22);
+  border-radius:50%;
+  animation:float 5s ease-in-out infinite;
+}
+
+.city-ring::before,
+.city-ring::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  border:1px dashed rgba(102,225,244,.18);
+}
+
+.city-ring::before{
+  inset:12%;
+}
+
+.city-ring::after{
+  inset:25%;
+}
+
+@keyframes float{
+  50%{transform:translateY(-2%) rotate(3deg)}
+}
+
+.city-core{
+  position:absolute;
+  top:25%;
+  left:34%;
+  display:grid;
+  place-items:center;
+  width:34%;
+  aspect-ratio:1;
+  border-radius:26%;
+  color:#071D36;
+  background:linear-gradient(135deg,#72EBF8,#25B6E8);
+  box-shadow:
+    0 0 3rem rgba(44,194,230,.42),
+    inset 0 0 1rem rgba(255,255,255,.35);
+  font-size:calc(var(--u) * 3.7);
+  font-weight:900;
+  transform:rotate(45deg);
+}
+
+.city-core span{
+  transform:rotate(-45deg);
+}
+
+.node{
+  position:absolute;
+  display:grid;
+  place-items:center;
+  width:calc(var(--u) * 3.2);
+  height:calc(var(--u) * 3.2);
+  border:1px solid rgba(107,225,244,.44);
+  border-radius:50%;
+  color:#82EDFA;
+  background:rgba(5,29,55,.88);
+  box-shadow:0 0 1.5rem rgba(34,199,232,.22);
+  font-size:calc(var(--u) * 1.35);
+}
+
+.node.n1{top:7%;left:42%}
+.node.n2{top:39%;left:4%}
+.node.n3{right:0;top:39%}
+.node.n4{left:22%;bottom:3%}
+.node.n5{right:17%;bottom:2%}
+
+/* =========================================================
+   第2页：目录
+========================================================= */
+.agenda-layout{
+  display:grid;
+  grid-template-columns:.75fr 1.25fr;
+  gap:5%;
+  height:75%;
+  align-items:center;
+}
+
+.agenda-visual{
+  position:relative;
+  height:100%;
+  border-radius:calc(var(--u) * 1.4);
+  background:linear-gradient(145deg,var(--navy),#14548B);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.agenda-visual::before{
+  content:"";
+  position:absolute;
+  inset:8%;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+}
+
+.agenda-big{
+  position:absolute;
+  left:10%;
+  top:10%;
+  color:rgba(255,255,255,.08);
+  font-size:calc(var(--u) * 9);
+  font-weight:900;
+  line-height:1;
+}
+
+.agenda-center{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  text-align:center;
+}
+
+.agenda-center b{
+  font-size:calc(var(--u) * 2.2);
+}
+
+.agenda-center span{
+  margin-top:.7em;
+  color:#75E3F2;
+  font-size:calc(var(--u) * .88);
+  letter-spacing:.13em;
+}
+
+.agenda-list{
+  display:grid;
+  gap:calc(var(--u) * .65);
+}
+
+.agenda-item{
+  display:grid;
+  grid-template-columns:3.2em 1fr auto;
+  align-items:center;
+  min-height:calc(var(--u) * 3.15);
+  padding:.65em 1em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .75);
+  background:white;
+  box-shadow:0 .5rem 1.2rem rgba(22,62,102,.06);
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.agenda-item:hover{
+  border-color:#8EC3FF;
+  transform:translateX(.4em);
+}
+
+.agenda-item .num{
+  color:var(--blue);
+  font-size:calc(var(--u) * 1.25);
+  font-weight:900;
+}
+
+.agenda-item b{
+  color:var(--navy);
+  font-size:calc(var(--u) * 1);
+}
+
+.agenda-item small{
+  color:#91A0B1;
+  font-size:calc(var(--u) * .72);
+}
+
+/* =========================================================
+   第3页：章节页
+========================================================= */
+.chapter{
+  color:white;
+  background:
+    radial-gradient(circle at 82% 24%,rgba(45,212,234,.25),transparent 23%),
+    linear-gradient(135deg,#071B33,#0D3A66);
+}
+
+.chapter-content{
+  position:relative;
+  z-index:3;
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  align-items:center;
+  height:100%;
+}
+
+.chapter-no{
+  color:#58D9EC;
+  font-size:calc(var(--u) * 1);
+  font-weight:900;
+  letter-spacing:.18em;
+}
+
+.chapter h2{
+  max-width:8em;
+  margin-top:.45em;
+  font-size:calc(var(--u) * 3.55);
+  line-height:1.13;
+  letter-spacing:-.05em;
+}
+
+.chapter p{
+  max-width:35em;
+  margin-top:1.5em;
+  color:#B9CCE0;
+  font-size:calc(var(--u) * 1.05);
+  line-height:1.7;
+}
+
+.principle-wheel{
+  position:relative;
+  width:85%;
+  aspect-ratio:1;
+  margin:auto;
+  border:1px solid rgba(107,227,245,.22);
+  border-radius:50%;
+}
+
+.principle-wheel::before{
+  content:"";
+  position:absolute;
+  inset:18%;
+  border:1px dashed rgba(107,227,245,.28);
+  border-radius:50%;
+}
+
+.wheel-core{
+  position:absolute;
+  inset:33%;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:#07203B;
+  background:linear-gradient(135deg,#6EE8F7,#2CB9E9);
+  box-shadow:0 0 3rem rgba(44,185,233,.38);
+  text-align:center;
+  font-size:calc(var(--u) * 1.15);
+  font-weight:900;
+}
+
+.wheel-item{
+  position:absolute;
+  display:grid;
+  place-items:center;
+  width:26%;
+  aspect-ratio:1;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:50%;
+  color:white;
+  background:rgba(255,255,255,.07);
+  text-align:center;
+  font-size:calc(var(--u) * .8);
+  font-weight:800;
+}
+
+.wheel-item.i1{left:37%;top:-7%}
+.wheel-item.i2{right:-4%;top:36%}
+.wheel-item.i3{left:37%;bottom:-7%}
+.wheel-item.i4{left:-4%;top:36%}
+
+/* =========================================================
+   第4页：对接方式
+========================================================= */
+.connect-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2%;
+}
+
+.connect-card{
+  padding:4.3%;
+}
+
+.connect-card.risk{
+  border-top:calc(var(--u) * .32) solid var(--orange);
+}
+
+.connect-card.good{
+  border-top:calc(var(--u) * .32) solid var(--green);
+}
+
+.connect-head{
+  display:flex;
+  align-items:center;
+  gap:1em;
+  margin-bottom:4%;
+}
+
+.flow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.45em;
+  margin:5% 0;
+}
+
+.flow-node{
+  display:grid;
+  place-items:center;
+  min-width:27%;
+  min-height:calc(var(--u) * 3.3);
+  padding:.7em;
+  border-radius:calc(var(--u) * .8);
+  color:var(--navy);
+  background:#EFF5FC;
+  text-align:center;
+  font-size:calc(var(--u) * .78);
+  font-weight:800;
+}
+
+.flow-node.vendor{
+  color:#9A580F;
+  background:#FFF1DD;
+}
+
+.flow-node.direct{
+  color:#08785A;
+  background:#DFF8F0;
+}
+
+.flow-arrow{
+  color:#8296AA;
+  font-size:calc(var(--u) * 1.5);
+  font-weight:900;
+}
+
+.compare-bottom{
+  display:grid;
+  grid-template-columns:1fr .8fr;
+  gap:2%;
+  margin-top:2%;
+}
+
+/* =========================================================
+   第5页：闭环
+========================================================= */
+.loop-layout{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:3%;
+  height:72%;
+}
+
+.loop-map{
+  position:relative;
+  border-radius:calc(var(--u) * 1.2);
+  background:
+    radial-gradient(circle at center,rgba(22,119,255,.10),transparent 34%),
+    white;
+  box-shadow:var(--shadow);
+}
+
+.loop-center{
+  position:absolute;
+  left:38%;
+  top:35%;
+  display:grid;
+  place-items:center;
+  width:24%;
+  aspect-ratio:1;
+  border-radius:50%;
+  color:white;
+  background:linear-gradient(135deg,var(--navy-2),var(--blue));
+  text-align:center;
+  font-size:calc(var(--u) * .94);
+  font-weight:900;
+  box-shadow:0 1rem 2.5rem rgba(22,119,255,.25);
+}
+
+.loop-item{
+  position:absolute;
+  display:flex;
+  align-items:center;
+  gap:.65em;
+  width:28%;
+  padding:.8em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .75);
+  background:white;
+  box-shadow:0 .5rem 1rem rgba(19,55,91,.08);
+  font-size:calc(var(--u) * .78);
+  font-weight:800;
+}
+
+.loop-item::before{
+  display:grid;
+  place-items:center;
+  width:2em;
+  height:2em;
+  flex:0 0 auto;
+  border-radius:.55em;
+  color:var(--blue);
+  background:#E9F3FF;
+}
+
+.loop-item.l1{left:5%;top:12%}
+.loop-item.l1::before{content:"识"}
+
+.loop-item.l2{right:5%;top:12%}
+.loop-item.l2::before{content:"控"}
+
+.loop-item.l3{right:5%;bottom:12%}
+.loop-item.l3::before{content:"费"}
+
+.loop-item.l4{left:5%;bottom:12%}
+.loop-item.l4::before{content:"异"}
+
+.loop-line{
+  position:absolute;
+  border-top:2px dashed #A9C9E8;
+  transform-origin:left center;
+}
+
+.line1{left:29%;top:30%;width:18%;transform:rotate(22deg)}
+.line2{left:58%;top:30%;width:18%;transform:rotate(-22deg)}
+.line3{left:58%;top:68%;width:18%;transform:rotate(22deg)}
+.line4{left:29%;top:68%;width:18%;transform:rotate(-22deg)}
+
+.loop-side{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4%;
+}
+
+.big-point{
+  display:flex;
+  align-items:flex-start;
+  gap:1em;
+  padding:1.2em;
+  border-radius:calc(var(--u) * .9);
+  background:white;
+  box-shadow:0 .5rem 1.4rem rgba(18,53,91,.08);
+}
+
+.big-point b{
+  display:block;
+  margin-bottom:.35em;
+  color:var(--navy);
+  font-size:calc(var(--u) * 1.05);
+}
+
+.big-point p{
+  color:var(--muted);
+  font-size:calc(var(--u) * .84);
+  line-height:1.55;
+}
+
+/* =========================================================
+   第6页：防占用
+========================================================= */
+.occupy-layout{
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:2.3%;
+}
+
+.problem-list{
+  display:grid;
+  gap:calc(var(--u) * .65);
+}
+
+.problem{
+  display:flex;
+  align-items:center;
+  gap:1em;
+  padding:1em;
+  border:1px solid #F1D6D9;
+  border-radius:calc(var(--u) * .75);
+  background:#FFF9FA;
+}
+
+.problem b{
+  color:#9B343E;
+  font-size:calc(var(--u) * .88);
+}
+
+.device-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:calc(var(--u) * .65);
+}
+
+.device{
+  display:flex;
+  align-items:center;
+  gap:.8em;
+  min-height:calc(var(--u) * 3.5);
+  padding:1em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .75);
+  background:white;
+}
+
+.device b{
+  color:var(--navy);
+  font-size:calc(var(--u) * .88);
+}
+
+.closed-loop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.5em;
+  margin-top:2%;
+  padding:1.2em;
+  border-radius:calc(var(--u) * 1);
+  color:white;
+  background:linear-gradient(135deg,#0B294A,#15588D);
+}
+
+.loop-step{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.5em;
+  width:20%;
+  text-align:center;
+  font-size:calc(var(--u) * .72);
+  font-weight:800;
+}
+
+.loop-step span{
+  display:grid;
+  place-items:center;
+  width:2.6em;
+  height:2.6em;
+  border-radius:50%;
+  color:#06213C;
+  background:#65E0F2;
+  font-size:calc(var(--u) * .94);
+}
+
+.loop-arrow-white{
+  color:#69DDF0;
+  font-weight:900;
+}
+
+/* =========================================================
+   第7页：超时占用费
+========================================================= */
+.pay-method{
+  padding:4%;
+  min-height:calc(var(--u) * 11.7);
+}
+
+.pay-method.featured{
+  color:white;
+  border-color:transparent;
+  background:linear-gradient(145deg,#0B294A,#146094);
+}
+
+.pay-method.featured h3,
+.pay-method.featured p,
+.pay-method.featured li{
+  color:white;
+}
+
+.pay-method.featured li::marker{
+  color:#68E2F3;
+}
+
+.pay-icon{
+  margin-bottom:1em;
+}
+
+.policy-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:calc(var(--u) * .55);
+  margin-top:2%;
+}
+
+.policy{
+  min-height:calc(var(--u) * 4.2);
+  padding:.9em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .7);
+  background:white;
+  text-align:center;
+}
+
+.policy b{
+  display:block;
+  margin-top:.55em;
+  color:var(--navy);
+  font-size:calc(var(--u) * .76);
+}
+
+.policy span{
+  color:var(--blue);
+  font-size:calc(var(--u) * 1.3);
+}
+
+/* =========================================================
+   第8页：设备统一
+========================================================= */
+.equipment-strip{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:calc(var(--u) * .55);
+  margin-bottom:2.2%;
+}
+
+.equipment-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:calc(var(--u) * 5);
+  padding:.7em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .75);
+  background:white;
+  text-align:center;
+}
+
+.equipment-item span{
+  margin-bottom:.45em;
+  color:var(--blue);
+  font-size:calc(var(--u) * 1.8);
+}
+
+.equipment-item b{
+  color:var(--navy);
+  font-size:calc(var(--u) * .76);
+}
+
+.standard-layout{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:2%;
+}
+
+.standard-points{
+  display:grid;
+  gap:calc(var(--u) * .55);
+}
+
+.standard-point{
+  display:flex;
+  align-items:center;
+  gap:1em;
+  padding:.8em 1em;
+  border-radius:calc(var(--u) * .7);
+  background:white;
+  box-shadow:0 .4rem 1rem rgba(23,58,94,.06);
+}
+
+.standard-point b{
+  color:var(--navy);
+  font-size:calc(var(--u) * .88);
+}
+
+.cost-stack{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:calc(var(--u) * .55);
+  height:100%;
+}
+
+.cost-item{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:1em;
+  border-radius:calc(var(--u) * .7);
+  color:white;
+  background:linear-gradient(135deg,#133D66,#17639A);
+}
+
+.cost-item strong{
+  color:#70E2F2;
+  font-size:calc(var(--u) * 1.2);
+}
+
+.cost-item small{
+  margin-top:.45em;
+  color:#D6E8F6;
+  font-size:calc(var(--u) * .72);
+}
+
+/* =========================================================
+   第9页：网络
+========================================================= */
+.network-layout{
+  display:grid;
+  grid-template-columns:1.12fr .88fr;
+  gap:2.5%;
+}
+
+.network-diagram{
+  position:relative;
+  min-height:calc(var(--u) * 19.5);
+  border-radius:calc(var(--u) * 1);
+  background:linear-gradient(145deg,#0A2544,#124E7F);
+  box-shadow:var(--shadow);
+}
+
+.cloud{
+  position:absolute;
+  left:38%;
+  top:9%;
+  width:24%;
+  padding:1.2em;
+  border-radius:999px;
+  color:#08203A;
+  background:#6CE1F1;
+  text-align:center;
+  font-size:calc(var(--u) * .9);
+  font-weight:900;
+}
+
+.net-branch{
+  position:absolute;
+  width:31%;
+  padding:1em;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:calc(var(--u) * .75);
+  color:white;
+  background:rgba(255,255,255,.07);
+  text-align:center;
+}
+
+.net-branch b{
+  display:block;
+  font-size:calc(var(--u) * .9);
+}
+
+.net-branch small{
+  display:block;
+  margin-top:.45em;
+  color:#BFD6E8;
+  font-size:calc(var(--u) * .68);
+}
+
+.net-branch.primary{
+  left:9%;
+  top:42%;
+}
+
+.net-branch.backup{
+  right:9%;
+  top:42%;
+}
+
+.net-center{
+  position:absolute;
+  left:38%;
+  bottom:8%;
+  width:24%;
+  padding:1.2em .7em;
+  border-radius:calc(var(--u) * .8);
+  color:white;
+  background:var(--blue);
+  text-align:center;
+  font-size:calc(var(--u) * .8);
+  font-weight:900;
+}
+
+.net-line-v{
+  position:absolute;
+  left:50%;
+  top:26%;
+  width:2px;
+  height:16%;
+  border-left:2px dashed rgba(104,225,241,.5);
+}
+
+.net-line-l,
+.net-line-r{
+  position:absolute;
+  top:35%;
+  width:24%;
+  border-top:2px dashed rgba(104,225,241,.5);
+}
+
+.net-line-l{
+  left:26%;
+  transform:rotate(20deg);
+}
+
+.net-line-r{
+  right:26%;
+  transform:rotate(-20deg);
+}
+
+.remote-list{
+  display:grid;
+  gap:calc(var(--u) * .65);
+}
+
+.remote-item{
+  display:flex;
+  align-items:flex-start;
+  gap:1em;
+  padding:1em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .75);
+  background:white;
+}
+
+.remote-item b{
+  display:block;
+  margin-bottom:.3em;
+  color:var(--navy);
+  font-size:calc(var(--u) * .9);
+}
+
+.remote-item p{
+  color:var(--muted);
+  font-size:calc(var(--u) * .77);
+  line-height:1.5;
+}
+
+/* =========================================================
+   第10页：统一计费
+========================================================= */
+.billing-layout{
+  display:grid;
+  grid-template-columns:1fr .9fr;
+  gap:2.5%;
+}
+
+.billing-core{
+  position:relative;
+  min-height:calc(var(--u) * 18.7);
+  border-radius:calc(var(--u) * 1.1);
+  background:
+    radial-gradient(circle at center,rgba(22,119,255,.14),transparent 32%),
+    white;
+  box-shadow:var(--shadow);
+}
+
+.billing-center{
+  position:absolute;
+  left:37%;
+  top:34%;
+  display:grid;
+  place-items:center;
+  width:26%;
+  aspect-ratio:1;
+  border-radius:50%;
+  color:white;
+  background:linear-gradient(135deg,var(--navy-2),var(--blue));
+  text-align:center;
+  font-size:calc(var(--u) * .9);
+  font-weight:900;
+  box-shadow:0 1rem 2rem rgba(22,119,255,.25);
+}
+
+.bill-tag{
+  position:absolute;
+  padding:.65em .8em;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#31516F;
+  background:white;
+  box-shadow:0 .4rem 1rem rgba(22,55,91,.08);
+  font-size:calc(var(--u) * .69);
+  font-weight:800;
+}
+
+.bt1{left:5%;top:10%}
+.bt2{left:38%;top:7%}
+.bt3{right:5%;top:10%}
+.bt4{right:2%;top:46%}
+.bt5{right:5%;bottom:10%}
+.bt6{left:36%;bottom:7%}
+.bt7{left:4%;bottom:10%}
+.bt8{left:1%;top:46%}
+
+.billing-side{
+  display:flex;
+  flex-direction:column;
+  gap:3%;
+}
+
+.billing-risk{
+  padding:1.2em;
+  border:1px solid #F0D8DA;
+  border-radius:calc(var(--u) * .8);
+  background:#FFF8F9;
+}
+
+.billing-risk h3{
+  margin-bottom:.6em;
+  color:#A73843;
+}
+
+.billing-risk p{
+  color:#76545A;
+  font-size:calc(var(--u) * .82);
+  line-height:1.55;
+}
+
+/* =========================================================
+   第11页：道路检测
+========================================================= */
+.method-card{
+  min-height:calc(var(--u) * 17.5);
+  padding:5%;
+}
+
+.method-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:calc(var(--u) * .35);
+  background:var(--blue);
+}
+
+.method-card.orange::before{background:var(--orange)}
+.method-card.green::before{background:var(--green)}
+
+.method-head{
+  display:flex;
+  align-items:center;
+  gap:.9em;
+  margin-bottom:1.2em;
+}
+
+.method-card ul{
+  margin-top:1em;
+}
+
+.method-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.45em;
+  margin-top:1.2em;
+}
+
+.method-tags span{
+  padding:.45em .7em;
+  border-radius:999px;
+  color:#54708A;
+  background:#F0F5FA;
+  font-size:calc(var(--u) * .68);
+  font-weight:800;
+}
+
+/* =========================================================
+   第12页：选型原则
+========================================================= */
+.factor-layout{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:2.5%;
+}
+
+.factor-cloud{
+  display:flex;
+  align-content:center;
+  flex-wrap:wrap;
+  gap:calc(var(--u) * .7);
+  min-height:calc(var(--u) * 15);
+  padding:4%;
+  border-radius:calc(var(--u) * 1);
+  background:white;
+  box-shadow:var(--shadow);
+}
+
+.factor{
+  display:flex;
+  align-items:center;
+  gap:.55em;
+  padding:.78em 1em;
+  border:1px solid #DCE7F3;
+  border-radius:999px;
+  color:#2C4968;
+  background:#F7FBFF;
+  font-size:calc(var(--u) * .82);
+  font-weight:800;
+}
+
+.factor span{
+  color:var(--blue);
+}
+
+.trial-card{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:8%;
+  color:white;
+  background:linear-gradient(145deg,#0A2949,#14629A);
+}
+
+.trial-card .trial-no{
+  color:#6FE0F0;
+  font-size:calc(var(--u) * 3.4);
+  font-weight:900;
+  line-height:1;
+}
+
+.trial-card h3{
+  margin:.5em 0;
+  color:white;
+  font-size:calc(var(--u) * 1.35);
+}
+
+.trial-card p{
+  color:#C8DEED;
+  font-size:calc(var(--u) * .84);
+  line-height:1.6;
+}
+
+.trial-flow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.7em;
+  margin-top:2.2%;
+}
+
+.trial-step{
+  min-width:18%;
+  padding:.75em 1em;
+  border-radius:999px;
+  color:var(--navy);
+  background:white;
+  text-align:center;
+  font-size:calc(var(--u) * .78);
+  font-weight:900;
+}
+
+.trial-flow .arrow{
+  color:var(--blue);
+  font-size:calc(var(--u) * 1.25);
+  font-weight:900;
+}
+
+/* =========================================================
+   第13页：人员配置
+========================================================= */
+.staff-layout{
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:2.5%;
+}
+
+.staff-visual{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:6%;
+  color:white;
+  background:linear-gradient(145deg,#08233F,#145C91);
+}
+
+.staff-number{
+  display:flex;
+  align-items:flex-end;
+  gap:.5em;
+}
+
+.staff-number strong{
+  color:#69E1F1;
+  font-size:calc(var(--u) * 5);
+  line-height:.8;
+}
+
+.staff-number span{
+  color:#D8EAF5;
+  font-size:calc(var(--u) * 1);
+}
+
+.balance{
+  position:relative;
+  height:calc(var(--u) * 5.2);
+  margin-top:2em;
+}
+
+.balance-line{
+  position:absolute;
+  left:10%;
+  right:10%;
+  top:50%;
+  height:.35em;
+  border-radius:1em;
+  background:linear-gradient(90deg,var(--red),var(--orange),var(--green));
+}
+
+.balance-dot{
+  position:absolute;
+  left:48%;
+  top:calc(50% - .7em);
+  width:1.4em;
+  height:1.4em;
+  border:.25em solid white;
+  border-radius:50%;
+  background:var(--blue);
+}
+
+.balance-labels{
+  display:flex;
+  justify-content:space-between;
+  margin-top:3.8em;
+  color:#D1E4F2;
+  font-size:calc(var(--u) * .7);
+}
+
+.staff-factors{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:calc(var(--u) * .6);
+}
+
+.staff-factor{
+  display:flex;
+  align-items:center;
+  gap:.8em;
+  min-height:calc(var(--u) * 3.1);
+  padding:.8em;
+  border:1px solid var(--line);
+  border-radius:calc(var(--u) * .7);
+  background:white;
+}
+
+.staff-factor b{
+  color:var(--navy);
+  font-size:calc(var(--u) * .77);
+}
+
+.dynamic-bar{
+  display:flex;
+  align-items:center;
+  gap:1.5em;
+  margin-top:2%;
+  padding:1em 1.2em;
+  border-radius:calc(var(--u) * .8);
+  color:white;
+  background:linear-gradient(90deg,var(--blue),#1660A1);
+}
+
+.dynamic-bar strong{
+  font-size:calc(var(--u) * 1.1);
+}
+
+.dynamic-bar span{
+  color:#DDEEFF;
+  font-size:calc(var(--u) * .8);
+}
+
+/* =========================================================
+   第14页：降低欠费
+========================================================= */
+.arrears-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2.3%;
+}
+
+.action-card{
+  padding:4.2%;
+}
+
+.action-head{
+  display:flex;
+  align-items:center;
+  gap:1em;
+  margin-bottom:1em;
+}
+
+.action-list{
+  display:grid;
+  gap:.5em;
+}
+
+.action-row{
+  display:flex;
+  align-items:center;
+  gap:.8em;
+  padding:.68em .8em;
+  border-radius:calc(var(--u) * .6);
+  background:#F6FAFE;
+  color:#415C77;
+  font-size:calc(var(--u) * .76);
+  font-weight:700;
+}
+
+.action-row::before{
+  content:"✓";
+  display:grid;
+  place-items:center;
+  width:1.65em;
+  height:1.65em;
+  flex:0 0 auto;
+  border-radius:50%;
+  color:white;
+  background:var(--green);
+  font-size:.8em;
+  font-weight:900;
+}
+
+.package-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.55em;
+}
+
+.package{
+  padding:1em;
+  border-radius:calc(var(--u) * .65);
+  color:#214361;
+  background:#EEF6FF;
+  text-align:center;
+  font-size:calc(var(--u) * .78);
+  font-weight:900;
+}
+
+.arrears-bottom{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:2%;
+  margin-top:2%;
+}
+
+.result-chain{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:1.2em;
+  border-radius:calc(var(--u) * .8);
+  background:white;
+  box-shadow:0 .5rem 1.2rem rgba(20,56,94,.07);
+}
+
+.result-item{
+  color:var(--navy);
+  text-align:center;
+  font-size:calc(var(--u) * .75);
+  font-weight:900;
+}
+
+.result-item span{
+  display:block;
+  margin-bottom:.4em;
+  color:var(--blue);
+  font-size:calc(var(--u) * 1.4);
+}
+
+/* =========================================================
+   第15页：总结
+========================================================= */
+.summary{
+  color:white;
+  background:
+    radial-gradient(circle at 89% 12%,rgba(39,207,232,.18),transparent 24%),
+    linear-gradient(135deg,#06182D,#0C365F);
+}
+
+.summary .slide-title h2,
+.summary .eyebrow{
+  color:white;
+}
+
+.summary .eyebrow::before{
+  background:#68E0F1;
+}
+
+.summary .title-no{
+  color:rgba(255,255,255,.06);
+}
+
+.summary-layout{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:2.5%;
+}
+
+.digital-panel{
+  padding:5%;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:calc(var(--u) * 1);
+  background:rgba(255,255,255,.055);
+}
+
+.digital-panel h3{
+  color:#68E0F1;
+  font-size:calc(var(--u) * 1.12);
+}
+
+.digital-tags{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.55em;
+  margin-top:1em;
+}
+
+.digital-tag{
+  display:flex;
+  align-items:center;
+  gap:.6em;
+  padding:.75em;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:calc(var(--u) * .6);
+  color:#E5F1F9;
+  background:rgba(255,255,255,.04);
+  font-size:calc(var(--u) * .7);
+  font-weight:700;
+}
+
+.digital-tag::before{
+  content:"";
+  width:.5em;
+  height:.5em;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#68E0F1;
+}
+
+.summary-list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.55em;
+}
+
+.summary-item{
+  display:flex;
+  align-items:flex-start;
+  gap:.75em;
+  padding:.78em;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:calc(var(--u) * .65);
+  background:rgba(255,255,255,.055);
+}
+
+.summary-item b{
+  color:white;
+  font-size:calc(var(--u) * .74);
+  line-height:1.45;
+}
+
+.summary-item .number-badge{
+  width:1.8em;
+  height:1.8em;
+  font-size:calc(var(--u) * .7);
+}
+
+.final-quote{
+  position:relative;
+  z-index:3;
+  margin-top:2%;
+  padding:1.15em 1.5em;
+  border-left:.35em solid #66DFEF;
+  border-radius:0 calc(var(--u) * .75) calc(var(--u) * .75) 0;
+  color:#E8F7FB;
+  background:rgba(103,224,241,.1);
+  font-size:calc(var(--u) * 1.02);
+  line-height:1.55;
+}
+
+.final-quote strong{
+  color:#68E0F1;
+}
+
+/* =========================================================
+   响应式与打印
+========================================================= */
+@media (max-aspect-ratio: 4/3){
+  .deck{
+    width:100vw;
+    height:56.25vw;
+  }
+}
+
+@media print{
+  html,body{
+    width:auto;
+    height:auto;
+    overflow:visible;
+    background:white;
+  }
+
+  .deck{
+    width:13.333in;
+    height:auto;
+    overflow:visible;
+    box-shadow:none;
+  }
+
+  .slides{
+    position:static;
+  }
+
+  .slide{
+    position:relative;
+    display:block !important;
+    width:13.333in;
+    height:7.5in;
+    page-break-after:always;
+    animation:none !important;
+  }
+
+  .top-tools,
+  .navbar,
+  .progress,
+  .toc-panel{
+    display:none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- 顶部工具 -->
+  <div class="top-tools">
+    <button class="tool-btn" id="tocBtn" title="目录">☰</button>
+    <button class="tool-btn" id="fullscreenBtn" title="全屏">⛶</button>
+  </div>
+
+  <main class="slides">
+
+    <!-- =====================================================
+         第1页 封面
+    ====================================================== -->
+    <section class="slide cover active">
+      <div class="cover-content">
+        <div>
+          <div class="cover-tag">CITY SMART OPERATION</div>
+
+          <h1>
+            城市级停车充电运营智能化建设
+            <em>“防坑”指南</em>
+          </h1>
+
+          <p class="cover-subtitle">
+            避免重复建设、厂商绑定和后期运营管理损失
+          </p>
+
+          <div class="cover-bottom">
+            <span>设备直连</span>
+            <span>统一计费</span>
+            <span>运营闭环</span>
+            <span>先试点再规模化</span>
+          </div>
+        </div>
+
+        <div class="city-graphic">
+          <div class="city-ring"></div>
+          <div class="city-core"><span>城</span></div>
+          <div class="node n1">充</div>
+          <div class="node n2">停</div>
+          <div class="node n3">路</div>
+          <div class="node n4">费</div>
+          <div class="node n5">管</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         第2页 目录
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">CONTENTS</div>
+          <h2>汇报目录</h2>
+          <p class="desc">围绕“充电、停车场、道路停车、运营管理”四个层面展开。</p>
+        </div>
+        <div class="title-no">02</div>
+      </div>
+
+      <div class="agenda-layout">
+        <div class="agenda-visual">
+          <div class="agenda-big">04</div>
+          <div class="agenda-center">
+            <b>四大建设主题</b>
+            <span>FROM DEVICE TO OPERATION</span>
+          </div>
+        </div>
+
+        <div class="agenda-list">
+          <div class="agenda-item" data-go="3">
+            <span class="num">01</span>
+            <b>充电设施与运营闭环</b>
+            <small>03—07</small>
+          </div>
+          <div class="agenda-item" data-go="7">
+            <span class="num">02</span>
+            <b>停车场设备、网络与计费</b>
+            <small>08—10</small>
+          </div>
+          <div class="agenda-item" data-go="10">
+            <span class="num">03</span>
+            <b>道路停车建设与运营</b>
+            <small>11—14</small>
+          </div>
+          <div class="agenda-item" data-go="14">
+            <span class="num">04</span>
+            <b>日常管理与建设总结</b>
+            <small>15</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">城市级停车充电运营智能化建设“防坑”指南</div>
+    </section>
+
+    <!-- =====================================================
+         第3页 总体原则
+    ====================================================== -->
+    <section class="slide chapter">
+      <div class="chapter-content">
+        <div>
+          <div class="chapter-no">CHAPTER 01 / 建设总原则</div>
+          <h2>先确定运营模式，再采购设备</h2>
+          <p>
+            智能化建设不是简单采购更多硬件，而是围绕业务模式建立
+            “设备可替换、数据可掌握、规则可调整、运营可追踪”的长期能力。
+          </p>
+        </div>
+
+        <div class="principle-wheel">
+          <div class="wheel-core">运营模式<br>先行</div>
+          <div class="wheel-item i1">设备<br>可替换</div>
+          <div class="wheel-item i2">计费<br>可调整</div>
+          <div class="wheel-item i3">过程<br>可追踪</div>
+          <div class="wheel-item i4">数据<br>可掌握</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         第4页 充电桩对接
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">CHARGING ACCESS</div>
+          <h2>充电桩对接方式选择</h2>
+          <p class="desc">对接方式将直接影响后期费用、数据控制权和设备替换能力。</p>
+        </div>
+        <div class="title-no">04</div>
+      </div>
+
+      <div class="connect-layout">
+        <div class="card connect-card risk">
+          <div class="connect-head">
+            <div class="icon orange">厂</div>
+            <div>
+              <div class="label">方式一</div>
+              <h3>厂家平台对接</h3>
+            </div>
+          </div>
+
+          <div class="flow">
+            <div class="flow-node">充电桩</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node vendor">厂家平台</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">运营平台</div>
+          </div>
+
+          <ul>
+            <li>充电桩先接入厂家平台</li>
+            <li>接口通常只适用于该厂家设备</li>
+            <li>可能产生接口费、平台服务费</li>
+            <li>容易形成设备与平台双重绑定</li>
+          </ul>
+        </div>
+
+        <div class="card connect-card good">
+          <div class="connect-head">
+            <div class="icon green">直</div>
+            <div>
+              <div class="label">方式二 · 优先建议</div>
+              <h3>充电桩设备直连</h3>
+            </div>
+          </div>
+
+          <div class="flow">
+            <div class="flow-node direct">多品牌充电桩</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node direct">主流设备协议</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node direct">运营平台</div>
+          </div>
+
+          <ul>
+            <li>充电桩直接接入运营平台</li>
+            <li>可适配多家充电桩设备</li>
+            <li>运营商直接掌握设备与订单数据</li>
+            <li>降低设备替换与扩容难度</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="compare-bottom">
+        <div class="note-box">
+          <strong>注意：</strong>
+          技术招标阶段应明确协议开放、数据归属、接口文档和后续服务费用。
+        </div>
+        <div class="value-box">
+          建议优先采用<strong>充电桩设备直连</strong>方式。
+        </div>
+      </div>
+
+      <div class="slide-footer">01 充电设施与运营闭环</div>
+    </section>
+
+    <!-- =====================================================
+         第5页 充电运营闭环
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">OPERATION LOOP</div>
+          <h2>设备只是入口，运营闭环才是结果</h2>
+          <p class="desc">识别、控制、订单、收费和异常处理必须形成统一联动。</p>
+        </div>
+        <div class="title-no">05</div>
+      </div>
+
+      <div class="loop-layout">
+        <div class="loop-map">
+          <div class="loop-line line1"></div>
+          <div class="loop-line line2"></div>
+          <div class="loop-line line3"></div>
+          <div class="loop-line line4"></div>
+
+          <div class="loop-center">统一运营<br>平台</div>
+
+          <div class="loop-item l1">车辆与车位识别</div>
+          <div class="loop-item l2">地锁与道闸控制</div>
+          <div class="loop-item l3">订单与费用结算</div>
+          <div class="loop-item l4">异常处理与追踪</div>
+        </div>
+
+        <div class="loop-side">
+          <div class="big-point">
+            <div class="icon">数</div>
+            <div>
+              <b>数据直接掌握</b>
+              <p>设备状态、充电订单、停车订单和支付结果进入同一数据体系。</p>
+            </div>
+          </div>
+
+          <div class="big-point">
+            <div class="icon green">联</div>
+            <div>
+              <b>业务自动联动</b>
+              <p>根据车辆、充电状态和收费规则自动控制设备，不依赖人工判断。</p>
+            </div>
+          </div>
+
+          <div class="big-point">
+            <div class="icon orange">替</div>
+            <div>
+              <b>设备可替换</b>
+              <p>通过统一接口和协议减少对单一厂家的长期依赖。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">01 充电设施与运营闭环</div>
+    </section>
+
+    <!-- =====================================================
+         第6页 防占用
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">PARKING OCCUPANCY</div>
+          <h2>充电车位防占用</h2>
+          <p class="desc">不能只买占位设备，必须同步设计业务判断与异常处理流程。</p>
+        </div>
+        <div class="title-no">06</div>
+      </div>
+
+      <div class="occupy-layout">
+        <div>
+          <div class="label" style="margin-bottom:.8em;">需要解决的问题</div>
+
+          <div class="problem-list">
+            <div class="problem">
+              <div class="icon red">占</div>
+              <b>非充电车辆占用充电车位</b>
+            </div>
+
+            <div class="problem">
+              <div class="icon red">超</div>
+              <b>充电完成后长时间不驶离</b>
+            </div>
+
+            <div class="problem">
+              <div class="icon red">误</div>
+              <b>车位状态不准，到场后无法使用</b>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="label" style="margin-bottom:.8em;">可选择的设备</div>
+
+          <div class="device-grid">
+            <div class="device">
+              <div class="icon">锁</div>
+              <b>普通地锁</b>
+            </div>
+            <div class="device">
+              <div class="icon green">沉</div>
+              <b>下沉地锁</b>
+            </div>
+            <div class="device">
+              <div class="icon orange">闸</div>
+              <b>车位道闸</b>
+            </div>
+            <div class="device">
+              <div class="icon purple">识</div>
+              <b>车位车牌识别相机</b>
+            </div>
+          </div>
+
+          <div class="note-box" style="margin-top:1em;">
+            <strong>关键：</strong>
+            提前设计车辆识别、设备控制、充电判断和异常处理流程。
+          </div>
+        </div>
+      </div>
+
+      <div class="closed-loop">
+        <div class="loop-step"><span>1</span>车辆识别</div>
+        <div class="loop-arrow-white">→</div>
+        <div class="loop-step"><span>2</span>设备控制</div>
+        <div class="loop-arrow-white">→</div>
+        <div class="loop-step"><span>3</span>充电判断</div>
+        <div class="loop-arrow-white">→</div>
+        <div class="loop-step"><span>4</span>费用联动</div>
+        <div class="loop-arrow-white">→</div>
+        <div class="loop-step"><span>5</span>异常处理</div>
+      </div>
+
+      <div class="slide-footer">01 充电设施与运营闭环</div>
+    </section>
+
+    <!-- =====================================================
+         第7页 超时占用费
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">OVERTIME FEE</div>
+          <h2>充电完成后的超时占用费</h2>
+          <p class="desc">账单生成不等于费用收取，必须先设计可靠的收费入口。</p>
+        </div>
+        <div class="title-no">07</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card pay-method">
+          <div class="pay-icon icon">账</div>
+          <div class="label">方式一</div>
+          <h3 style="margin:.35em 0 .7em;">充电账户支付</h3>
+          <ul>
+            <li>从车主充电账户余额中扣除</li>
+            <li>通过签约支付方式自动扣除</li>
+            <li>适合具有成熟账户体系的平台</li>
+          </ul>
+        </div>
+
+        <div class="card pay-method featured">
+          <div class="pay-icon icon green">出</div>
+          <div class="label" style="color:#69E0F1;">方式二</div>
+          <h3 style="margin:.35em 0 .7em;">停车场出口合并支付</h3>
+          <ul>
+            <li>停车费、充电费、占用费统一结算</li>
+            <li>车辆完成缴费后才能驶离停车场</li>
+            <li>形成更加可靠的收费约束</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="policy-grid">
+        <div class="policy"><span>⏱</span><b>免费缓冲期</b></div>
+        <div class="policy"><span>¥</span><b>收费标准</b></div>
+        <div class="policy"><span>⇧</span><b>单日上限</b></div>
+        <div class="policy"><span>!</span><b>余额不足处理</b></div>
+        <div class="policy"><span>↩</span><b>申诉与退款</b></div>
+      </div>
+
+      <div class="note-box" style="margin-top:1.1%;">
+        <strong>防坑提示：</strong>
+        没有可靠收费入口，占用费只能形成账单，无法真正约束车辆及时离开。
+      </div>
+
+      <div class="slide-footer">01 充电设施与运营闭环</div>
+    </section>
+
+    <!-- =====================================================
+         第8页 设备统一
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">EQUIPMENT STANDARD</div>
+          <h2>停车场设备统一化和标准化</h2>
+          <p class="desc">控制品牌、型号和接口数量，降低长期运维复杂度。</p>
+        </div>
+        <div class="title-no">08</div>
+      </div>
+
+      <div class="equipment-strip">
+        <div class="equipment-item"><span>◉</span><b>车牌识别相机</b></div>
+        <div class="equipment-item"><span>╱</span><b>道闸</b></div>
+        <div class="equipment-item"><span>▣</span><b>显示屏</b></div>
+        <div class="equipment-item"><span>▶</span><b>视频监控</b></div>
+        <div class="equipment-item"><span>◖</span><b>对讲设备</b></div>
+        <div class="equipment-item"><span>⌁</span><b>网络设备</b></div>
+      </div>
+
+      <div class="standard-layout">
+        <div class="standard-points">
+          <div class="standard-point">
+            <div class="number-badge">1</div>
+            <b>尽量统一设备技术标准和接口标准</b>
+          </div>
+
+          <div class="standard-point">
+            <div class="number-badge">2</div>
+            <b>控制设备种类，避免每个停车场采用不同方案</b>
+          </div>
+
+          <div class="standard-point">
+            <div class="number-badge">3</div>
+            <b>优先采用设备直连，减少厂家平台依赖</b>
+          </div>
+
+          <div class="note-box">
+            <strong>风险：</strong>
+            厂家平台对接可能产生接口费、平台服务费，并形成单一厂家绑定。
+          </div>
+        </div>
+
+        <div class="cost-stack">
+          <div class="cost-item">
+            <strong>接口对接</strong>
+            <small>品牌越多，适配工作越复杂</small>
+          </div>
+          <div class="cost-item">
+            <strong>人员培训</strong>
+            <small>不同设备需要不同操作方式</small>
+          </div>
+          <div class="cost-item">
+            <strong>备品备件</strong>
+            <small>型号过多导致库存成本增加</small>
+          </div>
+          <div class="cost-item">
+            <strong>现场维修</strong>
+            <small>故障定位和维修效率下降</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">02 停车场设备、网络与计费</div>
+    </section>
+
+    <!-- =====================================================
+         第9页 网络与远程管理
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">NETWORK & REMOTE</div>
+          <h2>停车场网络与远程管理</h2>
+          <p class="desc">无人值守停车场需要“主备网络＋离线补传＋远程处置”。</p>
+        </div>
+        <div class="title-no">09</div>
+      </div>
+
+      <div class="network-layout">
+        <div class="network-diagram">
+          <div class="cloud">城市运营平台</div>
+          <div class="net-line-v"></div>
+          <div class="net-line-l"></div>
+          <div class="net-line-r"></div>
+
+          <div class="net-branch primary">
+            <b>有线宽带</b>
+            <small>主用网络 · 稳定承载</small>
+          </div>
+
+          <div class="net-branch backup">
+            <b>4G / 5G</b>
+            <small>备用网络 · 自动切换</small>
+          </div>
+
+          <div class="net-center">
+            停车场出入口<br>离线订单自动补传
+          </div>
+        </div>
+
+        <div class="remote-list">
+          <div class="remote-item">
+            <div class="icon">切</div>
+            <div>
+              <b>网络自动切换</b>
+              <p>主网络故障后自动启用4G或5G备用链路。</p>
+            </div>
+          </div>
+
+          <div class="remote-item">
+            <div class="icon green">传</div>
+            <div>
+              <b>离线订单补传</b>
+              <p>网络恢复后自动补传订单，降低订单丢失风险。</p>
+            </div>
+          </div>
+
+          <div class="remote-item">
+            <div class="icon orange">视</div>
+            <div>
+              <b>视频监控</b>
+              <p>远程核实车牌识别错误、道闸故障和收费争议。</p>
+            </div>
+          </div>
+
+          <div class="remote-item">
+            <div class="icon purple">讲</div>
+            <div>
+              <b>远程对讲</b>
+              <p>运营中心可直接与现场车主沟通并处理异常。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">02 停车场设备、网络与计费</div>
+    </section>
+
+    <!-- =====================================================
+         第10页 统一计费
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">UNIFIED BILLING</div>
+          <h2>停车场统一计费</h2>
+          <p class="desc">计费规则由运营平台统一管理，不固化在停车场设备或厂家平台中。</p>
+        </div>
+        <div class="title-no">10</div>
+      </div>
+
+      <div class="billing-layout">
+        <div class="billing-core">
+          <div class="billing-center">统一计费<br>规则中心</div>
+
+          <div class="bill-tag bt1">临时停车</div>
+          <div class="bill-tag bt2">包月停车</div>
+          <div class="bill-tag bt3">共享停车</div>
+          <div class="bill-tag bt4">商户优惠</div>
+          <div class="bill-tag bt5">充电优惠</div>
+          <div class="bill-tag bt6">超时占用费</div>
+          <div class="bill-tag bt7">道路欠费补缴</div>
+          <div class="bill-tag bt8">特殊车辆减免</div>
+        </div>
+
+        <div class="billing-side">
+          <div class="card card-pad">
+            <div class="icon green" style="margin-bottom:1em;">统</div>
+            <h3>平台统一管理</h3>
+            <p style="margin-top:.7em;">
+              收费规则、优惠规则、订单和支付结果在同一平台配置与追踪。
+            </p>
+          </div>
+
+          <div class="billing-risk">
+            <h3>为什么不能固化在设备中？</h3>
+            <p>
+              停车收费形式会持续变化。如果规则掌握在不同厂家手中，
+              每次调整都需要单独开发，增加费用并影响运营效率。
+            </p>
+          </div>
+
+          <div class="value-box">
+            统一通过<strong>平台计费</strong>，是停车场、充电和道路停车一体化运营的基础。
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">02 停车场设备、网络与计费</div>
+    </section>
+
+    <!-- =====================================================
+         第11页 道路停车检测方式
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">ROAD PARKING</div>
+          <h2>道路停车检测方式选择</h2>
+          <p class="desc">不同路段的周转率、人工成本和建设条件不同，不能“一刀切”。</p>
+        </div>
+        <div class="title-no">11</div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card method-card">
+          <div class="method-head">
+            <div class="icon">磁</div>
+            <h3>地磁＋PDA</h3>
+          </div>
+          <ul>
+            <li>建设成本相对较低</li>
+            <li>施工相对简单</li>
+            <li>需要收费员现场确认</li>
+            <li>依赖人员管理和执行</li>
+          </ul>
+          <div class="method-tags">
+            <span>高周转率</span>
+            <span>收费潜力大</span>
+          </div>
+        </div>
+
+        <div class="card method-card orange">
+          <div class="method-head">
+            <div class="icon orange">视</div>
+            <h3>高位 / 低位视频</h3>
+          </div>
+          <ul>
+            <li>建设成本较高</li>
+            <li>供电、施工、网络要求高</li>
+            <li>可减少收费人员投入</li>
+            <li>自动化程度相对较高</li>
+          </ul>
+          <div class="method-tags">
+            <span>低周转率</span>
+            <span>人工成本高</span>
+          </div>
+        </div>
+
+        <div class="card method-card green">
+          <div class="method-head">
+            <div class="icon green">巡</div>
+            <h3>视频巡检车</h3>
+          </div>
+          <ul>
+            <li>单次巡检覆盖面积大</li>
+            <li>需要车辆和驾驶人员</li>
+            <li>可快速覆盖分散泊位</li>
+            <li>需要规划巡检频次</li>
+          </ul>
+          <div class="method-tags">
+            <span>泊位分散</span>
+            <span>机动巡检</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note-box" style="margin-top:1.5%;">
+        <strong>选择原则：</strong>
+        先分析路段经营特征，再决定设备方案，不要按全市统一模板简单复制。
+      </div>
+
+      <div class="slide-footer">03 道路停车建设与运营</div>
+    </section>
+
+    <!-- =====================================================
+         第12页 道路设备选型
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">EQUIPMENT SELECTION</div>
+          <h2>道路停车设备选型原则</h2>
+          <p class="desc">采购价格只是显性成本，运营收益与长期成本才是最终判断依据。</p>
+        </div>
+        <div class="title-no">12</div>
+      </div>
+
+      <div class="factor-layout">
+        <div class="factor-cloud">
+          <div class="factor"><span>↻</span>泊位周转率</div>
+          <div class="factor"><span>⌚</span>平均停车时长</div>
+          <div class="factor"><span>¥</span>停车收费标准</div>
+          <div class="factor"><span>✓</span>车主自主缴费率</div>
+          <div class="factor"><span>▦</span>路段泊位密度</div>
+          <div class="factor"><span>⌁</span>供电和网络条件</div>
+          <div class="factor"><span>⚒</span>施工难度</div>
+          <div class="factor"><span>人</span>收费人员工资</div>
+          <div class="factor"><span>修</span>设备维护成本</div>
+        </div>
+
+        <div class="card trial-card">
+          <div class="trial-no">POC</div>
+          <h3>先选典型路段试点</h3>
+          <p>
+            价格便宜不代表运营成本低，自动化程度高也不一定带来更高收益。
+            应用真实数据验证方案。
+          </p>
+        </div>
+      </div>
+
+      <div class="trial-flow">
+        <div class="trial-step">选择典型路段</div>
+        <div class="arrow">→</div>
+        <div class="trial-step">开展小规模试点</div>
+        <div class="arrow">→</div>
+        <div class="trial-step">分析订单与缴费率</div>
+        <div class="arrow">→</div>
+        <div class="trial-step">核算运营成本</div>
+        <div class="arrow">→</div>
+        <div class="trial-step">确定最终方案</div>
+      </div>
+
+      <div class="slide-footer">03 道路停车建设与运营</div>
+    </section>
+
+    <!-- =====================================================
+         第13页 人员配置
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">STAFFING MODEL</div>
+          <h2>道路停车收费人员配置</h2>
+          <p class="desc">人员数量应由路段、时段和经营数据动态决定。</p>
+        </div>
+        <div class="title-no">13</div>
+      </div>
+
+      <div class="staff-layout">
+        <div class="card staff-visual">
+          <div class="staff-number">
+            <strong>≠</strong>
+            <span>一次配置后长期不变</span>
+          </div>
+
+          <div class="balance">
+            <div class="balance-line"></div>
+            <div class="balance-dot"></div>
+            <div class="balance-labels">
+              <span>人员过少：漏单、欠费、服务下降</span>
+              <span>人员过多：人工成本过高</span>
+            </div>
+          </div>
+
+          <p style="margin-top:2em;color:#C7DBEA;font-size:calc(var(--u)*.82);line-height:1.6;">
+            目标是在订单及时确认、服务质量与人工成本之间取得平衡。
+          </p>
+        </div>
+
+        <div class="staff-factors">
+          <div class="staff-factor"><div class="icon">薪</div><b>收费员工资水平</b></div>
+          <div class="staff-factor"><div class="icon green">位</div><b>每人管理泊位数</b></div>
+          <div class="staff-factor"><div class="icon orange">转</div><b>泊位周转率</b></div>
+          <div class="staff-factor"><div class="icon purple">时</div><b>平均停车时长</b></div>
+          <div class="staff-factor"><div class="icon">峰</div><b>高峰和低峰时段</b></div>
+          <div class="staff-factor"><div class="icon green">自</div><b>车主自主缴费率</b></div>
+          <div class="staff-factor"><div class="icon orange">收</div><b>人均实收金额</b></div>
+          <div class="staff-factor"><div class="icon purple">率</div><b>路段整体缴费率</b></div>
+        </div>
+      </div>
+
+      <div class="dynamic-bar">
+        <strong>动态配置</strong>
+        <span>按路段、时段和月份定期分析数据，及时调整人员数量与排班方式。</span>
+      </div>
+
+      <div class="slide-footer">03 道路停车建设与运营</div>
+    </section>
+
+    <!-- =====================================================
+         第14页 降低欠费
+    ====================================================== -->
+    <section class="slide">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">ARREARS REDUCTION</div>
+          <h2>降低道路停车欠费</h2>
+          <p class="desc">通过自主缴费、无感支付、套餐和多场景追缴降低欠费。</p>
+        </div>
+        <div class="title-no">14</div>
+      </div>
+
+      <div class="arrears-layout">
+        <div class="card action-card">
+          <div class="action-head">
+            <div class="icon">付</div>
+            <div>
+              <div class="label">培养自主缴费习惯</div>
+              <h3>让缴费入口更清晰、更方便</h3>
+            </div>
+          </div>
+
+          <div class="action-list">
+            <div class="action-row">设置清晰的停车缴费标识</div>
+            <div class="action-row">提供小程序、二维码等缴费入口</div>
+            <div class="action-row">推广车牌绑定和无感支付</div>
+            <div class="action-row">通过短信或服务消息提醒缴费</div>
+            <div class="action-row">在停车场等场景提供欠费补缴</div>
+          </div>
+        </div>
+
+        <div class="card action-card">
+          <div class="action-head">
+            <div class="icon green">套</div>
+            <div>
+              <div class="label">设计差异化套餐</div>
+              <h3>将临时收费转为预付产品</h3>
+            </div>
+          </div>
+
+          <div class="package-grid">
+            <div class="package">居民停车套餐</div>
+            <div class="package">商户停车套餐</div>
+            <div class="package">工作日停车套餐</div>
+            <div class="package">夜间停车套餐</div>
+          </div>
+
+          <div class="note-box" style="margin-top:1em;">
+            <strong>激励：</strong>
+            可设置奖励机制，让收费员推广自主缴费和包月产品。
+          </div>
+        </div>
+      </div>
+
+      <div class="arrears-bottom">
+        <div class="result-chain">
+          <div class="result-item"><span>◉</span>无感支付</div>
+          <div>＋</div>
+          <div class="result-item"><span>▣</span>预付套餐</div>
+          <div>＋</div>
+          <div class="result-item"><span>↻</span>多场景追缴</div>
+          <div>＝</div>
+          <div class="result-item"><span>↓</span>降低欠费</div>
+        </div>
+
+        <div class="value-box">
+          减少现金收费，释放人员精力，逐步提升<strong>自主缴费率</strong>。
+        </div>
+      </div>
+
+      <div class="slide-footer">03 道路停车建设与运营</div>
+    </section>
+
+    <!-- =====================================================
+         第15页 日常管理与总结
+    ====================================================== -->
+    <section class="slide summary">
+      <div class="slide-title">
+        <div class="title-block">
+          <div class="eyebrow">MANAGEMENT & SUMMARY</div>
+          <h2>日常管理与建设总结</h2>
+        </div>
+        <div class="title-no">15</div>
+      </div>
+
+      <div class="summary-layout">
+        <div class="digital-panel">
+          <h3>日常工作全面线上化</h3>
+
+          <div class="digital-tags">
+            <div class="digital-tag">设备巡检</div>
+            <div class="digital-tag">故障报修</div>
+            <div class="digital-tag">维修处理</div>
+            <div class="digital-tag">投诉处理</div>
+            <div class="digital-tag">异常订单审核</div>
+            <div class="digital-tag">人员排班考核</div>
+            <div class="digital-tag">备品备件管理</div>
+            <div class="digital-tag">现场资料上传</div>
+          </div>
+
+          <p style="margin-top:1.2em;color:#BFD4E4;font-size:calc(var(--u)*.75);line-height:1.6;">
+            避免主要依靠电话、微信群和纸质表格，实现责任明确、过程留痕、结果可追踪。
+          </p>
+        </div>
+
+        <div class="summary-list">
+          <div class="summary-item">
+            <div class="number-badge">1</div>
+            <b>先确定运营模式，再进行设备采购</b>
+          </div>
+
+          <div class="summary-item">
+            <div class="number-badge">2</div>
+            <b>充电桩和停车设备优先采用设备直连</b>
+          </div>
+
+          <div class="summary-item">
+            <div class="number-badge">3</div>
+            <b>统一设备、接口、计费、订单和支付标准</b>
+          </div>
+
+          <div class="summary-item">
+            <div class="number-badge">4</div>
+            <b>根据不同路段选择不同道路停车方案</b>
+          </div>
+
+          <div class="summary-item">
+            <div class="number-badge">5</div>
+            <b>通过无感支付和套餐降低欠费与人工成本</b>
+          </div>
+
+          <div class="summary-item">
+            <div class="number-badge">6</div>
+            <b>先试点、再评估、最后规模化建设</b>
+          </div>
+
+          <div class="summary-item" style="grid-column:1 / -1;">
+            <div class="number-badge">7</div>
+            <b>日常工作全面线上化，实现责任明确、过程留痕</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="final-quote">
+        智能化建设的目标不是“设备更多、系统更复杂”，而是让
+        <strong>运营更简单、成本更可控、设备更容易替换。</strong>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 目录弹层 -->
+  <div class="toc-panel" id="tocPanel">
+    <div class="toc-head">
+      <h2>目录导航</h2>
+      <button class="close-toc" id="closeToc">×</button>
+    </div>
+
+    <div class="toc-grid">
+      <div class="toc-item" data-go="0"><span>01</span><b>封面</b></div>
+      <div class="toc-item" data-go="1"><span>02</span><b>汇报目录</b></div>
+      <div class="toc-item" data-go="2"><span>03</span><b>总体建设原则</b></div>
+      <div class="toc-item" data-go="3"><span>04</span><b>充电桩对接方式</b></div>
+      <div class="toc-item" data-go="4"><span>05</span><b>充电运营闭环</b></div>
+      <div class="toc-item" data-go="5"><span>06</span><b>充电车位防占用</b></div>
+      <div class="toc-item" data-go="6"><span>07</span><b>超时占用费</b></div>
+      <div class="toc-item" data-go="7"><span>08</span><b>停车场设备标准化</b></div>
+      <div class="toc-item" data-go="8"><span>09</span><b>网络与远程管理</b></div>
+      <div class="toc-item" data-go="9"><span>10</span><b>停车场统一计费</b></div>
+      <div class="toc-item" data-go="10"><span>11</span><b>道路停车检测方式</b></div>
+      <div class="toc-item" data-go="11"><span>12</span><b>道路设备选型原则</b></div>
+      <div class="toc-item" data-go="12"><span>13</span><b>收费人员配置</b></div>
+      <div class="toc-item" data-go="13"><span>14</span><b>降低道路停车欠费</b></div>
+      <div class="toc-item" data-go="14"><span>15</span><b>日常管理与总结</b></div>
+    </div>
+  </div>
+
+  <!-- 翻页控制 -->
+  <div class="navbar">
+    <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+    <div class="page-count">
+      <span id="currentPage">01</span> / <span id="totalPage">15</span>
+    </div>
+    <button class="nav-btn" id="nextBtn" title="下一页">→</button>
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   PPT 翻页逻辑
+========================================================= */
+const slides = Array.from(document.querySelectorAll(".slide"));
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const currentPage = document.getElementById("currentPage");
+const totalPage = document.getElementById("totalPage");
+const progressBar = document.getElementById("progressBar");
+
+const tocBtn = document.getElementById("tocBtn");
+const tocPanel = document.getElementById("tocPanel");
+const closeToc = document.getElementById("closeToc");
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const deck = document.getElementById("deck");
+
+let current = 0;
+let isAnimating = false;
+
+totalPage.textContent = String(slides.length).padStart(2,"0");
+
+function updateUI(){
+  currentPage.textContent = String(current + 1).padStart(2,"0");
+  progressBar.style.width = ((current + 1) / slides.length * 100) + "%";
+
+  prevBtn.style.opacity = current === 0 ? ".35" : "1";
+  nextBtn.style.opacity = current === slides.length - 1 ? ".35" : "1";
+}
+
+function goToSlide(index){
+  if(isAnimating) return;
+
+  index = Math.max(0, Math.min(index, slides.length - 1));
+  if(index === current) return;
+
+  isAnimating = true;
+
+  const oldSlide = slides[current];
+  const nextSlide = slides[index];
+  const forward = index > current;
+
+  oldSlide.classList.remove("active");
+  oldSlide.classList.add(forward ? "exit-left" : "exit-right");
+
+  nextSlide.classList.add("active");
+  current = index;
+  updateUI();
+
+  setTimeout(() => {
+    oldSlide.classList.remove("exit-left","exit-right");
+    isAnimating = false;
+  }, 450);
+}
+
+function nextSlide(){
+  if(current < slides.length - 1){
+    goToSlide(current + 1);
+  }
+}
+
+function prevSlide(){
+  if(current > 0){
+    goToSlide(current - 1);
+  }
+}
+
+nextBtn.addEventListener("click", nextSlide);
+prevBtn.addEventListener("click", prevSlide);
+
+/* 目录控制 */
+tocBtn.addEventListener("click", () => {
+  tocPanel.classList.add("open");
+});
+
+closeToc.addEventListener("click", () => {
+  tocPanel.classList.remove("open");
+});
+
+document.querySelectorAll("[data-go]").forEach(item => {
+  item.addEventListener("click", () => {
+    const target = Number(item.dataset.go);
+    tocPanel.classList.remove("open");
+    goToSlide(target);
+  });
+});
+
+/* 键盘控制 */
+document.addEventListener("keydown", event => {
+  if(tocPanel.classList.contains("open")){
+    if(event.key === "Escape"){
+      tocPanel.classList.remove("open");
+    }
+    return;
+  }
+
+  if(
+    event.key === "ArrowRight" ||
+    event.key === "ArrowDown" ||
+    event.key === "PageDown" ||
+    event.key === " "
+  ){
+    event.preventDefault();
+    nextSlide();
+  }
+
+  if(
+    event.key === "ArrowLeft" ||
+    event.key === "ArrowUp" ||
+    event.key === "PageUp"
+  ){
+    event.preventDefault();
+    prevSlide();
+  }
+
+  if(event.key === "Home"){
+    goToSlide(0);
+  }
+
+  if(event.key === "End"){
+    goToSlide(slides.length - 1);
+  }
+
+  if(event.key.toLowerCase() === "m"){
+    tocPanel.classList.add("open");
+  }
+
+  if(event.key.toLowerCase() === "f"){
+    toggleFullscreen();
+  }
+});
+
+/* 鼠标滚轮翻页 */
+let wheelLocked = false;
+
+deck.addEventListener("wheel", event => {
+  if(wheelLocked || tocPanel.classList.contains("open")) return;
+
+  if(Math.abs(event.deltaY) < 20) return;
+
+  wheelLocked = true;
+
+  if(event.deltaY > 0){
+    nextSlide();
+  }else{
+    prevSlide();
+  }
+
+  setTimeout(() => {
+    wheelLocked = false;
+  }, 650);
+}, {passive:true});
+
+/* 触屏滑动 */
+let touchStartX = 0;
+let touchStartY = 0;
+
+deck.addEventListener("touchstart", event => {
+  touchStartX = event.changedTouches[0].screenX;
+  touchStartY = event.changedTouches[0].screenY;
+}, {passive:true});
+
+deck.addEventListener("touchend", event => {
+  const endX = event.changedTouches[0].screenX;
+  const endY = event.changedTouches[0].screenY;
+
+  const diffX = endX - touchStartX;
+  const diffY = endY - touchStartY;
+
+  if(Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)){
+    if(diffX < 0){
+      nextSlide();
+    }else{
+      prevSlide();
+    }
+  }
+}, {passive:true});
+
+/* 全屏控制 */
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    deck.requestFullscreen?.();
+  }else{
+    document.exitFullscreen?.();
+  }
+}
+
+fullscreenBtn.addEventListener("click", toggleFullscreen);
+
+/* 初始化 */
+updateUI();
+</script>
+
+</body>
+</html>

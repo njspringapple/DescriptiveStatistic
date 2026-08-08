@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>章节｜两轮车充电数字化运营</title>
+
+<style>
+/* =========================================================
+   01. 全局基础
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  color: #fff;
+  transform-origin: center center;
+  background:
+    radial-gradient(
+      circle at 72% 42%,
+      rgba(0, 196, 255, .18),
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 90% 18%,
+      rgba(111, 75, 255, .14),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 15% 80%,
+      rgba(0, 225, 190, .07),
+      transparent 29%
+    ),
+    linear-gradient(
+      135deg,
+      #040c19 0%,
+      #07172b 48%,
+      #061327 73%,
+      #040c19 100%
+    );
+}
+
+/* 背景网格 */
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .13;
+  background-image:
+    linear-gradient(
+      rgba(68, 155, 255, .32) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(68, 155, 255, .32) 1px,
+      transparent 1px
+    );
+  background-size: 46px 46px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 17%,
+    #000 90%,
+    transparent
+  );
+}
+
+/* 右侧大光环 */
+
+#stage::after {
+  content: "";
+  position: absolute;
+  right: -190px;
+  top: -70px;
+  width: 990px;
+  height: 990px;
+  border: 1px solid rgba(64, 191, 255, .07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 184, 255, .06),
+    inset 0 0 140px rgba(0, 184, 255, .04);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   02. 背景科技曲线
+========================================================= */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.2;
+  opacity: .2;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #49ddeb;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .14;
+  animation: dataFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #5ce8f4;
+  opacity: .66;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes dataFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* =========================================================
+   03. 顶部品牌
+========================================================= */
+
+.top-bar {
+  position: absolute;
+  z-index: 8;
+  left: 56px;
+  right: 56px;
+  top: 33px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    linear-gradient(
+      135deg,
+      #168cff,
+      #23d7df
+    );
+  box-shadow:
+    0 7px 22px rgba(0, 181, 255, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.brand-logo::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(53, 214, 238, .15);
+  border-radius: 15px;
+}
+
+.brand-logo svg {
+  width: 25px;
+  height: 25px;
+}
+
+.brand-cn {
+  color: #dff7ff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-en {
+  margin-top: 3px;
+  color: #4f7e9b;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+}
+
+.chapter-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #668ba3;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.chapter-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #49e6cb;
+  box-shadow: 0 0 9px #49e6cb;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .42;
+    box-shadow: 0 0 3px #49e6cb;
+  }
+}
+
+/* =========================================================
+   04. 左侧章节信息
+========================================================= */
+
+.chapter-copy {
+  position: absolute;
+  z-index: 6;
+  left: 90px;
+  top: 145px;
+  width: 600px;
+  height: 600px;
+}
+
+.chapter-number {
+  position: absolute;
+  z-index: 0;
+  left: -10px;
+  top: -35px;
+  color: transparent;
+  font-size: 225px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -15px;
+  -webkit-text-stroke: 1px rgba(79, 201, 239, .12);
+  text-shadow: 0 0 60px rgba(0, 180, 238, .04);
+  user-select: none;
+}
+
+.chapter-content {
+  position: relative;
+  z-index: 2;
+  padding-top: 80px;
+}
+
+.chapter-label {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #55cbe6;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.chapter-label::before {
+  content: "";
+  width: 43px;
+  height: 2px;
+  border-radius: 2px;
+  background:
+    linear-gradient(
+      90deg,
+      #188fff,
+      #39e6dc
+    );
+  box-shadow: 0 0 10px rgba(53, 219, 239, .28);
+}
+
+.chapter-title {
+  margin-top: 28px;
+}
+
+.chapter-title h1 {
+  margin: 0;
+  color: transparent;
+  font-size: 52px;
+  line-height: 1.2;
+  letter-spacing: 3px;
+  font-weight: 700;
+  background:
+    linear-gradient(
+      90deg,
+      #ffffff 0%,
+      #a6efff 48%,
+      #55e3e9 78%,
+      #79efd7 100%
+    );
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow: 0 10px 35px rgba(0, 10, 30, .25);
+}
+
+.chapter-en {
+  position: relative;
+  margin-top: 17px;
+  padding-bottom: 23px;
+  color: #527f9a;
+  font-size: 11px;
+  letter-spacing: 5px;
+}
+
+.chapter-en::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 460px;
+  height: 1px;
+  opacity: .48;
+  background:
+    linear-gradient(
+      90deg,
+      #289cff,
+      #41e3e3,
+      transparent
+    );
+}
+
+.chapter-slogan {
+  margin-top: 31px;
+  color: #dceff6;
+  font-size: 22px;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.chapter-slogan strong {
+  color: #57e8d2;
+  font-weight: 700;
+}
+
+.chapter-description {
+  width: 540px;
+  margin-top: 15px;
+  color: #7095aa;
+  font-size: 11.5px;
+  line-height: 1.9;
+  letter-spacing: .4px;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 27px;
+}
+
+.keyword {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 13px;
+  color: #8fc0d2;
+  border: 1px solid rgba(61, 185, 228, .19);
+  border-radius: 16px;
+  background: rgba(13, 55, 84, .53);
+  font-size: 9px;
+}
+
+.keyword i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4bdff0;
+  box-shadow: 0 0 7px #4bdff0;
+}
+
+.keyword.purple {
+  color: #b9adf3;
+  border-color: rgba(151, 124, 241, .19);
+  background: rgba(74, 55, 131, .24);
+}
+
+.keyword.purple i {
+  background: #ad94ff;
+  box-shadow: 0 0 7px #ad94ff;
+}
+
+.keyword.green {
+  color: #84d9c6;
+  border-color: rgba(49, 211, 177, .19);
+  background: rgba(23, 121, 103, .2);
+}
+
+.keyword.green i {
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+.keyword.orange {
+  color: #d8aa72;
+  border-color: rgba(235, 164, 71, .19);
+  background: rgba(125, 76, 27, .2);
+}
+
+.keyword.orange i {
+  background: #f0ad59;
+  box-shadow: 0 0 7px #f0ad59;
+}
+
+/* =========================================================
+   05. 右侧主视觉
+========================================================= */
+
+.charging-visual {
+  position: absolute;
+  z-index: 4;
+  right: 48px;
+  top: 104px;
+  width: 850px;
+  height: 642px;
+}
+
+.charging-orbit {
+  position: absolute;
+  left: 160px;
+  top: 5px;
+  width: 600px;
+  height: 600px;
+  border: 1px solid rgba(66, 202, 239, .1);
+  border-radius: 50%;
+}
+
+.charging-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 39px;
+  border: 1px dashed rgba(71, 220, 235, .14);
+  border-radius: 50%;
+  animation: rotate 35s linear infinite;
+}
+
+.charging-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 92px;
+  border: 1px solid rgba(108, 102, 255, .1);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-dot {
+  position: absolute;
+  z-index: 7;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #58e8f3;
+  box-shadow:
+    0 0 9px #58e8f3,
+    0 0 20px rgba(45, 220, 240, .42);
+}
+
+.dot-1 {
+  left: 211px;
+  top: 65px;
+}
+
+.dot-2 {
+  right: 96px;
+  top: 178px;
+  background: #ae96ff;
+  box-shadow:
+    0 0 9px #ae96ff,
+    0 0 20px rgba(144, 111, 255, .42);
+}
+
+.dot-3 {
+  right: 151px;
+  bottom: 69px;
+  background: #4be6c6;
+  box-shadow:
+    0 0 9px #4be6c6,
+    0 0 20px rgba(56, 219, 186, .42);
+}
+
+.charging-glow {
+  position: absolute;
+  left: 220px;
+  top: 409px;
+  width: 470px;
+  height: 94px;
+  border-radius: 50%;
+  background: rgba(0, 199, 255, .16);
+  filter: blur(34px);
+}
+
+/* =========================================================
+   06. 数字化充电运营中枢
+========================================================= */
+
+.charging-console {
+  position: absolute;
+  z-index: 6;
+  left: 200px;
+  top: 100px;
+  width: 500px;
+  height: 355px;
+}
+
+.console-top {
+  position: absolute;
+  left: 32px;
+  top: 0;
+  width: 436px;
+  height: 75px;
+  clip-path:
+    polygon(
+      8% 0,
+      92% 0,
+      100% 100%,
+      0 100%
+    );
+  border: 1px solid rgba(78, 226, 243, .31);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(31, 105, 145, .96),
+      rgba(9, 57, 89, .97)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    0 -8px 30px rgba(0, 178, 255, .06);
+}
+
+.console-brand {
+  position: absolute;
+  left: 52px;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.console-brand-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  background:
+    linear-gradient(
+      135deg,
+      #168dff,
+      #2edfd5
+    );
+  box-shadow:
+    0 0 18px rgba(38, 215, 232, .31),
+    inset 0 1px 0 rgba(255, 255, 255, .23);
+}
+
+.console-brand-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.console-brand-name {
+  color: #e9fbff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.console-brand-en {
+  margin-top: 4px;
+  color: #67abc1;
+  font-size: 7px;
+  letter-spacing: 1.4px;
+}
+
+.console-online {
+  position: absolute;
+  right: 52px;
+  top: 27px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #5ce7cc;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.console-online i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #48ebc9;
+  box-shadow: 0 0 10px #48ebc9;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+.console-body {
+  position: absolute;
+  left: 0;
+  top: 66px;
+  width: 500px;
+  height: 266px;
+  overflow: hidden;
+  border: 1px solid rgba(65, 220, 239, .42);
+  border-radius: 11px 11px 29px 29px;
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(0, 199, 229, .16),
+      transparent 47%
+    ),
+    linear-gradient(
+      150deg,
+      rgba(13, 68, 101, .99),
+      rgba(4, 22, 43, .99)
+    );
+  box-shadow:
+    0 35px 70px rgba(0, 5, 20, .58),
+    0 0 56px rgba(0, 191, 231, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .09);
+}
+
+.console-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .08;
+  background-image:
+    linear-gradient(
+      rgba(80, 214, 243, .4) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(80, 214, 243, .4) 1px,
+      transparent 1px
+    );
+  background-size: 27px 27px;
+}
+
+/* 中央核心 */
+
+.charging-core {
+  position: absolute;
+  z-index: 3;
+  left: 179px;
+  top: 28px;
+  width: 142px;
+  height: 142px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(67, 229, 239, .36);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(18, 132, 162, .68),
+      rgba(5, 42, 70, .93) 68%
+    );
+  box-shadow:
+    0 0 42px rgba(0, 211, 234, .2),
+    inset 0 0 36px rgba(0, 218, 234, .12);
+}
+
+.charging-core::before {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  border: 1px dashed rgba(84, 231, 239, .26);
+  border-radius: 50%;
+  animation: rotate 18s linear infinite;
+}
+
+.charging-core::after {
+  content: "";
+  position: absolute;
+  inset: 25px;
+  border: 1px solid rgba(96, 225, 238, .13);
+  border-radius: 50%;
+}
+
+.core-content {
+  position: relative;
+  z-index: 4;
+  text-align: center;
+}
+
+.core-symbol {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 19px;
+  color: #fff;
+  background:
+    linear-gradient(
+      135deg,
+      #168dff,
+      #2edfd5
+    );
+  box-shadow:
+    0 0 22px rgba(38, 215, 232, .32),
+    inset 0 1px 0 rgba(255, 255, 255, .24);
+}
+
+.core-symbol svg {
+  width: 35px;
+  height: 35px;
+}
+
+.core-name {
+  margin-top: 8px;
+  color: #dfffff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.core-status {
+  margin-top: 3px;
+  color: #5eb4c6;
+  font-size: 6.5px;
+  letter-spacing: .5px;
+}
+
+/* 四个能力角标 */
+
+.inner-tag {
+  position: absolute;
+  z-index: 3;
+  width: 119px;
+  height: 43px;
+  padding: 7px 9px;
+  border: 1px solid rgba(64, 184, 220, .17);
+  border-radius: 9px;
+  background: rgba(5, 30, 53, .68);
+}
+
+.tag-1 {
+  left: 27px;
+  top: 34px;
+}
+
+.tag-2 {
+  left: 27px;
+  top: 94px;
+}
+
+.tag-3 {
+  right: 27px;
+  top: 34px;
+}
+
+.tag-4 {
+  right: 27px;
+  top: 94px;
+}
+
+.inner-tag.purple {
+  border-color: rgba(151, 125, 239, .18);
+  background: rgba(62, 47, 111, .25);
+}
+
+.inner-tag.green {
+  border-color: rgba(53, 207, 174, .17);
+  background: rgba(22, 108, 92, .22);
+}
+
+.inner-tag.orange {
+  border-color: rgba(235, 164, 71, .19);
+  background: rgba(124, 77, 28, .21);
+}
+
+.inner-tag strong {
+  display: block;
+  color: #a9d4e1;
+  font-size: 8.5px;
+}
+
+.inner-tag.purple strong {
+  color: #c0b2ec;
+}
+
+.inner-tag.green strong {
+  color: #8be0cc;
+}
+
+.inner-tag.orange strong {
+  color: #dfb47d;
+}
+
+.inner-tag span {
+  display: block;
+  margin-top: 4px;
+  color: #4e788d;
+  font-size: 6.5px;
+}
+
+.inner-tag.purple span {
+  color: #726b91;
+}
+
+.inner-tag.green span {
+  color: #527f76;
+}
+
+.inner-tag.orange span {
+  color: #8c7156;
+}
+
+/* 业务闭环 */
+
+.charging-flow {
+  position: absolute;
+  z-index: 3;
+  left: 25px;
+  right: 25px;
+  bottom: 17px;
+  height: 59px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid rgba(68, 181, 214, .14);
+  border-radius: 10px;
+  background: rgba(2, 18, 35, .65);
+}
+
+.flow-item {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 4px 2px;
+  color: #568ca0;
+  border: 1px solid rgba(55, 183, 221, .14);
+  border-radius: 5px;
+  background: rgba(14, 66, 91, .45);
+  font-size: 6px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.flow-item:not(:last-child)::after {
+  content: "›";
+  position: absolute;
+  z-index: 4;
+  right: -5px;
+  top: 14px;
+  color: #4cd7e7;
+  font-size: 10px;
+}
+
+.flow-item.active {
+  color: #75d9e3;
+  border-color: rgba(57, 202, 229, .22);
+  background: rgba(21, 108, 138, .24);
+}
+
+.flow-item.green {
+  color: #67d6bb;
+  border-color: rgba(50, 207, 174, .22);
+  background: rgba(20, 111, 92, .25);
+}
+
+.flow-item.purple {
+  color: #ab9ae2;
+  border-color: rgba(151, 124, 239, .2);
+  background: rgba(79, 60, 134, .26);
+}
+
+.flow-item.orange {
+  color: #d3aa75;
+  border-color: rgba(231, 164, 75, .2);
+  background: rgba(122, 74, 25, .24);
+}
+
+/* =========================================================
+   07. 主视觉连接线
+========================================================= */
+
+.visual-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 850px;
+  height: 642px;
+  pointer-events: none;
+}
+
+.charging-line {
+  fill: none;
+  stroke: #4bd9ed;
+  stroke-width: 1.4;
+  stroke-dasharray: 6 7;
+  opacity: .53;
+  animation: lineFlow 10s linear infinite;
+}
+
+.charging-line-purple {
+  stroke: #a28aff;
+}
+
+.charging-line-green {
+  stroke: #49dfbf;
+}
+
+.charging-node {
+  fill: #59e8f3;
+  filter: drop-shadow(0 0 6px #26d8ee);
+}
+
+.charging-node-purple {
+  fill: #b39bff;
+  filter: drop-shadow(0 0 6px #9175ff);
+}
+
+.charging-node-green {
+  fill: #55e9ca;
+  filter: drop-shadow(0 0 6px #38dbb8);
+}
+
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+
+/* =========================================================
+   08. 三个章节目录卡片
+========================================================= */
+
+.chapter-path {
+  position: absolute;
+  z-index: 7;
+  left: 14px;
+  right: 0;
+  bottom: 0;
+  height: 154px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+}
+
+.path-card {
+  position: relative;
+  height: 143px;
+  overflow: hidden;
+  padding: 15px 14px 12px;
+  border: 1px solid rgba(61, 181, 226, .2);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 56, 87, .87),
+      rgba(6, 27, 51, .92)
+    );
+  box-shadow:
+    0 14px 32px rgba(0, 5, 18, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  backdrop-filter: blur(10px);
+}
+
+.path-card::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  top: 0;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #57def1,
+      transparent
+    );
+}
+
+.path-card.purple {
+  border-color: rgba(153, 123, 255, .25);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(56, 47, 112, .62),
+      rgba(7, 30, 55, .92)
+    );
+}
+
+.path-card.purple::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #aa91ff,
+      transparent
+    );
+}
+
+.path-card.green {
+  border-color: rgba(47, 215, 177, .23);
+}
+
+.path-card.green::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #50e5c5,
+      transparent
+    );
+}
+
+.path-number {
+  position: absolute;
+  right: 14px;
+  top: 9px;
+  color: rgba(71, 211, 235, .13);
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.path-card.purple .path-number {
+  color: rgba(175, 150, 255, .14);
+}
+
+.path-card.green .path-number {
+  color: rgba(74, 224, 190, .13);
+}
+
+.path-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.path-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  color: #56e0f2;
+  border: 1px solid rgba(67, 205, 235, .15);
+  border-radius: 10px;
+  background: rgba(23, 149, 190, .15);
+}
+
+.path-card.purple .path-icon {
+  color: #c7b6ff;
+  border-color: rgba(167, 138, 246, .17);
+  background: rgba(127, 90, 218, .16);
+}
+
+.path-card.green .path-icon {
+  color: #55e4c5;
+  border-color: rgba(57, 211, 176, .16);
+  background: rgba(31, 179, 144, .14);
+}
+
+.path-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.path-title {
+  color: #dceff6;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.path-en {
+  margin-top: 3px;
+  color: #597f95;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.path-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  color: #7398aa;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.path-points {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.path-point {
+  padding: 3px 6px;
+  color: #80b4c6;
+  border-radius: 6px;
+  background: rgba(17, 70, 98, .48);
+  font-size: 6.5px;
+}
+
+.path-card.purple .path-point {
+  color: #aa9ed6;
+  background: rgba(83, 62, 141, .28);
+}
+
+.path-card.green .path-point {
+  color: #79c6b5;
+  background: rgba(22, 117, 97, .24);
+}
+
+/* =========================================================
+   09. 解决方案预览
+========================================================= */
+
+.solution-preview {
+  position: absolute;
+  right: 13px;
+  bottom: 12px;
+  width: 78px;
+  height: 56px;
+  opacity: .72;
+}
+
+.solution-core {
+  position: absolute;
+  left: 25px;
+  top: 13px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(74, 226, 238, .35);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(20, 126, 155, .65);
+  font-size: 14px;
+}
+
+.solution-node {
+  position: absolute;
+  width: 18px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(68, 196, 229, .22);
+  border-radius: 4px;
+  color: #67ddec;
+  background: rgba(12, 58, 83, .8);
+  font-size: 5px;
+}
+
+.solution-node.n1 {
+  left: 0;
+  top: 1px;
+}
+
+.solution-node.n2 {
+  right: 0;
+  top: 1px;
+}
+
+.solution-node.n3 {
+  left: 0;
+  bottom: 1px;
+}
+
+.solution-node.n4 {
+  right: 0;
+  bottom: 1px;
+}
+
+.solution-preview svg {
+  position: absolute;
+  inset: 0;
+  width: 78px;
+  height: 56px;
+}
+
+/* =========================================================
+   10. 管理平台截图预览
+========================================================= */
+
+.admin-preview {
+  position: absolute;
+  right: 11px;
+  bottom: 9px;
+  width: 102px;
+  height: 66px;
+  overflow: hidden;
+  border: 3px solid #172436;
+  border-radius: 6px;
+  background: #f1f5f9;
+  box-shadow: 0 7px 16px rgba(0, 4, 16, .32);
+}
+
+.admin-preview-browser {
+  display: flex;
+  height: 6px;
+  align-items: center;
+  gap: 2px;
+  padding-left: 3px;
+  background: #dfe6ee;
+}
+
+.admin-preview-browser i {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #8d9aaa;
+}
+
+.admin-preview-body {
+  display: grid;
+  height: 57px;
+  grid-template-columns: 21px 1fr;
+}
+
+.admin-preview-nav {
+  padding: 3px 2px;
+  background: #101b2b;
+}
+
+.admin-preview-nav span {
+  display: block;
+  height: 5px;
+  margin-bottom: 2px;
+  border-radius: 1px;
+  background: rgba(117, 139, 160, .25);
+}
+
+.admin-preview-nav span.active {
+  background: #1677ff;
+}
+
+.admin-preview-main {
+  padding: 3px;
+}
+
+.admin-preview-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.admin-preview-kpi i {
+  height: 10px;
+  border: 1px solid #e2e8ef;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.admin-preview-panels {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.admin-preview-panel {
+  height: 21px;
+  border: 1px solid #e2e8ef;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.admin-preview-table {
+  display: grid;
+  gap: 1px;
+  margin-top: 2px;
+}
+
+.admin-preview-table i {
+  height: 4px;
+  border-radius: 1px;
+  background: #fff;
+}
+
+/* =========================================================
+   11. 小程序截图预览
+========================================================= */
+
+.phone-preview {
+  position: absolute;
+  right: 23px;
+  bottom: 5px;
+  width: 50px;
+  height: 91px;
+  overflow: hidden;
+  border: 3px solid #172436;
+  border-radius: 9px;
+  background: #f4f7fb;
+  box-shadow: 0 8px 18px rgba(0, 4, 16, .38);
+}
+
+.phone-preview-status {
+  display: flex;
+  height: 5px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+  color: #fff;
+  background: #1677ff;
+  font-size: 1.6px;
+}
+
+.phone-preview-head {
+  display: grid;
+  height: 8px;
+  place-items: center;
+  color: #fff;
+  background: #1677ff;
+  font-size: 2px;
+}
+
+.phone-preview-hero {
+  height: 22px;
+  padding: 4px 3px;
+  color: #fff;
+  background:
+    linear-gradient(
+      145deg,
+      #1677ff,
+      #0958d9
+    );
+  font-size: 2px;
+}
+
+.phone-preview-scan {
+  position: relative;
+  display: flex;
+  height: 16px;
+  align-items: center;
+  gap: 2px;
+  margin: -6px 3px 0;
+  padding: 2px;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0 3px 7px rgba(20, 60, 100, .15);
+}
+
+.phone-preview-scan-icon {
+  display: grid;
+  width: 10px;
+  height: 10px;
+  place-items: center;
+  border-radius: 3px;
+  color: #fff;
+  background: #1677ff;
+  font-size: 4px;
+}
+
+.phone-preview-scan span {
+  color: #172033;
+  font-size: 2px;
+}
+
+.phone-preview-card {
+  margin: 3px;
+  padding: 2px;
+  border: 1px solid #e5ebf2;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.phone-preview-card-title {
+  color: #172033;
+  font-size: 2px;
+}
+
+.phone-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 2px;
+}
+
+.phone-preview-grid i {
+  height: 8px;
+  border-radius: 2px;
+  background: #eaf3ff;
+}
+
+/* =========================================================
+   12. 章节进度
+========================================================= */
+
+.chapter-progress {
+  position: absolute;
+  z-index: 8;
+  left: 90px;
+  right: 90px;
+  bottom: 50px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-label {
+  color: #52788e;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.progress-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  margin: 0 17px;
+  background: rgba(65, 136, 172, .18);
+}
+
+.progress-active {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 68%;
+  height: 2px;
+  background:
+    linear-gradient(
+      90deg,
+      #188fff,
+      #42e2e5,
+      #4adfbf
+    );
+  box-shadow: 0 0 8px rgba(55, 215, 235, .24);
+}
+
+.progress-dot {
+  position: absolute;
+  left: 68%;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #52e4d1;
+  box-shadow: 0 0 9px #52e4d1;
+}
+
+.progress-chapter {
+  color: #77a6ba;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   13. 页脚
+========================================================= */
+
+.footer {
+  position: absolute;
+  z-index: 8;
+  left: 56px;
+  right: 56px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #476e85;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+/* =========================================================
+   14. 打印
+========================================================= */
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+
+  @page {
+    size: 1600px 900px;
+    margin: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- =====================================================
+         背景科技曲线
+    ====================================================== -->
+
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient
+          id="backgroundGradient"
+          x1="0"
+          y1="0"
+          x2="1"
+          y2="1"
+        >
+          <stop
+            offset="0%"
+            stop-color="#188fff"
+          />
+
+          <stop
+            offset="52%"
+            stop-color="#44e1ed"
+          />
+
+          <stop
+            offset="100%"
+            stop-color="#716aff"
+          />
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="
+          M0 718
+          C229 658 305 755 493 680
+          C690 601 717 421 904 356
+          C1090 291 1305 416 1600 228
+        "
+      />
+
+      <path
+        class="bg-line-dash"
+        d="
+          M0 761
+          C245 710 387 793 568 722
+          C746 652 787 483 966 420
+          C1168 349 1371 419 1600 326
+        "
+      />
+
+      <circle
+        class="bg-dot"
+        cx="493"
+        cy="680"
+        r="3"
+      />
+
+      <circle
+        class="bg-dot"
+        cx="904"
+        cy="356"
+        r="3"
+      />
+
+      <circle
+        class="bg-dot"
+        cx="1305"
+        cy="416"
+        r="3"
+      />
+    </svg>
+
+    <!-- =====================================================
+         顶部品牌
+    ====================================================== -->
+
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect
+              x="4"
+              y="3"
+              width="12"
+              height="18"
+              rx="3"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+
+            <path
+              d="M8 8h4M8 12h4M8 16h3"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M17 6h2v5h2l-4 7v-5h-2l2-7z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <div class="brand-cn">
+            两轮车充电管理
+          </div>
+
+          <div class="brand-en">
+            TWO-WHEELER CHARGING CLOUD
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-status">
+        <i></i>
+
+        CHAPTER · SMART CHARGING OPERATION
+      </div>
+    </header>
+
+    <!-- =====================================================
+         左侧章节信息
+    ====================================================== -->
+
+    <section class="chapter-copy">
+      <div class="chapter-number">
+        03
+      </div>
+
+      <div class="chapter-content">
+        <div class="chapter-label">
+          安全用电与精细化运营能力
+        </div>
+
+        <div class="chapter-title">
+          <h1>
+            两轮车充电管理
+          </h1>
+        </div>
+
+        <div class="chapter-en">
+          TWO-WHEELER CHARGING MANAGEMENT
+        </div>
+
+        <div class="chapter-slogan">
+          从“安装充电设备”<br>
+          到<strong>经营完整充电业务</strong>
+        </div>
+
+        <div class="chapter-description">
+          面向社区、园区、医院、学校、商场、写字楼及停车场，
+          统一连接车主、充电设备、物业运营、运维服务和财务结算，
+          支持扫码支付、套餐权益、职工免费、安全告警、异常补偿及多方结算。
+        </div>
+
+        <div class="keywords">
+          <span class="keyword">
+            <i></i>
+            一口一码即扫即充
+          </span>
+
+          <span class="keyword purple">
+            <i></i>
+            套餐与免费权益
+          </span>
+
+          <span class="keyword green">
+            <i></i>
+            安全告警与运维
+          </span>
+
+          <span class="keyword">
+            <i></i>
+            订单支付全追溯
+          </span>
+
+          <span class="keyword orange">
+            <i></i>
+            对账分账与结算
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         右侧主视觉
+    ====================================================== -->
+
+    <section class="charging-visual">
+      <div class="charging-orbit"></div>
+
+      <i class="orbit-dot dot-1"></i>
+      <i class="orbit-dot dot-2"></i>
+      <i class="orbit-dot dot-3"></i>
+
+      <div class="charging-glow"></div>
+
+      <!-- 中枢至三部分连接线 -->
+
+      <svg
+        class="visual-lines"
+        viewBox="0 0 850 642"
+      >
+        <path
+          class="charging-line"
+          d="M368 448 C296 467 190 464 144 497"
+        />
+
+        <circle
+          class="charging-node"
+          cx="269"
+          cy="467"
+          r="3.5"
+        />
+
+        <path
+          class="charging-line charging-line-purple"
+          d="M450 451 V489"
+        />
+
+        <circle
+          class="charging-node-purple"
+          cx="450"
+          cy="470"
+          r="3.5"
+        />
+
+        <path
+          class="charging-line charging-line-green"
+          d="M532 448 C605 467 711 464 758 497"
+        />
+
+        <circle
+          class="charging-node-green"
+          cx="633"
+          cy="467"
+          r="3.5"
+        />
+      </svg>
+
+      <!-- ===================================================
+           两轮车充电数字中枢
+      ==================================================== -->
+
+      <div class="charging-console">
+        <div class="console-top">
+          <div class="console-brand">
+            <div class="console-brand-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M9 2h6l-1 7h4l-8 13 2-9H7L9 2z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="console-brand-name">
+                SMART CHARGING CENTER
+              </div>
+
+              <div class="console-brand-en">
+                USER · DEVICE · ORDER · SAFETY · FINANCE
+              </div>
+            </div>
+          </div>
+
+          <div class="console-online">
+            <i></i>
+            CHARGING ONLINE
+          </div>
+        </div>
+
+        <div class="console-body">
+
+          <!-- 左侧能力 -->
+
+          <div class="inner-tag tag-1">
+            <strong>
+              多模式充电运营
+            </strong>
+
+            <span>
+              扫码 · 套餐 · 余额 · 免费
+            </span>
+          </div>
+
+          <div class="inner-tag tag-2 green">
+            <strong>
+              设备与安全监控
+            </strong>
+
+            <span>
+              在线 · 功率 · 高温 · 过载
+            </span>
+          </div>
+
+          <!-- 右侧能力 -->
+
+          <div class="inner-tag tag-3 purple">
+            <strong>
+              套餐权益与身份
+            </strong>
+
+            <span>
+              居民 · 员工 · 职工 · 合作方
+            </span>
+          </div>
+
+          <div class="inner-tag tag-4 orange">
+            <strong>
+              财务与多方结算
+            </strong>
+
+            <span>
+              实收 · 消耗 · 减免 · 分账
+            </span>
+          </div>
+
+          <!-- 中央核心 -->
+
+          <div class="charging-core">
+            <div class="core-content">
+              <div class="core-symbol">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 2h6l-1 7h4l-8 13 2-9H7L9 2z"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round"
+                  />
+
+                  <circle
+                    cx="18"
+                    cy="5"
+                    r="2"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+
+              <div class="core-name">
+                智慧充电运营中枢
+              </div>
+
+              <div class="core-status">
+                CLOSED-LOOP OPERATION
+              </div>
+            </div>
+          </div>
+
+          <!-- 全链路闭环 -->
+
+          <div class="charging-flow">
+            <div class="flow-item active">
+              扫码<br>识别
+            </div>
+
+            <div class="flow-item active">
+              权益<br>匹配
+            </div>
+
+            <div class="flow-item purple">
+              支付<br>扣减
+            </div>
+
+            <div class="flow-item green">
+              设备<br>启动
+            </div>
+
+            <div class="flow-item green">
+              安全<br>监控
+            </div>
+
+            <div class="flow-item">
+              订单<br>结算
+            </div>
+
+            <div class="flow-item orange">
+              退款<br>补偿
+            </div>
+
+            <div class="flow-item purple">
+              对账<br>分账
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================
+           章节内三部分
+      ==================================================== -->
+
+      <div class="chapter-path">
+
+        <!-- 01 充电解决方案 -->
+
+        <article class="path-card">
+          <span class="path-number">
+            01
+          </span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M10 2h5l-1 7h4l-8 13 2-9H7l3-11z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+
+                <path
+                  d="M3 6h3M3 12h3M3 18h3"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">
+                两轮车充电解决方案
+              </div>
+
+              <div class="path-en">
+                CHARGING SOLUTION OVERVIEW
+              </div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            展示社区、园区、医院、学校和商业场景下的多模式充电、
+            安全用电、异常补偿及运营结算方案。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">
+              场景方案
+            </span>
+
+            <span class="path-point">
+              业务模式
+            </span>
+
+            <span class="path-point">
+              全链闭环
+            </span>
+          </div>
+
+          <!-- 解决方案拓扑预览 -->
+
+          <div class="solution-preview">
+            <svg viewBox="0 0 78 56">
+              <path
+                d="M18 8 L39 28 L60 8"
+                fill="none"
+                stroke="#45dce9"
+                stroke-width="1"
+                stroke-dasharray="2 2"
+              />
+
+              <path
+                d="M18 48 L39 28 L60 48"
+                fill="none"
+                stroke="#45dce9"
+                stroke-width="1"
+                stroke-dasharray="2 2"
+              />
+            </svg>
+
+            <span class="solution-node n1">
+              用户
+            </span>
+
+            <span class="solution-node n2">
+              设备
+            </span>
+
+            <span class="solution-node n3">
+              运维
+            </span>
+
+            <span class="solution-node n4">
+              财务
+            </span>
+
+            <span class="solution-core">
+              ⚡
+            </span>
+          </div>
+        </article>
+
+        <!-- 02 平台截图 -->
+
+        <article class="path-card purple">
+          <span class="path-number">
+            02
+          </span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="14"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M7 9h4v5H7V9zM14 7h3v7h-3V7z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+
+                <path
+                  d="M8 21h8M12 18v3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">
+                充电运营管理平台
+              </div>
+
+              <div class="path-en">
+                WEB OPERATION PLATFORM
+              </div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            展示运营工作台、项目站点、设备端口、订单、套餐、免费人员、
+            告警工单及财务结算管理能力。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">
+              运营驾驶舱
+            </span>
+
+            <span class="path-point">
+              设备监控
+            </span>
+
+            <span class="path-point">
+              财务结算
+            </span>
+          </div>
+
+          <!-- 管理平台截图预览 -->
+
+          <div class="admin-preview">
+            <div class="admin-preview-browser">
+              <i></i>
+              <i></i>
+              <i></i>
+            </div>
+
+            <div class="admin-preview-body">
+              <div class="admin-preview-nav">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <div class="admin-preview-main">
+                <div class="admin-preview-kpi">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+
+                <div class="admin-preview-panels">
+                  <div class="admin-preview-panel"></div>
+                  <div class="admin-preview-panel"></div>
+                </div>
+
+                <div class="admin-preview-table">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 03 小程序截图 -->
+
+        <article class="path-card green">
+          <span class="path-number">
+            03
+          </span>
+
+          <div class="path-head">
+            <div class="path-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="6"
+                  y="2"
+                  width="12"
+                  height="20"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M9 6h6M10 18h4"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+                <path
+                  d="M10 9h3l-1 3h2l-4 5 1-4H9l1-4z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div class="path-title">
+                车主充电小程序
+              </div>
+
+              <div class="path-en">
+                OWNER MINI PROGRAM
+              </div>
+            </div>
+          </div>
+
+          <div class="path-desc">
+            车主扫码后可选择普通支付、套餐或职工免费，
+            实时查看功率、电量、时长、费用及退款进度。
+          </div>
+
+          <div class="path-points">
+            <span class="path-point">
+              扫码即充
+            </span>
+
+            <span class="path-point">
+              权益匹配
+            </span>
+
+            <span class="path-point">
+              实时订单
+            </span>
+          </div>
+
+          <!-- 小程序截图预览 -->
+
+          <div class="phone-preview">
+            <div class="phone-preview-status">
+              <span>14:32</span>
+              <span>5G</span>
+            </div>
+
+            <div class="phone-preview-head">
+              两轮车充电
+            </div>
+
+            <div class="phone-preview-hero">
+              下午好，李女士
+            </div>
+
+            <div class="phone-preview-scan">
+              <div class="phone-preview-scan-icon">
+                ▦
+              </div>
+
+              <span>
+                扫码充电
+              </span>
+            </div>
+
+            <div class="phone-preview-card">
+              <div class="phone-preview-card-title">
+                我的权益
+              </div>
+
+              <div class="phone-preview-grid">
+                <i></i>
+                <i></i>
+                <i></i>
+              </div>
+            </div>
+
+            <div class="phone-preview-card">
+              <div class="phone-preview-card-title">
+                附近站点
+              </div>
+
+              <div class="phone-preview-grid">
+                <i></i>
+                <i></i>
+                <i></i>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         章节进度
+    ====================================================== -->
+
+    <div class="chapter-progress">
+      <span class="progress-label">
+        SOLUTION JOURNEY
+      </span>
+
+      <div class="progress-track">
+        <i class="progress-active"></i>
+        <i class="progress-dot"></i>
+      </div>
+
+      <span class="progress-chapter">
+        CHAPTER 03 · 两轮车充电管理
+      </span>
+    </div>
+
+    <!-- =====================================================
+         页脚
+    ====================================================== -->
+
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+
+        本章节将从充电解决方案、Web运营平台和车主小程序三个层面介绍两轮车充电能力
+      </div>
+
+      <div class="footer-right">
+        SAFE CHARGING · SMART OPERATION · WEB PLATFORM · OWNER MINI PROGRAM
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   画布自适应
+========================================================= */
+
+function resizeStage() {
+  const stage = document.getElementById("stage");
+
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener(
+  "resize",
+  resizeStage
+);
+
+resizeStage();
+</script>
+
+</body>
+</html>

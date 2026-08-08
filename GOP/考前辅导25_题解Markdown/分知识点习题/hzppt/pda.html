@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>道路停车收费PDA｜80%成熟作业 + 20%AI辅助</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030b17;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 51% 43%, rgba(0, 194, 255, .19), transparent 31%),
+    radial-gradient(circle at 88% 19%, rgba(111, 75, 255, .13), transparent 25%),
+    radial-gradient(circle at 9% 78%, rgba(0, 224, 184, .08), transparent 27%),
+    linear-gradient(135deg, #040c19 0%, #07172b 48%, #061327 73%, #040c19 100%);
+}
+
+/* 背景网格 */
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .11;
+  background-image:
+    linear-gradient(rgba(68, 155, 255, .30) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 155, 255, .30) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 15%,
+    #000 91%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 400px;
+  top: 45px;
+  width: 800px;
+  height: 800px;
+  border: 1px solid rgba(64, 191, 255, .06);
+  border-radius: 50%;
+  box-shadow:
+    0 0 140px rgba(0, 184, 255, .05),
+    inset 0 0 140px rgba(0, 184, 255, .035);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   背景装饰
+========================================================= */
+
+.background-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.bg-line {
+  fill: none;
+  stroke: url(#backgroundGradient);
+  stroke-width: 1.1;
+  opacity: .17;
+}
+
+.bg-line-dash {
+  fill: none;
+  stroke: #48ddea;
+  stroke-width: 1;
+  stroke-dasharray: 7 10;
+  opacity: .13;
+  animation: backgroundFlow 14s linear infinite;
+}
+
+.bg-dot {
+  fill: #59e7f3;
+  filter: drop-shadow(0 0 6px #27d9ef);
+}
+
+@keyframes backgroundFlow {
+  to {
+    stroke-dashoffset: -190;
+  }
+}
+
+/* =========================================================
+   标题
+========================================================= */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 20px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 51px;
+  height: 51px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168cff, #27d9dc);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 216, 240, .13);
+  border-radius: 18px;
+}
+
+.logo svg {
+  width: 30px;
+  height: 30px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #65a9d0;
+  font-size: 11px;
+  letter-spacing: 3.2px;
+}
+
+.header-message {
+  text-align: right;
+}
+
+.header-message strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #dff8ff;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.header-message strong b {
+  color: #56e8cd;
+}
+
+.header-message span {
+  color: #6c98b0;
+  font-size: 11px;
+}
+
+/* =========================================================
+   80% + 20% 产品定位条
+========================================================= */
+
+.strategy-bar {
+  position: absolute;
+  left: 100px;
+  right: 100px;
+  top: 105px;
+  height: 55px;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  overflow: hidden;
+  border: 1px solid rgba(63, 185, 228, .23);
+  border-radius: 28px;
+  background: rgba(6, 29, 52, .77);
+  box-shadow:
+    0 13px 32px rgba(0, 4, 16, .18),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.strategy-base,
+.strategy-ai {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.strategy-base {
+  padding-left: 28px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(14, 74, 109, .56),
+      rgba(9, 52, 79, .33)
+    );
+}
+
+.strategy-ai {
+  padding-left: 24px;
+  border-left: 1px solid rgba(76, 226, 202, .25);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(14, 99, 90, .46),
+      rgba(34, 73, 107, .42)
+    );
+}
+
+.strategy-percent {
+  color: #5ce3f0;
+  font-size: 25px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.strategy-ai .strategy-percent {
+  color: #5be5c8;
+}
+
+.strategy-copy {
+  margin-left: 14px;
+}
+
+.strategy-copy strong {
+  display: block;
+  color: #e1f6fc;
+  font-size: 14px;
+}
+
+.strategy-copy span {
+  display: block;
+  margin-top: 5px;
+  color: #759eb1;
+  font-size: 9px;
+}
+
+.strategy-ai .strategy-copy span {
+  color: #78aa9f;
+}
+
+.strategy-tags {
+  margin-left: auto;
+  margin-right: 24px;
+  display: flex;
+  gap: 7px;
+}
+
+.strategy-tag {
+  padding: 6px 10px;
+  border: 1px solid rgba(73, 191, 228, .16);
+  border-radius: 12px;
+  color: #9fc7d6;
+  font-size: 9px;
+  background: rgba(7, 35, 59, .54);
+}
+
+/* =========================================================
+   通用样式
+========================================================= */
+
+.section-head {
+  height: 39px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 22px;
+  height: 2px;
+  flex: 0 0 22px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #27baff, #45e8d3);
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #dff6ff;
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.section-en {
+  margin-left: auto;
+  color: #617f94;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.panel {
+  border: 1px solid rgba(66, 169, 237, .22);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .92)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .27),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+/* =========================================================
+   主体布局
+========================================================= */
+
+.main-area {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 177px;
+  height: 505px;
+  display: grid;
+  grid-template-columns: 420px 530px 520px;
+  gap: 17px;
+}
+
+.base-zone,
+.pda-zone,
+.ai-zone {
+  position: relative;
+  height: 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   左侧：80%基础作业能力
+========================================================= */
+
+.base-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46px;
+  bottom: 0;
+  padding: 15px;
+  overflow: hidden;
+  border-color: rgba(54, 198, 229, .28);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 192, 224, .10), transparent 30%),
+    linear-gradient(
+      145deg,
+      rgba(11, 61, 91, .90),
+      rgba(6, 27, 50, .94)
+    );
+}
+
+.base-panel::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #55ddeb, transparent);
+}
+
+.base-intro {
+  height: 57px;
+  padding: 10px 12px;
+  border: 1px solid rgba(55, 183, 220, .14);
+  border-radius: 10px;
+  background: rgba(5, 32, 57, .62);
+}
+
+.base-intro strong {
+  display: block;
+  color: #d7eff6;
+  font-size: 12px;
+}
+
+.base-intro span {
+  display: block;
+  margin-top: 7px;
+  color: #7198aa;
+  font-size: 9px;
+}
+
+/* 2×3基础能力 */
+
+.base-grid {
+  margin-top: 11px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.base-card {
+  position: relative;
+  height: 99px;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(56, 177, 216, .15);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10, 52, 80, .68),
+      rgba(5, 30, 54, .72)
+    );
+}
+
+.base-card.green {
+  border-color: rgba(49, 207, 175, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 74, 72, .43),
+      rgba(5, 31, 54, .72)
+    );
+}
+
+.base-card::after {
+  content: "";
+  position: absolute;
+  right: -22px;
+  bottom: -28px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(48, 200, 226, .04);
+}
+
+.base-card-head {
+  display: flex;
+  align-items: center;
+}
+
+.base-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #55dfee;
+  background: rgba(24, 145, 185, .14);
+}
+
+.base-card.green .base-icon {
+  color: #58e3c4;
+  background: rgba(31, 176, 141, .15);
+}
+
+.base-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.base-name {
+  margin-left: 9px;
+  color: #d2eaf2;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.base-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+  color: #6e94a5;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.base-desc b {
+  color: #9ed0dc;
+  font-weight: 600;
+}
+
+.base-card.green .base-desc b {
+  color: #90d8c8;
+}
+
+/* 作业闭环 */
+
+.base-flow {
+  margin-top: 11px;
+  padding: 10px 12px;
+  border: 1px solid rgba(49, 213, 179, .16);
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 81, 78, .34),
+      rgba(5, 31, 52, .62)
+    );
+}
+
+.base-flow-title {
+  color: #77dfca;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.flow-row {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns:
+    1fr 16px 1fr 16px 1fr 16px
+    1fr 16px 1fr 16px 1fr;
+  align-items: center;
+}
+
+.flow-step {
+  text-align: center;
+  color: #9bc9be;
+  font-size: 8px;
+}
+
+.flow-arrow {
+  position: relative;
+  height: 2px;
+  background: #3dbda6;
+}
+
+.flow-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  border-left: 5px solid #48d1b7;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+/* =========================================================
+   中间：拟物PDA
+========================================================= */
+
+.pda-zone {
+  overflow: visible;
+}
+
+.pda-orbit {
+  position: absolute;
+  left: 17px;
+  top: -20px;
+  width: 495px;
+  height: 495px;
+  border: 1px solid rgba(65, 205, 239, .11);
+  border-radius: 50%;
+}
+
+.pda-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 34px;
+  border: 1px dashed rgba(70, 221, 236, .14);
+  border-radius: 50%;
+  animation: rotate 34s linear infinite;
+}
+
+.pda-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 86px;
+  border: 1px solid rgba(107, 99, 255, .09);
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pda-glow {
+  position: absolute;
+  left: 78px;
+  bottom: 8px;
+  width: 375px;
+  height: 77px;
+  border-radius: 50%;
+  background: rgba(0, 196, 255, .19);
+  filter: blur(31px);
+}
+
+/* PDA设备 */
+
+.pda-device {
+  position: absolute;
+  left: 101px;
+  top: -5px;
+  z-index: 6;
+  width: 328px;
+  height: 505px;
+}
+
+.scanner-head {
+  position: absolute;
+  left: 50px;
+  top: 0;
+  z-index: 4;
+  width: 228px;
+  height: 55px;
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+  border: 1px solid rgba(100, 177, 215, .30);
+  background:
+    linear-gradient(
+      180deg,
+      #263747 0%,
+      #142738 55%,
+      #0b1b2b 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 7px 17px rgba(0, 5, 15, .30);
+}
+
+.scanner-lens {
+  position: absolute;
+  left: 88px;
+  top: 12px;
+  width: 51px;
+  height: 26px;
+  border: 2px solid #456176;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 35% 45%, #4bd6ea, #142e44 38%, #050c15 70%);
+  box-shadow:
+    0 0 9px rgba(64, 210, 233, .17),
+    inset 0 0 9px rgba(0,0,0,.7);
+}
+
+.scanner-light {
+  position: absolute;
+  right: 31px;
+  top: 18px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #45e5c5;
+  box-shadow: 0 0 8px #45e5c5;
+}
+
+.pda-side-left,
+.pda-side-right {
+  position: absolute;
+  top: 42px;
+  z-index: 1;
+  width: 34px;
+  height: 427px;
+  border: 1px solid rgba(74, 117, 144, .30);
+  background:
+    linear-gradient(
+      180deg,
+      #263746,
+      #172b3b 38%,
+      #0b1d2d 80%
+    );
+}
+
+.pda-side-left {
+  left: 0;
+  border-radius: 22px 5px 8px 28px;
+}
+
+.pda-side-right {
+  right: 0;
+  border-radius: 5px 22px 28px 8px;
+}
+
+.grip {
+  position: absolute;
+  top: 102px;
+  width: 17px;
+  height: 118px;
+  border-radius: 9px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #385367 0,
+      #385367 4px,
+      #20384a 4px,
+      #20384a 8px
+    );
+}
+
+.pda-side-left .grip {
+  left: 7px;
+}
+
+.pda-side-right .grip {
+  right: 7px;
+}
+
+.side-button {
+  position: absolute;
+  top: 250px;
+  width: 14px;
+  height: 51px;
+  border: 1px solid rgba(91, 202, 224, .30);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #197d9c, #0d415e);
+}
+
+.pda-side-left .side-button {
+  left: 7px;
+}
+
+.pda-side-right .side-button {
+  right: 7px;
+  background: linear-gradient(180deg, #a07237, #70471d);
+  border-color: rgba(242, 177, 81, .33);
+}
+
+.pda-body {
+  position: absolute;
+  left: 21px;
+  top: 41px;
+  z-index: 3;
+  width: 286px;
+  height: 436px;
+  padding: 12px 12px 14px;
+  border: 1px solid rgba(84, 153, 190, .35);
+  border-radius: 25px 25px 34px 34px;
+  background:
+    linear-gradient(
+      145deg,
+      #243849 0%,
+      #132838 38%,
+      #091a2a 100%
+    );
+  box-shadow:
+    0 33px 70px rgba(0, 4, 15, .58),
+    0 0 45px rgba(0, 176, 222, .10),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.pda-brand {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+}
+
+.pda-brand strong {
+  color: #95adbd;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.pda-brand span {
+  margin-left: auto;
+  color: #54dfc4;
+  font-size: 7px;
+}
+
+/* APP屏幕 */
+
+.pda-screen {
+  position: relative;
+  height: 342px;
+  overflow: hidden;
+  border: 2px solid #07121d;
+  border-radius: 12px;
+  color: #173149;
+  background:
+    linear-gradient(
+      180deg,
+      #f1f8fb,
+      #e9f3f7
+    );
+  box-shadow:
+    inset 0 0 11px rgba(0, 16, 30, .25),
+    0 0 0 1px rgba(105, 164, 190, .16);
+}
+
+/* APP顶部 */
+
+.app-header {
+  height: 47px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      100deg,
+      #087ab8,
+      #08a5b2
+    );
+}
+
+.avatar {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,.65);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,.16);
+}
+
+.user-info {
+  margin-left: 8px;
+}
+
+.user-info strong {
+  display: block;
+  font-size: 10px;
+}
+
+.user-info span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255,255,255,.76);
+  font-size: 7px;
+}
+
+.app-state {
+  margin-left: auto;
+  text-align: right;
+}
+
+.app-state strong {
+  display: block;
+  font-size: 8px;
+}
+
+.app-state span {
+  display: block;
+  margin-top: 4px;
+  color: #c8fff2;
+  font-size: 6px;
+}
+
+/* 责任区概览 */
+
+.duty-card {
+  margin: 8px;
+  padding: 9px;
+  border-radius: 10px;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #126f9f,
+      #0c9b99
+    );
+  box-shadow: 0 5px 13px rgba(16, 125, 153, .18);
+}
+
+.duty-head {
+  display: flex;
+  align-items: center;
+  font-size: 8px;
+}
+
+.duty-head strong {
+  font-size: 9px;
+}
+
+.duty-head span {
+  margin-left: auto;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: #d8fff5;
+  font-size: 6px;
+  background: rgba(255,255,255,.14);
+}
+
+.duty-metrics {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.duty-metric {
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.15);
+}
+
+.duty-metric:last-child {
+  border-right: 0;
+}
+
+.duty-metric strong {
+  display: block;
+  font-size: 12px;
+}
+
+.duty-metric span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255,255,255,.72);
+  font-size: 5.8px;
+}
+
+/* 优先待办 */
+
+.todo-card {
+  margin: 0 8px;
+  padding: 8px;
+  border: 1px solid #f1cccc;
+  border-radius: 9px;
+  background: #fff5f5;
+}
+
+.todo-head {
+  display: flex;
+  align-items: center;
+  color: #b24851;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.todo-level {
+  margin-left: auto;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 6px;
+  background: #e65d68;
+}
+
+.todo-title {
+  margin-top: 7px;
+  color: #87363e;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.todo-desc {
+  margin-top: 5px;
+  color: #a6686d;
+  font-size: 7px;
+  line-height: 1.35;
+}
+
+.todo-actions {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 6px;
+}
+
+.todo-button {
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e6b4b8;
+  border-radius: 6px;
+  color: #a55158;
+  font-size: 7px;
+  background: #ffffff;
+}
+
+.todo-button.primary {
+  color: #ffffff;
+  border-color: #d95864;
+  background: #df5b66;
+}
+
+/* 四个大按钮 */
+
+.app-grid {
+  margin: 7px 8px 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.app-button {
+  height: 58px;
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #dce9ed;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.app-button.green {
+  border-color: #a9ddcf;
+  background: #f0fbf8;
+}
+
+.app-button.orange {
+  border-color: #efcf9d;
+  background: #fff8eb;
+}
+
+.app-button.purple {
+  border-color: #cdc2ef;
+  background: #f8f5ff;
+}
+
+.button-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1488c5, #12adb2);
+}
+
+.app-button.green .button-icon {
+  background: linear-gradient(135deg, #158f78, #35c49e);
+}
+
+.app-button.orange .button-icon {
+  background: linear-gradient(135deg, #e38b36, #ecb346);
+}
+
+.app-button.purple .button-icon {
+  background: linear-gradient(135deg, #7362d7, #9c7ae5);
+}
+
+.button-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.button-text {
+  margin-left: 7px;
+}
+
+.button-text strong {
+  display: block;
+  color: #254456;
+  font-size: 9px;
+}
+
+.button-text span {
+  display: block;
+  margin-top: 5px;
+  color: #81939d;
+  font-size: 6px;
+}
+
+/* 语音助手 */
+
+.voice-command {
+  height: 30px;
+  margin: 7px 8px 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #b8ddd8;
+  border-radius: 8px;
+  color: #267a70;
+  background: #effbf8;
+}
+
+.voice-icon {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #168f88, #35c4aa);
+}
+
+.voice-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+.voice-text {
+  margin-left: 7px;
+  font-size: 7px;
+}
+
+.voice-text b {
+  color: #188777;
+  font-size: 8px;
+}
+
+/* 物理按键 */
+
+.physical-keys {
+  height: 43px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.key-small,
+.key-main {
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(95, 143, 169, .32);
+  color: #6f93a7;
+  background:
+    linear-gradient(
+      145deg,
+      #172c3c,
+      #091826
+    );
+}
+
+.key-small {
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+}
+
+.key-main {
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  color: #51d9e5;
+  border-color: rgba(65, 208, 225, .35);
+}
+
+.key-small svg {
+  width: 13px;
+  height: 13px;
+}
+
+.key-main svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* =========================================================
+   右侧：20%稳健AI创新
+========================================================= */
+
+.ai-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46px;
+  bottom: 0;
+  padding: 15px;
+  overflow: hidden;
+  border-color: rgba(143, 119, 245, .26);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(108, 76, 229, .11), transparent 31%),
+    linear-gradient(
+      145deg,
+      rgba(37, 42, 91, .81),
+      rgba(7, 27, 51, .94)
+    );
+}
+
+.ai-panel::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #a18aff, transparent);
+}
+
+.ai-intro {
+  height: 57px;
+  padding: 10px 12px;
+  border: 1px solid rgba(142, 119, 227, .14);
+  border-radius: 10px;
+  background: rgba(17, 28, 62, .56);
+}
+
+.ai-intro strong {
+  display: block;
+  color: #e4def6;
+  font-size: 12px;
+}
+
+.ai-intro span {
+  display: block;
+  margin-top: 7px;
+  color: #8885a2;
+  font-size: 9px;
+}
+
+/* 2×2 AI卡片 */
+
+.ai-grid {
+  margin-top: 11px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.ai-card {
+  position: relative;
+  height: 144px;
+  padding: 13px;
+  overflow: hidden;
+  border: 1px solid rgba(133, 113, 216, .16);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(29, 33, 76, .70),
+      rgba(9, 29, 56, .71)
+    );
+}
+
+.ai-card.green {
+  border-color: rgba(48, 205, 170, .18);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(9, 64, 66, .53),
+      rgba(8, 31, 55, .72)
+    );
+}
+
+.ai-card::after {
+  content: "";
+  position: absolute;
+  right: -25px;
+  bottom: -30px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(141, 112, 227, .05);
+}
+
+.ai-card.green::after {
+  background: rgba(49, 205, 170, .05);
+}
+
+.ai-card-head {
+  display: flex;
+  align-items: center;
+}
+
+.ai-icon {
+  width: 37px;
+  height: 37px;
+  flex: 0 0 37px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #cabaff;
+  background: rgba(123, 88, 211, .16);
+}
+
+.ai-card.green .ai-icon {
+  color: #5ce3c5;
+  background: rgba(29, 174, 139, .14);
+}
+
+.ai-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ai-name {
+  margin-left: 9px;
+  color: #dad4ed;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ai-card.green .ai-name {
+  color: #d0f0e8;
+}
+
+.ai-tag {
+  margin-left: auto;
+  padding: 4px 6px;
+  border-radius: 7px;
+  color: #a99fd0;
+  font-size: 7px;
+  background: rgba(103, 80, 177, .16);
+}
+
+.ai-card.green .ai-tag {
+  color: #7bbbab;
+  background: rgba(27, 130, 107, .16);
+}
+
+.ai-desc {
+  margin-top: 11px;
+  color: #898ca5;
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
+.ai-card.green .ai-desc {
+  color: #81aaa0;
+}
+
+.ai-result {
+  margin-top: 9px;
+  color: #b0a7d2;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.ai-card.green .ai-result {
+  color: #83cbbb;
+}
+
+/* AI边界 */
+
+.ai-boundary {
+  height: 68px;
+  margin-top: 11px;
+  padding: 10px 12px;
+  border: 1px solid rgba(51, 210, 178, .18);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(14, 74, 73, .38),
+      rgba(7, 30, 52, .66)
+    );
+}
+
+.boundary-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #75ddc8;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.boundary-title i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ce0c0;
+  box-shadow: 0 0 7px #4ce0c0;
+}
+
+.boundary-content {
+  margin-top: 9px;
+  display: flex;
+  justify-content: space-between;
+  color: #8fbab0;
+  font-size: 8px;
+}
+
+.boundary-content b {
+  color: #d0f2ea;
+  font-weight: 600;
+}
+
+/* =========================================================
+   底部价值
+========================================================= */
+
+.value-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 47px;
+  height: 148px;
+}
+
+.value-title {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8ab2c6;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.value-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #29bdff, #45e6ce);
+}
+
+.value-title span {
+  margin-left: auto;
+  color: #58788d;
+  font-size: 9px;
+}
+
+.value-grid {
+  height: 115px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.value-card {
+  position: relative;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(58, 178, 217, .18);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 49, 78, .80),
+      rgba(6, 26, 48, .84)
+    );
+}
+
+.value-card.orange {
+  border-color: rgba(229, 159, 71, .20);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(88, 58, 29, .43),
+      rgba(8, 29, 51, .86)
+    );
+}
+
+.value-card.green {
+  border-color: rgba(49, 210, 177, .21);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13, 69, 70, .46),
+      rgba(7, 28, 51, .85)
+    );
+}
+
+.value-card.purple {
+  border-color: rgba(146, 120, 237, .21);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(51, 43, 101, .48),
+      rgba(7, 28, 52, .86)
+    );
+}
+
+.value-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: #55e0f0;
+  background: rgba(23, 143, 184, .14);
+}
+
+.value-card.orange .value-icon {
+  color: #f0bc72;
+  background: rgba(191, 123, 46, .14);
+}
+
+.value-card.green .value-icon {
+  color: #58dfc2;
+  background: rgba(31, 173, 138, .14);
+}
+
+.value-card.purple .value-icon {
+  color: #c3b2ff;
+  background: rgba(123, 87, 210, .15);
+}
+
+.value-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.value-main {
+  padding-left: 10px;
+}
+
+.value-main strong {
+  display: block;
+  color: #e0f4fa;
+  font-size: 13px;
+}
+
+.value-main span {
+  display: block;
+  margin-top: 7px;
+  color: #749bac;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.value-highlight {
+  margin-top: 8px;
+  color: #56dfca;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.value-card.orange .value-highlight {
+  color: #dfb071;
+}
+
+.value-card.purple .value-highlight {
+  color: #b6a7df;
+}
+
+/* =========================================================
+   页脚
+========================================================= */
+
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #486f87;
+  font-size: 8px;
+  letter-spacing: 1.1px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-left i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43e5c5;
+  box-shadow: 0 0 8px #43e5c5;
+}
+
+.footer-right {
+  color: #3d5f76;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 背景装饰 -->
+    <svg class="background-svg" viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="backgroundGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#188fff"/>
+          <stop offset="52%" stop-color="#44e1ed"/>
+          <stop offset="100%" stop-color="#716aff"/>
+        </linearGradient>
+      </defs>
+
+      <path
+        class="bg-line"
+        d="M0 728 C222 660 317 760 495 683 C682 601 723 422 908 358 C1096 293 1303 418 1600 232"
+      />
+
+      <path
+        class="bg-line-dash"
+        d="M0 773 C247 712 386 799 568 724 C747 650 789 485 969 420 C1170 350 1371 421 1600 329"
+      />
+
+      <circle class="bg-dot" cx="495" cy="683" r="3"/>
+      <circle class="bg-dot" cx="908" cy="358" r="3"/>
+      <circle class="bg-dot" cx="1303" cy="418" r="3"/>
+    </svg>
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect
+              x="5"
+              y="2.5"
+              width="14"
+              height="19"
+              rx="2.8"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M8 6h8M8 10h8M9 17h6"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+            <path
+              d="M17 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>道路停车收费员智慧移动作业终端</h1>
+          <div class="subtitle">
+            INTELLIGENT MOBILE TERMINAL FOR ON-STREET PARKING
+          </div>
+        </div>
+      </div>
+
+      <div class="header-message">
+        <strong>成熟业务打底，AI 辅助<b>恰到好处</b></strong>
+        <span>责任泊位清晰 · 现场操作简单 · 风险主动提示 · 关键动作确认</span>
+      </div>
+    </header>
+
+    <!-- 80% + 20% -->
+    <section class="strategy-bar">
+
+      <div class="strategy-base">
+        <div class="strategy-percent">80%</div>
+
+        <div class="strategy-copy">
+          <strong>成熟可靠的移动作业能力</strong>
+          <span>考勤、巡检、开单、收费、工单、设备、绩效全流程覆盖</span>
+        </div>
+
+        <div class="strategy-tags">
+          <span class="strategy-tag">大按钮</span>
+          <span class="strategy-tag">少层级</span>
+          <span class="strategy-tag">全留痕</span>
+        </div>
+      </div>
+
+      <div class="strategy-ai">
+        <div class="strategy-percent">20%</div>
+
+        <div class="strategy-copy">
+          <strong>稳健 AI 辅助</strong>
+          <span>提示、识别、排序、建议</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 主体 -->
+    <main class="main-area">
+
+      <!-- ==================================================
+           左侧：80%基础能力
+      =================================================== -->
+
+      <section class="base-zone">
+        <div class="section-head">
+          <span class="section-number">01</span>
+          <i class="section-line"></i>
+          <h2>收费员日常作业基本盘</h2>
+          <span class="section-en">80% BASE</span>
+        </div>
+
+        <div class="panel base-panel">
+
+          <div class="base-intro">
+            <strong>围绕本人责任路段与责任泊位开展作业</strong>
+            <span>收费员只看自己的泊位、订单、任务和绩效。</span>
+          </div>
+
+          <div class="base-grid">
+
+            <!-- 责任区 -->
+            <div class="base-card">
+              <div class="base-card-head">
+                <div class="base-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="4"
+                      y="4"
+                      width="16"
+                      height="16"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M8 17V7h4a3 3 0 0 1 0 6H8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="base-name">责任泊位看板</div>
+              </div>
+
+              <div class="base-desc">
+                本人负责泊位的空闲、占用、异常和停用状态
+                <b>一屏掌握</b>。
+              </div>
+            </div>
+
+            <!-- 考勤巡检 -->
+            <div class="base-card green">
+              <div class="base-card-head">
+                <div class="base-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M5 20c.7-5 3-7 7-7s6.3 2 7 7"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="base-name">考勤与巡检</div>
+              </div>
+
+              <div class="base-desc">
+                责任路段上岗、巡检记录和电子围栏
+                <b>自动留痕</b>。
+              </div>
+            </div>
+
+            <!-- 开单 -->
+            <div class="base-card green">
+              <div class="base-card-head">
+                <div class="base-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="3"
+                      y="6"
+                      width="18"
+                      height="12"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="base-name">拍照开结单</div>
+              </div>
+
+              <div class="base-desc">
+                车辆驶入拍照开单、车辆离场确认结单，
+                <b>图片证据完整</b>。
+              </div>
+            </div>
+
+            <!-- 收费 -->
+            <div class="base-card">
+              <div class="base-card-head">
+                <div class="base-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 9.5h4a2 2 0 0 1 0 4H9M12 7.5v9"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+                <div class="base-name">收费与补缴</div>
+              </div>
+
+              <div class="base-desc">
+                扫码收费、现金登记、欠费查询和现场补缴
+                <b>统一办理</b>。
+              </div>
+            </div>
+
+            <!-- 工单 -->
+            <div class="base-card">
+              <div class="base-card-head">
+                <div class="base-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 3h9l3 3v15H6V3z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 11h6M9 15h6"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                  </svg>
+                </div>
+                <div class="base-name">异常与工单</div>
+              </div>
+
+              <div class="base-desc">
+                车辆、泊位和设备异常现场上报，平台任务
+                <b>闭环处理</b>。
+              </div>
+            </div>
+
+            <!-- 绩效 -->
+            <div class="base-card green">
+              <div class="base-card-head">
+                <div class="base-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M5 7l5-4 6 5 5-4"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                  </svg>
+                </div>
+                <div class="base-name">工作量与绩效</div>
+              </div>
+
+              <div class="base-desc">
+                订单量、收费率、追缴量和工单完成情况
+                <b>实时可见</b>。
+              </div>
+            </div>
+
+          </div>
+
+          <div class="base-flow">
+            <div class="base-flow-title">
+              标准现场作业闭环
+            </div>
+
+            <div class="flow-row">
+              <div class="flow-step">上岗</div>
+              <i class="flow-arrow"></i>
+
+              <div class="flow-step">巡检</div>
+              <i class="flow-arrow"></i>
+
+              <div class="flow-step">识别</div>
+              <i class="flow-arrow"></i>
+
+              <div class="flow-step">开单</div>
+              <i class="flow-arrow"></i>
+
+              <div class="flow-step">收费</div>
+              <i class="flow-arrow"></i>
+
+              <div class="flow-step">结单</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================
+           中央：PDA
+      =================================================== -->
+
+      <section class="pda-zone">
+
+        <div class="pda-orbit"></div>
+        <div class="pda-glow"></div>
+
+        <div class="pda-device">
+
+          <div class="scanner-head">
+            <div class="scanner-lens"></div>
+            <i class="scanner-light"></i>
+          </div>
+
+          <div class="pda-side-left">
+            <i class="grip"></i>
+            <i class="side-button"></i>
+          </div>
+
+          <div class="pda-side-right">
+            <i class="grip"></i>
+            <i class="side-button"></i>
+          </div>
+
+          <div class="pda-body">
+
+            <div class="pda-brand">
+              <strong>HUIBO PARKING PDA</strong>
+              <span>● 设备在线</span>
+            </div>
+
+            <div class="pda-screen">
+
+              <!-- 顶部 -->
+              <div class="app-header">
+                <div class="avatar">李</div>
+
+                <div class="user-info">
+                  <strong>李师傅，上午好</strong>
+                  <span>人民路 A 区 · 已上岗</span>
+                </div>
+
+                <div class="app-state">
+                  <strong>09:26</strong>
+                  <span>任务同步正常</span>
+                </div>
+              </div>
+
+              <!-- 责任区 -->
+              <div class="duty-card">
+                <div class="duty-head">
+                  <strong>我的责任泊位</strong>
+                  <span>A001 — A048</span>
+                </div>
+
+                <div class="duty-metrics">
+                  <div class="duty-metric">
+                    <strong>48</strong>
+                    <span>负责泊位</span>
+                  </div>
+
+                  <div class="duty-metric">
+                    <strong>31</strong>
+                    <span>当前占用</span>
+                  </div>
+
+                  <div class="duty-metric">
+                    <strong>3</strong>
+                    <span>待处理</span>
+                  </div>
+
+                  <div class="duty-metric">
+                    <strong>2</strong>
+                    <span>设备异常</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 优先待办 -->
+              <div class="todo-card">
+                <div class="todo-head">
+                  智能辅助 · 优先待办
+                  <span class="todo-level">需人工确认</span>
+                </div>
+
+                <div class="todo-title">
+                  A018 泊位疑似占用未开单
+                </div>
+
+                <div class="todo-desc">
+                  识别车牌：粤 A·12345｜历史欠费 3 次
+                </div>
+
+                <div class="todo-actions">
+                  <div class="todo-button primary">拍照核实并处理</div>
+                  <div class="todo-button">查看车辆信息</div>
+                </div>
+              </div>
+
+              <!-- 四个按钮 -->
+              <div class="app-grid">
+
+                <div class="app-button">
+                  <div class="button-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect
+                        x="3"
+                        y="6"
+                        width="18"
+                        height="12"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="3"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="button-text">
+                    <strong>拍照开单</strong>
+                    <span>识别后人工确认</span>
+                  </div>
+                </div>
+
+                <div class="app-button green">
+                  <div class="button-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="8"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M9 9.5h4a2 2 0 0 1 0 4H9M12 7.5v9"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="button-text">
+                    <strong>收费补缴</strong>
+                    <span>自动展示应缴金额</span>
+                  </div>
+                </div>
+
+                <div class="app-button orange">
+                  <div class="button-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 3l9 16H3L12 3z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M12 9v4M12 16h.01"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="button-text">
+                    <strong>异常上报</strong>
+                    <span>泊位／车辆／设备</span>
+                  </div>
+                </div>
+
+                <div class="app-button purple">
+                  <div class="button-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 3h9l3 3v15H6V3z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M9 11h6M9 15h6"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="button-text">
+                    <strong>我的工单</strong>
+                    <span>查看待办与处理记录</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- 语音 -->
+              <div class="voice-command">
+                <div class="voice-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="9"
+                      y="3"
+                      width="6"
+                      height="11"
+                      rx="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M6 11a6 6 0 0 0 12 0M12 17v4"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div class="voice-text">
+                  <b>语音查询：</b>“查看 A018 泊位情况”
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 实体按键 -->
+            <div class="physical-keys">
+              <div class="key-small">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M15 6l-6 6 6 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+
+              <div class="key-main">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="7"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                </svg>
+              </div>
+
+              <div class="key-small">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6 7h12M6 12h12M6 17h12"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================================================
+           右侧：20% AI创新
+      =================================================== -->
+
+      <section class="ai-zone">
+        <div class="section-head">
+          <span class="section-number">02</span>
+          <i class="section-line"></i>
+          <h2>AI 恰到好处地辅助现场作业</h2>
+          <span class="section-en">20% AI</span>
+        </div>
+
+        <div class="panel ai-panel">
+
+          <div class="ai-intro">
+            <strong>AI 不替代收费员，只减少查找、输入和判断负担</strong>
+            <span>基于本人责任泊位提供识别、提醒、排序和操作建议。</span>
+          </div>
+
+          <div class="ai-grid">
+
+            <!-- 待办归集 -->
+            <div class="ai-card">
+              <div class="ai-card-head">
+                <div class="ai-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 3h9l3 3v15H6V3z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 11h6M9 15h6"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                    <path
+                      d="M18 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+
+                <div class="ai-name">责任区待办助手</div>
+                <span class="ai-tag">提示</span>
+              </div>
+
+              <div class="ai-desc">
+                汇总本人责任泊位的未开单、车辆离场、设备异常和欠费提醒。
+              </div>
+
+              <div class="ai-result">
+                告诉收费员“先处理什么”
+              </div>
+            </div>
+
+            <!-- 图像识别 -->
+            <div class="ai-card green">
+              <div class="ai-card-head">
+                <div class="ai-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="3"
+                      y="6"
+                      width="18"
+                      height="12"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div class="ai-name">拍照辅助识别</div>
+                <span class="ai-tag">识别</span>
+              </div>
+
+              <div class="ai-desc">
+                辅助识别车牌、泊位和车辆状态，并自动带入开单或结单页面。
+              </div>
+
+              <div class="ai-result">
+                识别结果由收费员确认
+              </div>
+            </div>
+
+            <!-- 风险提示 -->
+            <div class="ai-card green">
+              <div class="ai-card-head">
+                <div class="ai-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M9 12l2 2 4-5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div class="ai-name">风险车辆提示</div>
+                <span class="ai-tag">提醒</span>
+              </div>
+
+              <div class="ai-desc">
+                当欠费车辆出现在责任泊位时，展示历史记录和现场追缴提示。
+              </div>
+
+              <div class="ai-result">
+                提升欠费车辆发现效率
+              </div>
+            </div>
+
+            <!-- 语音 -->
+            <div class="ai-card">
+              <div class="ai-card-head">
+                <div class="ai-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="9"
+                      y="3"
+                      width="6"
+                      height="11"
+                      rx="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <div class="ai-name">语音操作助手</div>
+                <span class="ai-tag">交互</span>
+              </div>
+
+              <div class="ai-desc">
+                支持语音查询泊位、订单、欠费记录，并快速跳转到对应功能。
+              </div>
+
+              <div class="ai-result">
+                降低输入和菜单查找负担
+              </div>
+            </div>
+
+          </div>
+
+          <!-- AI边界 -->
+          <div class="ai-boundary">
+            <div class="boundary-title">
+              <i></i>
+              AI 使用边界清晰，关键动作可控
+            </div>
+
+            <div class="boundary-content">
+              <span><b>AI：</b>识别、提示、排序、建议</span>
+              <span><b>规则引擎：</b>计费与权限校验</span>
+              <span><b>收费员：</b>核实并确认执行</span>
+              <span><b>平台：</b>全过程审计留痕</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==================================================
+         底部价值
+    =================================================== -->
+
+    <section class="value-zone">
+      <div class="value-title">
+        基础能力可靠落地，AI 创新带来实际增量
+        <span>不改变责任路段管理模式，不增加收费员操作负担</span>
+      </div>
+
+      <div class="value-grid">
+
+        <article class="value-card">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="12"
+                cy="12"
+                r="8"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M12 7v5l3 2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>现场作业更快</strong>
+            <span>常用功能首页直达，减少菜单查找和重复输入。</span>
+            <div class="value-highlight">核心业务三步内完成</div>
+          </div>
+        </article>
+
+        <article class="value-card orange">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M5 7l5-4 6 5 5-4"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>应收收入更完整</strong>
+            <span>主动提示未开单、异常占用和责任区欠费车辆。</span>
+            <div class="value-highlight">减少漏单与欠费遗漏</div>
+          </div>
+        </article>
+
+        <article class="value-card green">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M9 12l2 2 4-5"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>现场管理更规范</strong>
+            <span>考勤、巡检、订单、收费和异常处置全程留痕。</span>
+            <div class="value-highlight">责任清楚、过程可追溯</div>
+          </div>
+        </article>
+
+        <article class="value-card purple">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="4"
+                y="5"
+                width="16"
+                height="14"
+                rx="3"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <circle cx="9" cy="12" r="1.3" fill="currentColor"/>
+              <circle cx="15" cy="12" r="1.3" fill="currentColor"/>
+              <path
+                d="M9 16h6"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+
+          <div class="value-main">
+            <strong>学习门槛更低</strong>
+            <span>系统主动提示，AI 辅助识别，收费员只需核实确认。</span>
+            <div class="value-highlight">适合不同年龄和熟练度</div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        以成熟移动作业为基础，用可控 AI 减少查找、输入与判断负担
+      </div>
+
+      <div class="footer-right">
+        80% RELIABLE OPERATION · 20% PRACTICAL AI ASSISTANCE
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

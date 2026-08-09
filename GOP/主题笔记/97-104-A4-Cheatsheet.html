@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>97–104 概率统计 A4 Cheatsheet（1.5 页）</title>
+<script>
+window.MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']],processEscapes:true},svg:{fontCache:'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --ink:#17212b; --muted:#536170; --line:#81909e;
+    --blue:#dceeff; --blue2:#eaf5ff; --green:#e1f3e7; --green2:#eef9f1;
+    --amber:#fff0c9; --amber2:#fff8e5; --purple:#eee5fb; --purple2:#f7f2fd;
+    --red:#ffe1df; --red2:#fff1ef; --gray:#edf1f4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#d7dde2;color:var(--ink);font-family:"Segoe UI","Microsoft YaHei",Arial,sans-serif}
+  body{font-size:8.05pt;line-height:1.105}
+  .sheet{width:210mm;height:297mm;margin:7mm auto;background:white;position:relative;overflow:hidden;box-shadow:0 2mm 6mm #74808b;padding:4.2mm 4.4mm}
+  .sheet:last-child{page-break-after:auto}
+  .page-title{height:8.7mm;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1.2pt solid #253342;margin-bottom:2.2mm}
+  .page-title h1{font-size:15pt;line-height:1;margin:0;letter-spacing:.2pt}
+  .page-title .sub{font-size:7.5pt;color:var(--muted);text-align:right;line-height:1.2}
+  .columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6mm;align-items:start}
+  .col{display:flex;flex-direction:column;gap:1.2mm;min-width:0}
+  .box{border:.75pt solid var(--line);border-radius:1.7mm;overflow:hidden;break-inside:avoid;background:#fff}
+  .box h2{font-size:9.35pt;line-height:1.06;margin:0;padding:.85mm 1.25mm;border-bottom:.6pt solid #9aa6b0;display:flex;justify-content:space-between;align-items:baseline}
+  .box h2 small{font-size:6.7pt;font-weight:600;color:#465360}
+  .box .in{padding:.8mm 1.15mm}
+  .blue h2{background:var(--blue)} .blue .in{background:linear-gradient(#fff,var(--blue2))}
+  .green h2{background:var(--green)} .green .in{background:linear-gradient(#fff,var(--green2))}
+  .amber h2{background:var(--amber)} .amber .in{background:linear-gradient(#fff,var(--amber2))}
+  .purple h2{background:var(--purple)} .purple .in{background:linear-gradient(#fff,var(--purple2))}
+  .red h2{background:var(--red)} .red .in{background:linear-gradient(#fff,var(--red2))}
+  .gray h2{background:var(--gray)}
+  p{margin:.38mm 0}
+  ul{margin:.35mm 0 .45mm 3.8mm;padding:0}
+  li{margin:.35mm 0}
+  b{font-weight:750}
+  .f{display:block;margin:.42mm 0;padding:.38mm .62mm;background:#fff;border-left:2.2pt solid currentColor;border-radius:.6mm;line-height:1.105}
+  .mini{font-size:7.3pt;line-height:1.075}
+  .tiny{font-size:6.85pt;line-height:1.06}
+  .warn{color:#a72d26;font-weight:750}
+  .ok{color:#17673b;font-weight:750}
+  .tag{display:inline-block;padding:.12mm .7mm;border-radius:8mm;background:#243447;color:white;font-size:6.4pt;font-weight:700;vertical-align:.15mm}
+  .arrow{font-weight:800;color:#32495f}
+  table{width:100%;border-collapse:collapse;margin:.42mm 0;font-size:7.05pt;line-height:1.06}
+  th,td{border:.5pt solid #9ba6ae;padding:.38mm .5mm;vertical-align:top}
+  th{background:#edf1f4;font-weight:750}
+  .dist td:first-child{font-weight:750;white-space:nowrap}
+  .dist td:nth-child(2){width:41%}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:1mm}
+  .matrix{text-align:center;margin:.4mm 0}
+  mjx-container{font-size:93%!important}
+  mjx-container[display="true"]{margin:.4mm 0!important}
+  .half-used{height:144mm;overflow:hidden}
+  .half-used .page-title{height:8.2mm}
+  #page-1 .columns{height:288.5mm}
+  #page-1 .col{height:288.5mm;justify-content:space-between}
+  #page-2 .columns{height:143.8mm}
+  #page-2 .col{height:143.8mm;justify-content:space-between}
+  .unused{position:absolute;left:0;right:0;top:148.5mm;height:148.5mm;border-top:.55pt dashed #aeb7bf;background:repeating-linear-gradient(135deg,#fff,#fff 6mm,#fafbfc 6mm,#fafbfc 12mm)}
+  .unused span{position:absolute;top:2mm;right:6mm;color:#a7afb6;font-size:7pt}
+  .footer{position:absolute;right:5.6mm;bottom:2.2mm;color:#78848e;font-size:6.5pt}
+  @media print{
+    @page{size:A4 portrait;margin:0}
+    html,body{background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .sheet{margin:0;box-shadow:none;page-break-after:always}
+    .sheet:last-child{page-break-after:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- 第 1 页：正面完整 A4 -->
+<section class="sheet" id="page-1">
+  <main class="columns">
+    <div class="col">
+      <section class="box blue">
+        <h2>97 事件与概率 <small>Ereignisse</small></h2>
+        <div class="in">
+          <p><span class="tag">集合</span> 结果 $\omega$；样本空间 $\Omega$；事件 $A\subseteq\Omega$；补集 $\bar A$。</p>
+          <span class="f"><b>有限且等可能：</b>$P(A)=|A|/|\Omega|$；<b>无放回且不计顺序：</b>$\binom nk=\frac{n!}{k!(n-k)!}$</span>
+          <p><b>公理/推论：</b>$P(A)\ge0$，$P(\Omega)=1$；互斥可加；$A\subseteq B\Rightarrow P(A)\le P(B)$。</p>
+          <span class="f"><b>“不发生”走补集：</b>$P(\bar A)=1-P(A)$<br><b>“至少一个”走并集：</b>$P(A\cup B)=P(A)+P(B)-P(A\cap B)$</span>
+          <p><b>条件：</b>$P(A\mid B)=\dfrac{P(A\cap B)}{P(B)}$，$P(B)>0$。</p>
+          <span class="f"><b>多个事件同时发生，按顺序拆：</b><br>$P(A_1\cap\cdots\cap A_n)=P(A_1)P(A_2\mid A_1)\cdots$<br>${}\cdot P(A_n\mid A_1\cap\cdots\cap A_{n-1})$</span>
+          <p><b>全概率：</b>若 $(B_i)$ 为分割，$P(A)=\sum_iP(A\mid B_i)P(B_i)$。</p>
+          <p><b>独立：</b>$A\perp B\iff P(A\cap B)=P(A)P(B)$。多个事件须对<b>每个子集</b>成立；两两独立 $\nRightarrow$ 共同独立。</p>
+          <p><b>条件独立：</b>$(A\perp B)\mid C\iff P(A\cap B\mid C)=P(A\mid C)P(B\mid C)$。</p>
+          <p class="warn">互斥 ≠ 独立；条件独立与无条件独立互不推出。</p>
+        </div>
+      </section>
+
+      <section class="box blue">
+        <h2>Bayes · Odds · 列联表 <small>Kontingenz</small></h2>
+        <div class="in">
+          <span class="f"><b>看到结果 $A$，反推原因 $B_i$：</b>$P(B_i\mid A)=\dfrac{P(A\mid B_i)P(B_i)}{\sum_jP(A\mid B_j)P(B_j)}$</span>
+          <p><b>查找链：</b>先验 $\times$ 似然 $\rightarrow$ 后验；分母用全概率。</p>
+          <span class="f"><b>概率 ↔ 优势：</b>$\operatorname{Odds}(A)=\dfrac{p}{1-p}$，$p=\dfrac{\gamma}{1+\gamma}$<br><b>证据更新：</b>后验 odds = 先验 odds $\times$ LR</span>
+          <table>
+            <tr><th>$X\backslash Y$</th><th>1</th><th>0</th></tr>
+            <tr><th>1</th><td>$a=h_{11}$</td><td>$b=h_{12}$</td></tr>
+            <tr><th>0</th><td>$c=h_{21}$</td><td>$d=h_{22}$</td></tr>
+          </table>
+          <span class="f"><b>$2\times2$ 跨组比较：</b>$OR=\dfrac{a/b}{c/d}=\dfrac{ad}{bc}$；$OR=1$ 无关联；交换一行/列取倒数；交换 $X,Y$ 不变。</span>
+          <p><b>边缘/条件频率：</b>$f_{ij}=h_{ij}/n$；$f_{Y\mid X}(b_j\mid a_i)=h_{ij}/h_{i\cdot}$。</p>
+          <span class="f"><b>“若独立，本格应有多少”：</b>$\tilde h_{ij}=\dfrac{h_{i\cdot}h_{\cdot j}}n$<br><b>汇总观测值与期望值的偏离：</b>$\chi^2=\sum_{ij}\dfrac{(h_{ij}-\tilde h_{ij})^2}{\tilde h_{ij}}$</span>
+          <p class="tiny">$2\times2$ 快算：$\chi^2=\dfrac{n(ad-bc)^2}{(a+b)(a+c)(b+d)(c+d)}$。</p>
+          <p>$K=\sqrt{\chi^2/(n+\chi^2)}$；$M=\min(r,c)$，$K^*=K/\sqrt{(M-1)/M}\in[0,1]$。</p>
+          <p class="mini"><b>风险差 vs OR：</b>$RD=p_1-p_0$ 是百分点/每千人差；OR 是相对优势比。分层 OR 应逐层算；只能解释当前层差异，不能由两个年龄层推出连续年龄趋势。</p>
+          <p class="mini"><b>频数：</b>$h_j=\#\{i:x_i=a_j\}$，$f_j=h_j/n$，且 $\sum_jf_j=1$。</p>
+          <p class="mini"><b>Mosaic：</b>矩形面积 $=f_{ij}$；若条件比例随行明显改变，提示关联。</p>
+        </div>
+      </section>
+
+      <section class="box blue mini">
+        <h2>97 随机变量与 CDF <small>Zufallsvariable</small></h2>
+        <div class="in">
+          <p>$X:\Omega\to T_X\subseteq\mathbb R$，$F_X(x)=P(X\le x)$ 单调右连续，极限 $0,1$。</p>
+          <div class="two">
+            <div><b>离散 PMF</b><br>$p_X(x)=P(X=x)$<br>$p_X\ge0$，$\sum_xp_X(x)=1$<br>$F(x)=\sum_{t\le x}p_X(t)$</div>
+            <div><b>连续 PDF</b><br>$f_X\ge0$，$\int f_X=1$<br>$F(x)=\int_{-\infty}^xf(t)dt$<br>$F'(x)=f(x)$</div>
+          </div>
+          <span class="f"><b>用 CDF 算区间/尾部：</b>$P(a<X\le b)=F(b)-F(a)$；连续时端点无影响且 $P(X=x)=0$；$P(X>a)=1-F(a)$。</span>
+          <p class="warn">密度曲线的“高度”不是概率；连续概率一定是区间下的面积。</p>
+          <p class="mini">多组标准化密度的曲线面积都为 1：不能从峰高/面积判断各组样本量；曲线右移看条件均值，变宽变平看条件方差增大。</p>
+        </div>
+      </section>
+
+      <section class="box blue mini">
+        <h2>2025 真题：CDF 快速判定 <small>Prüfungstrigger</small></h2>
+        <div class="in">
+          <p><b>给一个候选 $F$：</b>逐项检查 ①单调不减 ②右连续（允许左跳）③$F(-\infty)=0,F(+\infty)=1$。</p>
+          <p><b>独立样本的极值：</b>先写容易的补事件。</p>
+          <span class="f"><b>最大值不超过 $x$：</b>$F_{\max}(x)=P(X_1\le x,\ldots,X_n\le x)=F(x)^n$<br><b>最小值不超过 $x$：</b>$F_{\min}(x)=1-P(X_1>x,\ldots,X_n>x)=1-[1-F(x)]^n$</span>
+          <p><b>解 $q^n<\alpha$：</b>$0<q<1$ 时 $n>\ln(\alpha)/\ln(q)$；除法时注意 $\ln q<0$，不等号反向。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="box amber">
+        <h2>99 位置指标 <small>Lage</small></h2>
+        <div class="in">
+          <p><b>选择尺度：</b>众数（所有尺度）；中位数/分位数（至少有序）；均值（至少区间尺度）。</p>
+          <p><b>众数：</b>$x_{mod}\in\arg\max_x f(x)$，可不唯一。</p>
+          <span class="f"><b>每个观测同权：</b>$\bar x=\frac1n\sum_ix_i$；<b>频数/重要性不同：</b>$\bar x_w=\frac{\sum_iw_ix_i}{\sum_iw_i}$</span>
+          <p><b>中位数：</b>排序 $x_{(1)}\le\cdots\le x_{(n)}$；奇数取 $x_{((n+1)/2)}$，偶数常取 $[x_{(n/2)}+x_{(n/2+1)}]/2$；且最小化 $\sum_i|x_i-c|$。</p>
+          <p><b>分位数：</b>$Q_p=\inf\{x:F(x)\ge p\}$。$Q_2=Q_{.5}$；样本中若 $np\notin\mathbb N$，取 $x_{(\lceil np\rceil)}$；若 $np\in\mathbb N$，$[x_{(np)},x_{(np+1)}]$ 内均可。</p>
+          <span class="f"><b>乘法因子/增长率：</b>几何均值 $\bar x_G=(\prod_i x_i)^{1/n}$；<br><b>等距离的速度/比率：</b>调和均值 $\bar x_H=(\frac1n\sum_i1/x_i)^{-1}$。</span>
+          <p><b>截尾均值：</b>去两端各 $r=\lfloor n\alpha\rfloor$ 后，$\frac1{n-2r}\sum_{i=r+1}^{n-r}x_{(i)}$。</p>
+        </div>
+      </section>
+
+      <section class="box purple mini">
+        <h2>2025 真题：协方差矩阵判定 <small>PSD</small></h2>
+        <div class="in">
+          <p><b>三步快查：</b>①是否对称 ②对角是否非负 ③是否半正定。</p>
+          <span class="f"><b>能否作为协方差矩阵：</b>$\Sigma$ 合法 $\iff \Sigma=\Sigma^T$ 且 $\mathbf a^T\Sigma\mathbf a\ge0$ 对所有 $\mathbf a$ 成立。</span>
+          <p>也可检查所有<b>主子式</b>非负；半正定时不能只查左上角开始的顺序主子式。能配成平方和是最直接证明。</p>
+        </div>
+      </section>
+
+      <section class="box amber">
+        <h2>99 离散度 · 形状 · 集中度 <small>Streuung</small></h2>
+        <div class="in">
+          <p><b>稳健性：</b>极差 $x_{max}-x_{min}$、均值/方差对异常值敏感；中位数、IQR 稳健。</p>
+          <span class="f"><b>稳健离散度/异常值边界：</b>$IQR=Q_3-Q_1$；栅栏 $Q_1-1.5IQR, Q_3+1.5IQR$（须到栅栏内实际极值）</span>
+          <p class="mini"><b>Boxplot：</b>简单型须到实际 min/max；修改型须到栅栏内最远观测，栅栏外单列异常值；看不出多峰。</p>
+          <span class="f"><b>样本波动：</b>$s_x^2=\frac1{n-1}\sum_i(x_i-\bar x)^2$，$s_x=\sqrt{s_x^2}$<br><b>换单位：</b>$y=a+bx\Rightarrow \bar y=a+b\bar x, s_y^2=b^2s_x^2, s_y=|b|s_x$</span>
+          <span class="f"><b>把任意中心 $c$ 换成均值：</b>$\sum_i(x_i-c)^2=\sum_i(x_i-\bar x)^2+n(\bar x-c)^2$</span>
+          <p>$MAD=\frac1n\sum_i|x_i-\bar x|$；变异系数 $v=\tilde s_x/\bar x$（正值、比率尺度）。</p>
+          <p><b>分组方差：</b>$\tilde s_x^2=\frac1n\sum_jn_j\tilde s_j^2+\frac1n\sum_jn_j(\bar x_j-\bar x)^2$。</p>
+          <p><b>偏态：</b>右偏/左陡：均值 $>$ 中位数 $>$ 众数；左偏反之。</p>
+          <span class="f"><b>方向不对称：</b>$g_Q=\dfrac{Q_3+Q_1-2Q_2}{Q_3-Q_1}$；$g_m=\frac1n\sum_i((x_i-\bar x)/s_x)^3$。正值=右偏。</span>
+          <p><b>矩：</b>$E(X^k)$；中心矩 $E[(X-EX)^k]$。峰度 $k=E[((X-\mu)/\sigma)^4]$，超额 $k^*=k-3$（尾部厚度）。</p>
+          <p><b>Lorenz/Gini：</b>曲线单调且在对角线下；$G=1-\frac1n\sum_{i=1}^n(v_{i-1}+v_i)\in[0,(n-1)/n]$，$G^+=\frac n{n-1}G\in[0,1]$。</p>
+          <p><b>Herfindahl：</b>$p_i=x_i/\sum_jx_j$，$H=\sum_ip_i^2\in[1/n,1]$。</p>
+        </div>
+      </section>
+
+      <section class="box amber">
+        <h2>期望 · 方差 <small>Momente</small></h2>
+        <div class="in">
+          <span class="f"><b>求变换后平均，不必先求新分布：</b>$E[g(X)]=\sum_xg(x)p_X(x)$ 或 $\int g(x)f_X(x)dx$；$E(aX+bY)=aEX+bEY$</span>
+          <p class="mini">若密度关于 $c$ 对称且期望存在，则 $E(X)=c$。</p>
+          <span class="f"><b>平方偏差/快速展开：</b>$\operatorname{Var}(X)=E[(X-EX)^2]=E(X^2)-(EX)^2$<br><b>平移不变、缩放平方：</b>$\operatorname{Var}(aX+b)=a^2\operatorname{Var}(X)$</span>
+          <p>$\operatorname{Var}(X+Y)=\operatorname{Var}X+\operatorname{Var}Y+2\operatorname{Cov}(X,Y)$；独立时协方差为 0。</p>
+          <p><b>Chebyshev：</b>$P(|X-EX|\ge c)\le \operatorname{Var}(X)/c^2$。</p>
+          <p class="mini"><b>题目问区间内下界：</b>先改写成 $|X-\mu|<c$，再用 $P(|X-\mu|<c)\ge1-\sigma^2/c^2$；这是保守下界，不是精确概率。</p>
+          <p class="mini"><b>Cauchy–Schwarz：</b>$|Cov(X,Y)|\le\sigma_X\sigma_Y$；$E(X^2),E(Y^2)<\infty\Rightarrow |Cov(X,Y)|<\infty$。</p>
+          <p class="mini"><b>复利年化收益：</b>先把收益率变为增长因子，$1+r_G=[\prod_i(1+r_i)]^{1/n}$，不是直接算术平均。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="box green">
+        <h2>100 分布特性与应用（无分布公式） <small>Verteilungswahl</small></h2>
+        <div class="in">
+          <p class="warn">PMF/PDF、支撑集、期望和方差查考场分布表，此处不重复。</p>
+          <table>
+            <tr><th>题目语言</th><th>立即想到</th></tr>
+            <tr><td>一次成败；$n$ 次独立同 $p$ 数成功</td><td>Bernoulli；Binomial</td></tr>
+            <tr><td>有放回/独立抽取；无放回有限总体</td><td>Binomial；Hypergeometric</td></tr>
+            <tr><td>固定区间事件数；第一次/相邻等待</td><td>Poisson；Exponential</td></tr>
+            <tr><td>首次成功试验数；第 $k$ 次事件总等待</td><td>Geometric；Gamma</td></tr>
+            <tr><td>$[0,1]$ 上未知比例；标准正态平方和</td><td>Beta；$\chi^2$</td></tr>
+          </table>
+          <span class="f"><b>重复成败试验：</b>$\sum_{i=1}^nBernoulli(p)=Binomial(n,p)$<br><b>稀有事件快算：</b>$B(n,p)\approx P(\lambda=np)$：$n$ 大、$p$ 小</span>
+          <p><b>Poisson 过程：</b>长度 $t$ 的计数 $N(t)\sim P(\lambda t)$；相邻等待 $\sim Exp(\lambda)$；第 $k$ 次到达时间 $\sim Gamma(k,\lambda)$。</p>
+          <p><b>无记忆：</b>几何/指数：$P(X>s+t\mid X>s)=P(X>t)$。</p>
+          <p><b>正态闭包：</b>$X\sim N(\mu,\sigma^2)\Rightarrow a+bX\sim N(a+b\mu,b^2\sigma^2)$；独立正态之和仍正态。</p>
+          <p><b>关系：</b>$Z_i\stackrel{iid}{\sim}N(0,1)\Rightarrow\sum_{i=1}^dZ_i^2\sim\chi_d^2$；$Gamma(1,\lambda)=Exp(\lambda)$；$\chi_d^2=Gamma(d/2,1/2)$（rate）。</p>
+          <p><b>识别 Beta/Gamma 常数：</b>$\Gamma(a)=(a-1)\Gamma(a-1)$，$\Gamma(n+1)=n!$，$\Gamma(1/2)=\sqrt\pi$；$B(\alpha,\beta)=\Gamma(\alpha)\Gamma(\beta)/\Gamma(\alpha+\beta)$。</p>
+          <p class="warn">Cauchy 虽关于 0 对称，但期望/方差不存在；不能套 WLLN/CLT。</p>
+        </div>
+      </section>
+
+      <section class="box green">
+        <h2>98/100 变换与模拟 <small>Transformation</small></h2>
+        <div class="in">
+          <p><b>一维单调：</b>$Y=g(X)$，先求 $T_Y=g(T_X)$。</p>
+          <span class="f"><b>一维密度变换：</b>$f_Y(y)=f_X(g^{-1}(y))\left|\dfrac{d}{dy}g^{-1}(y)\right|$</span>
+          <p class="mini">非一一映射须按反函数分支求和。例：$Z\sim N(0,1)\Rightarrow Z^2\sim\chi_1^2$。</p>
+          <p><b>逆变换：</b>$U\sim U(0,1)$，$X=F^{-1}(U)$。</p>
+          <span class="f"><b>把均匀概率水平变成目标取值：</b>$F^{-1}(u)=\inf\{x:F(x)\ge u\}$（连续/离散都适用）</span>
+          <p class="mini">生成独立样本须用独立 $U_i$。Exp：$F^{-1}(u)=-\ln(1-u)/\lambda$。</p>
+        </div>
+      </section>
+
+      <section class="box green mini">
+        <h2>计算路线 <small>Rechenweg</small></h2>
+        <div class="in">
+          <p><b>给 CDF 求概率：</b>先统一成 $P(a<X\le b)$，再用 $F(b)-F(a)$。</p>
+          <p><b>给密度求常数：</b>先写支撑集，再令 $\int_{T_X}f(x)dx=1$。</p>
+          <p><b>变量变换：</b>①新支撑集 ②反函数/分支 ③导数绝对值 ④归一性检查。</p>
+          <p><b>识别分布：</b>先看“计数/等待/比例/和”，再核对独立、有无放回、参数化方式。</p>
+        </div>
+      </section>
+
+      <section class="box gray mini">
+        <h2>微积分工具箱 <small>Ableitung / Integral</small></h2>
+        <div class="in">
+          <p><b>常用导数：</b>$(x^a)'=ax^{a-1}$；$(e^{ax})'=ae^{ax}$；$(b^x)'=b^x\ln b$；$(\ln x)'=1/x$；$(g^{-1})'(y)=1/g'(g^{-1}(y))$。</p>
+          <p><b>运算法则：</b>$(fg)'=f'g+fg'$；$(f/g)'=(f'g-fg')/g^2$；链式 $(f\circ g)'=f'(g)g'$。</p>
+          <p><b>常用原函数：</b>$\int x^a dx=\frac{x^{a+1}}{a+1}+C$ $(a\ne-1)$；$\int dx/x=\ln|x|+C$；$\int e^{ax}dx=e^{ax}/a+C$；$\int b^x dx=b^x/\ln b+C$。</p>
+          <p><b>换元｜看见“里面的导数”：</b>$u=g(x),du=g'(x)dx$；$\int f(g(x))g'(x)dx=\int f(u)du$。</p>
+          <span class="f"><b>分部积分｜乘积且一项易求导：</b>$\int u\,dv=uv-\int v\,du$<br>$\int_a^b u(x)v'(x)dx=[u(x)v(x)]_a^b-\int_a^b u'(x)v(x)dx$</span>
+          <p class="tiny">例：$\int\ln x\,dx=x\ln x-x+C$。无穷积分先写极限；先检查端点项是否趋于 0。</p>
+          <p><b>微积分基本定理：</b>$F(x)=\int_{-\infty}^xf(t)dt\Rightarrow F'(x)=f(x)$；$\int_a^bf(x)dx=G(b)-G(a)$。</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</section>
+
+<!-- 第 2 页：只使用上半张 A4 -->
+<section class="sheet" id="page-2">
+  <div class="half-used">
+    <main class="columns">
+      <div class="col">
+        <section class="box purple mini">
+          <h2>101 联合 · 条件 · 卷积 <small>mehrdimensional</small></h2>
+          <div class="in">
+            <p><b>随机向量：</b>$\mathbf X=(X_1,\ldots,X_d)$，$F_{\mathbf X}(\mathbf x)=P(X_1\le x_1,\ldots,X_d\le x_d)$。</p>
+            <p><b>“两个都不超过”：</b>$F_{XY}(x,y)=P(X\le x,Y\le y)$；连续时 $f_{XY}=\partial^2F/(\partial x\partial y)$，且 $\iint f_{XY}=1$。</p>
+            <p><b>区域概率：</b>$P((X,Y)\in A)=\iint_Af_{XY}(x,y),dx,dy$。</p>
+            <span class="f"><b>只看一个变量：</b>$f_X(x)=\sum_yf_{XY}(x,y)$ 或 $\int f_{XY}(x,y)dy$</span>
+            <span class="f"><b>固定 $Y=y$ 后归一化：</b>$f_{X\mid Y}(x\mid y)=\dfrac{f_{XY}(x,y)}{f_Y(y)}$；联合 = 条件 $\times$ 边缘</span>
+            <p><b>条件 CDF：</b>$F_{X\mid Y}(x\mid y)=\int_{-\infty}^x f_{X\mid Y}(u\mid y)du$；连续情形不能写 $P(Y=y)$ 作分母。</p>
+            <p><b>独立：</b>$f_{XY}=f_Xf_Y$（等价 $F_{XY}=F_XF_Y$）；此时条件 = 边缘。</p>
+            <p><b>变换后的平均：</b>$E[g(X,Y)]=\sum_x\sum_yg(x,y)f_{XY}$ 或 $\iint gf_{XY}$。</p>
+            <p><b>两个独立时间/数量相加（卷积）：</b>$p_Z(z)=\sum_xp_X(x)p_Y(z-x)$；$f_Z(z)=\int f_X(x)f_Y(z-x)dx$。先由支撑集确定求和/积分范围。</p>
+            <p><b>先按组算，再合并：</b>$E(E(X\mid Z))=E(X)$；$Var(X)=E[Var(X\mid Z)]+Var(E[X\mid Z])$（组内 + 组间）。</p>
+            <p><b>观察总数后拆来源：</b>独立 $X\sim P(\lambda_1),Y\sim P(\lambda_2)$，则 $X\mid X+Y=z\sim B(z,\lambda_1/(\lambda_1+\lambda_2))$。</p>
+            <p><b>成功率的 Bayes 更新：</b>$P\sim Beta(\alpha,\beta)$，$Y\mid P\sim B(n,P)$ ⇒ $P\mid Y=y\sim Beta(\alpha+y,\beta+n-y)$。</p>
+          </div>
+        </section>
+
+        <section class="box amber mini">
+          <h2>102 收敛与经验分布 <small>Konvergenz</small></h2>
+          <div class="in">
+            <p><b>三类推断：</b>最合适参数=点估计；兼容范围=区间估计；检查给定值=统计检验。</p>
+            <p><b>用样本估 CDF：</b>$F_n(t)=\frac1n\sum_iI(X_i\le t)$；固定 $t$ 时 $F_n(t)\xrightarrow P F(t)$。</p>
+            <p><b>整条曲线最大误差：</b>Glivenko–Cantelli：$\sup_x|F_n(x)-F(x)|\to0$（一致收敛，几乎必然）。</p>
+            <p><b>依概率：</b>看 $P(|X_n-X|>\varepsilon)\to0$；<b>依分布：</b>看 $F_n(x)\to F(x)$，只要求在极限 CDF 连续点。</p>
+            <p class="warn">$X_n\xrightarrow P X\Rightarrow X_n\xrightarrow dX$；反向一般不成立；极限为常数时等价。</p>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="col">
+        <section class="box amber mini">
+          <h2>102 LLN · ECDF · CLT <small>Grenzwertsätze</small></h2>
+          <div class="in">
+            <p><b>样本均值的中心与波动：</b>iid 下 $E\bar X_n=\mu$，$Var(\bar X_n)=\sigma^2/n$。</p>
+            <span class="f"><b>WLLN｜均值最终靠近哪里：</b>$\bar X_n\xrightarrow{P}\mu$，即 $P(|\bar X_n-\mu|>\varepsilon)\to0$（需有限期望）</span>
+            <span class="f"><b>CLT｜和/均值的误差分布：</b>$\dfrac{S_n-n\mu}{\sqrt n\sigma}\xrightarrow dN(0,1)$<br>$S_n\approx N(n\mu,n\sigma^2)$；$\bar X_n\approx N(\mu,\sigma^2/n)$</span>
+            <p><b>标准化查表：</b>$z=(x-\mu)/\sigma$；均值用标准误 $\sigma/\sqrt n$。</p>
+            <p><b>特例：</b>$B(n,p)\approx N(np,np(1-p))$；$\chi_n^2\approx N(n,2n)$。若原变量正态，和/均值在有限 $n$ 下即精确正态。</p>
+            <p class="warn">LLN 回答“趋向哪里”；CLT 回答“误差近似什么分布”。</p>
+          </div>
+        </section>
+
+        <section class="box red mini">
+          <h2>104 分类诊断 <small>ROC / AUC</small></h2>
+          <div class="in">
+            <table>
+              <tr><th>预测\真实</th><th>$Y=1$</th><th>$Y=0$</th></tr>
+              <tr><th>$\hat Y=1$</th><td>TP</td><td>FP</td></tr>
+              <tr><th>$\hat Y=0$</th><td>FN</td><td>TN</td></tr>
+            </table>
+            <span class="f"><b>从真实类别出发：</b>$TPR=\frac{TP}{TP+FN}$（患者找出多少）；$TNR=\frac{TN}{TN+FP}$（健康认对多少）<br>$FNR=1-TPR$；$FPR=1-TNR$</span>
+            <p><b>从预测结果出发：</b>$PPV=TP/(TP+FP)$（阳性可信度）；$NPV=TN/(TN+FN)$（阴性可信度）。二者受患病率影响。</p>
+            <p><b>调阈值：</b>$\hat y=1\iff x\ge c$；提高 $c$ ⇒ TPR↓、FPR↓。ROC 点为 $(FPR(c),TPR(c))$。</p>
+            <p><b>随机抽一患一健：</b><br>AUC $=\frac{N_C+N_E/2}{N_+N_-}$<br>$=P(X_+>X_-)+\frac12P(X_+=X_-)$；1 完美，0.5 随机。</p>
+            <p><b>阳性证据：</b>$LR^+=TPR/FPR=\text{敏感度}/(1-\text{特异度})$。</p>
+            <p><b>AUC 不是具体阈值：</b>组间均值差不变但方差增大 ⇒ 重叠增加 ⇒ AUC 向 $0.5$ 降低。</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="box purple mini">
+          <h2>103 相关与矩阵 <small>Zusammenhang</small></h2>
+          <div class="in">
+            <span class="f"><b>样本线性同向变化：</b>$s_{xy}=\frac1{n-1}\sum_i(x_i-\bar x)(y_i-\bar y)$；$r=\dfrac{s_{xy}}{s_xs_y}$</span>
+            <span class="f"><b>总体版本/快速计算：</b>$Cov(X,Y)=E(XY)-EX\,EY$；$\rho=Cov/(\sigma_X\sigma_Y)$</span>
+            <p>$[-1,1]$、无量纲；独立 ⇒ $\rho=0$，反之通常不成立。$|\rho|=1$ ⇔ 完全线性。</p>
+            <p class="warn">相关系数衡量线性规则程度，不衡量斜率大小；$r=0$ 仍可能存在强非线性关系。</p>
+            <p><b>换单位/反向计分：</b>$Cov(a+bX,c+dY)=bd\,Cov(X,Y)$；$\rho(a+bX,c+dY)=sgn(bd)\rho(X,Y)$。</p>
+            <p><b>协方差矩阵：</b>$\Sigma_{ii}=Var(X_i)$，$\Sigma_{ij}=Cov(X_i,X_j)$；对称、半正定。相关矩阵对角为 1。</p>
+            <p><b>多元正态：</b>$\mathbf X\sim N_d(\boldsymbol\mu,\Sigma)$；联合正态中 $Cov(X_i,X_j)=0\iff X_i\perp X_j$。</p>
+            <p><b>单调但非线性/有异常值：</b>Spearman = 对秩做 Pearson；并列取平均秩，$\bar r=(n+1)/2$；无并列时 $r_s=1-\frac{6\sum d_i^2}{n(n^2-1)}$。</p>
+            <p><b>比较观测对次序：</b>Kendall $\tau=(N_C-N_D)/\binom n2$；忽略并列的 Goodman–Kruskal：$(N_C-N_D)/(N_C+N_D)$；Somers’ $D_Y=(N_C-N_D)/(N_C+N_D+N_{T_Y})$。</p>
+            <p><b>距离相关：</b>$[0,1]$；捕捉任意依赖；0 ⇔ 独立（通常矩条件下），无方向。</p>
+          </div>
+        </section>
+
+        <section class="box purple mini">
+          <h2>2025 真题：多维线性变换 <small>Jacobi</small></h2>
+          <div class="in">
+            <p><b>看到 $\mathbf Y=A\mathbf X$：</b>先反解 $\mathbf x=A^{-1}\mathbf y$，再乘雅可比行列式绝对值。</p>
+            <span class="f"><b>反代旧密度 × 体积修正：</b><br>$f_{\mathbf Y}(\mathbf y)=f_{\mathbf X}(A^{-1}\mathbf y)|\det A^{-1}|$<br>$=f_{\mathbf X}(A^{-1}\mathbf y)/|\det A|$</span>
+            <div class="matrix">$D(T^{-1})(\mathbf y)=\begin{pmatrix}
+              \frac{\partial x_1}{\partial y_1}&\cdots&\frac{\partial x_1}{\partial y_d}\\
+              \vdots&\ddots&\vdots\\
+              \frac{\partial x_d}{\partial y_1}&\cdots&\frac{\partial x_d}{\partial y_d}
+            \end{pmatrix}=A^{-1}$</div>
+            <p>$\det(AB)=\det A\det B$，$\det(A^{-1})=1/\det A$；绝对值保证密度非负。</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="unused"><span>下半张留空 · untere Hälfte frei</span></div>
+</section>
+
+</body>
+</html>

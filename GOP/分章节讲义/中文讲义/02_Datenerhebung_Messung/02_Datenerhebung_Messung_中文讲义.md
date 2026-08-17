@@ -525,16 +525,16 @@ Likert 量表常用于心理测量（Psychometrie）。
 
 ## 德语词汇表
 
-| 德语 | 中文 | 使用场景 |
-| --- | --- | --- |
-| statistische Einheit | 统计单位 | 数据行对应对象 |
-| Merkmal | 变量/特征 | 数据列 |
-| Merkmalsausprägung | 特征取值 | 某单位的具体值 |
-| Skalenniveau | 尺度水平 | 决定允许运算 |
-| zulässige Transformation | 允许变换 | 尺度判断核心 |
-| Vollerhebung | 全体调查 | 覆盖总体 |
-| Stichprobenerhebung | 抽样调查 | 只观察子集 |
-| Paneldaten | 面板数据 | 多个单位多期观察 |
+| 德语                       | 中文    | 使用场景     |
+| ------------------------ | ----- | -------- |
+| statistische Einheit     | 统计单位  | 数据行对应对象  |
+| Merkmal                  | 变量/特征 | 数据列      |
+| Merkmalsausprägung       | 特征取值  | 某单位的具体值  |
+| Skalenniveau             | 尺度水平  | 决定允许运算   |
+| zulässige Transformation | 允许变换  | 尺度判断核心   |
+| Vollerhebung             | 全体调查  | 覆盖总体     |
+| Stichprobenerhebung      | 抽样调查  | 只观察子集    |
+| Paneldaten               | 面板数据  | 多个单位多期观察 |
 
 ## C1 德语句式
 

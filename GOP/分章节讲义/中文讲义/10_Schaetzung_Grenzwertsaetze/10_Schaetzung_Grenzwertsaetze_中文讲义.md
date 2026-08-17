@@ -550,16 +550,16 @@ $$
 
 ## 德语词汇表
 
-| 德语 | 中文 | 使用场景 |
-| --- | --- | --- |
-| Schätzung | 估计 | 用样本推总体 |
-| Estimand | 估计目标 | 总体参数 |
-| Estimator | 估计量 | 样本函数 |
-| Estimate | 估计值 | 具体数值 |
-| Gesetz der großen Zahlen | 大数定律 | 样本均值收敛 |
-| empirische Verteilungsfunktion | 经验分布函数 | 样本分布 |
-| Zentraler Grenzwertsatz | 中心极限定理 | 正态近似 |
-| Standardfehler | 标准误 | 估计量波动 |
+| 德语                             | 中文     | 使用场景   |
+| ------------------------------ | ------ | ------ |
+| Schätzung                      | 估计     | 用样本推总体 |
+| Estimand                       | 估计目标   | 总体参数   |
+| Estimator                      | 估计量    | 样本函数   |
+| Estimate                       | 估计值    | 具体数值   |
+| Gesetz der großen Zahlen       | 大数定律   | 样本均值收敛 |
+| empirische Verteilungsfunktion | 经验分布函数 | 样本分布   |
+| Zentraler Grenzwertsatz        | 中心极限定理 | 正态近似   |
+| Standardfehler                 | 标准误    | 估计量波动  |
 
 ## C1 德语句式
 

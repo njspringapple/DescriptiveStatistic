@@ -790,37 +790,37 @@ flowchart TD
 
 ## 德语词汇表
 
-| Deutsch | 中文 | 使用提示 |
-|---|---|---|
-| Zusammenhangsmaß | 关联度量 | 总称 |
-| metrisches Merkmal | 度量变量 | 连续/数值变量 |
-| Kovarianz | 协方差 | 有单位 |
-| Bravais-Pearson-Korrelationskoeffizient | Pearson 相关系数 | 线性关系 |
-| linearer Zusammenhang | 线性关系 | Pearson 核心 |
-| unkorreliert | 不相关 | 协方差为 0 |
-| Unabhängigkeit | 独立 | 强于不相关 |
-| Ausreißer | 离群值 | 影响 Pearson |
-| Kovarianzmatrix | 协方差矩阵 | 多变量 |
-| Korrelationsmatrix | 相关矩阵 | 对角线为 1 |
-| Scatterplotmatrix | 散点矩阵 | 多变量图 |
-| Rang | 秩 | Spearman/Kendall |
-| Spearman-Korrelation | Spearman 秩相关 | 单调关系 |
-| Kendall's Tau | Kendall Tau | 成对比较 |
-| konkordant | 协同的 | 排序一致 |
-| diskordant | 不协同的 | 排序相反 |
-| Bindung / ties | 并列值 | 平均秩或特殊处理 |
-| Distanzkorrelation | 距离相关 | 任意依赖 |
-| dichotomes Merkmal | 二分类变量 | 0/1 目标 |
-| Schwellenwert | 阈值 | 分类规则 |
-| Sensitivität | 敏感性 | TPR |
-| Spezifität | 特异性 | TNR |
-| falsch positiv | 假阳性 | FP |
-| falsch negativ | 假阴性 | FN |
-| ROC-Kurve | ROC 曲线 | TPR vs FPR |
-| AUC | 曲线下面积 | 总体区分能力 |
-| positiver prädiktiver Wert | 阳性预测值 | ppV |
-| negativer prädiktiver Wert | 阴性预测值 | npV |
-| Prävalenz | 患病率/基础率 | 影响 ppV/npV |
+| Deutsch                                 | 中文           | 使用提示             |
+| --------------------------------------- | ------------ | ---------------- |
+| Zusammenhangsmaß                        | 关联度量         | 总称               |
+| metrisches Merkmal                      | 度量变量         | 连续/数值变量          |
+| Kovarianz                               | 协方差          | 有单位              |
+| Bravais-Pearson-Korrelationskoeffizient | Pearson 相关系数 | 线性关系             |
+| linearer Zusammenhang                   | 线性关系         | Pearson 核心       |
+| unkorreliert                            | 不相关          | 协方差为 0           |
+| Unabhängigkeit                          | 独立           | 强于不相关            |
+| Ausreißer                               | 离群值          | 影响 Pearson       |
+| Kovarianzmatrix                         | 协方差矩阵        | 多变量              |
+| Korrelationsmatrix                      | 相关矩阵         | 对角线为 1           |
+| Scatterplotmatrix                       | 散点矩阵         | 多变量图             |
+| Rang                                    | 秩            | Spearman/Kendall |
+| Spearman-Korrelation                    | Spearman 秩相关 | 单调关系             |
+| Kendall's Tau                           | Kendall Tau  | 成对比较             |
+| konkordant                              | 协同的          | 排序一致             |
+| diskordant                              | 不协同的         | 排序相反             |
+| Bindung / ties                          | 并列值          | 平均秩或特殊处理         |
+| Distanzkorrelation                      | 距离相关         | 任意依赖             |
+| dichotomes Merkmal                      | 二分类变量        | 0/1 目标           |
+| Schwellenwert                           | 阈值           | 分类规则             |
+| Sensitivität                            | 敏感性          | TPR              |
+| Spezifität                              | 特异性          | TNR              |
+| falsch positiv                          | 假阳性          | FP               |
+| falsch negativ                          | 假阴性          | FN               |
+| ROC-Kurve                               | ROC 曲线       | TPR vs FPR       |
+| AUC                                     | 曲线下面积        | 总体区分能力           |
+| positiver prädiktiver Wert              | 阳性预测值        | ppV              |
+| negativer prädiktiver Wert              | 阴性预测值        | npV              |
+| Prävalenz                               | 患病率/基础率      | 影响 ppV/npV       |
 
 ## C1 德语句式
 

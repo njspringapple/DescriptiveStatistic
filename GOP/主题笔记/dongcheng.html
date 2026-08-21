@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>北京市东城区道路停车智慧运营体系</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #020914;
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  transform-origin: center center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 49% 42%, rgba(0, 183, 255, .17), transparent 32%),
+    radial-gradient(circle at 86% 28%, rgba(115, 82, 255, .12), transparent 26%),
+    radial-gradient(circle at 12% 68%, rgba(0, 220, 184, .09), transparent 27%),
+    linear-gradient(135deg, #051225 0%, #081a31 51%, #040d1b 100%);
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .13;
+  background-image:
+    linear-gradient(rgba(68, 150, 255, .30) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 150, 255, .30) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 1%,
+    #000 14%,
+    #000 92%,
+    transparent
+  );
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  left: 395px;
+  top: 95px;
+  width: 810px;
+  height: 710px;
+  border: 1px solid rgba(67, 175, 255, .06);
+  border-radius: 50%;
+  box-shadow:
+    0 0 120px rgba(0, 176, 255, .05),
+    inset 0 0 120px rgba(0, 176, 255, .03);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==============================
+   通用样式
+============================== */
+
+.card {
+  position: relative;
+  border: 1px solid rgba(66, 169, 237, .24);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 50, 85, .91),
+      rgba(7, 25, 48, .92)
+    );
+  box-shadow:
+    0 16px 40px rgba(0, 4, 16, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  opacity: .65;
+  background: linear-gradient(90deg, transparent, #55dafa, transparent);
+}
+
+.section-head {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.section-number {
+  color: #426d8b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.section-line {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #27baff, #45e8d3);
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #dff6ff;
+  font-size: 17px;
+}
+
+.section-en {
+  margin-left: auto;
+  color: #617f94;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* ==============================
+   标题
+============================== */
+
+.header {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 22px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #1489ff, #20d5dd);
+  box-shadow:
+    0 8px 28px rgba(0, 177, 255, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(47, 216, 240, .14);
+  border-radius: 19px;
+}
+
+.logo svg {
+  width: 32px;
+  height: 32px;
+}
+
+h1 {
+  margin: 0;
+  color: #f1fbff;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-top: 7px;
+  color: #65a9d0;
+  font-size: 10.5px;
+  letter-spacing: 3.2px;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.header-right strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #dff8ff;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.header-right strong b {
+  color: #52e4cf;
+}
+
+.header-right span {
+  color: #6796b1;
+  font-size: 10.5px;
+}
+
+/* ==============================
+   顶部理念
+============================== */
+
+.concepts {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 106px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+}
+
+.concept {
+  height: 36px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(66, 185, 235, .22);
+  border-radius: 18px;
+  color: #91bdcf;
+  font-size: 10px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 72, 108, .52),
+      rgba(7, 33, 60, .52)
+    );
+}
+
+.concept i {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: #4be1ec;
+  box-shadow: 0 0 8px #4be1ec;
+}
+
+.concept strong {
+  color: #d7f7ff;
+  font-size: 11px;
+}
+
+/* ==============================
+   左侧：道路停车预警
+============================== */
+
+.monitor-zone {
+  position: absolute;
+  left: 48px;
+  top: 160px;
+  width: 365px;
+  height: 579px;
+}
+
+.monitor-card {
+  height: 530px;
+  margin-top: 7px;
+  padding: 15px;
+}
+
+.monitor-title {
+  display: flex;
+  align-items: center;
+}
+
+.monitor-title-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #d9f5ff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.monitor-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(65, 207, 238, .20);
+  border-radius: 10px;
+  color: #5be5f3;
+  background: rgba(22, 148, 190, .14);
+}
+
+.monitor-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.live-badge {
+  margin-left: auto;
+  padding: 5px 9px;
+  border-radius: 10px;
+  color: #52e0c4;
+  font-size: 8px;
+  background: rgba(32, 181, 150, .10);
+}
+
+.live-badge i {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #4ce7c7;
+  box-shadow: 0 0 7px #4ce7c7;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .35;
+  }
+}
+
+.monitor-metrics {
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.monitor-metric {
+  height: 66px;
+  padding: 10px 8px;
+  text-align: center;
+  border: 1px solid rgba(62, 171, 217, .14);
+  border-radius: 10px;
+  background: rgba(8, 34, 61, .67);
+}
+
+.monitor-metric span {
+  display: block;
+  color: #608ca3;
+  font-size: 8px;
+}
+
+.monitor-metric strong {
+  display: block;
+  margin-top: 7px;
+  color: #e0f8ff;
+  font-size: 16px;
+}
+
+.monitor-metric strong em {
+  margin-left: 2px;
+  color: #65bdd3;
+  font-size: 8px;
+  font-style: normal;
+}
+
+.road-map {
+  position: relative;
+  height: 202px;
+  margin-top: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(60, 174, 218, .16);
+  border-radius: 11px;
+  background:
+    radial-gradient(circle at 60% 45%, rgba(0, 192, 225, .10), transparent 42%),
+    rgba(4, 24, 46, .76);
+}
+
+.road-map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .32;
+  background-image:
+    linear-gradient(rgba(73, 162, 198, .20) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 162, 198, .20) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.map-label {
+  position: absolute;
+  left: 11px;
+  top: 10px;
+  z-index: 3;
+  color: #7ba9ba;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+}
+
+.map-status {
+  position: absolute;
+  right: 10px;
+  top: 9px;
+  z-index: 3;
+  color: #54dbc4;
+  font-size: 8px;
+}
+
+.road-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.road-line {
+  fill: none;
+  stroke: #317e9d;
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: .52;
+}
+
+.road-center {
+  fill: none;
+  stroke: #54cfe2;
+  stroke-width: 1.2;
+  stroke-dasharray: 4 5;
+  opacity: .50;
+  animation: roadFlow 8s linear infinite;
+}
+
+.road-warning {
+  fill: none;
+  stroke: #ffbd59;
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: .75;
+}
+
+.road-danger {
+  fill: none;
+  stroke: #ff647d;
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: .78;
+}
+
+@keyframes roadFlow {
+  to {
+    stroke-dashoffset: -80;
+  }
+}
+
+.map-point {
+  position: absolute;
+  z-index: 4;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #b8f7ff;
+  border-radius: 50%;
+  background: #13b9d7;
+  box-shadow:
+    0 0 0 5px rgba(19, 185, 215, .10),
+    0 0 10px #23cce5;
+}
+
+.map-point.warning {
+  border-color: #fff1c7;
+  background: #ffb955;
+  box-shadow:
+    0 0 0 6px rgba(255, 185, 85, .12),
+    0 0 12px #ffb955;
+}
+
+.map-point.danger {
+  border-color: #ffdce2;
+  background: #ff5e78;
+  box-shadow:
+    0 0 0 6px rgba(255, 94, 120, .13),
+    0 0 12px #ff5e78;
+}
+
+.point-1 {
+  left: 75px;
+  top: 97px;
+}
+
+.point-2 {
+  left: 181px;
+  top: 59px;
+}
+
+.point-3 {
+  left: 269px;
+  top: 128px;
+}
+
+.point-tip {
+  position: absolute;
+  z-index: 5;
+  padding: 5px 7px;
+  border: 1px solid rgba(255, 190, 91, .22);
+  border-radius: 6px;
+  color: #e6c894;
+  font-size: 7px;
+  background: rgba(31, 35, 47, .92);
+}
+
+.tip-1 {
+  left: 195px;
+  top: 75px;
+}
+
+.tip-2 {
+  left: 215px;
+  top: 144px;
+  color: #ffafbd;
+  border-color: rgba(255, 95, 121, .22);
+}
+
+.alert-list {
+  margin-top: 11px;
+}
+
+.alert-title {
+  display: flex;
+  align-items: center;
+  color: #9cc5d3;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.alert-title span {
+  margin-left: auto;
+  color: #5e8294;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.alert-item {
+  height: 52px;
+  margin-top: 7px;
+  padding: 8px 9px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(65, 178, 218, .13);
+  border-radius: 9px;
+  background: rgba(8, 29, 54, .62);
+}
+
+.alert-level {
+  width: 43px;
+  flex: 0 0 43px;
+  text-align: center;
+}
+
+.alert-level b {
+  display: inline-block;
+  padding: 4px 6px;
+  border-radius: 7px;
+  color: #ffc86d;
+  font-size: 7.5px;
+  background: rgba(217, 143, 38, .12);
+}
+
+.alert-level b.red {
+  color: #ff8497;
+  background: rgba(217, 54, 83, .13);
+}
+
+.alert-content {
+  min-width: 0;
+  padding-left: 5px;
+}
+
+.alert-content strong {
+  display: block;
+  color: #c9e5ed;
+  font-size: 8.5px;
+}
+
+.alert-content span {
+  display: block;
+  margin-top: 5px;
+  color: #63889a;
+  font-size: 7.5px;
+}
+
+.alert-action {
+  margin-left: auto;
+  color: #56d9c2;
+  font-size: 7.5px;
+  white-space: nowrap;
+}
+
+/* ==============================
+   中部：流程运营中枢
+============================== */
+
+.engine-zone {
+  position: absolute;
+  left: 435px;
+  top: 160px;
+  width: 720px;
+  height: 579px;
+}
+
+.engine-card {
+  height: 530px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-color: rgba(50, 216, 233, .40);
+  border-radius: 19px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 200, 231, .17), transparent 40%),
+    linear-gradient(
+      145deg,
+      rgba(11, 66, 98, .96),
+      rgba(5, 26, 50, .97)
+    );
+  box-shadow:
+    0 24px 65px rgba(0, 5, 20, .44),
+    0 0 50px rgba(0, 189, 229, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.engine-top {
+  position: relative;
+  z-index: 3;
+  height: 67px;
+  padding: 14px 19px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.engine-logo {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #188eff, #2dded4);
+  box-shadow:
+    0 0 20px rgba(30, 205, 229, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .20);
+}
+
+.engine-logo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.engine-title {
+  margin-left: 12px;
+}
+
+.engine-title strong {
+  display: block;
+  color: #effcff;
+  font-size: 17px;
+}
+
+.engine-title span {
+  display: block;
+  margin-top: 4px;
+  color: #68abc1;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+}
+
+.engine-badge {
+  margin-left: auto;
+  padding: 7px 11px;
+  border: 1px solid rgba(62, 228, 199, .20);
+  border-radius: 15px;
+  color: #65ebce;
+  font-size: 8.5px;
+  background: rgba(34, 195, 161, .08);
+}
+
+.engine-main {
+  position: relative;
+  z-index: 2;
+  height: 354px;
+}
+
+.engine-main::before {
+  content: "";
+  position: absolute;
+  left: 254px;
+  top: 59px;
+  width: 212px;
+  height: 212px;
+  border: 1px solid rgba(70, 222, 239, .11);
+  border-radius: 50%;
+  box-shadow:
+    0 0 55px rgba(25, 207, 230, .08),
+    inset 0 0 55px rgba(25, 207, 230, .05);
+}
+
+.engine-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 720px;
+  height: 354px;
+  pointer-events: none;
+}
+
+.engine-line {
+  fill: none;
+  stroke: #45d5ea;
+  stroke-width: 1.25;
+  stroke-dasharray: 5 6;
+  opacity: .47;
+  animation: flow 9s linear infinite;
+}
+
+.engine-line.purple {
+  stroke: #9c88ff;
+}
+
+.engine-line.green {
+  stroke: #47dcb9;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.engine-dot {
+  fill: #57e9f6;
+  filter: drop-shadow(0 0 5px #24d9f0);
+}
+
+.engine-core {
+  position: absolute;
+  left: 262px;
+  top: 65px;
+  z-index: 3;
+  width: 196px;
+  height: 196px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(70, 231, 239, .37);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(20, 124, 154, .55), rgba(6, 37, 65, .95) 66%);
+  box-shadow:
+    0 0 38px rgba(0, 207, 231, .16),
+    inset 0 0 36px rgba(0, 210, 230, .08);
+}
+
+.engine-core::before,
+.engine-core::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.engine-core::before {
+  inset: 11px;
+  border: 1px dashed rgba(82, 225, 237, .25);
+  animation: rotate 24s linear infinite;
+}
+
+.engine-core::after {
+  inset: 25px;
+  border: 1px solid rgba(82, 225, 237, .11);
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.core-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.core-icon {
+  width: 51px;
+  height: 51px;
+  margin: 0 auto 9px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #188fff, #30dfd4);
+  box-shadow: 0 0 23px rgba(37, 217, 231, .30);
+}
+
+.core-icon svg {
+  width: 29px;
+  height: 29px;
+}
+
+.core-name {
+  color: #effcff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.core-desc {
+  margin-top: 6px;
+  color: #72b2c5;
+  font-size: 8.5px;
+  line-height: 1.5;
+}
+
+.core-tag {
+  margin-top: 8px;
+  padding: 4px 9px;
+  display: inline-block;
+  border-radius: 10px;
+  color: #64e5cf;
+  font-size: 7.5px;
+  background: rgba(33, 196, 163, .09);
+}
+
+.engine-node {
+  position: absolute;
+  z-index: 3;
+  width: 187px;
+  height: 84px;
+  padding: 10px 11px;
+  border: 1px solid rgba(60, 181, 222, .19);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 61, 91, .84),
+      rgba(6, 31, 56, .89)
+    );
+  box-shadow: 0 10px 25px rgba(0, 5, 16, .18);
+}
+
+.engine-node.purple {
+  border-color: rgba(153, 123, 255, .25);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(56, 47, 112, .58),
+      rgba(7, 33, 58, .89)
+    );
+}
+
+.engine-node.green {
+  border-color: rgba(47, 215, 177, .24);
+}
+
+.node-1 {
+  left: 22px;
+  top: 5px;
+}
+
+.node-2 {
+  right: 22px;
+  top: 5px;
+}
+
+.node-3 {
+  left: 14px;
+  top: 132px;
+}
+
+.node-4 {
+  right: 14px;
+  top: 132px;
+}
+
+.node-5 {
+  left: 55px;
+  top: 260px;
+}
+
+.node-6 {
+  right: 55px;
+  top: 260px;
+}
+
+.node-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.node-icon {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #54def3;
+  background: rgba(23, 148, 189, .14);
+}
+
+.engine-node.purple .node-icon {
+  color: #c4b2ff;
+  background: rgba(129, 91, 220, .15);
+}
+
+.engine-node.green .node-icon {
+  color: #58e4c5;
+  background: rgba(32, 180, 145, .13);
+}
+
+.node-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.node-name {
+  color: #d7eff7;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.node-desc {
+  margin-top: 7px;
+  color: #668da2;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.engine-footer {
+  position: relative;
+  z-index: 3;
+  height: 91px;
+  margin: 6px 17px 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(58, 181, 216, .15);
+  border-radius: 12px;
+  background: rgba(3, 22, 41, .58);
+}
+
+.engine-footer-title {
+  display: flex;
+  align-items: center;
+  color: #76aebf;
+  font-size: 8.5px;
+}
+
+.engine-footer-title span {
+  margin-left: auto;
+  color: #4ddfc5;
+  font-size: 8px;
+}
+
+.workflow-track {
+  position: relative;
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns:
+    1fr 22px 1fr 22px 1fr 22px 1fr 22px 1fr;
+  align-items: center;
+}
+
+.workflow-step {
+  text-align: center;
+}
+
+.workflow-step b {
+  display: block;
+  color: #cce8f1;
+  font-size: 8.5px;
+}
+
+.workflow-step span {
+  display: block;
+  margin-top: 4px;
+  color: #5e8294;
+  font-size: 7px;
+}
+
+.workflow-arrow {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, #247d9f, #43d7e6);
+}
+
+.workflow-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  border-left: 5px solid #43d7e6;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+}
+
+/* ==============================
+   右侧：AI与套餐
+============================== */
+
+.intelligence-zone {
+  position: absolute;
+  right: 48px;
+  top: 160px;
+  width: 375px;
+  height: 579px;
+}
+
+.intelligence-card {
+  height: 530px;
+  margin-top: 7px;
+  padding: 14px;
+  border-color: rgba(132, 107, 255, .28);
+  background:
+    radial-gradient(circle at 50% 7%, rgba(103, 74, 226, .13), transparent 34%),
+    linear-gradient(
+      145deg,
+      rgba(34, 42, 93, .83),
+      rgba(7, 27, 50, .95)
+    );
+}
+
+.intelligence-card::before {
+  background: linear-gradient(90deg, transparent, #9d87ff, transparent);
+}
+
+.ai-panel {
+  height: 233px;
+  padding: 12px;
+  border: 1px solid rgba(130, 112, 233, .17);
+  border-radius: 12px;
+  background: rgba(11, 30, 59, .68);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+}
+
+.panel-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ece9ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ai-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(164, 137, 246, .19);
+  border-radius: 9px;
+  color: #d1c4ff;
+  background: rgba(121, 91, 218, .17);
+}
+
+.ai-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ai-status {
+  margin-left: auto;
+  padding: 4px 7px;
+  border-radius: 8px;
+  color: #62e5ce;
+  font-size: 7.5px;
+  background: rgba(34, 190, 159, .09);
+}
+
+.ai-dialog {
+  margin-top: 11px;
+  padding: 10px;
+  border: 1px solid rgba(63, 209, 188, .14);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 79, 78, .35),
+      rgba(7, 30, 51, .65)
+    );
+}
+
+.ai-question {
+  color: #7e9ab6;
+  font-size: 8px;
+}
+
+.ai-answer {
+  margin-top: 7px;
+  color: #bfeee5;
+  font-size: 8.5px;
+  line-height: 1.55;
+}
+
+.ai-answer b {
+  color: #5be1c6;
+}
+
+.ai-capabilities {
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.ai-capability {
+  height: 39px;
+  padding: 7px 8px;
+  border: 1px solid rgba(129, 111, 218, .13);
+  border-radius: 8px;
+  color: #858bad;
+  font-size: 7.5px;
+  background: rgba(16, 31, 61, .58);
+}
+
+.ai-capability b {
+  display: block;
+  margin-bottom: 3px;
+  color: #d0caed;
+  font-size: 8px;
+}
+
+.package-panel {
+  height: 254px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid rgba(47, 211, 177, .18);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 76, 75, .33),
+      rgba(7, 29, 50, .71)
+    );
+}
+
+.package-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #dff8f2;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.package-title-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #5be2c5;
+  background: rgba(31, 180, 145, .14);
+  border: 1px solid rgba(61, 218, 179, .17);
+}
+
+.package-title-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.self-badge {
+  margin-left: auto;
+  color: #58ddc3;
+  font-size: 7.5px;
+}
+
+.package-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.package-item {
+  height: 45px;
+  padding: 7px 8px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(56, 189, 166, .13);
+  border-radius: 8px;
+  background: rgba(9, 38, 57, .62);
+}
+
+.package-type {
+  width: 36px;
+  height: 29px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: #5bdac1;
+  font-size: 8px;
+  font-weight: 700;
+  background: rgba(35, 154, 129, .12);
+}
+
+.package-content {
+  min-width: 0;
+  padding-left: 8px;
+}
+
+.package-content strong {
+  display: block;
+  color: #cbeae3;
+  font-size: 8.5px;
+}
+
+.package-content span {
+  display: block;
+  margin-top: 3px;
+  color: #658b88;
+  font-size: 7px;
+}
+
+.package-action {
+  margin-left: auto;
+  color: #5be0c6;
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.self-flow {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns:
+    1fr 14px 1fr 14px 1fr 14px 1fr;
+  align-items: center;
+}
+
+.self-step {
+  text-align: center;
+  color: #94bcb3;
+  font-size: 7.5px;
+}
+
+.self-arrow {
+  color: #42cfb4;
+  text-align: center;
+  font-size: 10px;
+}
+
+/* ==============================
+   主体连接线
+============================== */
+
+.main-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 1600px;
+  height: 900px;
+  pointer-events: none;
+}
+
+.main-line {
+  fill: none;
+  stroke: #42cfe8;
+  stroke-width: 1.3;
+  stroke-dasharray: 5 6;
+  opacity: .44;
+  animation: mainFlow 10s linear infinite;
+}
+
+.main-line.purple {
+  stroke: #9b88ff;
+}
+
+@keyframes mainFlow {
+  to {
+    stroke-dashoffset: -130;
+  }
+}
+
+.main-dot {
+  fill: #54e7f3;
+  filter: drop-shadow(0 0 5px #27d7ee);
+}
+
+.main-dot.purple {
+  fill: #b09cff;
+  filter: drop-shadow(0 0 5px #9176ff);
+}
+
+/* ==============================
+   底部：欠费复盘追缴
+============================== */
+
+.arrears-zone {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 42px;
+  height: 108px;
+}
+
+.arrears-title {
+  height: 25px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8ab2c6;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+}
+
+.arrears-title::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #29bdff, #45e6ce);
+}
+
+.arrears-title span {
+  margin-left: auto;
+  color: #54798e;
+  font-size: 8px;
+  letter-spacing: 0;
+}
+
+.arrears-cycle {
+  height: 77px;
+  display: grid;
+  grid-template-columns:
+    1fr 28px 1fr 28px 1fr 28px
+    1fr 28px 1fr 28px 1fr;
+  align-items: center;
+  padding: 0 15px;
+  border: 1px solid rgba(58, 180, 218, .16);
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(9, 39, 66, .78),
+      rgba(18, 40, 80, .69),
+      rgba(8, 38, 63, .78)
+    );
+}
+
+.cycle-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.cycle-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(63, 192, 222, .16);
+  border-radius: 9px;
+  color: #53ddec;
+  background: rgba(21, 111, 148, .12);
+}
+
+.cycle-icon.purple {
+  color: #b6a5ff;
+  border-color: rgba(154, 128, 240, .17);
+  background: rgba(106, 78, 179, .12);
+}
+
+.cycle-icon.green {
+  color: #55dfc2;
+  border-color: rgba(47, 209, 174, .17);
+  background: rgba(29, 142, 119, .12);
+}
+
+.cycle-icon.orange {
+  color: #ffc46b;
+  border-color: rgba(255, 184, 78, .17);
+  background: rgba(178, 110, 33, .11);
+}
+
+.cycle-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.cycle-text b {
+  display: block;
+  color: #d0eaf3;
+  font-size: 9.5px;
+}
+
+.cycle-text span {
+  display: block;
+  margin-top: 4px;
+  color: #63899e;
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.cycle-arrow {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, #237fa2, #45d9e7);
+}
+
+.cycle-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  border-left: 7px solid #45d9e7;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+/* ==============================
+   页脚
+============================== */
+
+.footer {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+  bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #50778f;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+}
+
+.footer-left,
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.footer i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3ee3c3;
+  box-shadow: 0 0 8px #3ee3c3;
+}
+
+@media print {
+  html,
+  body {
+    width: 1600px;
+    height: 900px;
+  }
+
+  #stage {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="content">
+
+    <!-- 标题 -->
+    <header class="header">
+      <div class="title-wrap">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 20V7l8-4 8 4v13"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M8 20v-8h4a2.5 2.5 0 0 1 0 5H8"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M16 10h2M16 14h2M3 20h18"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>北京市东城区道路停车智慧运营体系</h1>
+          <div class="subtitle">
+            DONGCHENG DISTRICT · SMART PARKING OPERATION
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <strong>以数字化驱动<b>精细运营</b>，以智能化提升治理效能</strong>
+        <span>实时感知 · 流程留痕 · AI 辅助 · 车主自助 · 欠费闭环</span>
+      </div>
+    </header>
+
+    <!-- 核心理念 -->
+    <section class="concepts">
+      <div class="concept">
+        <i></i>
+        <strong>全域感知</strong>
+        道路停车状态实时监测
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>流程规范</strong>
+        运营事项全程留痕
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>智能辅助</strong>
+        AI 智能体协同运营
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>车主自助</strong>
+        灵活套餐线上办理
+      </div>
+
+      <div class="concept">
+        <i></i>
+        <strong>数据闭环</strong>
+        欠费分析与数字化追缴
+      </div>
+    </section>
+
+    <!-- 主连接线 -->
+    <svg class="main-lines" viewBox="0 0 1600 900">
+      <path class="main-line" d="M413 275 H435"/>
+      <path class="main-line" d="M413 442 H435"/>
+      <path class="main-line" d="M413 610 H435"/>
+
+      <circle class="main-dot" cx="424" cy="275" r="3"/>
+      <circle class="main-dot" cx="424" cy="442" r="3"/>
+      <circle class="main-dot" cx="424" cy="610" r="3"/>
+
+      <path class="main-line purple" d="M1155 275 H1177"/>
+      <path class="main-line purple" d="M1155 442 H1177"/>
+      <path class="main-line purple" d="M1155 610 H1177"/>
+
+      <circle class="main-dot purple" cx="1166" cy="275" r="3"/>
+      <circle class="main-dot purple" cx="1166" cy="442" r="3"/>
+      <circle class="main-dot purple" cx="1166" cy="610" r="3"/>
+    </svg>
+
+    <!-- 左侧：预警监测 -->
+    <section class="monitor-zone">
+      <div class="section-head">
+        <span class="section-number">01</span>
+        <i class="section-line"></i>
+        <h2>道路停车预警监测</h2>
+        <span class="section-en">MONITORING</span>
+      </div>
+
+      <div class="card monitor-card">
+        <div class="monitor-title">
+          <div class="monitor-title-left">
+            <div class="monitor-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M3 12h4l2-5 4 11 2-6h6"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="1.3"
+                  opacity=".45"
+                />
+              </svg>
+            </div>
+            东城区道路运行态势
+          </div>
+
+          <div class="live-badge">
+            <i></i>实时监测
+          </div>
+        </div>
+
+        <div class="monitor-metrics">
+          <div class="monitor-metric">
+            <span>重点路段</span>
+            <strong>全量<em>接入</em></strong>
+          </div>
+          <div class="monitor-metric">
+            <span>预警类型</span>
+            <strong>多维<em>识别</em></strong>
+          </div>
+          <div class="monitor-metric">
+            <span>处置状态</span>
+            <strong>闭环<em>跟踪</em></strong>
+          </div>
+        </div>
+
+        <div class="road-map">
+          <div class="map-label">道路停车监测数字底图</div>
+          <div class="map-status">● 数据在线</div>
+
+          <svg class="road-svg" viewBox="0 0 335 202">
+            <path
+              class="road-line"
+              d="M18 142 C68 119 95 103 133 77 S220 42 317 68"
+            />
+            <path
+              class="road-center"
+              d="M18 142 C68 119 95 103 133 77 S220 42 317 68"
+            />
+
+            <path
+              class="road-line"
+              d="M61 24 C72 61 78 92 75 179"
+            />
+            <path
+              class="road-center"
+              d="M61 24 C72 61 78 92 75 179"
+            />
+
+            <path
+              class="road-line"
+              d="M185 18 C180 66 194 96 228 124 S279 164 325 181"
+            />
+            <path
+              class="road-center"
+              d="M185 18 C180 66 194 96 228 124 S279 164 325 181"
+            />
+
+            <path
+              class="road-warning"
+              d="M143 71 C160 62 176 57 193 55"
+            />
+            <path
+              class="road-danger"
+              d="M232 127 C251 143 268 154 283 161"
+            />
+          </svg>
+
+          <i class="map-point point-1"></i>
+          <i class="map-point warning point-2"></i>
+          <i class="map-point danger point-3"></i>
+
+          <div class="point-tip tip-1">高占用率预警</div>
+          <div class="point-tip tip-2">异常停车聚集</div>
+        </div>
+
+        <div class="alert-list">
+          <div class="alert-title">
+            智能预警事件
+            <span>自动生成处置任务</span>
+          </div>
+
+          <div class="alert-item">
+            <div class="alert-level">
+              <b>运营预警</b>
+            </div>
+            <div class="alert-content">
+              <strong>重点路段泊位周转率持续偏低</strong>
+              <span>触发巡检并分析车辆长时占用情况</span>
+            </div>
+            <div class="alert-action">转工作流 ›</div>
+          </div>
+
+          <div class="alert-item">
+            <div class="alert-level">
+              <b class="red">异常预警</b>
+            </div>
+            <div class="alert-content">
+              <strong>停车订单、设备状态或缴费数据异常</strong>
+              <span>自动关联路段、泊位、订单与责任人员</span>
+            </div>
+            <div class="alert-action">立即处置 ›</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 中部：运营工作流 -->
+    <section class="engine-zone">
+      <div class="section-head">
+        <span class="section-number">02</span>
+        <i class="section-line"></i>
+        <h2>工作流驱动的运营中枢</h2>
+        <span class="section-en">WORKFLOW ENGINE</span>
+      </div>
+
+      <div class="card engine-card">
+        <div class="engine-top">
+          <div class="engine-logo">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="3"
+                y="4"
+                width="7"
+                height="6"
+                rx="1.5"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <rect
+                x="14"
+                y="14"
+                width="7"
+                height="6"
+                rx="1.5"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <path
+                d="M10 7h4a3 3 0 0 1 3 3v4M14 17h-4a3 3 0 0 1-3-3v-4"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+
+          <div class="engine-title">
+            <strong>道路停车运营流程化管理平台</strong>
+            <span>EVENT · TASK · DISPATCH · EXECUTION · ARCHIVE</span>
+          </div>
+
+          <div class="engine-badge">事项可追踪 · 过程可复盘</div>
+        </div>
+
+        <div class="engine-main">
+          <svg class="engine-lines" viewBox="0 0 720 354">
+            <path class="engine-line" d="M209 46 C250 48 245 97 279 121"/>
+            <path class="engine-line purple" d="M511 46 C470 48 475 97 441 121"/>
+
+            <path class="engine-line" d="M201 174 H262"/>
+            <path class="engine-line green" d="M519 174 H458"/>
+
+            <path class="engine-line green" d="M242 302 C279 300 278 256 299 245"/>
+            <path class="engine-line purple" d="M478 302 C441 300 442 256 421 245"/>
+
+            <circle class="engine-dot" cx="244" cy="76" r="3"/>
+            <circle class="engine-dot" cx="476" cy="76" r="3"/>
+            <circle class="engine-dot" cx="231" cy="174" r="3"/>
+            <circle class="engine-dot" cx="489" cy="174" r="3"/>
+            <circle class="engine-dot" cx="273" cy="282" r="3"/>
+            <circle class="engine-dot" cx="447" cy="282" r="3"/>
+          </svg>
+
+          <div class="engine-node node-1">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 5h16v14H4V5z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 9h8M8 13h5"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">事件统一受理</div>
+            </div>
+            <div class="node-desc">
+              预警、投诉、巡检、客服事件统一进入<br>
+              自动编号并关联路段、泊位与订单
+            </div>
+          </div>
+
+          <div class="engine-node node-2 purple">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 12h5l2-4 3 8 2-4h4"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">规则识别分级</div>
+            </div>
+            <div class="node-desc">
+              按影响范围、紧急程度与事项类型分级<br>
+              自动匹配责任部门和标准处置时限
+            </div>
+          </div>
+
+          <div class="engine-node node-3">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M5 6h14M5 12h9M5 18h6"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M17 15l3 3-3 3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">任务智能派发</div>
+            </div>
+            <div class="node-desc">
+              根据区域、岗位、班次与负载自动派单<br>
+              支持转派、协同、督办和超时升级
+            </div>
+          </div>
+
+          <div class="engine-node node-4 green">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M5 4h14v16H5V4z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8 9l2 2 5-5M8 15h8"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">现场执行反馈</div>
+            </div>
+            <div class="node-desc">
+              移动端接单、定位、拍照与结果反馈<br>
+              操作时间、人员及处置材料自动留痕
+            </div>
+          </div>
+
+          <div class="engine-node node-5 green">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="8"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M8.5 12l2.3 2.3 4.8-5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">核验评价闭环</div>
+            </div>
+            <div class="node-desc">
+              处置结果线上核验、不合格自动退回<br>
+              支持服务评价与整改任务再次发起
+            </div>
+          </div>
+
+          <div class="engine-node node-6 purple">
+            <div class="node-head">
+              <div class="node-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6 3h9l3 3v15H6V3z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M14 3v4h4M9 11h6M9 15h6"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="node-name">全量记录归档</div>
+            </div>
+            <div class="node-desc">
+              形成一事一档和完整操作日志<br>
+              支持查询、审计、统计与责任追溯
+            </div>
+          </div>
+
+          <div class="engine-core">
+            <div class="core-content">
+              <div class="core-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M5 5h5v5H5V5zM14 14h5v5h-5v-5z"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+                  <path
+                    d="M10 7.5h3a3.5 3.5 0 0 1 3.5 3.5v3M14 16.5h-3A3.5 3.5 0 0 1 7.5 13v-3"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              <div class="core-name">运营工作流中心</div>
+              <div class="core-desc">
+                将监测预警、日常巡检、投诉处理、<br>
+                欠费追缴转化为标准化数字任务
+              </div>
+              <div class="core-tag">自动流转 · 全程留痕 · 闭环督办</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="engine-footer">
+          <div class="engine-footer-title">
+            标准运营闭环
+            <span>SLA 时限监控 · 操作日志永久可查</span>
+          </div>
+
+          <div class="workflow-track">
+            <div class="workflow-step">
+              <b>发现问题</b>
+              <span>系统／人工发起</span>
+            </div>
+            <i class="workflow-arrow"></i>
+
+            <div class="workflow-step">
+              <b>生成任务</b>
+              <span>分类分级定责</span>
+            </div>
+            <i class="workflow-arrow"></i>
+
+            <div class="workflow-step">
+              <b>派发处置</b>
+              <span>协同督办升级</span>
+            </div>
+            <i class="workflow-arrow"></i>
+
+            <div class="workflow-step">
+              <b>结果核验</b>
+              <span>退回整改评价</span>
+            </div>
+            <i class="workflow-arrow"></i>
+
+            <div class="workflow-step">
+              <b>归档复盘</b>
+              <span>数据沉淀优化</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右侧：AI和套餐 -->
+    <section class="intelligence-zone">
+      <div class="section-head">
+        <span class="section-number">03</span>
+        <i class="section-line"></i>
+        <h2>AI 辅助与车主自助服务</h2>
+        <span class="section-en">AI & SELF-SERVICE</span>
+      </div>
+
+      <div class="card intelligence-card">
+        <div class="ai-panel">
+          <div class="panel-head">
+            <div class="panel-head-left">
+              <div class="ai-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="5"
+                    y="6"
+                    width="14"
+                    height="12"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+                  <path
+                    d="M9 11h.01M15 11h.01M9 15h6M12 3v3M3 10h2M19 10h2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              AI 道路停车运营智能体
+            </div>
+
+            <span class="ai-status">7×24 辅助</span>
+          </div>
+
+          <div class="ai-dialog">
+            <div class="ai-question">
+              智能体分析：近期某重点区域高峰期占用率上升
+            </div>
+            <div class="ai-answer">
+              建议对长时停车车辆进行分群触达，向高频用户推荐
+              <b>错峰停车套餐</b>，同步生成路段巡检任务并跟踪效果。
+            </div>
+          </div>
+
+          <div class="ai-capabilities">
+            <div class="ai-capability">
+              <b>运营知识问答</b>
+              快速查询制度、规则与操作指引
+            </div>
+            <div class="ai-capability">
+              <b>事件辅助研判</b>
+              汇总路段、订单和历史处置记录
+            </div>
+            <div class="ai-capability">
+              <b>文案自动生成</b>
+              生成通知、工单摘要和复盘报告
+            </div>
+            <div class="ai-capability">
+              <b>策略智能推荐</b>
+              辅助套餐、巡检和欠费追缴决策
+            </div>
+          </div>
+        </div>
+
+        <div class="package-panel">
+          <div class="package-title">
+            <div class="package-title-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 6h16v12H4V6z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M8 10h8M8 14h5"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            车主套餐自助服务
+            <span class="self-badge">线上办理 · 即时生效</span>
+          </div>
+
+          <div class="package-list">
+            <div class="package-item">
+              <div class="package-type">通勤</div>
+              <div class="package-content">
+                <strong>工作日通勤套餐</strong>
+                <span>匹配固定时段通勤，降低长期停车成本</span>
+              </div>
+              <div class="package-action">自助购买 ›</div>
+            </div>
+
+            <div class="package-item">
+              <div class="package-type">错峰</div>
+              <div class="package-content">
+                <strong>夜间／周末错峰套餐</strong>
+                <span>按实际停车场景选择可用日期和时段</span>
+              </div>
+              <div class="package-action">灵活选择 ›</div>
+            </div>
+
+            <div class="package-item">
+              <div class="package-type">关怀</div>
+              <div class="package-content">
+                <strong>人性化弹性套餐</strong>
+                <span>支持续费提醒、车辆变更和特殊情况申请</span>
+              </div>
+              <div class="package-action">在线办理 ›</div>
+            </div>
+          </div>
+
+          <div class="self-flow">
+            <div class="self-step">身份认证</div>
+            <div class="self-arrow">›</div>
+            <div class="self-step">智能推荐</div>
+            <div class="self-arrow">›</div>
+            <div class="self-step">在线支付</div>
+            <div class="self-arrow">›</div>
+            <div class="self-step">自助管理</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 底部：欠费复盘与追缴 -->
+    <section class="arrears-zone">
+      <div class="arrears-title">
+        04－05　月度数据分析复盘与欠费追缴数字化管理
+        <span>以数据识别问题，以任务推动追缴，以结果优化运营策略</span>
+      </div>
+
+      <div class="arrears-cycle">
+        <div class="cycle-step">
+          <div class="cycle-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 19V10M10 19V5M16 19v-7M22 19H2"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="cycle-text">
+            <b>月度数据归集</b>
+            <span>订单、缴费、欠费与处置数据统一</span>
+          </div>
+        </div>
+
+        <i class="cycle-arrow"></i>
+
+        <div class="cycle-step">
+          <div class="cycle-icon purple">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="10"
+                cy="10"
+                r="6"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M14.5 14.5L20 20"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="cycle-text">
+            <b>欠费结构分析</b>
+            <span>按路段、金额、车主和账龄分层</span>
+          </div>
+        </div>
+
+        <i class="cycle-arrow"></i>
+
+        <div class="cycle-step">
+          <div class="cycle-icon orange">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l9 16H3L12 3z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 9v4M12 16h.01"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="cycle-text">
+            <b>风险分级建档</b>
+            <span>低、中、高风险生成追缴清单</span>
+          </div>
+        </div>
+
+        <i class="cycle-arrow"></i>
+
+        <div class="cycle-step">
+          <div class="cycle-icon green">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 5h16v14H4V5z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M4 8l8 6 8-6"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="cycle-text">
+            <b>数字化触达</b>
+            <span>消息提醒、客服协同与分级催缴</span>
+          </div>
+        </div>
+
+        <i class="cycle-arrow"></i>
+
+        <div class="cycle-step">
+          <div class="cycle-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 4h14v16H5V4z"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M8 9h8M8 13h5M8 17h7"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="cycle-text">
+            <b>追缴过程留痕</b>
+            <span>触达时间、结果与凭证完整记录</span>
+          </div>
+        </div>
+
+        <i class="cycle-arrow"></i>
+
+        <div class="cycle-step">
+          <div class="cycle-icon purple">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 17l5-5 4 3 7-8"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M16 7h4v4"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="cycle-text">
+            <b>复盘策略优化</b>
+            <span>评估回款效果并优化运营规则</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-left">
+        <i></i>
+        构建“监测预警—流程处置—智能辅助—车主服务—数据复盘”运营闭环
+      </div>
+
+      <div class="footer-right">
+        SMART MONITORING · DIGITAL WORKFLOW · AI AGENT · FLEXIBLE PACKAGE · ARREARS MANAGEMENT
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function resizeStage() {
+  const stage = document.getElementById("stage");
+  const baseWidth = 1600;
+  const baseHeight = 900;
+
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
+
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", resizeStage);
+resizeStage();
+</script>
+
+</body>
+</html>

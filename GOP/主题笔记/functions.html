@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>常见函数图像</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #dfe4ea;
+      color: #17202a;
+
+      font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        Arial,
+        sans-serif;
+    }
+
+    body {
+      padding: 12px 0;
+    }
+
+    /* A4 横向页面 */
+    .page {
+      width: 297mm;
+      height: 210mm;
+      margin: 0 auto;
+      padding: 6mm;
+
+      background: #ffffff;
+      box-shadow:
+        0 4px 18px
+        rgba(0, 0, 0, 0.16);
+
+      overflow: hidden;
+    }
+
+    /* 页头 */
+    .page-header {
+      height: 15mm;
+      margin-bottom: 3mm;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      border-bottom: 2px solid #1f4e79;
+    }
+
+    .page-header h1 {
+      margin: 0;
+
+      color: #17365d;
+      font-size: 22px;
+      letter-spacing: 2px;
+    }
+
+    .page-header p {
+      margin: 3px 0 0;
+
+      color: #5d6d7e;
+      font-size: 10px;
+    }
+
+    .page-label {
+      padding: 5px 12px;
+
+      color: #ffffff;
+      background: #1f4e79;
+      border-radius: 18px;
+
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* 3 × 3 卡片网格 */
+    .grid {
+      height: 180mm;
+
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 58mm);
+      gap: 3mm;
+    }
+
+    .card {
+      min-width: 0;
+      overflow: hidden;
+
+      border: 1.2px solid #9fbad0;
+      border-radius: 7px;
+      background: #ffffff;
+
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* 卡片标题 */
+    .card-title {
+      height: 10mm;
+      padding: 4px 8px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+
+      color: #ffffff;
+
+      background:
+        linear-gradient(
+          135deg,
+          #1f4e79,
+          #2e75b6
+        );
+    }
+
+    .card-title h2 {
+      margin: 0;
+
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .formula {
+      padding: 2px 7px;
+
+      color: #17365d;
+      background: #ffffff;
+      border-radius: 4px;
+
+      font-family:
+        "Cambria Math",
+        "Times New Roman",
+        serif;
+
+      font-size: 13px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    /* 卡片内容 */
+    .content {
+      height: calc(100% - 10mm);
+      padding: 5px;
+
+      display: grid;
+      grid-template-columns: 48% 52%;
+      gap: 5px;
+    }
+
+    .graph-wrap {
+      min-width: 0;
+      height: 100%;
+
+      border: 1px solid #d5dce2;
+      border-radius: 5px;
+      background: #fbfcfc;
+
+      overflow: hidden;
+    }
+
+    .graph {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .notes {
+      min-width: 0;
+      overflow: hidden;
+
+      font-size: 9.2px;
+      line-height: 1.32;
+    }
+
+    .notes p {
+      margin: 0 0 2px;
+    }
+
+    .notes strong {
+      color: #17365d;
+    }
+
+    .intersection {
+      color: #c00000;
+    }
+
+    .derivative {
+      color: #0070c0;
+
+      font-family:
+        "Cambria Math",
+        "Times New Roman",
+        serif;
+
+      font-weight: bold;
+    }
+
+    .antiderivative {
+      color: #7030a0;
+
+      font-family:
+        "Cambria Math",
+        "Times New Roman",
+        serif;
+
+      font-weight: bold;
+    }
+
+    .calculus {
+      margin-top: 3px;
+      padding-top: 3px;
+
+      border-top: 1px dashed #9fbad0;
+    }
+
+    .example {
+      color: #5d6d7e;
+      font-size: 8.5px;
+    }
+
+    /* SVG 样式 */
+    .grid-line {
+      stroke: #e4e9ed;
+      stroke-width: 1;
+    }
+
+    .axis-line {
+      stroke: #263238;
+      stroke-width: 1.4;
+    }
+
+    .tick-mark {
+      stroke: #263238;
+      stroke-width: 1;
+    }
+
+    .tick-label {
+      fill: #52616b;
+      font-family: Arial, sans-serif;
+      font-size: 8px;
+    }
+
+    .axis-label {
+      fill: #17202a;
+
+      font-family:
+        "Times New Roman",
+        serif;
+
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .curve {
+      fill: none;
+      stroke: #c00000;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .point {
+      fill: #0070c0;
+      stroke: #ffffff;
+      stroke-width: 1;
+    }
+
+    .point-label {
+      fill: #0070c0;
+      font-family: Arial, sans-serif;
+      font-size: 8px;
+      font-weight: bold;
+    }
+
+    .guide-line {
+      stroke: #16a085;
+      stroke-width: 1.2;
+      stroke-dasharray: 4 3;
+    }
+
+    .asymptote {
+      stroke: #e67e22;
+      stroke-width: 1.3;
+      stroke-dasharray: 5 4;
+    }
+
+    /* 打印设置 */
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    @media print {
+      html,
+      body {
+        width: 297mm;
+        height: 210mm;
+
+        margin: 0;
+        padding: 0;
+
+        background: #ffffff;
+      }
+
+      .page {
+        width: 297mm;
+        height: 210mm;
+
+        margin: 0;
+        padding: 6mm;
+
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="page">
+
+    <header class="page-header">
+      <div>
+        <h1>常见函数图像</h1>
+
+        <p>
+          函数性质、坐标轴交点、导数与原函数
+        </p>
+      </div>
+
+      <div class="page-label">
+        A4 横向 · 1 页
+      </div>
+    </header>
+
+    <main class="grid">
+
+      <!-- 1. 二次函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>二次函数</h2>
+
+          <span class="formula">
+            y = x² − 2x − 3
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="quadratic-one"
+              class="graph"
+              aria-label="二次函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>[−4，+∞)
+            </p>
+
+            <p>
+              <strong>对称轴：</strong>x = 1
+            </p>
+
+            <p>
+              <strong>顶点：</strong>(1，−4)
+            </p>
+
+            <p class="intersection">
+              <strong>x轴交点：</strong>
+              (−1，0)、(3，0)
+            </p>
+
+            <p class="intersection">
+              <strong>y轴交点：</strong>(0，−3)
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = 2x − 2
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  x³/3 − x² − 3x + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 2. 二次函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>二次函数</h2>
+
+          <span class="formula">
+            y = −2x² + 3
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="quadratic-two"
+              class="graph"
+              aria-label="二次函数负二x平方加三图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>(−∞，3]
+            </p>
+
+            <p>
+              <strong>对称轴：</strong>x = 0
+            </p>
+
+            <p>
+              <strong>顶点：</strong>(0，3)
+            </p>
+
+            <p class="intersection">
+              <strong>x轴交点：</strong>
+              (±√6/2，0)
+            </p>
+
+            <p class="intersection">
+              <strong>y轴交点：</strong>(0，3)
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = −4x
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  −2x³/3 + 3x + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 3. 一次函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>一次函数</h2>
+
+          <span class="formula">
+            y = kx + b
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="linear"
+              class="graph"
+              aria-label="一次函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>条件：</strong>k ≠ 0
+            </p>
+
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>R
+            </p>
+
+            <p>
+              <strong>单调性：</strong>
+              k&gt;0递增，k&lt;0递减
+            </p>
+
+            <p class="intersection">
+              <strong>x轴交点：</strong>(−b/k，0)
+            </p>
+
+            <p class="intersection">
+              <strong>y轴交点：</strong>(0，b)
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = k
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  kx²/2 + bx + C
+                </span>
+              </p>
+            </div>
+
+            <p class="example">
+              图中示例：k=1，b=1。
+            </p>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 4. 反比例函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>反比例函数</h2>
+
+          <span class="formula">
+            y = 1/x
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="reciprocal"
+              class="graph"
+              aria-label="反比例函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>x ≠ 0
+            </p>
+
+            <p>
+              <strong>值域：</strong>y ≠ 0
+            </p>
+
+            <p>
+              <strong>奇偶性：</strong>奇函数
+            </p>
+
+            <p>
+              <strong>单调性：</strong>
+              两个区间内均递减
+            </p>
+
+            <p>
+              <strong>渐近线：</strong>x=0，y=0
+            </p>
+
+            <p class="intersection">
+              <strong>坐标轴交点：</strong>无
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = −1/x²
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  ln|x| + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 5. 绝对值函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>绝对值函数</h2>
+
+          <span class="formula">
+            y = |x|
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="absolute"
+              class="graph"
+              aria-label="绝对值函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>[0，+∞)
+            </p>
+
+            <p>
+              <strong>奇偶性：</strong>偶函数
+            </p>
+
+            <p>
+              <strong>对称轴：</strong>y轴
+            </p>
+
+            <p>
+              <strong>最小值：</strong>0
+            </p>
+
+            <p class="intersection">
+              <strong>坐标轴交点：</strong>(0，0)
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  −1(x&lt;0)，1(x&gt;0)
+                </span>
+              </p>
+
+              <p>
+                <strong>x=0：</strong>不可导
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  x|x|/2 + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 6. 指数函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>指数函数</h2>
+
+          <span class="formula">
+            y = eˣ
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="exponential"
+              class="graph"
+              aria-label="指数函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>(0，+∞)
+            </p>
+
+            <p>
+              <strong>单调性：</strong>单调递增
+            </p>
+
+            <p>
+              <strong>水平渐近线：</strong>y = 0
+            </p>
+
+            <p class="intersection">
+              <strong>x轴交点：</strong>无
+            </p>
+
+            <p class="intersection">
+              <strong>y轴交点：</strong>(0，1)
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = eˣ
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  eˣ + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 7. 对数函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>对数函数</h2>
+
+          <span class="formula">
+            y = ln x
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="logarithm"
+              class="graph"
+              aria-label="自然对数函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>(0，+∞)
+            </p>
+
+            <p>
+              <strong>值域：</strong>R
+            </p>
+
+            <p>
+              <strong>单调性：</strong>单调递增
+            </p>
+
+            <p>
+              <strong>垂直渐近线：</strong>x = 0
+            </p>
+
+            <p class="intersection">
+              <strong>x轴交点：</strong>(1，0)
+            </p>
+
+            <p class="intersection">
+              <strong>y轴交点：</strong>无
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = 1/x
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  x ln x − x + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 8. 正弦函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>正弦函数</h2>
+
+          <span class="formula">
+            y = sin x
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="sine"
+              class="graph"
+              aria-label="正弦函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>[−1，1]
+            </p>
+
+            <p>
+              <strong>奇偶性：</strong>奇函数
+            </p>
+
+            <p>
+              <strong>周期：</strong>2π
+            </p>
+
+            <p class="intersection">
+              <strong>零点：</strong>x = kπ，k∈Z
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = cos x
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  −cos x + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- 9. 余弦函数 -->
+
+      <article class="card">
+
+        <div class="card-title">
+          <h2>余弦函数</h2>
+
+          <span class="formula">
+            y = cos x
+          </span>
+        </div>
+
+        <div class="content">
+
+          <div class="graph-wrap">
+            <svg
+              id="cosine"
+              class="graph"
+              aria-label="余弦函数图像"
+            ></svg>
+          </div>
+
+          <div class="notes">
+            <p>
+              <strong>定义域：</strong>R
+            </p>
+
+            <p>
+              <strong>值域：</strong>[−1，1]
+            </p>
+
+            <p>
+              <strong>奇偶性：</strong>偶函数
+            </p>
+
+            <p>
+              <strong>周期：</strong>2π
+            </p>
+
+            <p class="intersection">
+              <strong>零点：</strong>
+              x = π/2 + kπ
+            </p>
+
+            <p class="intersection">
+              <strong>y轴交点：</strong>(0，1)
+            </p>
+
+            <div class="calculus">
+              <p>
+                <strong>导数：</strong>
+                <span class="derivative">
+                  y′ = −sin x
+                </span>
+              </p>
+
+              <p>
+                <strong>原函数：</strong>
+                <span class="antiderivative">
+                  sin x + C
+                </span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+    </main>
+  </section>
+
+  <script>
+    "use strict";
+
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    const WIDTH = 300;
+    const HEIGHT = 180;
+
+    const MARGIN = {
+      left: 27,
+      right: 10,
+      top: 10,
+      bottom: 21
+    };
+
+    const graphConfigs = [
+      {
+        id: "quadratic-one",
+
+        fn: function (x) {
+          return x * x - 2 * x - 3;
+        },
+
+        xMin: -3,
+        xMax: 5,
+        yMin: -5,
+        yMax: 9,
+        xStep: 1,
+        yStep: 2,
+
+        verticalGuides: [1],
+
+        points: [
+          {
+            x: -1,
+            y: 0,
+            label: "(−1,0)",
+            dx: -35,
+            dy: -7
+          },
+          {
+            x: 3,
+            y: 0,
+            label: "(3,0)",
+            dx: 6,
+            dy: -7
+          },
+          {
+            x: 1,
+            y: -4,
+            label: "(1,−4)",
+            dx: 6,
+            dy: -7
+          }
+        ]
+      },
+
+      {
+        id: "quadratic-two",
+
+        fn: function (x) {
+          return -2 * x * x + 3;
+        },
+
+        xMin: -3,
+        xMax: 3,
+        yMin: -8,
+        yMax: 5,
+        xStep: 1,
+        yStep: 2,
+
+        verticalGuides: [0],
+
+        points: [
+          {
+            x: 0,
+            y: 3,
+            label: "(0,3)",
+            dx: 6,
+            dy: -7
+          },
+          {
+            x: Math.sqrt(1.5),
+            y: 0,
+            label: "(√6/2,0)",
+            dx: 5,
+            dy: -7
+          },
+          {
+            x: -Math.sqrt(1.5),
+            y: 0,
+            label: "(−√6/2,0)",
+            dx: -55,
+            dy: 12
+          }
+        ]
+      },
+
+      {
+        id: "linear",
+
+        /*
+         * 绘图示例：
+         * k = 1，b = 1
+         */
+        fn: function (x) {
+          return x + 1;
+        },
+
+        xMin: -5,
+        xMax: 5,
+        yMin: -5,
+        yMax: 6,
+        xStep: 1,
+        yStep: 1,
+
+        points: [
+          {
+            x: -1,
+            y: 0,
+            label: "(−1,0)",
+            dx: -35,
+            dy: -7
+          },
+          {
+            x: 0,
+            y: 1,
+            label: "(0,1)",
+            dx: 6,
+            dy: -7
+          }
+        ]
+      },
+
+      {
+        id: "reciprocal",
+
+        fn: function (x) {
+          if (Math.abs(x) < 0.000001) {
+            return NaN;
+          }
+
+          return 1 / x;
+        },
+
+        xMin: -5,
+        xMax: 5,
+        yMin: -5,
+        yMax: 5,
+        xStep: 1,
+        yStep: 1,
+
+        verticalAsymptotes: [0],
+        horizontalAsymptotes: [0],
+
+        points: [
+          {
+            x: 1,
+            y: 1,
+            label: "(1,1)",
+            dx: 6,
+            dy: -7
+          },
+          {
+            x: -1,
+            y: -1,
+            label: "(−1,−1)",
+            dx: -43,
+            dy: 12
+          }
+        ]
+      },
+
+      {
+        id: "absolute",
+
+        fn: function (x) {
+          return Math.abs(x);
+        },
+
+        xMin: -5,
+        xMax: 5,
+        yMin: -1,
+        yMax: 6,
+        xStep: 1,
+        yStep: 1,
+
+        points: [
+          {
+            x: 0,
+            y: 0,
+            label: "(0,0)",
+            dx: 6,
+            dy: -7
+          }
+        ]
+      },
+
+      {
+        id: "exponential",
+
+        fn: function (x) {
+          return Math.exp(x);
+        },
+
+        xMin: -4,
+        xMax: 3,
+        yMin: -1,
+        yMax: 9,
+        xStep: 1,
+        yStep: 1,
+
+        horizontalAsymptotes: [0],
+
+        points: [
+          {
+            x: 0,
+            y: 1,
+            label: "(0,1)",
+            dx: 6,
+            dy: -7
+          },
+          {
+            x: 1,
+            y: Math.E,
+            label: "(1,e)",
+            dx: 6,
+            dy: -7
+          }
+        ]
+      },
+
+      {
+        id: "logarithm",
+
+        fn: function (x) {
+          if (x <= 0) {
+            return NaN;
+          }
+
+          return Math.log(x);
+        },
+
+        xMin: -1,
+        xMax: 8,
+        yMin: -4,
+        yMax: 3,
+        xStep: 1,
+        yStep: 1,
+
+        verticalAsymptotes: [0],
+
+        points: [
+          {
+            x: 1,
+            y: 0,
+            label: "(1,0)",
+            dx: 6,
+            dy: -7
+          },
+          {
+            x: Math.E,
+            y: 1,
+            label: "(e,1)",
+            dx: 6,
+            dy: -7
+          }
+        ]
+      },
+
+      {
+        id: "sine",
+
+        fn: function (x) {
+          return Math.sin(x);
+        },
+
+        xMin: -2 * Math.PI,
+        xMax: 2 * Math.PI,
+        yMin: -1.5,
+        yMax: 1.5,
+
+        xStep: Math.PI / 2,
+        yStep: 0.5,
+
+        xFormatter: formatPi,
+
+        points: [
+          {
+            x: 0,
+            y: 0,
+            label: "(0,0)",
+            dx: 5,
+            dy: -7
+          },
+          {
+            x: Math.PI / 2,
+            y: 1,
+            label: "(π/2,1)",
+            dx: 5,
+            dy: -7
+          }
+        ]
+      },
+
+      {
+        id: "cosine",
+
+        fn: function (x) {
+          return Math.cos(x);
+        },
+
+        xMin: -2 * Math.PI,
+        xMax: 2 * Math.PI,
+        yMin: -1.5,
+        yMax: 1.5,
+
+        xStep: Math.PI / 2,
+        yStep: 0.5,
+
+        xFormatter: formatPi,
+
+        points: [
+          {
+            x: 0,
+            y: 1,
+            label: "(0,1)",
+            dx: 5,
+            dy: -7
+          },
+          {
+            x: Math.PI / 2,
+            y: 0,
+            label: "(π/2,0)",
+            dx: 5,
+            dy: -7
+          }
+        ]
+      }
+    ];
+
+    function createSVGElement(
+      tagName,
+      attributes
+    ) {
+      const element =
+        document.createElementNS(
+          SVG_NS,
+          tagName
+        );
+
+      if (attributes) {
+        Object.keys(attributes).forEach(
+          function (name) {
+            element.setAttribute(
+              name,
+              attributes[name]
+            );
+          }
+        );
+      }
+
+      return element;
+    }
+
+    function mapX(x, config) {
+      const drawingWidth =
+        WIDTH -
+        MARGIN.left -
+        MARGIN.right;
+
+      return (
+        MARGIN.left +
+        (
+          (x - config.xMin) /
+          (config.xMax - config.xMin)
+        ) *
+        drawingWidth
+      );
+    }
+
+    function mapY(y, config) {
+      const drawingHeight =
+        HEIGHT -
+        MARGIN.top -
+        MARGIN.bottom;
+
+      return (
+        MARGIN.top +
+        (
+          (config.yMax - y) /
+          (config.yMax - config.yMin)
+        ) *
+        drawingHeight
+      );
+    }
+
+    function formatNumber(value) {
+      if (Math.abs(value) < 0.000001) {
+        return "0";
+      }
+
+      if (
+        Math.abs(
+          value -
+          Math.round(value)
+        ) < 0.000001
+      ) {
+        return String(
+          Math.round(value)
+        );
+      }
+
+      return String(
+        Math.round(value * 10) / 10
+      );
+    }
+
+    function formatPi(value) {
+      const ratio = value / Math.PI;
+
+      if (Math.abs(ratio) < 0.000001) {
+        return "0";
+      }
+
+      if (Math.abs(ratio - 0.5) < 0.000001) {
+        return "π/2";
+      }
+
+      if (Math.abs(ratio + 0.5) < 0.000001) {
+        return "−π/2";
+      }
+
+      if (Math.abs(ratio - 1) < 0.000001) {
+        return "π";
+      }
+
+      if (Math.abs(ratio + 1) < 0.000001) {
+        return "−π";
+      }
+
+      if (Math.abs(ratio - 1.5) < 0.000001) {
+        return "3π/2";
+      }
+
+      if (Math.abs(ratio + 1.5) < 0.000001) {
+        return "−3π/2";
+      }
+
+      if (Math.abs(ratio - 2) < 0.000001) {
+        return "2π";
+      }
+
+      if (Math.abs(ratio + 2) < 0.000001) {
+        return "−2π";
+      }
+
+      return formatNumber(value);
+    }
+
+    function addClipPath(svg, config) {
+      const definitions =
+        createSVGElement("defs");
+
+      const clipPath =
+        createSVGElement(
+          "clipPath",
+          {
+            id: config.id + "-clip"
+          }
+        );
+
+      const rectangle =
+        createSVGElement(
+          "rect",
+          {
+            x: MARGIN.left,
+            y: MARGIN.top,
+
+            width:
+              WIDTH -
+              MARGIN.left -
+              MARGIN.right,
+
+            height:
+              HEIGHT -
+              MARGIN.top -
+              MARGIN.bottom
+          }
+        );
+
+      clipPath.appendChild(rectangle);
+      definitions.appendChild(clipPath);
+      svg.appendChild(definitions);
+    }
+
+    function drawGrid(svg, config) {
+      const group =
+        createSVGElement("g");
+
+      const epsilon = 0.000001;
+
+      const firstX =
+        Math.ceil(
+          config.xMin /
+          config.xStep
+        ) *
+        config.xStep;
+
+      for (
+        let x = firstX;
+        x <= config.xMax + epsilon;
+        x += config.xStep
+      ) {
+        const screenX = mapX(x, config);
+
+        group.appendChild(
+          createSVGElement(
+            "line",
+            {
+              x1: screenX,
+              y1: MARGIN.top,
+              x2: screenX,
+              y2:
+                HEIGHT -
+                MARGIN.bottom,
+              class: "grid-line"
+            }
+          )
+        );
+      }
+
+      const firstY =
+        Math.ceil(
+          config.yMin /
+          config.yStep
+        ) *
+        config.yStep;
+
+      for (
+        let y = firstY;
+        y <= config.yMax + epsilon;
+        y += config.yStep
+      ) {
+        const screenY = mapY(y, config);
+
+        group.appendChild(
+          createSVGElement(
+            "line",
+            {
+              x1: MARGIN.left,
+              y1: screenY,
+              x2:
+                WIDTH -
+                MARGIN.right,
+              y2: screenY,
+              class: "grid-line"
+            }
+          )
+        );
+      }
+
+      svg.appendChild(group);
+    }
+
+    function drawGuides(svg, config) {
+      if (!config.verticalGuides) {
+        return;
+      }
+
+      const group =
+        createSVGElement(
+          "g",
+          {
+            "clip-path":
+              "url(#" +
+              config.id +
+              "-clip)"
+          }
+        );
+
+      config.verticalGuides.forEach(
+        function (x) {
+          if (
+            x < config.xMin ||
+            x > config.xMax
+          ) {
+            return;
+          }
+
+          const screenX =
+            mapX(x, config);
+
+          group.appendChild(
+            createSVGElement(
+              "line",
+              {
+                x1: screenX,
+                y1: MARGIN.top,
+                x2: screenX,
+                y2:
+                  HEIGHT -
+                  MARGIN.bottom,
+                class: "guide-line"
+              }
+            )
+          );
+        }
+      );
+
+      svg.appendChild(group);
+    }
+
+    function drawAsymptotes(svg, config) {
+      const group =
+        createSVGElement(
+          "g",
+          {
+            "clip-path":
+              "url(#" +
+              config.id +
+              "-clip)"
+          }
+        );
+
+      if (config.verticalAsymptotes) {
+        config.verticalAsymptotes.forEach(
+          function (x) {
+            if (
+              x < config.xMin ||
+              x > config.xMax
+            ) {
+              return;
+            }
+
+            const screenX =
+              mapX(x, config);
+
+            group.appendChild(
+              createSVGElement(
+                "line",
+                {
+                  x1: screenX,
+                  y1: MARGIN.top,
+                  x2: screenX,
+                  y2:
+                    HEIGHT -
+                    MARGIN.bottom,
+                  class: "asymptote"
+                }
+              )
+            );
+          }
+        );
+      }
+
+      if (config.horizontalAsymptotes) {
+        config.horizontalAsymptotes.forEach(
+          function (y) {
+            if (
+              y < config.yMin ||
+              y > config.yMax
+            ) {
+              return;
+            }
+
+            const screenY =
+              mapY(y, config);
+
+            group.appendChild(
+              createSVGElement(
+                "line",
+                {
+                  x1: MARGIN.left,
+                  y1: screenY,
+                  x2:
+                    WIDTH -
+                    MARGIN.right,
+                  y2: screenY,
+                  class: "asymptote"
+                }
+              )
+            );
+          }
+        );
+      }
+
+      svg.appendChild(group);
+    }
+
+    function drawAxes(svg, config) {
+      let xAxisY;
+
+      if (
+        config.yMin <= 0 &&
+        config.yMax >= 0
+      ) {
+        xAxisY = mapY(0, config);
+      } else if (config.yMin > 0) {
+        xAxisY =
+          HEIGHT -
+          MARGIN.bottom;
+      } else {
+        xAxisY = MARGIN.top;
+      }
+
+      let yAxisX;
+
+      if (
+        config.xMin <= 0 &&
+        config.xMax >= 0
+      ) {
+        yAxisX = mapX(0, config);
+      } else if (config.xMin > 0) {
+        yAxisX = MARGIN.left;
+      } else {
+        yAxisX =
+          WIDTH -
+          MARGIN.right;
+      }
+
+      const group =
+        createSVGElement("g");
+
+      group.appendChild(
+        createSVGElement(
+          "line",
+          {
+            x1: MARGIN.left,
+            y1: xAxisY,
+            x2:
+              WIDTH -
+              MARGIN.right,
+            y2: xAxisY,
+            class: "axis-line"
+          }
+        )
+      );
+
+      group.appendChild(
+        createSVGElement(
+          "line",
+          {
+            x1: yAxisX,
+            y1: MARGIN.top,
+            x2: yAxisX,
+            y2:
+              HEIGHT -
+              MARGIN.bottom,
+            class: "axis-line"
+          }
+        )
+      );
+
+      group.appendChild(
+        createSVGElement(
+          "polygon",
+          {
+            points:
+              (
+                WIDTH -
+                MARGIN.right
+              ) +
+              "," +
+              xAxisY +
+              " " +
+              (
+                WIDTH -
+                MARGIN.right -
+                6
+              ) +
+              "," +
+              (xAxisY - 3.5) +
+              " " +
+              (
+                WIDTH -
+                MARGIN.right -
+                6
+              ) +
+              "," +
+              (xAxisY + 3.5),
+
+            fill: "#263238"
+          }
+        )
+      );
+
+      group.appendChild(
+        createSVGElement(
+          "polygon",
+          {
+            points:
+              yAxisX +
+              "," +
+              MARGIN.top +
+              " " +
+              (yAxisX - 3.5) +
+              "," +
+              (MARGIN.top + 6) +
+              " " +
+              (yAxisX + 3.5) +
+              "," +
+              (MARGIN.top + 6),
+
+            fill: "#263238"
+          }
+        )
+      );
+
+      const xLabel =
+        createSVGElement(
+          "text",
+          {
+            x:
+              WIDTH -
+              MARGIN.right -
+              2,
+            y: xAxisY - 6,
+            class: "axis-label",
+            "text-anchor": "end"
+          }
+        );
+
+      xLabel.textContent = "x";
+      group.appendChild(xLabel);
+
+      const yLabel =
+        createSVGElement(
+          "text",
+          {
+            x: yAxisX + 6,
+            y: MARGIN.top + 9,
+            class: "axis-label"
+          }
+        );
+
+      yLabel.textContent = "y";
+      group.appendChild(yLabel);
+
+      svg.appendChild(group);
+
+      drawTicks(
+        svg,
+        config,
+        xAxisY,
+        yAxisX
+      );
+    }
+
+    function drawTicks(
+      svg,
+      config,
+      xAxisY,
+      yAxisX
+    ) {
+      const group =
+        createSVGElement("g");
+
+      const epsilon = 0.000001;
+
+      const xFormatter =
+        config.xFormatter ||
+        formatNumber;
+
+      const firstX =
+        Math.ceil(
+          config.xMin /
+          config.xStep
+        ) *
+        config.xStep;
+
+      for (
+        let x = firstX;
+        x <= config.xMax + epsilon;
+        x += config.xStep
+      ) {
+        if (Math.abs(x) < epsilon) {
+          continue;
+        }
+
+        const screenX =
+          mapX(x, config);
+
+        group.appendChild(
+          createSVGElement(
+            "line",
+            {
+              x1: screenX,
+              y1: xAxisY - 2.5,
+              x2: screenX,
+              y2: xAxisY + 2.5,
+              class: "tick-mark"
+            }
+          )
+        );
+
+        const label =
+          createSVGElement(
+            "text",
+            {
+              x: screenX,
+
+              y: Math.min(
+                HEIGHT -
+                MARGIN.bottom +
+                13,
+
+                Math.max(
+                  MARGIN.top + 10,
+                  xAxisY + 12
+                )
+              ),
+
+              class: "tick-label",
+              "text-anchor": "middle"
+            }
+          );
+
+        label.textContent =
+          xFormatter(x);
+
+        group.appendChild(label);
+      }
+
+      const firstY =
+        Math.ceil(
+          config.yMin /
+          config.yStep
+        ) *
+        config.yStep;
+
+      for (
+        let y = firstY;
+        y <= config.yMax + epsilon;
+        y += config.yStep
+      ) {
+        if (Math.abs(y) < epsilon) {
+          continue;
+        }
+
+        const screenY =
+          mapY(y, config);
+
+        group.appendChild(
+          createSVGElement(
+            "line",
+            {
+              x1: yAxisX - 2.5,
+              y1: screenY,
+              x2: yAxisX + 2.5,
+              y2: screenY,
+              class: "tick-mark"
+            }
+          )
+        );
+
+        let labelX = yAxisX - 5;
+        let textAnchor = "end";
+
+        if (
+          labelX <
+          MARGIN.left + 13
+        ) {
+          labelX = yAxisX + 5;
+          textAnchor = "start";
+        }
+
+        const label =
+          createSVGElement(
+            "text",
+            {
+              x: labelX,
+              y: screenY + 3,
+              class: "tick-label",
+              "text-anchor": textAnchor
+            }
+          );
+
+        label.textContent =
+          formatNumber(y);
+
+        group.appendChild(label);
+      }
+
+      svg.appendChild(group);
+    }
+
+    function drawCurve(svg, config) {
+      const group =
+        createSVGElement(
+          "g",
+          {
+            "clip-path":
+              "url(#" +
+              config.id +
+              "-clip)"
+          }
+        );
+
+      const sampleCount = 1000;
+      const paths = [];
+
+      let currentPath = "";
+      let previousY = null;
+
+      for (
+        let index = 0;
+        index <= sampleCount;
+        index++
+      ) {
+        const x =
+          config.xMin +
+          (
+            index /
+            sampleCount
+          ) *
+          (
+            config.xMax -
+            config.xMin
+          );
+
+        const y = config.fn(x);
+
+        const valid =
+          Number.isFinite(y) &&
+          y >= config.yMin - 1 &&
+          y <= config.yMax + 1;
+
+        if (!valid) {
+          if (currentPath) {
+            paths.push(currentPath);
+            currentPath = "";
+          }
+
+          previousY = null;
+          continue;
+        }
+
+        const screenX =
+          mapX(x, config);
+
+        const screenY =
+          mapY(y, config);
+
+        const largeJump =
+          previousY !== null &&
+          Math.abs(
+            screenY -
+            previousY
+          ) >
+          HEIGHT * 0.55;
+
+        if (
+          !currentPath ||
+          largeJump
+        ) {
+          if (
+            largeJump &&
+            currentPath
+          ) {
+            paths.push(currentPath);
+          }
+
+          currentPath =
+            "M " +
+            screenX +
+            " " +
+            screenY;
+        } else {
+          currentPath +=
+            " L " +
+            screenX +
+            " " +
+            screenY;
+        }
+
+        previousY = screenY;
+      }
+
+      if (currentPath) {
+        paths.push(currentPath);
+      }
+
+      paths.forEach(
+        function (pathData) {
+          group.appendChild(
+            createSVGElement(
+              "path",
+              {
+                d: pathData,
+                class: "curve"
+              }
+            )
+          );
+        }
+      );
+
+      svg.appendChild(group);
+    }
+
+    function drawPoints(svg, config) {
+      if (!config.points) {
+        return;
+      }
+
+      const group =
+        createSVGElement("g");
+
+      config.points.forEach(
+        function (point) {
+          if (
+            point.x < config.xMin ||
+            point.x > config.xMax ||
+            point.y < config.yMin ||
+            point.y > config.yMax
+          ) {
+            return;
+          }
+
+          const screenX =
+            mapX(point.x, config);
+
+          const screenY =
+            mapY(point.y, config);
+
+          group.appendChild(
+            createSVGElement(
+              "circle",
+              {
+                cx: screenX,
+                cy: screenY,
+                r: 3.2,
+                class: "point"
+              }
+            )
+          );
+
+          if (point.label) {
+            const label =
+              createSVGElement(
+                "text",
+                {
+                  x:
+                    screenX +
+                    (point.dx || 5),
+
+                  y:
+                    screenY +
+                    (point.dy || -6),
+
+                  class: "point-label"
+                }
+              );
+
+            label.textContent =
+              point.label;
+
+            group.appendChild(label);
+          }
+        }
+      );
+
+      svg.appendChild(group);
+    }
+
+    function drawGraph(config) {
+      const svg =
+        document.getElementById(
+          config.id
+        );
+
+      if (!svg) {
+        return;
+      }
+
+      svg.innerHTML = "";
+
+      svg.setAttribute(
+        "viewBox",
+        "0 0 " +
+        WIDTH +
+        " " +
+        HEIGHT
+      );
+
+      svg.setAttribute(
+        "preserveAspectRatio",
+        "none"
+      );
+
+      addClipPath(svg, config);
+      drawGrid(svg, config);
+      drawGuides(svg, config);
+      drawAxes(svg, config);
+      drawAsymptotes(svg, config);
+      drawCurve(svg, config);
+      drawPoints(svg, config);
+    }
+
+    function initializeGraphs() {
+      graphConfigs.forEach(
+        function (config) {
+          drawGraph(config);
+        }
+      );
+    }
+
+    if (
+      document.readyState ===
+      "loading"
+    ) {
+      document.addEventListener(
+        "DOMContentLoaded",
+        initializeGraphs
+      );
+    } else {
+      initializeGraphs();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>概率统计考场公式小抄｜A4双面</title>
+<style>
+@page{size:A4 landscape;margin:0}
+:root{--paper:#fff;--ink:#18212b;--blue:#155eef;--amber:#b54708;--red:#b42318}
+*{box-sizing:border-box}html,body{margin:0;padding:0;color:var(--ink);background:rgba(24,33,43,.12)}
+body{font-family:"Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.sheet{position:relative;width:297mm;height:210mm;margin:8px auto;padding:3.2mm 3.8mm;overflow:hidden;background:var(--paper);box-shadow:0 2px 16px rgba(24,33,43,.22);break-after:page;page-break-after:always}
+.sheet:last-of-type{break-after:auto;page-break-after:auto}
+.grid{height:auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.05mm;align-items:start}
+.col{min-width:0}.card{margin:0 0 .72mm;border:.18mm solid rgba(24,33,43,.55);border-top:.72mm solid var(--blue);break-inside:avoid}
+h2{margin:0;padding:.52mm .62mm .46mm;color:var(--paper);background:var(--ink);font-size:6.8pt;line-height:1.08;letter-spacing:.01mm}
+.rows{padding:.42mm .54mm .5mm}.r{margin:0;padding:.34mm 0 .36mm;border-bottom:.1mm dotted rgba(24,33,43,.34);font-size:5.86pt;line-height:1.15}
+.r:last-child{border-bottom:0}.given{color:var(--amber);font-weight:700}.formula{color:var(--blue);font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:6.02pt;font-weight:700}.warn{color:var(--red);font-weight:700}
+.tag{display:inline-block;min-width:3.8mm;margin-right:.4mm;color:var(--paper);background:var(--blue);border-radius:.4mm;text-align:center;font-size:5.4pt;font-weight:700}
+.mini .r{font-size:5.62pt;line-height:1.12;padding-top:.29mm;padding-bottom:.31mm}.mini .formula{font-size:5.8pt}
+.mgf-card{border-top-color:var(--blue)}.mgf-card h2{background:var(--blue)}.mgf-card .r b{color:var(--amber)}.mgf-card small{font-size:5.15pt}
+.notes{margin-top:1.2mm;border-top:.18mm dashed rgba(24,33,43,.35);padding-top:.55mm;text-align:right;color:rgba(24,33,43,.5);font-size:5.4pt}
+.addon-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.05mm;margin-top:1.05mm;align-items:start}
+.addon-grid .card{margin-bottom:0}.addon-grid h2{font-size:6.35pt;padding:.46mm .58mm .42mm}
+.addon-grid .rows{padding:.34mm .48mm .4mm}.addon-grid .r{font-size:5.35pt;line-height:1.1;padding:.24mm 0 .26mm}
+.addon-grid .formula{font-size:5.55pt}
+.page-mark{position:absolute;right:3.8mm;bottom:1.2mm;color:rgba(24,33,43,.48);font-size:5.2pt}
+.supp-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.15mm;align-items:start}
+.supp .card{margin-bottom:.78mm}.supp h2{font-size:7.25pt;padding:.58mm .68mm .52mm}
+.supp .rows{padding:.43mm .58mm .5mm}.supp .r{font-size:6.15pt;line-height:1.15;padding:.33mm 0 .35mm}
+.supp .formula{font-size:6.38pt}.supp .mini .r{font-size:5.88pt;line-height:1.12;padding:.28mm 0 .3mm}.supp .mini .formula{font-size:6.08pt}
+.supp .proof{border-top-color:var(--amber)}.supp .proof h2{background:var(--amber)}
+.supp .theory{border-top-color:var(--blue)}.supp .theory h2{background:var(--blue)}
+.step{font-weight:700;color:var(--amber)}
+@media print{html,body{background:var(--paper)}.sheet{margin:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<main class="sheet">
+<section class="grid">
+<div class="col">
+<article class="card"><h2>13.1　E(X) / E[g(X)]</h2><div class="rows">
+<p class="r"><span class="given">常见分布</span> → 查该分布期望，如 Poi(λ)：<span class="formula">E(X)=λ</span></p>
+<p class="r"><span class="given">离散 p<sub>X</sub>(x)</span> → <span class="formula">E(X)=Σ<sub>x</sub>xp<sub>X</sub>(x)</span></p>
+<p class="r"><span class="given">连续 f<sub>X</sub>(x)</span> → <span class="formula">E(X)=∫xf<sub>X</sub>(x)dx</span></p>
+<p class="r"><span class="given">离散 g(X)</span> → <span class="formula">E[g(X)]=Σg(x)p<sub>X</sub>(x)</span></p>
+<p class="r"><span class="given">连续 g(X)</span> → <span class="formula">E[g(X)]=∫g(x)f<sub>X</sub>(x)dx</span></p>
+<p class="r"><span class="given">Y=aX+b</span> → <span class="formula">E(Y)=aE(X)+b</span></p>
+<p class="r"><span class="given">aX+bY+c</span> → <span class="formula">aE(X)+bE(Y)+c</span>；<span class="warn">无需独立</span></p>
+<p class="r"><span class="given">E(X|Y)</span> → <span class="formula">E(X)=E[E(X|Y)]</span></p>
+<p class="r"><span class="given">X≥0、给尾概率</span> → <span class="formula">E(X)=∫<sub>0</sub><sup>∞</sup>P(X&gt;t)dt</span></p>
+<p class="r"><span class="given">矩母函数 M<sub>X</sub>(t)</span> → <span class="formula">E(X)=M′<sub>X</sub>(0)</span></p>
+<p class="r"><span class="given">要 k 阶矩</span> → <span class="formula">M(t)=E(e<sup>tX</sup>)；E(X<sup>k</sup>)=M<sup>(k)</sup>(0)</span></p>
+</div></article>
+<article class="card mini"><h2>13.5　ρ<sub>XY</sub></h2><div class="rows">
+<p class="r"><span class="given">给 Cov,σ<sub>X</sub>,σ<sub>Y</sub></span> → <span class="formula">ρ=Cov/(σ<sub>X</sub>σ<sub>Y</sub>)</span></p>
+<p class="r"><span class="given">给 Cov,VarX,VarY</span> → <span class="formula">ρ=Cov/(√VarX·√VarY)</span></p>
+<p class="r"><span class="warn">−1≤ρ≤1，且 VarX,VarY&gt;0</span></p>
+</div></article>
+<article class="card mini mgf-card"><h2>MGF｜离散分布</h2><div class="rows">
+<p class="r"><b>矩</b> → <span class="formula">E(X)=M′(0)；E(X²)=M″(0)；Var=M″(0)−[M′(0)]²</span></p>
+<p class="r"><b>Bernoulli(p)</b> → <span class="formula">M(t)=1−p+pe<sup>t</sup></span></p>
+<p class="r"><b>Bin(n,p)</b> → <span class="formula">M(t)=(1−p+pe<sup>t</sup>)<sup>n</sup></span></p>
+<p class="r"><b>Poisson(λ)</b> → <span class="formula">M(t)=exp{λ(e<sup>t</sup>−1)}</span></p>
+<p class="r"><b>Geom(p)，X=0,1,…</b> → <span class="formula">M(t)=p/[1−(1−p)e<sup>t</sup>]</span><br><small class="warn">若 X=1,2,…，结果再乘 e<sup>t</sup></small></p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card"><h2>13.2　Var(X)</h2><div class="rows">
+<p class="r"><span class="given">常见分布</span> → 查表，如 Poi(λ)：<span class="formula">Var(X)=λ</span></p>
+<p class="r"><span class="given">给 E(X),E(X²)</span> → <span class="formula">Var(X)=E(X²)−[E(X)]²</span></p>
+<p class="r"><span class="given">只给离散分布</span> → 算 <span class="formula">E(X), E(X²)=Σx²p(x)</span>，再相减</p>
+<p class="r"><span class="given">只给连续密度</span> → 算 <span class="formula">E(X), E(X²)=∫x²f(x)dx</span>，再相减</p>
+<p class="r"><span class="given">Y=aX+b</span> → <span class="formula">Var(Y)=a²Var(X)</span></p>
+<p class="r"><span class="given">aX+bY</span> → <span class="formula">a²VarX+b²VarY+2abCov(X,Y)</span></p>
+<p class="r"><span class="given">X+Y</span> → <span class="formula">VarX+VarY+2Cov</span></p>
+<p class="r"><span class="given">X−Y</span> → <span class="formula">VarX+VarY−2Cov</span></p>
+<p class="r"><span class="given">X,Y 独立</span> → <span class="formula">Var(aX+bY)=a²VarX+b²VarY</span></p>
+<p class="r"><span class="given">条件量</span> → <span class="formula">VarX=E[Var(X|Y)]+Var(E[X|Y])</span></p>
+<p class="r"><span class="given">M<sub>X</sub>(t)</span> → <span class="formula">VarX=M″(0)−[M′(0)]²</span></p>
+</div></article>
+<article class="card mini"><h2>13.3　E(X²) / E(XY)</h2><div class="rows">
+<p class="r"><span class="given">给 E(X),Var(X)</span> → <span class="formula">E(X²)=Var(X)+[E(X)]²</span></p>
+<p class="r"><span class="given">给 Cov,E(X),E(Y)</span> → <span class="formula">E(XY)=Cov+E(X)E(Y)</span></p>
+<p class="r"><span class="given">给联合密度</span> → <span class="formula">E(XY)=∬xyf<sub>XY</sub>(x,y)dxdy</span></p>
+<p class="r"><span class="given">X,Y 独立</span> → <span class="formula">E(XY)=E(X)E(Y)</span></p>
+<p class="r"><span class="given">给 M<sub>X</sub>(t)</span> → <span class="formula">E(X²)=M″<sub>X</sub>(0)</span></p>
+</div></article>
+<article class="card mini mgf-card"><h2>MGF｜连续分布 I</h2><div class="rows">
+<p class="r"><b>N(μ,σ²)</b> → <span class="formula">M(t)=exp(μt+σ²t²/2)</span></p>
+<p class="r"><b>Exp(λ)，rate</b> → <span class="formula">M(t)=λ/(λ−t)</span>，<span class="warn">t&lt;λ</span></p>
+<p class="r"><b>Gamma(α,λ)，rate</b> → <span class="formula">M(t)=[λ/(λ−t)]<sup>α</sup></span>，<span class="warn">t&lt;λ</span></p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card"><h2>13.4　Cov(X,Y)</h2><div class="rows">
+<p class="r"><span class="given">给 E(XY),E(X),E(Y)</span> → <span class="formula">Cov=E(XY)−E(X)E(Y)</span></p>
+<p class="r"><span class="given">给联合密度</span> → 先算 <span class="formula">E(XY)=∬xyf<sub>XY</sub>dxdy</span>，再代定义</p>
+<p class="r"><span class="given">给 ρ,σ<sub>X</sub>,σ<sub>Y</sub></span> → <span class="formula">Cov=ρσ<sub>X</sub>σ<sub>Y</sub></span></p>
+<p class="r"><span class="given">给 ρ,VarX,VarY</span> → <span class="formula">Cov=ρ√VarX√VarY</span></p>
+<p class="r"><span class="given">给 Var(X+Y)</span> → <span class="formula">Cov=[Var(X+Y)−VarX−VarY]/2</span></p>
+<p class="r"><span class="given">给 Var(X−Y)</span> → <span class="formula">Cov=[VarX+VarY−Var(X−Y)]/2</span></p>
+<p class="r"><span class="given">线性变换</span> → <span class="formula">Cov(aX+b,cY+d)=ac·Cov(X,Y)</span></p>
+<p class="r"><span class="given">同一变量</span> → <span class="formula">Cov(X,X)=Var(X)</span></p>
+<p class="r"><span class="given">和与 Z</span> → <span class="formula">Cov(X+Y,Z)=Cov(X,Z)+Cov(Y,Z)</span></p>
+<p class="r"><span class="given">X,Y 独立</span> → <span class="formula">Cov(X,Y)=0</span></p>
+</div></article>
+<article class="card mini"><h2>13.13　协方差矩阵 / 线性组合</h2><div class="rows">
+<p class="r"><span class="formula">Σ=Cov(X)=E[(X−EX)(X−EX)<sup>T</sup>]</span></p>
+<p class="r"><span class="given">读 Σ</span> → <span class="formula">Σ<sub>ii</sub>=Var(X<sub>i</sub>)；Σ<sub>ij</sub>=Cov(X<sub>i</sub>,X<sub>j</sub>)</span></p>
+<p class="r"><span class="given">Y=a<sup>T</sup>X+b</span> → <span class="formula">E(Y)=a<sup>T</sup>E(X)+b</span></p>
+<p class="r"><span class="given">Y=a<sup>T</sup>X</span> → <span class="formula">Var(Y)=a<sup>T</sup>Σa</span></p>
+<p class="r"><span class="given">Y=ΣX<sub>i</sub></span> → <span class="formula">Var(Y)=1<sup>T</sup>Σ1</span>（Σ 全部元素之和）</p>
+<p class="r"><span class="given">Y=AX+b</span> → <span class="formula">E(Y)=AE(X)+b；Cov(Y)=AΣA<sup>T</sup></span></p>
+<p class="r"><span class="given">分块正态</span>　<span class="formula">X<sub>1</sub>|X<sub>2</sub>=x<sub>2</sub>∼N(μ<sub>1</sub>+Σ<sub>12</sub>Σ<sub>22</sub><sup>−1</sup>(x<sub>2</sub>−μ<sub>2</sub>), Σ<sub>11</sub>−Σ<sub>12</sub>Σ<sub>22</sub><sup>−1</sup>Σ<sub>21</sub>)</span></p>
+<p class="r"><span class="given">二维标准正态</span>　<span class="formula">X|Y=y∼N(ρy,1−ρ²)</span></p>
+</div></article>
+<article class="card mini mgf-card"><h2>MGF｜连续分布 II / 运算</h2><div class="rows">
+<p class="r"><b>χ²(k)</b> → <span class="formula">M(t)=(1−2t)<sup>−k/2</sup></span>，<span class="warn">t&lt;1/2</span></p>
+<p class="r"><b>U(a,b)</b> → <span class="formula">M(t)=(e<sup>bt</sup>−e<sup>at</sup>)/[t(b−a)]</span>；<small>t≠0，M(0)=1</small></p>
+<p class="r"><b>独立 X,Y</b> → <span class="formula">M<sub>X+Y</sub>(t)=M<sub>X</sub>(t)M<sub>Y</sub>(t)</span></p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card"><h2>13.6　P(·)</h2><div class="rows">
+<p class="r"><span class="tag">(a,b]</span><span class="formula">P(a&lt;X≤b)=F(b)−F(a)</span></p>
+<p class="r"><span class="tag">[a,b]</span><span class="formula">P(a≤X≤b)=F(b)−F(a⁻)</span></p>
+<p class="r"><span class="tag">(a,b)</span><span class="formula">P(a&lt;X&lt;b)=F(b⁻)−F(a)</span></p>
+<p class="r"><span class="tag">[a,b)</span><span class="formula">P(a≤X&lt;b)=F(b⁻)−F(a⁻)</span></p>
+<p class="r"><span class="given">右尾 &gt;</span> → <span class="formula">P(X&gt;x)=1−F(x)</span></p>
+<p class="r"><span class="given">右尾 ≥</span> → <span class="formula">P(X≥x)=1−F(x⁻)</span></p>
+<p class="r"><span class="given">连续密度</span> → <span class="formula">P(a&lt;X≤b)=∫<sub>a</sub><sup>b</sup>f(x)dx</span>；端点不影响</p>
+<p class="r"><span class="given">离散 PMF</span> → <span class="formula">P(X∈A)=Σ<sub>x∈A</sub>p(x)</span></p>
+<p class="r"><span class="given">连续联合区域 A</span> → <span class="formula">P((X,Y)∈A)=∬<sub>A</sub>f<sub>XY</sub>dxdy</span></p>
+<p class="r"><span class="given">离散联合区域 A</span> → <span class="formula">P((X,Y)∈A)=Σ<sub>(x,y)∈A</sub>p<sub>XY</sub>(x,y)</span></p>
+<p class="r"><span class="given">条件概率</span> → <span class="formula">P(A∩B)=P(A|B)P(B)</span></p>
+<p class="r"><span class="given">完备分组 B<sub>i</sub></span> → <span class="formula">P(A)=ΣP(A|B<sub>i</sub>)P(B<sub>i</sub>)</span></p>
+<p class="r"><span class="given">贝叶斯</span> → <span class="formula">P(B<sub>j</sub>|A)=P(A|B<sub>j</sub>)P(B<sub>j</sub>)/ΣP(A|B<sub>i</sub>)P(B<sub>i</sub>)</span></p>
+<p class="r"><span class="warn">含左端 a→F(a⁻)；不含右端 b→F(b⁻)</span></p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card mini"><h2>13.7　F<sub>X</sub>(x)</h2><div class="rows">
+<p class="r"><span class="given">连续密度</span> → <span class="formula">F(x)=∫<sub>−∞</sub><sup>x</sup>f(t)dt</span></p>
+<p class="r"><span class="given">支撑 [a,b]</span> → <span class="formula">0(x&lt;a)；∫<sub>a</sub><sup>x</sup>f(t)dt(a≤x≤b)；1(x&gt;b)</span></p>
+<p class="r"><span class="given">离散 PMF</span> → <span class="formula">F(x)=Σ<sub>t≤x</sub>p(t)</span></p>
+<p class="r"><span class="given">样本 X<sub>1</sub>,…,X<sub>n</sub></span> → <span class="formula">F<sub>n</sub>(x)=n<sup>−1</sup>Σ1<sub>{Xᵢ≤x}</sub></span></p>
+<p class="r"><span class="given">Y=g(X)，g↑</span> → <span class="formula">F<sub>Y</sub>(y)=F<sub>X</sub>(g<sup>−1</sup>(y))</span></p>
+<p class="r"><span class="given">Y=g(X)，g↓</span> → <span class="formula">F<sub>Y</sub>(y)=P(X≥g<sup>−1</sup>(y))</span>；离散用 <span class="formula">1−F<sub>X</sub>(g<sup>−1</sup>(y)⁻)</span></p>
+<p class="r"><span class="warn">CDF 单调不减、右连续、两端 0/1</span></p>
+</div></article>
+<article class="card mini"><h2>13.8　f<sub>X</sub>(x)</h2><div class="rows">
+<p class="r"><span class="given">可导 CDF</span> → <span class="formula">f(x)=F′(x)</span>；分段求导并保留区间</p>
+<p class="r"><span class="given">验证密度</span> → <span class="formula">f(x)≥0，∫f(x)dx=1</span></p>
+<p class="r"><span class="given">验证 PMF</span> → <span class="formula">p(x)≥0，Σp(x)=1</span></p>
+<p class="r"><span class="given">Y=g(X)，单调</span> → <span class="formula">f<sub>Y</sub>(y)=f<sub>X</sub>(g<sup>−1</sup>(y))|(g<sup>−1</sup>)′(y)|</span></p>
+<p class="r"><span class="given">Z=X+Y，独立</span> → <span class="formula">f<sub>Z</sub>(z)=∫f<sub>X</sub>(x)f<sub>Y</sub>(z−x)dx</span></p>
+<p class="r"><span class="given">二维可逆变换</span> → <span class="formula">f<sub>UV</sub>=f<sub>XY</sub>(g<sup>−1</sup>)|det J<sub>g⁻¹</sub>|</span></p>
+<p class="r"><span class="warn">变换、卷积都要重算支撑集/积分限</span></p>
+</div></article>
+<article class="card mini"><h2>13.9　边缘分布</h2><div class="rows">
+<p class="r"><span class="given">连续联合</span> → <span class="formula">f<sub>X</sub>(x)=∫f<sub>XY</sub>(x,y)dy；f<sub>Y</sub>(y)=∫f<sub>XY</sub>(x,y)dx</span></p>
+<p class="r"><span class="given">离散联合</span> → <span class="formula">p<sub>X</sub>=Σ<sub>y</sub>p<sub>XY</sub>；p<sub>Y</sub>=Σ<sub>x</sub>p<sub>XY</sub></span></p>
+<p class="r"><span class="given">联合 CDF</span> → <span class="formula">F<sub>X</sub>(x)=lim<sub>y→∞</sub>F<sub>XY</sub>(x,y)</span>；Y 同理</p>
+<p class="r"><span class="given">非矩形支撑</span> → 先找 <span class="formula">y<sub>min</sub>(x),y<sub>max</sub>(x)</span> 再积分</p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card mini"><h2>13.10　条件分布</h2><div class="rows">
+<p class="r"><span class="given">连续 X|Y</span> → <span class="formula">f<sub>X|Y</sub>(x|y)=f<sub>XY</sub>(x,y)/f<sub>Y</sub>(y)</span>，<span class="warn">f<sub>Y</sub>(y)&gt;0</span></p>
+<p class="r"><span class="given">连续 Y|X</span> → <span class="formula">f<sub>Y|X</sub>(y|x)=f<sub>XY</sub>(x,y)/f<sub>X</sub>(x)</span></p>
+<p class="r"><span class="given">离散 X|Y</span> → <span class="formula">p<sub>X|Y</sub>(x|y)=p<sub>XY</sub>(x,y)/p<sub>Y</sub>(y)</span></p>
+<p class="r"><span class="given">条件 × 边缘</span> → <span class="formula">f<sub>XY</sub>=f<sub>X|Y</sub>f<sub>Y</sub></span>（离散同理）</p>
+<p class="r"><span class="given">事件</span> → <span class="formula">P(A∩B)=P(A|B)P(B)</span></p>
+</div></article>
+<article class="card mini"><h2>13.11　联合分布</h2><div class="rows">
+<p class="r"><span class="given">条件密度 + 边缘</span> → <span class="formula">f<sub>XY</sub>=f<sub>X|Y</sub>f<sub>Y</sub></span></p>
+<p class="r"><span class="given">条件 PMF + 边缘</span> → <span class="formula">p<sub>XY</sub>=p<sub>X|Y</sub>p<sub>Y</sub></span></p>
+<p class="r"><span class="given">连续边缘 + 独立</span> → <span class="formula">f<sub>XY</sub>=f<sub>X</sub>f<sub>Y</sub></span></p>
+<p class="r"><span class="given">离散边缘 + 独立</span> → <span class="formula">p<sub>XY</sub>=p<sub>X</sub>p<sub>Y</sub></span></p>
+<p class="r"><span class="given">边缘 CDF + 独立</span> → <span class="formula">F<sub>XY</sub>=F<sub>X</sub>F<sub>Y</sub></span></p>
+<p class="r"><span class="given">二维变换</span> → <span class="formula">f<sub>UV</sub>=f<sub>XY</sub>(g<sup>−1</sup>)|det J<sub>g⁻¹</sub>|</span></p>
+<p class="r"><span class="warn">仅有两个边缘、未说独立：不能确定联合</span></p>
+</div></article>
+<article class="card mini"><h2>13.12　判断独立 / 不相关</h2><div class="rows">
+<p class="r"><span class="given">连续乘积</span> → <span class="formula">f<sub>XY</sub>=f<sub>X</sub>f<sub>Y</sub> ⇒ X⊥Y</span></p>
+<p class="r"><span class="given">离散乘积</span> → <span class="formula">p<sub>XY</sub>=p<sub>X</sub>p<sub>Y</sub> ⇒ X⊥Y</span></p>
+<p class="r"><span class="given">已知独立</span> → <span class="formula">E[g(X)h(Y)]=E[g(X)]E[h(Y)]</span></p>
+<p class="r"><span class="given">已知独立</span> → <span class="formula">Cov=0；f<sub>X|Y</sub>=f<sub>X</sub></span></p>
+<p class="r"><span class="given">给定 Z 条件独立</span> → <span class="formula">f<sub>XY|Z</sub>=f<sub>X|Z</sub>f<sub>Y|Z</sub></span></p>
+<p class="r"><span class="given">联合正态且 Cov=0</span> → <span class="formula">X⊥Y</span></p>
+<p class="r"><span class="warn">Cov=0 一般不能反推独立</span></p>
+<p class="r"><span class="warn">乘积要在完整支撑集成立</span></p>
+</div></article>
+</div>
+</section>
+
+<section class="addon-grid">
+<article class="card mini"><h2>24　概率运算补口</h2><div class="rows">
+<p class="r"><span class="formula">P(A)=|A|/|Ω|；P(A<sup>c</sup>)=1−P(A)</span></p>
+<p class="r"><span class="formula">P(A∪B)=P(A)+P(B)−P(A∩B)</span></p>
+<p class="r"><span class="given">链式</span>　<span class="formula">P(∩A<sub>i</sub>)=P(A<sub>1</sub>)∏<sub>i≥2</sub>P(A<sub>i</sub>|A<sub>1</sub>∩⋯∩A<sub>i−1</sub>)</span></p>
+<p class="r"><span class="given">分层</span>　<span class="formula">P(A|X)=ΣP(A|X,Z=z<sub>i</sub>)P(Z=z<sub>i</sub>|X)</span></p>
+</div></article>
+
+<article class="card mini"><h2>25　平均 / 离散程度</h2><div class="rows">
+<p class="r"><span class="formula">x̄<sub>w</sub>=Σw<sub>i</sub>x<sub>i</sub>/Σw<sub>i</sub></span></p>
+<p class="r"><span class="formula">x̄<sub>G</sub>=(∏x<sub>i</sub>)<sup>1/n</sup>；x̄<sub>H</sub>=[n<sup>−1</sup>Σ(1/x<sub>i</sub>)]<sup>−1</sup></span></p>
+<p class="r"><span class="given">快算</span>　<span class="formula">s²=[Σx<sub>i</sub>²−nx̄²]/(n−1)</span></p>
+<p class="r"><span class="formula">CV=s/x̄</span>（$x̄&gt;0$）；<span class="formula">MAD=n<sup>−1</sup>Σ|x<sub>i</sub>−x̄|</span></p>
+</div></article>
+
+<article class="card mini"><h2>26　偏度 / 峰度</h2><div class="rows">
+<p class="r"><span class="formula">γ<sub>1</sub>=E[(X−μ)³]/σ³</span></p>
+<p class="r"><span class="formula">g<sub>Q</sub>=(Q<sub>3</sub>+Q<sub>1</sub>−2Q<sub>2</sub>)/(Q<sub>3</sub>−Q<sub>1</sub>)</span></p>
+<p class="r"><span class="formula">K=E[(X−μ)⁴]/σ⁴；K<sub>ex</sub>=K−3</span></p>
+<p class="r"><span class="warn">正号右偏，负号左偏；正态超额峰度为 0</span></p>
+</div></article>
+
+<article class="card mini"><h2>27　联合 / 条件计算</h2><div class="rows">
+<p class="r"><span class="formula">E[g(X,Y)]=∬g(x,y)f<sub>XY</sub>dxdy</span>（离散改双重和）</p>
+<p class="r"><span class="given">离散卷积</span>　<span class="formula">p<sub>X+Y</sub>(z)=Σ<sub>x</sub>p<sub>X</sub>(x)p<sub>Y</sub>(z−x)</span></p>
+<p class="r"><span class="formula">E(X|Z=z)=Σxp(x|z)</span> 或 <span class="formula">∫xf(x|z)dx</span></p>
+<p class="r"><span class="formula">Var(X|Z)=E(X²|Z)−[E(X|Z)]²</span></p>
+</div></article>
+
+<article class="card mini theory"><h2>28　收敛补充</h2><div class="rows">
+<p class="r"><span class="given">Glivenko–Cantelli</span>　<span class="formula">sup<sub>x</sub>|F<sub>n</sub>(x)−F(x)|→<sup>a.s.</sup>0</span></p>
+<p class="r"><span class="formula">r&gt;s≥1：L<sup>r</sup>⇒L<sup>s</sup></span></p>
+<p class="r"><span class="given">Borel–Cantelli</span>　<span class="formula">ΣP(A<sub>n</sub>)&lt;∞⇒P(A<sub>n</sub> i.o.)=0</span></p>
+<p class="r"><span class="given">多元 CLT</span>　<span class="formula">√n(X̄−μ)→<sup>D</sup>N<sub>k</sub>(0,Σ)</span></p>
+</div></article>
+
+<article class="card mini"><h2>29　不等式 / 过程</h2><div class="rows">
+<p class="r"><span class="given">Minkowski</span>　<span class="formula">(E|X+Y|<sup>p</sup>)<sup>1/p</sup>≤(E|X|<sup>p</sup>)<sup>1/p</sup>+(E|Y|<sup>p</sup>)<sup>1/p</sup></span></p>
+<p class="r"><span class="given">MGF 仿射</span>　<span class="formula">M<sub>a+bX</sub>(t)=e<sup>at</sup>M<sub>X</sub>(bt)</span></p>
+<p class="r"><span class="given">随机游走</span>　<span class="formula">X<sub>t</sub>=Σ<sub>i≤t</sub>Z<sub>i</sub>；E(X<sub>t</sub>)=tμ；Var(X<sub>t</sub>)=tσ²</span></p>
+<p class="r"><span class="given">Markov 性</span>　<span class="formula">P(X<sub>t+1</sub>|X<sub>t</sub>,…,X<sub>0</sub>)=P(X<sub>t+1</sub>|X<sub>t</sub>)</span></p>
+</div></article>
+</section>
+
+<section class="notes">下方继续留白：个人易错点、分布参数化、德语关键词或临场提醒</section>
+<div class="page-mark">A 面｜目标→已知→公式｜下方为手写区</div>
+</main>
+
+<main class="sheet supp">
+<section class="supp-grid">
+<div class="col">
+<article class="card theory"><h2>14　常用不等式</h2><div class="rows">
+<p class="r"><span class="step">Markov</span>　$X≥0,a&gt;0$：<span class="formula">P(X≥a)≤E(X)/a</span><br><span class="warn">直接控制“超过某值”；离散“超过15”常改成 X≥16</span></p>
+<p class="r"><span class="step">Chebyshev</span>　<span class="formula">P(|X−μ|≥c)≤σ²/c²</span></p>
+<p class="r">中心区间下界：<span class="formula">P(|X−μ|&lt;c)≥1−σ²/c²</span><br><span class="warn">围绕均值的对称区间</span></p>
+<p class="r"><span class="step">Jensen</span>　凸：<span class="formula">f(E(X))≤E[f(X)]</span>；凹：反向</p>
+<p class="r">判断：<span class="formula">f″≥0⇒凸；f″≤0⇒凹</span></p>
+<p class="r"><span class="step">Cauchy–Schwarz</span>　<span class="formula">|E(XY)|≤√(E(X²)E(Y²))</span></p>
+<p class="r">协方差形式：<span class="formula">|Cov(X,Y)|≤√(VarX·VarY)</span></p>
+</div></article>
+
+<article class="card"><h2>15　正态标准化 / CLT</h2><div class="rows">
+<p class="r"><span class="given">标准化</span>　<span class="formula">Z=(X−μ)/σ∼N(0,1)</span>；<span class="warn">分母是 σ=√Var</span></p>
+<p class="r"><span class="given">对称性</span>　<span class="formula">Φ(−z)=1−Φ(z)</span>；<span class="formula">P(|Z|≤z)=2Φ(z)−1</span></p>
+<p class="r"><span class="given">样本均值</span>　<span class="formula">√n( X̄−μ)/σ ≈ N(0,1)</span></p>
+<p class="r"><span class="formula">X̄≈N(μ,σ²/n)</span>；标准误 <span class="formula">SE=σ/√n</span></p>
+<p class="r"><span class="given">随机和</span>　<span class="formula">S<sub>n</sub>=ΣX<sub>i</sub>≈N(nμ,nσ²)</span></p>
+<p class="r"><span class="given">对称区间</span>　<span class="formula">X̄∈[μ±z<sub>1−α/2</sub>σ/√n]</span>，概率约 $1−α$</p>
+<p class="r">常用：<span class="formula">z<sub>.975</sub>=1.96；z<sub>.95</sub>=1.645</span></p>
+<p class="r"><span class="given">多元正态</span>　<span class="formula">X∼N(μ,Σ)⇒AX+b∼N(Aμ+b,AΣA<sup>T</sup>)</span></p>
+<p class="r"><span class="formula">a<sup>T</sup>X+b∼N(a<sup>T</sup>μ+b,a<sup>T</sup>Σa)</span></p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card"><h2>16　描述统计 / 分位数</h2><div class="rows">
+<p class="r"><span class="formula">x̄=n<sup>−1</sup>Σx<sub>i</sub></span>；<span class="formula">s²=(n−1)<sup>−1</sup>Σ(x<sub>i</sub>−x̄)²</span>；<span class="formula">s=√s²</span></p>
+<p class="r"><span class="warn">样本方差分母通常为 n−1</span></p>
+<p class="r"><span class="given">先排序</span>　<span class="formula">x<sub>(1)</sub>≤⋯≤x<sub>(n)</sub></span></p>
+<p class="r"><span class="given">np 非整数</span> → <span class="formula">x̃<sub>p</sub>=x<sub>(⌈np⌉)</sub></span></p>
+<p class="r"><span class="given">np 为整数</span> → <span class="formula">x̃<sub>p</sub>=[x<sub>(np)</sub>+x<sub>(np+1)</sub>]/2</span></p>
+<p class="r"><span class="formula">Q<sub>1</sub>=x̃<sub>.25</sub>；Med=x̃<sub>.5</sub>；Q<sub>3</sub>=x̃<sub>.75</sub></span></p>
+<p class="r"><span class="formula">IQR=Q<sub>3</sub>−Q<sub>1</sub></span>；离群界 <span class="formula">Q<sub>1</sub>−1.5IQR，Q<sub>3</sub>+1.5IQR</span></p>
+<p class="r"><span class="given">总体分位函数</span>　<span class="formula">Q(p)=inf{x:F(x)≥p}</span></p>
+<p class="r"><span class="given">逆变换抽样</span>　<span class="formula">U∼U(0,1)⇒X=Q(U)</span></p>
+</div></article>
+
+<article class="card mini"><h2>17　样本相关 / 等级相关</h2><div class="rows">
+<p class="r"><span class="formula">s<sub>XY</sub>=(n−1)<sup>−1</sup>Σ(x<sub>i</sub>−x̄)(y<sub>i</sub>−ȳ)</span></p>
+<p class="r"><span class="formula">r<sub>XY</sub>=s<sub>XY</sub>/(s<sub>X</sub>s<sub>Y</sub>)</span>；线性、怕离群值</p>
+<p class="r"><span class="formula">r<sub>aX+b,cY+d</sub>=sgn(ac)r<sub>XY</sub></span></p>
+<p class="r"><span class="given">Spearman，无并列秩</span>　<span class="formula">r<sub>S</sub>=1−6Σd<sub>i</sub>²/[n(n²−1)]</span></p>
+<p class="r"><span class="given">有并列秩</span>　先取平均秩，再算 <span class="formula">r<sub>S</sub>=Σ(R<sub>i</sub>−R̄)(S<sub>i</sub>−S̄)/√[Σ(R<sub>i</sub>−R̄)²Σ(S<sub>i</sub>−S̄)²]</span></p>
+<p class="r">Spearman：衡量单调；同向单调不变，反向单调变号</p>
+<p class="r"><span class="given">Kendall，无并列</span>　<span class="formula">τ=(N<sub>C</sub>−N<sub>D</sub>)/[n(n−1)/2]</span></p>
+</div></article>
+
+<article class="card mini"><h2>17.4　2×2 列联表关联度</h2><div class="rows">
+<p class="r"><span class="step">① 表格</span>　<span class="formula">[[a,b],[c,d]]；n=a+b+c+d</span></p>
+<p class="r"><span class="step">② 一般 χ²</span>　期望频数 <span class="formula">E<sub>ij</sub>=(第i行和)(第j列和)/n</span></p>
+<p class="r"><span class="formula">χ²=Σ<sub>i,j</sub>(O<sub>ij</sub>−E<sub>ij</sub>)²/E<sub>ij</sub>≥0</span>；越大＝偏离独立越明显</p>
+<p class="r"><span class="step">③ 2×2 简式</span>　<span class="formula">χ²=n(ad−bc)²/[(a+b)(a+c)(b+d)(c+d)]</span></p>
+<p class="r"><span class="step">④ 列联系数</span>　<span class="formula">K=√[χ²/(n+χ²)]</span></p>
+<p class="r">令 <span class="formula">M=min{行数,列数}</span>，则 <span class="formula">0≤K≤√[(M−1)/M]</span></p>
+<p class="r"><span class="warn">K 的最大值随表格大小 M 改变，通常达不到 1，所以要归一化</span></p>
+<p class="r"><span class="step">⑤ 校正</span>　<span class="formula">K<sup>*</sup>=K/√[(M−1)/M]；0≤K<sup>*</sup>≤1</span></p>
+<p class="r"><span class="given">解释</span>　$K^*=0$：无关联/独立；越接近 1：关联越强</p>
+<p class="r"><span class="warn">K、K* 只有强弱、没有正负方向；交换行列不改变结果</span></p>
+</div></article>
+
+<article class="card mini"><h2>18　集中度</h2><div class="rows">
+<p class="r"><span class="step">准备</span>　升序排列；<span class="formula">T=Σx<sub>j</sub>；p<sub>i</sub>=x<sub>i</sub>/T；v<sub>i</sub>=Σ<sub>j≤i</sub>p<sub>j</sub>；v<sub>0</sub>=0</span></p>
+<p class="r">Lorenz 坐标：<span class="formula">(i/n,v<sub>i</sub>)</span></p>
+<p class="r"><span class="given">Gini</span>　<span class="formula">G=1−n<sup>−1</sup>Σ(v<sub>i−1</sub>+v<sub>i</sub>)</span></p>
+<p class="r">标准化：<span class="formula">G<sup>+</sup>=nG/(n−1)</span>；接近 0 平均，接近 1 集中</p>
+<p class="r"><span class="given">Herfindahl</span>　<span class="formula">H=Σp<sub>i</sub>²</span>，其中 $p_i=x_i/T$</p>
+<p class="r"><span class="formula">1/n≤H≤1</span>；越大越集中</p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card mini"><h2>19　独立随机变量之和</h2><div class="rows">
+<p class="r"><span class="formula">X<sub>i</sub>独立，X<sub>i</sub>∼Poi(λ<sub>i</sub>)⇒ΣX<sub>i</sub>∼Poi(Σλ<sub>i</sub>)</span></p>
+<p class="r"><span class="formula">Bin(n,p)+Bin(m,p)∼Bin(n+m,p)</span>；<span class="warn">独立且 p 相同</span></p>
+<p class="r"><span class="formula">Z<sub>i</sub> iid∼N(0,1)⇒ΣZ<sub>i</sub>²∼χ²(k)</span></p>
+<p class="r"><span class="formula">Z/√(U/ν)∼t<sub>ν</sub></span>，其中 $Z∼N(0,1),U∼χ²(ν),Z⊥U$</p>
+<p class="r"><span class="given">指数无记忆</span>　<span class="formula">P(X&gt;s+t|X&gt;s)=P(X&gt;t)</span></p>
+<p class="r"><span class="given">特征函数</span>　<span class="formula">φ<sub>X</sub>(t)=E(e<sup>itX</sup>)；独立和：φ<sub>ΣXᵢ</sub>=∏φ<sub>Xᵢ</sub></span></p>
+</div></article>
+
+<article class="card mini"><h2>20　Markov 链</h2><div class="rows">
+<p class="r"><span class="formula">p<sub>ij</sub>=P(X<sub>t+1</sub>=j|X<sub>t</sub>=i)</span></p>
+<p class="r">矩阵行＝当前状态，列＝下一状态；<span class="warn">每行和为 1</span></p>
+<p class="r"><span class="formula">μ<sup>(n+1)</sup>=μ<sup>(n)</sup>P；μ<sup>(n)</sup>=μ<sup>(0)</sup>P<sup>n</sup></span>（行向量）</p>
+<p class="r">平稳分布：<span class="formula">π=πP；π<sub>i</sub>≥0；Σπ<sub>i</sub>=1</span></p>
+</div></article>
+
+<article class="card"><h2>21　收敛 / 大数定理</h2><div class="rows">
+<p class="r"><span class="given">依概率</span>　<span class="formula">X<sub>n</sub>→<sup>P</sup>X ⇔ P(|X<sub>n</sub>−X|&gt;ε)→0，∀ε&gt;0</span></p>
+<p class="r"><span class="given">依分布</span>　<span class="formula">X<sub>n</sub>→<sup>D</sup>X ⇔ F<sub>n</sub>(x)→F(x)</span>，只查 $F$ 的连续点</p>
+<p class="r"><span class="given">几乎必然</span>　<span class="formula">P{ω:lim X<sub>n</sub>(ω)=X(ω)}=1</span></p>
+<p class="r"><span class="given">L<sup>r</sup></span>　<span class="formula">E(|X<sub>n</sub>−X|<sup>r</sup>)→0</span></p>
+<p class="r"><span class="formula">L<sup>r</sup>⇒P⇒D；a.s.⇒P⇒D</span></p>
+<p class="r">极限为常数：<span class="formula">X<sub>n</sub>→<sup>D</sup>c ⇒ X<sub>n</sub>→<sup>P</sup>c</span></p>
+<p class="r"><span class="given">弱大数</span>　<span class="formula">X̄<sub>n</sub>→<sup>P</sup>E(X<sub>1</sub>)</span></p>
+<p class="r"><span class="given">强大数</span>　<span class="formula">X̄<sub>n</sub>→<sup>a.s.</sup>E(X<sub>1</sub>)</span></p>
+<p class="r"><span class="warn">常见条件：i.i.d. 且 E|X<sub>1</sub>|&lt;∞</span></p>
+<p class="r"><span class="given">样本方差</span>　<span class="formula">√n(S<sub>n</sub>²−σ²)→<sup>D</sup>N(0,τ²)</span>，$τ²=Var((X−μ)²)$</p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card theory"><h2>22.1–22.5　测度论核心</h2><div class="rows">
+<p class="r"><span class="step">σ-代数</span>＝允许讨论的事件：<span class="formula">Ω∈F；A∈F⇒A<sup>c</sup>∈F；可数并仍∈F</span></p>
+<p class="r">有限空间生成法：先找最小原子分区，再取原子的所有并集</p>
+<p class="r"><span class="step">测度</span>＝给集合分配大小：<span class="formula">μ(∅)=0；μ(A)≥0</span></p>
+<p class="r">两两不交时：<span class="formula">μ(∪A<sub>i</sub>)=Σμ(A<sub>i</sub>)</span></p>
+<p class="r">概率测度再要求：<span class="formula">μ(Ω)=1</span></p>
+<p class="r"><span class="step">简单函数积分</span>　$f=Σa_i1_{A_i}$：<span class="formula">∫f dμ=Σa<sub>i</sub>μ(A<sub>i</sub>)</span></p>
+<p class="r">用途：有限集合中把积分变成“函数值 × 集合测度”</p>
+<p class="r"><span class="step">积分性质</span>　<span class="formula">∫(af+bg)dμ=a∫f dμ+b∫g dμ；f≤g⇒∫f≤∫g</span></p>
+<p class="r"><span class="step">计数测度</span>　<span class="formula">μ<sub>Z</sub>(A)=|A|；μ<sub>Z</sub>({x})=1</span></p>
+<p class="r"><span class="step">Lebesgue 测度</span>＝长度：<span class="formula">λ({x})=0</span></p>
+<p class="r"><span class="warn">同一函数换测度，积分可能完全不同</span></p>
+<p class="r"><span class="step">前推/像测度</span>　<span class="formula">μ<sub>f</sub>(B)=μ(f<sup>−1</sup>(B))</span></p>
+<p class="r">用途：用 $f$ 把原空间测度搬到新空间；随机变量的分布就是前推测度</p>
+<p class="r"><span class="step">乘积 σ-代数</span>　<span class="formula">F<sub>1</sub>⊗⋯⊗F<sub>n</sub>=σ({A<sub>1</sub>×⋯×A<sub>n</sub>})</span></p>
+<p class="r"><span class="step">乘积测度</span>　<span class="formula">(⊗μ<sub>i</sub>)(×A<sub>i</sub>)=∏μ<sub>i</sub>(A<sub>i</sub>)</span></p>
+<p class="r"><span class="step">测度差</span>　$A⊂B,μ(A)&lt;∞$：<span class="formula">μ(B\A)=μ(B)−μ(A)</span></p>
+<p class="r"><span class="step">指示函数</span>　<span class="formula">1<sub>Aᶜ</sub>=1−1<sub>A</sub>；1<sub>A∩B</sub>=1<sub>A</sub>1<sub>B</sub></span></p>
+</div></article>
+
+<article class="card mini theory"><h2>22.6–22.8　L–S / Dirac / R–N</h2><div class="rows">
+<p class="r"><span class="step">Lebesgue–Stieltjes</span>　<span class="formula">λ<sub>F</sub>((a,b])=F(b)−F(a)</span></p>
+<p class="r">单点质量：<span class="formula">λ<sub>F</sub>({x})=F(x)−F(x<sup>−</sup>)=P(X=x)</span></p>
+<p class="r"><span class="step">Dirac</span>　<span class="formula">δ<sub>x</sub>(A)=1<sub>A</sub>(x)</span>：只检查 $x$ 是否在 $A$</p>
+<p class="r"><span class="step">绝对连续</span>　<span class="formula">ν≪μ ⇔ μ(A)=0⇒ν(A)=0</span></p>
+<p class="r"><span class="step">R–N 密度</span>　<span class="formula">f=dν/dμ；ν(A)=∫<sub>A</sub>f dμ</span></p>
+<p class="r"><span class="warn">证无密度：找 A 使 μ(A)=0 但 ν(A)&gt;0</span></p>
+<p class="r">例：<span class="formula">λ({x})=0，δ<sub>x</sub>({x})=1</span>，故 Dirac 对 λ 无密度</p>
+</div></article>
+</div>
+
+<div class="col">
+<article class="card proof"><h2>23.1–23.5　固定证明模板 I</h2><div class="rows">
+<p class="r"><span class="step">σ-代数</span><br>① $Ω∈F$　② 补集封闭　③ 可数并封闭；反驳只需破坏一项</p>
+<p class="r"><span class="step">测度</span><br>① $μ(∅)=0$　② 非负　③ 两两不交集合的可数可加性</p>
+<p class="r"><span class="step">概率测度</span><br>先证测度三项，再加 ④ <span class="formula">P(Ω)=1</span></p>
+<p class="r"><span class="step">概率密度 / PMF</span><br>连续：<span class="formula">f≥0，∫f=1</span>；离散：<span class="formula">p≥0，Σp=1</span></p>
+<p class="r">关于测度 $μ$ 的密度：<span class="formula">f≥0 μ-a.e.；∫f dμ=1</span></p>
+<p class="r"><span class="step">分布函数 CDF</span><br>① 单调不减　② 右连续　③ $F(−∞)=0$　④ $F(+∞)=1$</p>
+<p class="r"><span class="warn">一般 CDF 不要求处处连续；只要求右连续</span></p>
+</div></article>
+
+<article class="card proof mini"><h2>23.6–23.10　固定证明模板 II</h2><div class="rows">
+<p class="r"><span class="step">独立</span><br>连续查 <span class="formula">f<sub>XY</sub>=f<sub>X</sub>f<sub>Y</sub></span>；离散查 <span class="formula">p<sub>XY</sub>=p<sub>X</sub>p<sub>Y</sub></span>，须在完整支撑成立</p>
+<p class="r"><span class="warn">一个反例点可否定独立；一个相等点不能证明独立</span></p>
+<p class="r"><span class="step">函数可测</span><br>证 <span class="formula">f<sup>−1</sup>(B)∈F</span> 对所有 Borel $B$；常用查 <span class="formula">{f≤x}∈F，∀x</span></p>
+<p class="r"><span class="step">依概率收敛</span><br>任取 $ε&gt;0$ → 写 $P(|X_n−X|&gt;ε)$ → 化简/估计 → 极限证为 0</p>
+<p class="r"><span class="step">依分布收敛</span><br>写 $F_n$ 和 $F$ → 找 $F$ 连续点 → 逐段证 <span class="formula">F_n(x)→F(x)</span></p>
+<p class="r"><span class="step">R–N 密度存在</span><br>查 $ν≪μ$ → 写候选 $f=dν/dμ$ → 验证 <span class="formula">ν(A)=∫_A f dμ</span></p>
+<p class="r"><span class="step">R–N 密度不存在</span><br>找 $A$：<span class="formula">μ(A)=0，ν(A)&gt;0</span></p>
+</div></article>
+</div>
+</section>
+<div class="page-mark">B 面｜补充公式＋测度论＋证明模板</div>
+</main>
+</body>
+</html>

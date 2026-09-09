@@ -756,12 +756,32 @@ $$
 
 (a) 确定常数 $c$，使得 $f_\Theta$ 成为一个概率密度函数。
 
+- 积分 = 1，得到 θ = 6
+
 (b) 识别 $\Theta$ 的分布，并给出其参数和支撑集（载域）。
 
-(c) 直接利用密度函数求 $E[\Theta]$ 和 $\text{Var}(\Theta)$。
+- 查表，类似Beta分布
+- a - 1 = 1 => a = 2
+- b - 1 = 1 => b = 2
+- 验证Beta分布系数，gaama函数，代入 a，b 得到 系数为  6，
+- 所以 θ ~ Beta(2,2)
+- T_ θ = [0,1]
 
-(d) 求 $\Theta$ 的分布函数，并计算
+(c) 直接利用**密度函数**求 $E[\Theta]$ 和 $\text{Var}(\Theta)$。
+
+- E(X）= f(x) = \int_0^1  6x^2(1-x)dx = 1/2
+- E(X^2) = ... 3/10
+- Var() = ... 1/20
+
+(d) 求 $\Theta$ 的**分布函数**，并计算
 $$P\left(\frac{1}{4} \leq \Theta \leq \frac{3}{4}\right).$$
+
+- F( θ) = \int_0^ θ f(t)dt
+- = 3 θ^2 - 2 θ^3
+
+在实数区间分区间写出分布函数，注意支撑集【0，1】分布函数有效，小于1，0，大于1，1
+
+- P(... ) = F(3/4) - F(1/4) = ....
 
 
 #### 21
@@ -770,18 +790,56 @@ $$P\left(\frac{1}{4} \leq \Theta \leq \frac{3}{4}\right).$$
 $$p = 0.001$$
 出现故障。设 $D$ 为故障单元的数量。
 
-(a) 确定 $D$ 的精确分布，包括其参数和支撑集（载域）。同时给出 $E[D]$ 和 $\text{Var}(D)$。
+(a) 确定 $D$ 的精确分布，包括其参数和支撑集（载域）。同时给出 $E[D]$ 和 $\text{Var}(D)$
+
+- D ~ Bin(2000,0.001)
+- E = np = 2
+- V  = np(1-p) = 1.998
 
 (b) 给出
 $$P(D \leq 2)$$
 的精确表达式。
 
+- 离散
+- P(D <= 2) = P(D = 0) +  P(D = 1) +P(D = 2)
+- PMF = f(x) = C(2000,x) p^x (1-p)^(n-x)
+- P(D = 0) = 1 x p^0 (1-p)^2000 = 
+- P(D = 1) = 2000  x p (1-p)^1999 =
+- P(D = 2) = 2000 x 1999 / 2  x p^2 (1-p)^1998 
+- = 0.6767  -- **不要害怕计算变态！！**
+
+
 (c) 使用适当的泊松分布近似计算 (b) 小题中的概率。解释为什么这种近似在这里是合理的，并确定所使用的参数。
+
+- 泊松分布- 罕见事件
+- **单位时间** 内 **事件发生的次数（$\lambda$）** $X \sim \mathcal{P}(\lambda)$
+	- 时间等单位要 **统一换算**      随机变量 $X$ 是单位时间内事件发生次数 $P(X=x) = f(x)$
+- lamda 是平均次数
+- 所以 lambda = E = 2
+- X ~ P(2)
+- f(x) = lamda^x / x! x exp(-lambda)
+- = e^-2 x (2^0 / 0! + 2^1 / 1! + 2^2 /2!)
+- = e^-2 x (1 + 2 + 2 ) = 5e^-2 = 0.6767
+
+- **二项分布的泊松近似，必须满足： n -> 无穷，p -> 0(罕见事件), np = 常数lambda**
+- Für die Poisson-Approximation einer Binomialverteilung müssen drei Bedingungen erfüllt sein: n → ∞, p → 0, np → λ konstant. Dies ist hier der Fall, da n = 2000, p = 0,001 und dem endlichen bzw. konstanten Produkt np = 2, sodass die Approximation plausibel ist
 
 (d) 现在一般地设 $Y \sim P(\lambda)$，其概率函数为
 $$P(Y = k) = e^{-\lambda} \frac{\lambda^k}{k!}, \quad k \in \mathbb{N}_0.$$
 从该概率函数出发，证明
 $$E[Y] = \lambda.$$
+
+- 离散
+- $E(Y) = \Sigma_0^∞  kP(Y=k) = \Sigma_0^∞ k \cdot e^{-\lambda} \frac{\lambda^k}{k!}$     -- 注意看定义，k的下限为0开始
+- k = 0, 为0  **-  尝试展开一两项，凑**
+- 从 k = 1 开始，
+- = $\Sigma_1^∞ k \cdot e^{-\lambda} \frac{\lambda^k}{k!}$
+- = $e^{-\lambda} \Sigma_1^∞  \cdot  \frac{\lambda^k}{(k-1)!}$
+- **看求和部分，类似 指数级数的泰勒展开！！**
+-  $e^x = \Sigma_{k=0}^{\infty} x^k/k!$ -- 公式小抄
+- 所以，上面 = $e^{-\lambda} \Sigma_0^∞  \cdot  \frac{\lambda^{k+1}}{(k-1)!}$ 
+- = $e^{-\lambda} \cdot \lambda \ e^{\lambda}$
+- $=\lambda$
 
 (e)* 首先证明
 $$E[Y(Y-1)] = \lambda^2,$$

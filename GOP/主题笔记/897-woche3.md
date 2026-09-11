@@ -93,7 +93,7 @@ $$ f_{X,Y}(x,y) = c\,(1 + 2xy) \cdot \mathbb{I}_{[0,1]^2}(x,y) $$
 **提示**：由于联合密度具有对称性，许多积分只需计算一次。
 
 
-#### 3
+#### 3. 值得做下
 
 设 $X \sim \text{Bernoulli}(1/2)$ 和 $Y \sim \text{Bernoulli}(1/2)$ 始终成立，但联合分布不同。考虑以下**三种模型**：
 
@@ -120,11 +120,11 @@ $$ f_{X,Y}(x,y) = c\,(1 + 2xy) \cdot \mathbb{I}_{[0,1]^2}(x,y) $$
 |       | 1/2   | 1/2   | 1   |
 **独立**
 
-|       | Y = 0 | Y = 1 |     |
-| ----- | ----- | ----- | --- |
-| X = 0 | 1/4   | 1/4   | 1/2 |
-| X = 1 | 1/4   | 1/4   | 1/2 |
-|       | 1/2   | 1/2   | 1   |
+|       | Y = 0 | Y = 1 |     |     |
+| ----- | ----- | ----- | --- | --- |
+| X = 0 | 1/4   | 1/4   | 1/2 |     |
+| X = 1 | 1/4   | 1/4   | 1/2 |     |
+|       | 1/2   | 1/2   | 1   |     |
 - **JedeZeilen-undSpaltensummeist1/2.**
 - **每行和每列的和都是 1/21/2**
 
@@ -185,7 +185,7 @@ $$ f_{X,Y}(x,y) = c\,(1 + 2xy) \cdot \mathbb{I}_{[0,1]^2}(x,y) $$
 	- **相同的边缘分布并不能确定和的分布，因此也不能确定联合结构**
 	- Die Wahrscheinlichkeiten sind der Reihe nach 0, 1/2 und 1. Identische Ränder legen die Verteilung einer Summe und damit die gemeinsame Struktur nicht fest.
 
-#### 4
+#### 4 线形代数
 
 设随机向量 $X = (X_1, X_2)^\top$ 满足
 
@@ -259,6 +259,10 @@ $$ \Sigma(a) = \begin{pmatrix} 4 & a \\ a & 9 \end{pmatrix} $$
 
 $$ \begin{pmatrix} X_1 \\ X_2 \end{pmatrix} \sim N_2 \left( \begin{pmatrix} 10 \\ 5 \end{pmatrix}, \begin{pmatrix} 4 & 2 \\ 2 & 9 \end{pmatrix} \right). $$
 
+
+
+$$ X_1 \mid X_2 = x_2 \sim N \left( \mu_1 + \frac{\sigma_{12}}{\sigma_2^2} (x_2 - \mu_2),\; \sigma_1^2 - \frac{\sigma_{12}^2}{\sigma_2^2} \right). $$
+
 1. 给出 $X_1$ 和 $X_2$ 的边缘分布，并求相关系数 $\rho$。
 
 	- X1 ~ N(10, 4)
@@ -297,8 +301,6 @@ $$ \begin{pmatrix} X_1 \\ X_2 \end{pmatrix} \sim N_2 \left( \begin{pmatrix} 10 \
 	- **当非对角元素为 0 时，相关系数 ρ=0，因此各分量相互独立。此处之所以能从“不相关”推出“独立”，是因为（两个分量）服从联合正态分布。**
 
 **提示**：对于二元正态分布，有
-
-$$ X_1 \mid X_2 = x_2 \sim N \left( \mu_1 + \frac{\sigma_{12}}{\sigma_2^2} (x_2 - \mu_2),\; \sigma_1^2 - \frac{\sigma_{12}^2}{\sigma_2^2} \right). $$
 
 #### 6 混合分布！！
 
@@ -383,7 +385,7 @@ $$ U = X, \qquad V = BX. $$
 	- **错误，边缘正态不能保证联合正态**
 	- Randnormalverteilung garantiert nicht die gemeinsame Normalverteilung.
 
-#### 8
+#### 8。重期望和方差分解
 
 在以下三个场景中，分布中的**某个参数本身不是固定的，而是一个随机变量**。
 
@@ -531,7 +533,7 @@ $$ X \mid N = k \sim \text{Bin}(k, \pi), $$
 - 前两个 **随机参数** 影响了成功率（或者事故率）
 - 第三个随机参数影响了试验次数，签约概率不会变
 
-#### 9
+#### 9 列联表离散重期望
 
 给定 $X$ 的分布以及给定 $X$ 下 $Y$ 的条件分布如下表：
 

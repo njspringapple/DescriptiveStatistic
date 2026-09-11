@@ -196,7 +196,7 @@ $$
 F_Y(y) =
 \begin{cases}
 0, & y < -1, \\[4pt]
-\dfrac{y+1}{3}, & -1 \le y \le 2, \\[4pt]
+(\dfrac{y+1}{3})^2, & -1 \le y \le 2, \\[4pt]
 1, & y > 2.
 \end{cases}
 $$

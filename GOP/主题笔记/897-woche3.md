@@ -701,7 +701,7 @@ $$ Y = 3 - 2X. $$
 	- 3-2X <= y => X >= (3-y)/2
 	- P(Y <= y) = P(3-2X <= y) = P(X >= (3-y)/2)
 	- 因为 X ~ exp(2)
-	- 指数分布的分布函数：F(x) = 1 - exp(-lambda x), x >= 0
+	- **指数分布的分布函数**：F(x) = 1 - exp(-lambda x), x >= 0
 	- P(X >= (3-y)/2) = 1 - 1 + exp(-lambda (3-y)/2) = exp(-2 (3-y)/2) = exp(y-3)
 
 	- **考试技巧：至少根据题目推导到这里，考场上最后要写分布函数，分布函数分段形式写出来再说，肯定式两端，有一段肯定式 exp(y-3), 最大一段肯定是1**
@@ -905,6 +905,12 @@ $$ \operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y). $$
 - Z = X+ Y,  Z >= 0
 - **Y = Z - X, 固定Z，所以，$Y \in [0,Z]$**
 
+
+- x >= 0
+- Y = Z - X >= 0 ==> x <= z
+- 所以, 0 < x < z
+
+
 (b) 写出
 
 $$ P_Z(z) = \sum_x P_X(x) \, P_Y(z - x) $$
@@ -919,7 +925,7 @@ $$ P_Z(z) = \sum_x P_X(x) \, P_Y(z - x) $$
 $$ Z \sim \text{Poi}(\lambda_1 + \lambda_2). $$
 
 - **二项式定理 ：$\displaystyle \binom{n}{k} = \frac{n!}{(n-k)!\,k!}$**
-- **二项式定理：$(a+b)^n = \Sigma_{k=0}^n a^k b^{(n-k)}$**
+- **二项式定理：$(a+b)^n = \Sigma_{k=0}^n C(n,k) \cdot a^k \cdot b^{(n-k)}$**
 - 所以，$z! / (x! \cdot (z-x)!) = C(z,x)$
 - $z! \cdot P_Z(z) = exp(-(\lambda_1 + \lambda_2)) \cdot \Sigma_x (\lambda_1^x \cdot \lambda_2^{z-x}) \cdot C(z,x)$
 - $= exp(-(\lambda_1 + \lambda_2)) \cdot (\lambda_1 + \lambda_2)^x$
@@ -1054,7 +1060,8 @@ $$ f_{S_n}(s) = \frac{\lambda^n s^{n-1}}{(n-1)!} e^{-\lambda s}, \quad s \geq 0,
 - 根据上面，S_n ~ Ga(n,\lambda)
 - 密度函数：$s^{(n−1)} exp(−\lambda s)$
 - **众数就是密度函数最大值**
-- 对密度函数求导：$f' = (n-1)/\lambda$
+- 对密度函数求导：$f' = s^{(n-2)} \cdot e^{-\lambda s} \cdot [(n-1) - \lambda s]$
+- 指数函数,幂函数都大于0, 所以, $f' = 0 \Rightarrow (n-1) = \lambda s$ ,  整理得到 $s = (n-1)/\lambda$
 
 
 
@@ -1195,7 +1202,7 @@ $$ S \sim \text{Exp}(\lambda_1 + \lambda_2 + \lambda_3), $$
 
 $$ E(M) = \frac{1}{\lambda} \left( 1 + \frac{1}{2} + \frac{1}{3} \right) = \frac{11}{6\lambda}. $$
 
-- 设 v = exp(-lambda) x
+- 设 v = exp(-lambda x) 
 - 1 - F_M(t) = 1 - (1 - v)^3 = 3v - 3v^2 + v^3  -- 换元法
 - 。。。 = 11/6\lambda
 
